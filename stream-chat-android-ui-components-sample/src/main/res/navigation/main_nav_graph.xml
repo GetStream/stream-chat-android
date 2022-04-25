@@ -460,7 +460,7 @@
 
     <fragment
         android:id="@+id/componentBrowserSearchViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.search.ComponentBrowserSearchViewFragment"
+        android:name="io.getstream.chat.ui.uitests.search.ComponentBrowserSearchViewFragment"
         android:label="ComponentBrowserSearchViewFragment"
         />
 

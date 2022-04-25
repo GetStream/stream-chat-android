@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.components.composer
 
 import androidx.compose.foundation.BorderStroke
@@ -29,11 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -77,12 +81,15 @@ public fun InputField(
         selection = selection
     )
 
+    val description = stringResource(id = R.string.stream_compose_cd_message_input)
+
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
             .background(ChatTheme.colors.inputBackground)
-            .padding(innerPadding),
+            .padding(innerPadding)
+            .semantics { contentDescription = description },
         value = textFieldValue,
         onValueChange = {
             textFieldValueState = it

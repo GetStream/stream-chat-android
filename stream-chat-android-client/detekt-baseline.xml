@@ -309,7 +309,6 @@
     <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>
     <ID>EmptyFunctionBlock:RetroError.kt$RetroError${ }</ID>
     <ID>EmptyFunctionBlock:RetroSuccess.kt$RetroSuccess${ }</ID>
-    <ID>ForbiddenComment:Call.kt$// TODO: Make internal after migrating ChatDomain</ID>
     <ID>ForbiddenComment:ChatClient.kt$ChatClient$// TODO: An InterceptedCall wrapper can be created to avoid so much code here.</ID>
     <ID>LargeClass:ChatClient.kt$ChatClient</ID>
     <ID>LargeClass:MoshiChatApi.kt$MoshiChatApi : ChatApi</ID>
@@ -379,7 +378,7 @@
     <ID>MaxLineLength:ChatClient.kt$ChatClient$listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")</ID>
-    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""</ID>
+    <ID>MaxLineLength:ChatClient.kt$ChatClient$return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient$userState is UserState.UserSet &amp;&amp; userState.user.id == user.id &amp;&amp; socketStateService.state == SocketState.Idle</ID>
     <ID>MaxLineLength:ChatClient.kt$ChatClient.Builder$*</ID>
@@ -390,6 +389,7 @@
     <ID>MaxLineLength:ConnectUserTest.kt$ConnectUserTest$result.error().message `should be equal to` "The user_id provided on the JWT token doesn't match with the current user you try to connect"</ID>
     <ID>MaxLineLength:DeleteMessageListener.kt$DeleteMessageListener$*</ID>
     <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)</ID>
+    <ID>MaxLineLength:DownstreamChannelDtoAdapterTest.kt$DownstreamChannelDtoAdapterTest$val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutNameAndImage, DownstreamChannelDto::class.java)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)</ID>
     <ID>MaxLineLength:EventArguments.kt$EventArguments$private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, null, channel)</ID>
@@ -514,6 +514,7 @@
     <ID>TooManyFunctions:BaseChatModule.kt$BaseChatModule</ID>
     <ID>TooManyFunctions:ChannelApi.kt$ChannelApi</ID>
     <ID>TooManyFunctions:ChannelClient.kt$ChannelClient</ID>
+    <ID>TooManyFunctions:ChannelRepository.kt$ChannelRepository</ID>
     <ID>TooManyFunctions:ChatApi.kt$ChatApi</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient</ID>
     <ID>TooManyFunctions:ChatClient.kt$ChatClient$Builder : ChatClientBuilder</ID>

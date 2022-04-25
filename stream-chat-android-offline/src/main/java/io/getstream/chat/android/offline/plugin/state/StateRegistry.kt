@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
@@ -30,7 +31,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
@@ -143,7 +143,7 @@ public class StateRegistry private constructor(
             messageRepository: MessageRepository,
             latestUsers: StateFlow<Map<String, User>>,
         ): StateRegistry {
-            if (instance == null) {
+            if (instance != null) {
                 logger.logE(
                     "StateRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use StateRegistry.get()"

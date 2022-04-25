@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.channel.controller
 
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -46,7 +46,8 @@ import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
@@ -69,7 +70,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val currentUser = User(id = CURRENT_USER_ID)
     private val userFlow = MutableStateFlow(currentUser)
 
-    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
+    override fun getTestScope(): TestScope = testCoroutines.scope
 
     private val repos: RepositoryFacade = mock()
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
@@ -104,7 +105,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should be updated`() {
+    fun `when user watching event arrives, last message should be updated`() = runTest {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(
@@ -125,7 +126,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // New message event
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`(): Unit = coroutineTest {
+    fun `when new message event arrives, messages should be propagated correctly`(): Unit = runTest {
         val user = User(id = CURRENT_USER_ID)
         val message = randomMessage(
             createdAt = Date(1000L),
@@ -147,7 +148,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `when new message event arrives from other user, unread number should be updated`() = coroutineTest {
+    fun `when new message event arrives from other user, unread number should be updated`() = runTest {
         val createdAt = Date()
         val message = randomMessage(
             createdAt = createdAt,
@@ -172,7 +173,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Message update
     @Test
-    fun `when a message update for a non existing message arrives, it is added`() = coroutineTest {
+    fun `when a message update for a non existing message arrives, it is added`() = runTest {
         val messageId = randomString()
         val message = randomMessage(
             id = messageId,
@@ -189,7 +190,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `when a message update event is outdated, it should be ignored`() = coroutineTest {
+    fun `when a message update event is outdated, it should be ignored`() = runTest {
         val messageId = randomString()
         val createdAt = randomDate()
         val createdLocallyAt = randomDateBefore(createdAt.time)
@@ -228,7 +229,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Member added event
     @Test
-    fun `when member is added, it should be propagated`(): Unit = coroutineTest {
+    fun `when member is added, it should be propagated`(): Unit = runTest {
         val user = randomUser()
         val member = randomMember(user = user)
         val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
@@ -240,7 +241,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Typing events
     @Test
-    fun `when events of start and stop tying arrive, it should be correctly propagated`() {
+    fun `when events of start and stop tying arrive, it should be correctly propagated`() = runTest {
         val user1 = randomUser()
         val user2 = randomUser()
 
@@ -262,7 +263,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Read event
     @Test
-    fun `when read notification event arrives, it should be correctly propagated`() {
+    fun `when read notification event arrives, it should be correctly propagated`() = runTest {
         val readEvent = randomNotificationMarkReadEvent(user = currentUser)
 
         channelLogic.handleEvent(readEvent)
@@ -272,7 +273,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Read event notification
     @Test
-    fun `when read event arrives, it should be correctly propagated`() {
+    fun `when read event arrives, it should be correctly propagated`() = runTest {
         val readEvent = randomMessageReadEvent(user = currentUser)
 
         channelLogic.handleEvent(readEvent)
@@ -282,7 +283,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = coroutineTest {
+    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = runTest {
         val message = randomMessage(
             showInChannel = true,
             silent = false,
@@ -298,7 +299,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Channel deleted event
     @Test
-    fun `when channel is deleted, messages are deleted too`() {
+    fun `when channel is deleted, messages are deleted too`() = runTest {
         val deleteChannelEvent = randomChannelDeletedEvent()
 
         channelLogic.handleEvent(deleteChannelEvent)
@@ -307,7 +308,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `when channel is deleted, the status is updated`() = coroutineTest {
+    fun `when channel is deleted, the status is updated`() = runTest {
         val channel = randomChannel()
         val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
         val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)

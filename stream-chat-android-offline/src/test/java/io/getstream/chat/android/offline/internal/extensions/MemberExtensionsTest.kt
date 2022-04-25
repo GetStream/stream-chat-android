@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.internal.extensions
 
 import io.getstream.chat.android.offline.extensions.internal.updateUsers

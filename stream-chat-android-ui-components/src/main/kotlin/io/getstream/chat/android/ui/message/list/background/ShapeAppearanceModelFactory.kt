@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list.background
 
 import android.content.Context
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**
  * Class that creates the default version of ShapeAppearanceModel used in the background of messages, attachments, pictures...

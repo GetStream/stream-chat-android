@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui
 
 import android.content.Context
@@ -83,22 +83,24 @@ public class SupportedReactions(
      */
     private object DefaultReactionDrawables {
         fun loveDrawable(context: Context): ReactionDrawable {
-            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_grey))
-            }
-            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
-            }
+            val drawableInactive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_grey))
+                }
+            val drawableActive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
+                }
             return ReactionDrawable(drawableInactive, drawableActive)
         }
 
         fun thumbsUpDrawable(context: Context): ReactionDrawable {
             val drawableInactive =
-                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)!!.apply {
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)!!.mutate().apply {
                     setTint(context.getColorCompat(R.color.stream_ui_grey))
                 }
             val drawableActive =
-                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)!!.apply {
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)!!.mutate().apply {
                     setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
                 }
             return ReactionDrawable(drawableInactive, drawableActive)
@@ -106,33 +108,37 @@ public class SupportedReactions(
 
         fun thumbsDownDrawable(context: Context): ReactionDrawable {
             val drawableInactive =
-                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)!!.apply {
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)!!.mutate().apply {
                     setTint(context.getColorCompat(R.color.stream_ui_grey))
                 }
             val drawableActive =
-                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)!!.apply {
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)!!.mutate().apply {
                     setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
                 }
             return ReactionDrawable(drawableInactive, drawableActive)
         }
 
         fun lolDrawable(context: Context): ReactionDrawable {
-            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_grey))
-            }
-            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
-            }
+            val drawableInactive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_grey))
+                }
+            val drawableActive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
+                }
             return ReactionDrawable(drawableInactive, drawableActive)
         }
 
         fun wutDrawable(context: Context): ReactionDrawable {
-            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_grey))
-            }
-            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)!!.apply {
-                setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
-            }
+            val drawableInactive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_grey))
+                }
+            val drawableActive =
+                ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)!!.mutate().apply {
+                    setTint(context.getColorCompat(R.color.stream_ui_accent_blue))
+                }
             return ReactionDrawable(drawableInactive, drawableActive)
         }
     }

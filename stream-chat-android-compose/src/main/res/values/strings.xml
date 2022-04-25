@@ -58,6 +58,7 @@
         <item quantity="other">%d Replies</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
+    <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_resend_message">Resend</string>
@@ -93,6 +94,7 @@
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
+    <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
@@ -134,4 +136,9 @@
     <string name="stream_compose_image_preview_delete">Delete</string>
     <string name="stream_compose_image_preview_share">Share</string>
     <string name="stream_compose_image_preview_photos">Photos</string>
+
+    <!-- Content Description -->
+    <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>
+    <string name="stream_compose_cd_message_input" translatable="false">Message input</string>
+    <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
 </resources>

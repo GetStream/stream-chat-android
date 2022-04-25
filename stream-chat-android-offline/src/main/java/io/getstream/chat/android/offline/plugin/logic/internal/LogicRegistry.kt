@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
@@ -155,7 +155,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
         ): LogicRegistry {
-            if (instance == null) {
+            if (instance != null) {
                 logger.logE(
                     "LogicRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"

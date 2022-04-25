@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
  * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
  * @param reactionOptionItemIconSize The size of a reaction option icon in the reaction options menu.
  * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
+ * @param messageItemMaxWidth The max width of message items inside message list.
  */
 @Immutable
 public data class StreamDimens(
@@ -92,6 +93,7 @@ public data class StreamDimens(
     public val userReactionItemIconSize: Dp,
     public val reactionOptionItemIconSize: Dp,
     public val headerElevation: Dp,
+    public val messageItemMaxWidth: Dp
 ) {
     public companion object {
         /**
@@ -133,6 +135,7 @@ public data class StreamDimens(
             userReactionItemAvatarSize = 64.dp,
             reactionOptionItemIconSize = 24.dp,
             headerElevation = 4.dp,
+            messageItemMaxWidth = 250.dp
         )
     }
 }

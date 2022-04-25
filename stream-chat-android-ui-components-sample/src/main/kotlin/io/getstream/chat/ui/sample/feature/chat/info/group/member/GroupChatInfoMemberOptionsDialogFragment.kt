@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.ui.sample.feature.chat.info.group.member
 
 import android.os.Bundle
@@ -128,7 +128,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             if (!state.loading) {
                 binding.apply {
                     optionMessage.isVisible = true
-                    optionViewInfo.isVisible = true
+                    optionViewInfo.isVisible = state.directChannelCid != null
                 }
             }
         }

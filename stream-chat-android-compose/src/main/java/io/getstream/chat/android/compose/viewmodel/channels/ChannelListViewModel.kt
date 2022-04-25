@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.viewmodel.channels
 
 import androidx.compose.runtime.MutableState
@@ -272,6 +272,7 @@ public class ChannelListViewModel(
      * Loads more data when the user reaches the end of the channels list.
      */
     public fun loadMore() {
+        if (chatClient.globalState.isOffline()) return
         val currentConfig = queryConfig.value
 
         channelsState = channelsState.copy(isLoadingMore = true)

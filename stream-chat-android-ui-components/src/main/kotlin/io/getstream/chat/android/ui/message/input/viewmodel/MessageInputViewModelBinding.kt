@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @file:JvmName("MessageInputViewModelBinding")
 
 package io.getstream.chat.android.ui.message.input.viewmodel

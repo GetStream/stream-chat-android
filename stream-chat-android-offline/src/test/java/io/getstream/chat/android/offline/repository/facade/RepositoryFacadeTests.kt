@@ -13,32 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.repository.facade
 
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -48,10 +52,12 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
-        runBlockingTest {
+        runTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
             val user = randomUser(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
@@ -68,7 +74,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given request more than last message When select channels Should return channels from DB with messages`() =
-        runBlockingTest {
+        runBlocking {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
@@ -95,7 +101,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         }
 
     @Test
-    fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
+    fun `Given Db contains all required data When select messages Should return message list`() = runTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
         whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(
@@ -109,7 +115,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `When insert a channel, all participant users of this channel need to be stored`() = runBlockingTest {
+    fun `When insert a channel, all participant users of this channel need to be stored`() = runTest {
         val memberUser = randomUser()
         val channelUser = randomUser()
         val userRead = randomUser()
@@ -126,7 +132,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(channels).insertChannel(eq(channel))
         verify(users).insertUsers(
-            org.mockito.kotlin.check { listUser ->
+            check { listUser ->
                 listUser.size `should be equal to` 5
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser)
             }
@@ -134,7 +140,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `When insert a message, all participant users of this message need to be stored`() = runBlockingTest {
+    fun `When insert a message, all participant users of this message need to be stored`() = runTest {
         val messageUser = randomUser()
         val replyToUser = randomUser()
         val latestReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
@@ -168,7 +174,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
     fun `When insert a list of channels, all participant users of these channels need to be stored`() =
-        runBlockingTest {
+        runTest {
             val (listOfUser: List<User>, listOfChannels: List<Channel>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
                     val memberUser = randomUser()
@@ -203,7 +209,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
     fun `When insert a list of messages, all participant users of these messages need to be stored`() =
-        runBlockingTest {
+        runTest {
             val (listOfUser: List<User>, listOfMessages: List<Message>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
                     val messageUser = randomUser()
@@ -239,7 +245,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         }
 
     @Test
-    fun `When insert a reaction, it should have a valid users and it need to be stored`() = runBlockingTest {
+    fun `When insert a reaction, it should have a valid users and it need to be stored`() = runTest {
         val user = randomUser()
         val reaction = randomReaction(user = user)
 
@@ -250,7 +256,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `When updating members of a channels, they need to be stored`() = runBlockingTest {
+    fun `When updating members of a channels, they need to be stored`() = runTest {
         val usersList = List(positiveRandomInt(20)) { randomUser() }
         val members = usersList.map(::randomMember)
         val cid = randomCID()
@@ -263,7 +269,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Proves that correct methods are called in storeStateForChannels`() {
-        runBlockingTest {
+        runTest {
             val configList = listOf<ChannelConfig>(mock())
             val userList = listOf(randomUser())
             val channelList = listOf(randomChannel())
@@ -285,24 +291,22 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `Proves that configs are not change if null is passed`() {
-        runBlockingTest {
-            val userList = listOf(randomUser())
-            val channelList = listOf(randomChannel())
-            val messageList = listOf(randomMessage())
+    fun `Proves that configs are not change if null is passed`() = runTest {
+        val userList = listOf(randomUser())
+        val channelList = listOf(randomChannel())
+        val messageList = listOf(randomMessage())
 
-            sut.storeStateForChannels(
-                configs = null,
-                users = userList,
-                channels = channelList,
-                messages = messageList,
-                cacheForMessages = false
-            )
+        sut.storeStateForChannels(
+            configs = null,
+            users = userList,
+            channels = channelList,
+            messages = messageList,
+            cacheForMessages = false
+        )
 
-            verifyNoInteractions(configs)
-            verify(users).insertUsers(userList)
-            verify(channels).insertChannels(channelList)
-            verify(messages).insertMessages(messageList, false)
-        }
+        verifyNoInteractions(configs)
+        verify(users).insertUsers(userList)
+        verify(channels).insertChannels(channelList)
+        verify(messages).insertMessages(messageList, false)
     }
 }

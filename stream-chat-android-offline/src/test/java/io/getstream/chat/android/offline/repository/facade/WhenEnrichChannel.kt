@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.repository.facade
 
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi

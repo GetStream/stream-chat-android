@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -79,6 +80,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageMaxWidthFactorMine Factor used to compute max width for message sent by the current user. Should be in <0.75, 1> range.
  * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
  * @property showMessageDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
+ * @property iconFailedMessage Icon for message failed status. Default value is [R.drawable.stream_ui_ic_warning].
+ * @property iconBannedMessage Icon for message when the current user is banned. Default value is [R.drawable.stream_ui_ic_warning].
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -121,6 +124,8 @@ public data class MessageListItemStyle(
     public val messageMaxWidthFactorMine: Float,
     public val messageMaxWidthFactorTheirs: Float,
     public val showMessageDeliveryStatusIndicator: Boolean,
+    public val iconFailedMessage: Drawable,
+    public val iconBannedMessage: Drawable,
 ) {
 
     @ColorInt
@@ -570,6 +575,11 @@ public data class MessageListItemStyle(
                 DEFAULT_MESSAGE_MAX_WIDTH_FACTOR,
             )
 
+            val iconFailedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconFailedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+            val iconBannedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconBannedIndicator)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -610,7 +620,9 @@ public data class MessageListItemStyle(
                 messageEndMargin = messageEndMargin,
                 messageMaxWidthFactorMine = messageMaxWidthFactorMine,
                 messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs,
-                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator
+                showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator,
+                iconFailedMessage = iconFailedMessage,
+                iconBannedMessage = iconBannedMessage,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

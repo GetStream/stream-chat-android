@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.input
 
 import android.animation.AnimatorSet
@@ -203,7 +203,7 @@ public class MessageInputView : ConstraintLayout {
     private var selectedAttachmentsCountListener: SelectedAttachmentsCountListener =
         SelectedAttachmentsCountListener { attachmentsCount, maxAttachmentsCount ->
 
-            suggestionListController?.commandsEnabled = attachmentsCount == 0
+            suggestionListController?.commandsEnabled = commandsEnabled && attachmentsCount == 0
 
             if (attachmentsCount > maxAttachmentsCount) {
                 alertMaxAttachmentsCountExceeded()

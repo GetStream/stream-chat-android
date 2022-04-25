@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Column
@@ -67,6 +67,7 @@ public fun QuotedMessage(
 
                     if (message.text.isNotEmpty()) {
                         MessageText(
+                            isQuote = true,
                             message = message,
                             onLongItemClick = onLongItemClick
                         )

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
-import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope

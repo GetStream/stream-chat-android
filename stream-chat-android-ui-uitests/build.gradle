@@ -1,0 +1,101 @@
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'shot'
+}
+
+apply from: "${rootDir}/scripts/android.gradle"
+
+android {
+    defaultConfig {
+        applicationId "io.getstream.chat.android.uitests"
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "com.karumi.shot.ShotTestRunner"
+        testApplicationId "io.getstream.chat.android.uitests.test"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
+    
+    buildFeatures {
+        viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.COMPOSE
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.RequiresOptIn',
+        ]
+    }
+}
+
+shot {
+    applicationId = "io.getstream.chat.android.uitests"
+}
+
+dependencies {
+    implementation project(":stream-chat-android-ui-components")
+    implementation project(":stream-chat-android-compose")
+
+    androidTestImplementation project(':stream-chat-android-test')
+
+    implementation Dependencies.androidxCoreKtx
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.materialComponents
+
+    // Compose
+    implementation Dependencies.composeCompiler
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeUiTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeAccompanistPermissions
+    implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.composeCoil
+
+    // Instrumentation tests
+    androidTestImplementation Dependencies.fragmentTest
+    androidTestImplementation Dependencies.junit4
+    androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.espressoContrib
+    androidTestImplementation Dependencies.androidxArchCoreTest
+    androidTestImplementation Dependencies.espressoIdlingResources
+    androidTestImplementation Dependencies.androidxTestJunit
+    androidTestImplementation Dependencies.navigationTest
+    androidTestImplementation Dependencies.composeUiTest
+    androidTestImplementation Dependencies.composeUiTestManifest
+}

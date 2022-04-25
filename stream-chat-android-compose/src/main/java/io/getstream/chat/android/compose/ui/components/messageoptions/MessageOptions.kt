@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.components.messageoptions
 
 import androidx.compose.foundation.clickable
@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -47,6 +48,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isGiphy
 import io.getstream.chat.android.compose.util.extensions.toSet
 
@@ -128,6 +130,7 @@ public fun defaultMessageOptionsState(
     val selectedMessageUserId = selectedMessage.user.id
 
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
+    val hasLinks = selectedMessage.attachments.any { it.hasLink() && it.type != ModelType.attach_giphy }
     val isOwnMessage = selectedMessageUserId == currentUser?.id
     val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
     val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
@@ -169,7 +172,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isTextOnlyMessage) {
+        if (isTextOnlyMessage || hasLinks) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),

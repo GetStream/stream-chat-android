@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.client
 
 import android.content.Context
@@ -147,13 +147,14 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -283,30 +284,29 @@ public class ChatClient internal constructor(
     private fun createInitListenerCall(
         performCall: (initListener: InitConnectionListener) -> Unit,
     ): Call<ConnectionData> {
-        return object : Call<ConnectionData> {
-            override fun execute(): Result<ConnectionData> {
-                // Uses coroutines to turn the async call into blocking
-                return runBlocking { await() }
-            }
+        return CoroutineCall(scope) {
+            performCall.awaitResult()
+        }
+    }
 
-            override fun enqueue(callback: Call.Callback<ConnectionData>) {
-                // Converts InitConnectionListener to Call.Callback
-                performCall(
-                    object : InitConnectionListener() {
-                        override fun onSuccess(data: ConnectionData) {
-                            val connectionData =
-                                io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
-                            callback.onResult(Result(connectionData))
-                        }
-
-                        override fun onError(error: ChatError) {
-                            callback.onResult(Result(error))
-                        }
+    /**
+     * Awaits [InitConnectionListener] being invoked from either [setUser] or [setGuestUser] or [setAnonymousUser].
+     */
+    private suspend fun ((initListener: InitConnectionListener) -> Unit).awaitResult(): Result<ConnectionData> {
+        return suspendCoroutine { continuation ->
+            invoke(
+                object : InitConnectionListener() {
+                    override fun onSuccess(data: ConnectionData) {
+                        val connectionData =
+                            io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
+                        continuation.resume(Result.success(connectionData))
                     }
-                )
-            }
 
-            override fun cancel() {}
+                    override fun onError(error: ChatError) {
+                        continuation.resume(Result.error(error))
+                    }
+                }
+            )
         }
     }
 
@@ -1569,6 +1569,7 @@ public class ChatClient internal constructor(
      *
      * @return String formatted header that contains all the information.
      */
+    @InternalStreamChatApi
     public fun buildSdkTrackingHeaders(): String {
         val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
         val buildModel = Build.MODEL
@@ -1576,7 +1577,7 @@ public class ChatClient internal constructor(
         val apiLevel = Build.VERSION.SDK_INT
         val osName = "Android ${Build.VERSION.RELEASE}"
 
-        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel"""
+        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""
     }
 
     @CheckResult
@@ -2437,9 +2438,19 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
+        /**
+         * Header used to track which SDK is being used.
+         */
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        /**
+         * Flag used to track whether offline support is enabled.
+         */
+        @InternalStreamChatApi
+        @JvmStatic
+        public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"

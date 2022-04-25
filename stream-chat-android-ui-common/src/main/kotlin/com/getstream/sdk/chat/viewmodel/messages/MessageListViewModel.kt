@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LiveData
@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
@@ -116,6 +117,12 @@ public class MessageListViewModel(
      * information about the message list. Sets the
      */
     private var threadListData: MessageListItemLiveData? = null
+
+    /**
+     * Regulates the visibility of deleted messages.
+     */
+    private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+        MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
     /**
      * Represents the current state of the message list
@@ -267,12 +274,13 @@ public class MessageListViewModel(
         val typingIds = capturedChannelState.typing.map { (_, idList) -> idList }.asLiveData()
 
         messageListData = MessageListItemLiveData(
-            user,
-            capturedChannelState.messages.asLiveData(),
-            capturedChannelState.reads.asLiveData(),
-            typingIds,
-            false,
-            dateSeparatorHandler,
+            currentUser = user,
+            messages = capturedChannelState.messages.asLiveData(),
+            readsLd = capturedChannelState.reads.asLiveData(),,
+            typingLd = typingIds,
+            isThread = false,
+            dateSeparatorHandler = dateSeparatorHandler,
+            deletedMessageVisibility = deletedMessageVisibility
         )
         _reads.addSource(capturedChannelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(capturedChannelState.loadingOlderMessages.asLiveData()) {
@@ -319,6 +327,7 @@ public class MessageListViewModel(
             null,
             true,
             threadDateSeparatorHandler,
+            deletedMessageVisibility
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -719,6 +728,16 @@ public class MessageListViewModel(
     private fun onNormalModeEntered() {
         currentMode = Mode.Normal
         resetThread()
+    }
+
+    /**
+     * Sets the value used to filter deleted messages.
+     * @see DeletedMessageVisibility
+     *
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     */
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        this.deletedMessageVisibility.value = deletedMessageVisibility
     }
 
     /**

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.core.internal.coroutines
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -21,6 +21,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider.res
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider.set
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainCoroutineDispatcher
 
 /**
  * Coroutine dispatchers used internally by Stream libraries. Should always be used
@@ -31,9 +32,31 @@ import kotlinx.coroutines.Dispatchers
 @InternalStreamChatApi
 public object DispatcherProvider {
 
+    /**
+     * Represents the Main coroutine dispatcher, tied to the UI thread.
+     */
     public var Main: CoroutineDispatcher = Dispatchers.Main
         internal set
 
+    /**
+     * Represents the Immediate coroutine dispatcher, which is usually tied to the UI thread.
+     *
+     * Useful for some cases where the UI updates require immediate execution, without dispatching the update events.
+     */
+    public val Immediate: CoroutineDispatcher
+        get() {
+            val mainDispatcher = Main
+
+            return if (mainDispatcher is MainCoroutineDispatcher) {
+                mainDispatcher.immediate
+            } else {
+                mainDispatcher
+            }
+        }
+
+    /**
+     * Represents the IO coroutine dispatcher, which is usually tied to background work.
+     */
     public var IO: CoroutineDispatcher = Dispatchers.IO
         internal set
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.interceptor.internal
 
 import android.content.Context
@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.extensions.internal.hasPendingAttachments
@@ -33,11 +36,9 @@ import io.getstream.chat.android.offline.message.attachments.internal.generateUp
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.getMessageType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -51,7 +52,9 @@ internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
     private val globalState: GlobalState,
-    private val repos: RepositoryFacade,
+    private val channelRepository: ChannelRepository,
+    private val messageRepository: MessageRepository,
+    private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val networkType: UploadAttachmentsNetworkType,
 ) : SendMessageInterceptor {
@@ -143,8 +146,8 @@ internal class SendMessageInterceptorImpl(
         // Update flow for currently running queries
         logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         // we insert early to ensure we don't lose messages
-        repos.insertMessage(newMessage)
-        repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+        messageRepository.insertMessage(newMessage)
+        channelRepository.updateLastMessageForChannel(newMessage.cid, newMessage)
         return newMessage
     }
 
@@ -157,7 +160,7 @@ internal class SendMessageInterceptorImpl(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    internal suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
+    private suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
         uploadAttachments(message, channelType, channelId)
 
     /**
@@ -204,12 +207,12 @@ internal class SendMessageInterceptorImpl(
         var messageToBeSent = newMessage
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
-                repos.observeAttachmentsForMessage(newMessage.id)
+                attachmentRepository.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                messageToBeSent = repos.selectMessage(newMessage.id) ?: newMessage.copy(
+                                messageToBeSent = messageRepository.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
                                 allAttachmentsUploaded = true

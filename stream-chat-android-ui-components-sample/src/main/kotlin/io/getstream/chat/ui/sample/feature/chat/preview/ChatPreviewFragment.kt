@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.ui.sample.feature.chat.preview
 
 import android.os.Bundle
@@ -96,13 +96,13 @@ class ChatPreviewFragment : Fragment() {
             messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
             setAvatarClickListener {
-                navigateToChatInfo()
+                navigateToChatInfo(cid)
             }
             setTitleClickListener {
-                navigateToChatInfo()
+                navigateToChatInfo(cid)
             }
             setSubtitleClickListener {
-                navigateToChatInfo()
+                navigateToChatInfo(cid)
             }
         }
 
@@ -120,9 +120,9 @@ class ChatPreviewFragment : Fragment() {
         }
     }
 
-    private fun navigateToChatInfo() {
+    private fun navigateToChatInfo(cid: String) {
         findNavController().navigateSafely(
-            ChatPreviewFragmentDirections.actionOpenChatInfo(userData = args.userData, cid = null)
+            ChatPreviewFragmentDirections.actionOpenChatInfo(userData = args.userData, cid = cid)
         )
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.content.ClipboardManager
@@ -21,9 +21,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 
@@ -39,6 +41,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  * @param showDateSeparators If we should show date separator items in the list.
  * @param showSystemMessages If we should show system message items in the list.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -50,6 +53,7 @@ public class MessagesViewModelFactory(
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
+    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -74,12 +78,13 @@ public class MessagesViewModelFactory(
                 enforceUniqueReactions = enforceUniqueReactions,
                 clipboardHandler = ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
                 showDateSeparators = showDateSeparators,
-                showSystemMessages = showSystemMessages
+                showSystemMessages = showSystemMessages,
+                deletedMessageVisibility = deletedMessageVisibility
             )
         },
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
-                StorageHelperWrapper(context, StorageHelper())
+                StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
             )
         }
     )

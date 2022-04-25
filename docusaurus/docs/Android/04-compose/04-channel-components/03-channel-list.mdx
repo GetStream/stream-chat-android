@@ -165,6 +165,7 @@ If you're looking to customize the UI of the `ChannelList`, there are a few ways
 fun ChannelList(
     // State and action handlers
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(...),
     loadingContent: @Composable () -> Unit = { ... },
     emptyContent: @Composable () -> Unit = { ... },
     emptySearchContent: @Composable (String) -> Unit = { ... },
@@ -176,6 +177,7 @@ fun ChannelList(
 ```
 
 * `modifier`: The modifier for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
+* `contentPadding`: Padding values to be applied to the channel list surrounding the content inside.
 * `loadingContent`: Customizable composable that allows you to override the default loading indicator when loading the initial data set.
 * `emptyContent`: Customizable composable that allows you to override the empty state, when there are no channels available. 
 * `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.

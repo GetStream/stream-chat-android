@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.ChatClient
@@ -31,10 +31,12 @@ import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -46,6 +48,9 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class EventHandlerImplTest {
+
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private val chatClient: ChatClient = mock()
     private val logicRegistry: LogicRegistry = mock()
@@ -71,7 +76,7 @@ internal class EventHandlerImplTest {
     }
 
     @Test
-    fun `when connected event arrives, user should be updated and state should be propagated`() = runBlockingTest {
+    fun `when connected event arrives, user should be updated and state should be propagated`() = runTest {
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
@@ -89,7 +94,7 @@ internal class EventHandlerImplTest {
     }
 
     @Test
-    fun `when disconnected event arrives, state should be propagated`() = runBlockingTest {
+    fun `when disconnected event arrives, state should be propagated`() = runTest {
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
@@ -112,7 +117,7 @@ internal class EventHandlerImplTest {
     }
 
     @Test
-    fun `when connecting event arrives, state should be propagated`() = runBlockingTest {
+    fun `when connecting event arrives, state should be propagated`() = runTest {
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
@@ -127,7 +132,7 @@ internal class EventHandlerImplTest {
     }
 
     @Test
-    fun `when a health check event happens, a request to retry failed entities should happen`() = runBlockingTest {
+    fun `when a health check event happens, a request to retry failed entities should happen`() = runTest {
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.channel.controller.attachment
 
 import android.webkit.MimeTypeMap
@@ -27,7 +27,8 @@ import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldBeTrue
@@ -46,6 +47,7 @@ import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import java.io.File
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class AttachmentUploaderTests {
     private val channelType: String = randomString()
@@ -59,7 +61,7 @@ internal class AttachmentUploaderTests {
 
     @Test
     @Ignore("Current logic doesn't work so. Need to rewrite test")
-    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runBlockingTest {
+    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runTest {
         val error = ChatError("")
         val attachment = randomAttachments(size = 1).first()
 
@@ -82,7 +84,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Should return attachment with properly filled data when successfully sent file`() = runBlockingTest {
+    fun `Should return attachment with properly filled data when successfully sent file`() = runTest {
         val attachment = randomAttachments(size = 1).first()
         val url = "url"
 
@@ -103,7 +105,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Upload attachment should have the right format`() = runBlockingTest {
+    fun `Upload attachment should have the right format`() = runTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 
@@ -129,7 +131,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Upload attachment should be configurable`() = runBlockingTest {
+    fun `Upload attachment should be configurable`() = runTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 

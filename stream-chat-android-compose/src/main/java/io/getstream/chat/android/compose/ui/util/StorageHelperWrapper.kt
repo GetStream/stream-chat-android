@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
 import android.net.Uri
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 
@@ -29,25 +30,32 @@ import io.getstream.chat.android.client.models.Attachment
  * @param context The context of the app, used to fetch files and media.
  * @param storageHelper The storage helper that provides all the logic required to work with the
  * system storage.
+ * @param attachmentFilter A filter that is used to filter out attachments that will not be accepted
+ * by the backend.
  */
 public class StorageHelperWrapper(
     private val context: Context,
     private val storageHelper: StorageHelper,
+    private val attachmentFilter: AttachmentFilter,
 ) {
 
     /**
-     * Loads a list of file metadata from the system.
+     * Loads a list of file metadata from the system and filters it against file types accepted by the backend.
      *
      * @return List of [AttachmentMetaData] that describe the files.
      */
-    public fun getFiles(): List<AttachmentMetaData> = storageHelper.getFileAttachments(context)
+    public fun getFiles(): List<AttachmentMetaData> {
+        return attachmentFilter.filterAttachments(storageHelper.getFileAttachments(context))
+    }
 
     /**
      * Loads a list of media metadata from the system.
      *
      * @return List of [AttachmentMetaData] that describe the files.
      */
-    public fun getMedia(): List<AttachmentMetaData> = storageHelper.getMediaAttachments(context)
+    public fun getMedia(): List<AttachmentMetaData> {
+        return attachmentFilter.filterAttachments(storageHelper.getMediaAttachments(context))
+    }
 
     /**
      * Transforms a list of [AttachmentMetaData] into a list of [Attachment]s. This is required
@@ -88,6 +96,8 @@ public class StorageHelperWrapper(
      * @return List of [Attachment]s with files prepared for uploading.
      */
     public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return getAttachmentsFromMetaData(storageHelper.getAttachmentsFromUriList(context, uris))
+        return storageHelper.getAttachmentsFromUriList(context, uris)
+            .let(attachmentFilter::filterAttachments)
+            .let(::getAttachmentsFromMetaData)
     }
 }

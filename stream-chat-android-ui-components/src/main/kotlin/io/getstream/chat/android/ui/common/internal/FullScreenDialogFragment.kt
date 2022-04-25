@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.common.internal
 
 import android.app.Dialog
@@ -24,6 +24,9 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 
+/**
+ * A fragment that displays a full screen overlay dialog.
+ */
 internal open class FullScreenDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

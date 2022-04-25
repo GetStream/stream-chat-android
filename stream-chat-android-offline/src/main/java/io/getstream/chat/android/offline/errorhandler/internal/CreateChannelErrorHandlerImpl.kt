@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.errorhandler.internal
 
 import io.getstream.chat.android.client.call.Call
@@ -23,9 +23,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.errorhandler.CreateChannelErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelRepository
 import io.getstream.chat.android.offline.utils.internal.generateChannelIdIfNeeded
 import kotlinx.coroutines.CoroutineScope
 

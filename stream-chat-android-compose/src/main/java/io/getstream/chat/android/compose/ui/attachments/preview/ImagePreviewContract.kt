@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.attachments.preview
 
 import android.content.Context
@@ -46,7 +46,7 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
      * @return The [ImagePreviewResult] or null if it doesn't exist.
      */
     override fun parseResult(resultCode: Int, intent: Intent?): ImagePreviewResult? {
-        return intent?.getParcelableExtra(ImagePreviewActivity.KEY_IMAGE_PREVIEW_RESULT)
+        return intent?.getParcelableExtra(ImagePreviewActivity.KeyImagePreviewResult)
     }
 
     /**

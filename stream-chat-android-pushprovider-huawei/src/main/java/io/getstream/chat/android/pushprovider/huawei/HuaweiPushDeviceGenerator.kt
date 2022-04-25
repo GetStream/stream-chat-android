@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.pushprovider.huawei
 
 import android.content.Context
 import com.huawei.hms.aaid.HmsInstanceId
-import com.huawei.hms.api.ConnectionResult
+import com.huawei.hms.api.ConnectionResult.SUCCESS
 import com.huawei.hms.api.HuaweiApiAvailability
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
@@ -38,7 +38,7 @@ public class HuaweiPushDeviceGenerator(context: Context, private val appId: Stri
     private val logger = ChatLogger.get("ChatNotifications")
 
     override fun isValidForThisDevice(context: Context): Boolean =
-        (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(context) == ConnectionResult.SUCCESS).also {
+        (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(context) == SUCCESS).also {
             logger.logI("Is Huawei available on on this device -> $it")
         }
 

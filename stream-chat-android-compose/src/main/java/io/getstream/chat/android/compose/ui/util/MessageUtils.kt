@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.EmojiUtil
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -80,3 +81,13 @@ internal fun Message.isGiphy(): Boolean = command == ModelType.attach_giphy
  * @return If the message is a temporary message to select a gif.
  */
 internal fun Message.isGiphyEphemeral(): Boolean = isGiphy() && isEphemeral()
+
+/**
+ * @return If the message is emoji only or not.
+ */
+internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(this)
+
+/**
+ * @return If the message is single emoji only or not.
+ */
+internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)

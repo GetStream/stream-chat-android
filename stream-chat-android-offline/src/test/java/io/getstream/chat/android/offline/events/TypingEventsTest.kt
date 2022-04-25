@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.events
 
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
@@ -24,11 +24,13 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
@@ -36,6 +38,8 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class TypingEventsTest {
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -47,25 +51,24 @@ internal class TypingEventsTest {
     private val channelId = "test_channel_id"
 
     @Test
-    fun `When typing events are disabled Should not pass precondition`() =
-        runBlockingTest {
+    fun `When typing events are disabled Should not pass precondition`() = runTest {
 
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsDisabled(channelType, channelId)
-                .get()
+        val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            .givenTypingEventsDisabled(channelType, channelId)
+            .get()
 
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date()
-            ).isSuccess `should be equal to` false
-        }
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date()
+        ).isSuccess `should be equal to` false
+    }
 
     @Test
     fun `When a user started typing Then subsequent keystroke events within a certain interval should not be sent to the server`() =
-        runBlockingTest {
+        runTest {
             val (sut, _) = Fixture(testCoroutines.scope, randomUser())
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
@@ -104,7 +107,7 @@ internal class TypingEventsTest {
 
     @Test
     fun `When stop typing event is sent without sending start typing event before Should not send event to the server`() =
-        runBlockingTest {
+        runTest {
             val (sut, _) = Fixture(testCoroutines.scope, randomUser())
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
@@ -120,7 +123,7 @@ internal class TypingEventsTest {
 
     @Test
     fun `When stop typing event is sent after sending start typing event before Should send event to the server`() =
-        runBlockingTest {
+        runTest {
             val (sut, _) = Fixture(testCoroutines.scope, randomUser())
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
@@ -152,7 +155,7 @@ internal class TypingEventsTest {
 
     @Test
     fun `When sending start typing event Should update lastStartTypeEvent`() =
-        runBlockingTest {
+        runTest {
             val (sut, stateRegistry) = Fixture(testCoroutines.scope, randomUser())
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.model.querychannels.pagination.internal
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 
 internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
 

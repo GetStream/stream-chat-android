@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,6 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,11 +100,13 @@ public fun ChannelItem(
     },
 ) {
     val channel = channelItem.channel
+    val description = stringResource(id = R.string.stream_compose_cd_channel_item)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .semantics { contentDescription = description }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.extensions.internal
 
 import io.getstream.chat.android.client.models.Channel
@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import java.util.Date
 
 /**
@@ -51,13 +51,24 @@ internal fun Channel.updateLastMessage(message: Message) {
     }
 }
 
-internal fun Channel.setMember(userId: String, member: Member?) {
+/**
+ * Updates member counts and list of members of this channel based on whether [member] is added, removed or updated.
+ *
+ * @param userId User id of the added/removed/updated member.
+ * @param member Member object.
+ * @param isUpdate True if a member is updated but not added/removed, false otherwise.
+ */
+internal fun Channel.updateMembers(userId: String, member: Member?, isUpdate: Boolean) {
     if (member == null) {
         members.firstOrNull { it.user.id == userId }?.also { foundMember ->
             members = members - foundMember
+            memberCount -= 1
         }
     } else {
         members = members + member
+        if (!isUpdate) {
+            memberCount += 1
+        }
     }
 }
 

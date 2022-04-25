@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
@@ -29,7 +30,10 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Lin
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
-internal class FailedIndicatorDecorator : BaseDecorator() {
+internal class FailedIndicatorDecorator(
+    private val listViewStyle: MessageListItemStyle,
+    private val isCurrentUserBanned: () -> Boolean,
+) : BaseDecorator() {
 
     /**
      * Decorates the visibility of the "failed" section of the message containing
@@ -139,6 +143,11 @@ internal class FailedIndicatorDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) {
         val isFailed = data.isMine && data.message.syncStatus == SyncStatus.FAILED_PERMANENTLY
-        deliveryFailedIcon.isVisible = isFailed
+        val isBanned = isFailed && isCurrentUserBanned()
+        when {
+            isBanned -> deliveryFailedIcon.setImageDrawable(listViewStyle.iconBannedMessage)
+            isFailed -> deliveryFailedIcon.setImageDrawable(listViewStyle.iconFailedMessage)
+        }
+        deliveryFailedIcon.isVisible = isFailed || isBanned
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.ui.sample.application
 
 import android.os.StrictMode
@@ -27,6 +27,16 @@ object DebugMetricsHelper {
             .build()
             .apply {
                 StrictMode.setThreadPolicy(this)
+            }
+
+        StrictMode.VmPolicy.Builder()
+            .detectLeakedSqlLiteObjects()
+            .detectLeakedClosableObjects()
+            .penaltyLog()
+            .penaltyDeath()
+            .build()
+            .apply {
+                StrictMode.setVmPolicy(this)
             }
     }
 }

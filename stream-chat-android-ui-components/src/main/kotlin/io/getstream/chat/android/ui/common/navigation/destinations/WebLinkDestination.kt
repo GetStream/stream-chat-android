@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.common.navigation.destinations
 
 import android.content.ActivityNotFoundException
@@ -23,15 +23,22 @@ import android.net.Uri
 import android.widget.Toast
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.addSchemeToUrlIfNeeded
 
 @InternalStreamChatApi
 public class WebLinkDestination(context: Context, private val url: String) : ChatDestination(context) {
 
     override fun navigate() {
         try {
-            start(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            val urlWithSchema = url.addSchemeToUrlIfNeeded()
+            start(Intent(Intent.ACTION_VIEW, Uri.parse(urlWithSchema)))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "There is no app to view this url\n$url", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_ui_message_list_error_cannot_open_link, url),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 }

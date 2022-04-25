@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.ui.message.list.options.message.internal
 
 import android.graphics.drawable.ColorDrawable
@@ -65,6 +65,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val style by lazy { messageListViewStyle!! }
 
     private val viewHolderFactory by lazy { messageViewHolderFactory!! }
+    private val decoratorProvider by lazy { messageOptionsDecoratorProvider!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -116,6 +117,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         super.onDestroyView()
         messageListViewStyle = null
         messageViewHolderFactory = null
+        messageOptionsDecoratorProvider = null
         _binding = null
     }
 
@@ -185,8 +187,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = viewHolderFactory
-            .createViewHolder(
+        viewHolderFactory.withDecoratorProvider(decoratorProvider) {
+            viewHolder = it.createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager)
             ).also { viewHolder ->
@@ -202,6 +204,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 )
                 viewHolder.bindListItem(messageItem)
             }
+        }
     }
 
     private fun setupUserReactionsView() {
@@ -404,6 +407,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         var messageArg: Message? = null
         var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
+        var messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider? = null
         var attachmentFactoryManager: AttachmentFactoryManager = AttachmentFactoryManager()
 
         fun newReactionOptionsInstance(
@@ -413,6 +417,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.REACTION_OPTIONS,
@@ -422,6 +427,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageViewHolderFactory,
                 messageBackgroundFactory,
                 attachmentFactoryManager,
+                showAvatarPredicate
             )
         }
 
@@ -432,6 +438,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             return newInstance(
                 OptionsMode.MESSAGE_OPTIONS,
@@ -441,6 +448,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageViewHolderFactory,
                 messageBackgroundFactory,
                 attachmentFactoryManager,
+                showAvatarPredicate
             )
         }
 
@@ -452,22 +460,17 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
             attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
         ): MessageOptionsDialogFragment {
             this.messageListViewStyle = style
             this.attachmentFactoryManager = attachmentFactoryManager
-            this.messageViewHolderFactory =
-                messageViewHolderFactory.clone()
-                    .apply {
-                        /* Default listener. We don't want the message of this dialog to listen for clicks just like it was
-                        * a normal message inside MessageListView
-                        */
-                        setListenerContainer(null)
-                        decoratorProvider = MessageOptionsDecoratorProvider(
-                            style.itemStyle,
-                            style.replyMessageStyle,
-                            messageBackgroundFactory
-                        )
-                    }
+            this.messageViewHolderFactory = messageViewHolderFactory
+            this.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
+                style.itemStyle,
+                style.replyMessageStyle,
+                messageBackgroundFactory,
+                showAvatarPredicate
+            )
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
@@ -476,6 +479,27 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 // pass message via static field
                 messageArg = message
             }
+        }
+    }
+
+    /**
+     * Executes the given [block] function on [MessageListItemViewHolderFactory] with
+     * the provided decorators and then resets them to the previous value.
+     *
+     * @param messageOptionsDecoratorProvider The temporary provider of item decorators.
+     * @param block The block of code that will be invoked with the modified item factory.
+     */
+    private inline fun MessageListItemViewHolderFactory.withDecoratorProvider(
+        messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider,
+        block: (MessageListItemViewHolderFactory) -> Unit,
+    ) {
+        val tempDecoratorProvider = decoratorProvider
+
+        decoratorProvider = messageOptionsDecoratorProvider
+        try {
+            block(this)
+        } finally {
+            decoratorProvider = tempDecoratorProvider
         }
     }
 }

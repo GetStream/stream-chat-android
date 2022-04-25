@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
@@ -78,15 +78,26 @@ public class MessageComposerController(
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
+     *
+     * We use the [DispatcherProvider.Immediate] variant here to make sure the UI updates don't go through the
+     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing really
+     * fast.
      */
-    private val scope = CoroutineScope(DispatcherProvider.Main)
+    private val scope = CoroutineScope(DispatcherProvider.Immediate)
+
+    /**
+     * Buffers typing updates.
+     *
+     * @see [TypingUpdateBuffer]
+     */
+    private val typingUpdateBuffer = TypingUpdateBuffer()
 
     /**
      * Holds information about the current state of the [Channel].
      */
     public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
-        messageLimit = DEFAULT_MESSAGE_LIMIT
+        messageLimit = DefaultMessageLimit
     ).filterNotNull()
 
     /**
@@ -189,7 +200,7 @@ public class MessageComposerController(
     /**
      * Represents the maximum allowed message length in the message input.
      */
-    private var maxMessageLength: Int = DEFAULT_MAX_MESSAGE_LENGTH
+    private var maxMessageLength: Int = DefaultMaxMessageLength
 
     /**
      * Represents the coroutine [Job] used to update the countdown
@@ -329,7 +340,9 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        handleTypingEvent(isTyping = canSendTypingUpdates.value && value.isNotEmpty())
+        if (canSendTypingUpdates) {
+            typingUpdateBuffer.onTypingEvent()
+        }
         handleMentionSuggestions()
         handleCommandSuggestions()
         handleValidationErrors()
@@ -458,7 +471,6 @@ public class MessageComposerController(
 
         dismissMessageActions()
         clearData()
-        handleTypingEvent(isTyping = false)
         handleCooldownTimer()
 
         sendMessageCall.enqueue()
@@ -537,26 +549,10 @@ public class MessageComposerController(
     }
 
     /**
-     * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
-     *
-     * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
-     * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
-     *
-     * @param isTyping If the user is currently typing.
-     */
-    private fun handleTypingEvent(isTyping: Boolean) {
-        val (type, id) = channelId.cidToTypeAndId()
-        if (isTyping) {
-            chatClient.keystroke(type, id, parentMessageId)
-        } else {
-            chatClient.stopTyping(type, id, parentMessageId)
-        }.enqueue()
-    }
-
-    /**
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
+        typingUpdateBuffer.clearTypingUpdates()
         scope.cancel()
     }
 
@@ -639,7 +635,7 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
-        val containsMention = MENTION_PATTERN.matcher(messageText).find()
+        val containsMention = MentionPattern.matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
@@ -652,7 +648,7 @@ public class MessageComposerController(
      * Shows the command suggestion list popup if necessary.
      */
     private fun handleCommandSuggestions() {
-        val containsCommand = COMMAND_PATTERN.matcher(messageText).find()
+        val containsCommand = CommandPattern.matcher(messageText).find()
 
         commandSuggestions.value = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
@@ -690,21 +686,104 @@ public class MessageComposerController(
         /**
          * The default allowed number of characters in a message.
          */
-        private const val DEFAULT_MAX_MESSAGE_LENGTH: Int = 5000
+        private const val DefaultMaxMessageLength: Int = 5000
 
         /**
          * The regex pattern used to check if the message ends with incomplete mention.
          */
-        private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
+        private val MentionPattern = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
          */
-        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+        private val CommandPattern = Pattern.compile("^/[a-z]*$")
 
         /**
          * The default limit for messages count in requests.
          */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
+        private const val DefaultMessageLimit: Int = 30
+
+        private const val DefaultTypingUpdateIntervalMillis = 2000L
+    }
+
+    /**
+     * A class designed to buffer typing updates.
+     * It works by sending the initial keystroke event and
+     * delaying for [delayInterval] before sending a stop typing
+     * event.
+     *
+     * Every subsequent keystroke will cancel the previous work
+     * and reset the time before sending a stop typing event.
+     *
+     * @param delayInterval The interval between the sending the
+     * keystroke event and the stop typing event.
+     */
+    private inner class TypingUpdateBuffer(private val delayInterval: Long = DefaultTypingUpdateIntervalMillis) {
+
+        /**
+         * If the user is currently typing or not.
+         *
+         * Sends out a typing related event on every value
+         * change.
+         */
+        private var isTyping: Boolean = false
+            set(value) {
+                field = value
+                handleTypingEvent(isTyping)
+            }
+
+        /**
+         * Holds the currently running job.
+         */
+        var job: Job? = null
+
+        /**
+         * Used to send a stop typing event after a
+         * set amount of time dictated by [delayInterval].
+         */
+        private suspend fun startTypingTimer() {
+            delay(delayInterval)
+            clearTypingUpdates()
+        }
+
+        /**
+         * Sets the value of [isTyping] only if there is
+         * a change in state in order to not create unnecessary events.
+         *
+         * It also resets the job to stop typing events after delay, debouncing keystrokes.
+         */
+        fun onTypingEvent() {
+            if (!isTyping) {
+                isTyping = true
+            }
+            job?.cancel()
+            job = scope.launch { startTypingTimer() }
+        }
+
+        /**
+         * Sets [isTyping] to false.
+         *
+         * Useful for clearing the state manually and in [onCleared].
+         */
+        fun clearTypingUpdates() {
+            isTyping = false
+        }
+
+        /**
+         * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
+         *
+         * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
+         * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
+         *
+         * @param isTyping If the user is currently typing.
+         */
+        private fun handleTypingEvent(isTyping: Boolean) {
+            val (type, id) = channelId.cidToTypeAndId()
+            if (isTyping) {
+                chatClient.keystroke(type, id, parentMessageId)
+            } else {
+                chatClient.stopTyping(type, id, parentMessageId)
+            }.enqueue()
+        }
     }
 }

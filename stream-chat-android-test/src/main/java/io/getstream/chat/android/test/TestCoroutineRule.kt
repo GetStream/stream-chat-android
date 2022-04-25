@@ -13,32 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
 package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 public class TestCoroutineRule : TestWatcher() {
 
-    public val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
-    public val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
+    public val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
+    public val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    public val scope: TestScope = TestScope(testDispatcher)
 
     override fun starting(description: Description) {
         super.starting(description)
+        Dispatchers.setMain(testDispatcher)
         DispatcherProvider.set(
-            mainDispatcher = dispatcher,
-            ioDispatcher = dispatcher
+            mainDispatcher = testDispatcher,
+            ioDispatcher = testDispatcher
         )
     }
 
     override fun finished(description: Description) {
         super.finished(description)
+        Dispatchers.resetMain()
         DispatcherProvider.reset()
     }
 }

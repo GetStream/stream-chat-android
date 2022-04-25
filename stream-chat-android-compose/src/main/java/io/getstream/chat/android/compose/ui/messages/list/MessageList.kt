@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
@@ -47,6 +49,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
  * @param modifier Modifier for styling.
+ * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
@@ -67,6 +70,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
@@ -99,6 +103,7 @@ public fun MessageList(
 ) {
     MessageList(
         modifier = modifier,
+        contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
         lazyListState = lazyListState,
         onMessagesStartReached = onMessagesStartReached,
@@ -180,6 +185,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  *
  * @param currentState The state of the component, represented by [MessagesState].
  * @param modifier Modifier for styling.
+ * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the scroll state.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
@@ -200,6 +206,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
@@ -232,6 +239,7 @@ public fun MessageList(
         isLoading -> loadingContent()
         !isLoading && messages.isNotEmpty() -> Messages(
             modifier = modifier,
+            contentPadding = contentPadding,
             messagesState = currentState,
             lazyListState = lazyListState,
             onMessagesStartReached = onMessagesStartReached,

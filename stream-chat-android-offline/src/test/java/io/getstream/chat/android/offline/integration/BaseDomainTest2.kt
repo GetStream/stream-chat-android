@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.integration
 
 import android.content.Context
@@ -31,15 +31,15 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.model.channel.internal.ChannelConfig
-import io.getstream.chat.android.offline.model.querychannels.internal.QueryChannelsSpec
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
@@ -51,7 +51,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
@@ -95,7 +95,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    override fun getTestScope(): TestCoroutineScope = testCoroutines.scope
+    override fun getTestScope(): TestScope = testCoroutines.scope
 
     @Before
     @CallSuper
@@ -184,7 +184,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
+            .setQueryExecutor(testCoroutines.ioDispatcher.asExecutor())
             .build()
     }
 

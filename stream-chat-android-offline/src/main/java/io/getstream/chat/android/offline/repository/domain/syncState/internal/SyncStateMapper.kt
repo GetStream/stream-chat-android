@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.repository.domain.syncState.internal
 
-import io.getstream.chat.android.offline.sync.internal.SyncState
+import io.getstream.chat.android.client.sync.SyncState
 
 internal fun SyncStateEntity.toModel() =
     SyncState(userId, activeChannelIds, lastSyncedAt, markedAllReadAt)

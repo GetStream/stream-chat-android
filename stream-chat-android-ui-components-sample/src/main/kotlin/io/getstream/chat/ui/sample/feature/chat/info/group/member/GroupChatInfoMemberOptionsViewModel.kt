@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.ui.sample.feature.chat.info.group.member
 
 import androidx.lifecycle.LiveData
@@ -30,23 +30,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -58,56 +47,25 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            globalState.user
-                .filterNotNull()
-                .map { user ->
-                    chatClient.queryChannels(
-                        request = QueryChannelsRequest(
-                            filter = Filters.and(
-                                Filters.eq("type", "messaging"),
-                                Filters.distinct(listOf(memberId, user.id)),
-                            ),
-                            querySort = QuerySort.desc(Channel::lastUpdated),
-                            messageLimit = 0,
-                            limit = 1,
-                        )
-                    ).await()
-                }.flatMapConcat { result ->
-                    if (result.isSuccess) {
-                        val cid = result.data().firstOrNull()?.cid ?: ""
+            val currentUser = chatClient.getCurrentUser()!!
 
-                        chatClient.watchChannelAsState(cid, 30, viewModelScope)
-                            .filterNotNull()
-                            .flatMapLatest {
-                                it.messagesState
-                            }
-                            .map { mapChannelState(it, cid) }
-                    } else {
-                        MutableStateFlow(null)
-                    }
-                }
-                .filterNotNull()
-                .collect { state ->
-                    _state.value = state
-                }
-        }
-    }
-
-    private fun mapChannelState(messagesState: MessagesState, cid: String): State {
-        return when (messagesState) {
-            is MessagesState.Result -> {
-                State(
-                    directChannelCid = cid,
-                    loading = false,
+            val result = chatClient.queryChannels(
+                request = QueryChannelsRequest(
+                    filter = Filters.and(
+                        Filters.eq("type", "messaging"),
+                        Filters.distinct(listOf(memberId, currentUser.id)),
+                    ),
+                    querySort = QuerySort.desc(Channel::lastUpdated),
+                    messageLimit = 0,
+                    limit = 1,
                 )
+            ).await()
+
+            _state.value = if (result.isSuccess && result.data().isNotEmpty()) {
+                State(directChannelCid = result.data().first().cid, loading = false)
+            } else {
+                State(directChannelCid = null, loading = false)
             }
-            MessagesState.NoQueryActive,
-            MessagesState.Loading,
-            -> State(directChannelCid = null, loading = true)
-            MessagesState.OfflineNoResults -> State(
-                directChannelCid = null,
-                loading = false,
-            )
         }
     }
 

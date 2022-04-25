@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package io.getstream.chat.android.offline.plugin.factory
 
 import android.content.Context
@@ -109,7 +109,9 @@ public class StreamOfflinePluginFactory(
             context = appContext,
             logic = logic,
             globalState = globalState,
-            repos = repos,
+            channelRepository = repos,
+            messageRepository = repos,
+            attachmentRepository = repos,
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType
         )
@@ -176,6 +178,8 @@ public class StreamOfflinePluginFactory(
         }
 
         globalState._user.value = user
+
+        ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         return OfflinePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
