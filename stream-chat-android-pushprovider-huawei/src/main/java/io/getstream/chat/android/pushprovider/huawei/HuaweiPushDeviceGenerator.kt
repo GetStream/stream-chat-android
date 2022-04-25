@@ -45,6 +45,10 @@ public class HuaweiPushDeviceGenerator(
             logger.logI("Is Huawei available on on this device -> $it")
         }
 
+    override fun onPushDeviceGeneratorSelected() {
+        HuaweiMessagingDelegate.fallbackProviderName = providerName
+    }
+
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Huawei token")
 

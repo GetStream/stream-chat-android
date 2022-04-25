@@ -3110,6 +3110,7 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
+	public abstract fun onPushDeviceGeneratorSelected ()V
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
