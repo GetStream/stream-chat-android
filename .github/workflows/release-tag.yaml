@@ -1,0 +1,27 @@
+name: Tag
+
+on: 
+  push:
+    tags:
+    - 'test-tags'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Bump version
+        run: ./gradlew version-bump
+      - name: Commit changes
+        run: | 
+          git add buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
+          git commit -m "AUTOMATION: version bump"
+      - name: create tag
+        run: |
+          ./gradlew version-print
+          version="$(cat temp-version)"
+          git tag $version
+      - name: Push changes
+        run: git push origin --tags
+
