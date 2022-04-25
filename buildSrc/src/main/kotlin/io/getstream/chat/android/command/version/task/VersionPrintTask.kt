@@ -19,7 +19,7 @@ open class VersionPrintTask: DefaultTask() {
         val currentVersion = getCurrentVersion()
 
         FilePrinter(File(config.printFilePath)).use { printer ->
-            printer.printline("v$currentVersion")
+            printer.printline(currentVersion)
         }
 
         println("File: ${config.printFilePath} generated")

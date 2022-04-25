@@ -1,0 +1,26 @@
+name: MainSync
+
+on:
+  workflow_run:
+    workflows: ["VersionBump"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+          with:
+            ref: main
+      - name: Sync main
+        run: git merge --ff-only origin/develop
+      - name: Create Tag
+        run: |
+          ./gradlew version-print
+          version="$(cat temp-version)"
+          git tag -a v$version -m "Release version $version"
+      - name: Push changes
+        run: git push origin --tags
+

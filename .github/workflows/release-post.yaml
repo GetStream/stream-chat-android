@@ -1,0 +1,24 @@
+name: ChangelogAutomation
+
+on:
+  workflow_run:
+    workflows: ["Publish"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+          with:
+            ref: develop
+      - name: Update changelog
+        run: ./gradlew update-changelog
+      - name: Commit changes
+        run: |
+          git add CHANGELOG.md
+          git commit -m "AUTOMATION: Changelog update"
+      - name: Push
+        run: git push origin
