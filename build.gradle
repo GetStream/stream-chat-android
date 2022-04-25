@@ -4,6 +4,7 @@ import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
 import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
+import io.getstream.chat.android.command.version.plugin.VersionPrintPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
@@ -15,6 +16,7 @@ apply plugin: ReleasePlugin
 apply plugin: ChangelogPlugin
 apply plugin: VersionBumpPlugin
 apply plugin: MinorBumpPlugin
+apply plugin: VersionPrintPlugin
 
 
 buildscript {
@@ -71,6 +73,10 @@ allprojects {
             }
         }
     }
+}
+
+versionPrint {
+    printFilePath = "temp-version"
 }
 
 unitTestDebugScript {
