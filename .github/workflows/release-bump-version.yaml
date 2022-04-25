@@ -3,16 +3,23 @@ name: VersionBump
 on: workflow_dispatch
 
 jobs:
-  build:
+  bump_version:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-          with:
-            ref: develop
+        with:
+          ref: develop
       - name: Bump version
         run: ./gradlew version-bump
       - name: Commit changes
         run: | 
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
           git commit -m "AUTOMATION: version bump"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
