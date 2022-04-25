@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
  */
 public class FirebasePushDeviceGenerator(
     private val firebaseMessaging: FirebaseMessaging = FirebaseMessaging.getInstance(),
+    private val providerName: String? = null,
 ) : PushDeviceGenerator {
     private val logger = ChatLogger.get("ChatNotifications")
 
@@ -47,6 +48,7 @@ public class FirebasePushDeviceGenerator(
                     Device(
                         token = it.result,
                         pushProvider = PushProvider.FIREBASE,
+                        providerName = providerName,
                     )
                 )
             } else {

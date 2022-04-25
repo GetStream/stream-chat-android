@@ -86,7 +86,7 @@ class Push {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    FirebaseMessagingDelegate.registerFirebaseToken(token)
+                    FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name")
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }

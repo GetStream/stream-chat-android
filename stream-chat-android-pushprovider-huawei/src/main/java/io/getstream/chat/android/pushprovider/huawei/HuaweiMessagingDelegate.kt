@@ -53,16 +53,18 @@ public object HuaweiMessagingDelegate {
      * Register new Huawei Token.
      *
      * @param token provided by Huawei.
+     * @param providerName Optional name for the provider name.
      *
      * @throws IllegalStateException if called before initializing ChatClient.
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun registerHuaweiToken(token: String) {
+    public fun registerHuaweiToken(token: String, providerName: String?) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.HUAWEI,
+                providerName = providerName,
             )
         )
     }
