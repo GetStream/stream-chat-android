@@ -340,7 +340,7 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        if (canSendTypingUpdates) {
+        if (canSendTypingUpdates.value) {
             typingUpdateBuffer.onTypingEvent()
         }
         handleMentionSuggestions()
@@ -703,7 +703,7 @@ public class MessageComposerController(
          */
         private const val DefaultMessageLimit: Int = 30
 
-        private const val DefaultTypingUpdateIntervalMillis = 2000L
+        private const val DefaultTypingUpdateIntervalMillis = 3000L
     }
 
     /**

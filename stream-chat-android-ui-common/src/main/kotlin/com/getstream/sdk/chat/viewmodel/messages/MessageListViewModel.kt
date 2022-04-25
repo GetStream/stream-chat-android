@@ -276,7 +276,7 @@ public class MessageListViewModel(
         messageListData = MessageListItemLiveData(
             currentUser = user,
             messages = capturedChannelState.messages.asLiveData(),
-            readsLd = capturedChannelState.reads.asLiveData(),,
+            readsLd = capturedChannelState.reads.asLiveData(),
             typingLd = typingIds,
             isThread = false,
             dateSeparatorHandler = dateSeparatorHandler,
