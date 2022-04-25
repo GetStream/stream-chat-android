@@ -53,7 +53,7 @@ public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
      */
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
         try {
-            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, null)
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
         } catch (exception: IllegalStateException) {
             Log.e(TAG, "Error while registering Xiaomi Token", exception)
         }

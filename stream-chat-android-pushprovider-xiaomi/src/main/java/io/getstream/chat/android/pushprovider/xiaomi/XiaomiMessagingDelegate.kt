@@ -33,6 +33,8 @@ import kotlin.jvm.Throws
  */
 public object XiaomiMessagingDelegate {
 
+    internal var fallbackProviderName: String? = null
+
     private val mapAdapter: JsonAdapter<MutableMap<String, String>> by lazy {
         Moshi.Builder()
             .build()
@@ -70,7 +72,10 @@ public object XiaomiMessagingDelegate {
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun registerXiaomiToken(miPushCommandMessage: MiPushCommandMessage, providerName: String?) {
+    public fun registerXiaomiToken(
+        miPushCommandMessage: MiPushCommandMessage,
+        providerName: String? = fallbackProviderName,
+    ) {
         miPushCommandMessage
             .takeIf { it.command == MiPushClient.COMMAND_REGISTER }
             ?.commandArguments

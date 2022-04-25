@@ -39,6 +39,10 @@ public class FirebasePushDeviceGenerator(
             logger.logI("Is Firebase available on on this device -> $it")
         }
 
+    override fun onPushDeviceGeneratorSelected() {
+        FirebaseMessagingDelegate.fallbackProviderName = providerName
+    }
+
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Firebase token")
         firebaseMessaging.token.addOnCompleteListener {

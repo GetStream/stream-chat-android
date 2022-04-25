@@ -10,6 +10,7 @@ public final class io/getstream/chat/android/pushprovider/firebase/FirebaseMessa
 	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/firebase/FirebaseMessagingDelegate;
 	public static final fun handleRemoteMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 	public static final fun registerFirebaseToken (Ljava/lang/String;Ljava/lang/String;)V
+	public static synthetic fun registerFirebaseToken$default (Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/pushprovider/firebase/FirebasePushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
@@ -18,5 +19,6 @@ public final class io/getstream/chat/android/pushprovider/firebase/FirebasePushD
 	public synthetic fun <init> (Lcom/google/firebase/messaging/FirebaseMessaging;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public fun isValidForThisDevice (Landroid/content/Context;)Z
+	public fun onPushDeviceGeneratorSelected ()V
 }
 
