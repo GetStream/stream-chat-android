@@ -1,0 +1,91 @@
+# Implementing Own Capabilities
+
+Each `Channel` has a list of capabilities that can be performed in it, such as muting a user, deleting messages and many
+others. Not all channels should have the same capabilities neither should all users, which is where own capabilities
+come into play.
+
+Inside of `Channel` you will find a property with a signature `ownCapabilities: Set<String>`. Which channel capabilities
+this set contains depends on the current user’s role (e.g. admin, guest, etc.), the channel type (e.g. messaging,
+livestream, etc.) and channel level settings. You can read more about channel
+capabilities [here](https://getstream.io/chat/docs/android/channel_capabilities/?language=kotlin) and more about channel
+level settings [here](https://getstream.io/chat/docs/android/channel-level_settings/).
+
+## Integrating channel capabilities into the UI
+
+If you are using our own UI in combination with our `ViewModel`s, then own capabilities work out of the box without any
+additional effort from your side, otherwise you will have to pass the correct set of capabilities to individual components.
+
+Different components have different ways of passing own capabilities to them, so we’ll go through them individually.
+
+:::note
+As a safety precaution, by default own capabilities are initially set to an empty set, this means that a user has no capabilities. Setting it to a set containing all capabilities will give the user potentially dangerous capabilities such as the ability to delete any message.
+:::
+
+### MessageListView
+
+Inside `MessageListView` you will find the following function:
+
+```kotlin
+public fun setOwnCapabilities(ownCapabilities: Set<String>)
+```
+
+After setting own capabilities, the following capabilities will be regulated:
+
+- send-reaction
+- send-reply
+- pin-message
+- delete-any-message
+- delete-own-message
+- update-any-message
+- update-own-message
+- ban-channel-members
+
+### MessageInputView
+
+Inside `MessageInputView` you will find the following function:
+
+```kotlin
+public fun setOwnCapabilities(ownCapabilities: Set<String>)
+```
+
+After setting own capabilities, the following capabilities will be regulated:
+
+- send-message
+- send-links
+- upload-file
+- send-typing-events
+
+### ChannelListView
+
+If you use our `ChannelListView` as is, no further action is needed as it is set up to use own
+capabilities.
+
+It regulates the following capabilities.
+
+- leave-channel
+- delete-channel
+
+`ChannelListView` contains the following function:
+
+```kotlin
+public fun setMoreOptionsClickListener(listener: ChannelClickListener?)
+```
+
+Should you wish to use it in order to override the default behavior, you will have to implement a UI capable of
+correctly using own capabilities.
+
+### Other own capabilities
+
+There are channel capabilities which are not implemented in the SDK because we do not offer the corresponding components
+or the functionality.
+You can implement these yourself after creating the correct components.
+
+These are as follows:
+
+- freeze-channel
+- set-channel-cooldown
+- update-channel
+- update-channel-members
+- search-messages
+
+Please note that while we do offer a search component, its functionality is not simple enough to be regulated by the 'search-messages' capability.
