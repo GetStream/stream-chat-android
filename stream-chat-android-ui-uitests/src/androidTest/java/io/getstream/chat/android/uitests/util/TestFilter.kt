@@ -46,6 +46,6 @@ class NonSnapshotTestFilter : Filter() {
     }
 
     override fun describe(): String {
-        return "All tests other that snapshot."
+        return "All tests other than snapshot."
     }
 }
