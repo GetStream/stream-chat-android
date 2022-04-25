@@ -183,7 +183,11 @@ internal class MessageOptionsView : FrameLayout {
 
                 return Configuration(
                     replyEnabled = viewStyle.replyEnabled && userCanReply,
-                    threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isThreadEnabled && userCanReply,
+                    threadsEnabled = if (suppressThreads) {
+                        false
+                    } else {
+                        viewStyle.threadsEnabled && channelConfig.isThreadEnabled && userCanReply
+                    },
                     editMessageEnabled = viewStyle.editMessageEnabled,
                     deleteMessageEnabled = viewStyle.deleteMessageEnabled,
                     copyTextEnabled = viewStyle.copyTextEnabled && hasTextToCopy,

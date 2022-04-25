@@ -303,7 +303,6 @@
     <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val unread_channels: Int = 0</ID>
     <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val unread_count: Int = 0</ID>
     <ID>ConstructorParameterNaming:UserDtos.kt$DownstreamUserDto$val updated_at: Date?</ID>
-    <ID>EmptyFunctionBlock:ChatClient.kt$ChatClient.&lt;no name provided>${}</ID>
     <ID>EmptyFunctionBlock:EventsParser.kt$EventsParser${ }</ID>
     <ID>EmptyFunctionBlock:FakeChatSocket.kt$FakeChatSocket${ }</ID>
     <ID>EmptyFunctionBlock:FakeSocketService.kt$FakeSocketService${ }</ID>

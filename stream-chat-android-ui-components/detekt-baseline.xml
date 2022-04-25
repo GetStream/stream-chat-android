@@ -10,9 +10,11 @@
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
     <ID>ComplexMethod:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$ public open fun createViewHolder( parentView: ViewGroup, viewType: Int, ): BaseMessageItemViewHolder&lt;out MessageListItem></ID>
+    <ID>ComplexMethod:MessageOptionsView.kt$MessageOptionsView$internal fun configure( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
     <ID>EmptyFunctionBlock:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener${}</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
+    <ID>LargeClass:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
@@ -135,7 +137,7 @@
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$return ChatClient.instance().globalState.user.value?.mutes?.any { mute -> mute.target.id == message.user.id } == true</ID>
-    <ID>MaxLineLength:MessageOptionsView.kt$MessageOptionsView.Configuration.Companion$threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled &amp;&amp; channelConfig.isThreadEnabled</ID>
+    <ID>MaxLineLength:MessageOptionsView.kt$MessageOptionsView.Configuration.Companion$reactionsEnabled</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
     <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
     <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)</ID>
