@@ -19,6 +19,7 @@
 - Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 - Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 - Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Add `provideName` property to `Device` entity to support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 ### ⚠️ Changed
 
@@ -91,6 +92,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 ### ⚠️ Changed
 - Upgrade Firebase Messaging dependency to version `23.0.4`. [#3484](https://github.com/GetStream/stream-chat-android/pull/3484)
@@ -103,6 +105,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 ### ⚠️ Changed
 
@@ -114,6 +117,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 ### ⚠️ Changed
 
