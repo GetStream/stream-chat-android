@@ -15,7 +15,7 @@ public final class io/getstream/chat/android/pushprovider/xiaomi/ChatXiaomiMessa
 public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiMessagingDelegate {
 	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/xiaomi/XiaomiMessagingDelegate;
 	public static final fun handleMiPushMessage (Lcom/xiaomi/mipush/sdk/MiPushMessage;)Z
-	public static final fun registerXiaomiToken (Lcom/xiaomi/mipush/sdk/MiPushCommandMessage;)V
+	public static final fun registerXiaomiToken (Lcom/xiaomi/mipush/sdk/MiPushCommandMessage;Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiPushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
