@@ -161,6 +161,7 @@ public class MessageListHeaderView : FrameLayout {
 
     private fun configBackground() {
         setBackgroundColor(style.background)
+        binding.separator.setBackgroundColor(style.separatorBackgroundColor)
     }
 
     private fun configUserAvatar() {
