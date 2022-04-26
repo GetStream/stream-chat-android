@@ -91,4 +91,7 @@ public fun ThreadParticipants(
     }
 }
 
+/**
+ * The max limit of how many users are shown as participants in a thread.
+ */
 private const val DefaultParticipantsLimit = 4

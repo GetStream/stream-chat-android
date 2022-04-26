@@ -36,6 +36,9 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedR
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
+/**
+ * The default maximum number of reactions shown in the picker.
+ */
 private const val DefaultNumberOfReactions = 5
 
 /**

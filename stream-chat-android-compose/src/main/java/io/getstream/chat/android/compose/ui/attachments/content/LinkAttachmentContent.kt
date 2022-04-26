@@ -119,79 +119,85 @@ public fun LinkAttachmentContent(
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
-        AttachmentImagePreview(attachment)
-        Title(attachment.title)
-        Description(attachment.text, linkDescriptionMaxLines)
-    }
-}
+        val imagePreviewUrl = attachment.imagePreviewUrl
+        if (imagePreviewUrl != null) {
+            LinkAttachmentImagePreview(attachment)
+        }
 
-@Composable
-private fun AttachmentImagePreview(attachment: Attachment) {
-    if (attachment.imagePreviewUrl != null) {
-        val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
-        BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 250.dp)
-                    .clip(ChatTheme.shapes.attachment),
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+        val title = attachment.title
+        if (title != null) {
+            LinkAttachmentTitle(title)
+        }
 
-            val authorName = attachment.authorName
-
-            if (authorName != null) {
-                Text(
-                    text = authorName,
-                    color = ChatTheme.colors.primaryAccent,
-                    maxLines = 1,
-                    style = ChatTheme.typography.bodyBold,
-                    fontSize = 16.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .widthIn(max = maxWidth / 2)
-                        .background(
-                            color = ChatTheme.colors.linkBackground,
-                            shape = ChatTheme.shapes.attachmentSiteLabel
-                        )
-                        .padding(vertical = 6.dp, horizontal = 12.dp)
-                        .align(Alignment.BottomStart)
-                )
-            }
+        val description = attachment.text
+        if (description != null) {
+            LinkAttachmentDescription(description, linkDescriptionMaxLines)
         }
     }
 }
 
 @Composable
-private fun Description(text: String?, linkDescriptionMaxLines: Int) {
-    if (text != null) {
-        Text(
-            modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 4.dp,
-                top = 2.dp
-            ),
-            text = text,
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis,
-            maxLines = linkDescriptionMaxLines,
-            overflow = TextOverflow.Ellipsis
+private fun LinkAttachmentImagePreview(attachment: Attachment) {
+    val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
+
+    BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 250.dp)
+                .clip(ChatTheme.shapes.attachment),
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
         )
+
+        val authorName = attachment.authorName
+
+        if (authorName != null) {
+            Text(
+                text = authorName,
+                color = ChatTheme.colors.primaryAccent,
+                maxLines = 1,
+                style = ChatTheme.typography.bodyBold,
+                fontSize = 16.sp,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .widthIn(max = maxWidth / 2)
+                    .background(
+                        color = ChatTheme.colors.linkBackground,
+                        shape = ChatTheme.shapes.attachmentSiteLabel
+                    )
+                    .padding(vertical = 6.dp, horizontal = 12.dp)
+                    .align(Alignment.BottomStart)
+            )
+        }
     }
 }
 
 @Composable
-private fun Title(text: String?) {
-    if (text != null) {
-        Text(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-            text = text,
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
-        )
-    }
+private fun LinkAttachmentTitle(text: String) {
+    Text(
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+        text = text,
+        style = ChatTheme.typography.bodyBold,
+        color = ChatTheme.colors.textHighEmphasis,
+    )
+}
+
+@Composable
+private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLines: Int) {
+    Text(
+        modifier = Modifier.padding(
+            start = 8.dp,
+            end = 8.dp,
+            bottom = 4.dp,
+            top = 2.dp
+        ),
+        text = description,
+        style = ChatTheme.typography.footnote,
+        color = ChatTheme.colors.textHighEmphasis,
+        maxLines = linkDescriptionMaxLines,
+        overflow = TextOverflow.Ellipsis
+    )
 }
