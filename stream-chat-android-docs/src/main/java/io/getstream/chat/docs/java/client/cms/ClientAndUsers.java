@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import android.content.Context;
 
@@ -34,10 +34,10 @@ public class ClientAndUsers {
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/init_and_users/?language=java#setting-the-user">Setting the User</a>
+         * @see <a href="https://getstream.io/chat/docs/android/init_and_users/?language=kotlin#connecting-the-user">Connecting the User</a>
          */
         @SuppressWarnings("Convert2Lambda")
-        public void setUser() {
+        public void connectingUser() {
             User user = new User();
             user.setId("bender");
             user.setName("Bender");
@@ -86,11 +86,8 @@ public class ClientAndUsers {
         public void developmentToken() {
             User user = new User();
             user.setId("bender");
-
-            HashMap<String, Object> extraData = new HashMap<>();
-            extraData.put("name", "Bender");
-            extraData.put("image", "https://bit.ly/321RmWb");
-            user.setExtraData(extraData);
+            user.setName("Bender");
+            user.setImage("https://bit.ly/321RmWb");
 
             String token = client.devToken(user.getId());
 
@@ -104,11 +101,8 @@ public class ClientAndUsers {
         public void tokenExpiration() {
             User user = new User();
             user.setId("bender");
-
-            HashMap<String, Object> extraData = new HashMap<>();
-            extraData.put("name", "Bender");
-            extraData.put("image", "https://bit.ly/321RmWb");
-            user.setExtraData(extraData);
+            user.setName("Bender");
+            user.setImage("https://bit.ly/321RmWb");
 
             TokenProvider tokenProvider = new TokenProvider() {
                 @NotNull
@@ -126,21 +120,23 @@ public class ClientAndUsers {
         }
     }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/guest_users/?language=java">Guest Users</a>
-     */
-    class GuestUsers {
-        public void guestUser() {
-            client.connectGuestUser("bender", "Bender").enqueue(result -> { /* ... */ });
+    class AuthlessUsers {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/authless_users/?language=java#guest-users">Guest Users</a>
+         */
+        class GuestUsers {
+            public void guestUser() {
+                client.connectGuestUser("bender", "Bender").enqueue(result -> { /* ... */ });
+            }
         }
-    }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/anon/?language=java">Anonymous Users</a>
-     */
-    class AnonymousUsers {
-        public void anonymousUser() {
-            client.connectAnonymousUser().enqueue(result -> { /* ... */ });
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/authless_users/?language=java#anonymous-users">Anonymous Users</a>
+         */
+        class AnonymousUsers {
+            public void anonymousUser() {
+                client.connectAnonymousUser().enqueue(result -> { /* ... */ });
+            }
         }
     }
 
@@ -198,4 +194,16 @@ public class ClientAndUsers {
         }
     }
 
+    class LoggingOut {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/logout/?language=java">Disconnect</a>
+         */
+        public void disconnect() {
+            User user = new User();
+            String token = "token";
+
+            client.disconnect();
+            client.connectUser(user, token).enqueue(result -> { /* ... */ });
+        }
+    }
 }

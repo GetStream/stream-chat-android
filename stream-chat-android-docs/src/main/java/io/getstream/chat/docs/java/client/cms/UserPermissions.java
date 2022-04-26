@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,12 +12,12 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 
-public class ChannelTypes {
+public class UserPermissions {
     private ChatClient client;
 
     class MultiTenantAndTeams {
         /**
-         * @see <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=java#channel-team">Multi Tenants & Teams</a>
+         * @see <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=java#channel-team">Channel Team</a>
          */
         public void createTeamChannel() {
             // Creates the red-general channel for the red team

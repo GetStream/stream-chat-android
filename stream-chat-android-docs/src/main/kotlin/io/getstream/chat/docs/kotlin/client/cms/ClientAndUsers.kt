@@ -29,10 +29,8 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         fun setUser() {
             val user = User(
                 id = "bender",
-                extraData = mutableMapOf(
-                    "name" to "Bender",
-                    "image" to "https://bit.ly/321RmWb",
-                ),
+                name = "Bender",
+                image = "https://bit.ly/321RmWb",
             )
 
             // You can setup a user token in two ways:
@@ -76,10 +74,8 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         fun developmentToken() {
             val user = User(
                 id = "bender",
-                extraData = mutableMapOf(
-                    "name" to "Bender",
-                    "image" to "https://bit.ly/321RmWb",
-                ),
+                name = "Bender",
+                image = "https://bit.ly/321RmWb",
             )
             val token = client.devToken(user.id)
 
@@ -112,21 +108,23 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
         }
     }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/guest_users/?language=kotlin">Guest Users</a>
-     */
-    inner class GuestUsers {
-        fun guestUser() {
-            client.connectGuestUser(userId = "bender", username = "Bender").enqueue { /*... */ }
+    inner class AuthlessUsers {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/authless_users/?language=kotlin#guest-users">Guest Users</a>
+         */
+        inner class GuestUsers {
+            fun guestUser() {
+                client.connectGuestUser(userId = "bender", username = "Bender").enqueue { /*... */ }
+            }
         }
-    }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/anon/?language=kotlin">Anonymous Users</a>
-     */
-    inner class AnonymousUsers {
-        fun anonymousUser() {
-            client.connectAnonymousUser().enqueue { /*... */ }
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/authless_users/?language=kotlin#anonymous-users">Anonymous Users</a>
+         */
+        inner class AnonymousUsers {
+            fun anonymousUser() {
+                client.connectAnonymousUser().enqueue { /*... */ }
+            }
         }
     }
 
@@ -185,6 +183,19 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
             )
 
             client.queryUsers(request).enqueue { /* ... */ }
+        }
+    }
+
+    inner class LoggingOut {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/logout/?language=kotlin">Disconnect</a>
+         */
+        fun disconnect() {
+            val user = User()
+            val token = "token"
+
+            client.disconnect()
+            client.connectUser(user, token).enqueue { /* ... */ }
         }
     }
 }

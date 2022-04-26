@@ -3,12 +3,11 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ClassNaming:Push.kt$Push$Device_</ID>
-    <ID>EmptyDefaultConstructor:Android.kt$Android.SyncHistory$()</ID>
     <ID>EmptyDefaultConstructor:ChannelListView.kt$ChannelListViewSnippets$()</ID>
     <ID>EmptyDefaultConstructor:MessageInput.kt$MessageInputViewSnippets$()</ID>
     <ID>EmptyDefaultConstructor:MessageList.kt$MessageListViewSnippets.CustomAttachmentFactory$()</ID>
     <ID>EmptyDefaultConstructor:MessageListHeader.kt$MessageListHeaderViewSnippets$()</ID>
-    <ID>EmptyFunctionBlock:Channels.kt$Channels.ChangingChannelMembers.ThrottlingAndSlowMode${}</ID>
+    <ID>EmptyFunctionBlock:Channels.kt$Channels.UpdatingChannelMembers.ThrottlingAndSlowMode${}</ID>
     <ID>FunctionNaming:AddingCustomAttachments.kt$AddingCustomAttachmentsSnippet$@Composable fun CustomMessageComposer( viewModel: MessageComposerViewModel, onDateSelected: (Long) -> Unit, )</ID>
     <ID>FunctionNaming:AddingCustomAttachments.kt$AddingCustomAttachmentsSnippet$@Composable fun CustomMessagesScreen( channelId: String, onBackPressed: () -> Unit = {}, )</ID>
     <ID>FunctionNaming:AddingCustomAttachments.kt$AddingCustomAttachmentsSnippet$@Composable fun DateAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
@@ -32,23 +31,22 @@
     <ID>FunctionNaming:UserAvatar.kt$UserAvatarHandlingActionsSnippet$@Composable fun MyUserAvatar(user: User)</ID>
     <ID>FunctionNaming:UserAvatar.kt$UserAvatarUsageSnippet$@Composable fun MyUserAvatar(user: User)</ID>
     <ID>FunctionOnlyReturningConstant:StaticInstances.kt$TokenService$fun getToken(user: User): String</ID>
-    <ID>ImplicitDefaultLocale:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$String.format("There was an error %s", result.error())</ID>
+    <ID>ImplicitDefaultLocale:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$String.format("There was an error %s", result.error())</ID>
     <ID>MagicNumber:Attachments.kt$Attachments$105.280184</ID>
     <ID>MagicNumber:Attachments.kt$Attachments$40.017985</ID>
-    <ID>MagicNumber:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$1000</ID>
-    <ID>MagicNumber:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$60</ID>
-    <ID>MagicNumber:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$10</ID>
-    <ID>MagicNumber:Channels.kt$Channels.ChannelPagination$10</ID>
-    <ID>MagicNumber:Channels.kt$Channels.QueryingChannels$10</ID>
     <ID>MagicNumber:Channels.kt$Channels.UpdatingAChannel$123</ID>
+    <ID>MagicNumber:Channels.kt$Channels.UpdatingChannelMembers.ChannelPagination$10</ID>
+    <ID>MagicNumber:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$1000</ID>
+    <ID>MagicNumber:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$60</ID>
+    <ID>MagicNumber:Channels.kt$Channels.UpdatingChannelMembers.QueryingChannels$10</ID>
+    <ID>MagicNumber:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$10</ID>
     <ID>MagicNumber:MessageComposer.kt$MessageComposerCustomizationSnippet.MyActivity$7f</ID>
     <ID>MagicNumber:Messages.kt$Messages.MessagesOverview$123</ID>
     <ID>MagicNumber:Messages.kt$Messages.MessagesOverview$234</ID>
     <ID>MagicNumber:Messages.kt$Messages.PinnedMessages$2077</ID>
     <ID>MagicNumber:ReactionsPicker.kt$ReactionsPickerCustomizationSnippet.MyActivity$4</ID>
     <ID>MatchingDeclarationName:MessageList.kt$MessageListViewSnippets : Fragment</ID>
-    <ID>MaxLineLength:Android.kt$Android.SyncHistory$* @see &lt;a href="https://getstream.io/nessy/docs/chat_docs/events/event_listening?language=kotlin">Listening for events&lt;/a></ID>
-    <ID>MaxLineLength:AppSettings.kt$AppSettings$* See: [Client Location Settings](https://getstream.io/chat/docs/android/multi_region/?language=kotlin#client-location-settings)</ID>
+    <ID>MaxLineLength:AppSettings.kt$AppSettings.MultiRegionSupport$* @see &lt;a href="https://getstream.io/chat/docs/android/multi_region/?language=java#migrating-to-edge">Migrating to Edge&lt;/a>&lt;/>&lt;/a></ID>
     <ID>MaxLineLength:AttachmentGallery.kt$AttachmentGallery$* [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/#handling-actions)</ID>
     <ID>MaxLineLength:AttachmentGallery.kt$AttachmentGallery$* [Navigating to Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/#navigating-to-attachment-gallery)</ID>
     <ID>MaxLineLength:Attachments.kt$Attachments$* @see &lt;a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/">Sending Attachments&lt;/a></ID>
@@ -67,27 +65,25 @@
     <ID>MaxLineLength:ChannelListHeader.kt$ChannelListHeaderViewSnippets$* [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/#handling-actions)</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListViewSnippets$* [Creating a Custom ViewHolder Factory](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#creating-a-custom-viewholder-factory)</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListViewSnippets$* [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#handling-actions)</ID>
-    <ID>MaxLineLength:ChannelTypes.kt$ChannelTypes.MultiTenantAndTeams$* @see &lt;a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=kotlin#channel-team">Multi Tenants &amp; Teams&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_members/?language=kotlin#message-parameter">Message Parameter&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers$* @see &lt;a href="https://getstream.io/chat/docs/channel_members/?language=kotlin#adding-removing-channel-members">Adding &amp; Removing Channel Members&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.DeletingAndHidingAChannel$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_delete/?language=kotlin#truncating-a-channel">Truncating a Channel&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.DeletingAndHidingAChannel$* @see &lt;a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin#hiding-a-channel">Hiding a Channel&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#accepting-an-invite">Accept an Invite&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#inviting-users">Inviting Users&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-accepted-invites">Query For Accepted Invites&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-pending-invites">Query For Pending Invites&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-rejected-invites">Query For Rejected Invites&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#rejecting-an-invite">Rejecting an Invite&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#channel-mute">Channel Mute&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#query-muted-channels">Query Muted Channels&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#remove-a-channel-mute">Remove a Channel Mute&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.OneToOneConversations$* @see &lt;a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin">One to One Conversations&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.ChangingChannelMembers.OneToOneConversations$* @see &lt;a href="https://getstream.io/chat/docs/channel_conversations/?language=kotlin#creating-conversations">Creating Conversations&lt;/a></ID>
     <ID>MaxLineLength:Channels.kt$Channels.CreatingChannels$* @see &lt;a href="https://getstream.io/chat/docs/react/creating_channels/?language=kotlin#1.-creating-a-channel-using-a-channel-id">Creating a Channel Using a Channel Id&lt;/a></ID>
     <ID>MaxLineLength:Channels.kt$Channels.CreatingChannels$* @see &lt;a href="https://getstream.io/chat/docs/react/creating_channels/?language=kotlin#2.-creating-a-channel-for-a-list-of-members">Creating a Channel for a List of Members&lt;/a></ID>
-    <ID>MaxLineLength:Channels.kt$Channels.QueryingChannels.CommonFilters$* @see &lt;a href="https://getstream.io/chat/docs/query_channels/?language=kotlin#common-filters-by-use-case">Common Filters&lt;/a></ID>
     <ID>MaxLineLength:Channels.kt$Channels.UpdatingAChannel$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_update/?language=kotlin#full-update-(overwrite)">Full Update (overwrite)&lt;/a></ID>
     <ID>MaxLineLength:Channels.kt$Channels.UpdatingAChannel$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_update/?language=kotlin#partial-update">Partial Update&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_members/?language=kotlin#message-parameter">Message Parameter&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers$* @see &lt;a href="https://getstream.io/chat/docs/channel_members/?language=kotlin#adding-removing-channel-members">Adding &amp; Removing Channel Members&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#accepting-an-invite">Accept an Invite&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#inviting-users">Inviting Users&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-accepted-invites">Query For Accepted Invites&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-pending-invites">Query For Pending Invites&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#query-for-rejected-invites">Query For Rejected Invites&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.Invites$* @see &lt;a href="https://getstream.io/chat/docs/channel_invites/?language=kotlin#rejecting-an-invite">Rejecting an Invite&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.HidingChannel$* @see &lt;a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin#hiding-a-channel">Hiding a Channel&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/android/muting_channels/?language=kotlin#check-if-user-is-muted">Check if User is Muted&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#channel-mute">Channel Mute&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#query-muted-channels">Query Muted Channels&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$* @see &lt;a href="https://getstream.io/chat/docs/muting_channels/?language=kotlin#remove-a-channel-mute">Remove a Channel Mute&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.QueryingChannels.CommonFilters$* @see &lt;a href="https://getstream.io/chat/docs/query_channels/?language=kotlin#common-filters-by-use-case">Common Filters&lt;/a></ID>
+    <ID>MaxLineLength:Channels.kt$Channels.UpdatingChannelMembers.TruncateAChannel$* @see &lt;a href="https://getstream.io/chat/docs/android/channel_delete/?language=kotlin#truncate-a-channel">Truncate a Channel&lt;/a></ID>
     <ID>MaxLineLength:ChannelsScreen.kt$ChannelsScreenHandlingActionsSnippet$* [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/#handling-actions)</ID>
     <ID>MaxLineLength:ChatUi.kt$ChatUiSnippets$* [Changing the Default Font](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#changing-the-default-font)</ID>
     <ID>MaxLineLength:ChatUi.kt$ChatUiSnippets$* [Custom MIME Type Icons](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-mime-type-icons)</ID>
@@ -96,6 +92,8 @@
     <ID>MaxLineLength:ChatUi.kt$ChatUiSnippets$* [Customizing Date Formatter](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-dateformatter)</ID>
     <ID>MaxLineLength:ChatUi.kt$ChatUiSnippets$* [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)</ID>
     <ID>MaxLineLength:ChatUi.kt$ChatUiSnippets$* [Transforming Message Text](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#transforming-message-text)</ID>
+    <ID>MaxLineLength:ClientAndUsers.kt$ClientAndUsers.AuthlessUsers.AnonymousUsers$* @see &lt;a href="https://getstream.io/chat/docs/android/authless_users/?language=kotlin#anonymous-users">Anonymous Users&lt;/a></ID>
+    <ID>MaxLineLength:ClientAndUsers.kt$ClientAndUsers.AuthlessUsers.GuestUsers$* @see &lt;a href="https://getstream.io/chat/docs/android/authless_users/?language=kotlin#guest-users">Guest Users&lt;/a></ID>
     <ID>MaxLineLength:ClientAndUsers.kt$ClientAndUsers.InitializationAndUsers$* @see &lt;a href="https://getstream.io/chat/docs/init_and_users/?language=java#websocket-connections">Websocket Connections&lt;/a></ID>
     <ID>MaxLineLength:ClientAndUsers.kt$ClientAndUsers.InitializationAndUsers$* @see &lt;a href="https://getstream.io/chat/docs/init_and_users/?language=kotlin#setting-the-user">Setting the User&lt;/a></ID>
     <ID>MaxLineLength:ClientAndUsers.kt$ClientAndUsers.QueryUsers$* @see &lt;a href="https://getstream.io/chat/docs/query_users/?language=kotlin#querying-using-the-autocomplete-operator">Autocomplete Operator&lt;/a></ID>
@@ -159,8 +157,11 @@
     <ID>MaxLineLength:TypingIndicators.kt$TypingIndicators$* @see &lt;a href="https://getstream.io/chat/docs/typing_indicators/?language=kotlin#receiving-typing-indicator-events">Receiving Typing Events&lt;/a></ID>
     <ID>MaxLineLength:TypingIndicators.kt$TypingIndicators$* @see &lt;a href="https://getstream.io/chat/docs/typing_indicators/?language=kotlin#sending-start-and-stop-typing-events">Sending Start and Stop Typing&lt;/a></ID>
     <ID>MaxLineLength:UserAvatar.kt$UserAvatarHandlingActionsSnippet$* [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/utility-components/user-avatar/#handling-actions)</ID>
+    <ID>MaxLineLength:UserPermissions.kt$UserPermissions.MultiTenantAndTeams$* @see &lt;a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=kotlin#channel-team">Channel Team&lt;/a></ID>
     <ID>MaxLineLength:UserPresence.kt$UserPresence$* @see &lt;a href="https://getstream.io/chat/docs/presence_format/?language=kotlin#listening-to-presence-changes">Listening to Presence Changes&lt;/a></ID>
-    <ID>MemberNameEqualsClassName:Channels.kt$Channels.ChannelPagination$fun channelPagination()</ID>
+    <ID>MemberNameEqualsClassName:Channels.kt$Channels.UpdatingChannelMembers.ChannelPagination$fun channelPagination()</ID>
+    <ID>MemberNameEqualsClassName:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$fun queryingMembers()</ID>
+    <ID>MemberNameEqualsClassName:Channels.kt$Channels.UpdatingChannelMembers.TruncateAChannel$fun truncateAChannel()</ID>
     <ID>MemberNameEqualsClassName:Messages.kt$Messages.FileUploads$fun fileUploads()</ID>
     <ID>SwallowedException:Push.kt$Push.AndroidAndFirebase.CustomFirebaseMessagingService$exception: IllegalStateException</ID>
     <ID>SwallowedException:Push.kt$Push.Firebase.CustomFirebaseMessagingService$exception: IllegalStateException</ID>
@@ -174,28 +175,25 @@
     <ID>UnusedPrivateClass:MessageListHeader.kt$MessageListHeaderViewSnippets : Fragment</ID>
     <ID>UnusedPrivateClass:SearchView.kt$SearchView : Fragment</ID>
     <ID>UnusedPrivateMember:AddingCustomAttachments.kt$AddingCustomAttachmentsSnippet$onBackPressed: () -> Unit = {}</ID>
-    <ID>UnusedPrivateMember:Android.kt$Android.UnreadCount$val readState: List&lt;ChannelUserRead> = channel.read</ID>
     <ID>UnusedPrivateMember:AndroidIntroduction.kt$AndroidIntroduction$val channels: List&lt;Channel> = result.data()</ID>
-    <ID>UnusedPrivateMember:ChannelTypes.kt$ChannelTypes.MultiTenantAndTeams$val channel = result.data()</ID>
-    <ID>UnusedPrivateMember:ChannelTypes.kt$ChannelTypes.MultiTenantAndTeams$val users: List&lt;User> = result.data()</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.Invites$val channels: List&lt;Channel> = result.data()</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$val channels: List&lt;Channel> = result.data()</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$val mutedFilter = Filters.eq("muted", true)</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$val mutes: List&lt;ChannelMute> = event.me.channelMutes</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$val mutes: List&lt;ChannelMute> = user.channelMutes</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.MutingChannels$val notMutedFilter = Filters.and( Filters.eq("muted", false), Filters.`in`("members", listOf(currentUserId)), )</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val createdAtDescendingSort = QuerySort&lt;Member>().desc("created_at")</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByAutoCompleteName = Filters.autocomplete("name", "tom")</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByBannedMembers = Filters.eq("banned", true)</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterById = Filters.eq("id", "tommaso")</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByIds = Filters.`in`("id", listOf("tommaso", "thierry"))</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByModerator = Filters.eq("is_moderator", true)</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByNone = NeutralFilterObject</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val filterByPendingInvite = Filters.eq("invite", "pending")</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.ChangingChannelMembers.QueryMembers$val members: List&lt;Member> = result.data()</ID>
     <ID>UnusedPrivateMember:Channels.kt$Channels.CreatingChannels$val newChannel: Channel = result.data()</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.QueryingChannels$val channels = result.data()</ID>
-    <ID>UnusedPrivateMember:Channels.kt$Channels.QueryingChannels$val channels: List&lt;Channel> = result.data()</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.Invites$val channels: List&lt;Channel> = result.data()</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$val channels: List&lt;Channel> = result.data()</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$val mutedFilter = Filters.eq("muted", true)</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$val mutes: List&lt;ChannelMute> = event.me.channelMutes</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$val mutes: List&lt;ChannelMute> = user.channelMutes</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.MutingOrHidingChannels.MutingChannels$val notMutedFilter = Filters.and( Filters.eq("muted", false), Filters.`in`("members", listOf(currentUserId)), )</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingChannels$val channels = result.data()</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingChannels$val channels: List&lt;Channel> = result.data()</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val createdAtDescendingSort = QuerySort&lt;Member>().desc("created_at")</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByAutoCompleteName = Filters.autocomplete("name", "tom")</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByBannedMembers = Filters.eq("banned", true)</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterById = Filters.eq("id", "tommaso")</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByIds = Filters.`in`("id", listOf("tommaso", "thierry"))</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByModerator = Filters.eq("is_moderator", true)</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByNone = NeutralFilterObject</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val filterByPendingInvite = Filters.eq("invite", "pending")</ID>
+    <ID>UnusedPrivateMember:Channels.kt$Channels.UpdatingChannelMembers.QueryingMembers$val members: List&lt;Member> = result.data()</ID>
     <ID>UnusedPrivateMember:Channels.kt$Channels.WatchingAChannel$val channels: List&lt;Channel> = result.data()</ID>
     <ID>UnusedPrivateMember:ClientAndUsers.kt$ClientAndUsers.InitializationAndUsers$val staticClientRef = ChatClient.instance()</ID>
     <ID>UnusedPrivateMember:ClientAndUsers.kt$ClientAndUsers.QueryUsers$val users: List&lt;User> = result.data()</ID>
@@ -222,6 +220,8 @@
     <ID>UnusedPrivateMember:Push.kt$Push.Device_$val devices: List&lt;Device> = result.data()</ID>
     <ID>UnusedPrivateMember:StaticInstances.kt$TokenService$user: User</ID>
     <ID>UnusedPrivateMember:Translation.kt$Translation$val translation = translatedMessage.getTranslation(frenchLanguage)</ID>
+    <ID>UnusedPrivateMember:UserPermissions.kt$UserPermissions.MultiTenantAndTeams$val channel = result.data()</ID>
+    <ID>UnusedPrivateMember:UserPermissions.kt$UserPermissions.MultiTenantAndTeams$val users: List&lt;User> = result.data()</ID>
     <ID>UnusedPrivateMember:UserPresence.kt$UserPresence$val channels: List&lt;Channel> = result.data()</ID>
     <ID>UnusedPrivateMember:UserPresence.kt$UserPresence$val users: List&lt;User> = result.data()</ID>
     <ID>VariableNaming:MessageList.kt$MessageListViewSnippets.CustomAttachmentFactory.CustomAttachmentFactory$private val MY_URL_ADDRESS = "https://myurl.com"</ID>

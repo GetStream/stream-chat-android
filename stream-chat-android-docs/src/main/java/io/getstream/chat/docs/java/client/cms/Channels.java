@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent;
 import io.getstream.chat.android.client.events.UserStartWatchingEvent;
 import io.getstream.chat.android.client.events.UserStopWatchingEvent;
+import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelMute;
 import io.getstream.chat.android.client.models.Filters;
@@ -36,30 +37,6 @@ public class Channels {
     private ChannelClient channelClient;
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/initialize_channel/?language=java">Channel Initialization</a>
-     */
-    class ChannelInitialization {
-        public void initialization() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            List<String> members = Arrays.asList("thierry", "tommaso");
-
-            Map<String, Object> extraData = new HashMap<>();
-            extraData.put("name", "Founder Chat");
-            extraData.put("image", "http://bit.ly/2O35mws");
-
-            channelClient.create(members, extraData)
-                    .enqueue(result -> {
-                        if (result.isSuccess()) {
-                            Channel channel = result.data();
-                        } else {
-                            // Handle result.error()
-                        }
-                    });
-        }
-    }
-
-    /**
      * @see <a href="https://getstream.io/chat/docs/creating_channels/?language=java">Creating Channels</a>
      */
     class CreatingChannels {
@@ -68,6 +45,28 @@ public class Channels {
 
             Map<String, Object> extraData = new HashMap<>();
             List<String> memberIds = new LinkedList<>();
+
+            channelClient.create(memberIds, extraData)
+                    .enqueue(result -> {
+                        if (result.isSuccess()) {
+                            Channel newChannel = result.data();
+                        } else {
+                            // Handle result.error()
+                        }
+                    });
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/react/creating_channels/?language=java#2.-creating-a-channel-for-a-list-of-members">Creating a Channel for a List of Members</a>
+         */
+        public void createChannelWithListOfMembers() {
+            ChannelClient channelClient = client.channel("messaging", "");
+
+            Map<String, Object> extraData = new HashMap<>();
+            List<String> memberIds = new LinkedList<>();
+            memberIds.add("thierry");
+            memberIds.add("tomasso");
+
             channelClient.create(memberIds, extraData)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
@@ -185,6 +184,133 @@ public class Channels {
     }
 
     /**
+     * @see <a href="https://getstream.io/chat/docs/channel_update/?language=java">Updating a Channel</a>
+     */
+    class UpdatingAChannel {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#partial-update">Partial Update</a>
+         */
+        public void partialUpdate() {
+            // Here's a channel with some custom field data that might be useful
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            List<String> members = Arrays.asList("thierry", "tommaso");
+
+            Map<String, String> channelDetail = new HashMap<>();
+            channelDetail.put("topic", "Plants and Animals");
+            channelDetail.put("rating", "pg");
+
+            Map<String, Integer> userId = new HashMap<>();
+            userId.put("user_id", 123);
+
+            Map<String, Object> extraData = new HashMap<>();
+            extraData.put("source", "user");
+            extraData.put("source_detail", userId);
+            extraData.put("channel_detail", channelDetail);
+
+            channelClient.create(members, extraData).execute();
+
+            // let's change the source of this channel
+            Map<String, Object> setField = Collections.singletonMap("source", "system");
+            channelClient.updatePartial(setField, emptyList()).execute();
+
+            // since it's system generated we no longer need source_detail
+            List<String> unsetField = Collections.singletonList("source_detail");
+            channelClient.updatePartial(emptyMap(), unsetField).execute();
+
+            // and finally update one of the nested fields in the channel_detail
+            Map<String, Object> setNestedField = Collections.singletonMap("channel_detail.topic", "Nature");
+            channelClient.updatePartial(setNestedField, emptyList()).execute();
+
+            // and maybe we decide we no longer need a rating
+            List<String> unsetNestedField = Collections.singletonList("channel_detail.rating");
+            channelClient.updatePartial(emptyMap(), unsetNestedField).execute();
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#full-update-(overwrite)">Full Update (overwrite)</a>
+         */
+        public void fullUpdate() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            Map<String, Object> channelData = new HashMap<>();
+            channelData.put("name", "myspecialchannel");
+            channelData.put("color", "green");
+            Message updateMessage = new Message();
+            updateMessage.setText("Thierry changed the channel color to green");
+
+            channelClient.update(updateMessage, channelData).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/channel_members/?language=java">Updating Channel Members</a>
+     */
+    class UpdatingChannelMembers {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/channel_members/?language=java#adding-removing-channel-members">Adding & Removing Channel Members</a>
+         */
+        public void addingAndRemovingChannelMembers() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            // Add members with ids "thierry" and "josh"
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), null).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            // Remove member with id "tommaso"
+            channelClient.removeMembers(Arrays.asList("tommaso"), null).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_members/?language=java#message-parameter">Message Parameter</a>
+         */
+        public void messageParameter() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            Message addMemberSystemMessage = new Message();
+            addMemberSystemMessage.setText("Thierry and Josh were added to this channel");
+            // Add members with ids "thierry" and "josh"
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            Message removeMemberSystemMessage = new Message();
+            addMemberSystemMessage.setText("Tommaso was removed from this channel");
+            // Remove member with id "tommaso"
+            channelClient.removeMembers(Arrays.asList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=java">Querying Channels</a>
      */
     class QueryingChannels {
@@ -263,6 +389,58 @@ public class Channels {
     }
 
     /**
+     * @see <a href="https://getstream.io/chat/docs/query_members/?language=java">Querying Members</a>
+     */
+    class QueryingMembers {
+        public void queryingMembers() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            int offset = 0; // Use this value for pagination
+            int limit = 10;
+            QuerySort<Member> sort = new QuerySort<>();
+
+            // Channel members can be queried with various filters
+            // 1. Create the filter, e.g query members by user name
+            FilterObject filterByName = Filters.eq("name", "tommaso");
+            // 2. Call queryMembers with that filter
+            channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Member> members = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            // Here are some other commons filters you can use:
+
+            // Autocomplete members by user name (names containing "tom")
+            FilterObject filterByAutoCompleteName = Filters.autocomplete("name", "tom");
+
+            // Query member by id
+            FilterObject filterById = Filters.eq("id", "tommaso");
+
+            // Query multiple members by id
+            FilterObject filterByIds = Filters.in("id", Arrays.asList("tommaso", "thierry"));
+
+            // Query channel moderators
+            FilterObject filterByModerator = Filters.eq("is_moderator", true);
+
+            // Query for banned members in channel
+            FilterObject filterByBannedMembers = Filters.eq("banned", true);
+
+            // Query members with pending invites
+            FilterObject filterByPendingInvite = Filters.eq("invite", "pending");
+
+            // Query all the members
+            FilterObject filterByNone = NeutralFilterObject.INSTANCE;
+
+            // We can order the results too with QuerySort param
+            // Here example to order results by member created at descending
+            QuerySort<Member> createdAtDescendingSort = new QuerySort<Member>().desc("created_at");
+        }
+    }
+
+    /**
      * @see <a href="https://getstream.io/chat/docs/channel_pagination/?language=java">Channel Pagination</a>
      */
     class ChannelPagination {
@@ -287,131 +465,6 @@ public class Channels {
                                 .withMessages(LESS_THAN, lastMessage.getId(), pageSize);
                         // ...
                     }
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_update/?language=java">Updating a Channel</a>
-     */
-    class UpdatingAChannel {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#partial-update">Partial Update</a>
-         */
-        public void partialUpdate() {
-            // Here's a channel with some custom field data that might be useful
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            List<String> members = Arrays.asList("thierry", "tommaso");
-
-            Map<String, String> channelDetail = new HashMap<>();
-            channelDetail.put("topic", "Plants and Animals");
-            channelDetail.put("rating", "pg");
-
-            Map<String, Integer> userId = new HashMap<>();
-            userId.put("user_id", 123);
-
-            Map<String, Object> extraData = new HashMap<>();
-            extraData.put("source", "user");
-            extraData.put("source_detail", userId);
-            extraData.put("channel_detail", channelDetail);
-
-            channelClient.create(members, extraData).execute();
-
-            // let's change the source of this channel
-            Map<String, Object> setField = Collections.singletonMap("source", "system");
-            channelClient.updatePartial(setField, emptyList()).execute();
-
-            // since it's system generated we no longer need source_detail
-            List<String> unsetField = Collections.singletonList("source_detail");
-            channelClient.updatePartial(emptyMap(), unsetField).execute();
-
-            // and finally update one of the nested fields in the channel_detail
-            Map<String, Object> setNestedField = Collections.singletonMap("channel_detail.topic", "Nature");
-            channelClient.updatePartial(setNestedField, emptyList()).execute();
-
-            // and maybe we decide we no longer need a rating
-            List<String> unsetNestedField = Collections.singletonList("channel_detail.rating");
-            channelClient.updatePartial(emptyMap(), unsetNestedField).execute();
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/android/channel_update/?language=java#full-update-(overwrite)">Full Update (overwrite)</a>
-         */
-        public void fullUpdate() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            Map<String, Object> channelData = new HashMap<>();
-            channelData.put("name", "myspecialchannel");
-            channelData.put("color", "green");
-            Message updateMessage = new Message();
-            updateMessage.setText("Thierry changed the channel color to green");
-
-            channelClient.update(updateMessage, channelData).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Channel channel = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_members/?language=java">Updating a Channel</a>
-     */
-    class ChangingChannelMembers {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_members/?language=java#adding-removing-channel-members">Adding & Removing Channel Members</a>
-         */
-        public void addingAndRemovingChannelMembers() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            Message addMemberSystemMessage = new Message();
-            addMemberSystemMessage.setText("Thierry and Josh were added to this channel");
-            // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Channel channel = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-
-            Message removeMemberSystemMessage = new Message();
-            addMemberSystemMessage.setText("Tommaso was removed from this channel");
-            // Remove member with id "tommaso"
-            channelClient.removeMembers(Arrays.asList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Channel channel = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=java">One to One Conversations</a>
-     */
-    class OneToOneConversations {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/channel_conversations/?language=java#creating-conversations">Creating Conversations</a>
-         */
-        public void creatingConversation() {
-            String emptyChannelId = "";
-            String channelType = "messaging";
-            List<String> members = Arrays.asList("thierry", "tomasso");
-            Map<String, Object> channelData = new HashMap<>();
-            client.createChannel(channelType, emptyChannelId, members, channelData).enqueue(result -> {
-                if (result.isSuccess()) {
-                    Channel channel = result.data();
                 } else {
                     // Handle result.error()
                 }
@@ -510,23 +563,128 @@ public class Channels {
                 }
             });
         }
-    }
 
-    /**
-     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=java">Deleting & Hiding a Channel</a>
-     */
-    class DeletingAndHidingAChannel {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=java#query-for-pending-invites">Query For Pending Invites</a>
+         */
+        public void queryForPendingInvites() {
+            FilterObject filter = Filters.eq("invite", "pending");
+            int offset = 0;
+            int limit = 10;
+            QuerySort<Channel> sort = new QuerySort<>();
+            int messageLimit = 0;
+            int memberLimit = 0;
+            QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
-        public void deletingAChannel() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            channelClient.delete().enqueue(result -> {
+            client.queryChannels(request).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Channel channel = result.data();
+                    List<Channel> channels = result.data();
                 } else {
                     // Handle result.error()
                 }
             });
+        }
+    }
+
+    class MutingOrHidingChannels {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java">Muting Channels</a>
+         */
+        class MutingChannels {
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#channel-mute">Channel Mute</a>
+             */
+            public void channelMute() {
+                // Mute a channel
+                ChannelClient channelClient = client.channel("messaging", "general");
+                channelClient.mute().enqueue(result -> {
+                    if (result.isSuccess()) {
+                        // Channel is muted
+                    } else {
+                        // Handle result.error()
+                    }
+                });
+
+                // Get list of muted channels when user is connected
+                User user = new User();
+                user.setId("user-id");
+                client.connectUser(user, "token").enqueue(result -> {
+                    if (result.isSuccess()) {
+                        // Result contains the list of channel mutes
+                        List<ChannelMute> mutes = result.data().getUser().getChannelMutes();
+                    }
+                });
+
+                // Get updates about muted channels
+                client.subscribeFor(
+                        new Class[]{NotificationChannelMutesUpdatedEvent.class},
+                        channelsMuteEvent -> {
+                            List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) channelsMuteEvent).getMe().getChannelMutes();
+                        }
+                );
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/android/muting_channels/?language=java#check-if-user-is-muted">Check if User is Muted</a>
+             */
+            public void checkIfUserIsMuted(Channel channel, User user) {
+                boolean isMuted = ChannelExtensionKt.isMutedFor(channel, user);
+                if (isMuted) {
+                    // Handle UI for muted channel
+                } else {
+                    // Handle UI for not muted channel
+                }
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#query-muted-channels">Query Muted Channels</a>
+             */
+            public void queryMutedChannels(String currentUserId, FilterObject filter) {
+                // Filter for all channels excluding muted ones
+                FilterObject notMutedFilter = Filters.and(
+                        Filters.eq("muted", false),
+                        Filters.in("members", Arrays.asList(currentUserId))
+                );
+
+                // Filter for muted channels
+                FilterObject mutedFilter = Filters.eq("muted", true);
+
+                // Executing a channels query with either of the filters
+                int offset = 0;
+                int limit = 10;
+                QuerySort<Channel> sort = new QuerySort<>();
+                int messageLimit = 0;
+                int memberLimit = 0;
+                client.queryChannels(new QueryChannelsRequest(
+                        filter, // Set the correct filter here
+                        offset,
+                        limit,
+                        sort,
+                        messageLimit,
+                        memberLimit)).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        List<Channel> channels = result.data();
+                    } else {
+                        // Handle result.error()
+                    }
+                });
+            }
+
+            /**
+             * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#remove-a-channel-mute">Remove a Channel Mute</a>
+             */
+            public void removeAChannelMute() {
+                // Unmute channel for current user
+                channelClient.unmute().enqueue(result -> {
+                    if (result.isSuccess()) {
+                        // Channel is unmuted
+                    } else {
+                        // Handle result.error()
+                    }
+                });
+            }
         }
 
         /**
@@ -560,11 +718,33 @@ public class Channels {
                 }
             });
         }
+    }
 
-        /**
-         * @see <a href="hhttps://getstream.io/chat/docs/android/channel_delete/?language=java#truncating-a-channel">Truncating a Channel</a>
-         */
-        public void truncatingAChannel() {
+    /**
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=java">Deleting Channels</a>
+     */
+    class DeletingChannels {
+
+        public void deletingAChannel() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            channelClient.delete().enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/truncate_channel/?language=java">Truncate a Channel</a>
+     */
+    class TruncateChannel {
+
+        public void truncateAChannel() {
             // Removes all of the messages of the channel but doesn't affect the channel data or members
             channelClient.truncate().enqueue(result -> {
                 if (result.isSuccess()) {
@@ -573,145 +753,6 @@ public class Channels {
                     // Handle result.error()
                 }
             });
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java">Muting Channels</a>
-     */
-    class MutingChannels {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#channel-mute">Channel Mute</a>
-         */
-        public void channelMute() {
-            // Mute a channel
-            ChannelClient channelClient = client.channel("messaging", "general");
-            channelClient.mute().enqueue(result -> {
-                if (result.isSuccess()) {
-                    // Channel is muted
-                } else {
-                    // Handle result.error()
-                }
-            });
-
-            // Get list of muted channels when user is connected
-            User user = new User();
-            user.setId("user-id");
-            client.connectUser(user, "token").enqueue(result -> {
-                if (result.isSuccess()) {
-                    // Result contains the list of channel mutes
-                    List<ChannelMute> mutes = result.data().getUser().getChannelMutes();
-                }
-            });
-
-            // Get updates about muted channels
-            client.subscribeFor(
-                    new Class[]{NotificationChannelMutesUpdatedEvent.class},
-                    channelsMuteEvent -> {
-                        List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) channelsMuteEvent).getMe().getChannelMutes();
-                    }
-            );
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#query-muted-channels">Query Muted Channels</a>
-         */
-        public void queryMutedChannels(String currentUserId, FilterObject filter) {
-            // Filter for all channels excluding muted ones
-            FilterObject notMutedFilter = Filters.and(
-                    Filters.eq("muted", false),
-                    Filters.in("members", Arrays.asList(currentUserId))
-            );
-
-            // Filter for muted channels
-            FilterObject mutedFilter = Filters.eq("muted", true);
-
-            // Executing a channels query with either of the filters
-            int offset = 0;
-            int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<>();
-            int messageLimit = 0;
-            int memberLimit = 0;
-            client.queryChannels(new QueryChannelsRequest(
-                    filter, // Set the correct filter here
-                    offset,
-                    limit,
-                    sort,
-                    messageLimit,
-                    memberLimit)).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Channel> channels = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/muting_channels/?language=java#remove-a-channel-mute">Remove a Channel Mute</a>
-         */
-        public void removeAChannelMute() {
-            // Unmute channel for current user
-            channelClient.unmute().enqueue(result -> {
-                if (result.isSuccess()) {
-                    // Channel is unmuted
-                } else {
-                    // Handle result.error()
-                }
-            });
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/query_members/?language=java">Query Members</a>
-     */
-    class QueryMembers {
-        public void queryingMembers() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
-            int offset = 0; // Use this value for pagination
-            int limit = 10;
-            QuerySort<Member> sort = new QuerySort<>();
-
-            // Channel members can be queried with various filters
-            // 1. Create the filter, e.g query members by user name
-            FilterObject filterByName = Filters.eq("name", "tommaso");
-            // 2. Call queryMembers with that filter
-            channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<Member> members = result.data();
-                } else {
-                    // Handle result.error()
-                }
-            });
-
-            // Here are some other commons filters you can use:
-
-            // Autocomplete members by user name (names containing "tom")
-            FilterObject filterByAutoCompleteName = Filters.autocomplete("name", "tom");
-
-            // Query member by id
-            FilterObject filterById = Filters.eq("id", "tommaso");
-
-            // Query multiple members by id
-            FilterObject filterByIds = Filters.in("id", Arrays.asList("tommaso", "thierry"));
-
-            // Query channel moderators
-            FilterObject filterByModerator = Filters.eq("is_moderator", true);
-
-            // Query for banned members in channel
-            FilterObject filterByBannedMembers = Filters.eq("banned", true);
-
-            // Query members with pending invites
-            FilterObject filterByPendingInvite = Filters.eq("invite", "pending");
-
-            // Query all the members
-            FilterObject filterByNone = NeutralFilterObject.INSTANCE;
-
-            // We can order the results too with QuerySort param
-            // Here example to order results by member created at descending
-            QuerySort<Member> createdAtDescendingSort = new QuerySort<Member>().desc("created_at");
         }
     }
 

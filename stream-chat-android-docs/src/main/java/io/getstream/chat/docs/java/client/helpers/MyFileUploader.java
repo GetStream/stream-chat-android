@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java.helpers;
+package io.getstream.chat.docs.java.client.helpers;
 
 
 import org.jetbrains.annotations.NotNull;

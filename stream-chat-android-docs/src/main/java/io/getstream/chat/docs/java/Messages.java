@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
-import io.getstream.chat.docs.java.helpers.MyFileUploader;
+import io.getstream.chat.docs.java.client.helpers.MyFileUploader;
 
 public class Messages {
     private ChatClient client;
