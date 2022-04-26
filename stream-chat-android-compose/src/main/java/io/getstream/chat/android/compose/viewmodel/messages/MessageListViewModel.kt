@@ -79,7 +79,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -969,7 +968,7 @@ public class MessageListViewModel(
         internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
 
         /**
-         * Time after the focus is removed
+         * Time in millis, after which the focus is removed.
          */
         private const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }

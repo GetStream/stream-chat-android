@@ -36,6 +36,9 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
+/**
+ * The default maximum number of columns when showing reactions and users.
+ */
 private const val DefaultNumberOfColumns = 5
 
 /**

@@ -45,7 +45,7 @@ public fun UnreadCountIndicator(
     color: Color = ChatTheme.colors.errorAccent,
 ) {
 
-    val displayText = if (unreadCount > LimitToManyUnreadCount) UnreadCountMany else unreadCount.toString()
+    val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
     val shape = RoundedCornerShape(9.dp)
 
     Box(
@@ -68,7 +68,7 @@ public fun UnreadCountIndicator(
  * The unread count that's shown for many messages.
  */
 private const val UnreadCountMany = "99+"
-private const val LimitToManyUnreadCount = 99
+private const val LimitTooManyUnreadCount = 99
 
 /**
  * Preview of [UnreadCountIndicator] with few unread messages.
