@@ -698,7 +698,7 @@ style:
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
-    ignoreAnnotated: ['Test', 'ParameterizedTest']
+    ignoreAnnotated: ['Test', 'ParameterizedTest', "Language"]
   MayBeConst:
     active: true
   ModifierOrder:
