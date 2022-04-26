@@ -185,7 +185,6 @@ private fun AttachmentMetaData.getTitleWithExtension(): String {
     return if (extension.isNullOrEmpty() && !mimeType.isNullOrEmpty()) {
         "$newTitle.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
     } else {
-        // Attachment's title should never be null. Review AttachmentMetaData class
         newTitle ?: ""
     }
 }
