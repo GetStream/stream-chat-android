@@ -180,7 +180,7 @@ These are as follows:
 - update-channel-members
 - ban-channel-members
 
-Additionally, the capability 'send-typing-events' is implemented in our `MessageComposerController` used by
+Additionally, the capability '**send-typing-events ***' is implemented in our `MessageComposerController` used by
 our `MessageComposerViewModel`.
 Please keep this in mind should you wish to not use our `ViewModel`s.
 
@@ -191,7 +191,7 @@ If we left it with the default, empty set of own capabilities we would get the f
 
 ![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)
 
-This leaves the user unable to do any actions enabled by the composer.
+This leaves the user unable to perform any action provided by the composer.
 Ideally, you should let your Dashboard App settings regulate capabilities, but if you wish to control them manually, you can do so.
 
 Take a look at the object called `ChannelCapabilities`:
@@ -209,7 +209,7 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
 
-If we were to enable to user to send messages, links and attachments, we would build a set as follows:
+If you were to enable the user to send messages, links and attachments, you would build a set as follows:
 
 ```kotlin
 val customOwnCapabilities = setOf(
@@ -242,9 +242,9 @@ This enables the following capabilities:
 - **send-links * **
 - **upload-file * **
 
-And results in the `MessageComposer` having the following appearance:
+And results in `MessageComposer` having the following appearance:
 
-![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)
+![MessageComposer with custom capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)
 
 :::note
 Please note that providing custom client side capabilities leaves you in charge of making sure that users are not awarded with dangerous capabilities and that different clients are in sync.
