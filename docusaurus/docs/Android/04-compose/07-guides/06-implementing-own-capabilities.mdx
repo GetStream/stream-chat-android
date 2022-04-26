@@ -26,41 +26,14 @@ As a safety precaution, by default an empty set is passed wherever `ownCapabilit
 ```kotlin
 @Composable
 public fun MessageComposer(
-        messageComposerState: MessageComposerState,
-        onSendMessage: (String, List<Attachment>) -> Unit,
-        modifier: Modifier = Modifier,
-        onAttachmentsClick: () -> Unit = {},
-        onCommandsClick: () -> Unit = {},
-        onValueChange: (String) -> Unit = {},
-        onAttachmentRemoved: (Attachment) -> Unit = {},
-        onCancelAction: () -> Unit = {},
-        onMentionSelected: (User) -> Unit = {},
-        onCommandSelected: (Command) -> Unit = {},
-        onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
-        headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-            // Default content
-        },
-        footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-            // Default content
-        },
-        mentionPopupContent: @Composable (List<User>) -> Unit = {
-            // Default content
-        },
-        commandPopupContent: @Composable (List<Command>) -> Unit = {
-            // Default content
-        },
-        integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
-            // Default content, uses own capabilities to regulate integrations
-        },
-        label: @Composable (MessageComposerState) -> Unit = {
-            // Default content
-        },
-        input: @Composable RowScope.(MessageComposerState) -> Unit = {
-            // Default content
-        },
-        trailingContent: @Composable (MessageComposerState) -> Unit = {
-            // Default content, uses own capabilities to regulate the send button
-        },
+    messageComposerState: MessageComposerState,
+    ..., // State, handlers and content slots
+    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+        // Default content, uses own capabilities to regulate integrations
+    },
+    trailingContent: @Composable (MessageComposerState) -> Unit = {
+        // Default content, uses own capabilities to regulate the send button
+    },
 )
 ```
 
@@ -73,16 +46,16 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 
 ```kotlin
 public data class MessageComposerState(
-        val inputValue: String = "",
-        val attachments: List<Attachment> = emptyList(),
-        val action: MessageAction? = null,
-        val validationErrors: List<ValidationError> = emptyList(),
-        val mentionSuggestions: List<User> = emptyList(),
-        val commandSuggestions: List<Command> = emptyList(),
-        val coolDownTime: Int = 0,
-        val messageMode: MessageMode = MessageMode.Normal,
-        val alsoSendToChannel: Boolean = false,
-        val ownCapabilities: Set<String> = setOf()
+    val inputValue: String = "",
+    val attachments: List<Attachment> = emptyList(),
+    val action: MessageAction? = null,
+    val validationErrors: List<ValidationError> = emptyList(),
+    val mentionSuggestions: List<User> = emptyList(),
+    val commandSuggestions: List<Command> = emptyList(),
+    val coolDownTime: Int = 0,
+    val messageMode: MessageMode = MessageMode.Normal,
+    val alsoSendToChannel: Boolean = false,
+    val ownCapabilities: Set<String> = setOf()
 )
 ```
 
@@ -97,23 +70,16 @@ public data class MessageComposerState(
 ```kotlin
 @Composable
 public fun SelectedMessageMenu(
-        message: Message,
-        messageOptions: List<MessageOptionItemState>,
-        ownCapabilities: Set<String>,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        modifier: Modifier = Modifier,
-        shape: Shape = ChatTheme.shapes.bottomSheet,
-        overlayColor: Color = ChatTheme.colors.overlay,
-        reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
-        @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
-        onDismiss: () -> Unit = {},
-        headerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content, uses own capabilities to regulate sending reactions
-        },
-        centerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content
-        },
+    message: Message,
+    messageOptions: List<MessageOptionItemState>,
+    ownCapabilities: Set<String>,
+    ..., // Handlers and customization options
+    headerContent: @Composable ColumnScope.() -> Unit = {
+        // Default content, uses own capabilities to regulate sending reactions
+    },
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        // Default content
+    },
 )
 ```
 
@@ -129,10 +95,10 @@ Additionally, you can create a list of `messageOptions` using the following func
 ```kotlin
 @Composable
 public fun defaultMessageOptionsState(
-        selectedMessage: Message,
-        currentUser: User?,
-        isInThread: Boolean,
-        ownCapabilities: Set<String>,
+    selectedMessage: Message,
+    currentUser: User?,
+    isInThread: Boolean,
+    ownCapabilities: Set<String>,
 ): List<MessageOptionItemState>
 ```
 
@@ -152,23 +118,16 @@ This function uses `ownCapabilities` to produce the correct list of `MessageOpti
 ```kotlin
 @Composable
 public fun SelectedReactionsMenu(
-        message: Message,
-        currentUser: User?,
-        ownCapabilities: Set<String>,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        modifier: Modifier = Modifier,
-        shape: Shape = ChatTheme.shapes.bottomSheet,
-        overlayColor: Color = ChatTheme.colors.overlay,
-        reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
-        @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
-        onDismiss: () -> Unit = {},
-        headerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content, uses own capabilities to regulate sending reactions
-        },
-        centerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content
-        },
+    message: Message,
+    currentUser: User?,
+    ownCapabilities: Set<String>,
+    ..., // Handlers and customization options
+    headerContent: @Composable ColumnScope.() -> Unit = {
+        // Default content, uses own capabilities to regulate sending reactions
+    },
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        // Default content
+    },
 )
 ```
 
@@ -184,21 +143,12 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 ```kotlin
 @Composable
 public fun SelectedChannelMenu(
-        selectedChannel: Channel,
-        isMuted: Boolean,
-        currentUser: User?,
-        onChannelOptionClick: (ChannelAction) -> Unit,
-        onDismiss: () -> Unit,
-        modifier: Modifier = Modifier,
-        shape: Shape = ChatTheme.shapes.bottomSheet,
-        overlayColor: Color = ChatTheme.colors.overlay,
-        headerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content
-        },
-        centerContent: @Composable ColumnScope.() -> Unit = {
-            // Default content, uses own capabilities to regulate
-            // deleting and leaving channels
-        },
+    selectedChannel: Channel,
+    ..., // State, handlers and content
+    centerContent: @Composable ColumnScope.() -> Unit = {
+        // Default content, uses own capabilities to regulate
+        // deleting and leaving channels
+    },
 )
 ```
 
