@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.search
+package io.getstream.chat.android.uitests.snapshot.uicomponents.search
 
 import android.view.View
 import androidx.fragment.app.testing.launchFragmentInContainer

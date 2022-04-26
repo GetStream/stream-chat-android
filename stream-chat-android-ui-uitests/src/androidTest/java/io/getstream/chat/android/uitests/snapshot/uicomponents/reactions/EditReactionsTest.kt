@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.reactions
+package io.getstream.chat.android.uitests.snapshot.uicomponents.reactions
 
 import androidx.fragment.app.testing.launchFragmentInContainer
 import com.karumi.shot.FragmentScenarioUtils.waitForFragment
