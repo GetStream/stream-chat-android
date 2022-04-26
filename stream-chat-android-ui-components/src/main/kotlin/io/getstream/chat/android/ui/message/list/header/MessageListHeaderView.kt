@@ -161,7 +161,8 @@ public class MessageListHeaderView : FrameLayout {
 
     private fun configBackground() {
         setBackgroundColor(style.background)
-        binding.separator.setBackgroundColor(style.separatorBackgroundColor)
+        binding.separator.visibility = if (style.separatorBackgroundDrawable != null) VISIBLE else GONE
+        binding.separator.background = style.separatorBackgroundDrawable
     }
 
     private fun configUserAvatar() {

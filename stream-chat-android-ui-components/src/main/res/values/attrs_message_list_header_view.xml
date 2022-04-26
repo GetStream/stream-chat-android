@@ -6,7 +6,7 @@
 
         <attr name="streamUiMessageListHeaderShowUserAvatar" format="boolean" />
 
-        <attr name="streamUiMessageListHeaderSeparatorBackgroundColor" format="reference|color" />
+        <attr name="streamUiMessageListHeaderSeparatorBackgroundDrawable" format="reference" />
 
         <attr name="streamUiMessageListHeaderTitleTextSize" format="dimension|reference" />
         <attr name="streamUiMessageListHeaderTitleTextColor" format="color|reference" />
