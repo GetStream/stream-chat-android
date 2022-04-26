@@ -54,6 +54,7 @@
 
 ### ⬆️ Improved
 - Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
+- Added a way to customize `messageInputField` padding inside `MessageInputFiledView`. [#3392](https://github.com/GetStream/stream-chat-android/pull/3392)
 
 ### ✅ Added
 
