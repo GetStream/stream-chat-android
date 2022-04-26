@@ -12,10 +12,11 @@ level settings [here](https://getstream.io/chat/docs/android/channel-level_setti
 
 ## Integrating channel capabilities into the UI
 
-If you are using our own UI in combination with our `ViewModel`s, then own capabilities work out of the box without any
+If you are using our bound UI components in combination with our `ViewModel`s, then own capabilities work out of the box without any
 additional effort from your side, otherwise you will have to pass the correct set of capabilities to individual components.
 
 Different components have different ways of passing own capabilities to them, so we’ll go through them individually.
+Capabilities that were a part of the minimal chat experience before the introduction of own capabilities will be highlighted in bold with an asterisk next to them.
 
 :::note
 As a safety precaution, by default an empty set is passed wherever `ownCapabilities: Set<String>` is required. This gives the user no capabilities. Passing a set containing all capabilities will give the user potentially dangerous capabilities such as the ability to delete any message.
@@ -56,9 +57,13 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 
 `MessageComposer` regulates the following capabilities:
 
-- send-message
-- send-links
-- upload-file
+- **send-message * **
+- **send-links * **
+- **upload-file * **
+
+:::note
+Own capabilities are publicly exposed inside `MessageComposerController` and `MessageComposerViewModel` as `ownCapabilities: StateFlow<Set<String>>`.
+:::
 
 ### SelectedMessageMenu
 
@@ -82,7 +87,7 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 
 `SelectedMessageMenu` regulates the following capability:
 
-- send-reaction
+- **send-reaction * **
 
 More capabilities can be regulated by creating the appropriate list of message options.
 You can use the following function provided by the SDK to do so:
@@ -101,12 +106,16 @@ This function uses `ownCapabilities` to produce the correct list of `MessageOpti
 
 `defaultMessageOptionsState` regulates the following capabilities:
 
-- send-reply
+- **send-reply * **
 - pin-message
 - delete-any-message
-- delete-own-message
+- **delete-own-message * **
 - update-any-message
-- update-own-message
+- **update-own-message * **
+
+:::note
+Own capabilities are publicly exposed inside `MessageListViewModel` as `ownCapabilities: StateFlow<Set<String>>`.
+:::
 
 ### SelectedReactionsMenu
 
@@ -130,7 +139,7 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf
 
 `SelectedReactionsMenu` menu regulates the following capability:
 
-- send-reaction
+- **send-reaction * **
 
 ### SelectedChannelMenu
 
@@ -153,7 +162,7 @@ value to leverage own capabilities inside the default center content.
 
 `SelectedChannelMenu` regulates the following capabilities:
 
-- leave-channel
+- **leave-channel * **
 - delete-channel
 
 ## Other capabilities
@@ -174,3 +183,70 @@ These are as follows:
 Additionally, the capability 'send-typing-events' is implemented in our `MessageComposerController` used by
 our `MessageComposerViewModel`.
 Please keep this in mind should you wish to not use our `ViewModel`s.
+
+# How capabilities affect the UI
+
+Let's take `MessageComposer` into consideration.
+If we left it with the default, empty set of own capabilities we would get the following result:
+
+![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)
+
+This leaves the user unable to do any actions enabled by the composer.
+Ideally, you should let your Dashboard App settings regulate capabilities, but if you wish to control them manually, you can do so.
+
+Take a look at the object called `ChannelCapabilities`:
+
+```kotlin
+public object ChannelCapabilities {
+    /** Ability to ban channel members. */
+    public const val BAN_CHANNEL_MEMBERS: String = "ban-channel-members"
+    ... // Other capabilities
+}
+```
+The file containing `ChannelCapabilities` can be
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt#L29).
+
+This object contains all relevant channel capabilities as type safe properties.
+You can use the properties to build a set containing only the capabilities you want enabled for the user.
+
+If we were to enable to user to send messages, links and attachments, we would build a set as follows:
+
+```kotlin
+val customOwnCapabilities = setOf(
+    ChannelCapabilities.SEND_MESSAGE,
+    ChannelCapabilities.SEND_LINKS,
+    ChannelCapabilities.UPLOAD_FILE
+)
+```
+
+Then use it to create `MessageComposerState`:
+
+```kotlin
+val messageComposerState = MessageComposerState(
+    ownCapabilities = customOwnCapabilities
+)
+```
+
+And finally pass the `MessageComposerState` to the stateless `MessageComposer` component:
+
+```kotlin
+public fun MessageComposer(
+    messageComposerState = messageComposerState,
+    ..., // State, handlers and content.
+)
+```
+
+This enables the following capabilities:
+
+- **send-message * **
+- **send-links * **
+- **upload-file * **
+
+And results in the `MessageComposer` having the following appearance:
+
+![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)
+
+:::note
+Please note that providing custom client side capabilities leaves you in charge of making sure that users are not awarded with dangerous capabilities and that different clients are in sync.
+This is why it is recommended to fetch own capabilities that are provided to you by the server.
+:::
