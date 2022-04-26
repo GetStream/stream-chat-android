@@ -27,13 +27,14 @@ import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
+private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
 public class StreamImageLoaderFactory(
     private val context: Context,
     private val builder: ImageLoader.Builder.() -> Unit = {}
 ) : ImageLoaderFactory {
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(context)
-            .availableMemoryPercentage(0.25)
+            .availableMemoryPercentage(DEFAULT_MEMORY_PERCENTAGE)
             .allowHardware(false)
             .crossfade(true)
             .okHttpClient {
