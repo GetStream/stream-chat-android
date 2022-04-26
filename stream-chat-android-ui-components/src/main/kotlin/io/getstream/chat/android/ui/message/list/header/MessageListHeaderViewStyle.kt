@@ -21,7 +21,6 @@ import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
@@ -181,7 +180,9 @@ public data class MessageListHeaderViewStyle(
                     .build()
 
                 val separatorBackgroundDrawable =
-                    a.getDrawable(R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable)
+                    a.getDrawable(
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable
+                    )
 
                 return MessageListHeaderViewStyle(
                     background = background,
