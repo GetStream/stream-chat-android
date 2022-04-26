@@ -36,28 +36,23 @@ public fun MessageComposer(
     },
 )
 ```
+The file containing `MessageComposer` can be
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt#L214).
 
 `MessageComposer` contains a parameter `messageComposerState: MessageComposerState`. This class holds all the necessary
 state to make `MessageComposer` work, including a set of own capabilities. These are used by the default components
 hosted in the `MessageComposer`.
 
-The file containing `MessageComposer` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt#L214)
+Let's take a look at `MessageComposerState`:
 
 ```kotlin
 public data class MessageComposerState(
-    val inputValue: String = "",
-    val attachments: List<Attachment> = emptyList(),
-    val action: MessageAction? = null,
-    val validationErrors: List<ValidationError> = emptyList(),
-    val mentionSuggestions: List<User> = emptyList(),
-    val commandSuggestions: List<Command> = emptyList(),
-    val coolDownTime: Int = 0,
-    val messageMode: MessageMode = MessageMode.Normal,
-    val alsoSendToChannel: Boolean = false,
+    ..., // State
     val ownCapabilities: Set<String> = setOf()
 )
 ```
+The file containing `MessageComposerState` can be
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt#L39).
 
 `MessageComposer` regulates the following capabilities:
 
@@ -82,15 +77,15 @@ public fun SelectedMessageMenu(
     },
 )
 ```
-
 The file containing `SelectedMessageMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenu.kt#L60)
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenu.kt#L60).
 
 `SelectedMessageMenu` regulates the following capability:
 
 - send-reaction
 
-Additionally, you can create a list of `messageOptions` using the following function provided by the SDK:
+More capabilities can be regulated by creating the appropriate list of message options.
+You can use the following function provided by the SDK to do so:
 
 ```kotlin
 @Composable
@@ -130,9 +125,8 @@ public fun SelectedReactionsMenu(
     },
 )
 ```
-
 The file containing `SelectedReactionsMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenu.kt#L62)
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenu.kt#L62).
 
 `SelectedReactionsMenu` menu regulates the following capability:
 
@@ -151,12 +145,11 @@ public fun SelectedChannelMenu(
     },
 )
 ```
+The file containing `SelectedChannelMenu` can be
+found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/channels/info/SelectedChannelMenu.kt#L66).
 
 `SelectedChannelMenu` contains a `Channel` value. It uses the `ownCapabilities` property contained by that `Channel`
 value to leverage own capabilities inside the default center content.
-
-The file containing `SelectedChannelMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/channels/info/SelectedChannelMenu.kt#L66)
 
 `SelectedChannelMenu` regulates the following capabilities:
 
