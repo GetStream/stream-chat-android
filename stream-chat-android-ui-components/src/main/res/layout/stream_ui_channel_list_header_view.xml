@@ -13,9 +13,9 @@
         android:id="@+id/userAvatar"
         style="?attr/streamUiChannelListHeaderAvatarStyle"
         android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <TextView
@@ -26,8 +26,8 @@
         android:layout_marginHorizontal="8dp"
         android:gravity="center_horizontal"
         android:text="@string/stream_ui_channel_list_header_connected"
-        android:visibility="gone"
         android:textDirection="locale"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/actionButton"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
@@ -89,10 +89,10 @@
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_ui_divider_height"
-        android:background="@color/stream_ui_border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:background="@color/stream_ui_border"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
