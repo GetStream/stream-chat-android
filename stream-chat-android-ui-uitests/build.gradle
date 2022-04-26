@@ -28,7 +28,7 @@ android {
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
@@ -38,7 +38,7 @@ android {
     packagingOptions {
         resources.excludes.add("META-INF/*")
     }
-    
+
     buildFeatures {
         viewBinding true
         compose true
@@ -88,7 +88,9 @@ dependencies {
     implementation Dependencies.composeCoil
 
     // Instrumentation tests
-    androidTestImplementation Dependencies.fragmentTest
+    debugImplementation(Dependencies.fragmentTest) {
+        exclude group: 'androidx.test', module: 'monitor'
+    }
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.espressoContrib

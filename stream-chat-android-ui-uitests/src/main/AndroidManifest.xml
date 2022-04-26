@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.getstream.chat.android.uitests"
+    android:sharedUserId="io.getstream.chat.android.uitests.uid"
     >
 
     <application
@@ -38,6 +39,8 @@
             android:name=".app.uicomponents.UiComponentsChannelsActivity"
             android:exported="false"
             />
+
+        <activity android:name="androidx.activity.ComponentActivity" />
 
     </application>
 
