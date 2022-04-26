@@ -39,11 +39,13 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
  *
  * @param channelsState Exposes if we're loading more items, reaches the end of the list and the
  * current list of channels to show.
- * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the scroll state.
+ * @param lazyListState State of the lazy list that represents the list of channels. Useful for controlling the
+ * scroll state.
  * @param onLastItemReached Handler for when the user reaches the end of the list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the channel list surrounding the content inside.
- * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement scroll to top button.
+ * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement
+ * scroll to top button.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemContent Customizable UI component, that represents each item in the list.
  * @param divider Customizable UI component, that represents item dividers.

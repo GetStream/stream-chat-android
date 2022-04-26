@@ -37,6 +37,7 @@ internal class CallRetryService(private val retryPolicy: RetryPolicy) {
      *
      * @param runnable The call to be run.
      */
+    @Suppress("LoopWithTooManyJumpStatements")
     suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
         var attempt = 1
         var result: Result<T>
@@ -52,11 +53,16 @@ internal class CallRetryService(private val retryPolicy: RetryPolicy) {
 
                 if (shouldRetry) {
                     // temporary failure, continue
-                    logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")
+                    logger.logI(
+                        "API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}"
+                    )
                     delay(timeout.toLong())
                     attempt += 1
                 } else {
-                    logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
+                    logger.logI(
+                        "API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. " +
+                            "Error was ${result.error()}"
+                    )
                     break
                 }
             }

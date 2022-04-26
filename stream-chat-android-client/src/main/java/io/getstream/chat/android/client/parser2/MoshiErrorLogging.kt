@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
@@ -26,7 +25,6 @@ import java.lang.reflect.Type
 
 internal fun MoshiConverterFactory.withErrorLogging(): Converter.Factory {
     val originalFactory = this
-    val logger = ChatLogger.get("NEW_SERIALIZATION_ERROR")
 
     return object : Converter.Factory() {
         override fun responseBodyConverter(
@@ -36,14 +34,7 @@ internal fun MoshiConverterFactory.withErrorLogging(): Converter.Factory {
         ): Converter<ResponseBody, *> {
             val originalConverter: Converter<ResponseBody, *> =
                 originalFactory.responseBodyConverter(type, annotations, retrofit)!!
-            return Converter { value ->
-                try {
-                    originalConverter.convert(value)
-                } catch (e: Throwable) {
-                    logger.logE(e)
-                    throw e
-                }
-            }
+            return Converter { value -> originalConverter.convert(value) }
         }
 
         override fun requestBodyConverter(

@@ -37,6 +37,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
+ * The default maximum number of reactions shown in the picker.
+ */
+private const val DefaultNumberOfReactions = 5
+
+/**
  * Displays all of the available reactions the user can set on a message.
  *
  * @param message The selected message.
@@ -59,7 +64,7 @@ public fun ReactionsPicker(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    cells: GridCells = GridCells.Fixed(5),
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     headerContent: @Composable ColumnScope.() -> Unit = {},
@@ -95,7 +100,7 @@ public fun ReactionsPicker(
 internal fun DefaultReactionsPickerCenterContent(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
-    cells: GridCells = GridCells.Fixed(5),
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
 ) {
     ExtendedReactionsOptions(

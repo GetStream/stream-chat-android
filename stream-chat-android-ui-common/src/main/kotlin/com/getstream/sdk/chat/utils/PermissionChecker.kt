@@ -35,7 +35,10 @@ public class PermissionChecker {
 
     public fun isGrantedStoragePermissions(context: Context): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     public fun isGrantedCameraPermissions(context: Context): Boolean =
@@ -47,7 +50,8 @@ public class PermissionChecker {
      *
      * @param context of the App
      *
-     * @return True if [Manifest.permission.CAMERA] is present on the App Manifest and user didn't grant it, False in another case
+     * @return True if [Manifest.permission.CAMERA] is present on the App Manifest and user didn't grant it,
+     * False in another case
      */
     public fun isNeededToRequestForCameraPermissions(context: Context): Boolean =
         isPermissionContainedOnManifest(context, Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
@@ -114,6 +118,7 @@ public class PermissionChecker {
             .requestedPermissions
             .contains(permission)
 
+    @Suppress("LongParameterList")
     private fun checkPermissions(
         view: View,
         dialogTitle: String,

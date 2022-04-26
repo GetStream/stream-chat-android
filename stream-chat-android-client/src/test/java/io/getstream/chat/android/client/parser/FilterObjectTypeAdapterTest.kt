@@ -59,6 +59,7 @@ internal class FilterObjectTypeAdapterTest {
     companion object {
 
         @JvmStatic
+        @Suppress("LongMethod", "ComplexMethod")
         fun writeArguments() = listOf(
             Arguments.of(NeutralFilterObject, "{}"),
             randomString().let { Arguments.of(ExistsFilterObject(it), "{\"$it\":{\"\$exists\":true}}") },
@@ -245,7 +246,8 @@ internal class FilterObjectTypeAdapterTest {
                                 EqualsFilterObject(fieldName, values.first())
                             )
                         ),
-                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"
+                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                            ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },
@@ -258,7 +260,8 @@ internal class FilterObjectTypeAdapterTest {
                                 EqualsFilterObject(fieldName, values.first())
                             )
                         ),
-                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"
+                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                            ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },
@@ -271,7 +274,8 @@ internal class FilterObjectTypeAdapterTest {
                                 EqualsFilterObject(fieldName, values.first())
                             )
                         ),
-                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":${values.first()}}]}"
+                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                            ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },

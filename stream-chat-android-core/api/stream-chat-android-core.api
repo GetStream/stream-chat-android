@@ -81,6 +81,10 @@ public final class io/getstream/chat/android/core/internal/ExtensionsKt {
 public abstract interface annotation class io/getstream/chat/android/core/internal/InternalStreamChatApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class io/getstream/chat/android/core/internal/StreamHandsOff : java/lang/annotation/Annotation {
+	public abstract fun reason ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachine$Companion {
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/core/internal/fsm/FiniteStateMachine;
 }

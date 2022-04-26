@@ -41,6 +41,7 @@ internal class TokenUtilsTest(
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
 
+        @Suppress("MaxLineLength")
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{index}: {0} => {1}")
         fun data(): Collection<Array<Any?>> = listOf(

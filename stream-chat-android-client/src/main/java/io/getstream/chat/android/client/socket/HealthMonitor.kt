@@ -96,6 +96,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     private fun needToReconnect() = disconnected || (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
 
+    @Suppress("MagicNumber")
     private fun getRetryInterval(consecutiveFailures: Int): Long {
         val max = min(500 + consecutiveFailures * 2000, 25000)
         val min = min(
