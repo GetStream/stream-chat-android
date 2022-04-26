@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.reactions
+package io.getstream.chat.android.uitests.snapshot.uicomponents.reactions
 
 import android.os.Bundle
 import android.view.LayoutInflater
