@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.User
 /**
  * Intercepts [ChatApi] calls and validates [CustomObject.extraData] keys to prevent passing reserved names.
  */
+@Suppress("TooManyFunctions")
 internal class ExtraDataValidator(
     private val delegate: ChatApi,
 ) : ChatApi by delegate {

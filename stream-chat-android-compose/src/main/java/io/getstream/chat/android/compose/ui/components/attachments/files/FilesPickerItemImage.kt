@@ -28,8 +28,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
 /**
- * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file type
- * or a thumbnail in case the file type is an image.
+ * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file
+ * type or a thumbnail in case the file type is an image.
  *
  * @param fileItem - The item we use to show the image.
  */

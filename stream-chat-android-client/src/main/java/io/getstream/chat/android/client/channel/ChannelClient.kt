@@ -92,6 +92,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
+@Suppress("TooManyFunctions")
 public class ChannelClient internal constructor(
     public val channelType: String,
     public val channelId: String,
@@ -185,6 +186,7 @@ public class ChannelClient internal constructor(
         }
     }
 
+    @Suppress("ComplexMethod")
     private fun isRelevantForChannel(event: ChatEvent): Boolean {
         return when (event) {
             is ChannelDeletedEvent -> event.cid == cid
@@ -481,7 +483,8 @@ public class ChannelClient internal constructor(
 
     /**
      * Sends the reaction.
-     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the current user.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the
+     * current user.
      *
      * @see [ChatClient.sendReaction]
      *
@@ -705,7 +708,8 @@ public class ChannelClient internal constructor(
      *
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
-     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
      */
     @CheckResult
     @JvmOverloads
@@ -718,7 +722,8 @@ public class ChannelClient internal constructor(
      *
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
-     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
      */
     @CheckResult
     @JvmOverloads

@@ -40,13 +40,16 @@ import java.util.Date
  * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
 @RequiresApi(Build.VERSION_CODES.M)
+@Suppress("TooManyFunctions")
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
 ) : NotificationHandler {
 
-    private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
+    private val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
     private val notificationManager: NotificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also { notificationManager ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

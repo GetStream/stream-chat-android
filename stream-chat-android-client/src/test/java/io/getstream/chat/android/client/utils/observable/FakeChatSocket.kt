@@ -26,9 +26,11 @@ internal class FakeChatSocket : ChatSocket {
     private val listeners = mutableSetOf<SocketListener>()
 
     override fun connect(user: User) {
+        // no-op
     }
 
     override fun connectAnonymously() {
+        // no-op
     }
 
     override fun addListener(listener: SocketListener) {
@@ -46,8 +48,10 @@ internal class FakeChatSocket : ChatSocket {
     }
 
     override fun disconnect() {
+        // no-op
     }
 
     override fun releaseConnection() {
+        // no-op
     }
 }

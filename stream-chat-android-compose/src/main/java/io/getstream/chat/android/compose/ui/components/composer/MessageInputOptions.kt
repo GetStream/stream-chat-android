@@ -51,9 +51,12 @@ public fun MessageInputOptions(
     modifier: Modifier = Modifier,
 ) {
     val optionImage =
-        painterResource(id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit)
+        painterResource(
+            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit
+        )
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message
+        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message
+        else R.string.stream_compose_edit_message
     )
 
     Row(

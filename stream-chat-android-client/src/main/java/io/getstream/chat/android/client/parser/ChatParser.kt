@@ -27,21 +27,23 @@ import retrofit2.Retrofit
 
 internal interface ChatParser {
 
-    private val TAG: String
+    private val tag: String
         get() = ChatParser::class.java.simpleName
 
     fun toJson(any: Any): String
     fun <T : Any> fromJson(raw: String, clazz: Class<T>): T
     fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder
 
+    @Suppress("TooGenericExceptionCaught")
     fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
             Result(fromJson(raw, clazz))
-        } catch (t: Throwable) {
-            Result(ChatError("fromJsonOrError error parsing of $clazz into $raw", t))
+        } catch (expected: Throwable) {
+            Result(ChatError("fromJsonOrError error parsing of $clazz into $raw", expected))
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "NestedBlockDepth")
     fun toError(okHttpResponse: Response): ChatNetworkError {
         val statusCode: Int = okHttpResponse.code
 
@@ -54,14 +56,14 @@ internal interface ChatParser {
             } else {
                 val error = try {
                     fromJson(body, ErrorResponse::class.java)
-                } catch (t: Throwable) {
+                } catch (_: Throwable) {
                     ErrorResponse().apply { message = body }
                 }
                 ChatNetworkError.create(error.code, error.message, statusCode)
             }
-        } catch (t: Throwable) {
-            ChatLogger.instance.logE(TAG, t)
-            ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
+        } catch (expected: Throwable) {
+            ChatLogger.instance.logE(tag, expected)
+            ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, expected, statusCode)
         }
     }
 }

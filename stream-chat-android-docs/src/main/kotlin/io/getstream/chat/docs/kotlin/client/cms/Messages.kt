@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
+import io.getstream.chat.docs.kotlin.client.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
 import java.util.Date

@@ -26,6 +26,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.io.IOException
 
+private const val DEFAULT_BITMAP_QUALITY = 90
 @InternalStreamChatApi
 public object StreamFileUtil {
 
@@ -45,12 +46,11 @@ public object StreamFileUtil {
                 "share_image_${System.currentTimeMillis()}.png"
             )
             file.outputStream().use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
+                bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
                 out.flush()
             }
             getUriForFile(context, file)
-        } catch (e: IOException) {
-            e.printStackTrace()
+        } catch (_: IOException) {
             null
         }
     }

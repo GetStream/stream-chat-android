@@ -34,6 +34,7 @@ import java.util.Locale
 
 @InternalStreamChatApi
 @OptIn(ExperimentalStreamChatApi::class)
+@Suppress("TooManyFunctions")
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
     private val projection = arrayOf(
@@ -49,7 +50,10 @@ public class StorageHelper {
         attachmentMetaData: AttachmentMetaData,
     ): File {
         if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
-            throw IllegalStateException("Unable to create cache file for attachment: $attachmentMetaData. Either file or URI cannot be null.")
+            throw IllegalStateException(
+                "Unable to create cache file for attachment: $attachmentMetaData. " +
+                    "Either file or URI cannot be null."
+            )
         }
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!
@@ -68,7 +72,8 @@ public class StorageHelper {
         // Excluding files with empty mime type just to be sure that we won't include folder and unknown files
         return getFilteredAttachments(
             context,
-            selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL AND ${MediaStore.Files.FileColumns.MIME_TYPE} != ''",
+            selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL " +
+                "AND ${MediaStore.Files.FileColumns.MIME_TYPE} != ''",
         )
     }
 
@@ -116,6 +121,7 @@ public class StorageHelper {
     }
 
     private fun getAttachmentFromCursor(cursor: Cursor, contentUri: Uri? = null): AttachmentMetaData {
+
         with(cursor) {
             val id = getLong(getColumnIndex(MediaStore.Files.FileColumns._ID))
             val mimeType = getString(getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE))
@@ -128,7 +134,7 @@ public class StorageHelper {
                 this.type = getModelType(mimeType)
                 this.size = size
                 this.title = title
-                this.videoLength = videoLength / 1000
+                this.videoLength = videoLength / MILISECOND_IN_A_SECOND
             }
         }
     }
@@ -166,6 +172,7 @@ public class StorageHelper {
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"
         public const val FILE_NAME_PREFIX: String = "STREAM_"
+        private const val MILISECOND_IN_A_SECOND = 1000
     }
 }
 
@@ -178,7 +185,6 @@ private fun AttachmentMetaData.getTitleWithExtension(): String {
     return if (extension.isNullOrEmpty() && !mimeType.isNullOrEmpty()) {
         "$newTitle.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
     } else {
-        // TODO: Attachment's title should never be null. Review AttachmentMetaData class
         newTitle ?: ""
     }
 }

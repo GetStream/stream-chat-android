@@ -51,6 +51,7 @@ internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
     }
 
     override fun cancel() {
+        // no-op
     }
 
     override fun execute(): Response<T> {

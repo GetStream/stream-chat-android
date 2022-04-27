@@ -37,14 +37,19 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 /**
+ * The default maximum number of columns when showing reactions and users.
+ */
+private const val DefaultNumberOfColumns = 5
+
+/**
  * Displays all available reactions a user can set on a message.
  *
  * @param ownReactions A list of user's own reactions.
  * @param onReactionOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
- * @param itemContent Composable that allows the user to customize the individual items shown in [ExtendedReactionsOptions].
- * By default it shows individual reactions.
+ * @param itemContent Composable that allows the user to customize the individual items shown
+ * in [ExtendedReactionsOptions]. By default it shows individual reactions.
  */
 @ExperimentalFoundationApi
 @Composable
@@ -52,7 +57,7 @@ public fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    cells: GridCells = GridCells.Fixed(5),
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultExtendedReactionsItemContent(

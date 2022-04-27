@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
  * Class responsible for handling chat notifications.
  * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
+@Suppress("TooManyFunctions")
 internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,

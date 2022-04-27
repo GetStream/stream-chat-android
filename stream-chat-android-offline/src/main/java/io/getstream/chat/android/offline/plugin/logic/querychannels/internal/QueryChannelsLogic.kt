@@ -54,6 +54,7 @@ import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 
+@Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,

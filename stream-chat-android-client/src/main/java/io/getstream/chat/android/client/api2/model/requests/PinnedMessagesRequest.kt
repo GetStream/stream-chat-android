@@ -36,9 +36,11 @@ import java.util.Date
  * @param id_lte Same as [id_lt] but the response will also include the message with provided id.
  * @param pinned_at_around Date of the message used to fetch messages around.
  * @param pinned_at_after Date of the message used to fetch messages sent after the date, based on [sort].
- * @param pinned_at_after_or_equal Same as [pinned_at_after] but the response will also include the message with provided id.
+ * @param pinned_at_after_or_equal Same as [pinned_at_after] but the response will also include the message with
+ * provided id.
  * @param pinned_at_before Date of the message used to fetch messages sent before the date, based on [sort].
- * @param pinned_at_before_or_equal Same as [pinned_at_before] but the response will also include the message with provided id.
+ * @param pinned_at_before_or_equal Same as [pinned_at_before] but the response will also include the message with
+ * provided id.
  */
 @JsonClass(generateAdapter = true)
 internal data class PinnedMessagesRequest(

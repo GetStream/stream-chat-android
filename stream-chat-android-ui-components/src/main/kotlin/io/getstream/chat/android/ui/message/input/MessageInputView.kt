@@ -37,10 +37,12 @@ import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
+import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -115,6 +117,43 @@ public class MessageInputView : ConstraintLayout {
 
     private var cooldownInterval: Int = 0
     private var cooldownTimerJob: Job? = null
+
+    private var currentlyActiveSnackBar: Snackbar? = null
+
+    /**
+     * Used to enable or disable parts of the UI depending
+     * on which abilities the user has in the given channel.
+     */
+    private var ownCapabilities: Set<String> = setOf()
+
+    // used to regulate UI according to ownCapabilities
+    private var canSendAttachments = false
+    private var canUseCommands = false
+    private var canSendLinks = false
+    private var canSendTypingUpdates = false
+
+    /**
+     * Changes value only when the new value
+     * is not the same as the current one.
+     *
+     * Disables or enables the send button and
+     * displays a snackbar when necessary.
+     *
+     * Note: This value is updated only if
+     * the user is not allowed to send links.
+     */
+    private var inputContainsLinks = false
+        set(value) {
+            if (value != inputContainsLinks) {
+                field = value
+                if (field) {
+                    disableSendButton()
+                    alertInputContainsLinkWhenNotAllowed()
+                } else {
+                    enableSendButton()
+                }
+            }
+        }
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -380,6 +419,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
+        currentlyActiveSnackBar?.dismiss()
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
         cooldownTimerJob?.cancel()
@@ -487,7 +527,10 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
             .show()
     }
 
@@ -500,7 +543,30 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG,
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
+            .show()
+    }
+
+    /**
+     * Displays a snackbar informing the user that
+     * sending links is not allowed in the given channel
+     */
+    private fun alertInputContainsLinkWhenNotAllowed() {
+        Snackbar.make(
+            this,
+            resources.getString(
+                R.string.stream_ui_message_input_error_sending_links_not_allowed,
+            ),
+            Snackbar.LENGTH_INDEFINITE,
+        )
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+                setAction(R.string.stream_ui_ok) { dismiss() }
+            }
             .show()
     }
 
@@ -678,6 +744,14 @@ public class MessageInputView : ConstraintLayout {
                         maxMessageLengthExceeded = isMessageTooLong()
                     )
 
+                    /**
+                     * Check for links only if the user is not allowed
+                     * to send them, otherwise it is unnecessary overhead.
+                     */
+                    if (!canSendLinks) {
+                        inputContainsLinks = messageText.containsLinks()
+                    }
+
                     refreshControlsState()
                     handleKeyStroke()
 
@@ -768,10 +842,12 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun handleKeyStroke() {
-        if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-            typingListener?.onKeystroke()
-        } else {
-            typingListener?.onStopTyping()
+        if (canSendTypingUpdates) {
+            if (binding.messageInputFieldView.messageText.isNotEmpty()) {
+                typingListener?.onKeystroke()
+            } else {
+                typingListener?.onStopTyping()
+            }
         }
     }
 
@@ -798,11 +874,73 @@ public class MessageInputView : ConstraintLayout {
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
+            attachmentsButton.isVisible =
+                messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
+    }
+
+    /**
+     * Setter method for own capabilities which dictate which
+     * parts of the UI are enabled or disabled for the current user
+     * in the given channel.
+     *
+     * @param ownCapabilities A set of capabilities given to the user
+     * in the current channel.
+     */
+    public fun setOwnCapabilities(ownCapabilities: Set<String>) {
+        this.ownCapabilities = ownCapabilities
+
+        val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendAttachment = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+
+        // precedence and boolean logic matter here
+        // otherwise you can undo a previous capability
+        setCanSendMessages(canSendMessage)
+        setCanSendAttachments(canSendAttachment && canSendMessage)
+        this.canSendLinks = ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
+        this.canSendTypingUpdates = ownCapabilities.contains(ChannelCapabilities.SEND_TYPING_EVENTS)
+    }
+
+    /**
+     * Disables or enables entering and sending a message
+     * into the [MessageInputView] depending on if the given user
+     * can send messages in the given channel.
+     *
+     * @param canSend If the user is given the ability to send messages.
+     */
+    private fun setCanSendMessages(canSend: Boolean) {
+        binding.commandsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = canSend
+
+        canSendAttachments = canSend
+        canUseCommands = canSend
+
+        if (canSend) {
+            enableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_input_hint)
+        } else {
+            disableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(
+                R.string.stream_ui_message_cannot_send_messages_hint
+            )
+        }
+        binding.messageInputFieldView.binding.messageEditText.isEnabled = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
+    }
+
+    /**
+     * Disables or enables the integration for sending attachments
+     * depending on if the given user can send attachments
+     * in the given channel.
+     *
+     * @param canSend If the user is given the ability to send attachments.
+     */
+    private fun setCanSendAttachments(canSend: Boolean) {
+        binding.attachmentsButton.isVisible = canSend
+        canSendAttachments = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {
