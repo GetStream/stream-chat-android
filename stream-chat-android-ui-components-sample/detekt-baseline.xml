@@ -24,7 +24,6 @@
     <ID>MagicNumber:DataProvider.kt$99</ID>
     <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$6</ID>
     <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$7</ID>
-    <ID>MagicNumber:GroupChatInfoMemberOptionsViewModel.kt$GroupChatInfoMemberOptionsViewModel$30</ID>
     <ID>MaxLineLength:AddChannelFragment.kt$AddChannelFragment$is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel</ID>
     <ID>MaxLineLength:AddChannelViewModel.kt$AddChannelViewModel$private</ID>
     <ID>MaxLineLength:AddGroupChannelMembersAdapter.kt$AddGroupChannelMembersAdapter.MemberViewHolder$inner</ID>
@@ -93,11 +92,6 @@
     <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
-    <ID>TooManyFunctions:AddChannelView.kt$AddChannelView : FrameLayout</ID>
-    <ID>TooManyFunctions:AddChannelViewController.kt$AddChannelViewController</ID>
-    <ID>TooManyFunctions:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment : Fragment</ID>
-    <ID>TooManyFunctions:CustomEventHandler.kt$CustomChatEventHandler : BaseChatEventHandler</ID>
-    <ID>TooManyFunctions:Extensions.kt$io.getstream.chat.ui.sample.common.Extensions.kt</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>

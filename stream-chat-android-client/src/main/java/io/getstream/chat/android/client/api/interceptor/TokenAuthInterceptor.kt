@@ -60,14 +60,16 @@ internal class TokenAuthInterceptor internal constructor(
         }
     }
 
-    private fun addTokenHeader(request: Request): Request {
-        val token = tokenManager.getToken()
+    private fun addTokenHeader(request: Request): Request = tokenManager.getToken().let { token ->
         try {
-            return request.newBuilder().header(AUTH_HEADER, token).build()
-        } catch (e: Throwable) {
-            val description = ChatErrorCode.INVALID_TOKEN.description
-            val code = ChatErrorCode.INVALID_TOKEN.code
-            throw ChatRequestError("$description: $token", code, -1, e)
+            request.newBuilder().header(AUTH_HEADER, token).build()
+        } catch (e: IllegalArgumentException) {
+            throw ChatRequestError(
+                "${ChatErrorCode.INVALID_TOKEN.description}: '$token'",
+                ChatErrorCode.INVALID_TOKEN.code,
+                -1,
+                e
+            )
         }
     }
 

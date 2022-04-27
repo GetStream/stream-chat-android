@@ -39,6 +39,7 @@ public interface QueryMembersErrorHandler : ErrorHandler {
      *
      * @return result The replacement for the original result.
      */
+    @Suppress("LongParameterList")
     public fun onQueryMembersError(
         originalCall: Call<List<Member>>,
         channelType: String,
@@ -51,6 +52,7 @@ public interface QueryMembersErrorHandler : ErrorHandler {
     ): ReturnOnErrorCall<List<Member>>
 }
 
+@Suppress("LongParameterList")
 internal fun Call<List<Member>>.onQueryMembersError(
     errorHandlers: List<QueryMembersErrorHandler>,
     channelType: String,

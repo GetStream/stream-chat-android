@@ -53,6 +53,7 @@ internal class RetroError<T : Any>(val statusCode: Int) : Call<T> {
     }
 
     override fun cancel() {
+        // no-op
     }
 
     override fun execute(): Response<T> {

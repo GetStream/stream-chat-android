@@ -31,9 +31,13 @@ internal class FakeSocketService(
 
     private var connectionUserId: String? = null
 
-    override fun anonymousConnect(endpoint: String, apiKey: String) { }
+    override fun anonymousConnect(endpoint: String, apiKey: String) {
+        // no-op
+    }
 
-    override fun userConnect(endpoint: String, apiKey: String, user: User) { }
+    override fun userConnect(endpoint: String, apiKey: String, user: User) {
+        // no-op
+    }
 
     private val listeners = mutableListOf<SocketListener>()
 
@@ -44,9 +48,11 @@ internal class FakeSocketService(
     }
 
     override fun disconnect() {
+        // no-op
     }
 
     override fun releaseConnection() {
+        // no-op
     }
 
     override fun addListener(listener: SocketListener) {
@@ -58,6 +64,7 @@ internal class FakeSocketService(
     }
 
     override fun onSocketError(error: ChatError) {
+        // no-op
     }
 
     override fun onConnectionResolved(event: ConnectedEvent) {

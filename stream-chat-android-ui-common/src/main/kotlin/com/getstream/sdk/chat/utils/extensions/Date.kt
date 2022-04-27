@@ -19,5 +19,7 @@ package com.getstream.sdk.chat.utils.extensions
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
+private const val ONE_MINUTE_IN_MILISECONDS = 60000
+
 @InternalStreamChatApi
-public fun Date.isInLastMinute(): Boolean = (Date().time - 60000 < time)
+public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILISECONDS < time)

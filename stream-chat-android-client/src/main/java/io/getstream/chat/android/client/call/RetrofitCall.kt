@@ -33,7 +33,7 @@ internal class RetrofitCall<T : Any>(
     private val callbackExecutor: Executor
 ) : Call<T> {
 
-    protected var canceled = AtomicBoolean(false)
+    private var canceled = AtomicBoolean(false)
 
     override fun cancel() {
         canceled.set(true)
@@ -92,6 +92,7 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun getResult(retroCall: retrofit2.Call<T>): Result<T> {
         return try {
             val retrofitResponse = retroCall.execute()
@@ -101,6 +102,7 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
         return if (retrofitResponse.isSuccessful) {
             try {

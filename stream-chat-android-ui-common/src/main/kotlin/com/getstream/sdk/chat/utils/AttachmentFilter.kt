@@ -127,7 +127,7 @@ public class AttachmentFilter(
     private fun matchesMimeType(attachment: AttachmentMetaData, mimeTypes: Array<String>): Boolean {
         return try {
             MimeTypeFilter.matches(attachment.mimeType, mimeTypes) != null
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             false
         }
     }

@@ -47,7 +47,7 @@ public fun ThreadParticipants(
     alignment: MessageAlignment,
     modifier: Modifier = Modifier,
     borderStroke: BorderStroke = BorderStroke(width = 1.dp, color = ChatTheme.colors.appBackground),
-    participantsLimit: Int = DEFAULT_PARTICIPANTS_LIMIT,
+    participantsLimit: Int = DefaultParticipantsLimit,
 ) {
     Box(modifier) {
         /**
@@ -67,8 +67,8 @@ public fun ThreadParticipants(
             val itemPadding = Modifier.padding(start = (index * (itemSize.value / 2)).dp)
 
             /**
-             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of the screen,
-             * the first item should be the upper most.
+             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of the
+             * screen, the first item should be the upper most.
              *
              * If we're aligned to the end, then the last item should be the upper most.
              */
@@ -91,4 +91,7 @@ public fun ThreadParticipants(
     }
 }
 
-private const val DEFAULT_PARTICIPANTS_LIMIT = 4
+/**
+ * The max limit of how many users are shown as participants in a thread.
+ */
+private const val DefaultParticipantsLimit = 4
