@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -64,7 +65,7 @@ import kotlinx.coroutines.launch
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     initialSort: QuerySort<Channel>,
-    private val initialFilters: FilterObject,
+    initialFilters: FilterObject,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
@@ -72,7 +73,7 @@ public class ChannelListViewModel(
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
-     * the [initialFilters] and the initial sort, but can be changed.
+     * the `initialFilters` parameter and the initial sort, but can be changed.
      */
     private val queryConfig = MutableStateFlow(QueryConfig(initialFilters, initialSort))
 
@@ -145,19 +146,22 @@ public class ChannelListViewModel(
      * Makes the initial query to request channels and starts observing state changes.
      */
     private suspend fun init() {
-        searchQuery.combine(queryConfig) { query, config -> query to config }
-            .collectLatest { (query, config) ->
-                val queryChannelsRequest = QueryChannelsRequest(
-                    filter = createQueryChannelsFilter(config.filters, query),
-                    querySort = config.querySort,
-                    limit = channelLimit,
-                    messageLimit = messageLimit,
-                    memberLimit = memberLimit,
-                )
+        chatClient.globalState.user.map { it?.id }.filterNotNull().flatMapLatest {
+            searchQuery.combine(queryConfig) { query, config -> query to config }
+        }.collectLatest { (query, config) ->
+            val filter = createQueryChannelsFilter(config.filters, query)
 
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-                observeChannels(searchQuery = query)
-            }
+            val queryChannelsRequest = QueryChannelsRequest(
+                filter = filter,
+                querySort = config.querySort,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+
+            queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+            observeChannels(searchQuery = query)
+        }
     }
 
     /**
@@ -173,9 +177,12 @@ public class ChannelListViewModel(
      * @return The filter that will be used to query channels.
      */
     private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
+        val userFilter = Filters.`in`("members", listOf(chatClient.getCurrentUser()?.id ?: ""))
+        val baseFilter = Filters.and(filter, userFilter)
+
         return if (searchQuery.isNotEmpty()) {
             Filters.and(
-                filter,
+                baseFilter,
                 Filters.or(
                     Filters.and(
                         Filters.autocomplete("member.user.name", searchQuery),
@@ -185,7 +192,7 @@ public class ChannelListViewModel(
                 )
             )
         } else {
-            filter
+            baseFilter
         }
     }
 
@@ -248,12 +255,15 @@ public class ChannelListViewModel(
      * Allows for the change of filters used for channel queries.
      *
      * Use this if you need to support runtime filter changes, through custom filters UI.
+     *
+     * Warning: The filter that's applied will override the `initialFilters` set through the constructor.
+     *
+     * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
         val currentConfig = this.queryConfig.value
 
-        this.queryConfig.value =
-            currentConfig.copy(filters = Filters.and(initialFilters, newFilters))
+        this.queryConfig.value = currentConfig.copy(filters = newFilters)
     }
 
     /**

@@ -85,8 +85,7 @@ public fun ChannelList(
             ChatClient.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                Filters.eq("type", "messaging")
             )
         )
     ),
