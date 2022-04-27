@@ -31,7 +31,7 @@ class ChatApp : Application() {
             config = Config(),
             appContext = this
         )
-        ChatClient.Builder("qx5us2v6xvmh", this)
+        ChatClient.Builder("hrwwzsgrzapv", this)
             .withPlugin(offlinePluginFactory)
             .logLevel(ChatLogLevel.NOTHING)
             .build()
