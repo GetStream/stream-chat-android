@@ -5,6 +5,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply from: "${rootDir}/scripts/android.gradle"
+apply from: "${rootDir}/scripts/detekt-disabled.gradle"
 
 android {
     defaultConfig {

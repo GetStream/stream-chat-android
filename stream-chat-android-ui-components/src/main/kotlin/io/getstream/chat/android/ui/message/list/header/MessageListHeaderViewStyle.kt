@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property backButtonBadgeBackgroundColor Unread badge color. Default value is [R.color.stream_ui_accent_red].
  * @property showSearchingForNetworkProgressBar Shows/hides searching for network progress bar. Shown by default.
  * @property searchingForNetworkProgressBarTint Progress bar tint color. Default value is [R.color.stream_ui_accent_blue].
+ * @property separatorBackgroundDrawable Background drawable of the separator at the bottom of [MessageListHeaderView].
  */
 public data class MessageListHeaderViewStyle(
     @ColorInt public val background: Int,
@@ -60,6 +61,7 @@ public data class MessageListHeaderViewStyle(
     @ColorInt public val backButtonBadgeBackgroundColor: Int,
     public val showSearchingForNetworkProgressBar: Boolean,
     public val searchingForNetworkProgressBarTint: ColorStateList,
+    public val separatorBackgroundDrawable: Drawable?,
 ) {
 
     internal companion object {
@@ -177,6 +179,11 @@ public data class MessageListHeaderViewStyle(
                     )
                     .build()
 
+                val separatorBackgroundDrawable =
+                    a.getDrawable(
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable
+                    )
+
                 return MessageListHeaderViewStyle(
                     background = background,
                     titleTextStyle = titleTextStyle,
@@ -190,6 +197,7 @@ public data class MessageListHeaderViewStyle(
                     backButtonBadgeBackgroundColor = backButtonBadgeBackgroundColor,
                     showSearchingForNetworkProgressBar = showSearchingForNetworkProgressBar,
                     searchingForNetworkProgressBarTint = searchingForNetworkProgressBarTint,
+                    separatorBackgroundDrawable = separatorBackgroundDrawable
                 ).let(TransformStyle.messageListHeaderStyleTransformer::transform)
             }
         }
