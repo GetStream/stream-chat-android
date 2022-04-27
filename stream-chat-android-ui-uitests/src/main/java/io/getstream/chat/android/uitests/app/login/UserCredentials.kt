@@ -28,7 +28,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Jc Miñarro"
             image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.WtWn2rgZyJNOpg48xUgYoMnG3BvMD5524RND7e7Mmhk"
     ),
     UserCredentials(
         user = User().apply {
@@ -36,7 +36,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Amit Kumar"
             image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.nYq8v8uFvdMwo3GlhQj_prXZArhi1dol-nkhPJsPXjI"
     ),
     UserCredentials(
         user = User().apply {
@@ -44,7 +44,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Belal Khan"
             image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.aGImcXURXHTJZuXpBflcu2U4bWZ84dRJfLkAR5NuTas"
     ),
     UserCredentials(
         user = User().apply {
@@ -52,7 +52,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Dmitrii Bychkov"
             image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9.Mc0yYuNd-Kk_udd2tqiaOFbCnMRk8Lpq4JDDWi4X6CY"
     ),
     UserCredentials(
         user = User().apply {
@@ -60,7 +60,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Filip Babić"
             image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.ZKNNAq-i-oKINbgJVpb750F984gmINRk5eslKK5avA0"
     ),
     UserCredentials(
         user = User().apply {
@@ -68,7 +68,15 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Jaewoong Eum"
             image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.SoSQ1zkdpD-xzrdTnNioFOZQ5pKKcLJj4Jw8wAzOhno"
+    ),
+    UserCredentials(
+        user = User().apply {
+            id = "kanat"
+            name = "Kanat Kiialbaev"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-128"
+        },
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.9DFWiJmdfOsUiYvURCYN5bpUOiMrDvZN62X7HLweVPo"
     ),
     UserCredentials(
         user = User().apply {
@@ -76,23 +84,15 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Leandro Borges Ferreira"
             image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.HGQfqwt1Jj2W25QQLO8hbnNeOrUl04q4a_AjHy0sFWM"
     ),
     UserCredentials(
         user = User().apply {
-            id = "marton"
-            name = "Márton Braun"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U018YPHEW7L-26ab96fd1ed3-128"
+            id = "marin"
+            name = "Marin Tolić"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02N2HTP79A-645f7845aa22-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8"
-    ),
-    UserCredentials(
-        user = User().apply {
-            id = "oleg"
-            name = "Oleg Kuzmin"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U019BEATNCD-bad2dcf654ef-128"
-        },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFyaW4ifQ.jSLjDAcGcz7hHrDyIU8OaSgRDg63aw2cW4C1nqIsB5c"
     ),
     UserCredentials(
         user = User().apply {
@@ -100,15 +100,15 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Rafal Adasiewicz"
             image = "https://ca.slack-edge.com/T02RM6X6B-U0177N46AFN-a4e664d1960d-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.Fx_BMBwlwbfZzSonziklhGt0KWTKVnLRtXRI5RIuJKU"
     ),
     UserCredentials(
         user = User().apply {
-            id = "samuel"
-            name = "Samuel Urbanowicz"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXD396-6d3169b36889-128"
+            id = "tomislav"
+            name = "Tomislav Gazica"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U036AL9LV3Q-aabe5318d2aa-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2FtdWVsIn0.SusttZNc2Y0sc-JPEOPCmTa5FuKDHRcWGO_7kYrC1C0"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9taXNsYXYifQ.-n5L1OmG4KpL0O16h8SeqKJID0DzUmy_nilqTgi8EZQ"
     ),
     UserCredentials(
         user = User().apply {
@@ -116,7 +116,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Thierry Schellenbach"
             image = "https://ca.slack-edge.com/T02RM6X6B-U02RM6X6D-g28a1278a98e-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.hZi4pBPt2v2HSoS-7Yn7Ll2a1twhs763MlRGFAday2c"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.pfG5thPeT7ytMSExrg3yoXQ02AqrLj2gIxuBZkTlr_c"
     ),
     UserCredentials(
         user = User().apply {
@@ -124,7 +124,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "Tommaso Barbugli"
             image = "https://ca.slack-edge.com/T02RM6X6B-U02U7SJP4-0f65a5997877-128"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.1H7yz3CZ_wtSxj0B36tOkfdFtKzULSPwRyesufrTGpM"
     ),
     UserCredentials(
         user = User().apply {
@@ -132,7 +132,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "QA Test 1"
             image = "https://getstream.imgix.net/images/random_svg/QT.png"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.T-LLXoVmdX1Huxg-gjUnBJ7TEnlyGSfa9zFw-N50zLY"
     ),
     UserCredentials(
         user = User().apply {
@@ -140,7 +140,7 @@ val userCredentialsList: List<UserCredentials> = listOf(
             name = "QA Test 2"
             image = "https://getstream.imgix.net/images/random_svg/QT.png"
         },
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.EVNBLb7-yR823jv2jtDcjYBQCxBAQnhLDNhpMjcJ1uI"
     ),
 )
 
