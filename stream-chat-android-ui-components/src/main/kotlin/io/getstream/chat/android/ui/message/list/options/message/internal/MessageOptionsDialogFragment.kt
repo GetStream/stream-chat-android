@@ -283,7 +283,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setFlagMessageListener {
-                if (style.deleteConfirmationEnabled) {
+                if (style.flagMessageConfirmationEnabled) {
                     confirmFlagMessageClickHandler?.onConfirmFlagMessage(message) {
                         messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
                     }
