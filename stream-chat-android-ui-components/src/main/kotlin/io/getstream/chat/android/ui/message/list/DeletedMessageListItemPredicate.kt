@@ -25,10 +25,7 @@ import io.getstream.chat.android.client.ChatClient
 @Deprecated(
     message = "Deprecated in favor of filtering in the ViewModel by using " +
         "'io.getstream.chat.android.common.state.DeletedMessageVisibility'" +
-        " together with 'com.getstream.sdk.chat.viewmodel.messages.setDeletedMessageVisibility()'",
-    replaceWith = ReplaceWith(
-        "io.getstream.chat.android.common.state.DeletedMessageVisibility"
-    ),
+        " together with 'com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.setDeletedMessageVisibility()'",
     level = DeprecationLevel.WARNING
 )
 public sealed class DeletedMessageListItemPredicate : MessageListView.MessageListItemPredicate {
