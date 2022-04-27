@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.client.persistance.repository.factory
 
+/**
+ * Provider of repositories. This is singleton that holds a [RepositoryFactory] and ensures the SDK uses only one
+ * instance of it.
+ */
 public class RepositoryProvider private constructor(
     private val repositoryFactory: RepositoryFactory,
 ) : RepositoryFactory by repositoryFactory {

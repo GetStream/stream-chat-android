@@ -27,28 +27,62 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 
+/**
+ * Factory that creates all repositories of SDK.
+ */
 public interface RepositoryFactory {
 
     public fun <T : Any> get(classz: Class<T>): T
 
+    /**
+     * Creates [UserRepository]
+     */
     public fun createUserRepository(): UserRepository
 
+    /**
+     * Creates [ChannelConfigRepository]
+     */
     public fun createChannelConfigRepository(): ChannelConfigRepository
 
+    /**
+     * Creates [ChannelRepository]
+     *
+     * @param getUser function that provides userId.
+     * @param getMessage function that provides messageId.
+     */
     public fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository
 
+    /**
+     * Creates [QueryChannelsRepository]
+     */
     public fun createQueryChannelsRepository(): QueryChannelsRepository
 
+    /**
+     * Creates [MessageRepository]
+     *
+     * @param getUser function that provides userId.
+     */
     public fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
     ): MessageRepository
 
+    /**
+     * Creates [ReactionRepository]
+     *
+     * @param getUser function that provides userId.
+     */
     public fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository
 
+    /**
+     * Creates [SyncStateRepository]
+     */
     public fun createSyncStateRepository(): SyncStateRepository
 
+    /**
+     * Creates [AttachmentRepository]
+     */
     public fun createAttachmentRepository(): AttachmentRepository
 }

@@ -83,6 +83,9 @@ public class StreamOfflinePluginFactory(
 
     private var repositoryFactory: RepositoryFactory? = null
 
+    /**
+     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
+     */
     public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
         this.repositoryFactory = repositoryFactory
     }
