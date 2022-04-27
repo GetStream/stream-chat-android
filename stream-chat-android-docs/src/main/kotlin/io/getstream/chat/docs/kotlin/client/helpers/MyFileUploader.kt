@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.kotlin.helpers
+package io.getstream.chat.docs.kotlin.client.helpers
 
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
