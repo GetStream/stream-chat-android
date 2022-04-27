@@ -56,7 +56,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseUserRepository ?: run {
             DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[UserRepository::class.java] = repository
             }
         }
     }
@@ -67,7 +67,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseChannelConfigRepository ?: run {
             DatabaseChannelConfigRepository(database.channelConfigDao()).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[ChannelConfigRepository::class.java] = repository
             }
         }
     }
@@ -81,7 +81,7 @@ internal class DatabaseRepositoryFactory(
         return databaseChannelRepository ?: run {
             DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
                 .also { repository ->
-                    repositoriesCache[repository::class.java] = repository
+                    repositoriesCache[ChannelRepository::class.java] = repository
                 }
         }
     }
@@ -92,7 +92,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseQueryChannelsRepository ?: run {
             DatabaseQueryChannelsRepository(database.queryChannelsDao()).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[QueryChannelsRepository::class.java] = repository
             }
         }
     }
@@ -109,7 +109,7 @@ internal class DatabaseRepositoryFactory(
                 currentUser,
                 DEFAULT_CACHE_SIZE
             ).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[MessageRepository::class.java] = repository
             }
         }
     }
@@ -120,7 +120,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseReactionRepository ?: run {
             DatabaseReactionRepository(database.reactionDao(), getUser).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[ReactionRepository::class.java] = repository
             }
         }
     }
@@ -131,7 +131,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseSyncStateRepository ?: run {
             DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[SyncStateRepository::class.java] = repository
             }
         }
     }
@@ -142,7 +142,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseAttachmentRepository ?: run {
             DatabaseAttachmentRepository(database.attachmentDao()).also { repository ->
-                repositoriesCache[repository::class.java] = repository
+                repositoriesCache[AttachmentRepository::class.java] = repository
             }
         }
     }
