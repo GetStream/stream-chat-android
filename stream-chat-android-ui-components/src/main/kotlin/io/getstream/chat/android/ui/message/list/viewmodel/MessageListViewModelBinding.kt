@@ -94,6 +94,10 @@ public fun MessageListViewModel.bindView(
     view.setAttachmentDownloadHandler { downloadAttachmentCall -> onEvent(DownloadAttachment(downloadAttachmentCall)) }
     view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
 
+    ownCapabilities.observe(lifecycleOwner) {
+        view.setOwnCapabilities(it)
+    }
+
     state.observe(lifecycleOwner) { state ->
         when (state) {
             is MessageListViewModel.State.Loading -> {

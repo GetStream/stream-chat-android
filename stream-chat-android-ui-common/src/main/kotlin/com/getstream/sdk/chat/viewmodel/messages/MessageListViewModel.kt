@@ -55,7 +55,12 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -77,6 +82,32 @@ public class MessageListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    public val channelState: StateFlow<ChannelState?> =
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope
+        )
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: LiveData<Set<String>> = channelState.filterNotNull()
+        .flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        ).asLiveData()
 
     /**
      * Contains a list of messages along with additional

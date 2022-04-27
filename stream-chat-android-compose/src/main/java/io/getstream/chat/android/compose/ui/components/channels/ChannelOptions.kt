@@ -35,12 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
-import io.getstream.chat.android.compose.previewdata.PreviewMembersData
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
@@ -50,7 +47,7 @@ import io.getstream.chat.android.compose.state.channels.list.MuteChannel
 import io.getstream.chat.android.compose.state.channels.list.UnmuteChannel
 import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.isDistinct
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * This is the default bottom drawer UI that shows up when the user long taps on a channel item.
@@ -103,22 +100,16 @@ public fun ChannelOptions(
  * Builds the default list of channel options, based on the current user and the state of the channel.
  *
  * @param selectedChannel The currently selected channel.
- * @param currentUser The currently logged in user.
  * @param isMuted If the channel is muted or not.
- * @param channelMembers The members of the channel.
  */
 @Composable
 public fun buildDefaultChannelOptionsState(
     selectedChannel: Channel,
-    currentUser: User?,
     isMuted: Boolean,
-    channelMembers: List<Member>,
+    ownCapabilities: Set<String>,
 ): List<ChannelOptionState> {
-    val canLeaveChannel = !selectedChannel.isDistinct()
-    val canDeleteChannel = channelMembers.firstOrNull { it.user.id == currentUser?.id }
-        ?.role
-        ?.let { it == "admin" || it == "owner" }
-        ?: false
+    val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
+    val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
 
     return listOfNotNull(
         ChannelOptionState(
@@ -185,9 +176,8 @@ private fun ChannelOptionsPreview() {
         ChannelOptions(
             options = buildDefaultChannelOptionsState(
                 selectedChannel = PreviewChannelData.channelWithMessages,
-                currentUser = PreviewUserData.user1,
                 isMuted = false,
-                channelMembers = PreviewMembersData.manyMembers
+                ownCapabilities = ChannelCapabilities.toSet()
             ),
             onChannelOptionClick = {}
         )
