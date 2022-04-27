@@ -4,11 +4,5 @@
   <CurrentIssues>
     <ID>LongParameterList:Linkify.kt$Linkify$( links: MutableList&lt;LinkSpec>, s: Spannable, pattern: Pattern, schemes: Array&lt;String>, matchFilter: Linkify.MatchFilter?, transformFilter: Linkify.TransformFilter?, )</ID>
     <ID>NestedBlockDepth:Linkify.kt$Linkify$private fun pruneOverlaps(links: MutableList&lt;LinkSpec>, text: Spannable)</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private const val LIMIT = 30</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val CHANNEL = createChannel(CID)</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val MESSAGES = createMessageList { createMessage( user = CURRENT_USER, createdAt = Date.from(Instant.now()), parentId = null ) }</ID>
-    <ID>UnusedPrivateMember:MessageListViewModelTest.kt$private val THREAD_MESSAGES = createMessageList { createMessage( createdAt = Date.from(Instant.now()), parentId = THREAD_PARENT_MESSAGE.id, user = CURRENT_USER ) }</ID>
   </CurrentIssues>
 </SmellBaseline>

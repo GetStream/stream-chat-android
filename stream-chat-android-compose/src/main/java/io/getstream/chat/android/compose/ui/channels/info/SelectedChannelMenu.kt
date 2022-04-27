@@ -53,7 +53,6 @@ import io.getstream.chat.android.compose.ui.util.isOneToOne
  *
  * @param selectedChannel The channel the user selected.
  * @param isMuted If the channel is muted for the current user.
- * @param currentUser The currently logged-in user data.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
@@ -81,9 +80,9 @@ public fun SelectedChannelMenu(
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedChannelMenuCenterContent(
             selectedChannel = selectedChannel,
-            currentUser = currentUser,
             isMuted = isMuted,
-            onChannelOptionClick = onChannelOptionClick
+            onChannelOptionClick = onChannelOptionClick,
+            ownCapabilities = selectedChannel.ownCapabilities
         )
     },
 ) {
@@ -141,22 +140,20 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
  * Represents the default content shown at the center of [SelectedChannelMenu] dialog.
  *
  * @param selectedChannel The channel the user selected.
- * @param currentUser The currently logged-in user data.
  * @param isMuted If the channel is muted for the current user.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  */
 @Composable
 internal fun DefaultSelectedChannelMenuCenterContent(
     selectedChannel: Channel,
-    currentUser: User?,
     isMuted: Boolean,
     onChannelOptionClick: (ChannelAction) -> Unit,
+    ownCapabilities: Set<String>
 ) {
     val channelOptions = buildDefaultChannelOptionsState(
         selectedChannel = selectedChannel,
-        currentUser = currentUser,
         isMuted = isMuted,
-        channelMembers = selectedChannel.members
+        ownCapabilities = ownCapabilities
     )
 
     ChannelOptions(channelOptions, onChannelOptionClick)

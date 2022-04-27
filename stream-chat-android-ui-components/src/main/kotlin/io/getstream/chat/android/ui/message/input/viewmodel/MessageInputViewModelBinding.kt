@@ -70,6 +70,10 @@ public fun MessageInputViewModel.bindView(
         view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
     }
 
+    ownCapabilities.observe(lifecycleOwner) {
+        view.setOwnCapabilities(it)
+    }
+
     view.setSendMessageHandler(
         object : MessageInputView.MessageSendHandler {
             val viewModel = this@bindView
@@ -135,6 +139,7 @@ public fun MessageInputViewModel.bindView(
             }
         }
     )
+
     view.setTypingListener(
         object : MessageInputView.TypingListener {
             override fun onKeystroke() = keystroke()

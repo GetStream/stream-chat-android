@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -49,6 +50,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isGiphy
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * Displays all available [MessageOptionItem]s.
@@ -111,12 +113,15 @@ internal fun DefaultMessageOptionItem(
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
  * @param isInThread If the message is in a thread or not, to block off some options.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
     isInThread: Boolean,
+    ownCapabilities: Set<String>,
 ): List<MessageOptionItemState> {
     if (selectedMessage.id.isEmpty()) {
         return emptyList()
@@ -131,160 +136,98 @@ public fun defaultMessageOptionsState(
     val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
     val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
+    // user capabilities
+    val canReplyToMessage = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+    val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
+    val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
+    val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
+    val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
+    val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
+
     return listOfNotNull(
-        resendOptionItemState(isOwnMessage, isMessageFailed, selectedMessage),
-        replyOptionItemState(isMessageSynced, selectedMessage),
-        threadReplyOptionItemState(isInThread, isMessageSynced, selectedMessage),
-        copyMessageOptionItemState(isTextOnlyMessage, hasLinks, selectedMessage),
-        editMessageOptionItemState(isOwnMessage, selectedMessage),
-        flagMessageOptionItemState(isOwnMessage, selectedMessage),
-        pinOptionItemState(isMessageSynced, selectedMessage),
-        deleteOptionItemState(isOwnMessage, selectedMessage),
-        muteOptionItemState(isOwnMessage, isUserMuted, selectedMessage)
+        if (isOwnMessage && isMessageFailed) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_resend_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
+                action = Resend(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (isMessageSynced && canReplyToMessage) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_reply,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
+                action = Reply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (!isInThread && isMessageSynced && canReplyToMessage) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_thread_reply,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
+                action = ThreadReply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (isTextOnlyMessage || hasLinks) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_copy_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
+                action = Copy(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_edit_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
+                action = Edit(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (!isOwnMessage) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_flag_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
+                action = Flag(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (isMessageSynced && canPinMessage) {
+            MessageOptionItemState(
+                title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
+                action = Pin(selectedMessage),
+                iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                titleColor = ChatTheme.colors.textHighEmphasis
+            )
+        } else null,
+        if (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_delete_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
+                action = Delete(selectedMessage),
+                iconColor = ChatTheme.colors.errorAccent,
+                titleColor = ChatTheme.colors.errorAccent
+            )
+        } else null,
+        if (!isOwnMessage) {
+            MessageOptionItemState(
+                title = if (isUserMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
+                iconPainter = painterResource(id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute),
+                action = MuteUser(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null
     )
 }
-
-@Composable
-private fun muteOptionItemState(
-    isOwnMessage: Boolean,
-    isUserMuted: Boolean,
-    selectedMessage: Message,
-) = if (!isOwnMessage) {
-    MessageOptionItemState(
-        title = if (isUserMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
-        iconPainter = painterResource(
-            id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute
-        ),
-        action = MuteUser(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun deleteOptionItemState(
-    isOwnMessage: Boolean,
-    selectedMessage: Message,
-) = if (isOwnMessage) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_delete_message,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
-        action = Delete(selectedMessage),
-        iconColor = ChatTheme.colors.errorAccent,
-        titleColor = ChatTheme.colors.errorAccent
-    )
-} else null
-
-@Composable
-private fun pinOptionItemState(
-    isMessageSynced: Boolean,
-    selectedMessage: Message,
-) = if (isMessageSynced) {
-    MessageOptionItemState(
-        title = if (selectedMessage.pinned) {
-            R.string.stream_compose_unpin_message
-        } else {
-            R.string.stream_compose_pin_message
-        },
-        action = Pin(selectedMessage),
-        iconPainter = painterResource(
-            id = if (selectedMessage.pinned) {
-                R.drawable.stream_compose_ic_unpin_message
-            } else {
-                R.drawable.stream_compose_ic_pin_message
-            }
-        ),
-        iconColor = ChatTheme.colors.textLowEmphasis,
-        titleColor = ChatTheme.colors.textHighEmphasis
-    )
-} else null
-
-@Composable
-private fun flagMessageOptionItemState(
-    isOwnMessage: Boolean,
-    selectedMessage: Message,
-) = if (!isOwnMessage) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_flag_message,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
-        action = Flag(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun editMessageOptionItemState(
-    isOwnMessage: Boolean,
-    selectedMessage: Message,
-) = if (isOwnMessage && !selectedMessage.isGiphy()) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_edit_message,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
-        action = Edit(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun copyMessageOptionItemState(
-    isTextOnlyMessage: Boolean,
-    hasLinks: Boolean,
-    selectedMessage: Message,
-) = if (isTextOnlyMessage || hasLinks) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_copy_message,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
-        action = Copy(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun threadReplyOptionItemState(
-    isInThread: Boolean,
-    isMessageSynced: Boolean,
-    selectedMessage: Message,
-) = if (!isInThread && isMessageSynced) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_thread_reply,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
-        action = ThreadReply(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun replyOptionItemState(
-    isMessageSynced: Boolean,
-    selectedMessage: Message,
-) = if (isMessageSynced) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_reply,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
-        action = Reply(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
-
-@Composable
-private fun resendOptionItemState(
-    isOwnMessage: Boolean,
-    isMessageFailed: Boolean,
-    selectedMessage: Message,
-) = if (isOwnMessage && isMessageFailed) {
-    MessageOptionItemState(
-        title = R.string.stream_compose_resend_message,
-        iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
-        action = Resend(selectedMessage),
-        titleColor = ChatTheme.colors.textHighEmphasis,
-        iconColor = ChatTheme.colors.textLowEmphasis,
-    )
-} else null
 
 /**
  * Preview of [MessageOptions] for a delivered message of the current user.
@@ -347,7 +290,8 @@ private fun MessageOptionsPreview(
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
-            isInThread = false
+            isInThread = false,
+            ownCapabilities = ChannelCapabilities.toSet()
         )
 
         MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})

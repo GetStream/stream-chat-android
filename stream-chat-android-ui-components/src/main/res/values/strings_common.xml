@@ -2,6 +2,7 @@
 <resources>
     <string name="stream_ui_mention" translatable="false">\@%1$s</string>
     <string name="stream_ui_yesterday">Yesterday</string>
+    <string name="stream_ui_ok">OK</string>
 
     <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
     <string name="stream_ui_user_status_online">Online</string>
