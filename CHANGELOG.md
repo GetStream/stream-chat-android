@@ -43,6 +43,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `DeletedMessageListItemPredicate` in favor of `DeletedMessageVisibility`. This is a followup on [#3272](https://github.com/GetStream/stream-chat-android/pull/3272/files) which deprecated filtering messages inside `MessageListView` in favor of filtering messages inside `MessageListViewModel`. [#3409](https://github.com/GetStream/stream-chat-android/pull/3409)
 
 ### ❌ Removed
 
@@ -63,6 +64,7 @@
 - Added support for own capabilities. You can read more about own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 
 ### ⚠️ Changed
+- Deprecated `DeletedMessageListItemPredicate` in favor of `DeletedMessageVisibility`. This is a followup on [#3272](https://github.com/GetStream/stream-chat-android/pull/3272/files) which deprecated filtering messages inside `MessageListView` in favor of filtering messages inside `MessageListViewModel`. [#3409](https://github.com/GetStream/stream-chat-android/pull/3409)
 - Added own capabilities. If you are using our UI components separately from our `ViewModel`s, this has the possibility of introducing a change in functionality. You can find the guide on implementing own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 
 ### ❌ Removed
