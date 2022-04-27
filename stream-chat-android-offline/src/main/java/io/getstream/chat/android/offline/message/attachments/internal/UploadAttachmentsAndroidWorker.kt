@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
@@ -59,8 +60,8 @@ internal class UploadAttachmentsAndroidWorker(
             channelId: String,
             messageId: String,
             networkType: UploadAttachmentsNetworkType,
-        ) {
-            val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
+        ): UUID {
+            val uploadAttachmentsWorkRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(networkType.toNetworkType()).build())
                 .setInputData(
                     workDataOf(
@@ -74,8 +75,19 @@ internal class UploadAttachmentsAndroidWorker(
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
-                uploadAttachmentsWorRequest
+                uploadAttachmentsWorkRequest
             )
+            return uploadAttachmentsWorkRequest.id
+        }
+
+        /**
+         * Stops the ongoing work if there is any.
+         *
+         * @param context Context of the application.
+         * @param workId UUID of the enqueued work.
+         */
+        fun stop(context: Context, workId: UUID) {
+            WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
 }
