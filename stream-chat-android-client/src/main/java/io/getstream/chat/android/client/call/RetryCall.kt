@@ -26,11 +26,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 /**
- * A wrapper around [Call] that allows retrying the original call based on [io.getstream.chat.android.client.utils.retry.RetryPolicy].
+ * A wrapper around [Call] that allows retrying the original call based on
+ * [io.getstream.chat.android.client.utils.retry.RetryPolicy].
  *
  * @param originalCall The original call.
  * @param scope Coroutine scope where the call should be run.
- * @param callRetryService A service responsible for retrying calls based on [io.getstream.chat.android.client.utils.retry.RetryPolicy].
+ * @param callRetryService A service responsible for retrying calls based on
+ * [io.getstream.chat.android.client.utils.retry.RetryPolicy].
  */
 internal class RetryCall<T : Any>(
     private val originalCall: Call<T>,

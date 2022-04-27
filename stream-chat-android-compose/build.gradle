@@ -5,6 +5,7 @@ import io.getstream.chat.android.Versions
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
+apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -74,4 +75,15 @@ dependencies {
     implementation Dependencies.composeCoil
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
+
+    // Tests
+    testImplementation project(':stream-chat-android-test')
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
 }

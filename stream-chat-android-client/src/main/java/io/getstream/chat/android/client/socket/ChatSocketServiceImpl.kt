@@ -40,7 +40,9 @@ import kotlin.math.pow
 import kotlin.properties.Delegates
 
 private const val RETRY_LIMIT = 3
+private const val DEFAULT_DELAY = 500
 
+@Suppress("TooManyFunctions")
 internal class ChatSocketServiceImpl constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
@@ -153,7 +155,7 @@ internal class ChatSocketServiceImpl constructor(
             -> {
                 if (reconnectionAttempts < RETRY_LIMIT) {
                     coroutineScope.launch {
-                        delay(500 * reconnectionAttempts.toDouble().pow(2.0).toLong())
+                        delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
                         reconnect(connectionConf)
                         reconnectionAttempts += 1
                     }

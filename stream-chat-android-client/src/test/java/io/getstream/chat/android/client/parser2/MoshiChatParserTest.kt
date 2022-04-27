@@ -25,9 +25,9 @@ internal class MoshiChatParserTest {
 
     private val parser = MoshiChatParser()
 
-    /** [io.getstream.chat.android.client.parser.EventArguments.eventAdapterArguments] */
+    /** [io.getstream.chat.android.client.parser.EventArguments.eventAdapterArgumentsList] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArguments")
+    @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArgumentsList")
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
         val parsedEvent = parser.fromJson(eventData, ChatEvent::class.java)
         parsedEvent shouldBeEqualTo expectedEvent

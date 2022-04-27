@@ -61,8 +61,7 @@ public fun ChannelClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: ChatEventListener<ChatEvent>
 ): Disposable {
-    val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
-    return subscribeFor(*javaClassTypes, listener = listener)
+    return subscribeFor(eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 }
 
 /**
@@ -75,8 +74,7 @@ public fun ChannelClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: ChatEventListener<ChatEvent>
 ): Disposable {
-    val javaClassTypes: Array<Class<out ChatEvent>> = eventTypes.map { it.java }.toTypedArray()
-    return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
+    return subscribeFor(lifecycleOwner, eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 }
 
 /**

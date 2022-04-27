@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -56,8 +55,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class MoshiChatParser : ChatParser {
-
-    val logger = ChatLogger.get("NEW_SERIALIZATION_ERROR")
 
     private val moshi: Moshi by lazy {
         Moshi.Builder()
@@ -85,16 +82,10 @@ internal class MoshiChatParser : ChatParser {
             .addConverterFactory(MoshiConverterFactory.create(moshi).withErrorLogging())
     }
 
-    override fun toJson(any: Any): String {
-        if (Map::class.java.isAssignableFrom(any.javaClass)) {
-            return serializeMap(any)
-        }
-        if (any is ConnectedEvent) {
-            return serializeConnectedEvent(any)
-        }
-
-        val adapter = moshi.adapter(any.javaClass)
-        return adapter.toJson(any)
+    override fun toJson(any: Any): String = when {
+        Map::class.java.isAssignableFrom(any.javaClass) -> serializeMap(any)
+        any is ConnectedEvent -> serializeConnectedEvent(any)
+        else -> moshi.adapter(any.javaClass).toJson(any)
     }
 
     private val mapAdapter = moshi.adapter(Map::class.java)
@@ -110,26 +101,13 @@ internal class MoshiChatParser : ChatParser {
         return upstreamConnectedEventAdapter.toJson(eventDto)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
-        try {
-            if (clazz == ChatEvent::class.java) {
-                @Suppress("UNCHECKED_CAST")
-                return parseAndProcessEvent(raw) as T
-            }
-            if (clazz == SocketErrorMessage::class.java) {
-                @Suppress("UNCHECKED_CAST")
-                return parseSocketError(raw) as T
-            }
-            if (clazz == ErrorResponse::class.java) {
-                @Suppress("UNCHECKED_CAST")
-                return parseErrorResponse(raw) as T
-            }
-
-            val adapter = moshi.adapter(clazz)
-            return adapter.fromJson(raw)!!
-        } catch (e: Exception) {
-            logger.logE(e)
-            throw e
+        return when (clazz) {
+            ChatEvent::class.java -> parseAndProcessEvent(raw) as T
+            SocketErrorMessage::class.java -> parseSocketError(raw) as T
+            ErrorResponse::class.java -> parseErrorResponse(raw) as T
+            else -> return moshi.adapter(clazz).fromJson(raw)!!
         }
     }
 

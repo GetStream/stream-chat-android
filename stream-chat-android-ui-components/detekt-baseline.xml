@@ -32,17 +32,13 @@
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
     <ID>LongMethod:SuggestionListViewStyle.kt$SuggestionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
-    <ID>LongParameterList:ChannelListViewModel.kt$ChannelListViewModel$( private val filter: FilterObject? = null, private val sort: QuerySort&lt;Channel> = DEFAULT_SORT, private val limit: Int = 30, private val messageLimit: Int = 1, private val memberLimit: Int = 30, private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(), private val chatClient: ChatClient = ChatClient.instance(), private val globalState: GlobalState = chatClient.globalState )</ID>
     <ID>LongParameterList:ChannelViewHolder.kt$ChannelViewHolder$( parent: ViewGroup, private val channelClickListener: ChannelListView.ChannelClickListener, private val channelLongClickListener: ChannelListView.ChannelLongClickListener, private val channelDeleteListener: ChannelListView.ChannelClickListener, private val channelMoreOptionsListener: ChannelListView.ChannelClickListener, private val userClickListener: ChannelListView.UserClickListener, private val swipeListener: ChannelListView.SwipeListener, private val style: ChannelListViewStyle, private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate( parent.streamThemeInflater, parent, false ), private val globalState: GlobalState = ChatClient.instance().globalState, )</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
-    <ID>LongParameterList:MessageListHeaderView.kt$MessageListHeaderView$( isThread: Boolean = headerState.isThread, isTitleEnabled: Boolean = headerState.isTitleEnabled, normalModeTitle: String = headerState.normalModeTitle, threadModeTitle: String = headerState.threadModeTitle, isSubtitleEnabled: Boolean = headerState.isSubtitleEnabled, normalModeSubtitle: String = headerState.normalModeSubtitle, threadModeSubtitle: String = headerState.threadModeSubtitle, typingUsers: List&lt;User> = headerState.typingUsers, onlineState: OnlineState = headerState.onlineState, )</ID>
     <ID>LongParameterList:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$( dateFormatter: DateFormatter, isDirectMessage: () -> Boolean, messageListViewStyle: MessageListViewStyle, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageBackgroundFactory: MessageBackgroundFactory, deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate, isCurrentUserBanned: () -> Boolean )</ID>
-    <ID>LongParameterList:MessageListListenerContainerImpl.kt$MessageListListenerContainerImpl$( messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM), messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM), messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM), threadClickListener: ThreadClickListener = ThreadClickListener(EmptyFunctions.ONE_PARAM), attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM), attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM), reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM), userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM), giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM), linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM), )</ID>
     <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, configuration: MessageOptionsView.Configuration, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
     <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, configuration: MessageOptionsView.Configuration, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
     <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.MessageOptionsHandlers$( val threadReplyHandler: MessageListView.ThreadStartHandler, val retryHandler: MessageListView.MessageRetryHandler, val editClickHandler: MessageListView.MessageEditHandler, val flagClickHandler: MessageListView.MessageFlagHandler, val pinClickHandler: MessageListView.MessagePinHandler, val unpinClickHandler: MessageListView.MessageUnpinHandler, val muteClickHandler: MessageListView.UserMuteHandler, val unmuteClickHandler: MessageListView.UserUnmuteHandler, val blockClickHandler: MessageListView.UserBlockHandler, val deleteClickHandler: MessageListView.MessageDeleteHandler, val replyClickHandler: MessageListView.MessageReplyHandler, )</ID>
     <ID>LongParameterList:MessageOptionsView.kt$MessageOptionsView$( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
-    <ID>LongParameterList:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, isMyMessage: Boolean, isSingleReaction: Boolean, inverseBubbleStyle: Boolean = false, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
     <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>
@@ -165,30 +161,12 @@
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:MessageInputView.kt$MessageInputView$e: Exception</ID>
-    <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
-    <ID>TooManyFunctions:AttachmentSelectionDialogFragment.kt$AttachmentSelectionDialogFragment : BottomSheetDialogFragmentAttachmentSelectionListener</ID>
-    <ID>TooManyFunctions:AvatarBitmapFactory.kt$AvatarBitmapFactory</ID>
-    <ID>TooManyFunctions:AvatarDecorator.kt$AvatarDecorator : BaseDecorator</ID>
-    <ID>TooManyFunctions:ChannelActionsDialogFragment.kt$ChannelActionsDialogFragment : BottomSheetDialogFragment</ID>
-    <ID>TooManyFunctions:ChannelListFragment.kt$ChannelListFragment : Fragment</ID>
-    <ID>TooManyFunctions:ChannelListHeaderView.kt$ChannelListHeaderView : ConstraintLayout</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
-    <ID>TooManyFunctions:ChannelListViewModel.kt$ChannelListViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:ChannelViewHolder.kt$ChannelViewHolder : SwipeViewHolder</ID>
-    <ID>TooManyFunctions:FileAttachmentFragment.kt$FileAttachmentFragment : Fragment</ID>
-    <ID>TooManyFunctions:FootnoteDecorator.kt$FootnoteDecorator : BaseDecorator</ID>
-    <ID>TooManyFunctions:FootnoteView.kt$FootnoteView : ConstraintLayout</ID>
-    <ID>TooManyFunctions:MediaAttachmentFragment.kt$MediaAttachmentFragment : Fragment</ID>
-    <ID>TooManyFunctions:Message.kt$io.getstream.chat.android.ui.common.extensions.Message.kt</ID>
     <ID>TooManyFunctions:MessageInputFieldView.kt$MessageInputFieldView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>TooManyFunctions:MessageListHeaderView.kt$MessageListHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory</ID>
     <ID>TooManyFunctions:MessageListView.kt$MessageListView : ConstraintLayout</ID>
-    <ID>TooManyFunctions:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment : FullScreenDialogFragment</ID>
-    <ID>TooManyFunctions:MessageOptionsView.kt$MessageOptionsView : FrameLayout</ID>
-    <ID>TooManyFunctions:MessageReplyView.kt$MessageReplyView : FrameLayout</ID>
-    <ID>TooManyFunctions:ReactionsDecorator.kt$ReactionsDecorator : BaseDecorator</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>
     <ID>UnnecessaryAbstractClass:InnerAttachmentViewHolder.kt$InnerAttachmentViewHolder</ID>
     <ID>UnusedImports:ChannelListViewStyle.kt$import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder</ID>

@@ -17,12 +17,17 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for
  * special [extraData] handling.
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map"
+)
 @JsonClass(generateAdapter = true)
 internal data class UpstreamMessageDto(
     val attachments: List<AttachmentDto>,
@@ -50,6 +55,10 @@ internal data class UpstreamMessageDto(
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter] for
  * special [extraData] handling.
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map"
+)
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMessageDto(
     val attachments: List<AttachmentDto>,

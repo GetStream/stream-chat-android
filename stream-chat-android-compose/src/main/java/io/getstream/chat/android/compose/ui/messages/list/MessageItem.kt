@@ -170,7 +170,7 @@ public fun MessageItem(
             durationMillis = if (focusState is MessageFocused) {
                 AnimationConstants.DefaultDurationMillis
             } else {
-                HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+                HighlightFadeOutDurationMillis
             }
         )
     ).value else backgroundColor
@@ -282,7 +282,6 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-
         val reactionCounts = message.reactionCounts.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
         reactionCounts
@@ -292,9 +291,8 @@ internal fun DefaultMessageItemHeaderContent(
             ?.map { type ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
-                val painter = reactionIcon.getPainter(isSelected)
                 ReactionOptionItemState(
-                    painter = painter,
+                    painter = reactionIcon.getPainter(isSelected),
                     type = type
                 )
             }
@@ -557,4 +555,4 @@ internal fun DefaultMessageTextContent(
 /**
  * Represents the time the highlight fade out transition will take.
  */
-public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+public const val HighlightFadeOutDurationMillis: Int = 1000

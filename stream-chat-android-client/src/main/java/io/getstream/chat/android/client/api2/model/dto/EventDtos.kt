@@ -466,19 +466,19 @@ internal data class UpstreamConnectedEventDto(
 @JsonClass(generateAdapter = true)
 internal data class ConnectingEventDto(
     val type: String,
-    val createdAt: Date,
+    val created_at: Date,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class DisconnectedEventDto(
     val type: String,
-    val createdAt: Date,
+    val created_at: Date,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ErrorEventDto(
     val type: String,
-    val createdAt: Date,
+    val created_at: Date,
     val error: ChatError,
 ) : ChatEventDto()
 

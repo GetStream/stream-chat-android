@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.models
 
-internal class ModelFields {
-    companion object {
-        const val MEMBERS = "members"
-    }
+internal object ModelFields {
+    const val MEMBERS = "members"
 }

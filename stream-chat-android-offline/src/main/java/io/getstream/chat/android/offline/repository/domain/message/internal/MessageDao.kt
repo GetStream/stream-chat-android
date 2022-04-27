@@ -28,6 +28,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import java.util.Date
 
 @Dao
+@Suppress("TooManyFunctions")
 internal abstract class MessageDao {
 
     @Transaction

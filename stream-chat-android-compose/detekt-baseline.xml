@@ -6,7 +6,6 @@
     <ID>ComplexMethod:AttachmentsPicker.kt$ @OptIn(ExperimentalPermissionsApi::class) @Composable public fun AttachmentsPicker( attachmentsPickerViewModel: AttachmentsPickerViewModel, onAttachmentsSelected: (List&lt;Attachment>) -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.bottomSheet, )</ID>
     <ID>ComplexMethod:ImagePreviewActivity.kt$ImagePreviewActivity$ @OptIn(ExperimentalCoilApi::class) @Composable private fun ImagePreviewContent( pagerState: PagerState, attachments: List&lt;Attachment>, )</ID>
     <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel$ private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, ): List&lt;MessageListItemState></ID>
-    <ID>ComplexMethod:MessageOptions.kt$ @Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ): List&lt;MessageOptionItemState></ID>
     <ID>ComplexMethod:MessagesScreen.kt$ @OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class) @Composable public fun MessagesScreen( channelId: String, messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT, showHeader: Boolean = true, enforceUniqueReactions: Boolean = true, showDateSeparators: Boolean = true, showSystemMessages: Boolean = true, deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE, onBackPressed: () -> Unit = {}, onHeaderActionClick: (channel: Channel) -> Unit = {}, )</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>LongMethod:AttachmentsPicker.kt$ @Composable private fun AttachmentPickerOptions( attachmentsPickerMode: AttachmentsPickerMode, hasPickedImages: Boolean, hasPickedFiles: Boolean, onOptionClick: (AttachmentsPickerMode) -> Unit, onSendAttachmentsClick: () -> Unit, )</ID>
@@ -16,81 +15,23 @@
     <ID>LongMethod:GiphyMessageContent.kt$ @Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:ImageAttachmentContent.kt$ @OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:ImagePreviewActivity.kt$ImagePreviewActivity$ @OptIn(ExperimentalCoilApi::class) @Composable private fun ImagePreviewContent( pagerState: PagerState, attachments: List&lt;Attachment>, )</ID>
-    <ID>LongMethod:LinkAttachmentContent.kt$ @OptIn(ExperimentalFoundationApi::class) @Composable public fun LinkAttachmentContent( attachmentState: AttachmentState, linkDescriptionMaxLines: Int, modifier: Modifier = Modifier, )</ID>
-    <ID>LongMethod:MessageItem.kt$ @Composable internal fun DefaultMessageItemHeaderContent( messageItem: MessageItemState, onReactionsClick: (Message) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageListHeader.kt$ @Composable public fun DefaultMessageListHeaderCenterContent( channel: Channel, currentUser: User?, modifier: Modifier = Modifier, typingUsers: List&lt;User> = emptyList(), messageMode: MessageMode = MessageMode.Normal, onHeaderActionClick: (Channel) -> Unit = {}, connectionState: ConnectionState = ConnectionState.CONNECTED, )</ID>
-    <ID>LongMethod:MessageOptions.kt$ @Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:MessagesScreen.kt$ @OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class) @Composable public fun MessagesScreen( channelId: String, messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT, showHeader: Boolean = true, enforceUniqueReactions: Boolean = true, showDateSeparators: Boolean = true, showSystemMessages: Boolean = true, deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE, onBackPressed: () -> Unit = {}, onHeaderActionClick: (channel: Channel) -> Unit = {}, )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$ public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
     <ID>LongParameterList:Messages.kt$( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( context: Context, channelId: String, enforceUniqueReactions: Boolean, messageLimit: Int, showDateSeparators: Boolean, showSystemMessages: Boolean, deletedMessageVisibility: DeletedMessageVisibility, )</ID>
     <ID>MagicNumber:AttachmentsPicker.kt$4f</ID>
     <ID>MagicNumber:AttachmentsPicker.kt$5f</ID>
-    <ID>MagicNumber:ExtendedReactionsOptions.kt$5</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
-    <ID>MagicNumber:GroupAvatar.kt$4</ID>
     <ID>MagicNumber:ImageAttachmentContent.kt$3</ID>
     <ID>MagicNumber:ImageAttachmentContent.kt$4</ID>
     <ID>MagicNumber:ImagePreviewActivity.kt$ImagePreviewActivity$8f</ID>
     <ID>MagicNumber:ImageUtils.kt$255</ID>
-    <ID>MagicNumber:ImagesPicker.kt$3</ID>
-    <ID>MagicNumber:MessageListViewModel.kt$MessageListViewModel$2000</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
-    <ID>MagicNumber:ReactionsPicker.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
-    <ID>MagicNumber:UnreadCountIndicator.kt$99</ID>
-    <ID>MaxLineLength:AttachmentFactory.kt$AttachmentFactory$*</ID>
-    <ID>MaxLineLength:AttachmentsPicker.kt$tint = if (!hasPickedFiles &amp;&amp; !hasPickedImages) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled</ID>
-    <ID>MaxLineLength:AttachmentsPicker.kt$tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis</ID>
-    <ID>MaxLineLength:ChannelList.kt$*</ID>
-    <ID>MaxLineLength:ChannelViewModelFactory.kt$ChannelViewModelFactory$?:</ID>
-    <ID>MaxLineLength:Channels.kt$*</ID>
-    <ID>MaxLineLength:ExtendedReactionsOptions.kt$*</ID>
-    <ID>MaxLineLength:FileAttachmentFactory.kt$it.uploadId != null || it.upload != null || it.type == ModelType.attach_file || it.type == ModelType.attach_video || it.type == ModelType.attach_audio</ID>
-    <ID>MaxLineLength:FilesPickerItemImage.kt$*</ID>
-    <ID>MaxLineLength:MediaAttachmentPreviewHandler.kt$MediaAttachmentPreviewHandler$if (!mimeType.isNullOrEmpty() &amp;&amp; (mimeType.contains(ModelType.attach_audio) || mimeType.contains(ModelType.attach_video))) return true</ID>
-    <ID>MaxLineLength:MessageComposer.kt$*</ID>
-    <ID>MaxLineLength:MessageComposer.kt$tint = if (isAttachmentsButtonEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled</ID>
-    <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
-    <ID>MaxLineLength:MessageInputOptions.kt$id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message</ID>
-    <ID>MaxLineLength:MessageInputOptions.kt$painterResource(id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit)</ID>
-    <ID>MaxLineLength:MessageList.kt$*</ID>
-    <ID>MaxLineLength:MessageList.kt$lazyListState: LazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId)</ID>
-    <ID>MaxLineLength:MessageListUtils.kt$*</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel$is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.Companion$*</ID>
-    <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (isUserMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute)</ID>
-    <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>
-    <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
-    <ID>MaxLineLength:Messages.kt$*</ID>
-    <ID>MaxLineLength:Messages.kt$if</ID>
-    <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$?:</ID>
-    <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$clipboardHandler = ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)</ID>
-    <ID>MaxLineLength:OnlineIndicator.kt$*</ID>
-    <ID>MaxLineLength:ReactionOptions.kt$*</ID>
-    <ID>MaxLineLength:SelectedMessageMenu.kt$*</ID>
-    <ID>MaxLineLength:SelectedReactionsMenu.kt$*</ID>
-    <ID>MaxLineLength:ThreadParticipants.kt$*</ID>
-    <ID>MaxLineLength:UploadingFooter.kt$*</ID>
-    <ID>ReturnCount:DocumentAttachmentPreviewHandler.kt$DocumentAttachmentPreviewHandler$override fun canHandle(attachment: Attachment): Boolean</ID>
-    <ID>ReturnCount:MediaAttachmentPreviewHandler.kt$MediaAttachmentPreviewHandler$override fun canHandle(attachment: Attachment): Boolean</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$ public fun updateLastSeenMessage(message: Message)</ID>
-    <ID>TooManyFunctions:ChannelList.kt$io.getstream.chat.android.compose.ui.channels.list.ChannelList.kt</ID>
-    <ID>TooManyFunctions:ChannelListViewModel.kt$ChannelListViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:ImagePreviewActivity.kt$ImagePreviewActivity : AppCompatActivity</ID>
-    <ID>TooManyFunctions:MessageComposer.kt$io.getstream.chat.android.compose.ui.messages.composer.MessageComposer.kt</ID>
-    <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:MessageListViewModel.kt$MessageListViewModel : ViewModel</ID>
-    <ID>TooManyFunctions:MessageUtils.kt$io.getstream.chat.android.compose.ui.util.MessageUtils.kt</ID>
-    <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f</ID>
-    <ID>TopLevelPropertyNaming:ImageUtils.kt$private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f</ID>
-    <ID>TopLevelPropertyNaming:MessageInput.kt$/** * The default number of lines allowed in the input. The message input will become scrollable after * this threshold is exceeded. */ private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6</ID>
-    <ID>TopLevelPropertyNaming:MessageItem.kt$/** * Represents the time the highlight fade out transition will take. */ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000</ID>
-    <ID>TopLevelPropertyNaming:ReactionOptions.kt$/** * The default maximum number of reactions shown before the show more button. */ private const val DEFAULT_NUMBER_OF_REACTIONS_SHOWN = 5</ID>
-    <ID>TopLevelPropertyNaming:ThreadParticipants.kt$private const val DEFAULT_PARTICIPANTS_LIMIT = 4</ID>
-    <ID>TopLevelPropertyNaming:UnreadCountIndicator.kt$/** * The unread count that's shown for many messages. */ private const val UNREAD_COUNT_MANY = "99+"</ID>
   </CurrentIssues>
 </SmellBaseline>

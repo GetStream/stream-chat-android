@@ -34,6 +34,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
+ * Default max number of avatars shown in the grid.
+ */
+private const val DefaultNumberOfAvatars = 4
+
+/**
  * Represents an avatar with a matrix of user images or initials.
  *
  * @param users The users to show.
@@ -50,7 +55,7 @@ public fun GroupAvatar(
     textStyle: TextStyle = ChatTheme.typography.captionBold,
     onClick: (() -> Unit)? = null,
 ) {
-    val avatarUsers = users.take(4)
+    val avatarUsers = users.take(DefaultNumberOfAvatars)
     val imageCount = avatarUsers.size
 
     val clickableModifier: Modifier = if (onClick != null) {

@@ -14,7 +14,7 @@
         <!-- Font assets reference for the ChannelHeader's online state title -->
         <attr name="streamUiOnlineTitleFontAssets" format="string" />
         <!-- Text style of the ChannelHeader's online state title: "normal", "bold", and "italic". -->
-        <attr name="streamUiOnlineTitleTextStyle" >
+        <attr name="streamUiOnlineTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -45,6 +45,9 @@
         <attr name="streamUiActionButtonIcon" format="reference" />
         <!-- Action button background tint -->
         <attr name="streamUiActionBackgroundTint" format="color|reference" />
+        <!-- Separator background drawable -->
+        <attr name="streamUiChannelListSeparatorBackgroundDrawable" format="reference" />
+
     </declare-styleable>
 
 </resources>
