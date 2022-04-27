@@ -61,4 +61,4 @@ dokkasaurus_filter.json                 @leandroBorgesFerreira
 
 # Detekt
 config/detekt       @jcminarro
-*baseline.xml       @jcminarro
+*baseline.xml       @GetStream/android-developers
