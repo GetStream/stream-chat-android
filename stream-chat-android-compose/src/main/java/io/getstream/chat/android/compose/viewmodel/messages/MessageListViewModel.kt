@@ -266,9 +266,9 @@ public class MessageListViewModel(
                         -> messagesState.copy(isLoading = true)
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
                             messagesState.copy(
-                            isLoading = false,
-                            messageItems = emptyList(),
-                        )
+                                isLoading = false,
+                                messageItems = emptyList(),
+                            )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
