@@ -28,11 +28,7 @@ internal class TokenManagerImpl : TokenManager {
     }
 
     override fun loadSync(): String {
-        return try {
-            provider.loadToken()
-        } catch (t: Throwable) {
-            EMPTY_TOKEN
-        }.also {
+        return provider.loadToken().also {
             this.token = it
         }
     }

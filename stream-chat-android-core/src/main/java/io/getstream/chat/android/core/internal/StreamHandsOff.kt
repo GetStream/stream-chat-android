@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.core.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.User
-
-internal open class InitConnectionListener {
-
-    open fun onSuccess(data: ConnectionData) {
-    }
-
-    open fun onError(error: ChatError) {
-    }
-
-    data class ConnectionData(val user: User, val connectionId: String)
-}
+/**
+ * Indicates that the annotated code should not be modified without consulting  the team.
+ * @param reason
+ * For example:
+ *
+ * <pre>
+ * &#064;StreamHandsOff(reason = "If you move a card, the house is collapsed")
+ * public class HouseOfCards { }
+</pre> *
+ */
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+public annotation class StreamHandsOff(val reason: String)

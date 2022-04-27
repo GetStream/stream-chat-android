@@ -56,7 +56,7 @@ public fun MessageInput(
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    maxLines: Int = DEFAULT_MESSAGE_INPUT_MAX_LINES,
+    maxLines: Int = DefaultMessageInputMaxLines,
     label: @Composable () -> Unit = { DefaultComposerLabel() },
     innerLeadingContent: @Composable RowScope.() -> Unit = {},
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
@@ -119,4 +119,4 @@ public fun MessageInput(
  * The default number of lines allowed in the input. The message input will become scrollable after
  * this threshold is exceeded.
  */
-private const val DEFAULT_MESSAGE_INPUT_MAX_LINES = 6
+private const val DefaultMessageInputMaxLines = 6

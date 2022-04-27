@@ -16,20 +16,21 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.events.ChatEvent
-import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
+import io.getstream.chat.android.client.parser2.testdata.SocketErrorResponseTestData
+import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Test
 
-internal class MoshiChatParserTest {
+internal class SocketErrorResponseAdapterTest {
 
     private val parser = MoshiChatParser()
 
-    /** [io.getstream.chat.android.client.parser.EventArguments.eventAdapterArgumentsList] */
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArgumentsList")
-    fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
-        val parsedEvent = parser.fromJson(eventData, ChatEvent::class.java)
-        parsedEvent shouldBeEqualTo expectedEvent
+    @Test
+    fun `Deserialize JSON socket error response`() {
+        val error = parser.fromJson(
+            SocketErrorResponseTestData.json,
+            SocketErrorResponse::class.java
+        )
+        error `should be equal to` SocketErrorResponseTestData.socketErrorResponse
     }
 }

@@ -29,8 +29,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * A footer indicating the current upload progress - how many items have been uploaded and what the total number of items
- * is.
+ * A footer indicating the current upload progress - how many items have been uploaded and what the total number of
+ * items is.
  *
  * @param message The message to show the content of.
  * @param modifier Modifier for styling.
@@ -50,7 +50,9 @@ public fun UploadingFooter(
         OwnedMessageVisibilityContent(message = message)
 
         Text(
-            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount),
+            text = stringResource(
+                id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount
+            ),
             style = ChatTheme.typography.body,
             textAlign = TextAlign.End
         )

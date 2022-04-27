@@ -131,6 +131,7 @@ internal class EventDtoAdapter(
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
 
+    @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
         if (reader.peek() == JsonReader.Token.NULL) {
             reader.nextNull<Nothing?>()

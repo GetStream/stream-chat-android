@@ -18,12 +18,9 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -35,7 +32,6 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
-import java.util.Date
 
 internal class ChannelsApiCallsTests {
 
@@ -319,14 +315,6 @@ internal class ChannelsApiCallsTests {
     @Test
     fun markReadSuccess() {
         val messageId = "message-id"
-        val event = MessageReadEvent(
-            EventType.MESSAGE_READ,
-            Date(),
-            User(),
-            "${mock.channelType}:${mock.channelId}",
-            mock.channelType,
-            mock.channelId,
-        )
 
         Mockito.`when`(
             mock.api.markRead(

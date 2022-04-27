@@ -121,6 +121,7 @@ internal class AttachmentHelperTests {
         )
 
         @JvmStatic
+        @Suppress("MaxLineLength")
         fun streamUrlsInput() = listOf(
             "https://www.google.com/search?q=find+something" to false,
             "https://stream-chat-us-east-c4.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&s=43257e963dbb993d65bd358d57b54a38" to true,

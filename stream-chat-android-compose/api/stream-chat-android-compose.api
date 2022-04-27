@@ -1272,7 +1272,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageCon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageItemKt {
-	public static final field HIGHLIGHT_FADE_OUT_DURATION_MILLIS I
+	public static final field HighlightFadeOutDurationMillis I
 	public static final fun MessageItem (Lio/getstream/chat/android/compose/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;III)V
 }
 

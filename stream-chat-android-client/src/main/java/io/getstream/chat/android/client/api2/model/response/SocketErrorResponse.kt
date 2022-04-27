@@ -17,12 +17,16 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.core.internal.StreamHandsOff
 
 @JsonClass(generateAdapter = true)
 internal data class SocketErrorResponse(
     val error: ErrorResponse? = null,
 ) {
 
+    @StreamHandsOff(
+        reason = "Field `StatusCode` name is right, even when it doesn't follow camelCase nor snake_case rules"
+    )
     @JsonClass(generateAdapter = true)
     data class ErrorResponse(
         val code: Int = -1,

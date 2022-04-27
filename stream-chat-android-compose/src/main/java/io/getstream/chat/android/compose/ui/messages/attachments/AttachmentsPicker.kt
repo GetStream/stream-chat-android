@@ -366,7 +366,11 @@ private fun AttachmentPickerOptions(
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled
+                        tint = if (!hasPickedFiles && !hasPickedImages) {
+                            ChatTheme.colors.textLowEmphasis
+                        } else {
+                            ChatTheme.colors.disabled
+                        }
                     )
                 },
                 onClick = { onOptionClick(MediaCapture) }
@@ -387,7 +391,11 @@ private fun AttachmentPickerOptions(
                         .mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                    tint = if (hasPickedFiles || hasPickedImages) {
+                        ChatTheme.colors.primaryAccent
+                    } else {
+                        ChatTheme.colors.textLowEmphasis
+                    }
                 )
             }
         )

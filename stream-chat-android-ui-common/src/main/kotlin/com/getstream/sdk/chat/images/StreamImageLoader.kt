@@ -34,6 +34,7 @@ public sealed interface StreamImageLoader {
 
     public var imageHeadersProvider: ImageHeadersProvider
 
+    @Suppress("LongParameterList")
     public fun load(
         target: ImageView,
         data: Any?,
@@ -43,6 +44,7 @@ public sealed interface StreamImageLoader {
         onComplete: () -> Unit = {},
     ): Disposable
 
+    @Suppress("LongParameterList")
     public fun load(
         target: ImageView,
         data: Any?,
@@ -52,6 +54,7 @@ public sealed interface StreamImageLoader {
         onComplete: () -> Unit = {},
     ): Disposable
 
+    @Suppress("LongParameterList")
     public suspend fun loadAndResize(
         target: ImageView,
         data: Any?,
@@ -61,6 +64,7 @@ public sealed interface StreamImageLoader {
         onComplete: () -> Unit = {},
     )
 
+    @Suppress("LongParameterList")
     public fun loadVideoThumbnail(
         target: ImageView,
         uri: Uri?,

@@ -244,7 +244,8 @@ public abstract class com/getstream/sdk/chat/utils/LegacyDateFormatter : com/get
 public final class com/getstream/sdk/chat/utils/MediaStringUtil {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/utils/MediaStringUtil;
 	public static final fun convertFileSizeByteCount (J)Ljava/lang/String;
-	public static final fun convertVideoLength (J)Ljava/lang/String;
+	public static final fun convertVideoLength (JLjava/util/Locale;)Ljava/lang/String;
+	public static synthetic fun convertVideoLength$default (JLjava/util/Locale;ILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/utils/StartStopBuffer {
@@ -381,8 +382,7 @@ public final class com/getstream/sdk/chat/view/messages/MessageListItemWrapper {
 public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun dismissReply ()V
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
@@ -414,6 +414,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLive
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field DEFAULT_MESSAGES_LIMIT I
+	public static final field SEPARATOR_TIME I
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;

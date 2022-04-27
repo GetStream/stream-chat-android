@@ -28,8 +28,8 @@ import io.getstream.chat.android.compose.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f
-private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f
+private const val GradientDarkerColorFactor = 1.3f
+private const val GradientLighterColorFactor = 0.7f
 
 /**
  * Used for gradient color adjustment when the user doesn't have an image.
@@ -67,8 +67,8 @@ internal fun initialsGradient(initials: String): Brush {
 
     return Brush.linearGradient(
         listOf(
-            Color(adjustColorBrightness(baseColor, GRADIENT_DARKER_COLOR_FACTOR)),
-            Color(adjustColorBrightness(baseColor, GRADIENT_LIGHTER_COLOR_FACTOR)),
+            Color(adjustColorBrightness(baseColor, GradientDarkerColorFactor)),
+            Color(adjustColorBrightness(baseColor, GradientLighterColorFactor)),
         )
     )
 }
