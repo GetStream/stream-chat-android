@@ -80,6 +80,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
             configActionButton(typedArray)
+            configureSeparator(typedArray)
         }
     }
 
@@ -123,6 +124,20 @@ public class ChannelListHeaderView : ConstraintLayout {
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
                     ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+        }
+    }
+
+    /**
+     * Uses the [typedArray] to customize the separator View's background drawable.
+     *
+     * @param typedArray The attribute array the user passed to the XML component.
+     */
+    private fun configureSeparator(typedArray: TypedArray) {
+        binding.separator.apply {
+            val drawable =
+                typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiChannelListSeparatorBackgroundDrawable)
+            visibility = if (drawable != null) VISIBLE else GONE
+            background = drawable
         }
     }
 
