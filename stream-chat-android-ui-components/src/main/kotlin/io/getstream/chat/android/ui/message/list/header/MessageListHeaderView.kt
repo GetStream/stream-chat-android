@@ -159,6 +159,9 @@ public class MessageListHeaderView : FrameLayout {
         configOnlineLabel()
     }
 
+    /**
+     * Uses the [style] to change the separator View's background visibility and drawable.
+     */
     private fun configBackground() {
         setBackgroundColor(style.background)
         binding.separator.visibility = if (style.separatorBackgroundDrawable != null) VISIBLE else GONE

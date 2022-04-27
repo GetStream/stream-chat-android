@@ -127,6 +127,11 @@ public class ChannelListHeaderView : ConstraintLayout {
         }
     }
 
+    /**
+     * Uses the [typedArray] to customize the separator View's background drawable.
+     *
+     * @param typedArray The attribute array the user passed to the XML component.
+     */
     private fun configureSeparator(typedArray: TypedArray) {
         binding.separator.apply {
             val drawable =
