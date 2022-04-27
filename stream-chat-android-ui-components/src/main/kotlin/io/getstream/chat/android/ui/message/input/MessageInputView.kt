@@ -74,11 +74,11 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
@@ -623,6 +623,8 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configAttachmentButton() {
         binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
+        binding.attachmentsButton.setBorderlessRipple(messageInputViewStyle.attachmentButtonRippleColor)
+
         setAttachmentButtonClickListener {
             context.getFragmentManager()?.let {
                 AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
@@ -695,8 +697,10 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configLightningButton() {
+        binding.commandsButton.setImageDrawable(messageInputViewStyle.commandsButtonIcon)
+        binding.commandsButton.setBorderlessRipple(messageInputViewStyle.commandButtonRippleColor)
+
         binding.commandsButton.run {
-            messageInputViewStyle.commandsButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
                     if (isSelected || it.isSuggestionListVisible()) {
