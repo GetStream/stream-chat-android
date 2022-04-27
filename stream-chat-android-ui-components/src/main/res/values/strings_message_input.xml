@@ -4,6 +4,7 @@
     <string name="stream_ui_message_input_send_as_direct_message">Also send as direct message</string>
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
+    <string name="stream_ui_message_cannot_send_messages_hint">You can\'t send messages in this channel</string>
     <string name="stream_ui_message_input_only_attachments_hint">Add a comment or send</string>
     <string name="stream_ui_message_input_slow_mode_hint">Slow mode ON</string>
 
@@ -33,5 +34,6 @@
     <string name="stream_ui_message_input_error_max_length">Max message length (%1$d) exceeded.</string>
     <string name="stream_ui_message_input_error_file_large_size">File is too large - max %dMB.</string>
     <string name="stream_ui_message_input_error_max_attachments_count_exceeded">Attachments count (%1$d) exceeded.</string>
+    <string name="stream_ui_message_input_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_ui_message_input_error_command_not_allowed" translatable="false">It is not possible to use a command when editing messages</string>
 </resources>

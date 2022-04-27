@@ -77,6 +77,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -84,6 +85,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -122,6 +125,23 @@ public class MessageListViewModel(
         messageLimit = messageLimit,
         coroutineScope = viewModelScope
     )
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    private val ownCapabilities: StateFlow<Set<String>> =
+        channelState.filterNotNull()
+            .flatMapLatest { it.channelData }
+            .map { it.ownCapabilities }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = setOf()
+            )
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -247,7 +267,7 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
                             messagesState.copy(
                                 isLoading = false,
-                                messageItems = emptyList()
+                                messageItems = emptyList(),
                             )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
                             messagesState.copy(
@@ -259,7 +279,7 @@ public class MessageListViewModel(
                                 ),
                                 isLoadingMore = false,
                                 endOfMessages = channelState.endOfOlderMessages.value,
-                                currentUser = user
+                                currentUser = user,
                             )
                         }
                     }
@@ -495,7 +515,12 @@ public class MessageListViewModel(
      */
     public fun selectMessage(message: Message?) {
         if (message != null) {
-            changeSelectMessageState(SelectedMessageOptionsState(message))
+            changeSelectMessageState(
+                SelectedMessageOptionsState(
+                    message = message,
+                    ownCapabilities = ownCapabilities.value
+                )
+            )
         }
     }
 
@@ -506,7 +531,12 @@ public class MessageListViewModel(
      */
     public fun selectReactions(message: Message?) {
         if (message != null) {
-            changeSelectMessageState(SelectedMessageReactionsState(message))
+            changeSelectMessageState(
+                SelectedMessageReactionsState(
+                    message = message,
+                    ownCapabilities = ownCapabilities.value
+                )
+            )
         }
     }
 
@@ -517,7 +547,12 @@ public class MessageListViewModel(
      */
     public fun selectExtendedReactions(message: Message?) {
         if (message != null) {
-            changeSelectMessageState(SelectedMessageReactionsPickerState(message))
+            changeSelectMessageState(
+                SelectedMessageReactionsPickerState(
+                    message = message,
+                    ownCapabilities = ownCapabilities.value
+                )
+            )
         }
     }
 

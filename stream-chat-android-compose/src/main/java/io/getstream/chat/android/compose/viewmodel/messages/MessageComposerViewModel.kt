@@ -97,6 +97,15 @@ public class MessageComposerViewModel(
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
 
     /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
+
+    /**
      * Called when the input changes and the internal state needs to be updated.
      *
      * @param value Current state value.

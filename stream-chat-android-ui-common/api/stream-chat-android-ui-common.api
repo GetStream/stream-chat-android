@@ -306,6 +306,9 @@ public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/StringKt {
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
 	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
 }
@@ -392,6 +395,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
+	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
@@ -418,9 +422,11 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
+	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
+	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
@@ -761,9 +767,10 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 
 public final class io/getstream/chat/android/common/composer/MessageComposerState {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;Z)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/util/Set;
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun component4 ()Ljava/util/List;
@@ -772,8 +779,8 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/common/state/MessageMode;
 	public final fun component9 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;Z)Lio/getstream/chat/android/common/composer/MessageComposerState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun getAlsoSendToChannel ()Z
@@ -783,6 +790,7 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun getInputValue ()Ljava/lang/String;
 	public final fun getMentionSuggestions ()Ljava/util/List;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
+	public final fun getOwnCapabilities ()Ljava/util/Set;
 	public final fun getValidationErrors ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -889,6 +897,10 @@ public final class io/getstream/chat/android/common/state/ValidationError$Attach
 	public final fun getMaxAttachmentSize ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/state/ValidationError$ContainsLinksWhenNotAllowed : io/getstream/chat/android/common/state/ValidationError {
+	public static final field INSTANCE Lio/getstream/chat/android/common/state/ValidationError$ContainsLinksWhenNotAllowed;
 }
 
 public final class io/getstream/chat/android/common/state/ValidationError$MessageLengthExceeded : io/getstream/chat/android/common/state/ValidationError {

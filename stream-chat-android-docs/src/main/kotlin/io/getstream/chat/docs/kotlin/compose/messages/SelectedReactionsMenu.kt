@@ -59,6 +59,8 @@ private object SelectedReactionsMenuUsageSnippet {
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 // The message whose reactions you selected
                                 message = selectedMessage,
                                 onMessageAction = { action ->
@@ -114,6 +116,8 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 // The message whose reactions you selected
                                 message = selectedMessage,
                                 onMessageAction = { action ->
@@ -171,6 +175,8 @@ private object SelectedReactionsMenuCustomizationSnippet {
                                     .wrapContentSize(),
                                 // The currently logged-in user
                                 currentUser = user,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 // The message whose reactions you selected
                                 message = selectedMessage,
                                 // Assign a different shape to the Composable element

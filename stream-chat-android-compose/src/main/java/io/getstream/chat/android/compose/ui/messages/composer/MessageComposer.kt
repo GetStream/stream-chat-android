@@ -31,12 +31,16 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
@@ -48,8 +52,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -64,6 +70,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInputOpti
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -137,16 +144,17 @@ public fun MessageComposer(
         DefaultComposerIntegrations(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick
+            onCommandsClick = onCommandsClick,
+            ownCapabilities = it.ownCapabilities
         )
     },
-    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
-            label = label
+            label = label,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
@@ -155,6 +163,7 @@ public fun MessageComposer(
             coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
+            ownCapabilities = it.ownCapabilities,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -255,10 +264,11 @@ public fun MessageComposer(
         DefaultComposerIntegrations(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick
+            onCommandsClick = onCommandsClick,
+            ownCapabilities = messageComposerState.ownCapabilities
         )
     },
-    label: @Composable () -> Unit = { DefaultComposerLabel() },
+    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultComposerInputContent(
             messageComposerState = messageComposerState,
@@ -273,13 +283,18 @@ public fun MessageComposer(
             coolDownTime = it.coolDownTime,
             validationErrors = it.validationErrors,
             attachments = it.attachments,
-            onSendMessage = onSendMessage
+            onSendMessage = onSendMessage,
+            ownCapabilities = messageComposerState.ownCapabilities
         )
     },
 ) {
     val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    MessageInputValidationError(validationErrors)
+    MessageInputValidationError(
+        validationErrors = validationErrors,
+        snackbarHostState = snackbarHostState
+    )
 
     Surface(
         modifier = modifier,
@@ -308,6 +323,10 @@ public fun MessageComposer(
             }
 
             footerContent(messageComposerState)
+        }
+
+        if (snackbarHostState.currentSnackbarData != null) {
+            SnackbarPopup(snackbarHostState = snackbarHostState)
         }
 
         if (mentionSuggestions.isNotEmpty()) {
@@ -422,12 +441,15 @@ internal fun DefaultCommandPopupContent(
  * @param messageInputState The state of the input.
  * @param onAttachmentsClick Handler when the user selects attachments.
  * @param onCommandsClick Handler when the user selects commands.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerIntegrations(
     messageInputState: MessageComposerState,
     onAttachmentsClick: () -> Unit,
     onCommandsClick: () -> Unit,
+    ownCapabilities: Set<String>,
 ) {
     val hasTextInput = messageInputState.inputValue.isNotEmpty()
     val hasAttachments = messageInputState.attachments.isNotEmpty()
@@ -438,63 +460,82 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    Row(
-        modifier = Modifier
-            .height(44.dp)
-            .padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(
-            enabled = isAttachmentsButtonEnabled,
+    val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendAttachments = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+
+    if (canSendMessage) {
+        Row(
             modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp),
-            content = {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
-                    contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                    tint = if (isAttachmentsButtonEnabled) {
-                        ChatTheme.colors.textLowEmphasis
-                    } else {
-                        ChatTheme.colors.disabled
+                .height(44.dp)
+                .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (canSendAttachments) {
+                IconButton(
+                    enabled = isAttachmentsButtonEnabled,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(4.dp),
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
+                            contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                            tint = if (isAttachmentsButtonEnabled) {
+                                ChatTheme.colors.textLowEmphasis
+                            } else {
+                                ChatTheme.colors.disabled
+                            },
+                        )
                     },
+                    onClick = onAttachmentsClick
                 )
-            },
-            onClick = onAttachmentsClick
-        )
+            }
 
-        val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
-            ChatTheme.colors.primaryAccent
-        } else if (isCommandsButtonEnabled) {
-            ChatTheme.colors.textLowEmphasis
-        } else {
-            ChatTheme.colors.disabled
+            val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
+                ChatTheme.colors.primaryAccent
+            } else if (isCommandsButtonEnabled) {
+                ChatTheme.colors.textLowEmphasis
+            } else {
+                ChatTheme.colors.disabled
+            }
+
+            IconButton(
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                enabled = isCommandsButtonEnabled,
+                content = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                        contentDescription = null,
+                        tint = commandsButtonTint,
+                    )
+                },
+                onClick = onCommandsClick
+            )
         }
-
-        IconButton(
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp),
-            enabled = isCommandsButtonEnabled,
-            content = {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                    contentDescription = null,
-                    tint = commandsButtonTint,
-                )
-            },
-            onClick = onCommandsClick
-        )
+    } else {
+        Spacer(modifier = Modifier.width(12.dp))
     }
 }
 
 /**
  * Default input field label that the user can override in [MessageComposer].
+ *
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
-internal fun DefaultComposerLabel() {
+internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
+    val text =
+        if (ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)) {
+            stringResource(id = R.string.stream_compose_message_label)
+        } else {
+            stringResource(id = R.string.stream_compose_cannot_send_messages_label)
+        }
+
     Text(
-        text = stringResource(id = R.string.stream_compose_message_label),
+        text = text,
         color = ChatTheme.colors.textLowEmphasis
     )
 }
@@ -512,7 +553,7 @@ public fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
-    label: @Composable () -> Unit,
+    label: @Composable (MessageComposerState) -> Unit,
 ) {
     MessageInput(
         modifier = Modifier
@@ -522,7 +563,7 @@ public fun RowScope.DefaultComposerInputContent(
         label = label,
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,
-        onAttachmentRemoved = onAttachmentRemoved
+        onAttachmentRemoved = onAttachmentRemoved,
     )
 }
 
@@ -534,6 +575,8 @@ public fun RowScope.DefaultComposerInputContent(
  * @param attachments The selected attachments.
  * @param validationErrors List of errors for message validation.
  * @param onSendMessage Handler when the user wants to send a message.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
@@ -541,9 +584,11 @@ internal fun DefaultMessageComposerTrailingContent(
     coolDownTime: Int,
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
+    ownCapabilities: Set<String>,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
-    val isInputValid = (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+    val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val description = stringResource(id = R.string.stream_compose_cd_send_button)
 
     if (coolDownTime > 0) {
@@ -551,7 +596,7 @@ internal fun DefaultMessageComposerTrailingContent(
     } else {
         IconButton(
             modifier = Modifier.semantics { contentDescription = description },
-            enabled = isInputValid,
+            enabled = isSendButtonEnabled && isInputValid,
             content = {
                 val layoutDirection = LocalLayoutDirection.current
 
@@ -581,9 +626,11 @@ internal fun DefaultMessageComposerTrailingContent(
  * @param validationErrors The list of validation errors for the current user input.
  */
 @Composable
-private fun MessageInputValidationError(validationErrors: List<ValidationError>) {
+private fun MessageInputValidationError(validationErrors: List<ValidationError>, snackbarHostState: SnackbarHostState) {
     if (validationErrors.isNotEmpty()) {
-        val errorMessage = when (val validationError = validationErrors.first()) {
+        val firstValidationError = validationErrors.first()
+
+        val errorMessage = when (val validationError = firstValidationError) {
             is ValidationError.MessageLengthExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_message_length,
@@ -602,11 +649,39 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>)
                     MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
                 )
             }
+            is ValidationError.ContainsLinksWhenNotAllowed -> {
+                stringResource(
+                    R.string.stream_compose_message_composer_error_sending_links_not_allowed,
+                )
+            }
         }
 
         val context = LocalContext.current
+        val stringOk = stringResource(id = R.string.stream_compose_ok)
         LaunchedEffect(validationErrors.size) {
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage,
+                    actionLabel = stringOk,
+                    duration = SnackbarDuration.Indefinite
+                )
+            } else {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+}
+
+/**
+ * A snackbar wrapped inside of a popup allowing it be
+ * displayed above the Composable it's anchored to.
+ *
+ * @param snackbarHostState The state of the snackbar host. Contains
+ * the snackbar data necessary to display the snackbar.
+ */
+@Composable
+private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
+    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
