@@ -23,7 +23,8 @@ import io.getstream.chat.android.client.ChatClient
  * Predicate class used to filter [MessageListItem.MessageItem] items which are deleted. Used by [MessageListView.setDeletedMessageListItemPredicate].
  */
 @Deprecated(
-    message = "Deprecated in favor of filtering in the ViewModel by using 'io.getstream.chat.android.common.state.DeletedMessageVisibility'" +
+    message = "Deprecated in favor of filtering in the ViewModel by using " +
+        "'io.getstream.chat.android.common.state.DeletedMessageVisibility'" +
         " together with 'com.getstream.sdk.chat.viewmodel.messages.setDeletedMessageVisibility()'",
     replaceWith = ReplaceWith(
         "io.getstream.chat.android.common.state.DeletedMessageVisibility"
