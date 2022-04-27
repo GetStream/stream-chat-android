@@ -44,28 +44,106 @@ internal class DatabaseRepositoryFactory(
     private val currentUser: User?,
 ) : RepositoryFactory {
 
-    override fun createUserRepository(): UserRepository = DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE)
-    override fun createChannelConfigRepository(): ChannelConfigRepository =
-        DatabaseChannelConfigRepository(database.channelConfigDao())
+    private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
+
+    @Throws(IllegalStateException::class)
+    override fun <T : Any> get(classz: Class<T>): T {
+        return repositoriesCache[classz] as? T ?: throw IllegalStateException("This repository was not initialized yet")
+    }
+
+    override fun createUserRepository(): UserRepository {
+        val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
+
+        return databaseUserRepository ?: run {
+            DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
+
+    override fun createChannelConfigRepository(): ChannelConfigRepository {
+        val databaseChannelConfigRepository =
+            repositoriesCache[ChannelConfigRepository::class.java] as? DatabaseChannelConfigRepository?
+
+        return databaseChannelConfigRepository ?: run {
+            DatabaseChannelConfigRepository(database.channelConfigDao()).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
 
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository =
-        DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
+    ): ChannelRepository {
+        val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository =
-        DatabaseQueryChannelsRepository(database.queryChannelsDao())
+        return databaseChannelRepository ?: run {
+            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
+                .also { repository ->
+                    repositoriesCache[repository::class.java] = repository
+                }
+        }
+    }
+
+    override fun createQueryChannelsRepository(): QueryChannelsRepository {
+        val databaseQueryChannelsRepository =
+            repositoriesCache[QueryChannelsRepository::class.java] as? QueryChannelsRepository?
+
+        return databaseQueryChannelsRepository ?: run {
+            DatabaseQueryChannelsRepository(database.queryChannelsDao()).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = DatabaseMessageRepository(database.messageDao(), getUser, currentUser, DEFAULT_CACHE_SIZE)
+    ): MessageRepository {
+        val databaseMessageRepository = repositoriesCache[MessageRepository::class.java] as? DatabaseMessageRepository?
 
-    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
-        DatabaseReactionRepository(database.reactionDao(), getUser)
+        return databaseMessageRepository ?: run {
+            DatabaseMessageRepository(
+                database.messageDao(),
+                getUser,
+                currentUser,
+                DEFAULT_CACHE_SIZE
+            ).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
 
-    override fun createSyncStateRepository(): SyncStateRepository = DatabaseSyncStateRepository(database.syncStateDao())
+    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
+        val databaseReactionRepository =
+            repositoriesCache[ReactionRepository::class.java] as? DatabaseReactionRepository?
 
-    override fun createAttachmentRepository(): AttachmentRepository =
-        DatabaseAttachmentRepository(database.attachmentDao())
+        return databaseReactionRepository ?: run {
+            DatabaseReactionRepository(database.reactionDao(), getUser).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
+
+    override fun createSyncStateRepository(): SyncStateRepository {
+        val databaseSyncStateRepository =
+            repositoriesCache[SyncStateRepository::class.java] as? DatabaseSyncStateRepository?
+
+        return databaseSyncStateRepository ?: run {
+            DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
+
+    override fun createAttachmentRepository(): AttachmentRepository {
+        val databaseAttachmentRepository =
+            repositoriesCache[AttachmentRepository::class.java] as? DatabaseAttachmentRepository?
+
+        return databaseAttachmentRepository ?: run {
+            DatabaseAttachmentRepository(database.attachmentDao()).also { repository ->
+                repositoriesCache[repository::class.java] = repository
+            }
+        }
+    }
 }

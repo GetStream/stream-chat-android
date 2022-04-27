@@ -28,6 +28,8 @@ public class RepositoryProvider private constructor(
             instance = RepositoryProvider(repositoryFactory)
         }
 
-        public fun get(): RepositoryProvider? = instance
+        public fun get(): RepositoryProvider = instance ?: throw IllegalStateException(
+            "RepositoryProvider is not correctly configured"
+        )
     }
 }

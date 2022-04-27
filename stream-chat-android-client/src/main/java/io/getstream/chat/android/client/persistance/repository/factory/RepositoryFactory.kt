@@ -29,6 +29,8 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 
 public interface RepositoryFactory {
 
+    public fun <T : Any> get(classz: Class<T>): T
+
     public fun createUserRepository(): UserRepository
 
     public fun createChannelConfigRepository(): ChannelConfigRepository

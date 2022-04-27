@@ -18,6 +18,8 @@ package io.getstream.chat.android.offline.errorhandler.factory.internal
 
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.QueryMembersErrorHandlerImpl
@@ -25,7 +27,6 @@ import io.getstream.chat.android.offline.errorhandler.internal.SendReactionError
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 
 /**
  * Provides all offline support related error handler factories.
@@ -77,10 +78,12 @@ private class SendReactionErrorHandlerFactory : ErrorHandlerFactory {
 private class QueryMembersErrorHandlerFactory : ErrorHandlerFactory {
 
     override fun create(): ErrorHandler {
+        val repositoryProvider = RepositoryProvider.get()
+
         return QueryMembersErrorHandlerImpl(
             scope = StateRegistry.get().scope,
             globalState = GlobalMutableState.getOrCreate(),
-            channelRepository = RepositoryFacade.get()
+            channelRepository = repositoryProvider.get(ChannelRepository::class.java)
         )
     }
 }
@@ -91,11 +94,12 @@ private class QueryMembersErrorHandlerFactory : ErrorHandlerFactory {
 private class CreateChannelErrorHandlerFactory : ErrorHandlerFactory {
 
     override fun create(): ErrorHandler {
-        val repos = RepositoryFacade.get()
+        val repositoryProvider = RepositoryProvider.get()
+
         return CreateChannelErrorHandlerImpl(
             scope = StateRegistry.get().scope,
             globalState = GlobalMutableState.getOrCreate(),
-            channelRepository = repos
+            channelRepository = repositoryProvider.get(ChannelRepository::class.java)
         )
     }
 }
