@@ -54,6 +54,7 @@
 - Fixed a bug on Nougat where the reaction colors were not displayed properly. [#3347](https://github.com/GetStream/stream-chat-android/pull/3347)
 - Fixed a bug where custom `MessageListItemViewHolderFactory` was ignore on the message options overlay. [#3343](https://github.com/GetStream/stream-chat-android/pull/3343)
 - Fixed `MessageListViewModel` initialization when channel's data is not available immediately, for example when the view model is created after connecting the user. [#3379](https://github.com/GetStream/stream-chat-android/pull/3379)
+- Fixed configuration for flag message confirmation dialog. [3411](https://github.com/GetStream/stream-chat-android/pull/3411)
 
 ### ⬆️ Improved
 - Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
@@ -87,6 +88,8 @@
 ### ⚠️ Changed
 - `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)
 - Added own capabilities. If you are using our components individually this has the possibility of introducing a change in functionality. You can find the guide on implementing own capabilities [here](https://getstream.io/chat/docs/sdk/android/compose/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
+- Changed the default filter for Channels in `ChannelsScreen` and `ChannelList` to only filter messaging channels. It will still filter the channels the current user is a member of, as that's the most common case. [#3410](https://github.com/GetStream/stream-chat-android/pull/3410)
+- Changed the `ChannelListViewModel.setFilters(newFilters)` to override the previous ones, rather than combining the two. [#3410](https://github.com/GetStream/stream-chat-android/pull/3410)
 
 ### ❌ Removed
 
