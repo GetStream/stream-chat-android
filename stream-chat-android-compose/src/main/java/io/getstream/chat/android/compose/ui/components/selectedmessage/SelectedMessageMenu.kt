@@ -58,7 +58,8 @@ import io.getstream.chat.android.compose.util.extensions.toSet
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
- * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog. By Default [MessageOptions].
+ * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog.
+ * By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(

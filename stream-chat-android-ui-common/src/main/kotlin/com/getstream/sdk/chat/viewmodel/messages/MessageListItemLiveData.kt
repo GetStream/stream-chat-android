@@ -54,8 +54,10 @@ import java.util.Date
  * @param messages A livedata object with the messages.
  * @param readsLd A livedata object with the read state per user.
  * @param typingLd A livedata object with the users who are currently typing.
- * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the item list.
- * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a date separator.
+ * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the
+ * item list.
+ * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a
+ * date separator.
  *
  * Here's an example:
  *
@@ -68,6 +70,8 @@ import java.util.Date
  * }
  *
  */
+
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class MessageListItemLiveData(
     private val currentUser: LiveData<User?>,
     messages: LiveData<List<Message>>,
@@ -213,6 +217,7 @@ internal class MessageListItemLiveData(
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
      * It's fast enough though.
      */
+    @Suppress("ComplexMethod")
     private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
 
         val filteredMessages = filterDeletedMessages(messages)
@@ -291,6 +296,7 @@ internal class MessageListItemLiveData(
      * Since the most common scenario is that someone read to the end, we start by matching the end of the list.
      * We also sort the read state for easier merging of the lists.
      */
+    @Suppress("ReturnCount", "NestedBlockDepth")
     private fun addReads(
         messages: List<MessageListItem>,
         reads: List<ChannelUserRead>?,
@@ -298,7 +304,10 @@ internal class MessageListItemLiveData(
     ): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter { it.user.id != currentUserId }.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads
+            .filter { it.user.id != currentUserId }
+            .sortedBy { it.lastRead }
+            .toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()

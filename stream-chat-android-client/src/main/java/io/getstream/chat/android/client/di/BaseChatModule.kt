@@ -66,6 +66,7 @@ import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
+@Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,
@@ -249,7 +250,9 @@ internal open class BaseChatModule(
             val auth = this.annotations.any { it is AuthenticatedApi }
 
             if (anon && auth) {
-                throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")
+                throw IllegalStateException(
+                    "Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both"
+                )
             }
 
             if (anon) return true

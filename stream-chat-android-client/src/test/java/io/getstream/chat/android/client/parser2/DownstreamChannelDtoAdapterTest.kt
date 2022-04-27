@@ -28,19 +28,28 @@ internal class DownstreamChannelDtoAdapterTest {
 
     @Test
     fun `Deserialize JSON channel with custom fields`() {
-        val channel = parser.fromJson(ChannelDtoTestData.downstreamJson, DownstreamChannelDto::class.java)
+        val channel = parser.fromJson(
+            ChannelDtoTestData.downstreamJson,
+            DownstreamChannelDto::class.java
+        )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannel
     }
 
     @Test
     fun `Deserialize JSON channel without custom fields`() {
-        val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData, DownstreamChannelDto::class.java)
+        val channel = parser.fromJson(
+            ChannelDtoTestData.downstreamJsonWithoutExtraData,
+            DownstreamChannelDto::class.java
+        )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutExtraData
     }
 
     @Test
     fun `Deserialize JSON channel without name and image fields`() {
-        val channel = parser.fromJson(ChannelDtoTestData.downstreamJsonWithoutNameAndImage, DownstreamChannelDto::class.java)
+        val channel = parser.fromJson(
+            ChannelDtoTestData.downstreamJsonWithoutNameAndImage,
+            DownstreamChannelDto::class.java
+        )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
     }
 

@@ -31,7 +31,7 @@ object Versions {
     internal const val DOKKA = "1.5.0"
     internal const val DOKKASAURUS = "0.1.10"
     internal const val DOTENV = "5.2.2"
-    internal const val ESPRESSO = "3.3.0"
+    internal const val ESPRESSO = "3.4.0"
     internal const val FRAGMENT_TESTING = "1.4.0"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"

@@ -33,11 +33,9 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
@@ -53,13 +51,12 @@ import java.io.File
  *
  * @param cid The full channel id, i.e. "messaging:123".
  * @param chatClient Entry point for most of the chat SDK
- * @param globalState Global state of OfflinePlugin. Contains information
  * such as the current user, connection state, unread counts etc.
  */
+@Suppress("TooManyFunctions")
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -244,7 +241,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         chatClient.sendMessage(channelType, channelId, message)
             .enqueue(
                 onError = { chatError ->
-                    logger.logE("Could not send message with cid: ${message.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                    logger.logE(
+                        "Could not send message with cid: ${message.cid}. " +
+                            "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
+                    )
                 }
             )
     }
@@ -301,7 +301,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         stopTyping()
         chatClient.updateMessage(updatedMessage).enqueue(
             onError = { chatError ->
-                logger.logE("Could not edit message with cid: ${updatedMessage.cid}. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not edit message with cid: ${updatedMessage.cid}. " +
+                        "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -325,7 +328,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val (channelType, channelId) = cid.cidToTypeAndId()
         ChatClient.instance().keystroke(channelType, channelId, parentId).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send keystroke cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send keystroke cid: $cid. " +
+                        "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }
@@ -338,7 +344,10 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val (channelType, channelId) = cid.cidToTypeAndId()
         ChatClient.instance().stopTyping(channelType, channelId, parentId).enqueue(
             onError = { chatError ->
-                logger.logE("Could not send stop typing event with cid: $cid. Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}")
+                logger.logE(
+                    "Could not send stop typing event with cid: $cid. " +
+                        "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
+                )
             }
         )
     }

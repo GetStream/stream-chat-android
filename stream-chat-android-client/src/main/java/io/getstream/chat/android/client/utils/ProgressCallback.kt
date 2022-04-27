@@ -29,7 +29,8 @@ public interface ProgressCallback {
     public fun onSuccess(url: String?)
 
     /**
-     * Called when the attachment could not be uploaded due to cancellation, network problem or timeout etc with an [error].
+     * Called when the attachment could not be uploaded due to cancellation, network problem or timeout etc
+     * with an [error].
      *
      * @see ChatError
      */

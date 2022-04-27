@@ -2204,11 +2204,12 @@ public abstract interface class io/getstream/chat/android/ui/message/list/header
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle {
-	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)V
+	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()Z
 	public final fun component12 ()Landroid/content/res/ColorStateList;
+	public final fun component13 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2217,8 +2218,8 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 	public final fun component7 ()Landroid/graphics/drawable/Drawable;
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackButtonBadgeBackgroundColor ()I
 	public final fun getBackButtonIcon ()Landroid/graphics/drawable/Drawable;
@@ -2227,6 +2228,7 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 	public final fun getOnlineTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getSearchingForNetworkProgressBarTint ()Landroid/content/res/ColorStateList;
 	public final fun getSearchingForNetworkTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getSeparatorBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getShowBackButton ()Z
 	public final fun getShowBackButtonBadge ()Z
 	public final fun getShowSearchingForNetworkProgressBar ()Z

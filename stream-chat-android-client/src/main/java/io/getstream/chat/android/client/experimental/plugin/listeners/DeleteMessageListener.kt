@@ -32,8 +32,8 @@ public interface DeleteMessageListener {
     public suspend fun onMessageDeleteRequest(messageId: String)
 
     /**
-     * Method called when a request for message deletion return. Use it to update database, update messages or to present
-     * an error to the user.
+     * Method called when a request for message deletion return. Use it to update database, update messages or to
+     * present an error to the user.
      *
      * @param result the result of the API call.
      */

@@ -68,6 +68,7 @@ import java.util.regex.Pattern
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
 @InternalStreamChatApi
+@Suppress("TooManyFunctions")
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -80,8 +81,8 @@ public class MessageComposerController(
      * ViewModel is disposed.
      *
      * We use the [DispatcherProvider.Immediate] variant here to make sure the UI updates don't go through the
-     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing really
-     * fast.
+     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing
+     * really fast.
      */
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
@@ -215,8 +216,8 @@ public class MessageComposerController(
     private var cooldownInterval: Int = 0
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
+     * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 
@@ -667,7 +668,7 @@ public class MessageComposerController(
             cooldownTimerJob = scope.launch {
                 for (timeRemaining in cooldownInterval downTo 0) {
                     cooldownTimer.value = timeRemaining
-                    delay(1000)
+                    delay(OneSecond)
                 }
             }
         }
@@ -704,6 +705,7 @@ public class MessageComposerController(
         private const val DefaultMessageLimit: Int = 30
 
         private const val DefaultTypingUpdateIntervalMillis = 3000L
+        private const val OneSecond = 1000L
     }
 
     /**

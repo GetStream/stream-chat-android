@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
@@ -119,6 +120,7 @@ internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     )
 }
 
+@Suppress("ComplexMethod")
 internal fun ChatEventDto.toDomain(): ChatEvent {
     return when (this) {
         is NewMessageEventDto -> toDomain()
@@ -643,21 +645,21 @@ private fun ConnectedEventDto.toDomain(): ConnectedEvent {
 private fun ConnectingEventDto.toDomain(): ConnectingEvent {
     return ConnectingEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
     return DisconnectedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun ErrorEventDto.toDomain(): ErrorEvent {
     return ErrorEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         error = error,
     )
 }

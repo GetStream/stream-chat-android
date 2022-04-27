@@ -80,7 +80,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -105,6 +104,7 @@ import java.util.concurrent.TimeUnit
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
+@Suppress("TooManyFunctions")
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
@@ -264,7 +264,8 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults -> messagesState.copy(
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
+                            messagesState.copy(
                             isLoading = false,
                             messageItems = emptyList(),
                         )
@@ -432,7 +433,9 @@ public class MessageListViewModel(
             return
         }
 
-        if (message.id == lastSeenMessage.id) return
+        if (message.id == lastSeenMessage.id) {
+            return
+        }
 
         val lastSeenMessageDate = lastSeenMessage.createdAt ?: Date()
         val currentMessageDate = message.createdAt ?: Date()
@@ -925,7 +928,7 @@ public class MessageListViewModel(
 
         viewModelScope.launch {
             updateMessages(messages)
-            delay(2000)
+            delay(REMOVE_MESSAGE_FOCUS_DELAY)
             removeMessageFocus(messageId)
         }
     }
@@ -989,8 +992,8 @@ public class MessageListViewModel(
 
     internal companion object {
         /**
-         * The default threshold for showing date separators. If the message difference in hours is equal to this number, then
-         * we show a separator, if it's enabled in the list.
+         * The default threshold for showing date separators. If the message difference in hours is equal to this
+         * number, then we show a separator, if it's enabled in the list.
          */
         internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
 
@@ -998,5 +1001,10 @@ public class MessageListViewModel(
          * The default limit for messages count in requests.
          */
         internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
+
+        /**
+         * Time in millis, after which the focus is removed.
+         */
+        private const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }
 }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.reactions
+package io.getstream.chat.android.core.internal
 
-import androidx.fragment.app.testing.launchFragmentInContainer
-import com.karumi.shot.FragmentScenarioUtils.waitForFragment
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import org.junit.Test
-
-@InternalStreamChatApi
-class EditReactionsTest : ScreenshotTest {
-
-    @Test
-    fun reactionsTestWithNoCustomization() {
-        val fragmentScenario = launchFragmentInContainer<ComponentBrowserEditReactionsFragment>()
-        compareScreenshot(fragmentScenario.waitForFragment())
-    }
-}
+/**
+ * Indicates that the annotated code should not be modified without consulting  the team.
+ * @param reason
+ * For example:
+ *
+ * <pre>
+ * &#064;StreamHandsOff(reason = "If you move a card, the house is collapsed")
+ * public class HouseOfCards { }
+</pre> *
+ */
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+public annotation class StreamHandsOff(val reason: String)

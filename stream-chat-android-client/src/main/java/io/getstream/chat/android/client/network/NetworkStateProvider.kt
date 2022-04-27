@@ -68,7 +68,8 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
             runCatching {
                 connectivityManager.run {
                     getNetworkCapabilities(activeNetwork)?.run {
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                            hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                     }
                 }
             }.getOrNull() ?: false

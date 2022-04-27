@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.Date
 
+@Suppress("TooManyFunctions", "LongParameterList")
 internal interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)

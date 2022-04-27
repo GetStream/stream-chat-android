@@ -29,7 +29,7 @@ internal fun DownstreamFlagDto.toDomain(): Flag {
         createdAt = approved_at,
         updatedAt = updated_at,
         reviewedAt = reviewed_at,
-        approvedAt = reviewed_by,
+        approvedAt = approved_at,
         rejectedAt = rejected_at,
     )
 }
