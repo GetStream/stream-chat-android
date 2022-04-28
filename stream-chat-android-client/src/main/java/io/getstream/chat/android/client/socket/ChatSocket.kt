@@ -20,6 +20,233 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.models.User
 
+/**
+ * @startuml
+ *
+ * title Current WebSocket Layer
+ * interface ChatSocket {
+ *      ~ connect(user: User)
+ *      ~ connectAnonymously()
+ *      ~ addListener(listener: SocketListener)
+ *      ~ removeListener(listener: SocketListener)
+ *      ~ disconnect()
+ *      ~ releaseConnection()
+ * }
+ *
+ * interface ChatSocketService {
+ *      ~ anonymousConnect(endpoint: String, apiKey: String)
+ *      ~ userConnect(endpoint: String, apiKey: String, user: User)
+ *      ~ disconnect()
+ *      ~ releaseConnection()
+ *      ~ addListener(listener: SocketListener)
+ *      ~ removeListener(listener: SocketListener)
+ *      ~ onSocketError(error: ChatError)
+ *      ~ onConnectionResolved(event: ConnectedEvent)
+ *      ~ onEvent(event: ChatEvent)
+ * }
+ *
+ * class Socket {
+ *      - {field} socket: WebSocket (OkHttp WebSocket instance)
+ *      - parser: ChatParser
+ *      ~ send(event: ChatEvent)
+ *      ~ close(code: Int, reason: String)
+ * }
+ *
+ * class EventsParser {
+ *      .. constructor ..
+ *      - parser: ChatParser
+ *      - service: ChatSocketService
+ *      ..
+ *
+ * }
+ * class HealthMonitor
+ * class SocketFactory {
+ *      - parser: ChatParser
+ *      - tokenManager: TokenManager
+ *      ~ createAnonymousSocket(): Socket
+ *      ~ createNormalSocket(): Socket
+ * }
+ *
+ * interface SocketListener {
+ *      + onConnecting()
+ *      + onConnected(event: ConnectedEvent)
+ *      + onDisconnected(cause: DisconnectCause)
+ *      + onError(error: ChatError)
+ *      + onEvent(event: ChatEvent)
+ * }
+ *
+ * class ChatSocketImpl {
+ *      .. constructor ..
+ *      - apiKey: String
+ *      - wssUrl: String
+ *      - tokenManager: TokenManager
+ *      - parser: ChatParser
+ *      - networkStateProvider: NetworkStateProvider
+ *      ..
+ *      - service: ChatSocketService
+ * }
+ * class ChatSocketServiceImpl {
+ *      .. constructor ..
+ *      - tokenManager: TokenManager
+ *      - socketFactory: SocketFactory,
+ *      - networkStateProvider: NetworkStateProvider,
+ *      - parser: ChatParser,
+ *      ..
+ *      - socket: Socket
+ *      - eventsParser: EventParser
+ *      - healthMonitor: HealthMonitor
+ *      - networkStateListener: NetworkStateProvider.Listener
+ *      - state: ChatSocketServiceImpl.State
+ * }
+ * class ChatClient {
+ *      Most of the functionality of this class
+ *      is omitted to keep simplicity in diagram.
+ *      ==
+ *      .. constructor ..
+ *      - socket: ChatSocket
+ *      - socketStateService: SocketStateService
+ *      - userStateService: UserStateService
+ *      ..
+ *      - eventsObservable: ChatEventsObservable
+ * }
+ *
+ * class ChatEventsObservable {
+ *      .. constructor ..
+ *      - socket: ChatSocket
+ *      - client: ChatClient
+ *      ..
+ *      - eventsMapper: EventsMapper
+ *      ..
+ *      subscribe(filter: << lambda >>, listener: ChatEventListener<ChatEvent>): Disposable
+ *      subscribeSingle(filter: << lambda >>, listener: ChatEventListener<ChatEvent>): Disposable
+ * }
+ *
+ * class EventsMapper {
+ *      .. constructor ..
+ *      - observable: ChatEventsObservable
+ * }
+ * class State << (D,orchid) >>
+ * class ConnectionConf << (D,orchid) >>
+ * ChatSocketImpl ..|> ChatSocket
+ * ChatSocketServiceImpl ..|> ChatSocketService
+ * EventsParser --> ChatSocketService
+ * ChatSocketServiceImpl --> EventsParser
+ * ChatSocketImpl *--> ChatSocketService
+ * ChatSocketImpl ..> SocketFactory
+ * SocketFactory ..> Socket : produces
+ * ChatSocketServiceImpl --> HealthMonitor
+ * ChatSocketServiceImpl --> Socket
+ * ChatSocketService ..> SocketListener
+ * SocketFactory ..> EventsParser
+ * ChatSocket ..> SocketListener
+ * State --+ ChatSocketServiceImpl
+ * ConnectionConf --+ ChatSocketServiceImpl
+ * ChatEventsObservable --> ChatSocket
+ * ChatEventsObservable <--* ChatClient
+ * EventsMapper ..|> SocketListener
+ * ChatEventsObservable <--> EventsMapper
+ * ChatClient --> ChatSocket
+ * ChatClient ..> SocketListener
+ * @enduml
+ *
+ * @startuml
+ * title Refactored WebSocket Layer
+ *
+ * interface ChatSocketService {
+ *      ~ anonymousConnect(endpoint: String, apiKey: String)
+ *      ~ userConnect(endpoint: String, apiKey: String, user: User)
+ *      ~ disconnect()
+ *      ~ releaseConnection()
+ *      ~ addListener(listener: SocketListener)
+ *      ~ removeListener(listener: SocketListener)
+ *      ~ onSocketError(error: ChatError)
+ *      ~ onConnectionResolved(event: ConnectedEvent)
+ *      ~ onEvent(event: ChatEvent)
+ * }
+ *
+ * class Socket {
+ *      - {field} socket: WebSocket (OkHttp WebSocket instance)
+ *      - parser: ChatParser
+ *      ~ send(event: ChatEvent)
+ *      ~ close(code: Int, reason: String)
+ * }
+ *
+ * class EventsParser {
+ *      .. constructor ..
+ *      - parser: ChatParser
+ *      - service: ChatSocketService
+ *      ..
+ *
+ * }
+ * class HealthMonitor
+ * class SocketFactory {
+ *      - parser: ChatParser
+ *      - tokenManager: TokenManager
+ *      ~ createAnonymousSocket(): Socket
+ *      ~ createNormalSocket(): Socket
+ * }
+ *
+ * interface SocketListener {
+ *      + onConnecting()
+ *      + onConnected(event: ConnectedEvent)
+ *      + onDisconnected(cause: DisconnectCause)
+ *      + onError(error: ChatError)
+ *      + onEvent(event: ChatEvent)
+ * }
+ *
+ * class ChatSocketServiceImpl {
+ *      .. constructor ..
+ *      - tokenManager: TokenManager
+ *      - socketFactory: SocketFactory,
+ *      - networkStateProvider: NetworkStateProvider,
+ *      - parser: ChatParser,
+ *      ..
+ *      - socket: Socket
+ *      - eventsParser: EventParser
+ *      - healthMonitor: HealthMonitor
+ *      - networkStateListener: NetworkStateProvider.Listener
+ *      - state: ChatSocketServiceImpl.State
+ * }
+ * class ChatClient {
+ *      Most of the functionality of this class
+ *      is omitted to keep simplicity in diagram.
+ *      ==
+ *      .. constructor ..
+ *      - socketService: ChatSocketService
+ *      - socketStateService: SocketStateService
+ *      - userStateService: UserStateService
+ *      ..
+ *      - eventsObservable: ChatEventsObservable
+ * }
+ *
+ * class ChatEventsObservable {
+ *      .. constructor ..
+ *      - socketService: ChatSocketService
+ *      ..
+ *      subscribe(filter: << lambda >>, listener: ChatEventListener<ChatEvent>): Disposable
+ *      subscribeSingle(filter: << lambda >>, listener: ChatEventListener<ChatEvent>): Disposable
+ * }
+ *
+ * class State << (D,orchid) >>
+ * class ConnectionConf << (D,orchid) >>
+ * ChatSocketServiceImpl ..|> ChatSocketService
+ * EventsParser --> ChatSocketService
+ * ChatSocketServiceImpl --> EventsParser
+ * ChatSocketServiceImpl ..> SocketFactory
+ * SocketFactory ..> Socket : produces
+ * ChatSocketServiceImpl --> HealthMonitor
+ * ChatSocketServiceImpl --> Socket
+ * ChatSocketService ..> SocketListener
+ * SocketFactory ..> EventsParser
+ * State --+ ChatSocketServiceImpl
+ * ConnectionConf --+ ChatSocketServiceImpl
+ * ChatEventsObservable --> ChatSocketService
+ * ChatEventsObservable --* ChatClient
+ * ChatEventsObservable ..|> SocketListener
+ * ChatClient --> ChatSocketService
+ * ChatClient ..> SocketListener
+ * @enduml
+ */
 internal interface ChatSocket {
     fun connect(user: User)
     fun connectAnonymously()

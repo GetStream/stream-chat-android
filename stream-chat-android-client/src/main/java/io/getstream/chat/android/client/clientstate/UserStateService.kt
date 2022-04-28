@@ -19,6 +19,32 @@ package io.getstream.chat.android.client.clientstate
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
+/**
+ * @startuml
+ * title UserState FSM
+ *
+ * state Anonymous {
+ *  state Pending
+ *  state "UserSet" as AnonymousUserSet
+ * }
+ *
+ * NotSet --> UserSet : ConnectUser
+ * NotSet --> Pending : ConnectAnonymous
+ * NotSet -left-> NotSet : UnsetUser
+ * NotSet --> NotSet : UserUpdated(user)
+ *
+ * UserSet --> UserSet : UserUpdated(user)
+ * UserSet --> NotSet : UnsetUser
+ *
+ * Pending --> AnonymousUserSet : UserUpdated(user)
+ * Pending --> NotSet : UnsetUser
+ *
+ * AnonymousUserSet --> AnonymousUserSet : UserUpdated(user)
+ * AnonymousUserSet --> NotSet : UnsetUser
+ *
+ * [*] --> NotSet
+ * @enduml
+ */
 internal class UserStateService {
     fun onUserUpdated(user: User) {
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
