@@ -22,8 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.toUnitCall
@@ -41,11 +43,13 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -64,17 +68,29 @@ import kotlinx.coroutines.launch
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     initialSort: QuerySort<Channel>,
-    initialFilters: FilterObject,
+    initialFilters: FilterObject?,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
 ) : ViewModel() {
 
     /**
+     * State flow that keeps the value of the current [FilterObject] for channels.
+     */
+    private val filterFlow: MutableStateFlow<FilterObject> = MutableStateFlow(initialFilters ?: NeutralFilterObject)
+
+    /**
+     * State flow that keeps the value of the current [QuerySort] for channels.
+     */
+    private val querySortFlow: MutableStateFlow<QuerySort<Channel>> = MutableStateFlow(initialSort)
+
+    /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
      * the `initialFilters` parameter and the initial sort, but can be changed.
      */
-    private val queryConfig = MutableStateFlow(QueryConfig(initialFilters, initialSort))
+    private val queryConfigFlow = filterFlow.combine(querySortFlow) { filters, sort ->
+        QueryConfig(filters = filters, querySort = sort)
+    }
 
     /**
      * The current state of the search input. When changed, it emits a new value in a flow, which
@@ -118,6 +134,13 @@ public class ChannelListViewModel(
     public val channelMutes: StateFlow<List<ChannelMute>> = chatClient.globalState.channelMutes
 
     /**
+     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
+     */
+    private fun buildDefaultFilter(): Flow<FilterObject> {
+        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+    }
+
+    /**
      * Checks if the channel is muted for the current user.
      *
      * @param cid The CID of the channel that needs to be checked.
@@ -136,6 +159,14 @@ public class ChannelListViewModel(
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
+        if (initialFilters == null) {
+            viewModelScope.launch {
+                val filter = buildDefaultFilter().first()
+
+                this@ChannelListViewModel.filterFlow.value = filter
+            }
+        }
+
         viewModelScope.launch {
             init()
         }
@@ -145,7 +176,7 @@ public class ChannelListViewModel(
      * Makes the initial query to request channels and starts observing state changes.
      */
     private suspend fun init() {
-        searchQuery.combine(queryConfig) { query, config -> query to config }
+        searchQuery.combine(queryConfigFlow) { query, config -> query to config }
             .collectLatest { (query, config) ->
                 val queryChannelsRequest = QueryChannelsRequest(
                     filter = createQueryChannelsFilter(config.filters, query),
@@ -254,9 +285,7 @@ public class ChannelListViewModel(
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
-        val currentConfig = this.queryConfig.value
-
-        this.queryConfig.value = currentConfig.copy(filters = newFilters)
+        this.filterFlow.tryEmit(value = newFilters)
     }
 
     /**
@@ -265,10 +294,7 @@ public class ChannelListViewModel(
      * Use this if you need to support runtime sort changes, through custom sort UI.
      */
     public fun setQuerySort(querySort: QuerySort<Channel>) {
-        val currentConfig = this.queryConfig.value
-
-        this.queryConfig.value =
-            currentConfig.copy(querySort = querySort)
+        this.querySortFlow.tryEmit(value = querySort)
     }
 
     /**
@@ -276,7 +302,10 @@ public class ChannelListViewModel(
      */
     public fun loadMore() {
         if (chatClient.globalState.isOffline()) return
-        val currentConfig = queryConfig.value
+        val currentConfig = QueryConfig(
+            filters = filterFlow.value,
+            querySort = querySortFlow.value
+        )
 
         channelsState = channelsState.copy(isLoadingMore = true)
 
