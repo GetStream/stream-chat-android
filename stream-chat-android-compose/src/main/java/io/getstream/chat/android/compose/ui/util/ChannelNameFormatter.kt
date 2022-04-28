@@ -78,9 +78,20 @@ private class DefaultChannelNameFormatter(
      */
     override fun formatChannelName(channel: Channel, currentUser: User?): String {
         return channel.name.takeIf { it.isNotEmpty() }
-            ?: channel.getOtherUsers(currentUser)
-                .joinToString(limit = maxMembers) { it.name }
-                .takeIf { it.isNotEmpty() }
+            ?: nameFromMembers(channel, currentUser)
             ?: context.getString(R.string.stream_compose_untitled_channel)
+    }
+
+    private fun nameFromMembers(channel: Channel, currentUser: User?): String? {
+        val users = channel.getOtherUsers(currentUser)
+
+        return when {
+            users.isNotEmpty() -> users.joinToString { it.name }.takeIf { it.isNotEmpty() }
+
+            // This channel has only the current user or only one user
+            channel.members.size == 1 -> channel.members.first().user.name
+
+            else -> null
+        }
     }
 }
