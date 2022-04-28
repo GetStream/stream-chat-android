@@ -385,8 +385,9 @@ internal class ChannelLogic(
         mutableState._members.value = (mutableState._members.value + members.associateBy(Member::getUserId))
     }
 
-    internal fun updateChannelData(channel: Channel) {
-        mutableState._channelData.value = ChannelData(channel)
+    private fun updateChannelData(channel: Channel) {
+        val currentOwnCapabilities = mutableState._channelData.value?.ownCapabilities ?: emptySet()
+        mutableState._channelData.value = ChannelData(channel, currentOwnCapabilities)
     }
 
     private fun setWatchers(watchers: List<User>) {
