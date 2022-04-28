@@ -46,7 +46,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -146,22 +145,19 @@ public class ChannelListViewModel(
      * Makes the initial query to request channels and starts observing state changes.
      */
     private suspend fun init() {
-        chatClient.globalState.user.map { it?.id }.filterNotNull().flatMapLatest {
-            searchQuery.combine(queryConfig) { query, config -> query to config }
-        }.collectLatest { (query, config) ->
-            val filter = createQueryChannelsFilter(config.filters, query)
+        searchQuery.combine(queryConfig) { query, config -> query to config }
+            .collectLatest { (query, config) ->
+                val queryChannelsRequest = QueryChannelsRequest(
+                    filter = createQueryChannelsFilter(config.filters, query),
+                    querySort = config.querySort,
+                    limit = channelLimit,
+                    messageLimit = messageLimit,
+                    memberLimit = memberLimit,
+                )
 
-            val queryChannelsRequest = QueryChannelsRequest(
-                filter = filter,
-                querySort = config.querySort,
-                limit = channelLimit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
-
-            queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-            observeChannels(searchQuery = query)
-        }
+                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+                observeChannels(searchQuery = query)
+            }
     }
 
     /**
@@ -177,12 +173,9 @@ public class ChannelListViewModel(
      * @return The filter that will be used to query channels.
      */
     private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
-        val userFilter = Filters.`in`("members", listOf(chatClient.getCurrentUser()?.id ?: ""))
-        val baseFilter = Filters.and(filter, userFilter)
-
         return if (searchQuery.isNotEmpty()) {
             Filters.and(
-                baseFilter,
+                filter,
                 Filters.or(
                     Filters.and(
                         Filters.autocomplete("member.user.name", searchQuery),
@@ -192,7 +185,7 @@ public class ChannelListViewModel(
                 )
             )
         } else {
-            baseFilter
+            filter
         }
     }
 

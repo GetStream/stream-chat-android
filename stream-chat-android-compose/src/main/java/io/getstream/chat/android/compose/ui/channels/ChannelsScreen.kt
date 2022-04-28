@@ -68,7 +68,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  *
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
  *
- * @param filters Default filters for messaging channels.
+ * @param filters Default filters for channels.
  * @param querySort Default query sort for channels.
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
@@ -87,6 +87,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 public fun ChannelsScreen(
     filters: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
+        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
     ),
     querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",

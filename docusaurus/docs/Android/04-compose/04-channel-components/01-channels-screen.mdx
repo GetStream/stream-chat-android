@@ -99,7 +99,8 @@ When it comes to UI and behavior customization in the `ChannelsScreen` signature
 ```kotlin
 fun ChannelsScreen(
     filters: FilterObject = Filters.and(
-        Filters.eq("type", "messaging")
+        Filters.eq("type", "messaging"),
+        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
     ),
     querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",

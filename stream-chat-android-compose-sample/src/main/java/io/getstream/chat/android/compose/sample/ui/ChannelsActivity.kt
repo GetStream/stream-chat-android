@@ -72,7 +72,8 @@ class ChannelsActivity : BaseConnectedActivity() {
             ChatClient.instance(),
             QuerySort.desc("last_updated"),
             Filters.and(
-                Filters.eq("type", "messaging")
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
             )
         )
     }
