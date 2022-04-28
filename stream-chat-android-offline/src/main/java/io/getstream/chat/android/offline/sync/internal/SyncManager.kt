@@ -111,7 +111,10 @@ internal class SyncManager(
     }
 
     /**
-     * Store the latest sync state of events. Sync state is updated whenever sync api returns a success response.
+     * Store the date of the latest events sync.
+     * The date should be updated whenever the sync endpoint returns a successful response.
+     *
+     * @param latestEventDate The date of the last event returned by the sync endpoint. 
      */
     internal suspend fun updateSyncStateForEvents(latestEventDate: Date) {
         syncStateFlow.value?.let { syncState ->
