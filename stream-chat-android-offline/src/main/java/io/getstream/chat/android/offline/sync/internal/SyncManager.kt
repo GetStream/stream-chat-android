@@ -113,9 +113,9 @@ internal class SyncManager(
     /**
      * Store the latest sync state of events. Sync state is updated whenever sync api returns a success response.
      */
-    internal suspend fun updateSyncStateForEvents() {
+    internal suspend fun updateSyncStateForEvents(latestEventDate: Date) {
         syncStateFlow.value?.let { syncState ->
-            val newSyncState = syncState.copy(lastSyncedAt = Date())
+            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
             repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
         }
