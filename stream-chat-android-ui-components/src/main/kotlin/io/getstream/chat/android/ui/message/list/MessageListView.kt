@@ -121,6 +121,7 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelpe
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
+import io.getstream.chat.android.ui.utils.extensions.isGroupedWithNextMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -701,7 +702,9 @@ public class MessageListView : ConstraintLayout {
      * @param channel The channel object.
      */
     public fun init(channel: Channel) {
+        println("channel set")
         this.channel = channel
+        println("adapter init")
         initAdapter()
 
         messageListViewStyle = requireStyle().copy(
@@ -737,6 +740,7 @@ public class MessageListView : ConstraintLayout {
             messageBackgroundFactory,
             deletedMessageListItemPredicate,
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
+            isGroupedWithNextMessage = { adapter.isGroupedWithNextMessage(it) }
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
@@ -1634,6 +1638,10 @@ public class MessageListView : ConstraintLayout {
      */
     public fun interface MessageListItemPredicate {
         public fun predicate(item: MessageListItem): Boolean
+    }
+
+    public fun interface GroupedMessageListItemPredicate {
+        public fun isGroupedWithNextMessage(messageItem: MessageListItem.MessageItem): Boolean
     }
 
     public fun interface ShowAvatarPredicate {

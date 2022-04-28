@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
@@ -52,7 +54,8 @@ internal class MessageListItemDecoratorProvider(
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
-    isCurrentUserBanned: () -> Boolean
+    isCurrentUserBanned: () -> Boolean,
+    isGroupedWithNextMessage: (MessageListItem.MessageItem) -> Boolean
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
@@ -65,7 +68,7 @@ internal class MessageListItemDecoratorProvider(
         FailedIndicatorDecorator(messageListViewStyle.itemStyle, isCurrentUserBanned),
         ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
         ReplyDecorator(messageListViewStyle.replyMessageStyle),
-        FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle, deletedMessageListItemPredicate),
+        FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle, deletedMessageListItemPredicate, isGroupedWithNextMessage),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )
 
