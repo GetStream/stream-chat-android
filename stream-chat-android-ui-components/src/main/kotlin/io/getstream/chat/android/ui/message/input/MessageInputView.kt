@@ -756,7 +756,7 @@ public class MessageInputView : ConstraintLayout {
                     handleKeyStroke()
 
                     /** Debouncing when clearing the input will cause the suggestion list
-                     popup to appear briefly after clearing the input in certain cases. */
+                    popup to appear briefly after clearing the input in certain cases. */
                     if (messageText.isEmpty()) {
                         messageInputDebouncer?.cancelLastDebounce()
                         suggestionListController?.onNewMessageText(messageText)
@@ -929,6 +929,7 @@ public class MessageInputView : ConstraintLayout {
         }
         binding.messageInputFieldView.binding.messageEditText.isEnabled = canSend
         binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusableInTouchMode = canSend
     }
 
     /**
