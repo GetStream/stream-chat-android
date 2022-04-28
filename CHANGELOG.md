@@ -26,6 +26,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed a crash when attachment upload is in progress or about to start and user is disconnected at the same moment. [#3377](https://github.com/GetStream/stream-chat-android/pull/3377)
+- Fixed updating `Channel::ownCapabilities` after receiving events. [#3420](https://github.com/GetStream/stream-chat-android/pull/3420)
 
 ### ⬆️ Improved
 
