@@ -45,10 +45,21 @@ public fun Channel.getDisplayName(
     @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
 ): String {
     return name.takeIf { it.isNotEmpty() }
-        ?: getUsersExcludingCurrent(currentUser)
-            .joinToString { it.name }
-            .takeIf { it.isNotEmpty() }
+        ?: nameFromMembers(currentUser)
         ?: context.getString(fallback)
+}
+
+private fun Channel.nameFromMembers(currentUser: User?): String? {
+    val users = getUsersExcludingCurrent(currentUser)
+
+    return when {
+        users.isNotEmpty() -> users.joinToString { it.name }.takeIf { it.isNotEmpty() }
+
+        // This channel has only the current user or only one user
+        members.size == 1 -> members.first().user.name
+
+        else -> null
+    }
 }
 
 /**
