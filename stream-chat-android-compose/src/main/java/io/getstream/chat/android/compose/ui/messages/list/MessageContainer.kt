@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
@@ -51,6 +52,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
  * @param systemMessageContent Composable that represents system messages.
@@ -63,8 +65,8 @@ public fun MessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { it.groupPosition != MessageItemGroupPosition.Bottom },
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
@@ -188,16 +190,17 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onImagePreviewResult Handler when the user receives an image preview result.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 @Composable
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     MessageItem(
         messageItem = messageItem,

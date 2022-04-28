@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
+import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
@@ -97,6 +98,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
  * current user.
@@ -113,13 +115,13 @@ import io.getstream.chat.android.compose.ui.util.isUploading
 @Composable
 public fun MessageItem(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { messageItem.groupPosition != Bottom },
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },
@@ -322,11 +324,12 @@ internal fun DefaultMessageItemHeaderContent(
  * - message timestamp
  *
  * @param messageItem The message item to show the content for.
- */
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
+ * */
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     val message = messageItem.message
     when {

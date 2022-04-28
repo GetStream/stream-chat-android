@@ -44,14 +44,4 @@ public data class MessagesState(
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
-) {
-
-    internal fun isGroupedWithNextMessage(message: MessageItemState): Boolean {
-        if (message.groupPosition == MessageItemGroupPosition.Bottom) {
-            return false
-        }
-        val messageIndex = messageItems.indexOf(message)
-        val nextMessage = messageItems.take(messageIndex).findLast { it is MessageItemState } as? MessageItemState ?: return false
-        return (nextMessage.message.createdAt?.time ?: 0) - (message.message.createdAt?.time ?: 0) < 1000 * 60
-    }
-}
+)

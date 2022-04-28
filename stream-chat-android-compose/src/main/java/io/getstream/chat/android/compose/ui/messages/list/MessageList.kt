@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isGroupedWithNextMessage
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
@@ -62,6 +63,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -90,13 +92,16 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = {
+        viewModel.currentMessagesState.messageItems.isGroupedWithNextMessage(it)
+    },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState, (MessageItemState) -> Boolean) -> Unit = { messageListItem, isGroupedWithNextMessage ->
+    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
             onImagePreviewResult = onImagePreviewResult,
@@ -136,6 +141,7 @@ public fun MessageList(
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 @Composable
 internal fun DefaultMessageContainer(
@@ -206,6 +212,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -228,13 +235,14 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { currentState.messageItems.isGroupedWithNextMessage(it) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(currentState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState, (MessageItemState) -> Boolean) -> Unit = { messageListItemState, isGroupedWithNextMessage ->
+    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItemState ->
         DefaultMessageContainer(
             messageListItem = messageListItemState,
             onLongItemClick = onLongItemClick,
@@ -260,29 +268,7 @@ public fun MessageList(
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
-            itemContent = itemContent,
-            isGroupedWithNextMessage = isGroupedWithNextMessage@{ message ->
-                currentState.isGroupedWithNextMessage(message = message)
-                // if (message.groupPosition == MessageItemGroupPosition.Bottom) return@isGroupedWithNextMessage false
-                // val index = messages.indexOf(message)
-                // val nextMessage = messages[index - 1]
-                //
-                // messages.find { (it as? MessageItemState)?.message?.showInChannel == true }
-                //
-                // println("----------------------")
-                // println("current message: ${message.message.text}: ${message.message.createdAt}")
-                // println("next message: ${(nextMessage as? MessageItemState)?.message?.text}: ${(nextMessage as? MessageItemState)?.message?.createdAt}")
-                // println("diff is: ${((nextMessage as? MessageItemState)?.message?.createdAt?.time ?: 0) - (message.message.createdAt?.time ?: 0)}")
-                // println("----------------------")
-                //
-                // if (nextMessage is MessageItemState) {
-                //     (nextMessage.message.createdAt?.time ?: return@isGroupedWithNextMessage false) -
-                //         (message.message.createdAt?.time ?: return@isGroupedWithNextMessage false) <
-                //         1000 * 60
-                // } else {
-                //     true
-                // }
-            }
+            itemContent = itemContent
         )
         else -> emptyContent()
     }
