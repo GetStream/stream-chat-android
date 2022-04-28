@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
@@ -39,7 +40,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param messageItem Message to show.
  */
 @Composable
-public fun MessageFooter(messageItem: MessageItemState) {
+public fun MessageFooter(
+    messageItem: MessageItemState,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean
+) {
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
@@ -57,7 +61,7 @@ public fun MessageFooter(messageItem: MessageItemState) {
         )
     }
 
-    if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None) {
+    if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None || isGroupedWithNextMessage(messageItem)) {
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically

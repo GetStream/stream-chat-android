@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -95,14 +96,15 @@ public fun MessageList(
         DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
+    itemContent: @Composable (MessageListItemState, (MessageItemState) -> Boolean) -> Unit = { messageListItem, isGroupedWithNextMessage ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
             onImagePreviewResult = onImagePreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
+            isGroupedWithNextMessage = isGroupedWithNextMessage
         )
     },
 ) {
@@ -143,6 +145,7 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     MessageContainer(
         messageListItem = messageListItem,
@@ -150,7 +153,8 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult
+        onImagePreviewResult = onImagePreviewResult,
+        isGroupedWithNextMessage = isGroupedWithNextMessage
     )
 }
 
@@ -230,14 +234,15 @@ public fun MessageList(
         DefaultMessagesHelperContent(currentState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
+    itemContent: @Composable (MessageListItemState, (MessageItemState) -> Boolean) -> Unit = { messageListItemState, isGroupedWithNextMessage ->
         DefaultMessageContainer(
-            messageListItem = it,
+            messageListItem = messageListItemState,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            isGroupedWithNextMessage = isGroupedWithNextMessage
         )
     },
 ) {
@@ -255,7 +260,29 @@ public fun MessageList(
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
-            itemContent = itemContent
+            itemContent = itemContent,
+            isGroupedWithNextMessage = isGroupedWithNextMessage@{ message ->
+                currentState.isGroupedWithNextMessage(message = message)
+                // if (message.groupPosition == MessageItemGroupPosition.Bottom) return@isGroupedWithNextMessage false
+                // val index = messages.indexOf(message)
+                // val nextMessage = messages[index - 1]
+                //
+                // messages.find { (it as? MessageItemState)?.message?.showInChannel == true }
+                //
+                // println("----------------------")
+                // println("current message: ${message.message.text}: ${message.message.createdAt}")
+                // println("next message: ${(nextMessage as? MessageItemState)?.message?.text}: ${(nextMessage as? MessageItemState)?.message?.createdAt}")
+                // println("diff is: ${((nextMessage as? MessageItemState)?.message?.createdAt?.time ?: 0) - (message.message.createdAt?.time ?: 0)}")
+                // println("----------------------")
+                //
+                // if (nextMessage is MessageItemState) {
+                //     (nextMessage.message.createdAt?.time ?: return@isGroupedWithNextMessage false) -
+                //         (message.message.createdAt?.time ?: return@isGroupedWithNextMessage false) <
+                //         1000 * 60
+                // } else {
+                //     true
+                // }
+            }
         )
         else -> emptyContent()
     }

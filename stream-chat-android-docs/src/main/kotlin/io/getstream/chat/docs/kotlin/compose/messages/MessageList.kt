@@ -163,7 +163,7 @@ private object MessageListCustomizationSnippet {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(ChatTheme.colors.appBackground),
-                        itemContent = { item ->
+                        itemContent = { item, _ ->
                             if (item is MessageItemState) { // we check against other subclasses of 'MessageListItemState'
                                 val message = item.message
 

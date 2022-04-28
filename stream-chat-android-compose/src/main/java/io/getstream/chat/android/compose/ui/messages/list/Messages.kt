@@ -74,13 +74,14 @@ public fun Messages(
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(messagesState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState) -> Unit,
+    itemContent: @Composable (MessageListItemState, (MessageItemState) -> Boolean) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
 
@@ -99,7 +100,7 @@ public fun Messages(
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                itemContent(item)
+                itemContent(item, isGroupedWithNextMessage)
 
                 if (item is MessageItemState) {
                     onLastVisibleMessageChanged(item.message)

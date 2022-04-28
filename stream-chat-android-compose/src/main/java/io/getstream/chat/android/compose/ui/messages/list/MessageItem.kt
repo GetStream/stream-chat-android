@@ -113,6 +113,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
 @Composable
 public fun MessageItem(
     messageItem: MessageItemState,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
@@ -137,7 +138,7 @@ public fun MessageItem(
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemFooterContent(messageItem = it)
+        DefaultMessageItemFooterContent(messageItem = it, isGroupedWithNextMessage = isGroupedWithNextMessage)
     },
     trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(messageItem = it)
@@ -325,6 +326,7 @@ internal fun DefaultMessageItemHeaderContent(
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean
 ) {
     val message = messageItem.message
     when {
@@ -338,7 +340,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
             OwnedMessageVisibilityContent(message = message)
         }
         !message.isDeleted() -> {
-            MessageFooter(messageItem = messageItem)
+            MessageFooter(messageItem = messageItem, isGroupedWithNextMessage = isGroupedWithNextMessage)
         }
     }
 

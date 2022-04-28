@@ -63,6 +63,7 @@ public fun MessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -80,7 +81,8 @@ public fun MessageContainer(
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            isGroupedWithNextMessage = isGroupedWithNextMessage
         )
     },
 ) {
@@ -190,6 +192,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
 @Composable
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
@@ -202,6 +205,7 @@ internal fun DefaultMessageItem(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult
+        onImagePreviewResult = onImagePreviewResult,
+        isGroupedWithNextMessage = isGroupedWithNextMessage
     )
 }
