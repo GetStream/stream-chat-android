@@ -159,6 +159,7 @@ internal class EventHandlerImpl(
     private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
+                syncManager.updateSyncStateForEvents(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
                 handleEventsInternal(eventList, isFromSync = true)
             }
     }
@@ -545,7 +546,6 @@ internal class EventHandlerImpl(
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }
-        syncManager.updateSyncStateForEvents(sortedEvents.lastOrNull()?.createdAt ?: Date())
         updateOfflineStorageFromEvents(sortedEvents, isFromSync)
 
         // step 3 - forward the events to the active channels
