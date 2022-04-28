@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
  * @param deletedMessageListItemPredicate [MessageListView.MessageListItemPredicate] Predicate to hide or show the the deleted message accordingly to the logic provided.
  * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
+ * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
