@@ -3183,6 +3183,37 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun selectUsersLikeName (Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
+	public abstract fun createAttachmentRepository ()Lio/getstream/chat/android/client/persistance/repository/AttachmentRepository;
+	public abstract fun createChannelConfigRepository ()Lio/getstream/chat/android/client/persistance/repository/ChannelConfigRepository;
+	public abstract fun createChannelRepository (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;
+	public abstract fun createMessageRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/MessageRepository;
+	public abstract fun createQueryChannelsRepository ()Lio/getstream/chat/android/client/persistance/repository/QueryChannelsRepository;
+	public abstract fun createReactionRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ReactionRepository;
+	public abstract fun createSyncStateRepository ()Lio/getstream/chat/android/client/persistance/repository/SyncStateRepository;
+	public abstract fun createUserRepository ()Lio/getstream/chat/android/client/persistance/repository/UserRepository;
+	public abstract fun get (Ljava/lang/Class;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
+	public static final field Companion Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider$Companion;
+	public synthetic fun <init> (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun createAttachmentRepository ()Lio/getstream/chat/android/client/persistance/repository/AttachmentRepository;
+	public fun createChannelConfigRepository ()Lio/getstream/chat/android/client/persistance/repository/ChannelConfigRepository;
+	public fun createChannelRepository (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;
+	public fun createMessageRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/MessageRepository;
+	public fun createQueryChannelsRepository ()Lio/getstream/chat/android/client/persistance/repository/QueryChannelsRepository;
+	public fun createReactionRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ReactionRepository;
+	public fun createSyncStateRepository ()Lio/getstream/chat/android/client/persistance/repository/SyncStateRepository;
+	public fun createUserRepository ()Lio/getstream/chat/android/client/persistance/repository/UserRepository;
+	public fun get (Ljava/lang/Class;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider$Companion {
+	public final fun changeRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
+	public final fun get ()Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider;
+}
+
 public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
