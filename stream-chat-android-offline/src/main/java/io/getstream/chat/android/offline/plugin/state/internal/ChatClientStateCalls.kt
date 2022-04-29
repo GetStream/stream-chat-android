@@ -27,6 +27,9 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
+import java.util.Date
+
+private const val MAX_TIME_OF_STATE_MILI = 300
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
@@ -34,11 +37,19 @@ import kotlinx.coroutines.CoroutineScope
 internal class ChatClientStateCalls(
     private val chatClient: ChatClient,
     private val state: StateRegistry,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) {
+
+    private val requestTimeMap: MutableMap<Int, Date> = mutableMapOf()
     /** Reference request of the channels query. */
-    internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
-        chatClient.queryChannels(request).launch(scope)
+    internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
+        val queryHashCode = QueryChannelCacheKey(request).hashCode()
+
+        if (isStateOld(queryHashCode) || forceRefresh) {
+            chatClient.queryChannels(request).launch(scope)
+            requestTimeMap[queryHashCode] = Date()
+        }
+
         return state.queryChannels(request.filter, request.querySort)
     }
 
@@ -64,5 +75,14 @@ internal class ChatClientStateCalls(
     internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
         chatClient.getReplies(messageId, messageLimit).launch(scope)
         return state.thread(messageId)
+    }
+
+    private fun isStateOld(requestHash: Int): Boolean {
+        if (!requestTimeMap.containsKey(requestHash)) return true
+
+        val now = Date()
+        val diff = now.time - requestTimeMap[requestHash]!!.time
+
+        return diff > MAX_TIME_OF_STATE_MILI
     }
 }

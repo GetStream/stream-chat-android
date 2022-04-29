@@ -22,6 +22,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -91,7 +92,7 @@ public fun ChatClient.queryChannelsAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request)
+        requestsAsState(coroutineScope).queryChannels(request, false) //Todo: review this!
     }
 }
 
