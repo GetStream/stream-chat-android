@@ -31,7 +31,7 @@ internal class FakeSocketService(
 
     private var connectionUserId: String? = null
 
-    private val listeners = mutableListOf<SocketListener>()
+    private val listeners = mutableSetOf<SocketListener>()
 
     fun sendEvent(event: ChatEvent) {
         synchronized(listeners) {

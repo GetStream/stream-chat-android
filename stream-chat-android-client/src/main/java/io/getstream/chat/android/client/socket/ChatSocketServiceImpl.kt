@@ -57,7 +57,7 @@ internal class ChatSocketServiceImpl constructor(
     private var socket: Socket? = null
     private var eventsParser: EventsParser? = null
     private var socketConnectionJob: Job? = null
-    private val listeners = mutableListOf<SocketListener>()
+    private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         object : HealthMonitor.HealthCallback {
