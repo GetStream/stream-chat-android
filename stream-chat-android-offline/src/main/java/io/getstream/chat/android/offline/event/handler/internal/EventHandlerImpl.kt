@@ -159,6 +159,7 @@ internal class EventHandlerImpl(
     private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
+                syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
                 handleEventsInternal(eventList, isFromSync = true)
             }
     }
