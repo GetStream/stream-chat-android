@@ -30,6 +30,7 @@ import java.util.Date
 /**
  * Repository to read and write [Channel] data.
  */
+@SuppressWarnings("TooManyFunctions")
 internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
@@ -76,7 +77,7 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return selectChannels(listOf(cid)).getOrNull(0)
+        return selectChannelsByCids(listOf(cid)).getOrNull(0)
     }
 
     /**
@@ -111,10 +112,31 @@ internal class DatabaseChannelRepository(
     }
 
     /**
+     * Reads channel using specified [cid].
+     */
+    override suspend fun selectChannelByCid(cid: String): Channel? {
+        return channelDao.select(cid = cid)?.toModel(getUser, getMessage)
+    }
+
+    /**
+     * Reads list of channels using specified [cids].
+     */
+    override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> {
+        return channelDao.select(cids = cids).map { it.toModel(getUser, getMessage) }
+    }
+
+    /**
+     * Read which channel cids need sync.
+     */
+    override suspend fun selectChannelCidsSyncNeeded(limit: Int): List<String> {
+        return channelDao.selectCidsSyncNeeded(limit = limit)
+    }
+
+    /**
      * Read which channels need sync.
      */
-    override suspend fun selectChannelsSyncNeeded(): List<Channel> {
-        return channelDao.selectSyncNeeded().map { it.toModel(getUser, getMessage) }
+    override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> {
+        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage) }
     }
 
     /**
