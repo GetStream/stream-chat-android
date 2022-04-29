@@ -19,15 +19,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ChannelRepository.selectChannelByCid` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ChannelRepository.selectChannelsByCids` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ChannelRepository.selectChannelCidsSyncNeeded` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `MessageRepository.selectMessageIdsBySyncState` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ReactionRepository.selectReactionById` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ReactionRepository.selectReactionsByIds` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ReactionRepository.selectReactionIdsBySyncStatus` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `ChatLogger.logV` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
-- Added `TaggedLogger.logV` method. [#3400](https://github.com/GetStream/stream-chat-android/pull/3400)
+- Added `ChannelRepository.selectChannelByCid` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChannelRepository.selectChannelsByCids` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChannelRepository.selectChannelCidsSyncNeeded` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `MessageRepository.selectMessageIdsBySyncState` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionById` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionsByIds` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionIdsBySyncStatus` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChatLogger.logV` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `TaggedLogger.logV` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
 
 ### ⚠️ Changed
 - Changed visibility of the `retry` extension to internal. [#3353](https://github.com/GetStream/stream-chat-android/pull/3353)
