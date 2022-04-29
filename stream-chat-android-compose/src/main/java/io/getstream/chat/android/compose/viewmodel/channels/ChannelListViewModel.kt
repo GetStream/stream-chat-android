@@ -25,7 +25,6 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.toUnitCall
@@ -77,7 +76,7 @@ public class ChannelListViewModel(
     /**
      * State flow that keeps the value of the current [FilterObject] for channels.
      */
-    private val filterFlow: MutableStateFlow<FilterObject> = MutableStateFlow(initialFilters ?: NeutralFilterObject)
+    private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
 
     /**
      * State flow that keeps the value of the current [QuerySort] for channels.
@@ -88,7 +87,7 @@ public class ChannelListViewModel(
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
      * the `initialFilters` parameter and the initial sort, but can be changed.
      */
-    private val queryConfigFlow = filterFlow.combine(querySortFlow) { filters, sort ->
+    private val queryConfigFlow = filterFlow.filterNotNull().combine(querySortFlow) { filters, sort ->
         QueryConfig(filters = filters, querySort = sort)
     }
 
@@ -303,7 +302,7 @@ public class ChannelListViewModel(
     public fun loadMore() {
         if (chatClient.globalState.isOffline()) return
         val currentConfig = QueryConfig(
-            filters = filterFlow.value,
+            filters = filterFlow.value ?: return,
             querySort = querySortFlow.value
         )
 
