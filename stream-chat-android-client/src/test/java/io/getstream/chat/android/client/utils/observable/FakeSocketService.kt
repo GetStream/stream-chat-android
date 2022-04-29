@@ -34,10 +34,8 @@ internal class FakeSocketService(
     private val listeners = mutableSetOf<SocketListener>()
 
     fun sendEvent(event: ChatEvent) {
-        synchronized(listeners) {
-            listeners.forEach {
-                it.onEvent(event)
-            }
+        listeners.forEach {
+            it.onEvent(event)
         }
     }
 
@@ -58,15 +56,11 @@ internal class FakeSocketService(
     }
 
     override fun addListener(listener: SocketListener) {
-        synchronized(listeners) {
-            listeners.add(listener)
-        }
+        listeners.add(listener)
     }
 
     override fun removeListener(listener: SocketListener) {
-        synchronized(listeners) {
-            listeners.remove(listener)
-        }
+        listeners.remove(listener)
     }
 
     override fun onSocketError(error: ChatError) {
