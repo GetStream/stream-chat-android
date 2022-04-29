@@ -47,6 +47,7 @@ public fun interface ChannelNameFormatter {
          *
          * @see [DefaultChannelNameFormatter]
          */
+        @JvmOverloads
         public fun defaultFormatter(
             context: Context,
             @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
