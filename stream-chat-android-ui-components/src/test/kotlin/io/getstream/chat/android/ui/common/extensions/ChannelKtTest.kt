@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.extensions
 
+import com.getstream.sdk.chat.utils.extensions.getDisplayName
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.createMember
 import io.getstream.chat.android.ui.createUser
 import io.getstream.chat.android.ui.randomChannel
@@ -31,6 +33,10 @@ internal class ChannelKtTest {
         val member = createMember(user = randomUser)
         val oneMemberChannel = randomChannel(members = listOf(member))
 
-        randomUser.name `should be equal to` oneMemberChannel.getDisplayName(mock(), randomUser)
+        randomUser.name `should be equal to` oneMemberChannel.getDisplayName(
+            mock(),
+            randomUser,
+            R.string.stream_ui_channel_list_untitled_channel
+        )
     }
 }
