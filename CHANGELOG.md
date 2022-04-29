@@ -32,6 +32,7 @@
 - Fixed reaction sync issue because `SyncState::lastSyncedAt` was never updated. [#3421](https://github.com/GetStream/stream-chat-android/pull/3421)
 
 ### ⬆️ Improved
+- Adding the possibility to change the repositories of `OfflinePlugin`. You can change `RepositoryFactory` in `OfflinePlugin` and use custom implementations of repositories.
 
 ### ✅ Added
 

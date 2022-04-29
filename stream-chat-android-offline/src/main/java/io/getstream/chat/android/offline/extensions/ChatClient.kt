@@ -34,6 +34,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
@@ -46,7 +48,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.validateCidWithResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -247,10 +248,12 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
             try {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
 
-                val repos = RepositoryFacade.get()
+                val repositoryProvider = RepositoryProvider.get()
+                val channelRepository = repositoryProvider.get(MessageRepository::class.java)
+
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
-                repos.deleteChannelMessage(message)
+                channelRepository.deleteChannelMessage(message)
 
                 Result.success(true)
             } catch (exception: Exception) {
@@ -298,9 +301,10 @@ public fun ChatClient.loadMessageById(
                 result
             } else {
                 try {
-                    RepositoryFacade.get().selectMessage(messageId)?.let { message ->
-                        Result(message)
-                    } ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+                    val repositoryProvider = RepositoryProvider.get()
+
+                    repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
+                        ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
                 } catch (exception: Exception) {
                     Result.error(exception)
                 }
