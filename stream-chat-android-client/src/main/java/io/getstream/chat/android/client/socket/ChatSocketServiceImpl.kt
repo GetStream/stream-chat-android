@@ -44,6 +44,8 @@ private const val DEFAULT_DELAY = 500
 
 @Suppress("TooManyFunctions")
 internal class ChatSocketServiceImpl constructor(
+    private val apiKey: String,
+    private val wssUrl: String,
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
     private val networkStateProvider: NetworkStateProvider,
@@ -186,11 +188,11 @@ internal class ChatSocketServiceImpl constructor(
         }
     }
 
-    override fun anonymousConnect(endpoint: String, apiKey: String) =
-        connect(ConnectionConf.AnonymousConnectionConf(endpoint, apiKey))
+    override fun connectAnonymously() =
+        connect(ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
 
-    override fun userConnect(endpoint: String, apiKey: String, user: User) =
-        connect(ConnectionConf.UserConnectionConf(endpoint, apiKey, user))
+    override fun connect(user: User) =
+        connect(ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
 
     private fun connect(connectionConf: ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()

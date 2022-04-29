@@ -59,6 +59,8 @@ internal class ChatSocketServiceImplTest {
         networkStateProvider = mock()
         socketListener = mock()
         socketService = ChatSocketServiceImpl(
+            randomString(),
+            randomString(),
             tokenManager,
             socketFactory,
             networkStateProvider,
@@ -72,7 +74,7 @@ internal class ChatSocketServiceImplTest {
     fun `Should start connecting to socket when connecting and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        socketService.userConnect(randomString(), randomString(), randomUser())
+        socketService.connect(randomUser())
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
     }
@@ -84,7 +86,7 @@ internal class ChatSocketServiceImplTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        socketService.userConnect(randomString(), randomString(), randomUser())
+        socketService.connect(randomUser())
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
     }
@@ -93,7 +95,7 @@ internal class ChatSocketServiceImplTest {
     fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        socketService.userConnect(randomString(), randomString(), randomUser())
+        socketService.connect(randomUser())
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
     }
@@ -102,7 +104,7 @@ internal class ChatSocketServiceImplTest {
     fun `Should start connecting to socket when connecting with anymous user and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        socketService.anonymousConnect(randomString(), randomString())
+        socketService.connectAnonymously()
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
     }
@@ -114,7 +116,7 @@ internal class ChatSocketServiceImplTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        socketService.anonymousConnect(randomString(), randomString())
+        socketService.connectAnonymously()
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
     }
@@ -123,7 +125,7 @@ internal class ChatSocketServiceImplTest {
     fun `Should not start connecting to socket when connecting with anymous user  and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        socketService.anonymousConnect(randomString(), randomString())
+        socketService.connectAnonymously()
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
     }
@@ -138,7 +140,7 @@ internal class ChatSocketServiceImplTest {
             statusCode = 500,
         )
 
-        socketService.anonymousConnect(randomString(), randomString())
+        socketService.connectAnonymously()
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false

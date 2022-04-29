@@ -26,12 +26,12 @@ import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 import java.util.Date
 
 internal class ChatEventsObservable(
-    private val socket: ChatSocket,
+    private val socket: ChatSocketService,
     private var client: ChatClient,
 ) {
 

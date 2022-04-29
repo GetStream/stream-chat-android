@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 
 internal interface ChatSocketService {
-    fun anonymousConnect(endpoint: String, apiKey: String)
-    fun userConnect(endpoint: String, apiKey: String, user: User)
+    fun connectAnonymously()
+    fun connect(user: User)
     fun disconnect()
     fun releaseConnection()
     fun addListener(listener: SocketListener)

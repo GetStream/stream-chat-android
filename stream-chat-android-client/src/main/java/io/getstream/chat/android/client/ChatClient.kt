@@ -123,7 +123,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -165,7 +165,7 @@ public class ChatClient
 internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
-    private val socket: ChatSocket,
+    private val socket: ChatSocketService,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
