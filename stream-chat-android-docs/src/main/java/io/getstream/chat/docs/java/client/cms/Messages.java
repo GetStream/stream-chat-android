@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import android.content.Context;
 
@@ -113,6 +113,9 @@ public class Messages {
     }
 
     class MessageFormat {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/message_format/?language=java">Open Graph Scrapper</a>
+         */
         public void openGraphScraper() {
             Message message = new Message();
             message.setText("Check this bear out https://imgur.com/r/bears/4zmGbMN");
@@ -418,6 +421,37 @@ public class Messages {
                             // Handle result.error()
                         }
                     });
+        }
+    }
+
+    public class Translation {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/translation/?language=java#message-translation-endpoint">Message Translation</a>
+         */
+        public void messageTranslation() {
+            // Translate message to French
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            Message message = new Message();
+            message.setText("Hello, I would like to have more information about your product.");
+
+            channelClient.sendMessage(message).enqueue(result -> {
+                if (result.isSuccess()) {
+                    String messageId = result.data().getId();
+
+                    client.translate(messageId, "fr").enqueue(translationResult -> {
+                        if (translationResult.isSuccess()) {
+                            Message translatedMessage = translationResult.data();
+                            String translation = translatedMessage.getI18n().get("fr_text");
+                        } else {
+                            // Handle translationResult.error()
+                        }
+                    });
+                } else {
+                    // Handle result.error()
+                }
+            });
         }
     }
 }
