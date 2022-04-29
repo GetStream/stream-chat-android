@@ -929,6 +929,7 @@ public class MessageInputView : ConstraintLayout {
         }
         binding.messageInputFieldView.binding.messageEditText.isEnabled = canSend
         binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusableInTouchMode = canSend
     }
 
     /**
