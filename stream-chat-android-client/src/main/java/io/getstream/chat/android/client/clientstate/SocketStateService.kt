@@ -18,28 +18,6 @@ package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
-/**
- * @startuml
- * title SocketState FSM
- *
- * Idle --> Pending : ConnectionRequested
- * Idle --> Idle : ConnectedEvent/DisconnectRequestedEvent/DisconnectedEvent/ForceDisconnect
- *
- * Pending --> Connected : ConnectedEvent
- * Pending --> Pending : DisconnectedEvent
- * Pending --> Idle : DisconnectRequestedEvent/ForceDisconnect
- *
- * Connected --> Disconnected : DisconnectedEvent
- * Connected --> Idle : DisconnectRequestedEvent/ForceDisconnect
- * Connected --> Connected : ConnectedEvent
- *
- * Disconnected --> Disconnected : DisconnectedEvent
- * Disconnected --> Idle : DisconnectRequestedEvent/ForceDisconnect
- * Disconnected --> Connected : ConnectedEvent
- *
- * [*] --> Idle
- * @enduml
- */
 internal class SocketStateService {
     fun onConnected(connectionId: String) {
         stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(connectionId))
