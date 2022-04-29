@@ -43,7 +43,7 @@ internal interface ChannelDao {
             "ORDER BY syncStatus ASC " +
             "LIMIT :limit"
     )
-    suspend fun selectCidsSyncNeeded(
+    suspend fun selectCidsBySyncNeeded(
         syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED,
         limit: Int = NO_LIMIT
     ): List<String>

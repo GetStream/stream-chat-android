@@ -251,7 +251,7 @@ internal class SyncManager(
     }
 
     private suspend fun retryChannels() {
-        val cids = repos.selectChannelCidsSyncNeeded()
+        val cids = repos.selectChannelCidsBySyncNeeded()
         logger.logD("[retryChannels] cids.size: ${cids.size}")
         for (cid in cids) {
             logger.logD("[retryReactions] process channel($cid)")

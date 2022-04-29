@@ -36,13 +36,17 @@ internal interface ReactionDao {
 
     @Query(
         "SELECT id FROM stream_chat_reaction " +
-            "WHERE syncStatus = :syncStatus ORDER BY syncStatus ASC LIMIT :limit"
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
     )
     suspend fun selectIdsSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<Int>
 
     @Query(
         "SELECT * FROM stream_chat_reaction " +
-            "WHERE syncStatus = :syncStatus ORDER BY syncStatus ASC LIMIT :limit"
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
     )
     suspend fun selectSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<ReactionEntity>
 

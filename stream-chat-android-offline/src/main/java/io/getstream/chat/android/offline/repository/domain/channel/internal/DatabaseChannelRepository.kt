@@ -128,8 +128,8 @@ internal class DatabaseChannelRepository(
     /**
      * Read which channel cids need sync.
      */
-    override suspend fun selectChannelCidsSyncNeeded(limit: Int): List<String> {
-        return channelDao.selectCidsSyncNeeded(limit = limit)
+    override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> {
+        return channelDao.selectCidsBySyncNeeded(limit = limit)
     }
 
     /**

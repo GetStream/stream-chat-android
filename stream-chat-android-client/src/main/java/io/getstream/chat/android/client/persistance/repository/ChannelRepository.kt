@@ -95,7 +95,7 @@ public interface ChannelRepository {
     /**
      * Read which channel cids need sync.
      */
-    public suspend fun selectChannelCidsSyncNeeded(limit: Int = NO_LIMIT): List<String>
+    public suspend fun selectChannelCidsBySyncNeeded(limit: Int = NO_LIMIT): List<String>
 
     /**
      * Read which channels need sync.
