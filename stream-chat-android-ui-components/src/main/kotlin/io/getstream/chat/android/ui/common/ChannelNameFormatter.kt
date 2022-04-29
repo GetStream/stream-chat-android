@@ -18,10 +18,10 @@ package io.getstream.chat.android.ui.common
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.getstream.sdk.chat.utils.extensions.getDisplayName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 
 /**
  *  An interface that generates a name for the given channel.
@@ -43,14 +43,16 @@ public fun interface ChannelNameFormatter {
          *
          * @param context The context used to load string resources.
          * @param fallback The resource identifier of a fallback string.
+         * @param maxMembers The maximum number of members used to generate a name for a distinct channel.
          *
          * @see [DefaultChannelNameFormatter]
          */
         public fun defaultFormatter(
             context: Context,
             @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
+            maxMembers: Int
         ): ChannelNameFormatter {
-            return DefaultChannelNameFormatter(context, fallback)
+            return DefaultChannelNameFormatter(context, fallback, maxMembers)
         }
     }
 }
@@ -65,10 +67,12 @@ public fun interface ChannelNameFormatter {
  *
  * @param context The context used to load string resources.
  * @param fallback The resource identifier of a fallback string.
+ * @param maxMembers The maximum number of members used to generate a name for a distinct channel.
  */
 private class DefaultChannelNameFormatter(
     private val context: Context,
     @StringRes private val fallback: Int,
+    private val maxMembers: Int,
 ) : ChannelNameFormatter {
 
     /**
@@ -79,6 +83,6 @@ private class DefaultChannelNameFormatter(
      * @return The display name for the given channel.
      */
     override fun formatChannelName(channel: Channel, currentUser: User?): String {
-        return channel.getDisplayName(context, currentUser, fallback)
+        return channel.getDisplayName(context, currentUser, fallback, maxMembers)
     }
 }

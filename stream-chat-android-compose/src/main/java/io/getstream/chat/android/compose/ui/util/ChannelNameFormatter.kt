@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import com.getstream.sdk.chat.utils.extensions.getDisplayName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -77,21 +78,6 @@ private class DefaultChannelNameFormatter(
      * @return The display name for the given channel.
      */
     override fun formatChannelName(channel: Channel, currentUser: User?): String {
-        return channel.name.takeIf { it.isNotEmpty() }
-            ?: nameFromMembers(channel, currentUser)
-            ?: context.getString(R.string.stream_compose_untitled_channel)
-    }
-
-    private fun nameFromMembers(channel: Channel, currentUser: User?): String? {
-        val users = channel.getOtherUsers(currentUser)
-
-        return when {
-            users.isNotEmpty() -> users.joinToString { it.name }.takeIf { it.isNotEmpty() }
-
-            // This channel has only the current user or only one user
-            channel.members.size == 1 -> channel.members.first().user.name
-
-            else -> null
-        }
+        return channel.getDisplayName(context, currentUser, R.string.stream_compose_untitled_channel, maxMembers)
     }
 }
