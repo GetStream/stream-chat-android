@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
@@ -121,7 +120,7 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { messageItem.groupPosition != Bottom },
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { it.groupPosition != Bottom },
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },

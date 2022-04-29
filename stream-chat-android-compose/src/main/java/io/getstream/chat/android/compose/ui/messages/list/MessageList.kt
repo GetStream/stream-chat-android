@@ -235,7 +235,9 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { currentState.messageItems.isGroupedWithNextMessage(it) },
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean = {
+        currentState.messageItems.isGroupedWithNextMessage(it)
+    },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {

@@ -302,10 +302,8 @@ internal class FootnoteDecorator(
         val createdAt = data.message.getCreatedAtOrNull()
         val updatedAt = data.message.getUpdatedAtOrNull()
 
-        val isGroupedWithNextMessage = isGroupedWithNextMessage(data)
-
         when {
-            (data.isNotBottomPosition() || createdAt == null) && !isGroupedWithNextMessage -> footnoteView.hideTimeLabel()
+            createdAt == null || isGroupedWithNextMessage(data) -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
                 dateFormatter.formatTime(
                     updatedAt

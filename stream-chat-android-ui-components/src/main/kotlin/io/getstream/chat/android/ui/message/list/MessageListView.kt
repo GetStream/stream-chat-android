@@ -702,9 +702,7 @@ public class MessageListView : ConstraintLayout {
      * @param channel The channel object.
      */
     public fun init(channel: Channel) {
-        println("channel set")
         this.channel = channel
-        println("adapter init")
         initAdapter()
 
         messageListViewStyle = requireStyle().copy(

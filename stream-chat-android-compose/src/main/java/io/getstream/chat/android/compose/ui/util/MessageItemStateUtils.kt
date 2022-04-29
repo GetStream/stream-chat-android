@@ -32,10 +32,16 @@ internal fun MessageItemState.isFailed(): Boolean = isMine && message.syncStatus
  * @return If the current message is grouped with the next message.
  */
 internal fun List<MessageListItemState>.isGroupedWithNextMessage(message: MessageItemState): Boolean {
-    if (message.groupPosition == MessageItemGroupPosition.Bottom) {
-        return false
-    }
+    if (message.groupPosition == MessageItemGroupPosition.Bottom) return false
+
     val messageIndex = indexOf(message)
-    val nextMessage = take(messageIndex).findLast { it is MessageItemState } as? MessageItemState ?: return false
-    return (nextMessage.message.createdAt?.time ?: 0) - (message.message.createdAt?.time ?: 0) < 1000 * 60
+    val nextMessage = take(messageIndex).findLast { it is MessageItemState } as? MessageItemState
+        ?: return false
+    if (message.isMine != nextMessage.isMine) return false
+
+    return (nextMessage.message.createdAt?.time ?: 0) -
+        (message.message.createdAt?.time ?: 0) <
+        DefaultMessageGroupingDelayMillis
 }
+
+private const val DefaultMessageGroupingDelayMillis: Long = 60 * 1000L

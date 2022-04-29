@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.state.messages
 
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 
 /**

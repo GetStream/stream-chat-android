@@ -1732,6 +1732,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 	public abstract fun onGiphySend (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$GroupedMessageListItemPredicate {
+	public abstract fun isGroupedWithNextMessage (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Z
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$LastMessageReadHandler {
 	public abstract fun onLastMessageRead ()V
 }
