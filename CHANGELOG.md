@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 - Fixed ANR happening on a token request. [#3342](https://github.com/GetStream/stream-chat-android/pull/3342)
 - Fixed overriding User's `image` and `name` properties with empty values when connecting the user. [#3430](https://github.com/GetStream/stream-chat-android/pull/3430)
+- Fixed serialization problem when flagging message. [#3437](https://github.com/GetStream/stream-chat-android/pull/3437)
 
 ### ⬆️ Improved
 
