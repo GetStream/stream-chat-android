@@ -28,7 +28,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 
 /**
- *  An interface that allows to generate a preview text for the given message.
+ * An interface that allows to generate a preview text for the given message.
  */
 public fun interface MessagePreviewFormatter {
 
