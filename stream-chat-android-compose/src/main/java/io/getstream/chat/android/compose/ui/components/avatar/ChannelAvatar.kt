@@ -73,7 +73,7 @@ public fun ChannelAvatar(
          * If the channel has an image we load that as a priority.
          * If the channel has just one member (current user) we show our initials.
          */
-        channel.image.isNotEmpty() || memberCount == 1 -> {
+        channel.image.isNotEmpty() -> {
             Avatar(
                 modifier = modifier,
                 imageUrl = channel.image,
@@ -81,6 +81,24 @@ public fun ChannelAvatar(
                 textStyle = textStyle,
                 shape = shape,
                 contentDescription = contentDescription,
+                onClick = onClick
+            )
+        }
+
+        /**
+         * If the channel has one member - direct message with yourself - we show your image or initials.
+         */
+        memberCount == 1 -> {
+            val user = members.first().user
+
+            UserAvatar(
+                modifier = modifier,
+                user = user,
+                shape = shape,
+                contentDescription = user.name,
+                showOnlineIndicator = showOnlineIndicator,
+                onlineIndicatorAlignment = onlineIndicatorAlignment,
+                onlineIndicator = onlineIndicator,
                 onClick = onClick
             )
         }
@@ -138,6 +156,17 @@ private fun ChannelWithImageAvatarPreview() {
 @Composable
 private fun ChannelAvatarForDirectChannelWithOnlineUserPreview() {
     ChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
+}
+
+/**
+ * Preview of [ChannelAvatar] for a direct conversation with only one user.
+ *
+ * Should show a user avatar with an online indicator.
+ */
+@Preview(showBackground = true, name = "ChannelAvatar Preview (Only one user)")
+@Composable
+private fun ChannelAvatarForDirectChannelWithOneUserPreview() {
+    ChannelAvatarPreview(PreviewChannelData.channelWithOneUser)
 }
 
 /**

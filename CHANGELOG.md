@@ -65,6 +65,7 @@
 - Added a way to customize `messageInputField` padding inside `MessageInputFiledView`. [#3392](https://github.com/GetStream/stream-chat-android/pull/3392)
 - Added a way to change the `MessageListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
 - Added a way to change the `ChannelListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
+- Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 
 ### ✅ Added
 - Added support for own capabilities. You can read more about own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
@@ -80,6 +81,7 @@
 - Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⬆️ Improved
+- Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 
 ### ✅ Added
 - Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
