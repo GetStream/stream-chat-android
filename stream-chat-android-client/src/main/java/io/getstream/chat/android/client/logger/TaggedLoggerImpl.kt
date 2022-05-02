@@ -31,6 +31,10 @@ internal class TaggedLoggerImpl(
         logger.logD(tag, message)
     }
 
+    override fun logV(message: String) {
+        logger.logV(tag, message)
+    }
+
     override fun logW(message: String) {
         logger.logW(tag, message)
     }

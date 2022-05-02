@@ -24,6 +24,7 @@ import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
+@SuppressWarnings("TooManyFunctions")
 @Dao
 internal interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -37,10 +38,26 @@ internal interface ChannelDao {
     suspend fun selectAllCids(): List<String>
 
     @Query(
-        "SELECT * FROM stream_chat_channel_state " +
-            "WHERE stream_chat_channel_state.syncStatus IN (:syncStatus)"
+        "SELECT cid FROM stream_chat_channel_state " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
     )
-    suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<ChannelEntity>
+    suspend fun selectCidsBySyncNeeded(
+        syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED,
+        limit: Int = NO_LIMIT
+    ): List<String>
+
+    @Query(
+        "SELECT * FROM stream_chat_channel_state " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
+    )
+    suspend fun selectSyncNeeded(
+        syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED,
+        limit: Int = NO_LIMIT
+    ): List<ChannelEntity>
 
     @Query(
         "SELECT * FROM stream_chat_channel_state " +
@@ -65,4 +82,8 @@ internal interface ChannelDao {
 
     @Query("UPDATE stream_chat_channel_state SET hidden = :hidden WHERE cid = :cid")
     suspend fun setHidden(cid: String, hidden: Boolean)
+
+    private companion object {
+        private const val NO_LIMIT: Int = -1
+    }
 }

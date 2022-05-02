@@ -136,6 +136,15 @@ internal class DatabaseMessageRepository(
     }
 
     /**
+     * Selects all message ids of a [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> {
+        return messageDao.selectIdsBySyncStatus(syncStatus)
+    }
+
+    /**
      * Selects all message of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]

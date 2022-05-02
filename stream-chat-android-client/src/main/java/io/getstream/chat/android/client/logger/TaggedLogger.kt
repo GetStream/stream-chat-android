@@ -23,6 +23,8 @@ public interface TaggedLogger {
 
     public fun logD(message: String)
 
+    public fun logV(message: String)
+
     public fun logW(message: String)
 
     public fun logE(message: String)
