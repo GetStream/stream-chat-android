@@ -20,11 +20,13 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 
 @InternalStreamChatApi
 internal fun MessageListItemAdapter.isGroupedWithNextMessage(messageItem: MessageListItem.MessageItem): Boolean {
     if (messageItem.isBottomPosition()) return false
+    if (messageItem.message.isDeleted()) return true
 
     val messageIndex = currentList.indexOf(
         currentList.find {
@@ -37,6 +39,7 @@ internal fun MessageListItemAdapter.isGroupedWithNextMessage(messageItem: Messag
         .find { it is MessageListItem.MessageItem } as? MessageListItem.MessageItem
         ?: return false
     if (messageItem.isMine != nextMessage.isMine) return false
+    if (nextMessage.message.isDeleted()) return false
 
     val currentMessageDateTime: Long = messageItem.message.getCreatedAtOrNull()?.time ?: 0
     val nextMessageDateTime: Long = nextMessage.message.getCreatedAtOrNull()?.time ?: 0
