@@ -2,7 +2,7 @@ name: SyncRelease
 
 on:
   workflow_run:
-    workflows: ["VersionBump"]
+    workflows: ["ReleaseStart"]
     types:
       - completed
 

@@ -1,4 +1,4 @@
-name: VersionBump
+name: ReleaseStart
 
 on: 
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         type: boolean
 
 jobs:
-  bump_version:
+  pre_release_work:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
