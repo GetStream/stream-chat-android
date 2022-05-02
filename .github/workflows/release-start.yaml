@@ -3,7 +3,7 @@ name: VersionBump
 on: 
   workflow_dispatch:
     inputs:
-      minor: 
+      force_bump_minor_version: 
         type: boolean
 
 jobs:
@@ -20,6 +20,8 @@ jobs:
       - name: Version bump
         if: "${{ github.event.inputs.minor != 'true' }}"
         run: ./gradlew version-bump
+      - name: Parse release section in changelog
+        run: ./gradlew changelog-release-section
       - name: Commit changes
         run: | 
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"

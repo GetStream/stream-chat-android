@@ -16,7 +16,7 @@ jobs:
         with:
           ref: develop
       - name: Update changelog
-        run: ./gradlew update-changelog
+        run: ./gradlew changelog-add-model-section
       - name: Commit changes
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"

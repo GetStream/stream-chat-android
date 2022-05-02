@@ -18,24 +18,19 @@ private const val DATE_PATTERN = "MMMM dd'th', yyyy"
  * @param oldReleases all the old releases as a list of lines.
  * @param currentVersion the current version of the SDK.
  */
-fun createdUpdatedChangelog(
+fun addModelSection(
     printer: Printer,
     modelFile: File,
-    releaseDocument: Document,
-    oldReleases: List<String>,
-    currentVersion: String,
+    changelogLines: List<String>,
 ) {
     printer.modelHeader(modelFile)
     printer.printline("")
 
-    printer.releaseSection(releaseDocument, currentVersion)
-
-    printer.printOldReleases(oldReleases)
+    changelogLines.forEach(printer::printline)
 }
 
 fun parseReleaseSectionInChangelog(
     printer: Printer,
-    modelFile: File,
     releaseDocument: Document,
     oldReleases: List<String>,
     currentVersion: String,

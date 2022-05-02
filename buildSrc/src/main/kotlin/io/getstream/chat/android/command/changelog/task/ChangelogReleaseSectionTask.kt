@@ -1,8 +1,7 @@
 package io.getstream.chat.android.command.changelog.task
 
-import io.getstream.chat.android.command.changelog.plugin.ChangelogCommandExtension
+import io.getstream.chat.android.command.changelog.plugin.ChangelogReleaseSectionCommandExtension
 import io.getstream.chat.android.command.changelog.version.getCurrentVersion
-import io.getstream.chat.android.command.release.markdown.createdUpdatedChangelog
 import io.getstream.chat.android.command.release.markdown.parseReleaseSectionInChangelog
 import io.getstream.chat.android.command.release.output.InMemoryPrinter
 import io.getstream.chat.android.command.utils.filterOldReleases
@@ -17,10 +16,10 @@ import java.io.File
  * Task called to update an specified changelog. It takes most recent section and attributed a version to it.
  * Use this after the release is done.
  */
-open class ChangelogTask : DefaultTask() {
+open class ChangelogReleaseSectionTask : DefaultTask() {
 
     @Input
-    lateinit var config: ChangelogCommandExtension
+    lateinit var config: ChangelogReleaseSectionCommandExtension
 
     @TaskAction
     private fun command() {
@@ -35,7 +34,6 @@ open class ChangelogTask : DefaultTask() {
 
         parseReleaseSectionInChangelog(
             inMemoryPrinter,
-            File(config.changelogModel),
             releaseDocument,
             oldReleases,
             getCurrentVersion(configurationFile)

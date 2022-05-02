@@ -1,10 +1,11 @@
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.command.changelog.plugin.ChangelogPlugin
+import io.getstream.chat.android.command.changelog.plugin.ChangelogReleaseSectionPlugin
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
 import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
 import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
 import io.getstream.chat.android.command.version.plugin.VersionPrintPlugin
+import io.getstream.chat.android.command.changelog.plugin.ChangelogAddModelSectionPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
@@ -13,10 +14,11 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
-apply plugin: ChangelogPlugin
+apply plugin: ChangelogReleaseSectionPlugin
 apply plugin: VersionBumpPlugin
 apply plugin: MinorBumpPlugin
 apply plugin: VersionPrintPlugin
+apply plugin: ChangelogAddModelSectionPlugin
 
 
 buildscript {
@@ -88,6 +90,10 @@ releaseScript {
 }
 
 changelogReleaseSection {
+    changelogPath = "CHANGELOG.md"
+}
+
+changelogAddModelSection {
     changelogPath = "CHANGELOG.md"
     changelogModel = "CHANGELOG_MODEL.md"
 }
