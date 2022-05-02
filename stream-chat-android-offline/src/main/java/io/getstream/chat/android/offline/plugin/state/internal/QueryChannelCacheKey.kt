@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.plugin.state.internal
 
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 
 internal data class QueryChannelCacheKey(
-    val request: QueryChannelsRequest,
-    val channelType: String? = null,
-    val channelId: String? = null,
+    val request: QueryChannelRequest,
+    val channelType: String,
+    val channelId: String,
 )

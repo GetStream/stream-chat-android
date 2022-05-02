@@ -140,4 +140,14 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         private const val KEY_LIMIT = "limit"
         private const val KEY_OFFSET = "offset"
     }
+
+    override fun hashCode(): Int {
+        return state.hashCode() +
+            watch.hashCode() +
+            presence.hashCode() +
+            messages.hashCode() +
+            watchers.hashCode() +
+            members.hashCode() +
+            data.hashCode()
+    }
 }

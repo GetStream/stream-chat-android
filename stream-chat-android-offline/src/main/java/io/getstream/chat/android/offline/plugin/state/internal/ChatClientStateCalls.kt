@@ -43,7 +43,7 @@ internal class ChatClientStateCalls(
     private val requestTimeMap: MutableMap<Int, Date> = mutableMapOf()
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
-        val queryHashCode = QueryChannelCacheKey(request).hashCode()
+        val queryHashCode = request.hashCode()
 
         if (isStateOld(queryHashCode) || forceRefresh) {
             chatClient.queryChannels(request).launch(scope)
@@ -58,22 +58,35 @@ internal class ChatClientStateCalls(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
+        forceRefresh: Boolean
     ): ChannelState {
-        chatClient.queryChannel(channelType, channelId, request).launch(scope)
+        val queryHashCode = QueryChannelCacheKey(request, channelType, channelId).hashCode()
+
+        if (isStateOld(queryHashCode) || forceRefresh) {
+            chatClient.queryChannel(channelType, channelId, request).launch(scope)
+            requestTimeMap[queryHashCode] = Date()
+        }
+
         return state.channel(channelType, channelId)
     }
 
     /** Reference request of the watch channel query. */
-    internal fun watchChannel(cid: String, messageLimit: Int): ChannelState {
+    internal fun watchChannel(cid: String, messageLimit: Int, forceRefresh: Boolean): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
-        return queryChannel(channelType, channelId, request)
+        return queryChannel(channelType, channelId, request, forceRefresh)
     }
 
     /** Reference request of the get thread replies query. */
-    internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
-        chatClient.getReplies(messageId, messageLimit).launch(scope)
+    internal fun getReplies(messageId: String, messageLimit: Int, forceRefresh: Boolean): ThreadState {
+        val repliesHashCode = GetRepliesCacheKey(messageId, messageLimit).hashCode()
+
+        if (isStateOld(repliesHashCode) || forceRefresh) {
+            chatClient.getReplies(messageId, messageLimit).launch(scope)
+            requestTimeMap[repliesHashCode] = Date()
+        }
+
         return state.thread(messageId)
     }
 

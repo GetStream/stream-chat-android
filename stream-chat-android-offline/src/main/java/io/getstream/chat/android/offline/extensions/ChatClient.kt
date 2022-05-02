@@ -113,7 +113,7 @@ public fun ChatClient.watchChannelAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, false) // Todo: Review this
     }
 }
 
@@ -132,7 +132,7 @@ public fun ChatClient.getRepliesAsState(
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
-    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit, false) // Todo: Review this
 }
 
 /**
