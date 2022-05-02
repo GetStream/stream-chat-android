@@ -18,6 +18,9 @@ fun filterOldReleases(file: File): List<String> {
     return file.readLines().filterOldReleases()
 }
 
+/**
+ * Transforms the lines of the unreleased section in to a [Document].
+ */
 private fun List<String>.parseReleaseDocument(): Document {
     val document = Document(mutableListOf())
     var currentProjectSections = mutableListOf<Section>()
@@ -51,6 +54,9 @@ private fun List<String>.parseReleaseDocument(): Document {
     return document
 }
 
+/**
+ * Filter all the old releases.
+ */
 private fun List<String>.filterOldReleases(): List<String> {
     var sectionCount = 0
 
@@ -73,6 +79,9 @@ fun isStartOfSection(line: String) = line.startsWith("###")
 
 fun isStartOfMainSection(line: String) = line.trim().startsWith("# ")
 
+/**
+ * This method filters the only the part of the CHANGELOG that wasn't released yet.
+ */
 private fun List<String>.filterUnreleasedSection(): List<String> {
     var shouldAdd = false
     var firstSection = true
@@ -103,6 +112,9 @@ private fun List<String>.filterUnreleasedSection(): List<String> {
     }
 }
 
+/**
+ * Finds if there's a breaking change in the unreleased part of the CHANGELOG
+ */
 fun hasBreakingChange(file: File): Boolean {
     var sectionCount = 0
 

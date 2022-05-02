@@ -87,7 +87,7 @@ releaseScript {
     changelogPath = "CHANGELOG.md"
 }
 
-changelogScript {
+changelogReleaseSection {
     changelogPath = "CHANGELOG.md"
     changelogModel = "CHANGELOG_MODEL.md"
 }

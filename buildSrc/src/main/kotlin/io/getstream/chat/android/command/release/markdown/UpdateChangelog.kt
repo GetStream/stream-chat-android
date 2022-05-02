@@ -33,6 +33,17 @@ fun createdUpdatedChangelog(
     printer.printOldReleases(oldReleases)
 }
 
+fun parseReleaseSectionInChangelog(
+    printer: Printer,
+    modelFile: File,
+    releaseDocument: Document,
+    oldReleases: List<String>,
+    currentVersion: String,
+) {
+    printer.releaseSection(releaseDocument, currentVersion)
+    printer.printOldReleases(oldReleases)
+}
+
 /**
  * Prints the header of the changelog. That's the unreleased section.
  */

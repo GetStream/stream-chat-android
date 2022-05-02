@@ -6,8 +6,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
-private const val CONFIG_CLOJURE_NAME = "changelogScript"
-private const val COMMAND_NAME = "update-changelog"
+private const val CONFIG_CLOJURE_NAME = "changelogReleaseSection"
+private const val COMMAND_NAME = "changelog-release-section"
 
 class ChangelogPlugin : Plugin<Project> {
 
