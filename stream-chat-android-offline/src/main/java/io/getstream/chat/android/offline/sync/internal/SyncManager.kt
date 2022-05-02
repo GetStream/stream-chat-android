@@ -253,9 +253,9 @@ internal class SyncManager(
     private suspend fun retryChannels() {
         val cids = repos.selectChannelCidsBySyncNeeded()
         logger.logD("[retryChannels] cids.size: ${cids.size}")
-        for (cid in cids) {
+        cids.forEach { cid ->
             logger.logD("[retryReactions] process channel($cid)")
-            val channel = repos.selectChannelByCid(cid) ?: continue
+            val channel = repos.selectChannelByCid(cid) ?: return@forEach
             logger.logV("[retryChannels] sending channel($cid)")
             val result = chatClient.createChannel(
                 channel.type,
@@ -278,9 +278,9 @@ internal class SyncManager(
     private suspend fun retryReactions() {
         val ids = repos.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
         logger.logD("[retryReactions] ids.size: ${ids.size}")
-        for (id in ids) {
+        ids.forEach { id ->
             logger.logD("[retryReactions] process reaction($id)")
-            val reaction = repos.selectReactionById(id) ?: continue
+            val reaction = repos.selectReactionById(id) ?: return@forEach
             val result = if (reaction.deletedAt != null) {
                 logger.logV("[retryReactions] deleting reaction($id) for messageId: ${reaction.messageId}")
                 chatClient.deleteReaction(reaction.messageId, reaction.type)
@@ -295,9 +295,9 @@ internal class SyncManager(
     private suspend fun retryMessagesWithSyncedAttachments() {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         logger.logD("[retryMgsWithSyncedAttachments] ids.size: ${ids.size}")
-        for (id in ids) {
+        ids.forEach { id ->
             logger.logD("[retryMgsWithSyncedAttachments] process message($id)")
-            val message = repos.selectMessage(id) ?: continue
+            val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
                 message.deletedAt != null -> {
@@ -329,9 +329,9 @@ internal class SyncManager(
     private suspend fun retryMessagesWithPendingAttachments() {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
         logger.logD("[retryMessagesWithPendingAttachments] ids.size: ${ids.size}")
-        for (id in ids) {
+        ids.forEach { id ->
             logger.logD("[retryMessagesWithPendingAttachments] process message($id)")
-            val message = repos.selectMessage(id) ?: continue
+            val message = repos.selectMessage(id) ?: return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
             if (isFailed) {
                 logger.logV("[retryMessagesWithSyncedAttachments] marking message(${message.id}) as failed")
