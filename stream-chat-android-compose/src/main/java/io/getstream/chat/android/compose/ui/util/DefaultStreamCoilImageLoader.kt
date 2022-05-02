@@ -22,11 +22,33 @@ import coil.ImageLoaderFactory
 import com.getstream.sdk.chat.coil.StreamImageLoaderFactory
 
 /**
+ * A factory that creates new Coil [ImageLoader] instances.
+ */
+public fun interface StreamCoilImageLoaderFactory {
+
+    /**
+     * Returns a new Coil [ImageLoader].
+     */
+    public fun imageLoader(context: Context): ImageLoader
+
+    public companion object {
+        /**
+         * Returns the default singleton instance of [StreamCoilImageLoaderFactory].
+         *
+         * @return The default implementation of [StreamCoilImageLoaderFactory].
+         */
+        public fun defaultFactory(): StreamCoilImageLoaderFactory {
+            return DefaultStreamCoilImageLoaderFactory
+        }
+    }
+}
+
+/**
  * Provides a custom image loader that uses the [StreamImageLoaderFactory] to build the default loading settings.
  *
  * Gives support to load GIFs.
  */
-internal object StreamCoilImageLoader {
+internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFactory {
 
     /**
      * Loads images in the app, with our default settings.
@@ -44,7 +66,7 @@ internal object StreamCoilImageLoader {
      * @param context - The [Context] to build the [ImageLoader] with.
      * @return [ImageLoader] that loads images in the app.
      */
-    internal fun imageLoader(context: Context): ImageLoader = imageLoader ?: newImageLoader(context)
+    override fun imageLoader(context: Context): ImageLoader = imageLoader ?: newImageLoader(context)
 
     /**
      * Builds a new [ImageLoader] using the given Android [Context]. If the loader already exists, we return it.

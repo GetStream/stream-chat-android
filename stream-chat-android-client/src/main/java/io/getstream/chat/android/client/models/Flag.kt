@@ -24,9 +24,9 @@ public data class Flag(
     val targetMessageId: String,
     val reviewedBy: String,
     val createdByAutomod: Boolean,
-    val createdAt: Date,
+    val createdAt: Date?,
     val updatedAt: Date,
-    val reviewedAt: Date,
+    val reviewedAt: Date?,
     val approvedAt: Date?,
-    val rejectedAt: Date,
+    val rejectedAt: Date?,
 )
