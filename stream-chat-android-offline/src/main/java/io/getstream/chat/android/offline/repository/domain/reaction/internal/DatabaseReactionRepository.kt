@@ -56,7 +56,34 @@ internal class DatabaseReactionRepository(
     }
 
     /**
-     * Selects all reactions with specific [SyncStatus]
+     * Selects reaction with specified [id].
+     *
+     * @param id A [ReactionEntity.id] to search for.
+     */
+    override suspend fun selectReactionById(id: Int): Reaction? {
+        return reactionDao.selectReactionById(id)?.toModel(getUser)
+    }
+
+    /**
+     * Selects all reactions with specified [ids]
+     *
+     * @param ids A list of [ReactionEntity.id] to search for.
+     */
+    override suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction> {
+        return reactionDao.selectReactionsByIds(ids).map { it.toModel(getUser) }
+    }
+
+    /**
+     * Selects all reaction ids with specific [SyncStatus].
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    override suspend fun selectReactionIdsBySyncStatus(syncStatus: SyncStatus): List<Int> {
+        return reactionDao.selectIdsSyncStatus(syncStatus)
+    }
+
+    /**
+     * Selects all reactions with specific [SyncStatus].
      *
      * @param syncStatus [SyncStatus]
      */
