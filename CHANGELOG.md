@@ -13,6 +13,8 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed ANR happening on a token request. [#3342](https://github.com/GetStream/stream-chat-android/pull/3342)
+- Fixed overriding User's `image` and `name` properties with empty values when connecting the user. [#3430](https://github.com/GetStream/stream-chat-android/pull/3430)
+- Fixed serialization problem when flagging message. [#3437](https://github.com/GetStream/stream-chat-android/pull/3437)
 
 ### ⬆️ Improved
 
@@ -27,8 +29,10 @@
 ### 🐞 Fixed
 - Fixed a crash when attachment upload is in progress or about to start and user is disconnected at the same moment. [#3377](https://github.com/GetStream/stream-chat-android/pull/3377)
 - Fixed updating `Channel::ownCapabilities` after receiving events. [#3420](https://github.com/GetStream/stream-chat-android/pull/3420)
+- Fixed reaction sync issue because `SyncState::lastSyncedAt` was never updated. [#3421](https://github.com/GetStream/stream-chat-android/pull/3421)
 
 ### ⬆️ Improved
+- Adding the possibility to change the repositories of `OfflinePlugin`. You can change `RepositoryFactory` in `OfflinePlugin` and use custom implementations of repositories.
 
 ### ✅ Added
 
@@ -92,6 +96,7 @@
 - Added own capabilities. If you are using our components individually this has the possibility of introducing a change in functionality. You can find the guide on implementing own capabilities [here](https://getstream.io/chat/docs/sdk/android/compose/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 - Changed the default filter for Channels in `ChannelsScreen` and `ChannelList` to only filter messaging channels. It will still filter the channels the current user is a member of, as that's the most common case. [#3410](https://github.com/GetStream/stream-chat-android/pull/3410)
 - Changed the `ChannelListViewModel.setFilters(newFilters)` to override the previous ones, rather than combining the two. [#3410](https://github.com/GetStream/stream-chat-android/pull/3410)
+- Replaced the `imageLoader` parameter in `ChatTheme` with the new `imageLoaderFactory` parameter that can used to provide a custom Coil `ImageLoader` factory.  [#3441](https://github.com/GetStream/stream-chat-android/pull/3441)
 
 ### ❌ Removed
 

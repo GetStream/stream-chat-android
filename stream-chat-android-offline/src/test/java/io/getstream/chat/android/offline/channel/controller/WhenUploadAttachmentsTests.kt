@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
@@ -77,7 +78,7 @@ internal class WhenUploadAttachmentsTests {
                 on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
             }
 
-            val sut = Fixture().givenRepository(repositoryFacade).get()
+            val sut = Fixture().givenMessageRepository(repositoryFacade).get()
             val result = sut.uploadAttachmentsForMessage(
                 channelType,
                 channelId,
@@ -94,7 +95,7 @@ internal class WhenUploadAttachmentsTests {
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
 
-        val sut = Fixture().givenRepository(repositoryFacade).get()
+        val sut = Fixture().givenMessageRepository(repositoryFacade).get()
         val result = sut.uploadAttachmentsForMessage(
             channelType,
             channelId,
@@ -110,7 +111,7 @@ internal class WhenUploadAttachmentsTests {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
-        val result = Fixture().givenRepository(repositoryFacade).get()
+        val result = Fixture().givenMessageRepository(repositoryFacade).get()
             .uploadAttachmentsForMessage(
                 channelType,
                 channelId,
@@ -148,7 +149,9 @@ internal class WhenUploadAttachmentsTests {
             )
         )
         val sut =
-            Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+            Fixture().givenAttachmentUploader(attachmentUploader)
+                .givenMessageRepository(repository)
+                .givenMessage(message)
                 .get()
 
         sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
@@ -180,7 +183,9 @@ internal class WhenUploadAttachmentsTests {
                 )
             )
             val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                Fixture().givenAttachmentUploader(attachmentUploader)
+                    .givenMessageRepository(repository)
+                    .givenMessage(message)
                     .get()
 
             sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
@@ -225,7 +230,9 @@ internal class WhenUploadAttachmentsTests {
                 )
             )
             val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                Fixture().givenAttachmentUploader(attachmentUploader)
+                    .givenMessageRepository(repository)
+                    .givenMessage(message)
                     .get()
 
             sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
@@ -266,7 +273,9 @@ internal class WhenUploadAttachmentsTests {
                 )
             )
             val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader).givenRepository(repository).givenMessage(message)
+                Fixture().givenAttachmentUploader(attachmentUploader)
+                    .givenMessageRepository(repository)
+                    .givenMessage(message)
                     .get()
 
             sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
@@ -285,8 +294,8 @@ internal class WhenUploadAttachmentsTests {
 
     private class Fixture {
         private var uploader: AttachmentUploader = mock()
-        private var repos: RepositoryFacade = mock()
-        private var logicRegistry: LogicRegistry = mock() {
+        private var messageRepository: MessageRepository = mock()
+        private var logicRegistry: LogicRegistry = mock {
             on(it.channel(any(), any())) doReturn mock()
         }
 
@@ -299,12 +308,12 @@ internal class WhenUploadAttachmentsTests {
             uploader = attachmentUploader
         }
 
-        fun givenRepository(repository: RepositoryFacade) = apply {
-            repos = repository
+        fun givenMessageRepository(repository: RepositoryFacade) = apply {
+            messageRepository = repository
         }
 
         suspend fun givenMessage(message: Message) = apply {
-            whenever(repos.selectMessage(any())) doReturn message
+            whenever(messageRepository.selectMessage(any())) doReturn message
         }
 
         fun givenChatClientNoStoredCredentials() = apply {
@@ -314,7 +323,7 @@ internal class WhenUploadAttachmentsTests {
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
                 logic = logicRegistry,
-                repos = repos,
+                messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader
             )

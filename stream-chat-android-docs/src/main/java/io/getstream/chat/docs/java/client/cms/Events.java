@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
-import io.getstream.chat.android.client.events.UnknownEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
@@ -18,12 +17,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable;
 public class Events {
     private ChatClient client;
     private ChannelClient channelClient;
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/event_object/?language=java">Event Object</a>
-     */
-    class EventObject {
-    }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/event_listening/?language=java">Listening For Events</a>
@@ -117,7 +110,7 @@ public class Events {
         /**
          * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java#to-a-channel">Sending Custom Events</a>
          */
-        public void sendingCustomEvents() {
+        public void toAChannel() {
             Map<Object, Object> extraData = new HashMap<>();
             extraData.put("text", "Hey there, long time no see!");
 
@@ -129,23 +122,6 @@ public class Events {
                     // Handle result.error()
                 }
             });
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java#to-a-channel">Listening for Custom Events</a>
-         */
-        public void listeningForCustomEvents() {
-            // Subscribe for custom events
-            Disposable disposable = channelClient.subscribeFor(
-                    new Class[]{UnknownEvent.class},
-                    (ChatEvent event) -> {
-                        UnknownEvent customEvent = (UnknownEvent) event;
-                        String text = (String) customEvent.getRawData().get("text");
-                    }
-            );
-
-            // Dispose when you want to stop receiving events
-            disposable.dispose();
         }
     }
 }
