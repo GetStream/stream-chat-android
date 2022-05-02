@@ -97,17 +97,25 @@ internal class SocketFactory(
         private const val ANONYMOUS_USER_ID = "anon"
     }
 
+    /**
+     * Converts the [User] object to a map of properties updated while connecting the user.
+     * [User.name] and [User.image] will only be included if they are not blank.
+     *
+     * @return A map of User's properties to update.
+     */
     private fun User.reduceUserDetails(): Map<String, Any> {
         val details = mutableMapOf(
             "id" to id,
-            "name" to name,
-            "image" to image,
             "role" to role,
             "banned" to banned,
             "invisible" to invisible,
             "teams" to teams,
-        )
-        details.putAll(extraData)
+        ).apply {
+            if (image.isNotBlank()) put("image", image)
+            if (name.isNotBlank()) put("name", name)
+            putAll(extraData)
+        }
+
         return details
     }
 }

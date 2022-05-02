@@ -8,18 +8,12 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
 
 class Events(val client: ChatClient, val channelClient: ChannelClient) {
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/event_object/?language=kotlin">Event Object</a>
-     */
-    inner class EventObject
 
     /**
      * @see <a href="https://getstream.io/chat/docs/event_listening/?language=kotlin">Listening For Events</a>
@@ -108,7 +102,7 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
         /**
          * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=kotlin#to-a-channel">Sending Custom Events</a>
          */
-        fun sendingCustomEvents() {
+        fun toAChannel() {
             // Send a custom event to all users watching the channel
             channelClient.sendEvent(
                 eventType = "friendship_request",
@@ -120,19 +114,6 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
                     // Handle result.error()
                 }
             }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=kotlin#to-a-channel">Listening for Custom Events</a>
-         */
-        fun listeningForCustomEvents() {
-            // Subscribe for custom events
-            val disposable: Disposable = channelClient.subscribeFor<UnknownEvent> { customEvent ->
-                val text = customEvent.rawData["text"]
-            }
-
-            // Dispose when you want to stop receiving events
-            disposable.dispose()
         }
     }
 }
