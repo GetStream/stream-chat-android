@@ -17,7 +17,6 @@
 package io.getstream.logging.helper
 
 import io.getstream.logging.Priority
-import io.getstream.logging.StreamLogger
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -28,13 +27,12 @@ public fun Thread.stringify(): String {
 }
 
 public fun Priority.stringify(): String = when (this) {
-    StreamLogger.VERBOSE -> "V"
-    StreamLogger.DEBUG -> "D"
-    StreamLogger.INFO -> "I"
-    StreamLogger.WARN -> "W"
-    StreamLogger.ERROR -> "E"
-    StreamLogger.ASSERT -> "E"
-    else -> "?"
+    Priority.VERBOSE -> "V"
+    Priority.DEBUG -> "D"
+    Priority.INFO -> "I"
+    Priority.WARN -> "W"
+    Priority.ERROR -> "E"
+    Priority.ASSERT -> "E"
 }
 
 public fun Throwable.stringify(): String {

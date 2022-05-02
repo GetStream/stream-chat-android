@@ -17,9 +17,9 @@
 package io.getstream.logging.kotlin
 
 import io.getstream.logging.Priority
+import io.getstream.logging.Priority.ASSERT
+import io.getstream.logging.Priority.ERROR
 import io.getstream.logging.StreamLogger
-import io.getstream.logging.StreamLogger.Level.ASSERT
-import io.getstream.logging.StreamLogger.Level.ERROR
 import io.getstream.logging.helper.stringify
 import java.text.DateFormat
 import java.text.SimpleDateFormat

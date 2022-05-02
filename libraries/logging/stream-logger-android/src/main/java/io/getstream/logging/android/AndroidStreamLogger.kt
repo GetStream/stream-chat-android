@@ -48,12 +48,12 @@ public class AndroidStreamLogger : StreamLogger {
 
     private fun Priority.toAndroidPriority(): Int {
         return when (this) {
-            StreamLogger.VERBOSE -> Log.VERBOSE
-            StreamLogger.DEBUG -> Log.DEBUG
-            StreamLogger.INFO -> Log.INFO
-            StreamLogger.WARN -> Log.WARN
-            StreamLogger.ERROR -> Log.ERROR
-            StreamLogger.ASSERT -> Log.ASSERT
+            Priority.VERBOSE -> Log.VERBOSE
+            Priority.DEBUG -> Log.DEBUG
+            Priority.INFO -> Log.INFO
+            Priority.WARN -> Log.WARN
+            Priority.ERROR -> Log.ERROR
+            Priority.ASSERT -> Log.ASSERT
             else -> Log.ERROR
         }
     }

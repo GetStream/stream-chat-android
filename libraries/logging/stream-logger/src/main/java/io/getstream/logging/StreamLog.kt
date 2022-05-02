@@ -16,11 +16,11 @@
 
 package io.getstream.logging
 
-import io.getstream.logging.StreamLogger.Level.DEBUG
-import io.getstream.logging.StreamLogger.Level.ERROR
-import io.getstream.logging.StreamLogger.Level.INFO
-import io.getstream.logging.StreamLogger.Level.VERBOSE
-import io.getstream.logging.StreamLogger.Level.WARN
+import io.getstream.logging.Priority.DEBUG
+import io.getstream.logging.Priority.ERROR
+import io.getstream.logging.Priority.INFO
+import io.getstream.logging.Priority.VERBOSE
+import io.getstream.logging.Priority.WARN
 
 /**
  * API for sending log output.
@@ -36,19 +36,37 @@ public object StreamLog {
     /**
      * [StreamLogger] implementation to be used.
      */
-    public var logger: StreamLogger = SilentStreamLogger
+    @PublishedApi
+    internal var internalLogger: StreamLogger = SilentStreamLogger
+        private set
 
     /**
      * [IsLoggableValidator] implementation to be used.
      */
-    public var validator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
+    @PublishedApi
+    internal var internalValidator: IsLoggableValidator = IsLoggableValidator { _, _ -> false }
+        private set
+
+    /**
+     * Sets a [StreamLogger] implementation to be used.
+     */
+    public fun setLogger(logger: StreamLogger) {
+        internalLogger = logger
+    }
+
+    /**
+     * Sets a [IsLoggableValidator] implementation to be used.
+     */
+    public fun setValidator(validator: IsLoggableValidator) {
+        internalValidator = validator
+    }
 
     /**
      * Returns a tagged logger.
      *
      * @return [TaggedLogger] Tagged logger.
      */
-    public fun getLogger(tag: String): TaggedLogger = TaggedLogger(tag, logger, validator)
+    public fun getLogger(tag: String): TaggedLogger = TaggedLogger(tag, internalLogger, internalValidator)
 
     /**
      * Send a [ERROR] log message.
@@ -58,8 +76,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun e(tag: String, throwable: Throwable, message: () -> String) {
-        if (validator.isLoggable(ERROR, tag)) {
-            logger.log(ERROR, tag, message(), throwable)
+        if (internalValidator.isLoggable(ERROR, tag)) {
+            internalLogger.log(ERROR, tag, message(), throwable)
         }
     }
 
@@ -70,8 +88,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun e(tag: String, message: () -> String) {
-        if (validator.isLoggable(ERROR, tag)) {
-            logger.log(ERROR, tag, message())
+        if (internalValidator.isLoggable(ERROR, tag)) {
+            internalLogger.log(ERROR, tag, message())
         }
     }
 
@@ -82,8 +100,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun w(tag: String, message: () -> String) {
-        if (validator.isLoggable(WARN, tag)) {
-            logger.log(WARN, tag, message())
+        if (internalValidator.isLoggable(WARN, tag)) {
+            internalLogger.log(WARN, tag, message())
         }
     }
 
@@ -94,8 +112,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun i(tag: String, message: () -> String) {
-        if (validator.isLoggable(INFO, tag)) {
-            logger.log(INFO, tag, message())
+        if (internalValidator.isLoggable(INFO, tag)) {
+            internalLogger.log(INFO, tag, message())
         }
     }
 
@@ -106,8 +124,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun d(tag: String, message: () -> String) {
-        if (validator.isLoggable(DEBUG, tag)) {
-            logger.log(DEBUG, tag, message())
+        if (internalValidator.isLoggable(DEBUG, tag)) {
+            internalLogger.log(DEBUG, tag, message())
         }
     }
 
@@ -118,8 +136,8 @@ public object StreamLog {
      * @param message The function returning a message you would like logged.
      */
     public inline fun v(tag: String, message: () -> String) {
-        if (validator.isLoggable(VERBOSE, tag)) {
-            logger.log(VERBOSE, tag, message())
+        if (internalValidator.isLoggable(VERBOSE, tag)) {
+            internalLogger.log(VERBOSE, tag, message())
         }
     }
 }

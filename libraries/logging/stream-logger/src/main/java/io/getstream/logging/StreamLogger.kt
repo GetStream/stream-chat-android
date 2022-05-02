@@ -16,27 +16,10 @@
 
 package io.getstream.logging
 
-public typealias Priority = Int
-
 /**
  * Low-level Logger interface.
  */
 public interface StreamLogger {
-
-    public companion object Level {
-        /** Priority constant for the [log] method; use [StreamLog.v]. */
-        public const val VERBOSE: Priority = 2
-        /** Priority constant for the [log] method; use [StreamLog.d]. */
-        public const val DEBUG: Priority = 3
-        /** Priority constant for the [log] method; use [StreamLog.i]. */
-        public const val INFO: Priority = 4
-        /** Priority constant for the [log] method; use [StreamLog.w]. */
-        public const val WARN: Priority = 5
-        /** Priority constant for the [log] method; use [StreamLog.e]. */
-        public const val ERROR: Priority = 6
-        /** Priority constant for the [log] method. */
-        public const val ASSERT: Priority = 7
-    }
 
     /**
      * Low-level logging call.
@@ -50,6 +33,31 @@ public interface StreamLogger {
      * @see java.util.Formatter
      */
     public fun log(priority: Priority, tag: String, message: String, throwable: Throwable? = null)
+}
+
+/**
+ * The priority/type of a log message.
+ */
+public enum class Priority(
+    public val level: Int,
+) {
+    /** Priority for the [StreamLogger.log] method; use [StreamLog.v]. */
+    VERBOSE(level = 2),
+
+    /** Priority for the [StreamLogger.log] method; use [StreamLog.d]. */
+    DEBUG(level = 3),
+
+    /** Priority for the [StreamLogger.log] method; use [StreamLog.i]. */
+    INFO(level = 4),
+
+    /** Priority for the [StreamLogger.log] method; use [StreamLog.w]. */
+    WARN(level = 5),
+
+    /** Priority for the [StreamLogger.log] method; use [StreamLog.e]. */
+    ERROR(level = 6),
+
+    /** Priority for the [StreamLogger.log] method. */
+    ASSERT(level = 7),
 }
 
 /**

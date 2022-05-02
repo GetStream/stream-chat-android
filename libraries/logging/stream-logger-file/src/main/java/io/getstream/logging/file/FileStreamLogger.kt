@@ -58,12 +58,6 @@ public class FileStreamLogger(
     private var currentFile: File? = null
     private var currentWriter: Writer? = null
 
-    init {
-        executor.execute {
-            init()
-        }
-    }
-
     override fun log(
         priority: Priority,
         tag: String,
@@ -72,6 +66,7 @@ public class FileStreamLogger(
     ) {
         val thread = Thread.currentThread()
         executor.execute {
+            initIfNeeded()
             swapFiles()
             currentWriter?.runCatching {
                 val formattedDateTime = timeFormat.format(Date())
@@ -99,14 +94,16 @@ public class FileStreamLogger(
         internalFile1.writeText("")
     }
 
-    private fun init() {
-        val internalFile: File = when {
-            !internalFile0.exists() || !internalFile1.exists() -> internalFile0
-            internalFile0.lastModified() > internalFile1.lastModified() -> internalFile0
-            else -> internalFile1
+    private fun initIfNeeded() {
+        if (currentFile == null) {
+            val internalFile: File = when {
+                !internalFile0.exists() || !internalFile1.exists() -> internalFile0
+                internalFile0.lastModified() > internalFile1.lastModified() -> internalFile0
+                else -> internalFile1
+            }
+            currentFile = internalFile
+            currentWriter = internalFile.fileWriter()
         }
-        this.currentFile = internalFile
-        this.currentWriter = internalFile.fileWriter()
     }
 
     private fun swapFiles(): Result<Unit> = runCatching {

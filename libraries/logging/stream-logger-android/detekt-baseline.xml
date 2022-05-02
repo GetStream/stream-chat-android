@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>EmptyFunctionBlock:ActivityLifecycleCallbacks.kt$ActivityLifecycleCallbacks${}</ID>
-  </CurrentIssues>
-</SmellBaseline>
