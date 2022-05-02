@@ -75,6 +75,7 @@
 - Added a way to customize `messageInputField` padding inside `MessageInputFiledView`. [#3392](https://github.com/GetStream/stream-chat-android/pull/3392)
 - Added a way to change the `MessageListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
 - Added a way to change the `ChannelListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
+- Now single membered channels display the name of member instead of "Channel without name" [3423](https://github.com/GetStream/stream-chat-android/pull/3423)
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 - Added a way to change the `attachmentsButton` and `commandsButton` ripple color inside `MessageInputView`. [#3412](https://github.com/GetStream/stream-chat-android/pull/3412)
 
@@ -92,6 +93,7 @@
 - Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⬆️ Improved
+- Now single membered channels display the name of member instead of "Channel without name" [3423](https://github.com/GetStream/stream-chat-android/pull/3423)
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 - Improved the way filters work in `ChannelList`, `ChannelsScreen` and `ChannelListViewModel`. Now the filters are nullable and if you want the default behavior, just pass in null. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)
 - You can now completely override the filters by using `ChannelListViewModel.setFilters()` in the runtime, or by passing in custom `FilterObject` to the `ViewModelFactory` or the `ViewModel` constructor. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)

@@ -16,14 +16,21 @@
 
 package io.getstream.chat.android.ui
 
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import java.util.Date
 
@@ -79,3 +86,52 @@ internal fun createMembers(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Member = { createMember() }
 ): List<Member> = List(size, creationFunction)
+
+internal fun randomChannel(
+    cid: String = randomCID(),
+    id: String = randomString(),
+    type: String = randomString(),
+    watcherCount: Int = randomInt(),
+    frozen: Boolean = randomBoolean(),
+    lastMessageAt: Date? = randomDate(),
+    createdAt: Date? = randomDate(),
+    deletedAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    syncStatus: SyncStatus = randomSyncStatus(),
+    memberCount: Int = randomInt(),
+    messages: List<Message> = mutableListOf(),
+    members: List<Member> = mutableListOf(),
+    watchers: List<User> = mutableListOf(),
+    read: List<ChannelUserRead> = mutableListOf(),
+    config: Config = Config(),
+    createdBy: User = createUser(),
+    unreadCount: Int? = randomInt(),
+    team: String = randomString(),
+    hidden: Boolean? = randomBoolean(),
+    hiddenMessagesBefore: Date? = randomDate(),
+): Channel = Channel(
+    cid = cid,
+    id = id,
+    type = type,
+    watcherCount = watcherCount,
+    frozen = frozen,
+    lastMessageAt = lastMessageAt,
+    createdAt = createdAt,
+    deletedAt = deletedAt,
+    updatedAt = updatedAt,
+    syncStatus = syncStatus,
+    memberCount = memberCount,
+    messages = messages,
+    members = members,
+    watchers = watchers,
+    read = read,
+    config = config,
+    createdBy = createdBy,
+    unreadCount = unreadCount,
+    team = team,
+    hidden = hidden,
+    hiddenMessagesBefore = hiddenMessagesBefore
+)
+
+internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
+    (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
