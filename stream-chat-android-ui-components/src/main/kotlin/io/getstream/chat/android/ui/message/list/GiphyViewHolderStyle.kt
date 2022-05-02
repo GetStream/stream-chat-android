@@ -59,8 +59,8 @@ public data class GiphyViewHolderStyle(
 
     internal companion object {
         operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle {
-            val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
+            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
             val cardBackgroundColor = attributes.getColor(
                 R.styleable.MessageListView_streamUiGiphyCardBackgroundColor,
