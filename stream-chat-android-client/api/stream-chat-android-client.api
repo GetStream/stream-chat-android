@@ -490,6 +490,7 @@ public final class io/getstream/chat/android/client/api/models/PinnedMessagesPag
 
 public class io/getstream/chat/android/client/api/models/QueryChannelRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
 	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun filteringOlderMessages ()Z
 	public final fun getData ()Ljava/util/Map;
 	public final fun getMembers ()Ljava/util/Map;
