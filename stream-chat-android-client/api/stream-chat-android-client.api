@@ -498,6 +498,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getState ()Z
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
+	public fun hashCode ()I
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
 	public final fun membersOffset ()I
