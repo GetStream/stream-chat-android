@@ -82,7 +82,7 @@ public data class MessageReplyStyle(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorTheirs,
                 VALUE_NOT_SET
             )
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
+            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageReplyTextSizeMine,
