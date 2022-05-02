@@ -85,7 +85,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -123,7 +122,8 @@ public class MessageListViewModel(
     private val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
         cid = channelId,
         messageLimit = messageLimit,
-        coroutineScope = viewModelScope
+        coroutineScope = viewModelScope,
+        false
     )
 
     /**
@@ -633,7 +633,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val threadState = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGE_LIMIT)
+        val threadState = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGE_LIMIT, forceRefresh = true)
         val channelState = channelState.value ?: return
 
         messageMode = MessageMode.MessageThread(parentMessage, threadState)

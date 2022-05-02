@@ -128,6 +128,4 @@ internal class ChatClientStateCallsTest {
 
         verify(chatClient, times(repeatTimes)).getReplies(messageId, messageLimit)
     }
-
-
 }

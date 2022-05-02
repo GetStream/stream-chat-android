@@ -89,9 +89,10 @@ public val ChatClient.globalState: GlobalState
 public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    forceRefresh: Boolean
 ): StateFlow<QueryChannelsState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request, false) // Todo: review this!
+        requestsAsState(coroutineScope).queryChannels(request, forceRefresh)
     }
 }
 
@@ -111,9 +112,10 @@ public fun ChatClient.watchChannelAsState(
     cid: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    forceRefresh: Boolean
 ): StateFlow<ChannelState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, false) // Todo: Review this
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, forceRefresh)
     }
 }
 
@@ -131,8 +133,9 @@ public fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    forceRefresh: Boolean
 ): ThreadState {
-    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit, false) // Todo: Review this
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit, forceRefresh)
 }
 
 /**

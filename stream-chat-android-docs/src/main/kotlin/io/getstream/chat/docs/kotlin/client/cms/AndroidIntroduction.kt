@@ -86,16 +86,17 @@ class AndroidIntroduction {
 
         // Watching a channel's state using the offline library
         scope.launch {
-            client.watchChannelAsState(cid = "messaging:travel", messageLimit = 0).collect { channelState ->
-                if (channelState != null) {
-                    // StateFlow objects to observe
-                    channelState.messages
-                    channelState.reads
-                    channelState.typing
-                } else {
-                    // User not connected yet.
+            client.watchChannelAsState(cid = "messaging:travel", messageLimit = 0, forceRefresh = true)
+                .collect { channelState ->
+                    if (channelState != null) {
+                        // StateFlow objects to observe
+                        channelState.messages
+                        channelState.reads
+                        channelState.typing
+                    } else {
+                        // User not connected yet.
+                    }
                 }
-            }
         }
     }
 

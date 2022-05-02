@@ -51,7 +51,7 @@ class GroupChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope, false).filterNotNull()
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()

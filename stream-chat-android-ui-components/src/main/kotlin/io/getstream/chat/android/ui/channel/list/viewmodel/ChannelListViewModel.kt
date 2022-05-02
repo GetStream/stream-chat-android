@@ -77,7 +77,7 @@ public class ChannelListViewModel(
     private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -166,10 +166,11 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope, true)
         viewModelScope.launch {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-                queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
+                queryChannelsState.chatEventHandler =
+                    chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
                 stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
                     stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
                 }

@@ -90,7 +90,8 @@ public class MessageListViewModel(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            coroutineScope = viewModelScope,
+            forceRefresh = false
         )
 
     /**
@@ -263,7 +264,8 @@ public class MessageListViewModel(
             chatClient.watchChannelAsState(
                 cid = cid,
                 messageLimit = DEFAULT_MESSAGES_LIMIT,
-                coroutineScope = viewModelScope
+                coroutineScope = viewModelScope,
+                forceRefresh = false
             ).collect { channelState ->
                 if (channelState != null) {
                     initWithOfflinePlugin(channelState)
@@ -717,7 +719,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT, forceRefresh = true)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }

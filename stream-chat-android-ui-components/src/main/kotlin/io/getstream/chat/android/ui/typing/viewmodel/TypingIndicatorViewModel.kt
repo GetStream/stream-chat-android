@@ -48,7 +48,8 @@ public class TypingIndicatorViewModel(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            coroutineScope = viewModelScope,
+            forceRefresh = false
         )
 
     /**

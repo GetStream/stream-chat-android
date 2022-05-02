@@ -40,7 +40,7 @@ class ChatViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope, false)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent

@@ -136,11 +136,6 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         }
     }
 
-    private companion object {
-        private const val KEY_LIMIT = "limit"
-        private const val KEY_OFFSET = "offset"
-    }
-
     override fun hashCode(): Int {
         return state.hashCode() +
             watch.hashCode() +
@@ -149,5 +144,24 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             watchers.hashCode() +
             members.hashCode() +
             data.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is QueryChannelRequest) {
+            state == other.state &&
+                watch == other.watch &&
+                presence == other.presence &&
+                messages == other.messages &&
+                watchers == other.watchers &&
+                members == other.members &&
+                data == other.data
+        } else {
+            false
+        }
+    }
+
+    private companion object {
+        private const val KEY_LIMIT = "limit"
+        private const val KEY_OFFSET = "offset"
     }
 }
