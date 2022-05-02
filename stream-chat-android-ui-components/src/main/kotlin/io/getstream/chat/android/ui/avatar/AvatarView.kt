@@ -70,16 +70,27 @@ public class AvatarView : AppCompatImageView {
      * @param channel A channel that includes user list information.
      */
     public fun setChannelData(channel: Channel) {
+        val allMembers = channel.members
         val otherUsers = channel.getUsersExcludingCurrent()
-        if (channel.isAnonymousChannel() && otherUsers.size == 1) {
-            setUserData(otherUsers.first())
-        } else {
-            load(
-                data = Avatar.ChannelAvatar(channel, avatarStyle),
-                transformation = avatarShape(avatarStyle),
-            )
 
-            isOnline = false
+        when {
+            channel.isAnonymousChannel() && otherUsers.size == 1 -> {
+                setUserData(otherUsers.first())
+            }
+
+            // The current user is the only member
+            channel.isAnonymousChannel() && allMembers.size == 1 -> {
+                setUserData(allMembers.first().user)
+            }
+
+            else -> {
+                load(
+                    data = Avatar.ChannelAvatar(channel, avatarStyle),
+                    transformation = avatarShape(avatarStyle),
+                )
+
+                isOnline = false
+            }
         }
     }
 

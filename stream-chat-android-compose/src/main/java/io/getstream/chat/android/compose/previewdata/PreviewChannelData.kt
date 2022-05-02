@@ -34,6 +34,13 @@ internal object PreviewChannelData {
         )
     }
 
+    val channelWithOneUser: Channel = Channel().apply {
+        cid = "channelType:channelId2"
+        members = listOf(
+            Member(user = PreviewUserData.user1),
+        )
+    }
+
     val channelWithOnlineUser: Channel = Channel().apply {
         cid = "channelType:channelId2"
         members = listOf(

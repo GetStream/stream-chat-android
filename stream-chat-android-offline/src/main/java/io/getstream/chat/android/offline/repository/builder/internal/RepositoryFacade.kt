@@ -32,10 +32,11 @@ import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.repository.factory.internal.RepositoryFactory
+import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -157,7 +158,7 @@ internal class RepositoryFacade(
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
          *
-         * @param factory [RepositoryFactory]
+         * @param factory [DatabaseRepositoryFactory]
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
