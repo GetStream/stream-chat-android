@@ -27,10 +27,10 @@ import androidx.annotation.ColorInt
  * @param color Color of the ripple.
  */
 internal fun View.setBorderlessRipple(@ColorInt color: Int?) {
-    background = if (color == null) {
-        null
-    } else {
+    background = if (color != null) {
         val rippleColor = ColorStateList.valueOf(color)
         RippleDrawable(rippleColor, null, background)
+    } else {
+        null
     }
 }
