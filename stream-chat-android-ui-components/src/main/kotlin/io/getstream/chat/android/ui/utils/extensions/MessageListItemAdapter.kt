@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 
 @InternalStreamChatApi
@@ -37,10 +38,10 @@ internal fun MessageListItemAdapter.isGroupedWithNextMessage(messageItem: Messag
         ?: return false
     if (messageItem.isMine != nextMessage.isMine) return false
 
-    return (nextMessage.message.createdAt?.time ?: 0) - (
-        messageItem.message.createdAt?.time
-            ?: 0
-        ) < DEFAULT_MESSAGE_GROUPING_DELAY
+    val currentMessageDateTime: Long = messageItem.message.getCreatedAtOrNull()?.time ?: 0
+    val nextMessageDateTime: Long = nextMessage.message.getCreatedAtOrNull()?.time ?: 0
+
+    return nextMessageDateTime - currentMessageDateTime < DEFAULT_MESSAGE_GROUPING_DELAY
 }
 
 private const val DEFAULT_MESSAGE_GROUPING_DELAY: Long = 60 * 1000L
