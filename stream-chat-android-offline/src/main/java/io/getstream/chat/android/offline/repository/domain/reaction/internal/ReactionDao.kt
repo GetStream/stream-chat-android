@@ -28,8 +28,27 @@ internal interface ReactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reactionEntity: ReactionEntity)
 
-    @Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.syncStatus IN (:syncStatus)")
-    suspend fun selectSyncStatus(syncStatus: SyncStatus): List<ReactionEntity>
+    @Query("SELECT * FROM stream_chat_reaction WHERE id = :id")
+    suspend fun selectReactionById(id: Int): ReactionEntity?
+
+    @Query("SELECT * FROM stream_chat_reaction WHERE id IN (:ids)")
+    suspend fun selectReactionsByIds(ids: List<Int>): List<ReactionEntity>
+
+    @Query(
+        "SELECT id FROM stream_chat_reaction " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
+    )
+    suspend fun selectIdsSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<Int>
+
+    @Query(
+        "SELECT * FROM stream_chat_reaction " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY syncStatus ASC " +
+            "LIMIT :limit"
+    )
+    suspend fun selectSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<ReactionEntity>
 
     @Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")
     suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): ReactionEntity?
@@ -39,4 +58,8 @@ internal interface ReactionDao {
 
     @Query("UPDATE stream_chat_reaction SET deletedAt = :deletedAt WHERE userId = :userId AND messageId = :messageId")
     suspend fun setDeleteAt(userId: String, messageId: String, deletedAt: Date)
+
+    private companion object {
+        private const val NO_LIMIT: Int = -1
+    }
 }

@@ -19,6 +19,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelRepository.selectChannelByCid` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChannelRepository.selectChannelsByCids` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChannelRepository.selectChannelCidsSyncNeeded` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `MessageRepository.selectMessageIdsBySyncState` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionById` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionsByIds` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ReactionRepository.selectReactionIdsBySyncStatus` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `ChatLogger.logV` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
+- Added `TaggedLogger.logV` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
 
 ### ⚠️ Changed
 - Changed visibility of the `retry` extension to internal. [#3353](https://github.com/GetStream/stream-chat-android/pull/3353)
@@ -59,13 +68,16 @@
 - Fixed a bug where custom `MessageListItemViewHolderFactory` was ignore on the message options overlay. [#3343](https://github.com/GetStream/stream-chat-android/pull/3343)
 - Fixed `MessageListViewModel` initialization when channel's data is not available immediately, for example when the view model is created after connecting the user. [#3379](https://github.com/GetStream/stream-chat-android/pull/3379)
 - Fixed configuration for flag message confirmation dialog. [3411](https://github.com/GetStream/stream-chat-android/pull/3411)
+- Fixed a potential crash with conflicting font names. [#3445](https://github.com/GetStream/stream-chat-android/pull/3445)
 
 ### ⬆️ Improved
 - Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
 - Added a way to customize `messageInputField` padding inside `MessageInputFiledView`. [#3392](https://github.com/GetStream/stream-chat-android/pull/3392)
 - Added a way to change the `MessageListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
 - Added a way to change the `ChannelListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
+- Now single membered channels display the name of member instead of "Channel without name" [3423](https://github.com/GetStream/stream-chat-android/pull/3423)
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
+- Added a way to change the `attachmentsButton` and `commandsButton` ripple color inside `MessageInputView`. [#3412](https://github.com/GetStream/stream-chat-android/pull/3412)
 
 ### ✅ Added
 - Added support for own capabilities. You can read more about own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
@@ -81,6 +93,7 @@
 - Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
 
 ### ⬆️ Improved
+- Now single membered channels display the name of member instead of "Channel without name" [3423](https://github.com/GetStream/stream-chat-android/pull/3423)
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 - Improved the way filters work in `ChannelList`, `ChannelsScreen` and `ChannelListViewModel`. Now the filters are nullable and if you want the default behavior, just pass in null. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)
 - You can now completely override the filters by using `ChannelListViewModel.setFilters()` in the runtime, or by passing in custom `FilterObject` to the `ViewModelFactory` or the `ViewModel` constructor. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)

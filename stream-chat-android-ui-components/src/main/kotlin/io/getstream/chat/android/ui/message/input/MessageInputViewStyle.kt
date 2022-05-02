@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -73,6 +74,8 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
  * @property maxAttachmentsCount Maximum number of attachments for single message. Cannot by greater than 10. Default value is 10.
  * @property editInputModeIcon Icon displayed in MessageInputView's top left corner when user edits the message. Default value is [R.drawable.stream_ui_ic_edit]
  * @property replyInputModeIcon Icon displayed in MessageInputView's top left corner when user replies to the message. Default value is [R.drawable.stream_ui_ic_arrow_curve_left]
+ * @property commandButtonRippleColor Ripple color of the command button. Default value is [colorControlHighlight]
+ * @property attachmentButtonRippleColor Ripple color of the attachment button. Default value is [colorControlHighlight]
  */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -117,6 +120,8 @@ public data class MessageInputViewStyle(
     public val maxAttachmentsCount: Int,
     public val editInputModeIcon: Drawable,
     public val replyInputModeIcon: Drawable,
+    @ColorInt public val commandButtonRippleColor: Int?,
+    @ColorInt public val attachmentButtonRippleColor: Int?
 ) {
 
     public companion object {
@@ -562,6 +567,14 @@ public data class MessageInputViewStyle(
                 val replyInputModeIcon = a.getDrawable(R.styleable.MessageInputView_streamUiReplyInputModeIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left)!!
 
+                val attachmentsButtonRippleColor = a.getColorOrNull(
+                    R.styleable.MessageInputView_streamUiAttachButtonRippleColor
+                )
+
+                val commandsButtonRippleColor = a.getColorOrNull(
+                    R.styleable.MessageInputView_streamUiCommandButtonRippleColor
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -605,6 +618,8 @@ public data class MessageInputViewStyle(
                     maxAttachmentsCount = maxAttachmentsCount,
                     editInputModeIcon = editInputModeIcon,
                     replyInputModeIcon = replyInputModeIcon,
+                    attachmentButtonRippleColor = attachmentsButtonRippleColor,
+                    commandButtonRippleColor = commandsButtonRippleColor
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
                     .also { style -> style.checkMaxAttachmentsCountRange() }
             }

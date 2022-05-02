@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import com.getstream.sdk.chat.utils.extensions.getDisplayName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -77,10 +78,6 @@ private class DefaultChannelNameFormatter(
      * @return The display name for the given channel.
      */
     override fun formatChannelName(channel: Channel, currentUser: User?): String {
-        return channel.name.takeIf { it.isNotEmpty() }
-            ?: channel.getOtherUsers(currentUser)
-                .joinToString(limit = maxMembers) { it.name }
-                .takeIf { it.isNotEmpty() }
-            ?: context.getString(R.string.stream_compose_untitled_channel)
+        return channel.getDisplayName(context, currentUser, R.string.stream_compose_untitled_channel, maxMembers)
     }
 }

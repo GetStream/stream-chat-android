@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.logger
+package io.getstream.chat.android.ui.utils.extensions
 
-import io.getstream.chat.android.client.errors.ChatError
+import android.content.res.ColorStateList
+import android.graphics.drawable.RippleDrawable
+import android.view.View
+import androidx.annotation.ColorInt
 
-public interface TaggedLogger {
-    public fun logI(message: String)
-
-    public fun logD(message: String)
-
-    public fun logV(message: String)
-
-    public fun logW(message: String)
-
-    public fun logE(message: String)
-
-    public fun logE(throwable: Throwable)
-
-    public fun logE(chatError: ChatError)
-
-    public fun logE(message: String, throwable: Throwable)
-
-    public fun logE(message: String, chatError: ChatError)
-
-    public fun getLevel(): ChatLogLevel
+/**
+ * Helper method for adding ripple effect to views
+ *
+ * @param color Color of the ripple.
+ */
+internal fun View.setBorderlessRipple(@ColorInt color: Int?) {
+    background = if (color != null) {
+        val rippleColor = ColorStateList.valueOf(color)
+        RippleDrawable(rippleColor, null, background)
+    } else {
+        null
+    }
 }

@@ -242,8 +242,8 @@ public data class MessageListItemStyle(
                     context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
                 )
 
-            val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
-            val boldTypeface = ResourcesCompat.getFont(context, R.font.roboto_bold) ?: Typeface.DEFAULT_BOLD
+            val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+            val boldTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_bold) ?: Typeface.DEFAULT_BOLD
 
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(

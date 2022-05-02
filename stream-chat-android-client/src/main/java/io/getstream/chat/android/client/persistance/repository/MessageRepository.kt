@@ -87,6 +87,13 @@ public interface MessageRepository {
     public suspend fun deleteChannelMessage(message: Message)
 
     /**
+     * Selects all message ids of a [SyncStatus]
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    public suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String>
+
+    /**
      * Selects all message of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]
