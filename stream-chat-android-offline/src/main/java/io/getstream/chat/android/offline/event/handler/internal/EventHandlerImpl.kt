@@ -93,7 +93,7 @@ import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-private const val TAG = "EventHandler"
+private const val TAG = "Chat:EventHandler"
 
 internal class EventHandlerImpl(
     private val recoveryEnabled: Boolean,
@@ -190,7 +190,7 @@ internal class EventHandlerImpl(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
-                    logger.logI("[handleConnectEvents] received DisconnectedEvent")
+                    logger.i { "[handleConnectEvents] received DisconnectedEvent" }
                     mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> {
@@ -211,12 +211,12 @@ internal class EventHandlerImpl(
                     }
                 }
                 is HealthEvent -> {
-                    logger.logV("[handleConnectEvents] received HealthEvent")
+                    logger.v { "[handleConnectEvents] received HealthEvent" }
                     syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
-                    logger.logI("[handleConnectEvents] received ConnectingEvent")
+                    logger.i { "[handleConnectEvents] received ConnectingEvent" }
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
                 }
 
