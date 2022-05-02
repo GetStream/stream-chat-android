@@ -426,7 +426,7 @@ public class MessageListViewModel(
             is Event.PinMessage -> {
                 chatClient.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not flag message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.logE("Could not pin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
                     }
                 )

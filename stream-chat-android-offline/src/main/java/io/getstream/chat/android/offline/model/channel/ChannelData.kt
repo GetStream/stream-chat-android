@@ -62,10 +62,12 @@ public data class ChannelData(
 
     /**
      * Creates a [ChannelData] entity from a [Channel] object.
+     * Keeps existing [ChannelData.ownCapabilities] if the [Channel] object comes with an empty set of capabilities.
      *
-     * @param channel The [Channel] object to convert
+     * @param channel The [Channel] object to convert.
+     * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
      */
-    internal constructor(channel: Channel) : this(
+    internal constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
         channelId = channel.id,
         name = channel.name,
@@ -79,7 +81,8 @@ public data class ChannelData(
         extraData = channel.extraData,
         createdBy = channel.createdBy,
         team = channel.team,
-        ownCapabilities = channel.ownCapabilities
+        ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
+            ?: currentOwnCapabilities,
     )
 
     /**

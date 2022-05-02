@@ -158,19 +158,32 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
     connectionState: ConnectionState,
     title: String,
 ) {
-    if (connectionState == ConnectionState.CONNECTED) {
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .wrapContentWidth()
-                .padding(horizontal = 16.dp),
-            text = title,
-            style = ChatTheme.typography.title3Bold,
-            maxLines = 1,
-            color = ChatTheme.colors.textHighEmphasis
-        )
-    } else {
-        NetworkLoadingIndicator(modifier = Modifier.weight(1f))
+    when (connectionState) {
+        ConnectionState.CONNECTED -> {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth()
+                    .padding(horizontal = 16.dp),
+                text = title,
+                style = ChatTheme.typography.title3Bold,
+                maxLines = 1,
+                color = ChatTheme.colors.textHighEmphasis
+            )
+        }
+        ConnectionState.CONNECTING -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
+        ConnectionState.OFFLINE -> {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth()
+                    .padding(horizontal = 16.dp),
+                text = stringResource(R.string.stream_compose_disconnected),
+                style = ChatTheme.typography.title3Bold,
+                maxLines = 1,
+                color = ChatTheme.colors.textHighEmphasis
+            )
+        }
     }
 }
 

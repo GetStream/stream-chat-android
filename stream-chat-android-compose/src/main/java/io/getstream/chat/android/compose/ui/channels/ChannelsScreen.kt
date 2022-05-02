@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channels.list.LeaveGroup
@@ -68,7 +67,8 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  *
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
  *
- * @param filters Default filters for channels.
+ * @param filters Default filters for channels. By passing in `null` to the ViewModel, we show messaging channels
+ * where the current user is a member.
  * @param querySort Default query sort for channels.
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
@@ -85,10 +85,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun ChannelsScreen(
-    filters: FilterObject = Filters.and(
-        Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-    ),
+    filters: FilterObject? = null,
     querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,

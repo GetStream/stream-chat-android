@@ -37,7 +37,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
@@ -84,10 +83,7 @@ public fun ChannelList(
         ChannelViewModelFactory(
             ChatClient.instance(),
             QuerySort.desc("last_updated"),
-            Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-            )
+            filters = null
         )
     ),
     lazyListState: LazyListState = rememberLazyListState(),

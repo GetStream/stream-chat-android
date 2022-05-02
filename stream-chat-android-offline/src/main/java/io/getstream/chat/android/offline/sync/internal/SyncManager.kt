@@ -111,6 +111,20 @@ internal class SyncManager(
     }
 
     /**
+     * Store the date of the latest events sync.
+     * The date should be updated whenever the sync endpoint returns a successful response.
+     *
+     * @param latestEventDate The date of the last event returned by the sync endpoint.
+     */
+    internal suspend fun updateLastSyncedDate(latestEventDate: Date) {
+        syncStateFlow.value?.let { syncState ->
+            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
+            repos.insertSyncState(newSyncState)
+            syncStateFlow.value = newSyncState
+        }
+    }
+
+    /**
      * Updates all the read state for the SDK. If the currentDate of this update is older then the most recent one, the update
      * is ignored.
      *

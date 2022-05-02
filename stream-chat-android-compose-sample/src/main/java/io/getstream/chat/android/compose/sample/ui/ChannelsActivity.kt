@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -71,10 +70,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         ChannelViewModelFactory(
             ChatClient.instance(),
             QuerySort.desc("last_updated"),
-            Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-            )
+            null
         )
     }
 
