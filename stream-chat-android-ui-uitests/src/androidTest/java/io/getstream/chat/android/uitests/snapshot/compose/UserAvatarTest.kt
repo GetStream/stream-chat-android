@@ -44,7 +44,7 @@ class UserAvatarTest : ScreenshotTest {
     @Test
     fun testUserAvatar() {
         composeRule.setContent {
-            ChatTheme(imageLoader = FakeImageLoader(context)) {
+            ChatTheme(imageLoaderFactory = { FakeImageLoader(context) }) {
                 UserAvatar(
                     modifier = Modifier.size(40.dp),
                     user = user1,
@@ -59,7 +59,7 @@ class UserAvatarTest : ScreenshotTest {
     @Test
     fun testChannelAvatar() {
         composeRule.setContent {
-            ChatTheme(imageLoader = FakeImageLoader(context)) {
+            ChatTheme(imageLoaderFactory = { FakeImageLoader(context) }) {
                 ChannelAvatar(
                     modifier = Modifier.size(40.dp),
                     currentUser = user1,
