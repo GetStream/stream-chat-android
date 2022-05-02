@@ -46,7 +46,6 @@ private fun Channel.includesCurrentUser(): Boolean {
  * @return The display name of the channel.
  */
 @InternalStreamChatApi
-@JvmOverloads
 public fun Channel.getDisplayName(
     context: Context,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
