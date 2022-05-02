@@ -26,15 +26,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     packagingOptions {
         resources.excludes.add("META-INF/*")
     }
@@ -86,6 +77,12 @@ dependencies {
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
     implementation Dependencies.composeCoil
+
+    // Coil
+    androidTestImplementation Dependencies.coil
+    androidTestImplementation Dependencies.composeCoil
+    androidTestImplementation Dependencies.coilGif
+    androidTestImplementation Dependencies.coilVideo
 
     // Instrumentation tests
     debugImplementation(Dependencies.fragmentTest) {
