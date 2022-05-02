@@ -34,11 +34,9 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.isGroupedWithNextMessage
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 
@@ -63,7 +61,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -92,9 +89,6 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = {
-        viewModel.currentMessagesState.messageItems.isGroupedWithNextMessage(it)
-    },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -109,7 +103,6 @@ public fun MessageList(
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            isGroupedWithNextMessage = isGroupedWithNextMessage
         )
     },
 ) {
@@ -141,7 +134,6 @@ public fun MessageList(
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 @Composable
 internal fun DefaultMessageContainer(
@@ -151,7 +143,6 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     MessageContainer(
         messageListItem = messageListItem,
@@ -160,7 +151,6 @@ internal fun DefaultMessageContainer(
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onImagePreviewResult = onImagePreviewResult,
-        isGroupedWithNextMessage = isGroupedWithNextMessage
     )
 }
 
@@ -212,7 +202,6 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -235,9 +224,6 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = {
-        currentState.messageItems.isGroupedWithNextMessage(it)
-    },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -252,7 +238,6 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            isGroupedWithNextMessage = isGroupedWithNextMessage
         )
     },
 ) {

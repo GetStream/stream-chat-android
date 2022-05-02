@@ -408,3 +408,7 @@ public fun Message.getCreatedAtOrThrow(): Date {
     val created = createdAt ?: createdLocallyAt
     return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }
+
+public fun Message.getCreatedAtOrNull(): Date? {
+    return createdAt ?: createdLocallyAt
+}

@@ -38,12 +38,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * holds the sender name and the timestamp.
  *
  * @param messageItem Message to show.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 @Composable
 public fun MessageFooter(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { it.groupPosition != MessageItemGroupPosition.Bottom },
 ) {
     val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
@@ -64,7 +62,7 @@ public fun MessageFooter(
 
     if (position == MessageItemGroupPosition.Bottom ||
         position == MessageItemGroupPosition.None ||
-        !isGroupedWithNextMessage(messageItem)
+        messageItem.shouldShowFooter
     ) {
         Row(
             modifier = Modifier.padding(top = 4.dp),

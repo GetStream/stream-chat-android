@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrNull
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -34,6 +35,7 @@ import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.MuteUser
@@ -63,6 +65,7 @@ import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
@@ -85,7 +88,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -109,12 +111,13 @@ public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
     private val clipboardHandler: ClipboardHandler,
-    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
+    private val messageLimit: Int = DefaultMessageLimit,
     private val enforceUniqueReactions: Boolean = true,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
-    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD),
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
 ) : ViewModel() {
 
     /**
@@ -500,7 +503,7 @@ public class MessageListViewModel(
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
-                limit = DEFAULT_MESSAGE_LIMIT,
+                limit = DefaultMessageLimit,
             ).enqueue()
         } else {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
@@ -633,7 +636,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val threadState = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGE_LIMIT)
+        val threadState = chatClient.getRepliesAsState(parentMessage.id, DefaultMessageLimit)
         val channelState = channelState.value ?: return
 
         messageMode = MessageMode.MessageThread(parentMessage, threadState)
@@ -723,6 +726,8 @@ public class MessageListViewModel(
                 else -> MessageItemGroupPosition.None
             }
 
+            val shouldShowFooter = shouldShowMessageFooter(message, position, nextMessage)
+
             if (shouldAddDateSeparator(previousMessage, message)) {
                 groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
             }
@@ -742,7 +747,8 @@ public class MessageListViewModel(
                         parentMessageId = parentMessageId,
                         isMine = user.id == currentUser?.id,
                         isInThread = isInThread,
-                        isMessageRead = isMessageRead
+                        isMessageRead = isMessageRead,
+                        shouldShowFooter = shouldShowFooter
                     )
                 )
             }
@@ -774,6 +780,38 @@ public class MessageListViewModel(
             val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
 
             return timeDifference > dateSeparatorThresholdMillis
+        }
+    }
+
+    /**
+     * Decides if we need to show the message footer (timestamp) below the message.
+     *
+     * @param message The current message for which we are checking whether we need to show the footer for.
+     * @param messagePosition the [MessageItemGroupPosition] of the current message for which we are checking whether we show the footer or not.
+     * @param nextMessage The message that comes after the current message. Depending on it and [MessageFooterVisibility] we will show/hide the footer.
+     */
+    private fun shouldShowMessageFooter(
+        message: Message,
+        messagePosition: MessageItemGroupPosition,
+        nextMessage: Message?,
+    ): Boolean {
+        if (nextMessage == null && messageFooterVisibility != MessageFooterVisibility.Never) return true
+        return when (messageFooterVisibility) {
+            MessageFooterVisibility.Always -> true
+            MessageFooterVisibility.LastInGroup -> messagePosition == MessageItemGroupPosition.Bottom
+            MessageFooterVisibility.Never -> false
+            is MessageFooterVisibility.WithTimeDifference -> {
+                when {
+                    messagePosition == MessageItemGroupPosition.Bottom -> true
+                    message.isDeleted() -> false
+                    message.user != nextMessage?.user
+                        || nextMessage.isDeleted()
+                        || (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
+                        (message.getCreatedAtOrNull()?.time ?: 0) >
+                        messageFooterVisibility.timeDifferenceMillis -> true
+                    else -> false
+                }
+            }
         }
     }
 
@@ -928,7 +966,7 @@ public class MessageListViewModel(
 
         viewModelScope.launch {
             updateMessages(messages)
-            delay(REMOVE_MESSAGE_FOCUS_DELAY)
+            delay(RemoveMessageFocusDelay)
             removeMessageFocus(messageId)
         }
     }
@@ -995,16 +1033,16 @@ public class MessageListViewModel(
          * The default threshold for showing date separators. If the message difference in hours is equal to this
          * number, then we show a separator, if it's enabled in the list.
          */
-        internal const val DATE_SEPARATOR_DEFAULT_HOUR_THRESHOLD: Long = 4
+        internal const val DateSeparatorDefaultHourThreshold: Long = 4
 
         /**
          * The default limit for messages count in requests.
          */
-        internal const val DEFAULT_MESSAGE_LIMIT: Int = 30
+        internal const val DefaultMessageLimit: Int = 30
 
         /**
          * Time in millis, after which the focus is removed.
          */
-        private const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
+        private const val RemoveMessageFocusDelay: Long = 2000
     }
 }

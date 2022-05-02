@@ -120,12 +120,8 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean = { it.groupPosition != Bottom },
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(
-            messageItem = it,
-            isGroupedWithNextMessage = isGroupedWithNextMessage
-        )
+        DefaultMessageItemLeadingContent(it)
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
@@ -142,7 +138,7 @@ public fun MessageItem(
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemFooterContent(messageItem = it, isGroupedWithNextMessage = isGroupedWithNextMessage)
+        DefaultMessageItemFooterContent(messageItem = it)
     },
     trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(messageItem = it)
@@ -220,15 +216,13 @@ public fun MessageItem(
 @Composable
 internal fun RowScope.DefaultMessageItemLeadingContent(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     val modifier = Modifier
         .padding(start = 8.dp, end = 8.dp)
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    val position = messageItem.groupPosition
-    if (!messageItem.isMine && !isGroupedWithNextMessage(messageItem)) {
+    if (!messageItem.isMine && messageItem.shouldShowFooter) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
@@ -327,12 +321,10 @@ internal fun DefaultMessageItemHeaderContent(
  * - message timestamp
  *
  * @param messageItem The message item to show the content for.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * */
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
-    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     val message = messageItem.message
     when {
@@ -346,7 +338,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
             OwnedMessageVisibilityContent(message = message)
         }
         !message.isDeleted() -> {
-            MessageFooter(messageItem = messageItem, isGroupedWithNextMessage = isGroupedWithNextMessage)
+            MessageFooter(messageItem = messageItem)
         }
     }
 
