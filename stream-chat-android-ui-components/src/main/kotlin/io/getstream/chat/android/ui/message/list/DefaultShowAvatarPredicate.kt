@@ -18,8 +18,10 @@ package io.getstream.chat.android.ui.message.list
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 
-internal class DefaultShowAvatarPredicate : MessageListView.ShowAvatarPredicate {
+internal class DefaultShowAvatarPredicate(
+    val isGroupedWithNextMessage: (MessageListItem.MessageItem) -> Boolean,
+) : MessageListView.ShowAvatarPredicate {
     override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean {
-        return messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+        return messageItem.isTheirs && !isGroupedWithNextMessage(messageItem)
     }
 }

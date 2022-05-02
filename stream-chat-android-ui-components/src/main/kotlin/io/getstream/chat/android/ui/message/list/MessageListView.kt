@@ -297,7 +297,9 @@ public class MessageListView : ConstraintLayout {
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
-    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
+    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate {
+        adapter.isGroupedWithNextMessage(it)
+    }
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone

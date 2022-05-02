@@ -122,7 +122,10 @@ public fun MessageItem(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     isGroupedWithNextMessage: (MessageItemState) -> Boolean = { it.groupPosition != Bottom },
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(messageItem = it)
+        DefaultMessageItemLeadingContent(
+            messageItem = it,
+            isGroupedWithNextMessage = isGroupedWithNextMessage
+        )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
@@ -217,6 +220,7 @@ public fun MessageItem(
 @Composable
 internal fun RowScope.DefaultMessageItemLeadingContent(
     messageItem: MessageItemState,
+    isGroupedWithNextMessage: (MessageItemState) -> Boolean,
 ) {
     val modifier = Modifier
         .padding(start = 8.dp, end = 8.dp)
@@ -224,7 +228,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .align(Alignment.Bottom)
 
     val position = messageItem.groupPosition
-    if (!messageItem.isMine && (position == Bottom || position == None)) {
+    if (!messageItem.isMine && !isGroupedWithNextMessage(messageItem)) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
