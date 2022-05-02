@@ -98,10 +98,7 @@ When it comes to UI and behavior customization in the `ChannelsScreen` signature
 
 ```kotlin
 fun ChannelsScreen(
-    filters: FilterObject = Filters.and(
-        Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-    ),
+    filters: FilterObject? = null,
     querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
@@ -113,7 +110,7 @@ fun ChannelsScreen(
 )
 ```
 
-* `filters`: These filters are applied to the channel query, meaning you can customize what data to show in the list.
+* `filters`: These filters are applied to the channel query, meaning you can customize what data to show in the list. By default they are null which signals us to use default messaging channel filters.
 * `querySort`: Like with filters, these are applied to the list data and affect its sorting order.
 * `title`: The title of the `ChannelListHeader`.
 * `isShowingHeader`: Flag that affects if we show the `ChannelListHeader`. `true` by default.

@@ -35,13 +35,22 @@ internal class SocketFactory(
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
     private val httpClient = OkHttpClient()
 
+    @Throws(UnsupportedEncodingException::class)
     fun createAnonymousSocket(eventsParser: EventsParser, endpoint: String, apiKey: String): Socket =
         create(eventsParser, endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
 
+    @Throws(UnsupportedEncodingException::class)
     fun createNormalSocket(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User): Socket =
         create(eventsParser, endpoint, apiKey, user, false)
 
-    private fun create(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): Socket {
+    @Throws(UnsupportedEncodingException::class)
+    private fun create(
+        eventsParser: EventsParser,
+        endpoint: String,
+        apiKey: String,
+        user: User,
+        isAnonymous: Boolean,
+    ): Socket {
         val url = buildUrl(endpoint, apiKey, user, isAnonymous)
         val request = Request.Builder().url(url).build()
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
@@ -51,6 +60,8 @@ internal class SocketFactory(
         return Socket(newWebSocket, parser)
     }
 
+    @Suppress("TooGenericExceptionCaught")
+    @Throws(UnsupportedEncodingException::class)
     private fun buildUrl(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): String {
         var json = buildUserDetailJson(user)
         return try {
@@ -63,7 +74,7 @@ internal class SocketFactory(
                 val token = tokenManager.getToken()
                 "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
             }
-        } catch (throwable: Throwable) {
+        } catch (_: Throwable) {
             throw UnsupportedEncodingException("Unable to encode user details json: $json")
         }
     }
@@ -86,17 +97,25 @@ internal class SocketFactory(
         private const val ANONYMOUS_USER_ID = "anon"
     }
 
+    /**
+     * Converts the [User] object to a map of properties updated while connecting the user.
+     * [User.name] and [User.image] will only be included if they are not blank.
+     *
+     * @return A map of User's properties to update.
+     */
     private fun User.reduceUserDetails(): Map<String, Any> {
         val details = mutableMapOf(
             "id" to id,
-            "name" to name,
-            "image" to image,
             "role" to role,
             "banned" to banned,
             "invisible" to invisible,
             "teams" to teams,
-        )
-        details.putAll(extraData)
+        ).apply {
+            if (image.isNotBlank()) put("image", image)
+            if (name.isNotBlank()) put("name", name)
+            putAll(extraData)
+        }
+
         return details
     }
 }

@@ -37,6 +37,7 @@
     <string name="stream_compose_user_status_online">Online</string>
     <string name="stream_compose_user_status_last_seen">Last seen %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>
+    <string name="stream_compose_disconnected">Disconnected</string>
 
     <!-- Message List Header -->
     <plurals name="stream_compose_message_list_header_typing_users">
@@ -90,12 +91,14 @@
     <string name="stream_compose_message_composer_error_message_length">Max message length (%1$d) exceeded.</string>
     <string name="stream_compose_message_composer_error_file_size">File is too large - max %1$s.</string>
     <string name="stream_compose_message_composer_error_attachment_count">Attachments count (%1$d) exceeded.</string>
+    <string name="stream_compose_message_composer_error_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
     <string name="stream_compose_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
     <string name="stream_compose_message_label">Send a message</string>
+    <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>

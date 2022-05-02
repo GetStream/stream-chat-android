@@ -23,6 +23,7 @@ import java.io.StringWriter
 
 private const val TAG_PREFIX = "Chat:"
 
+@Suppress("TooManyFunctions")
 internal class ChatLoggerImpl constructor(
     private val level: ChatLogLevel = ChatLogLevel.NOTHING,
     private val handler: ChatLoggerHandler? = null
@@ -78,6 +79,12 @@ internal class ChatLoggerImpl constructor(
             Log.d(getTag(tag), message)
         }
         handler?.logD(getTag(tag), message)
+    }
+
+    override fun logV(tag: Any, message: String) {
+        if (level.isMoreOrEqualsThan(ChatLogLevel.DEBUG)) {
+            Log.v(getTag(tag), message)
+        }
     }
 
     override fun logW(tag: Any, message: String) {

@@ -25,7 +25,8 @@ import java.util.Date
  * @param role Determines the set of user permissions.
  * @param name User's name.
  * @param image User's image.
- * @param invisible Determines if the user should share its online status. Can only be changed while connecting the user.
+ * @param invisible Determines if the user should share its online status. Can only be changed while connecting
+ * the user.
  * @param banned Whether a user is banned or not.
  * @param devices The list of devices for the current user.
  * @param online Whether a is user online or not.

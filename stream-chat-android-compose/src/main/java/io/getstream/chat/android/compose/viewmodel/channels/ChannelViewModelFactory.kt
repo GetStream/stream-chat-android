@@ -37,7 +37,7 @@ import io.getstream.chat.android.client.models.Channel
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient,
     private val querySort: QuerySort<Channel>,
-    private val filters: FilterObject,
+    private val filters: FilterObject?,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
@@ -61,7 +61,10 @@ public class ChannelViewModelFactory(
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+            ?: throw IllegalArgumentException(
+                "MessageListViewModelFactory can only create instances of the " +
+                    "following classes: ${factories.keys.joinToString { it.simpleName }}"
+            )
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T

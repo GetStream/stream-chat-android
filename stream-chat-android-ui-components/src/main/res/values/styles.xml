@@ -120,8 +120,8 @@
     <style name="StreamUiTextAppearance" parent="TextAppearance.AppCompat.Body2" />
 
     <style name="StreamUiTextAppearance.CaptionBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">10sp</item>
@@ -130,8 +130,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Footnote">
-        <item name="fontFamily">@font/roboto_regular</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="fontFamily">@font/stream_roboto_regular</item>
+        <item name="android:fontFamily">@font/stream_roboto_regular</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -140,8 +140,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.FootnoteBold">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -150,8 +150,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Caption1Bold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -160,8 +160,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Body">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
@@ -170,8 +170,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.BodyBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
@@ -180,8 +180,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Headline">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
@@ -190,8 +190,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.HeadlineBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
@@ -200,8 +200,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Title">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">22sp</item>
@@ -568,6 +568,7 @@
         <item name="streamUiShowActionButton">true</item>
         <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
         <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
+        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">@drawable/stream_ui_divider</item>
     </style>
 
     <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
@@ -758,6 +759,8 @@
         <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">@color/stream_ui_accent_red</item>
         <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
         <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">@color/stream_ui_accent_blue</item>
+
+        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">@drawable/stream_ui_divider</item>
     </style>
 
     <style name="StreamUi.SearchInputView" parent="StreamUi">
@@ -1006,6 +1009,8 @@
         <item name="streamUiMaxAttachmentsCount">10</item>
         <item name="streamUiEditInputModeIcon">@drawable/stream_ui_ic_edit</item>
         <item name="streamUiReplyInputModeIcon">@drawable/stream_ui_ic_arrow_curve_left</item>
+        <item name="streamUiCommandButtonRippleColor">?attr/colorControlHighlight</item>
+        <item name="streamUiAttachButtonRippleColor">?attr/colorControlHighlight</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">

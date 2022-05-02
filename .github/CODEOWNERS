@@ -22,6 +22,8 @@ stream-chat-android-ui-components-sample    @GetStream/android-developers-ui
 stream-chat-android-compose             @GetStream/android-developers-ui
 stream-chat-android-compose-sample      @GetStream/android-developers-ui
 
+# UI testing
+stream-chat-android-ui-uitests          @GetStream/android-developers-ui
 
 ### Top level files and directories
 # Git and GitHub
@@ -59,4 +61,4 @@ dokkasaurus_filter.json                 @leandroBorgesFerreira
 
 # Detekt
 config/detekt       @jcminarro
-*baseline.xml       @jcminarro
+*baseline.xml       @GetStream/android-developers

@@ -28,6 +28,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import java.util.Date
 
 @Dao
+@Suppress("TooManyFunctions")
 internal abstract class MessageDao {
 
     @Transaction
@@ -128,11 +129,11 @@ internal abstract class MessageDao {
         return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
     }
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:ids)")
+    @Query("SELECT * FROM stream_chat_message WHERE id IN (:ids)")
     @Transaction
     protected abstract suspend fun selectChunked(ids: List<String>): List<MessageEntity>
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:id)")
+    @Query("SELECT * FROM stream_chat_message WHERE id IN (:id)")
     @Transaction
     abstract suspend fun select(id: String): MessageEntity?
 
@@ -141,11 +142,25 @@ internal abstract class MessageDao {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
+    @Query(
+        "SELECT * FROM stream_chat_message " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC " +
+            "LIMIT :limit"
+    )
     @Transaction
-    abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
+    abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<MessageEntity>
+
+    @Query(
+        "SELECT id FROM stream_chat_message " +
+            "WHERE syncStatus = :syncStatus " +
+            "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC " +
+            "LIMIT :limit"
+    )
+    abstract suspend fun selectIdsBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<String>
 
     private companion object {
-        private const val SQLITE_MAX_VARIABLE_NUMBER = 999
+        private const val SQLITE_MAX_VARIABLE_NUMBER: Int = 999
+        private const val NO_LIMIT: Int = -1
     }
 }

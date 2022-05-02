@@ -16,8 +16,12 @@
 
 package com.getstream.sdk.chat.utils.extensions
 
+import android.content.Context
+import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
@@ -28,4 +32,40 @@ public fun Channel.isDirectMessaging(): Boolean {
 private fun Channel.includesCurrentUser(): Boolean {
     val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
     return members.any { it.user.id == currentUserId }
+}
+
+/**
+ * Returns the channel name if exists, or the list of member names if the channel is distinct.
+ *
+ * @param context The context to load string resources.
+ * @param currentUser The currently logged-in user.
+ * @param fallback The resource identifier of a fallback string if the [Channel] object lacks
+ * @param maxMembers The maximum number of members used to generate a name for a distinct channel.
+ * information to construct a valid display name string.
+ *
+ * @return The display name of the channel.
+ */
+@InternalStreamChatApi
+public fun Channel.getDisplayName(
+    context: Context,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    @StringRes fallback: Int,
+    maxMembers: Int = 5,
+): String {
+    return name.takeIf { it.isNotEmpty() }
+        ?: nameFromMembers(currentUser, maxMembers)
+        ?: context.getString(fallback)
+}
+
+private fun Channel.nameFromMembers(currentUser: User?, maxMembers: Int): String? {
+    val users = getUsersExcludingCurrent(currentUser)
+
+    return when {
+        users.isNotEmpty() -> users.joinToString(limit = maxMembers, transform = { it.name }).takeIf { it.isNotEmpty() }
+
+        // This channel has only the current user or only one user
+        members.size == 1 -> members.first().user.name
+
+        else -> null
+    }
 }

@@ -53,7 +53,6 @@ private object SelectedMessageMenuUsageSnippet {
                     Box(modifier = Modifier.fillMaxSize()) {
 
                         // The rest of your UI
-
                         if (selectedMessageState is SelectedMessageOptionsState) {
                             val selectedMessage = selectedMessageState.message
                             SelectedMessageMenu(
@@ -62,10 +61,13 @@ private object SelectedMessageMenuUsageSnippet {
                                 messageOptions = defaultMessageOptionsState(
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
-                                    isInThread = listViewModel.isInThread
+                                    isInThread = listViewModel.isInThread,
+                                    ownCapabilities = selectedMessageState.ownCapabilities
                                 ),
                                 // The message you selected
                                 message = selectedMessage,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 onMessageAction = { action ->
                                     // Handle message action
                                 },
@@ -121,10 +123,13 @@ private object SelectedMessageMenuHandlingActionsSnippet {
                                 messageOptions = defaultMessageOptionsState(
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
-                                    isInThread = listViewModel.isInThread
+                                    isInThread = listViewModel.isInThread,
+                                    ownCapabilities = selectedMessageState.ownCapabilities
                                 ),
                                 // The message you selected
                                 message = selectedMessage,
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 onMessageAction = { action ->
                                     composerViewModel.performMessageAction(action)
                                     listViewModel.performMessageAction(action)
@@ -181,8 +186,11 @@ private object SelectedMessageMenuCustomizationSnippet {
                                 messageOptions = defaultMessageOptionsState(
                                     selectedMessage = selectedMessage,
                                     currentUser = user,
-                                    isInThread = listViewModel.isInThread
+                                    isInThread = listViewModel.isInThread,
+                                    ownCapabilities = selectedMessageState.ownCapabilities
                                 ),
+                                // The capabilities the user has in a given channel
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                                 message = selectedMessage,
                                 // Assign a different shape to the Composable element
                                 shape = ChatTheme.shapes.attachment,

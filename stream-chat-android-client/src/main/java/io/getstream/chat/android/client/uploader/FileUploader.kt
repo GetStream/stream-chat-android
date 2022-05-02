@@ -28,11 +28,13 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the upload failed.
+     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
+     * upload failed.
      *
      * @see [Result.success]
      * @see [Result.error]
      */
+    @Suppress("LongParameterList")
     public fun sendFile(
         channelType: String,
         channelId: String,
@@ -45,7 +47,8 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel.
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the upload failed.
+     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
+     * upload failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -61,11 +64,13 @@ public interface FileUploader {
     /**
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
-     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the upload failed.
+     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the
+     * upload failed.
      *
      * @see [Result.success]
      * @see [Result.error]
      */
+    @Suppress("LongParameterList")
     public fun sendImage(
         channelType: String,
         channelId: String,
@@ -78,7 +83,8 @@ public interface FileUploader {
     /**
      * Uploads an image for the given channel.
      *
-     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the upload failed.
+     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the
+     * upload failed.
      *
      * @see [Result.success]
      * @see [Result.error]

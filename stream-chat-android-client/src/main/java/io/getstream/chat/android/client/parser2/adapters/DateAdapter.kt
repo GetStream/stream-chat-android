@@ -58,6 +58,7 @@ public class DateAdapter : JsonAdapter<Date>() {
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     @FromJson
     override fun fromJson(reader: JsonReader): Date? {
         val nextValue = reader.peek()
@@ -72,10 +73,10 @@ public class DateAdapter : JsonAdapter<Date>() {
         } else {
             try {
                 dateFormat.parse(rawValue)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 try {
                     dateFormatWithoutNanoseconds.parse(rawValue)
-                } catch (t: Throwable) {
+                } catch (_: Throwable) {
                     null
                 }
             }

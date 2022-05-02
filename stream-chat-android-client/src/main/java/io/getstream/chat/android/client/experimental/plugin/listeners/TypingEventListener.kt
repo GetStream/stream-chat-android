@@ -31,7 +31,8 @@ public interface TypingEventListener {
     /**
      * Runs this precondition before [ChatClient.keystroke] and [ChatClient.stopTyping] request is invoked.
      *
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
@@ -50,7 +51,8 @@ public interface TypingEventListener {
     /**
      * Runs this side effect before [ChatClient.keystroke] and [ChatClient.stopTyping] request is invoked.
      *
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
@@ -68,12 +70,14 @@ public interface TypingEventListener {
      * Runs this side effect after [ChatClient.keystroke] and [ChatClient.stopTyping] request is completed.
      *
      * @param result Result of the original request.
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
      * @param eventTime [Date] object as the time of this event.
      */
+    @Suppress("LongParameterList")
     public fun onTypingEventResult(
         result: Result<ChatEvent>,
         eventType: String,

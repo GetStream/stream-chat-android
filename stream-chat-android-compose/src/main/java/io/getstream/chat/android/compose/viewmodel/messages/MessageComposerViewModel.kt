@@ -86,8 +86,8 @@ public class MessageComposerViewModel(
     public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
+     * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
 
@@ -95,6 +95,15 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 
     /**
      * Called when the input changes and the internal state needs to be updated.

@@ -159,6 +159,7 @@ internal class EventHandlerImpl(
     private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
+                syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
                 handleEventsInternal(eventList, isFromSync = true)
             }
     }
@@ -182,10 +183,11 @@ internal class EventHandlerImpl(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
+                    logger.logI("[handleConnectEvents] received DisconnectedEvent")
                     mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> {
-                    logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
+                    logger.logI("[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled")
                     updateCurrentUser(event.me)
 
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
@@ -202,10 +204,12 @@ internal class EventHandlerImpl(
                     }
                 }
                 is HealthEvent -> {
+                    logger.logV("[handleConnectEvents] received HealthEvent")
                     syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
+                    logger.logI("[handleConnectEvents] received ConnectingEvent")
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
                 }
 

@@ -79,6 +79,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 bindMemberNames(members)
                 bindMembersInfo(members)
                 bindDeleteConversationButton(canDeleteChannel)
+                bindLeaveGroupButton(canLeaveChannel)
             }
         }
     }
@@ -107,7 +108,6 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun configureLeaveGroupButton() {
         binding.leaveGroupButton.apply {
             if (style.leaveGroupEnabled) {
-                isVisible = isGroup
                 configureActionItem(style.itemTextStyle, style.leaveGroupIcon)
                 setOnClickListener {
                     channelActionListener?.onLeaveChannelClicked(cid)
@@ -146,8 +146,20 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * Used to change the visibility of the delete conversation button
+     * once the [ChannelActionsViewModel.state] updates.
+     */
     private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
         binding.deleteButton.isVisible = canDeleteChannel && style.deleteConversationEnabled
+    }
+
+    /**
+     * Used to change the visibility of the leave group button
+     * once the [ChannelActionsViewModel.state] updates.
+     */
+    private fun bindLeaveGroupButton(canLeaveChannel: Boolean) {
+        binding.leaveGroupButton.isVisible = canLeaveChannel && style.leaveGroupEnabled
     }
 
     private fun bindMemberNames(members: List<Member>) {

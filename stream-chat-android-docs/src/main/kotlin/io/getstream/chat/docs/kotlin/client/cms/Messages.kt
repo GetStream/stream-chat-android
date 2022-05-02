@@ -13,8 +13,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.docs.kotlin.helpers.MyFileUploader
+import io.getstream.chat.docs.kotlin.client.helpers.MyFileUploader
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -117,6 +118,9 @@ class Messages(
     }
 
     inner class MessageFormat {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/message_format/?language=kotlin">Open Graph Scrapper</a>
+         */
         fun openGraphScraper() {
             val message = Message(
                 text = "Check this bear out https://imgur.com/r/bears/4zmGbMN"
@@ -171,13 +175,6 @@ class Messages(
             ).enqueue() // No callback passed to enqueue, as we'll get notified above anyway
         }
 
-        fun usingYourOwnCdn(apiKey: String, context: Context) {
-            // Set a custom FileUploader implementation when building your client
-            val client = ChatClient.Builder("{{ api_key }}", context)
-                .fileUploader(MyFileUploader())
-                .build()
-        }
-
         /**
          * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
          */
@@ -189,6 +186,13 @@ class Messages(
 
             // Deletes the file
             channelClient.deleteFile("{{ url of uploaded file }}").enqueue()
+        }
+
+        fun usingYourOwnCdn(apiKey: String, context: Context) {
+            // Set a custom FileUploader implementation when building your client
+            val client = ChatClient.Builder("{{ api_key }}", context)
+                .fileUploader(MyFileUploader())
+                .build()
         }
     }
 
@@ -469,6 +473,36 @@ class Messages(
             ).enqueue { result ->
                 if (result.isSuccess) {
                     val pinnedMessages: List<Message> = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+    }
+
+    inner class Translation {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/translation/?language=kotlin#message-translation-endpoint">Message Translation</a>
+         */
+        fun messageTranslation() {
+            // Translate message to French
+            val channelClient = client.channel("messaging", "general")
+            val message = Message(text = "Hello, I would like to have more information about your product.")
+
+            channelClient.sendMessage(message).enqueue { result ->
+                if (result.isSuccess) {
+                    val messageId = result.data().id
+                    val frenchLanguage = "fr"
+
+                    client.translate(messageId, frenchLanguage).enqueue { translationResult ->
+                        if (translationResult.isSuccess) {
+                            val translatedMessage = translationResult.data()
+                            val translation = translatedMessage.getTranslation(frenchLanguage)
+                        } else {
+                            // Handle translationResult.error()
+                        }
+                    }
                 } else {
                     // Handle result.error()
                 }

@@ -159,8 +159,10 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-public class ChatClient internal constructor(
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "TooManyFunctions", "LargeClass")
+public class ChatClient
+@Suppress("LongParameterList")
+internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
@@ -311,23 +313,6 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Initializes [ChatClient] for a specific user using the given user [token].
-     *
-     * @param user Instance of [User] type.
-     * @param token Instance of JWT token. It must be unique for each user.
-     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
-     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
-     * You can generate the JWT token on using one of the available libraries or use our manual
-     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
-     *
-     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases.
-     */
-    @CheckResult
-    public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token))
-    }
-
-    /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
@@ -348,12 +333,18 @@ public class ChatClient internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
+            listener?.onError(
+                ChatError(
+                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                )
+            )
             return
         }
         val userState = userStateService.state
         when {
-            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
+            userState is UserState.UserSet &&
+                userState.user.id == user.id &&
+                socketStateService.state == SocketState.Idle -> {
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(cacheableTokenProvider)
                 connectionListener = listener
@@ -368,7 +359,10 @@ public class ChatClient internal constructor(
                 socket.connect(user)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+                logger.logE(
+                    "Trying to set user without disconnecting the previous one - make sure that previously set " +
+                        "user is disconnected."
+                )
                 listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
             }
             else -> {
@@ -399,20 +393,42 @@ public class ChatClient internal constructor(
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
-     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
-     * for the initial token, and it's also invoked whenever the user's token has expired, to
-     * fetch a new token.
+     * Initializes [ChatClient] for a specific user.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
      *
      * This method performs required operations before connecting with the Stream API.
      * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
+     *
+     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
+     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
+     * You can generate the JWT token on using one of the available libraries or use our manual
+     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
+     *
+     * @see TokenProvider
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
+     *
+     * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
+    }
+
+    /**
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     * Check [ChatClient.connectUser] with [TokenProvider] parameter for advanced use cases.
+     *
+     * @param user Instance of [User] type.
+     * @param token Instance of JWT token.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    @CheckResult
+    public fun connectUser(user: User, token: String): Call<ConnectionData> {
+        return connectUser(user, ConstantTokenProvider(token))
     }
 
     /**
@@ -513,6 +529,7 @@ public class ChatClient internal constructor(
      *
      * @return [Call] with a list of members or an error.
      */
+    @Suppress("LongParameterList")
     @CheckResult
     public fun queryMembers(
         channelType: String,
@@ -698,7 +715,8 @@ public class ChatClient internal constructor(
 
     /**
      * Sends the reaction.
-     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the current user.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the
+     * current user.
      * [cid] parameter is being used in side effect functions executed by plugins.
      * You can skip it if plugins are not being used.
      *
@@ -1192,8 +1210,8 @@ public class ChatClient internal constructor(
         val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
         return CoroutineCall(scope) {
 
-            // Message is first prepared i.e. all its attachments are uploaded and message is updated with these attachments.
-            // TODO: An InterceptedCall wrapper can be created to avoid so much code here.
+            // Message is first prepared i.e. all its attachments are uploaded and message is updated with
+            // these attachments.
             relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
@@ -1216,8 +1234,8 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here to
-     * store the updated message locally.
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here
+     * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
      */
@@ -1504,7 +1522,7 @@ public class ChatClient internal constructor(
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
-     * between 1-120.
+     * between 1-[MAX_COOLDOWN_TIME_SECONDS].
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -1518,10 +1536,14 @@ public class ChatClient internal constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return if (cooldownTimeInSeconds in 1..120) {
+        return if (cooldownTimeInSeconds in 1..MAX_COOLDOWN_TIME_SECONDS) {
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
-            ErrorCall(ChatError("You can't specify a value outside the range 1-120 for cooldown duration."))
+            ErrorCall(
+                ChatError(
+                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
+                )
+            )
         }
     }
 
@@ -1565,7 +1587,8 @@ public class ChatClient internal constructor(
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
     /**
-     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and vendor and more.
+     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and vendor
+     * and more.
      *
      * @return String formatted header that contains all the information.
      */
@@ -1577,7 +1600,12 @@ public class ChatClient internal constructor(
         val apiLevel = Build.VERSION.SDK_INT
         val osName = "Android ${Build.VERSION.RELEASE}"
 
-        return """$clientInformation|os=$osName|api_version=$apiLevel|device_vendor=$deviceManufacturer|device_model=$buildModel|offline_enabled=$OFFLINE_SUPPORT_ENABLED"""
+        return clientInformation +
+            "|os=$osName" +
+            "|api_version=$apiLevel" +
+            "|device_vendor=$deviceManufacturer" +
+            "|device_model=$buildModel" +
+            "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
     }
 
     @CheckResult
@@ -1643,8 +1671,10 @@ public class ChatClient internal constructor(
         unset: List<String> = emptyList(),
     ): Call<User> {
         if (id != getCurrentUser()?.id) {
-            logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")
-            return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))
+            val errorMessage = "The client-side partial update allows you to update only the current user. " +
+                "Make sure the user is set before updating it."
+            logger.logE(errorMessage)
+            return ErrorCall(ChatError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -1958,7 +1988,8 @@ public class ChatClient internal constructor(
      * Creates the channel.
      * You can either create an id-based channel by passing not blank [channelId] or
      * member-based (distinct) channel by leaving [channelId] empty.
-     * Use [memberIds] list to create a channel together with members. Make sure the list is not empty in case of creating member-based channel!
+     * Use [memberIds] list to create a channel together with members. Make sure the list is not empty in case of
+     * creating member-based channel!
      * Extra channel's information, for example name, can be passed in the [extraData] map.
      *
      * The call will be retried accordingly to [retryPolicy].
@@ -2051,7 +2082,8 @@ public class ChatClient internal constructor(
      * @param channelId The id of this channel.
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
-     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
      */
     @CheckResult
     public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
@@ -2089,7 +2121,8 @@ public class ChatClient internal constructor(
      * @param channelId The id of this channel.
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
-     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or [ChatError] if fails.
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
      */
     @CheckResult
     public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
@@ -2170,9 +2203,11 @@ public class ChatClient internal constructor(
     /**
      * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
      *
-     * @param apiKey The API key of your Stream Chat app obtained from the [Stream Dashboard](https://dashboard.getstream.io/).
+     * @param apiKey The API key of your Stream Chat app obtained from the
+     * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
+    @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat.stream-io-api.com"
@@ -2223,7 +2258,8 @@ public class ChatClient internal constructor(
          * around push notifications. Create your own subclass and override methods to customize
          * notification appearance and behavior.
          *
-         * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
+         * See the
+         * [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
          * documentation for more information.
          *
          *
@@ -2233,7 +2269,8 @@ public class ChatClient internal constructor(
         @JvmOverloads
         public fun notifications(
             notificationConfig: NotificationConfig,
-            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+            notificationsHandler: NotificationHandler =
+                NotificationHandlerFactory.createNotificationHandler(context = appContext),
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
@@ -2246,7 +2283,8 @@ public class ChatClient internal constructor(
          * The default implementation uses Stream's own CDN to store these files,
          * which has a 20 MB upload size limit.
          *
-         * For more info, see [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
+         * For more info, see
+         * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
          *
          * @param fileUploader Your custom implementation of [FileUploader].
          */
@@ -2282,7 +2320,8 @@ public class ChatClient internal constructor(
         /**
          * Sets the base URL to be used by the client.
          *
-         * By default, this is the URL of Stream's [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
+         * By default, this is the URL of Stream's
+         * [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
          * which provides low latency regardless of which region your Stream
          * app is hosted in.
          *
@@ -2452,6 +2491,7 @@ public class ChatClient internal constructor(
         @JvmStatic
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
+        private const val MAX_COOLDOWN_TIME_SECONDS = 120
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
@@ -2466,7 +2506,9 @@ public class ChatClient internal constructor(
         @JvmStatic
         public fun instance(): ChatClient {
             return instance
-                ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+                ?: throw IllegalStateException(
+                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance"
+                )
         }
 
         public val isInitialized: Boolean
@@ -2474,7 +2516,8 @@ public class ChatClient internal constructor(
 
         /**
          * Handles push message.
-         * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
+         * If user is not connected - automatically restores last user credentials and sets user without
+         * connecting to the socket.
          * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *

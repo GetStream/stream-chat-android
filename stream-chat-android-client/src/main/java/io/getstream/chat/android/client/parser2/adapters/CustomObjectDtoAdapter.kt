@@ -27,7 +27,7 @@ import kotlin.reflect.full.declaredMemberProperties
  * Base class for implementing Moshi adapters that support our API's dynamic
  * JSON models.
  */
-internal abstract class CustomObjectDtoAdapter<Value : Any>(private val kClass: KClass<Value>) {
+internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KClass<Value>) {
 
     private companion object {
         private const val EXTRA_DATA = "extraData"

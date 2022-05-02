@@ -17,11 +17,13 @@
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import com.getstream.sdk.chat.utils.extensions.containsLinks
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -41,11 +43,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
@@ -63,6 +68,7 @@ import java.util.regex.Pattern
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
 @InternalStreamChatApi
+@Suppress("TooManyFunctions")
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -75,8 +81,8 @@ public class MessageComposerController(
      * ViewModel is disposed.
      *
      * We use the [DispatcherProvider.Immediate] variant here to make sure the UI updates don't go through the
-     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing really
-     * fast.
+     * process of dispatching events. This fixes several bugs where the input state breaks when deleting or typing
+     * really fast.
      */
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
@@ -94,6 +100,53 @@ public class MessageComposerController(
         cid = channelId,
         messageLimit = DefaultMessageLimit
     ).filterNotNull()
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
+        .map { it.ownCapabilities }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = setOf()
+        )
+
+    /**
+     * Signals if the user's typing will send a typing update in the given channel.
+     *
+     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
+     * on every typing update.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val canSendTypingUpdates = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
+     * Signals if the user is allowed to send links.
+     *
+     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
+     * on every typing update.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_LINKS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
 
     /**
      * Full message composer state holding all the required information.
@@ -163,8 +216,8 @@ public class MessageComposerController(
     private var cooldownInterval: Int = 0
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
+     * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 
@@ -274,6 +327,10 @@ public class MessageComposerController(
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
         }.launchIn(scope)
+
+        ownCapabilities.onEach { ownCapabilities ->
+            state.value = state.value.copy(ownCapabilities = ownCapabilities)
+        }.launchIn(scope)
     }
 
     /**
@@ -284,7 +341,9 @@ public class MessageComposerController(
     public fun setMessageInput(value: String) {
         this.input.value = value
 
-        typingUpdateBuffer.onTypingEvent()
+        if (canSendTypingUpdates.value) {
+            typingUpdateBuffer.onTypingEvent()
+        }
         handleMentionSuggestions()
         handleCommandSuggestions()
         handleValidationErrors()
@@ -503,7 +562,9 @@ public class MessageComposerController(
      */
     private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
-            val messageLength = input.value.length
+            val message = input.value
+            val messageLength = message.length
+
             if (messageLength > maxMessageLength) {
                 add(
                     ValidationError.MessageLengthExceeded(
@@ -531,6 +592,11 @@ public class MessageComposerController(
                         attachments = attachments,
                         maxAttachmentSize = maxAttachmentSize
                     )
+                )
+            }
+            if (!canSendLinks.value && message.containsLinks()) {
+                add(
+                    ValidationError.ContainsLinksWhenNotAllowed
                 )
             }
         }
@@ -602,7 +668,7 @@ public class MessageComposerController(
             cooldownTimerJob = scope.launch {
                 for (timeRemaining in cooldownInterval downTo 0) {
                     cooldownTimer.value = timeRemaining
-                    delay(1000)
+                    delay(OneSecond)
                 }
             }
         }
@@ -638,7 +704,8 @@ public class MessageComposerController(
          */
         private const val DefaultMessageLimit: Int = 30
 
-        private const val DefaultTypingUpdateIntervalMillis = 2000L
+        private const val DefaultTypingUpdateIntervalMillis = 3000L
+        private const val OneSecond = 1000L
     }
 
     /**

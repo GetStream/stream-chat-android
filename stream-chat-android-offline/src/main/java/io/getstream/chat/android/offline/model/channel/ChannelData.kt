@@ -40,6 +40,7 @@ import java.util.Date
  * @param memberCount Number of members in the channel.
  * @param team Team the channel belongs to (multi-tenant only).
  * @param extraData A map of custom fields for the channel.
+ * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
  */
 public data class ChannelData(
     var channelId: String,
@@ -56,14 +57,17 @@ public data class ChannelData(
     var memberCount: Int = 0,
     var team: String = "",
     var extraData: MutableMap<String, Any> = mutableMapOf(),
+    var ownCapabilities: Set<String> = setOf(),
 ) {
 
     /**
      * Creates a [ChannelData] entity from a [Channel] object.
+     * Keeps existing [ChannelData.ownCapabilities] if the [Channel] object comes with an empty set of capabilities.
      *
-     * @param channel The [Channel] object to convert
+     * @param channel The [Channel] object to convert.
+     * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
      */
-    internal constructor(channel: Channel) : this(
+    internal constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
         channelId = channel.id,
         name = channel.name,
@@ -77,6 +81,8 @@ public data class ChannelData(
         extraData = channel.extraData,
         createdBy = channel.createdBy,
         team = channel.team,
+        ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
+            ?: currentOwnCapabilities,
     )
 
     /**
@@ -118,6 +124,18 @@ public data class ChannelData(
             read = reads,
             team = team,
             memberCount = memberCount,
+            ownCapabilities = ownCapabilities
         )
+    }
+
+    /**
+     * Checks if the user has specific capabilities.
+     *
+     * You can find a list of capabilities in [io.getstream.chat.android.client.models.ChannelCapabilities].
+     *
+     * @param channelCapability The specific ability we are checking against.
+     */
+    public fun isUserAbleTo(channelCapability: String): Boolean {
+        return ownCapabilities.contains(channelCapability)
     }
 }

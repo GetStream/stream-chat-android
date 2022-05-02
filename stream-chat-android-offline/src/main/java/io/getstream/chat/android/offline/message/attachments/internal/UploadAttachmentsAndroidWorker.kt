@@ -25,9 +25,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
@@ -39,13 +41,20 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        return UploadAttachmentsWorker(LogicRegistry.get(), RepositoryFacade.get(), ChatClient.instance())
-            .uploadAttachmentsForMessage(
-                channelType,
-                channelId,
-                messageId
-            )
-            .run { if (isSuccess) Result.success() else Result.failure() }
+        val chatClient = ChatClient.instance()
+        val repositoryProvider = RepositoryProvider.get()
+
+        return UploadAttachmentsWorker(
+            LogicRegistry.get(),
+            repositoryProvider.get(MessageRepository::class.java),
+            chatClient
+        ).uploadAttachmentsForMessage(
+            channelType,
+            channelId,
+            messageId
+        ).let { result ->
+            if (result.isSuccess) Result.success() else Result.failure()
+        }
     }
 
     companion object {
@@ -59,8 +68,8 @@ internal class UploadAttachmentsAndroidWorker(
             channelId: String,
             messageId: String,
             networkType: UploadAttachmentsNetworkType,
-        ) {
-            val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
+        ): UUID {
+            val uploadAttachmentsWorkRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(networkType.toNetworkType()).build())
                 .setInputData(
                     workDataOf(
@@ -74,8 +83,19 @@ internal class UploadAttachmentsAndroidWorker(
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
-                uploadAttachmentsWorRequest
+                uploadAttachmentsWorkRequest
             )
+            return uploadAttachmentsWorkRequest.id
+        }
+
+        /**
+         * Stops the ongoing work if there is any.
+         *
+         * @param context Context of the application.
+         * @param workId UUID of the enqueued work.
+         */
+        fun stop(context: Context, workId: UUID) {
+            WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
 }

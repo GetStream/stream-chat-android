@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.sync.SyncState
@@ -76,6 +75,7 @@ internal class SyncManager(
      * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
      */
     internal suspend fun connectionRecovered() {
+        logger.logD("[connectionRecovered] firstConnect $firstConnect")
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
@@ -105,6 +105,20 @@ internal class SyncManager(
     internal suspend fun storeSyncState() {
         syncStateFlow.value?.let { syncState ->
             val newSyncState = syncState.copy(activeChannelIds = logicRegistry.getActiveChannelsLogic().map { it.cid })
+            repos.insertSyncState(newSyncState)
+            syncStateFlow.value = newSyncState
+        }
+    }
+
+    /**
+     * Store the date of the latest events sync.
+     * The date should be updated whenever the sync endpoint returns a successful response.
+     *
+     * @param latestEventDate The date of the last event returned by the sync endpoint.
+     */
+    internal suspend fun updateLastSyncedDate(latestEventDate: Date) {
+        syncStateFlow.value?.let { syncState ->
+            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
             repos.insertSyncState(newSyncState)
             syncStateFlow.value = newSyncState
         }
@@ -141,17 +155,23 @@ internal class SyncManager(
      */
     internal suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {
+            val thread = Thread.currentThread().run { "$name:$id" }
+            logger.logD("($thread) [retryFailedEntities] no args")
             // retry channels, messages and reactions in that order..
-            val channels = retryChannels()
-            val messages = retryMessages()
-            val reactions = retryReactions()
-            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+            retryChannels()
+            retryMessages()
+            retryReactions()
+            logger.logV("[retryFailedEntities] completed")
         }
     }
 
+    @SuppressWarnings("LongMethod")
+    /**
+     * This method needs to be refactored. It's too long.
+     */
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
+        logger.logD("[connectionRecovered] recoverAll $recoverAll")
         // 0. ensure load is complete
-
         val online = globalState.isOnline()
 
         // 1. Retry any failed requests first (synchronous)
@@ -163,7 +183,6 @@ internal class SyncManager(
 
         // 2. update the results for queries that are actively being shown right now (synchronous)
         val updatedChannelIds = mutableSetOf<String>()
-
         logicRegistry.getActiveQueryChannelsLogic()
             .filter { queryChannelsLogic -> queryChannelsLogic.state().recoveryNeeded.value || recoverAll }
             .take(QUERIES_TO_RETRY)
@@ -231,86 +250,102 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun retryChannels(): List<Channel> {
-        return repos.selectChannelsSyncNeeded().onEach { channel ->
-            chatClient.createChannel(
+    private suspend fun retryChannels() {
+        val cids = repos.selectChannelCidsBySyncNeeded()
+        logger.logD("[retryChannels] cids.size: ${cids.size}")
+        cids.forEach { cid ->
+            logger.logD("[retryReactions] process channel($cid)")
+            val channel = repos.selectChannelByCid(cid) ?: return@forEach
+            logger.logV("[retryChannels] sending channel($cid)")
+            val result = chatClient.createChannel(
                 channel.type,
                 channel.id,
                 channel.members.map(UserEntity::getUserId),
                 channel.extraData
             ).await()
+            logger.logV("[retryChannels] result($cid).isSuccess: ${result.isSuccess}")
         }
     }
 
     @VisibleForTesting
-    private suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
+    private suspend fun retryMessages() {
+        logger.logD("[retryMessages] no args")
+        retryMessagesWithSyncedAttachments()
+        retryMessagesWithPendingAttachments()
+        logger.logV("[retryMessages] completed")
     }
 
-    private suspend fun retryReactions(): List<Reaction> {
-        return repos.selectReactionsBySyncStatus(SyncStatus.SYNC_NEEDED).onEach { reaction ->
-            if (reaction.deletedAt != null) {
+    private suspend fun retryReactions() {
+        val ids = repos.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
+        logger.logD("[retryReactions] ids.size: ${ids.size}")
+        ids.forEach { id ->
+            logger.logD("[retryReactions] process reaction($id)")
+            val reaction = repos.selectReactionById(id) ?: return@forEach
+            val result = if (reaction.deletedAt != null) {
+                logger.logV("[retryReactions] deleting reaction($id) for messageId: ${reaction.messageId}")
                 chatClient.deleteReaction(reaction.messageId, reaction.type)
             } else {
+                logger.logV("[retryReactions] sending reaction($id) for messageId: ${reaction.messageId}")
                 chatClient.sendReaction(reaction, reaction.enforceUnique)
             }.await()
+            logger.logV("[retryReactions] result($id).isSuccess: ${result.isSuccess}")
         }
     }
 
-    private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val messages = repos.selectMessageBySyncState(SyncStatus.SYNC_NEEDED)
-
-        messages.forEach { message ->
+    private suspend fun retryMessagesWithSyncedAttachments() {
+        val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
+        logger.logD("[retryMgsWithSyncedAttachments] ids.size: ${ids.size}")
+        ids.forEach { id ->
+            logger.logD("[retryMgsWithSyncedAttachments] process message($id)")
+            val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
-
-            when {
+            val result = when {
                 message.deletedAt != null -> {
-                    logger.logD("Deleting message: ${message.id}")
+                    logger.logV("[retryMgsWithSyncedAttachments] deleting message($id)")
                     channelClient.deleteMessage(message.id).await()
                 }
                 message.updatedLocallyAt != null && message.createdAt != null -> {
-                    logger.logD("Updating message: ${message.id}")
-
+                    logger.logV("[retryMgsWithSyncedAttachments] updating message($id)")
                     channelClient.updateMessage(message).await()
                 }
                 else -> {
-                    logger.logD("Sending message: ${message.id}")
-                    val result = channelClient.sendMessage(message).await()
-
-                    if (result.isSuccess) {
-                        repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-                    } else if (result.isError && result.error().isPermanent()) {
-                        markMessageAsFailed(message)
+                    logger.logV("[retryMgsWithSyncedAttachments] sending message($id)")
+                    channelClient.sendMessage(message).await().also { result ->
+                        if (result.isSuccess) {
+                            repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
+                        } else if (result.isError && result.error().isPermanent()) {
+                            repos.markMessageAsFailed(message)
+                        }
                     }
                 }
             }
+            logger.logV("[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result.isSuccess}")
         }
-
-        return messages
     }
 
     /**
      * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
      */
-    private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
-        val retriedMessages = repos.selectMessageBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
-
-        val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
-            message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
+    private suspend fun retryMessagesWithPendingAttachments() {
+        val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
+        logger.logD("[retryMessagesWithPendingAttachments] ids.size: ${ids.size}")
+        ids.forEach { id ->
+            logger.logD("[retryMessagesWithPendingAttachments] process message($id)")
+            val message = repos.selectMessage(id) ?: return@forEach
+            val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
+            if (isFailed) {
+                logger.logV("[retryMessagesWithSyncedAttachments] marking message(${message.id}) as failed")
+                repos.markMessageAsFailed(message)
+            } else {
+                logger.logV("[retryMessagesWithSyncedAttachments] sending message(${message.id})")
+                val (channelType, channelId) = message.cid.cidToTypeAndId()
+                chatClient.sendMessage(channelType, channelId, message, true).await()
+            }
         }
-
-        failedMessages.forEach { markMessageAsFailed(it) }
-
-        needToBeSync.forEach { message ->
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            chatClient.sendMessage(channelType, channelId, message, true).await()
-        }
-
-        return retriedMessages
     }
 
-    private suspend fun markMessageAsFailed(message: Message) =
-        repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
+    private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
+        insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
 
     private suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
         val users = mutableMapOf<String, User>()

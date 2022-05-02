@@ -115,6 +115,7 @@ import kotlin.math.max
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
  */
+@Suppress("TooManyFunctions")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: GlobalMutableState,
@@ -384,8 +385,9 @@ internal class ChannelLogic(
         mutableState._members.value = (mutableState._members.value + members.associateBy(Member::getUserId))
     }
 
-    internal fun updateChannelData(channel: Channel) {
-        mutableState._channelData.value = ChannelData(channel)
+    private fun updateChannelData(channel: Channel) {
+        val currentOwnCapabilities = mutableState._channelData.value?.ownCapabilities ?: emptySet()
+        mutableState._channelData.value = ChannelData(channel, currentOwnCapabilities)
     }
 
     private fun setWatchers(watchers: List<User>) {

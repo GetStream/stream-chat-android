@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.utils
 import android.util.Log
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+private const val MILLISECONDS_IN_A_SECONDS = 1000.0
+
 @InternalStreamChatApi
 public object PerformanceUtils {
     @Volatile
@@ -52,7 +54,7 @@ public object PerformanceUtils {
 
     private fun doMeasureAndUpdateResult(taskName: String, entry: TaskEntry) {
         entry.lastStart?.let { startTime ->
-            val lastDuration = (System.currentTimeMillis() - startTime) / 1000.0
+            val lastDuration = (System.currentTimeMillis() - startTime) / MILLISECONDS_IN_A_SECONDS
             val newSumDuration = entry.sumDuration + lastDuration
             val newCount = entry.count + 1
             tasks = tasks + (taskName to entry.copy(count = newCount, sumDuration = newSumDuration, lastStart = null))

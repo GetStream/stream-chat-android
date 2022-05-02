@@ -43,7 +43,8 @@ public interface NotificationHandler {
 
     /**
      * Handles showing notification after receiving [PushMessage].
-     * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
+     * Default implementation loads necessary data from the server and shows notification if application is not in
+     * foreground.
      *
      * @return False if remote message should be handled internally.
      */
