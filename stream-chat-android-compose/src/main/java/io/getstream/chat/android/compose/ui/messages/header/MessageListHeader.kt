@@ -222,7 +222,7 @@ public fun DefaultMessageListHeaderCenterContent(
             }
             ConnectionState.OFFLINE -> {
                 Text(
-                    text = stringResource(id = R.string.stream_compose_offline),
+                    text = stringResource(id = R.string.stream_compose_disconnected),
                     color = ChatTheme.colors.textLowEmphasis,
                     style = ChatTheme.typography.footnote,
                     maxLines = 1,
