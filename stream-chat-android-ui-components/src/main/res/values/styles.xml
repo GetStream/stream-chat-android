@@ -1009,6 +1009,8 @@
         <item name="streamUiMaxAttachmentsCount">10</item>
         <item name="streamUiEditInputModeIcon">@drawable/stream_ui_ic_edit</item>
         <item name="streamUiReplyInputModeIcon">@drawable/stream_ui_ic_arrow_curve_left</item>
+        <item name="streamUiCommandButtonRippleColor">?attr/colorControlHighlight</item>
+        <item name="streamUiAttachButtonRippleColor">?attr/colorControlHighlight</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">
