@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.java;
+package io.getstream.chat.docs.java.client.cms;
 
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.TypingStartEvent;
