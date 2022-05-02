@@ -37,6 +37,7 @@
     <string name="stream_compose_user_status_online">Online</string>
     <string name="stream_compose_user_status_last_seen">Last seen %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>
+    <string name="stream_compose_disconnected">Disconnected</string>
 
     <!-- Message List Header -->
     <plurals name="stream_compose_message_list_header_typing_users">
