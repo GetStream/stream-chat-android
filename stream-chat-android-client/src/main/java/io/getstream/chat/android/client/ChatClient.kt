@@ -313,23 +313,6 @@ internal constructor(
     }
 
     /**
-     * Initializes [ChatClient] for a specific user using the given user [token].
-     *
-     * @param user Instance of [User] type.
-     * @param token Instance of JWT token. It must be unique for each user.
-     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
-     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
-     * You can generate the JWT token on using one of the available libraries or use our manual
-     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
-     *
-     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases.
-     */
-    @CheckResult
-    public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token))
-    }
-
-    /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
@@ -410,20 +393,42 @@ internal constructor(
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
-     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
-     * for the initial token, and it's also invoked whenever the user's token has expired, to
-     * fetch a new token.
+     * Initializes [ChatClient] for a specific user.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
      *
      * This method performs required operations before connecting with the Stream API.
      * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
+     *
+     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
+     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
+     * You can generate the JWT token on using one of the available libraries or use our manual
+     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
+     *
+     * @see TokenProvider
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
+     *
+     * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
+    }
+
+    /**
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     * Check [ChatClient.connectUser] with [TokenProvider] parameter for advanced use cases.
+     *
+     * @param user Instance of [User] type.
+     * @param token Instance of JWT token.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    @CheckResult
+    public fun connectUser(user: User, token: String): Call<ConnectionData> {
+        return connectUser(user, ConstantTokenProvider(token))
     }
 
     /**
