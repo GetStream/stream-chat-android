@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
@@ -63,8 +64,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
             currentUser(currentUser)
             scope(testCoroutines.scope)
             defaultConfig(Config())
-            database(chatDatabase)
-            setOfflineEnabled(false)
+            repositoryFactory(DatabaseRepositoryFactory(chatDatabase, currentUser))
         }.build()
     }
 }

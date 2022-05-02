@@ -25,9 +25,10 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -40,13 +41,20 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        return UploadAttachmentsWorker(LogicRegistry.get(), RepositoryFacade.get(), ChatClient.instance())
-            .uploadAttachmentsForMessage(
-                channelType,
-                channelId,
-                messageId
-            )
-            .run { if (isSuccess) Result.success() else Result.failure() }
+        val chatClient = ChatClient.instance()
+        val repositoryProvider = RepositoryProvider.get()
+
+        return UploadAttachmentsWorker(
+            LogicRegistry.get(),
+            repositoryProvider.get(MessageRepository::class.java),
+            chatClient
+        ).uploadAttachmentsForMessage(
+            channelType,
+            channelId,
+            messageId
+        ).let { result ->
+            if (result.isSuccess) Result.success() else Result.failure()
+        }
     }
 
     companion object {
