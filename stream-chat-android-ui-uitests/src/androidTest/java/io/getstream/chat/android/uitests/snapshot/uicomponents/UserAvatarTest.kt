@@ -23,11 +23,11 @@ import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.uitests.R
 import io.getstream.chat.android.uitests.util.FakeImageLoader
+import io.getstream.chat.android.uitests.util.TestUsers
 import org.junit.Before
 import org.junit.Test
 
@@ -47,7 +47,7 @@ class UserAvatarTest : ScreenshotTest {
             .from(context)
             .inflate(R.layout.view_avatar, null, false) as AvatarView
 
-        avatarView.setUserData(user1)
+        avatarView.setUserData(TestUsers.user1)
 
         compareScreenshot(view = avatarView, widthInPx = SCREENSHOT_SIZE, heightInPx = SCREENSHOT_SIZE)
     }
@@ -57,6 +57,14 @@ class UserAvatarTest : ScreenshotTest {
         val avatarView = LayoutInflater
             .from(context)
             .inflate(R.layout.view_avatar, null, false) as AvatarView
+        val channel = Channel(
+            cid = "messaging:123",
+            members = listOf(
+                Member(user = TestUsers.user1),
+                Member(user = TestUsers.user2),
+                Member(user = TestUsers.user3),
+            )
+        )
 
         avatarView.setChannelData(channel)
 
@@ -65,33 +73,5 @@ class UserAvatarTest : ScreenshotTest {
 
     companion object {
         private const val SCREENSHOT_SIZE = 128
-
-        private val user1: User = User().apply {
-            id = "jc1"
-            name = "Jc Miñarro"
-            image = FakeImageLoader.AVATAR_JC
-            online = true
-        }
-
-        private val user2: User = User().apply {
-            id = "amit"
-            name = "Amit Kumar"
-            image = FakeImageLoader.AVATAR_AMIT
-        }
-
-        private val user3: User = User().apply {
-            id = "filip"
-            name = "Filip Babić"
-            image = FakeImageLoader.AVATAR_FILIP
-        }
-
-        private val channel = Channel(
-            cid = "messaging:123",
-            members = listOf(
-                Member(user = user1),
-                Member(user = user2),
-                Member(user = user3),
-            )
-        )
     }
 }

@@ -26,11 +26,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uitests.util.FakeImageLoader
+import io.getstream.chat.android.uitests.util.TestUsers
 import org.junit.Rule
 import org.junit.Test
 
@@ -47,7 +47,7 @@ class UserAvatarTest : ScreenshotTest {
             ChatTheme(imageLoaderFactory = { FakeImageLoader(context) }) {
                 UserAvatar(
                     modifier = Modifier.size(40.dp),
-                    user = user1,
+                    user = TestUsers.user1,
                     showOnlineIndicator = true,
                 )
             }
@@ -58,11 +58,20 @@ class UserAvatarTest : ScreenshotTest {
 
     @Test
     fun testChannelAvatar() {
+        val channel = Channel(
+            cid = "messaging:123",
+            members = listOf(
+                Member(user = TestUsers.user1),
+                Member(user = TestUsers.user2),
+                Member(user = TestUsers.user3),
+            )
+        )
+
         composeRule.setContent {
             ChatTheme(imageLoaderFactory = { FakeImageLoader(context) }) {
                 ChannelAvatar(
                     modifier = Modifier.size(40.dp),
-                    currentUser = user1,
+                    currentUser = TestUsers.user1,
                     channel = channel,
                     showOnlineIndicator = true,
                 )
@@ -70,35 +79,5 @@ class UserAvatarTest : ScreenshotTest {
         }
 
         compareScreenshot(composeRule.onRoot())
-    }
-
-    companion object {
-        private val user1: User = User().apply {
-            id = "jc1"
-            name = "Jc Miñarro"
-            image = FakeImageLoader.AVATAR_JC
-            online = true
-        }
-
-        private val user2: User = User().apply {
-            id = "amit"
-            name = "Amit Kumar"
-            image = FakeImageLoader.AVATAR_AMIT
-        }
-
-        private val user3: User = User().apply {
-            id = "filip"
-            name = "Filip Babić"
-            image = FakeImageLoader.AVATAR_FILIP
-        }
-
-        private val channel = Channel(
-            cid = "messaging:123",
-            members = listOf(
-                Member(user = user1),
-                Member(user = user2),
-                Member(user = user3),
-            )
-        )
     }
 }
