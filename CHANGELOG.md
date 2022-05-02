@@ -59,6 +59,7 @@
 - Fixed a bug where custom `MessageListItemViewHolderFactory` was ignore on the message options overlay. [#3343](https://github.com/GetStream/stream-chat-android/pull/3343)
 - Fixed `MessageListViewModel` initialization when channel's data is not available immediately, for example when the view model is created after connecting the user. [#3379](https://github.com/GetStream/stream-chat-android/pull/3379)
 - Fixed configuration for flag message confirmation dialog. [3411](https://github.com/GetStream/stream-chat-android/pull/3411)
+- Fixed a potential crash with conflicting font names. [#3445](https://github.com/GetStream/stream-chat-android/pull/3445)
 
 ### ⬆️ Improved
 - Added a way to customize reactions behavior to allow multiple reactions. [#3341](https://github.com/GetStream/stream-chat-android/pull/3341)
