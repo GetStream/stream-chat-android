@@ -12,6 +12,117 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-xiaomi
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# UNRELEASED CHANGELOG
+## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
 - Fixed ANR happening on a token request. [#3342](https://github.com/GetStream/stream-chat-android/pull/3342)
 - Fixed overriding User's `image` and `name` properties with empty values when connecting the user. [#3430](https://github.com/GetStream/stream-chat-android/pull/3430)
 - Fixed serialization problem when flagging message. [#3437](https://github.com/GetStream/stream-chat-android/pull/3437)
