@@ -1,19 +1,24 @@
 name: ReleaseStart
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       force_bump_minor_version: 
         type: boolean
 
 jobs:
-  pre_release_work:
+  sync_release:
     runs-on: ubuntu-latest
+    environment: 'publish'
     steps:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: develop
+          ref: main
+      - name: Sync main
+        run: | 
+          git pull
+          git merge --ff-only origin/develop
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' }}"
         run: ./gradlew minor-bump
@@ -29,8 +34,26 @@ jobs:
           git add buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
           git add CHANGELOG.md
           git commit -m "AUTOMATION: version bump"
+      - name: Create Tag
+        run: |
+          ./gradlew version-print
+          version="$(cat temp-version)"
+          echo GITHUB_TAG_VERSION=$version >> $GITHUB_ENV
+          git tag -a v$version -m "Release version $version"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
+          tags: true
+      - name: Generate release file
+        run: ./gradlew generate-release
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release.tar.gz,foo/*.txt"
+          bodyFile: "CHANGELOG_PARSED.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.GITHUB_TAG_VERSION }}
+
+
