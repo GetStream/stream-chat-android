@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.utils.extensions
 
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrNull
@@ -10,7 +26,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  *
  * @param message The current message for which we are checking whether we need to show the footer for.
  * @param isBottomMessageInGroup Is the message at the bottom of the group.
- * @param nextMessage The message that comes after the current message. Depending on it and [MessageFooterVisibility] we will show/hide the footer.
+ * @param nextMessage The message that comes after the current message.
+ *        Depending on it and [MessageFooterVisibility] we will show/hide the footer.
  */
 @InternalStreamChatApi
 public fun MessageFooterVisibility.shouldShowMessageFooter(
@@ -27,9 +44,9 @@ public fun MessageFooterVisibility.shouldShowMessageFooter(
             when {
                 isBottomMessageInGroup -> true
                 message.isDeleted() -> false
-                message.user != nextMessage?.user
-                    || nextMessage.isDeleted()
-                    || (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
+                message.user != nextMessage?.user ||
+                    nextMessage.isDeleted() ||
+                    (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
                     (message.getCreatedAtOrNull()?.time ?: 0) >
                     timeDifferenceMillis -> true
                 else -> false

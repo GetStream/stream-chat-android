@@ -71,6 +71,9 @@ import java.util.Date
  *   }
  * }
  *
+ * @param deletedMessageVisibility Controls when deleted messages are shown.
+ * @param messageFooterVisibility Controls when the message footer is shown.
+ *
  */
 
 @Suppress("LongParameterList", "TooManyFunctions")

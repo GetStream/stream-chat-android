@@ -67,10 +67,10 @@
 - Added a way to change the `ChannelListHeaderView` separator color. [#3395](https://github.com/GetStream/stream-chat-android/pull/3395)
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 - Added a way to change the `attachmentsButton` and `commandsButton` ripple color inside `MessageInputView`. [#3412](https://github.com/GetStream/stream-chat-android/pull/3412)
-- Improved message grouping by sent date. [#3343](https://github.com/GetStream/stream-chat-android/pull/3433)
 
 ### ✅ Added
 - Added support for own capabilities. You can read more about own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
+- Added the possibility to customize the message footer visibility through `MessageFooterVisibility` inside `MessageListViewModel`. [#3343](https://github.com/GetStream/stream-chat-android/pull/3433)
 
 ### ⚠️ Changed
 - Deprecated `DeletedMessageListItemPredicate` in favor of `DeletedMessageVisibility`. This is a followup on [#3272](https://github.com/GetStream/stream-chat-android/pull/3272/files) which deprecated filtering messages inside `MessageListView` in favor of filtering messages inside `MessageListViewModel`. [#3409](https://github.com/GetStream/stream-chat-android/pull/3409)
@@ -86,7 +86,7 @@
 - Channels with only one member now show the member's image in avatar. [3425](https://github.com/GetStream/stream-chat-android/pull/3425)
 - Improved the way filters work in `ChannelList`, `ChannelsScreen` and `ChannelListViewModel`. Now the filters are nullable and if you want the default behavior, just pass in null. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)
 - You can now completely override the filters by using `ChannelListViewModel.setFilters()` in the runtime, or by passing in custom `FilterObject` to the `ViewModelFactory` or the `ViewModel` constructor. [#3422](https://github.com/GetStream/stream-chat-android/pull/3422)
-- Improved message grouping by sent date. [#3343](https://github.com/GetStream/stream-chat-android/pull/3433)
+
 
 ### ✅ Added
 - Added pan to ImagePreviewActivity. [#3335](https://github.com/GetStream/stream-chat-android/pull/3335)
@@ -96,6 +96,7 @@
 - Added emoji sticker support. [3359](https://github.com/GetStream/stream-chat-android/pull/3359)
 - Added support for own capabilities. You can read more about own capabilities [here](https://getstream.io/chat/docs/sdk/android/compose/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 - Added better handling for Compose ChannelListHeader and MessageListHeader states. We now cover Connected, Connecting and Disconnected states (added Connecting). [#3428](https://github.com/GetStream/stream-chat-android/pull/3428)
+- Added the possibility to customize the message footer visibility through `MessageFooterVisibility` inside `MessageListViewModel`. [#3343](https://github.com/GetStream/stream-chat-android/pull/3433)
 
 ### ⚠️ Changed
 - `loadMore` calls inside `MessageListViewModel` and `ChannelListViewModel` should no longer load data if there is no network connection. [3362](https://github.com/GetStream/stream-chat-android/pull/3362)

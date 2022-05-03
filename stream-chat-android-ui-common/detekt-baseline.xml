@@ -2,6 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexMethod:MessageFooterVisibility.kt$ @InternalStreamChatApi public fun MessageFooterVisibility.shouldShowMessageFooter( message: Message, isBottomMessageInGroup: Boolean, nextMessage: Message?, ): Boolean</ID>
+    <ID>LongMethod:MessageListItemLiveData.kt$MessageListItemLiveData$ @Suppress("ComplexMethod") private fun groupMessages(messages: List&lt;Message>?, currentUserId: String): List&lt;MessageListItem></ID>
     <ID>LongParameterList:Linkify.kt$Linkify$( links: MutableList&lt;LinkSpec>, s: Spannable, pattern: Pattern, schemes: Array&lt;String>, matchFilter: Linkify.MatchFilter?, transformFilter: Linkify.TransformFilter?, )</ID>
     <ID>NestedBlockDepth:Linkify.kt$Linkify$private fun pruneOverlaps(links: MutableList&lt;LinkSpec>, text: Spannable)</ID>
   </CurrentIssues>

@@ -334,7 +334,9 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message
             )
         }
-        message.isDeleted() && messageItem.isMine && messageItem.groupPosition == Bottom && messageItem.shouldShowFooter -> {
+        message.isDeleted() && messageItem.isMine &&
+            messageItem.groupPosition == Bottom &&
+            messageItem.shouldShowFooter -> {
             OwnedMessageVisibilityContent(message = message)
         }
         !message.isDeleted() -> {
