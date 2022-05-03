@@ -109,25 +109,12 @@
 
 ### ❌ Removed
 
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# May 3rd, 2022 - 5.1.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed ANR happening on a token request. [#3342](https://github.com/GetStream/stream-chat-android/pull/3342)
 - Fixed overriding User's `image` and `name` properties with empty values when connecting the user. [#3430](https://github.com/GetStream/stream-chat-android/pull/3430)
 - Fixed serialization problem when flagging message. [#3437](https://github.com/GetStream/stream-chat-android/pull/3437)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added `ChannelRepository.selectChannelByCid` method. [#3434](https://github.com/GetStream/stream-chat-android/pull/3434)
@@ -143,8 +130,6 @@
 ### ⚠️ Changed
 - Changed visibility of the `retry` extension to internal. [#3353](https://github.com/GetStream/stream-chat-android/pull/3353)
 
-### ❌ Removed
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed a crash when attachment upload is in progress or about to start and user is disconnected at the same moment. [#3377](https://github.com/GetStream/stream-chat-android/pull/3377)
@@ -154,23 +139,9 @@
 ### ⬆️ Improved
 - Adding the possibility to change the repositories of `OfflinePlugin`. You can change `RepositoryFactory` in `OfflinePlugin` and use custom implementations of repositories.
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Deprecated `DeletedMessageListItemPredicate` in favor of `DeletedMessageVisibility`. This is a followup on [#3272](https://github.com/GetStream/stream-chat-android/pull/3272/files) which deprecated filtering messages inside `MessageListView` in favor of filtering messages inside `MessageListViewModel`. [#3409](https://github.com/GetStream/stream-chat-android/pull/3409)
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -197,8 +168,6 @@
 - Deprecated `DeletedMessageListItemPredicate` in favor of `DeletedMessageVisibility`. This is a followup on [#3272](https://github.com/GetStream/stream-chat-android/pull/3272/files) which deprecated filtering messages inside `MessageListView` in favor of filtering messages inside `MessageListViewModel`. [#3409](https://github.com/GetStream/stream-chat-android/pull/3409)
 - Added own capabilities. If you are using our UI components separately from our `ViewModel`s, this has the possibility of introducing a change in functionality. You can find the guide on implementing own capabilities [here](https://getstream.io/chat/docs/sdk/android/ui/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the message input handling when typing quickly or holding down the delete (backspace) button. [#3355](https://github.com/GetStream/stream-chat-android/pull/3355)
@@ -223,51 +192,6 @@
 - Added own capabilities. If you are using our components individually this has the possibility of introducing a change in functionality. You can find the guide on implementing own capabilities [here](https://getstream.io/chat/docs/sdk/android/compose/guides/implementing-own-capabilities/). [#3389](https://github.com/GetStream/stream-chat-android/pull/3389)
 - Replaced the `imageLoader` parameter in `ChatTheme` with the new `imageLoaderFactory` parameter that can used to provide a custom Coil `ImageLoader` factory.  [#3441](https://github.com/GetStream/stream-chat-android/pull/3441)
 
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 # April 12th, 2022 - 5.0.3
 ## Common changes for all artifacts
 
