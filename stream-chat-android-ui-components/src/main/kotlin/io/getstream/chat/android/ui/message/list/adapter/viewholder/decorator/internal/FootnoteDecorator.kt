@@ -54,7 +54,6 @@ internal class FootnoteDecorator(
     private val isDirectMessage: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
     private val deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
-    private val isGroupedWithNextMessage: (MessageListItem.MessageItem) -> Boolean
 ) : BaseDecorator() {
 
     /**
@@ -228,7 +227,12 @@ internal class FootnoteDecorator(
     }
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
-        footnoteView.showSimpleFootnote()
+        if (data.showMessageFooter) {
+            footnoteView.showSimpleFootnote()
+        } else {
+            footnoteView.hideSimpleFootnote()
+            return
+        }
         setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
@@ -303,7 +307,7 @@ internal class FootnoteDecorator(
         val updatedAt = data.message.getUpdatedAtOrNull()
 
         when {
-            createdAt == null || isGroupedWithNextMessage(data) -> footnoteView.hideTimeLabel()
+            createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
                 dateFormatter.formatTime(
                     updatedAt

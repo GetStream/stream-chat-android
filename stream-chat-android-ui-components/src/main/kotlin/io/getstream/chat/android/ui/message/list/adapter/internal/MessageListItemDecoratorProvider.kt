@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
-import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
@@ -45,7 +44,6 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
  * @param deletedMessageListItemPredicate [MessageListView.MessageListItemPredicate] Predicate to hide or show the the deleted message accordingly to the logic provided.
  * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  */
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
@@ -55,7 +53,6 @@ internal class MessageListItemDecoratorProvider(
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
     isCurrentUserBanned: () -> Boolean,
-    isGroupedWithNextMessage: (MessageListItem.MessageItem) -> Boolean,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
@@ -72,8 +69,7 @@ internal class MessageListItemDecoratorProvider(
             dateFormatter,
             isDirectMessage,
             messageListViewStyle,
-            deletedMessageListItemPredicate,
-            isGroupedWithNextMessage
+            deletedMessageListItemPredicate
         ),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )

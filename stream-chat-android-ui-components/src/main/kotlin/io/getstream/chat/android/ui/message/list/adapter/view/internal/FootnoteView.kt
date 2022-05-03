@@ -80,6 +80,11 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
+    fun hideSimpleFootnote() {
+        footnote.root.isVisible = false
+        threadsFootnote.root.isVisible = false
+    }
+
     /**
      * Shows the footnote for thread replies.
      *

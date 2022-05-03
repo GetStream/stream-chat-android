@@ -17,11 +17,10 @@
 package io.getstream.chat.android.ui.message.list
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 
-internal class DefaultShowAvatarPredicate(
-    val isGroupedWithNextMessage: (MessageListItem.MessageItem) -> Boolean,
-) : MessageListView.ShowAvatarPredicate {
+internal class DefaultShowAvatarPredicate : MessageListView.ShowAvatarPredicate {
     override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean {
-        return messageItem.isTheirs && !isGroupedWithNextMessage(messageItem)
+        return messageItem.isTheirs && (messageItem.showMessageFooter || messageItem.isBottomPosition())
     }
 }

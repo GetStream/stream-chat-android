@@ -121,7 +121,6 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelpe
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
-import io.getstream.chat.android.ui.utils.extensions.isGroupedWithNextMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -297,9 +296,7 @@ public class MessageListView : ConstraintLayout {
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
-    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate {
-        adapter.isGroupedWithNextMessage(it)
-    }
+    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
@@ -740,7 +737,6 @@ public class MessageListView : ConstraintLayout {
             messageBackgroundFactory,
             deletedMessageListItemPredicate,
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
-            isGroupedWithNextMessage = { adapter.isGroupedWithNextMessage(it) }
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

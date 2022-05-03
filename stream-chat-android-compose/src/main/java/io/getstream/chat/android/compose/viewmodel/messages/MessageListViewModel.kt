@@ -21,7 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrNull
+import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -65,7 +65,6 @@ import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
-import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
@@ -726,7 +725,11 @@ public class MessageListViewModel(
                 else -> MessageItemGroupPosition.None
             }
 
-            val shouldShowFooter = shouldShowMessageFooter(message, position, nextMessage)
+            val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
+                message = message,
+                isBottomMessageInGroup = position == MessageItemGroupPosition.Bottom,
+                nextMessage = nextMessage
+            )
 
             if (shouldAddDateSeparator(previousMessage, message)) {
                 groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
@@ -780,38 +783,6 @@ public class MessageListViewModel(
             val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
 
             return timeDifference > dateSeparatorThresholdMillis
-        }
-    }
-
-    /**
-     * Decides if we need to show the message footer (timestamp) below the message.
-     *
-     * @param message The current message for which we are checking whether we need to show the footer for.
-     * @param messagePosition the [MessageItemGroupPosition] of the current message for which we are checking whether we show the footer or not.
-     * @param nextMessage The message that comes after the current message. Depending on it and [MessageFooterVisibility] we will show/hide the footer.
-     */
-    private fun shouldShowMessageFooter(
-        message: Message,
-        messagePosition: MessageItemGroupPosition,
-        nextMessage: Message?,
-    ): Boolean {
-        if (nextMessage == null && messageFooterVisibility != MessageFooterVisibility.Never) return true
-        return when (messageFooterVisibility) {
-            MessageFooterVisibility.Always -> true
-            MessageFooterVisibility.LastInGroup -> messagePosition == MessageItemGroupPosition.Bottom
-            MessageFooterVisibility.Never -> false
-            is MessageFooterVisibility.WithTimeDifference -> {
-                when {
-                    messagePosition == MessageItemGroupPosition.Bottom -> true
-                    message.isDeleted() -> false
-                    message.user != nextMessage?.user
-                        || nextMessage.isDeleted()
-                        || (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
-                        (message.getCreatedAtOrNull()?.time ?: 0) >
-                        messageFooterVisibility.timeDifferenceMillis -> true
-                    else -> false
-                }
-            }
         }
     }
 

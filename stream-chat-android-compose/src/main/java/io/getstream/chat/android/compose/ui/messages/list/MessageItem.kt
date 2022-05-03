@@ -222,7 +222,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    if (!messageItem.isMine && messageItem.shouldShowFooter) {
+    if (!messageItem.isMine && (messageItem.shouldShowFooter || messageItem.groupPosition == Bottom)) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
@@ -334,7 +334,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message
             )
         }
-        message.isDeleted() && messageItem.isMine && messageItem.groupPosition == Bottom -> {
+        message.isDeleted() && messageItem.isMine && messageItem.groupPosition == Bottom && messageItem.shouldShowFooter -> {
             OwnedMessageVisibilityContent(message = message)
         }
         !message.isDeleted() -> {
