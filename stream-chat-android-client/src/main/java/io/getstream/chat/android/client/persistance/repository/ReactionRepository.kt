@@ -42,6 +42,27 @@ public interface ReactionRepository {
     public suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date)
 
     /**
+     * Selects reaction with specified [id].
+     *
+     * @param id A reaction id to search for.
+     */
+    public suspend fun selectReactionById(id: Int): Reaction?
+
+    /**
+     * Selects all reactions with specified [ids]
+     *
+     * @param ids A list of reaction id to search for.
+     */
+    public suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction>
+
+    /**
+     * Selects all reaction ids with specific [SyncStatus].
+     *
+     * @param syncStatus [SyncStatus]
+     */
+    public suspend fun selectReactionIdsBySyncStatus(syncStatus: SyncStatus): List<Int>
+
+    /**
      * Selects all reactions with specific [SyncStatus]
      *
      * @param syncStatus [SyncStatus]

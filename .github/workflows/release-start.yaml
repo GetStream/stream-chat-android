@@ -1,0 +1,35 @@
+name: ReleaseStart
+
+on: 
+  workflow_dispatch:
+    inputs:
+      force_bump_minor_version: 
+        type: boolean
+
+jobs:
+  pre_release_work:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+      - name: Minor version bump
+        if: "${{ github.event.inputs.minor == 'true' }}"
+        run: ./gradlew minor-bump
+      - name: Version bump
+        if: "${{ github.event.inputs.minor != 'true' }}"
+        run: ./gradlew version-bump
+      - name: Parse release section in changelog
+        run: ./gradlew changelog-release-section
+      - name: Commit changes
+        run: | 
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
+          git commit -m "AUTOMATION: version bump"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

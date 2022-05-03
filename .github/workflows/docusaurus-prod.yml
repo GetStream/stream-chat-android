@@ -1,10 +1,10 @@
 name: Publish Docusaurus to prod
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish"]
+    types:
+      - completed
 
 jobs:
   push_docusaurus:

@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.logger
+package io.getstream.chat.android.uitests.util
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.User
 
-public interface TaggedLogger {
-    public fun logI(message: String)
+/**
+ * Provides sample users for UI tests.
+ */
+object TestUsers {
 
-    public fun logD(message: String)
+    val user1: User = User().apply {
+        id = "jc1"
+        name = "Jc Miñarro"
+        image = FakeImageLoader.AVATAR_JC
+        online = true
+    }
 
-    public fun logV(message: String)
+    val user2: User = User().apply {
+        id = "amit"
+        name = "Amit Kumar"
+        image = FakeImageLoader.AVATAR_AMIT
+    }
 
-    public fun logW(message: String)
-
-    public fun logE(message: String)
-
-    public fun logE(throwable: Throwable)
-
-    public fun logE(chatError: ChatError)
-
-    public fun logE(message: String, throwable: Throwable)
-
-    public fun logE(message: String, chatError: ChatError)
-
-    public fun getLevel(): ChatLogLevel
+    val user3: User = User().apply {
+        id = "filip"
+        name = "Filip Babić"
+        image = FakeImageLoader.AVATAR_FILIP
+    }
 }
