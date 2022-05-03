@@ -102,7 +102,7 @@ public fun MessageList(
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
+            onGiphyActionClick = onGiphyActionClick
         )
     },
 ) {
@@ -150,7 +150,7 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult,
+        onImagePreviewResult = onImagePreviewResult
     )
 }
 
@@ -230,14 +230,14 @@ public fun MessageList(
         DefaultMessagesHelperContent(currentState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItemState ->
+    itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
-            messageListItem = messageListItemState,
+            messageListItem = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onImagePreviewResult = onImagePreviewResult
         )
     },
 ) {

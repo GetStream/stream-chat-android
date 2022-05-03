@@ -47,7 +47,6 @@
     <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
     <ID>LongParameterList:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$( private val context: Context, private val logic: LogicRegistry, private val globalState: GlobalState, private val channelRepository: ChannelRepository, private val messageRepository: MessageRepository, private val attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val networkType: UploadAttachmentsNetworkType, )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
-    <ID>MagicNumber:RepositoryFactory.kt$RepositoryFactory$100</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
     <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>

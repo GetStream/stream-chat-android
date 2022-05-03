@@ -80,7 +80,7 @@ public fun MessageContainer(
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onImagePreviewResult = onImagePreviewResult
         )
     },
 ) {
@@ -202,6 +202,6 @@ internal fun DefaultMessageItem(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult,
+        onImagePreviewResult = onImagePreviewResult
     )
 }

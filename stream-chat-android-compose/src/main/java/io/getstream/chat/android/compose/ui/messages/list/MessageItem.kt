@@ -121,7 +121,7 @@ public fun MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(it)
+        DefaultMessageItemLeadingContent(messageItem = it)
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
@@ -321,7 +321,7 @@ internal fun DefaultMessageItemHeaderContent(
  * - message timestamp
  *
  * @param messageItem The message item to show the content for.
- * */
+ */
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
