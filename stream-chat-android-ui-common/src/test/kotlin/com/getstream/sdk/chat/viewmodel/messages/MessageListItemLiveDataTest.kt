@@ -249,6 +249,6 @@ internal class MessageListItemLiveDataTest {
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
-        verify(testObserver, times(3)).onChanged(any())
+        verify(testObserver, times(4)).onChanged(any())
     }
 }
