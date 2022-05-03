@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: develop
+          ref: main
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
       - name: Commit changes
@@ -29,3 +29,16 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: develop
+      - name: Create PR to develop
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Post release merge
+          committer: github-action-bot
+          branch: automation/main_to_develop
+          delete-branch: true
+          title: 'Post Release - Main to develop'
+          body: |
+            Post Release - Main to develop
+          labels: |
+            automated pr        
