@@ -5,11 +5,13 @@ on:
     workflows: ["Publish"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   push_docusaurus:
     name: Publish docusaurus docs
     runs-on: ubuntu-latest
+    environment: 'publish'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11

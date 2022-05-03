@@ -5,6 +5,7 @@ on:
     workflows: ["ReleaseStart"]
     types:
       - completed
+  workflow_dispatch
 
 jobs:
   sync_release:

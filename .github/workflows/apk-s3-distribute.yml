@@ -10,6 +10,7 @@ jobs:
   build_ui_components_sample_app:
     name: Build and push to S3
     runs-on: ubuntu-18.04
+    environment: 'publish'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11

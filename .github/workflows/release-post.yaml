@@ -5,6 +5,7 @@ on:
     workflows: ["Publish"]
     types:
       - completed
+  workflow_dispatch
 
 jobs:
   update_changelog:
