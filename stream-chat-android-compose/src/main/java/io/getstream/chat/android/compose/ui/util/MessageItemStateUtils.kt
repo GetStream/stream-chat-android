@@ -17,33 +17,9 @@
 package io.getstream.chat.android.compose.ui.util
 
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 
 /**
  * @return If the current message failed to send.
  */
 internal fun MessageItemState.isFailed(): Boolean = isMine && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
-
-/**
- * @param message message to check if it is grouped with the next message.
- *
- * @return If the current message is grouped with the next message.
- */
-internal fun List<MessageListItemState>.isGroupedWithNextMessage(message: MessageItemState): Boolean {
-    if (message.groupPosition == MessageItemGroupPosition.Bottom) return false
-    if (message.message.isDeleted()) return true
-
-    val messageIndex = indexOf(message)
-    val nextMessage = take(messageIndex).findLast { it is MessageItemState } as? MessageItemState
-        ?: return false
-    if (message.isMine != nextMessage.isMine) return false
-    if (nextMessage.message.isDeleted()) return false
-
-    return (nextMessage.message.createdAt?.time ?: 0) -
-        (message.message.createdAt?.time ?: 0) <
-        DefaultMessageGroupingDelayMillis
-}
-
-private const val DefaultMessageGroupingDelayMillis: Long = 60 * 1000L

@@ -97,7 +97,6 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param isGroupedWithNextMessage Checks if the current message is grouped with the next message.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
  * current user.
