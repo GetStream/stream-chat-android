@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
 import org.amshove.kluent.shouldBeEmpty
@@ -74,6 +75,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -82,7 +84,8 @@ internal class MessageListItemLiveDataTest {
             typingLd = typing,
             isThread = false,
             dateSeparatorHandler = ::simpleDateGroups,
-            deletedMessageVisibility = deletedMessageVisibility
+            deletedMessageVisibility = deletedMessageVisibility,
+            messageFooterVisibility = messageFooterVisibility
         )
     }
 
@@ -91,6 +94,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -99,7 +103,8 @@ internal class MessageListItemLiveDataTest {
             typingLd = typing,
             isThread = false,
             dateSeparatorHandler = ::simpleDateGroups,
-            deletedMessageVisibility = deletedMessageVisibility
+            deletedMessageVisibility = deletedMessageVisibility,
+            messageFooterVisibility = messageFooterVisibility
         )
     }
 
@@ -123,6 +128,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+        val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -131,7 +137,8 @@ internal class MessageListItemLiveDataTest {
             typingLd = typing,
             isThread = false,
             dateSeparatorHandler = ::simpleDateGroups,
-            deletedMessageVisibility = deletedMessageVisibility
+            deletedMessageVisibility = deletedMessageVisibility,
+            messageFooterVisibility = messageFooterVisibility
         )
     }
 
