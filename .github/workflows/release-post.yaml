@@ -10,7 +10,7 @@ jobs:
   update_changelog:
     name: Update Changelog - Model
     runs-on: ubuntu-latest
-    environment: 'publish'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
   publish:
     name: Dokka docs
     runs-on: ubuntu-latest
-    environment: 'publish'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -61,7 +61,7 @@ jobs:
   push_docusaurus:
     name: Publish docusaurus docs
     runs-on: ubuntu-latest
-    environment: 'publish'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11

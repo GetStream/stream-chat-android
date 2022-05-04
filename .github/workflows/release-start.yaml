@@ -18,7 +18,6 @@ jobs:
   start_release:
     name: Start Release
     runs-on: ubuntu-latest
-    environment: 'publish'
     steps:
       - name: Check out code
         uses: actions/checkout@v3
