@@ -70,13 +70,7 @@ public fun ImageAttachmentContent(
 
     Row(
         modifier
-            .clip(ChatTheme.shapes.attachment)
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {},
-                onLongClick = { onLongItemClick(message) }
-            ),
+            .clip(ChatTheme.shapes.attachment),
         horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         val attachments =

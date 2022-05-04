@@ -51,6 +51,7 @@ public fun MessageContent(
     message: Message,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
@@ -66,7 +67,8 @@ public fun MessageContent(
         DefaultMessageContent(
             message = message,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -129,6 +131,7 @@ internal fun DefaultMessageContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     Column {
         MessageAttachmentsContent(
@@ -140,7 +143,8 @@ internal fun DefaultMessageContent(
         if (message.text.isNotEmpty()) {
             DefaultMessageTextContent(
                 message = message,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick
             )
         }
     }

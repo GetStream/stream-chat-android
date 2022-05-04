@@ -64,6 +64,7 @@ public fun MessageContainer(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit,
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
@@ -80,7 +81,8 @@ public fun MessageContainer(
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -195,6 +197,7 @@ internal fun DefaultMessageItem(
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     MessageItem(
         messageItem = messageItem,
@@ -202,6 +205,7 @@ internal fun DefaultMessageItem(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult
+        onImagePreviewResult = onImagePreviewResult,
+        onQuotedMessageClick = onQuotedMessageClick
     )
 }

@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +42,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit,
 ) {
     val user = message.user
 
@@ -57,6 +63,10 @@ public fun QuotedMessage(
         Spacer(modifier = Modifier.size(8.dp))
 
         MessageBubble(
+            modifier = Modifier.combinedClickable(true) {
+                println("clicked")
+                onQuotedMessageClick(message)
+            },
             shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {

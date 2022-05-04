@@ -119,6 +119,7 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit,
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },
@@ -133,7 +134,8 @@ public fun MessageItem(
             messageItem = it,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -380,6 +382,7 @@ internal fun DefaultMessageItemCenterContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isEmojiOnly()) {
@@ -388,7 +391,8 @@ internal fun DefaultMessageItemCenterContent(
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     } else {
         RegularMessageContent(
@@ -396,7 +400,8 @@ internal fun DefaultMessageItemCenterContent(
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     }
 }
@@ -417,6 +422,7 @@ internal fun EmojiMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     val message = messageItem.message
 
@@ -425,7 +431,8 @@ internal fun EmojiMessageContent(
             message = message,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     } else {
         Box(modifier = modifier) {
@@ -433,7 +440,8 @@ internal fun EmojiMessageContent(
                 message = message,
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
-                onImagePreviewResult = onImagePreviewResult
+                onImagePreviewResult = onImagePreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick
             )
 
             Icon(
@@ -464,6 +472,7 @@ internal fun RegularMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
 
@@ -492,7 +501,8 @@ internal fun RegularMessageContent(
                     message = message,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
-                    onImagePreviewResult = onImagePreviewResult
+                    onImagePreviewResult = onImagePreviewResult,
+                    onQuotedMessageClick = onQuotedMessageClick
                 )
             }
         )
@@ -507,7 +517,8 @@ internal fun RegularMessageContent(
                         message = message,
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,
-                        onImagePreviewResult = onImagePreviewResult
+                        onImagePreviewResult = onImagePreviewResult,
+                        onQuotedMessageClick = onQuotedMessageClick
                     )
                 }
             )
@@ -534,6 +545,7 @@ internal fun RegularMessageContent(
 internal fun DefaultMessageTextContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     val quotedMessage = message.replyTo
 
@@ -542,7 +554,8 @@ internal fun DefaultMessageTextContent(
             QuotedMessage(
                 modifier = Modifier.padding(8.dp),
                 message = quotedMessage,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick
             )
         }
         MessageText(

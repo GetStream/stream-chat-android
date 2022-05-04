@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.Scroll
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -75,9 +76,11 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
+    onScrolledToSelectedMessage: (Message) -> Unit = {},
+    loadNextPage: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState)
+        DefaultMessagesHelperContent(messagesState, lazyListState, onScrolledToSelectedMessage, loadNextPage)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
@@ -133,31 +136,44 @@ public fun Messages(
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
+ * TODO
  */
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
     lazyListState: LazyListState,
+    onScrolledToSelectedMessage: (Message) -> Unit,
+    loadNextPage: () -> Unit,
 ) {
-    val (_, _, _, messages, _, _, newMessageState) = messagesState
+    val (_, _, _, messages, _, _, newMessageState, _, _, scrollState) = messagesState
     val coroutineScope = rememberCoroutineScope()
 
     val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-    LaunchedEffect(key1 = newMessageState, key2 = firstVisibleItemIndex, focusedItemIndex) {
+    LaunchedEffect(newMessageState, firstVisibleItemIndex, focusedItemIndex, scrollState, messagesState.isLoadingMore) {
         if (focusedItemIndex != -1) {
             coroutineScope.launch {
                 lazyListState.scrollToItem(focusedItemIndex)
             }
         }
         when {
-            !lazyListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
-                coroutineScope.launch {
-                    lazyListState.animateScrollToItem(0)
+            scrollState is Scroll && !messagesState.isLoadingMore -> coroutineScope.launch {
+                val message =
+                    messages.firstOrNull { it is MessageItemState && it.message.id == scrollState.message.id } as? MessageItemState
+                if (message != null) {
+                    lazyListState.scrollToItem(messages.indexOf(message))
+                    onScrolledToSelectedMessage(message.message)
+                } else {
+                    loadNextPage()
                 }
             }
+
+            !lazyListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> coroutineScope.launch {
+                lazyListState.animateScrollToItem(0)
+            }
+
             !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)
@@ -166,6 +182,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
 
             else -> Unit
+
         }
     }
 

@@ -89,10 +89,12 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
+    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it) },
+    onScrolledToQuotedMessage: (Message) -> Unit = { viewModel.scrollToMessage(null) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
+        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState, onScrolledToQuotedMessage, viewModel::loadMore)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
@@ -102,7 +104,8 @@ public fun MessageList(
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -121,7 +124,9 @@ public fun MessageList(
         helperContent = helperContent,
         loadingMoreContent = loadingMoreContent,
         loadingContent = loadingContent,
-        emptyContent = emptyContent
+        emptyContent = emptyContent,
+        onQuotedMessageClick = onQuotedMessageClick,
+        onScrolledToSelectedMessage = onScrolledToQuotedMessage,
     )
 }
 
@@ -143,6 +148,7 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit,
 ) {
     MessageContainer(
         messageListItem = messageListItem,
@@ -150,7 +156,8 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult
+        onImagePreviewResult = onImagePreviewResult,
+        onQuotedMessageClick = onQuotedMessageClick
     )
 }
 
@@ -224,10 +231,13 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
+    onScrolledToSelectedMessage: (Message) -> Unit = {},
+    loadNextPage: () -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(currentState, lazyListState)
+        DefaultMessagesHelperContent(currentState, lazyListState, onScrolledToSelectedMessage, loadNextPage)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
@@ -237,7 +247,8 @@ public fun MessageList(
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -255,7 +266,8 @@ public fun MessageList(
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
-            itemContent = itemContent
+            itemContent = itemContent,
+            onScrolledToSelectedMessage = onScrolledToSelectedMessage
         )
         else -> emptyContent()
     }

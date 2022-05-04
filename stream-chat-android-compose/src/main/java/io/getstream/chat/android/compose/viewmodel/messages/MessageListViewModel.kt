@@ -46,7 +46,10 @@ import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
+import io.getstream.chat.android.compose.state.messages.NoScroll
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.Scroll
+import io.getstream.chat.android.compose.state.messages.ScrollToMessage
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -85,7 +88,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -236,6 +238,11 @@ public class MessageListViewModel(
      * Represents the latest message we've seen in the active thread.
      */
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
+
+    /**
+     * TODO
+     */
+    private var scrollToMessage: Message? by mutableStateOf(null)
 
     /**
      * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
@@ -480,6 +487,24 @@ public class MessageListViewModel(
     public fun loadMore() {
         if (chatClient.globalState.isOffline()) return
         val messageMode = messageMode
+
+        if (currentMessagesState.scrollToMessage is Scroll) {
+            val scroll = currentMessagesState.scrollToMessage as Scroll
+            if (!scroll.shouldLoadNext()) {
+                if (isInThread) {
+                    threadMessagesState = threadMessagesState.copy(scrollToMessage = NoScroll)
+                }else {
+                    messagesState = messagesState.copy(scrollToMessage = NoScroll)
+                }
+                return
+            }
+
+            if (isInThread) {
+                threadMessagesState = threadMessagesState.copy(scrollToMessage = scroll.copy(currentScrollLoads = scroll.currentScrollLoads + 1))
+            }else {
+                messagesState = messagesState.copy(scrollToMessage = scroll.copy(currentScrollLoads = scroll.currentScrollLoads + 1))
+            }
+        }
 
         if (messageMode is MessageMode.MessageThread) {
             threadLoadMore(messageMode)
@@ -990,6 +1015,18 @@ public class MessageListViewModel(
         }.exhaustive.enqueue()
     }
 
+    /**
+     * TODO
+     */
+    public fun scrollToMessage(message: Message?, maxLoads: Int = DefaultMaxNextLoadCallsOnScrollTo) {
+        val scroll: ScrollToMessage = if (message != null) Scroll(message = message, maxScrollLoads = maxLoads) else NoScroll
+        if (isInThread) {
+            threadMessagesState = threadMessagesState.copy(scrollToMessage = scroll)
+        }else {
+            messagesState = messagesState.copy(scrollToMessage = scroll)
+        }
+    }
+
     internal companion object {
         /**
          * The default threshold for showing date separators. If the message difference in hours is equal to this
@@ -1006,5 +1043,10 @@ public class MessageListViewModel(
          * Time in millis, after which the focus is removed.
          */
         private const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
+
+        /**
+         * TODO
+         */
+        private const val DefaultMaxNextLoadCallsOnScrollTo: Int = 5
     }
 }
