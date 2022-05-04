@@ -10,10 +10,16 @@ if [ ! -d "$ANDROID_HOME/cmdline-tools" ]; then
   exit
 fi
 
+if [[ $(uname -m) == 'arm64' ]]; then
+  ARCHITECTURE='arm64-v8a'
+else
+  ARCHITECTURE=$(uname -m)
+fi
+
 echo "Downloading emulator image..."
-echo no | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-26;google_apis;x86"
+echo no | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-26;google_apis;$ARCHITECTUR"
 echo "Image downloaded."
 
 echo "Creating emulator..."
-echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --name "Pixel_API_26" --package "system-images;android-26;google_apis;x86" --force --device "pixel" --sdcard "512M"
+echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --name "Pixel_API_26" --package "system-images;android-26;google_apis;$ARCHITECTUR" --force --device "pixel" --sdcard "512M"
 echo "Emulator created."
