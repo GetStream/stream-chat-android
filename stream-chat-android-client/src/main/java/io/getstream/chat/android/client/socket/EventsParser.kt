@@ -29,7 +29,7 @@ import okhttp3.WebSocket
 @Suppress("TooManyFunctions")
 internal class EventsParser(
     private val parser: ChatParser,
-    private val service: ChatSocketService,
+    private val service: ChatSocket,
 ) : okhttp3.WebSocketListener() {
 
     private var connectionEventReceived = false

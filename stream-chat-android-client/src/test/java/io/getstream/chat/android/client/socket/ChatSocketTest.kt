@@ -36,7 +36,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-internal class ChatSocketServiceImplTest {
+internal class ChatSocketTest {
 
     companion object {
         @JvmField
@@ -49,7 +49,7 @@ internal class ChatSocketServiceImplTest {
     private lateinit var chatParser: ChatParser
     private lateinit var networkStateProvider: NetworkStateProvider
     private lateinit var socketListener: SocketListener
-    private lateinit var socketService: ChatSocketServiceImpl
+    private lateinit var socketService: ChatSocket
 
     @BeforeEach
     fun setup() {
@@ -58,7 +58,7 @@ internal class ChatSocketServiceImplTest {
         chatParser = mock()
         networkStateProvider = mock()
         socketListener = mock()
-        socketService = ChatSocketServiceImpl(
+        socketService = ChatSocket(
             randomString(),
             randomString(),
             tokenManager,
@@ -76,7 +76,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -88,7 +88,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -97,7 +97,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
+        socketService.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
@@ -106,7 +106,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -127,7 +127,7 @@ internal class ChatSocketServiceImplTest {
 
         socketService.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
+        socketService.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
@@ -141,7 +141,7 @@ internal class ChatSocketServiceImplTest {
         )
 
         socketService.connectAnonymously()
-        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false
         socketService.onSocketError(networkError)

@@ -32,13 +32,13 @@ import java.util.Date
 
 internal class ChatEventsObservableTest {
 
-    private lateinit var socket: FakeSocketService
+    private lateinit var socket: FakeSocket
     private lateinit var observable: ChatEventsObservable
     private lateinit var result: MutableList<ChatEvent>
 
     @Before
     fun before() {
-        socket = FakeSocketService()
+        socket = FakeSocket()
         observable = ChatEventsObservable(socket, mock())
         result = mutableListOf()
     }

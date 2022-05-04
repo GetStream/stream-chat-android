@@ -42,8 +42,8 @@ import kotlin.properties.Delegates
 private const val RETRY_LIMIT = 3
 private const val DEFAULT_DELAY = 500
 
-@Suppress("TooManyFunctions")
-internal class ChatSocketServiceImpl constructor(
+@Suppress("TooManyFunctions", "LongParameterList")
+internal open class ChatSocket constructor(
     private val apiKey: String,
     private val wssUrl: String,
     private val tokenManager: TokenManager,
@@ -51,7 +51,7 @@ internal class ChatSocketServiceImpl constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val parser: ChatParser,
     private val coroutineScope: CoroutineScope,
-) : ChatSocketService {
+) {
     private val logger = ChatLogger.get("SocketService")
     private var connectionConf: ConnectionConf = ConnectionConf.None
     private var socket: Socket? = null
@@ -63,7 +63,7 @@ internal class ChatSocketServiceImpl constructor(
         object : HealthMonitor.HealthCallback {
             override fun reconnect() {
                 if (state is State.DisconnectedTemporarily) {
-                    this@ChatSocketServiceImpl.reconnect(connectionConf)
+                    this@ChatSocket.reconnect(connectionConf)
                 }
             }
             override fun check() {
@@ -135,7 +135,7 @@ internal class ChatSocketServiceImpl constructor(
     }
         private set
 
-    override fun onSocketError(error: ChatError) {
+    open fun onSocketError(error: ChatError) {
         if (state !is State.DisconnectedPermanently) {
             logger.logE(error)
             callListeners { it.onError(error) }
@@ -176,22 +176,22 @@ internal class ChatSocketServiceImpl constructor(
         }
     }
 
-    override fun removeListener(listener: SocketListener) {
+    open fun removeListener(listener: SocketListener) {
         synchronized(listeners) {
             listeners.remove(listener)
         }
     }
 
-    override fun addListener(listener: SocketListener) {
+    open fun addListener(listener: SocketListener) {
         synchronized(listeners) {
             listeners.add(listener)
         }
     }
 
-    override fun connectAnonymously() =
+    open fun connectAnonymously() =
         connect(ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
 
-    override fun connect(user: User) =
+    open fun connect(user: User) =
         connect(ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
 
     private fun connect(connectionConf: ConnectionConf) {
@@ -206,25 +206,25 @@ internal class ChatSocketServiceImpl constructor(
         networkStateProvider.subscribe(networkStateListener)
     }
 
-    override fun disconnect() {
+    open fun disconnect() {
         reconnectionAttempts = 0
         state = State.DisconnectedPermanently(null)
     }
 
-    override fun releaseConnection() {
+    open fun releaseConnection() {
         state = State.DisconnectedByRequest
     }
 
-    override fun onConnectionResolved(event: ConnectedEvent) {
+    open fun onConnectionResolved(event: ConnectedEvent) {
         state = State.Connected(event)
     }
 
-    override fun onEvent(event: ChatEvent) {
+    open fun onEvent(event: ChatEvent) {
         healthMonitor.ack()
         callListeners { listener -> listener.onEvent(event) }
     }
 
-    internal fun sendEvent(event: ChatEvent) {
+    internal open fun sendEvent(event: ChatEvent) {
         socket?.send(event)
     }
 

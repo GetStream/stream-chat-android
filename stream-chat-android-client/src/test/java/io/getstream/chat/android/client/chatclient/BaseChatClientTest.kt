@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.socket.ChatSocketService
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -48,7 +48,7 @@ internal open class BaseChatClientTest {
     protected lateinit var userStateService: UserStateService
 
     @Mock
-    protected lateinit var socket: ChatSocketService
+    protected lateinit var socket: ChatSocket
 
     @Mock
     protected lateinit var tokenManager: TokenManager
