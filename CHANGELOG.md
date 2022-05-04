@@ -14,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Added cache for requests so the SDK does less requests to API. [#3447](https://github.com/GetStream/stream-chat-android/pull/3447)
 
 ### ✅ Added
 
@@ -26,6 +25,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Caching state to avoid unnecessary request to API. [#3447](https://github.com/GetStream/stream-chat-android/pull/3447)
 
 ### ✅ Added
 
