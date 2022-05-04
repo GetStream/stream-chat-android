@@ -345,6 +345,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
+        member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels
     )

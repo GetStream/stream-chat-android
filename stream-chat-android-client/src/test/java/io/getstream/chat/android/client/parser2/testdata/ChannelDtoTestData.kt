@@ -136,7 +136,18 @@ internal object ChannelDtoTestData {
           "cooldown": 1,
           "pinned_messages": [${MessageDtoTestData.downstreamJson}],
           "draft": true,
-          "own_capabilities": ["connect-events", "pin-message"]
+          "own_capabilities": ["connect-events", "pin-message"],
+          "membership": {
+            "user": ${UserDtoTestData.downstreamJson},
+            "role": "owner",
+            "created_at": "2020-06-10T11:04:31.0Z",
+            "updated_at": "2020-06-10T11:04:31.588Z",
+            "invited": true,
+            "invite_accepted_at": "2020-06-10T11:04:31.588Z",
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
+           }
         }
         """.withoutWhitespace()
     val downstreamChannel = DownstreamChannelDto(
@@ -181,6 +192,18 @@ internal object ChannelDtoTestData {
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
         own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
+        membership = DownstreamMemberDto(
+            user = UserDtoTestData.downstreamUser,
+            role = "owner",
+            created_at = Date(1591787071000),
+            updated_at = Date(1591787071588),
+            invited = true,
+            invite_accepted_at = Date(1591787071588),
+            invite_rejected_at = null,
+            shadow_banned = false,
+            banned = false,
+            channel_role = "member",
+        ),
         extraData = mapOf("draft" to true),
     )
 
@@ -218,6 +241,7 @@ internal object ChannelDtoTestData {
         team = "",
         cooldown = 0,
         pinned_messages = emptyList(),
+        membership = null,
         extraData = emptyMap(),
     )
 
@@ -255,6 +279,7 @@ internal object ChannelDtoTestData {
         team = "",
         cooldown = 0,
         pinned_messages = emptyList(),
+        membership = null,
         extraData = emptyMap(),
     )
 
