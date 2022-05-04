@@ -34,7 +34,7 @@ private const val MAX_TIME_OF_STATE_MILI = 300
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
  */
-internal class ChatClientStateCalls(
+internal class ChatClientStateCalls internal constructor(
     private val chatClient: ChatClient,
     private val state: StateRegistry,
     private val scope: CoroutineScope,
@@ -98,4 +98,17 @@ internal class ChatClientStateCalls(
 
         return diff > MAX_TIME_OF_STATE_MILI
     }
+
+    companion object {
+        private var instance: ChatClientStateCalls? = null
+
+        fun createOrGet(
+            chatClient: ChatClient,
+            state: StateRegistry,
+            scope: CoroutineScope,
+        ) = instance ?: ChatClientStateCalls(chatClient, state, scope).also { stateCalls ->
+            instance = stateCalls
+        }
+    }
+
 }

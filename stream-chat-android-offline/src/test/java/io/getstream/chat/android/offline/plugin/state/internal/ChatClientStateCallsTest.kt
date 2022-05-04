@@ -128,4 +128,28 @@ internal class ChatClientStateCallsTest {
 
         verify(chatClient, times(repeatTimes)).getReplies(messageId, messageLimit)
     }
+
+    @Test
+    fun `given two objects are created using the factory of class should cache work correctly`() {
+        val chatClient: ChatClient = mock {
+            on(it.queryChannels(any())) doReturn TestCall(Result(emptyList()))
+            on(it.queryChannel(any(), any(), any())) doReturn TestCall(Result(randomChannel()))
+            on(it.getReplies(any(), any())) doReturn TestCall(Result(emptyList()))
+        }
+
+        val stateCalls1 = ChatClientStateCalls.createOrGet(chatClient, mock(), scope)
+        val stateCalls2 = ChatClientStateCalls.createOrGet(chatClient, mock(), scope)
+
+        val messageId = randomString()
+        val messageLimit = randomInt()
+
+        val repeatTimes = 5
+
+        repeat(repeatTimes) {
+            stateCalls1.getReplies(messageId, messageLimit, false)
+            stateCalls2.getReplies(messageId, messageLimit, false)
+        }
+
+        verify(chatClient, times(1)).getReplies(messageId, messageLimit)
+    }
 }
