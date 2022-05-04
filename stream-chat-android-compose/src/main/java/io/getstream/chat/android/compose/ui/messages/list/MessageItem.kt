@@ -221,7 +221,13 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    if (!messageItem.isMine && (messageItem.shouldShowFooter || messageItem.groupPosition == Bottom)) {
+    if (!messageItem.isMine &&
+        (
+            messageItem.shouldShowFooter ||
+                messageItem.groupPosition == Bottom ||
+                messageItem.groupPosition == None
+            )
+    ) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,

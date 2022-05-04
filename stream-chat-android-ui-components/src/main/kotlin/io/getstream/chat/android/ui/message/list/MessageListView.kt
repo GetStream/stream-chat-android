@@ -1636,10 +1636,6 @@ public class MessageListView : ConstraintLayout {
         public fun predicate(item: MessageListItem): Boolean
     }
 
-    public fun interface GroupedMessageListItemPredicate {
-        public fun isGroupedWithNextMessage(messageItem: MessageListItem.MessageItem): Boolean
-    }
-
     public fun interface ShowAvatarPredicate {
         public fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean
     }

@@ -312,6 +312,11 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibili
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
+	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/StringKt {
 }
 
@@ -416,11 +421,6 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public static synthetic fun sendMessageWithCustomAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun stopTyping ()V
-}
-
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLiveDataKt {
-	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {

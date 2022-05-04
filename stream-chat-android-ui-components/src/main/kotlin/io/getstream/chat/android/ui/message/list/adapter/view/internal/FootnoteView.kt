@@ -80,6 +80,9 @@ internal class FootnoteView : ConstraintLayout {
         threadsFootnote.root.isVisible = false
     }
 
+    /**
+     * Hides the message footnote.
+     */
     fun hideSimpleFootnote() {
         footnote.root.isVisible = false
         threadsFootnote.root.isVisible = false

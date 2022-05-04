@@ -18,9 +18,25 @@ package com.getstream.sdk.chat.utils.extensions
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.util.Date
 
 /**
  * @return if the message has been deleted.
  */
 @InternalStreamChatApi
 internal fun Message.isDeleted(): Boolean = deletedAt != null
+
+/**
+ * @return when the message was created or throw an exception.
+ */
+public fun Message.getCreatedAtOrThrow(): Date {
+    val created = createdAt ?: createdLocallyAt
+    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
+}
+
+/**
+ * @return when the message was created or null.
+ */
+public fun Message.getCreatedAtOrNull(): Date? {
+    return createdAt ?: createdLocallyAt
+}

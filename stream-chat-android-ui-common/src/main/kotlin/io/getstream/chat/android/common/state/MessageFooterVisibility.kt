@@ -36,8 +36,9 @@ public sealed class MessageFooterVisibility {
      *
      * @param timeDifferenceMillis Time duration after which we show the message footer.
      */
-    public data class WithTimeDifference(val timeDifferenceMillis: Long = DEFAULT_FOOTER_TIME_DIFF_MILLIS) :
-        MessageFooterVisibility()
+    public data class WithTimeDifference(
+        val timeDifferenceMillis: Long = DEFAULT_FOOTER_TIME_DIFF_MILLIS,
+    ) : MessageFooterVisibility()
 
     /**
      * The message footer will be visible for every message.

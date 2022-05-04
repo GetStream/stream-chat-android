@@ -25,6 +25,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
@@ -129,7 +130,7 @@ public class MessageListViewModel(
         MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
 
     /**
-     * Regulates the message footer visibility
+     * Regulates the message footer visibility.
      */
     private var messageFooterVisibility: MutableLiveData<MessageFooterVisibility> =
         MutableLiveData(MessageFooterVisibility.WithTimeDifference())

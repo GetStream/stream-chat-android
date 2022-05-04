@@ -16,7 +16,6 @@
 
 package com.getstream.sdk.chat.utils.extensions
 
-import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrNull
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -27,7 +26,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param message The current message for which we are checking whether we need to show the footer for.
  * @param isBottomMessageInGroup Is the message at the bottom of the group.
  * @param nextMessage The message that comes after the current message.
- *        Depending on it and [MessageFooterVisibility] we will show/hide the footer.
+ * Depending on it and [MessageFooterVisibility] we will show/hide the footer.
+ *
+ * @return If the message footer should be visible or not.
  */
 @InternalStreamChatApi
 public fun MessageFooterVisibility.shouldShowMessageFooter(

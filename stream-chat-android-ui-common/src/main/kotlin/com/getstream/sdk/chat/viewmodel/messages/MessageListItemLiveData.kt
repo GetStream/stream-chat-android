@@ -22,6 +22,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.combineWith
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -29,7 +30,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
-import java.util.Date
 
 /**
  * It's common for messaging UIs to interleave and group messages
@@ -419,13 +419,4 @@ internal class MessageListItemLiveData(
             }
         }
     }
-}
-
-public fun Message.getCreatedAtOrThrow(): Date {
-    val created = createdAt ?: createdLocallyAt
-    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
-}
-
-public fun Message.getCreatedAtOrNull(): Date? {
-    return createdAt ?: createdLocallyAt
 }
