@@ -240,11 +240,6 @@ public class MessageListViewModel(
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
 
     /**
-     * TODO
-     */
-    private var scrollToMessage: Message? by mutableStateOf(null)
-
-    /**
      * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
      */
     private val logger = ChatLogger.get("MessageListViewModel")

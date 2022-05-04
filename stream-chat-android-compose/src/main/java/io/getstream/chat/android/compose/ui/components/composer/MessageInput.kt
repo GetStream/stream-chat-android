@@ -80,9 +80,7 @@ public fun MessageInput(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         message = activeAction.message,
                         onLongItemClick = {},
-                        onQuotedMessageClick = {
-                            println("for some reason in input")
-                        }
+                        onQuotedMessageClick = {}
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))
