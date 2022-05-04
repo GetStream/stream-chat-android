@@ -122,6 +122,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -177,6 +178,7 @@ internal constructor(
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
+    private val apiRequestsAnalyser: ApiRequestsAnalyser
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -1359,6 +1361,11 @@ internal constructor(
     ): Call<Channel> {
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
+        apiRequestsAnalyser.registerRequest(
+            "queryChannel",
+            mapOf("channelType" to channelType, "channelId" to channelId)
+        )
+
         return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
                 relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
@@ -2223,6 +2230,7 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var apiRequestsAnalyser: ApiRequestsAnalyser? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -2448,6 +2456,7 @@ internal constructor(
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
+
             ).also {
                 configureInitializer(it)
             }
