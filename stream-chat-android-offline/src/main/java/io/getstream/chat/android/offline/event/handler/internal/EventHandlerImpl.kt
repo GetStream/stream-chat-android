@@ -194,7 +194,7 @@ internal class EventHandlerImpl(
                     mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> {
-                    logger.i {"[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
+                    logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
                     updateCurrentUser(event.me)
 
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
