@@ -26,7 +26,7 @@ First, let's take a look into a high level overview of the differences between t
 | Secondary Building Blocks (no.) |                                         ~10                                          |                                 ~70                                  |
 |      Ease of Theming            |                                     ✅ <br/> Good                                    |       ✅ <br/> Excellent. Also allows for easy runtime changes.      |
 |  Runtime Customizability   |                             ✅ <br/> As a custom feature                              |                  ✅ <br/> As idiomatic Compose code                   |
-|      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more new files generated or changed) | ✅ Low <br/> (Less boilerplate, fewer new files generated or changed) |
+|      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more files generated or changed) | ✅ Low <br/> (Less boilerplate, fewer files generated or changed) |
 |    Stateless Components    |                                          ⛔️                                          |                                  ✅                               |
 |  Extensive Layout Changes  |                                          ⛔️                                          |                                  ✅ <br/> Using slot APIs                                       |
 
@@ -69,6 +69,20 @@ If you want a stock chat experience that works out of the box, either SDK is a g
 Don't feel apprehensive about trying it out if your developers are not familiar with Jetpack Compose and/or if your app is written using XML and Views.
 Jetpack Compose is easy to learn and is inter-operable with View based technology. The time saved by not having to write boilerplate code such as `ViewHolder`s will most likely offset the time spent on learning Jetpack Compose. On top of that, Compose code is often easier to maintain and produces fewer bugs.
 
+## Implementation Time
+
+Before we proceed, we have to state a small caveat: Implementation time was measured for one of our developers.
+This means that it is most likely going to be slightly quicker than usual. However we have taken the time to go through both our [UI Components](https://getstream.io/tutorials/android-chat/) and [Compose](https://getstream.io/chat/compose/tutorial/) tutorials and complete the steps individually in order to make the experience as close as possible to a first time implementation.
+
+The implementation will follow the tutorials exactly, with the result presented in the following table:
+
+
+| SDK | Implementation Time |
+|:---:|:-------------:|
+| | |
+| | |
+
+
 ## Performance
 
 There are many important aspects to what makes a certain technology a good candidate for your project, and performance
@@ -86,7 +100,7 @@ Performance benchmarks should always be run on physical phones in order to measu
 Ours were run using the following:
 
 | Device         | API             |
-|----------------|-----------------|
+|:--------------:|:--------------:|
 | Google Pixel 6 | 31 (Android 12) |
 
 ### Startup Time
@@ -176,7 +190,7 @@ For our memory footprint test we wanted to measure how our SDKs behave in two ma
    loaded channel list.
 
 | UI SDK        | Memory Consumption |
-|---------------|--------------------|
+|:-------------:|:------------------:|
 | UI Components | 244 MB             |
 | Compose       | 244.9 MB           |
 
@@ -187,7 +201,7 @@ before the first garbage collection event.
    scrolled through in the UI with 35 different images loaded.
 
 | UI SDK        | Memory Consumption |
-|---------------|--------------------|
+|:-------------:|:------------------:|
 | UI Components | 342.2 MB           |
 | Compose       | 346.8 MB           |
 
@@ -203,3 +217,17 @@ Performance wise, none of these results exclude the other.
 It should be noted though that Jetpack Compose is a much more recent technology and that as such, it will certainly
 receive performance improvements in the future. If you choose our Compose SDK, you should probably expect a performance
 bump with every Jetpack Compose Compiler and Runtime improvement.
+
+### SDK Size Comparison
+
+Size constraints matter less on modern devices, however it is still a good idea to make your app as small as possible because smaller apps download faster and achieve a higher rate of successful installs.
+
+For a side by side size comparison see the following table:
+
+| Metric | UI Components | Compose |
+|:---:|:-------------:|:-------:|
+| Source Code (.aar) | |
+| Compiled Size (Vanilla Chat App) | |
+| APK Size (Vanilla Chat App) | |
+
+
