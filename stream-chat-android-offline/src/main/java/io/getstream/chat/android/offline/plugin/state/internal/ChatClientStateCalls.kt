@@ -110,5 +110,4 @@ internal class ChatClientStateCalls internal constructor(
             instance = stateCalls
         }
     }
-
 }
