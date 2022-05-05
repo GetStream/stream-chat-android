@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.errors.ChatError
 
 internal class TaggedLoggerImpl(
     private val tag: Any,
-    private val logger: ChatLogger
+    private val logger: ChatLogger,
 ) : TaggedLogger {
 
     override fun logI(message: String) {

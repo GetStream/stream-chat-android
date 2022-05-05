@@ -67,4 +67,5 @@ public data class MessageItemState(
     val isInThread: Boolean = false,
     val currentUser: User? = null,
     val isMessageRead: Boolean = false,
+    val shouldShowFooter: Boolean = false
 ) : MessageListItemState()
