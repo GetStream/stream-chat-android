@@ -10,7 +10,6 @@ jobs:
   publish:
     name: Release build and publish
     runs-on: ubuntu-latest
-    environment: 'publish'
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
