@@ -77,14 +77,20 @@ class Offline {
         fun accessStateWithApiCall() {
             // Returns StateFlow<QueryChannelsState?> object and performs queryChannels request
             val queryChannelsState: StateFlow<QueryChannelsState?> =
-                chatClient.queryChannelsAsState(request = queryChannelsRequest, coroutineScope = scope, true)
+                chatClient.queryChannelsAsState(
+                    request = queryChannelsRequest,
+                    coroutineScope = scope,
+                    forceRefresh = true
+                )
 
             // Returns StateFlow<ChannelState?> object and performs watchChannel request
             val channelState: StateFlow<ChannelState?> =
-                chatClient.watchChannelAsState(cid = "messaging:sampleId",
+                chatClient.watchChannelAsState(
+                    cid = "messaging:sampleId",
                     messageLimit = 30,
                     coroutineScope = scope,
-                    true)
+                    forceRefresh = true
+                )
 
             // Returns ThreadState object for a thread associated with a given parentMessageId
             val threadState: ThreadState =
@@ -92,7 +98,7 @@ class Offline {
                     messageId = "messaging:sampleId",
                     messageLimit = 30,
                     coroutineScope = scope,
-                    true
+                    forceRefresh = true
                 )
         }
     }

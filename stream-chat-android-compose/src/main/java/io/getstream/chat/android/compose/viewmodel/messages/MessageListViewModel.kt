@@ -123,7 +123,7 @@ public class MessageListViewModel(
         cid = channelId,
         messageLimit = messageLimit,
         coroutineScope = viewModelScope,
-        false
+        forceRefresh = false
     )
 
     /**
