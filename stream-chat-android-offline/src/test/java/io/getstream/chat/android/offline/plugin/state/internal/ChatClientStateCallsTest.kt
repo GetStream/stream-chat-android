@@ -130,6 +130,24 @@ internal class ChatClientStateCallsTest {
     }
 
     @Test
+    fun `cache should work with multiple calls`() {
+        val messageId = randomString()
+        val messageLimit = randomInt()
+        val request = QueryChannelsRequest(filter = Filters.neutral(), limit = 1)
+        val cid = randomCID()
+
+        repeat(5) {
+            stateCalls.getReplies(messageId, messageLimit, false)
+            stateCalls.queryChannels(request, false)
+            stateCalls.watchChannel(cid, 1, false)
+        }
+
+        verify(chatClient, times(1)).getReplies(messageId, messageLimit)
+        verify(chatClient, times(1)).queryChannels(request)
+        verify(chatClient, times(1)).queryChannel(any(), any(), any())
+    }
+
+    @Test
     fun `given two objects are created using the factory of class should cache work correctly`() {
         val chatClient: ChatClient = mock {
             on(it.queryChannels(any())) doReturn TestCall(Result(emptyList()))
