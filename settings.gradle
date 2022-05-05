@@ -7,6 +7,7 @@ include (
 		':stream-chat-android-ui-components',
 		':stream-chat-android-ui-components-sample',
 		':stream-chat-android-offline',
+		':stream-chat-android-state',
 		':stream-chat-android-client',
 		':stream-chat-android-core',
 		':stream-chat-android-test',

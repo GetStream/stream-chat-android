@@ -57,6 +57,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-client")
+    api project(":stream-chat-android-state")
 
     // Kotlin
     implementation Dependencies.kotlinReflect
