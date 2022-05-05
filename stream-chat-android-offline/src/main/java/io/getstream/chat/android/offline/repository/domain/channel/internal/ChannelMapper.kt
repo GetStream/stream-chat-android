@@ -36,7 +36,7 @@ internal fun Channel.toEntity(): ChannelEntity {
     var lastMessageAt: Date? = null
     messages.lastOrNull()?.let { message ->
         lastMessage = message.toEntity()
-        lastMessageAt = message.createdAt
+        lastMessageAt = message.createdAt ?: message.createdLocallyAt
     }
     return ChannelEntity(
         type = type,
