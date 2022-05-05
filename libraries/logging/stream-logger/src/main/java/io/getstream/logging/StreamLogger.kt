@@ -65,5 +65,5 @@ public enum class Priority(
  */
 public object SilentStreamLogger : StreamLogger {
 
-    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {}
+    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) { /* no-op */ }
 }
