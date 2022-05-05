@@ -81,6 +81,14 @@ internal class FootnoteView : ConstraintLayout {
     }
 
     /**
+     * Hides the message footnote.
+     */
+    fun hideSimpleFootnote() {
+        footnote.root.isVisible = false
+        threadsFootnote.root.isVisible = false
+    }
+
+    /**
      * Shows the footnote for thread replies.
      *
      * @param isMine Whether this is the message if the current user.

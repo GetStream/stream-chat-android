@@ -2,7 +2,7 @@ name: Publish
 
 on:
   workflow_run:
-    workflows: ["Releases"]
+    workflows: ["SyncRelease"]
     types:
       - completed
 

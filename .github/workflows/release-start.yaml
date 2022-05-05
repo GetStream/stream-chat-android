@@ -15,10 +15,10 @@ jobs:
         with:
           ref: develop
       - name: Minor version bump
-        if: "${{ github.event.inputs.minor == 'true' }}"
+        if: "${{ github.event.inputs.force_bump_minor_version == 'true' }}"
         run: ./gradlew minor-bump
       - name: Version bump
-        if: "${{ github.event.inputs.minor != 'true' }}"
+        if: "${{ github.event.inputs.force_bump_minor_version != 'true' }}"
         run: ./gradlew version-bump
       - name: Parse release section in changelog
         run: ./gradlew changelog-release-section
