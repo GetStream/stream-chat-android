@@ -54,6 +54,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 shot {
     applicationId = "io.getstream.chat.android.uitests"
+    tolerance = 1
 }
 
 dependencies {

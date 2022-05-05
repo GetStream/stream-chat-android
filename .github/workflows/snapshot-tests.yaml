@@ -1,6 +1,6 @@
 name: Snapshot-Test
 
-on: 
+on:
   schedule:
     - cron: '0 1 * * *'
 
@@ -22,10 +22,11 @@ jobs:
       - name: Snapshot tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 28
+          api-level: 26
           disable-animations: true
-          profile: Nexus 4
-          script: ./gradlew stream-chat-android-ui-uitests:connectedAndroidTest stream-chat-android-ui-uitests:executeScreenshotTests
+          profile: pixel
+          emulator-options: -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
       - name: Upload screnshot results
         if: always()
         uses: actions/upload-artifact@v2
