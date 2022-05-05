@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -54,13 +55,20 @@ public fun QuotedMessage(
 
     val messageBubbleShape = if (isMyMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
 
-    Row(modifier = modifier.combinedClickable(
-        onLongClick = { onLongItemClick(message) },
-        onClick = { onQuotedMessageClick(message) }
-    ), verticalAlignment = Alignment.Bottom) {
+    Row(
+        modifier = modifier.combinedClickable(
+            interactionSource = MutableInteractionSource(),
+            indication = null,
+            onLongClick = { onLongItemClick(message) },
+            onClick = { onQuotedMessageClick(message) }
+        ),
+        verticalAlignment = Alignment.Bottom
+    ) {
         if (!isMyMessage) {
             Avatar(
-                modifier = Modifier.padding(start = 2.dp).size(24.dp),
+                modifier = Modifier
+                    .padding(start = 2.dp)
+                    .size(24.dp),
                 imageUrl = user.image,
                 initials = user.initials,
                 textStyle = ChatTheme.typography.captionBold,
