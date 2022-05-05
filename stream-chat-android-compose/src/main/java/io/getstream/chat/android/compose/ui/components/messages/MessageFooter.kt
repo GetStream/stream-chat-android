@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
+import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
@@ -39,8 +39,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param messageItem Message to show.
  */
 @Composable
-public fun MessageFooter(messageItem: MessageItemState) {
-    val (message, position) = messageItem
+public fun MessageFooter(
+    messageItem: MessageItemState,
+) {
+    val message = messageItem.message
     val hasThread = message.threadParticipants.isNotEmpty()
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
@@ -57,7 +59,7 @@ public fun MessageFooter(messageItem: MessageItemState) {
         )
     }
 
-    if (position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None) {
+    if (messageItem.shouldShowFooter) {
         Row(
             modifier = Modifier.padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -83,7 +85,7 @@ public fun MessageFooter(messageItem: MessageItemState) {
 
             val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
             if (date != null) {
-                Timestamp(date = date)
+                Timestamp(date = date, formatType = DateFormatType.TIME)
             }
         }
     }

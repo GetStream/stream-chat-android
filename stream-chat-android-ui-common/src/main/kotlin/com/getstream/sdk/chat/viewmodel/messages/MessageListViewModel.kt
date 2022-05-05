@@ -25,6 +25,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
@@ -43,6 +44,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
@@ -126,6 +128,12 @@ public class MessageListViewModel(
      */
     private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
         MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+
+    /**
+     * Regulates the message footer visibility.
+     */
+    private var messageFooterVisibility: MutableLiveData<MessageFooterVisibility> =
+        MutableLiveData(MessageFooterVisibility.WithTimeDifference())
 
     /**
      * Represents the current state of the message list
@@ -302,7 +310,8 @@ public class MessageListViewModel(
             typingLd = typingIds,
             isThread = false,
             dateSeparatorHandler = dateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility
+            deletedMessageVisibility = deletedMessageVisibility,
+            messageFooterVisibility = messageFooterVisibility
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -347,7 +356,8 @@ public class MessageListViewModel(
             null,
             true,
             threadDateSeparatorHandler,
-            deletedMessageVisibility
+            deletedMessageVisibility,
+            messageFooterVisibility
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -780,6 +790,16 @@ public class MessageListViewModel(
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
         this.deletedMessageVisibility.value = deletedMessageVisibility
+    }
+
+    /**
+     * Sets the value used to determine if message footer content is shown.
+     * @see MessageFooterVisibility
+     *
+     * @param messageFooterVisibility Changes the visibility of message footers.
+     */
+    public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
+        this.messageFooterVisibility.value = messageFooterVisibility
     }
 
     /**
