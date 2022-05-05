@@ -59,6 +59,7 @@ public sealed class MessageListItem {
         val messageReadBy: List<ChannelUserRead> = listOf(),
         val isThreadMode: Boolean = false,
         val isMessageRead: Boolean = true,
+        val showMessageFooter: Boolean = false,
     ) : MessageListItem() {
         public val isTheirs: Boolean
             get() = !isMine

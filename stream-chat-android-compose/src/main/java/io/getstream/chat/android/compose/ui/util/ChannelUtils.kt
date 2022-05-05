@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
