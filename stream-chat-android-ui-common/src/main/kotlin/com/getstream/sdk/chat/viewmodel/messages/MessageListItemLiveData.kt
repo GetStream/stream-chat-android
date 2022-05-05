@@ -22,12 +22,14 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.combineWith
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import java.util.Date
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 
 /**
  * It's common for messaging UIs to interleave and group messages
@@ -69,6 +71,9 @@ import java.util.Date
  *   }
  * }
  *
+ * @param deletedMessageVisibility Controls when deleted messages are shown.
+ * @param messageFooterVisibility Controls when the message footer is shown.
+ *
  */
 
 @Suppress("LongParameterList", "TooManyFunctions")
@@ -80,6 +85,7 @@ internal class MessageListItemLiveData(
     private val isThread: Boolean = false,
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
+    private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -99,12 +105,15 @@ internal class MessageListItemLiveData(
 
     /**
      * Emits a value from this [MediatorLiveData] class when either
-     * the user gets updated or the deleted message visibility gets
-     * changed.
+     * the user gets updated, the deleted message visibility or
+     * message footer visibility gets changed.
      */
     private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
         val messagesChange = getCurrentUser
             .combineWith(deletedMessageVisibility) { user, _ ->
+                user
+            }
+            .combineWith(messageFooterVisibility) { user, _ ->
                 user
             }
             .changeOnUserLoaded(messages) { changedMessages, currentUser ->
@@ -272,12 +281,20 @@ internal class MessageListItemLiveData(
                 }
             }
 
+            // determine if footer is shown or not
+            val shouldShowMessageFooter = messageFooterVisibility.value?.shouldShowMessageFooter(
+                message,
+                positions.contains(MessageListItem.Position.BOTTOM),
+                nextMessage
+            ) ?: false
+
             items.add(
                 MessageListItem.MessageItem(
                     message,
                     positions,
                     isMine = message.user.id == currentUserId,
                     isThreadMode = isThread,
+                    showMessageFooter = shouldShowMessageFooter
                 )
             )
             previousMessage = message
@@ -402,9 +419,4 @@ internal class MessageListItemLiveData(
             }
         }
     }
-}
-
-public fun Message.getCreatedAtOrThrow(): Date {
-    val created = createdAt ?: createdLocallyAt
-    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }

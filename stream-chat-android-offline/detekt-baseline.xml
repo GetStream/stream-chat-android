@@ -47,7 +47,6 @@
     <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
     <ID>LongParameterList:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$( private val context: Context, private val logic: LogicRegistry, private val globalState: GlobalState, private val channelRepository: ChannelRepository, private val messageRepository: MessageRepository, private val attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val networkType: UploadAttachmentsNetworkType, )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
-    <ID>MagicNumber:RepositoryFactory.kt$RepositoryFactory$100</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
     <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
@@ -87,7 +86,6 @@
     <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt; :dateFilter || createdLocallyAt &lt; :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt;= :dateFilter || createdLocallyAt &lt;= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
@@ -115,7 +113,6 @@
     <ID>MaxLineLength:StreamOfflinePluginFactory.kt$StreamOfflinePluginFactory$* Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$* Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.</ID>
-    <ID>MaxLineLength:SyncManager.kt$SyncManager$logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying $queriesToRetry queries and ${cids.size} channels")</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
     <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>

@@ -17,9 +17,10 @@
 package io.getstream.chat.android.ui.message.list
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 
 internal class DefaultShowAvatarPredicate : MessageListView.ShowAvatarPredicate {
     override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean {
-        return messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+        return messageItem.isTheirs && (messageItem.showMessageFooter || messageItem.isBottomPosition())
     }
 }

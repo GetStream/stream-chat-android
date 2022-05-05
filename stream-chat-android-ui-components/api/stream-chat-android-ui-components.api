@@ -2011,9 +2011,10 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/BaseMess
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff {
-	public fun <init> (ZZZZZZZZZZ)V
+	public fun <init> (ZZZZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
+	public final fun component11 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2022,11 +2023,12 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZZZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public final fun copy (ZZZZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
+	public final fun getFooter ()Z
 	public final fun getMentions ()Z
 	public final fun getPinned ()Z
 	public final fun getPositions ()Z
