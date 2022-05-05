@@ -16,8 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `Channel.membership` property. [#3320](https://github.com/GetStream/stream-chat-android/pull/3320)
-- Added `NotificationAddedToChannelEvent.member` property. [#3320](https://github.com/GetStream/stream-chat-android/pull/3320)
+- Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 
 ### ⚠️ Changed
 
