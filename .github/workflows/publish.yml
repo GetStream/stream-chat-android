@@ -2,7 +2,7 @@ name: Publish
 
 on:
   workflow_run:
-    workflows: ["SyncRelease"]
+    workflows: ["ReleaseStart"]
     types:
       - completed
 
@@ -10,6 +10,7 @@ jobs:
   publish:
     name: Release build and publish
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
