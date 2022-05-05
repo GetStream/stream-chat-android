@@ -725,9 +725,12 @@ public class MessageListViewModel(
                 else -> MessageItemGroupPosition.None
             }
 
+            val isLastMessageInGroup =
+                position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None
+
             val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
                 message = message,
-                isBottomMessageInGroup = position == MessageItemGroupPosition.Bottom,
+                isLastMessageInGroup = isLastMessageInGroup,
                 nextMessage = nextMessage
             )
 
