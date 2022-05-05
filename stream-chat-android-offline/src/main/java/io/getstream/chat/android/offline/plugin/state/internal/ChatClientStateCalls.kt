@@ -28,8 +28,9 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 
-private const val MAX_TIME_OF_STATE_MILI = 300
+private const val MAX_TIME_OF_STATE_MILI = 400
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
@@ -40,14 +41,22 @@ internal class ChatClientStateCalls internal constructor(
     private val scope: CoroutineScope,
 ) {
 
-    private val requestTimeMap: MutableMap<Int, Date> = mutableMapOf()
+    private val requestTimeMap: MutableMap<Int, Date> = ConcurrentHashMap()
+
+    private var globalLastRequest: Date? = null
+
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
+        evaluateGlobalState()
+
         val queryHashCode = request.hashCode()
 
         if (isStateOld(queryHashCode) || forceRefresh) {
+            val now = Date()
+
             chatClient.queryChannels(request).launch(scope)
-            requestTimeMap[queryHashCode] = Date()
+            requestTimeMap[queryHashCode] = now
+            globalLastRequest = now
         }
 
         return state.queryChannels(request.filter, request.querySort)
@@ -63,8 +72,11 @@ internal class ChatClientStateCalls internal constructor(
         val queryHashCode = QueryChannelCacheKey(request, channelType, channelId).hashCode()
 
         if (isStateOld(queryHashCode) || forceRefresh) {
+            val now = Date()
+
             chatClient.queryChannel(channelType, channelId, request).launch(scope)
-            requestTimeMap[queryHashCode] = Date()
+            requestTimeMap[queryHashCode] = now
+            globalLastRequest = now
         }
 
         return state.channel(channelType, channelId)
@@ -72,6 +84,8 @@ internal class ChatClientStateCalls internal constructor(
 
     /** Reference request of the watch channel query. */
     internal fun watchChannel(cid: String, messageLimit: Int, forceRefresh: Boolean): ChannelState {
+        evaluateGlobalState()
+
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
@@ -80,14 +94,30 @@ internal class ChatClientStateCalls internal constructor(
 
     /** Reference request of the get thread replies query. */
     internal fun getReplies(messageId: String, messageLimit: Int, forceRefresh: Boolean): ThreadState {
+        evaluateGlobalState()
+
         val repliesHashCode = GetRepliesCacheKey(messageId, messageLimit).hashCode()
 
         if (isStateOld(repliesHashCode) || forceRefresh) {
+            val now = Date()
+
             chatClient.getReplies(messageId, messageLimit).launch(scope)
-            requestTimeMap[repliesHashCode] = Date()
+            requestTimeMap[repliesHashCode] = now
+            globalLastRequest = now
         }
 
         return state.thread(messageId)
+    }
+
+    private fun evaluateGlobalState() {
+        if (globalLastRequest == null) return
+
+        val now = Date()
+        val diff = now.time - globalLastRequest!!.time
+
+        if (diff > MAX_TIME_OF_STATE_MILI) {
+            requestTimeMap.clear()
+        }
     }
 
     private fun isStateOld(requestHash: Int): Boolean {
