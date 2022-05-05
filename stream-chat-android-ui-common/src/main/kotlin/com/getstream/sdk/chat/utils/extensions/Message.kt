@@ -31,7 +31,7 @@ internal fun Message.isDeleted(): Boolean = deletedAt != null
  * @return if the message was sent by current user.
  */
 @InternalStreamChatApi
-internal fun Message.isMine(): Boolean = ChatClient.instance().getCurrentUser()?.id == user.id
+public fun Message.isMine(): Boolean = ChatClient.instance().getCurrentUser()?.id == user.id
 
 /**
  * @return when the message was created or throw an exception.

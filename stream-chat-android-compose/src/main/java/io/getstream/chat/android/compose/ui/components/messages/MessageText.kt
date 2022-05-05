@@ -39,9 +39,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isFile
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
@@ -130,13 +133,37 @@ public fun MessageText(
 public fun QuotedMessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    maxQuoteLength: Int = DefaultQuoteMaxLength
+    maxQuoteLength: Int = DefaultQuoteMaxLength,
 ) {
-    val quotedMessage = if (message.text.count() > maxQuoteLength) {
-        val text = message.text.take(maxQuoteLength - 3) + "..."
-        message.copy(text = text)
-    } else {
-        message
+    val context = LocalContext.current
+
+    val quotedMessage = when {
+        message.text.count() > DefaultQuoteMaxLength -> {
+            val text = context.getString(
+                R.string.stream_compose_quoted_message_ellipsize,
+                message.text.take(maxQuoteLength)
+            )
+            message.copy(text = text)
+        }
+
+        message.text.isBlank() -> {
+            val attachment = message.attachments.first()
+            val text = when {
+                attachment.type == ModelType.attach_image -> {
+                    context.getString(R.string.stream_compose_quoted_message_image_tag)
+                }
+                attachment.type == ModelType.attach_giphy -> {
+                    context.getString(R.string.stream_compose_quoted_message_giphy_tag)
+                }
+                attachment.isFile() -> {
+                    attachment.name ?: context.getString(R.string.stream_compose_quoted_message_file_tag)
+                }
+                else -> message.text
+            }
+            message.copy(text = text)
+        }
+
+        else -> message
     }
 
     val styledText = buildAnnotatedMessageText(quotedMessage)

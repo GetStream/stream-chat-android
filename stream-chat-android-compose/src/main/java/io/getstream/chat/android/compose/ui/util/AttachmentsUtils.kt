@@ -42,6 +42,17 @@ internal fun Attachment.isMedia(): Boolean = type in MEDIA_ATTACHMENT_TYPES
 internal fun Attachment.hasLink(): Boolean = titleLink != null || ogUrl != null
 
 /**
+ * @return If the [Attachment] is a file or not.
+ */
+internal fun Attachment.isFile(): Boolean {
+    return uploadId != null
+        || upload != null
+        || type == ModelType.attach_file
+        || type == ModelType.attach_video
+        || type == ModelType.attach_audio
+}
+
+/**
  * @return If the attachment is currently being uploaded to the server.
  */
 internal fun Attachment.isUploading(): Boolean {
