@@ -62,7 +62,7 @@ If you're curious about the code powering these changes, you can read more about
 `MessageListHeader` is not the only Composable we offer that uses slots, in fact, most of our major components such as `MessageComposer`, `MessageList`, various menus, dialogs and others make extensive use of slots.
 This level of customization is miles above anything we can offer you with UI Components.
 
-### Customization Conclusion
+### Results Conclusion
 
 If you want a stock chat experience that works out of the box, either SDK is a good option. However, if you want a highly customizable chat, our Compose SDK is unparalleled in this regard.
 
@@ -208,7 +208,7 @@ before the first garbage collection event.
 The two apps show nearly identical memory footprint with the discrepancy in a few MB most likely related to garbage
 collection events.
 
-### Performance Results Conclusion
+### Results Conclusion
 
 Both SDKs are good performers with slightly different strong points. UI Components dealing with a list of channels
 slightly better while Compose renders a list of messages better.
@@ -218,7 +218,7 @@ It should be noted though that Jetpack Compose is a much more recent technology 
 receive performance improvements in the future. If you choose our Compose SDK, you should probably expect a performance
 bump with every Jetpack Compose Compiler and Runtime improvement.
 
-### SDK Size Comparison
+## SDK Size Comparison
 
 Size constraints matter less on modern devices, however it is still a good idea to make your app as small as possible because smaller apps download faster and achieve a higher rate of successful installs.
 
@@ -226,8 +226,14 @@ For a side by side size comparison see the following table:
 
 | Metric | UI Components | Compose |
 |:---:|:-------------:|:-------:|
-| Source Code (.aar) | |
-| Compiled Size (Vanilla Chat App) | |
-| APK Size (Vanilla Chat App) | |
+| Source Code (.aar) | 1.9 MB | 2.3 MB |
+| APK Size (Downloaded) | 3.3 MB | 3.8 MB |
+| APK Size (On Disk) | 7.4 MB | 8.5 MB |
+| Installed App | 8 MB| 9.26 MB |
 
+### Results Conclusion
 
+Both SDKs pack a lot of features into a minuscule application size. You can expect minimal size overhead for a fully functional chat experience with broad multimedia support.
+
+UI Components still lead the way here. This is because we have to include View reliant technology for certain solutions such as our media player.
+As technology progresses Compose alternatives will be offered for these and we will manage to substantially reduce the size of our Compose SDK.
