@@ -97,7 +97,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 @Composable
 public fun MessagesScreen(
     channelId: String,
-    messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
+    messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
