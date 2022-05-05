@@ -44,6 +44,7 @@ public data class StreamShapes(
     public val otherMessageBubble: Shape,
     public val inputField: Shape,
     public val attachment: Shape,
+    public val quotedAttachment: Shape,
     public val imageThumbnail: Shape,
     public val bottomSheet: Shape,
     public val suggestionList: Shape,
@@ -66,7 +67,8 @@ public data class StreamShapes(
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             suggestionList = RoundedCornerShape(16.dp),
             attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
-            header = RectangleShape
+            header = RectangleShape,
+            quotedAttachment = RoundedCornerShape(4.dp)
         )
     }
 }

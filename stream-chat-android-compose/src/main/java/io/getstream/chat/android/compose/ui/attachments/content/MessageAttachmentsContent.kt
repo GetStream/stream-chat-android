@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,9 +41,16 @@ public fun MessageAttachmentsContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    isQuote: Boolean = false
 ) {
     if (message.attachments.isNotEmpty()) {
         val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != ModelType.attach_giphy }
+
+        val quoteAttachmentFactory = if (isQuote) {
+            ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
+        }else {
+            null
+        }
 
         val linkFactory = if (links.isNotEmpty()) {
             ChatTheme.attachmentFactories.firstOrNull { it.canHandle(links) }
@@ -62,10 +70,16 @@ public fun MessageAttachmentsContent(
             onImagePreviewResult = onImagePreviewResult
         )
 
-        if (attachmentFactory != null) {
-            attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
-        } else if (linkFactory != null) {
-            linkFactory.content(Modifier.padding(8.dp), attachmentState)
+        when {
+            quoteAttachmentFactory != null -> {
+                quoteAttachmentFactory.content(Modifier.padding(top = 6.dp, bottom = 6.dp, start = 8.dp).size(36.dp), attachmentState)
+            }
+            attachmentFactory != null -> {
+                attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
+            }
+            linkFactory != null -> {
+                linkFactory.content(Modifier.padding(8.dp), attachmentState)
+            }
         }
     }
 }

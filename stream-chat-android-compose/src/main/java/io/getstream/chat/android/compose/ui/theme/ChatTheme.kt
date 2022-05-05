@@ -61,6 +61,9 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalQuoteAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
+    error("No quote attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -106,6 +109,7 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    quoteAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
@@ -132,6 +136,7 @@ public fun ChatTheme(
         LocalRippleTheme provides rippleTheme,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
+        LocalQuoteAttachmentFactories provides quoteAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
@@ -195,6 +200,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentPreviewHandlers.current
+
+    /**
+     * Retrieves the current list of [AttachmentFactory] at the call site's position in the hierarchy.
+     */
+    public val quoteAttachmentFactories: List<AttachmentFactory>
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalQuoteAttachmentFactories.current
 
     /**
      * Retrieves the current reaction icon factory at the call site's position in the hierarchy.

@@ -54,14 +54,12 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
- * @param isQuote Is the message is a quote inside another message.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    isQuote: Boolean = false,
     onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
@@ -69,8 +67,8 @@ public fun MessageText(
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
-    val isEmojiOnly = message.isEmojiOnly() && !isQuote
-    val isSingleEmoji = message.isSingleEmoji() && !isQuote
+    val isEmojiOnly = message.isEmojiOnly()
+    val isSingleEmoji = message.isSingleEmoji()
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
@@ -122,6 +120,52 @@ public fun MessageText(
     }
 }
 
+/**
+ * Default text element for quoted messages, with extra styling and padding for the chat bubble.
+ *
+ * @param message Message to show.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun QuotedMessageText(
+    message: Message,
+    modifier: Modifier = Modifier,
+    maxQuoteLength: Int = DefaultQuoteMaxLength
+) {
+    val quotedMessage = if (message.text.count() > maxQuoteLength) {
+        val text = message.text.take(maxQuoteLength - 3) + "..."
+        message.copy(text = text)
+    } else {
+        message
+    }
+
+    val styledText = buildAnnotatedMessageText(quotedMessage)
+
+    val isEmojiOnly = message.isEmojiOnly()
+    val isSingleEmoji = message.isSingleEmoji()
+
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    val style = when {
+        isSingleEmoji -> ChatTheme.typography.singleEmoji
+        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
+
+    val horizontalPadding = 8.dp
+    val verticalPadding = 5.dp
+
+    Text(
+        modifier = modifier.padding(
+            top = verticalPadding,
+            bottom = verticalPadding,
+            start = horizontalPadding,
+            end = horizontalPadding
+        ),
+        text = styledText,
+        style = style
+    )
+}
+
 private val URL_SCHEMES = listOf("http://", "https://")
 
 /**
@@ -132,8 +176,9 @@ private val URL_SCHEMES = listOf("http://", "https://")
  *
  * @return The annotated String, with clickable links, if applicable.
  */
+
 @Composable
-private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
+internal fun buildAnnotatedMessageText(message: Message): AnnotatedString {
     val text = message.text
 
     return buildAnnotatedString {
@@ -229,3 +274,8 @@ private fun ClickableText(
         }
     )
 }
+
+/**
+ * The max length of quote message. After that it gets ellipsized.
+ */
+private const val DefaultQuoteMaxLength: Int = 170

@@ -17,14 +17,16 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
@@ -45,38 +47,56 @@ public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit
+    onQuotedMessageClick: (Message) -> Unit,
 ) {
     val user = message.user
+    val isMyMessage = message.isMine()
 
-    Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
-        Avatar(
-            modifier = Modifier.size(24.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            textStyle = ChatTheme.typography.captionBold,
-        )
+    val messageBubbleShape = if (isMyMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
 
-        Spacer(modifier = Modifier.size(8.dp))
+    Row(modifier = modifier.combinedClickable(
+        onLongClick = { onLongItemClick(message) },
+        onClick = { onQuotedMessageClick(message) }
+    ), verticalAlignment = Alignment.Bottom) {
+        if (!isMyMessage) {
+            Avatar(
+                modifier = Modifier.padding(start = 2.dp).size(24.dp),
+                imageUrl = user.image,
+                initials = user.initials,
+                textStyle = ChatTheme.typography.captionBold,
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+        }
 
         MessageBubble(
-            shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
+            shape = messageBubbleShape, color = ChatTheme.colors.barsBackground,
             content = {
-                Column {
-                    MessageAttachmentsContent(
-                        message = message,
-                        onLongItemClick = {}
-                    )
-
-                    if (message.text.isNotEmpty()) {
-                        MessageText(
-                            isQuote = true,
+                Row {
+                    if (message.attachments.isNotEmpty()) {
+                        MessageAttachmentsContent(
                             message = message,
-                            onLongItemClick = onLongItemClick
+                            onLongItemClick = {},
+                            isQuote = true
                         )
                     }
+
+                    QuotedMessageText(
+                        message = message,
+                    )
                 }
             }
         )
+
+        if (isMyMessage) {
+            Avatar(
+                modifier = Modifier.size(24.dp),
+                imageUrl = user.image,
+                initials = user.initials,
+                textStyle = ChatTheme.typography.captionBold,
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+        }
     }
 }
