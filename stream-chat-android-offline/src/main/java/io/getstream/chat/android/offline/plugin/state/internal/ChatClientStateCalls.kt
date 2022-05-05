@@ -30,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-private const val MAX_TIME_OF_STATE_MILI = 400
+private const val MAX_TIME_OF_STATE_MILLIS = 300
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
@@ -49,14 +49,8 @@ internal class ChatClientStateCalls internal constructor(
     internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
         evaluateGlobalState()
 
-        val queryHashCode = request.hashCode()
-
-        if (isStateOld(queryHashCode) || forceRefresh) {
-            val now = Date()
-
+        cachedBlock(request.hashCode(), forceRefresh) {
             chatClient.queryChannels(request).launch(scope)
-            requestTimeMap[queryHashCode] = now
-            globalLastRequest = now
         }
 
         return state.queryChannels(request.filter, request.querySort)
@@ -71,12 +65,8 @@ internal class ChatClientStateCalls internal constructor(
     ): ChannelState {
         val queryHashCode = QueryChannelCacheKey(request, channelType, channelId).hashCode()
 
-        if (isStateOld(queryHashCode) || forceRefresh) {
-            val now = Date()
-
+        cachedBlock(queryHashCode, forceRefresh) {
             chatClient.queryChannel(channelType, channelId, request).launch(scope)
-            requestTimeMap[queryHashCode] = now
-            globalLastRequest = now
         }
 
         return state.channel(channelType, channelId)
@@ -98,15 +88,22 @@ internal class ChatClientStateCalls internal constructor(
 
         val repliesHashCode = GetRepliesCacheKey(messageId, messageLimit).hashCode()
 
-        if (isStateOld(repliesHashCode) || forceRefresh) {
-            val now = Date()
-
+        cachedBlock(repliesHashCode, forceRefresh) {
             chatClient.getReplies(messageId, messageLimit).launch(scope)
-            requestTimeMap[repliesHashCode] = now
-            globalLastRequest = now
         }
 
         return state.thread(messageId)
+    }
+
+    private fun cachedBlock(queryHashCode: Int, forceRefresh: Boolean, block: () -> Unit) {
+        if (isStateOld(queryHashCode) || forceRefresh) {
+            val now = Date()
+
+            block.invoke()
+
+            requestTimeMap[queryHashCode] = now
+            globalLastRequest = now
+        }
     }
 
     private fun evaluateGlobalState() {
@@ -115,7 +112,7 @@ internal class ChatClientStateCalls internal constructor(
         val now = Date()
         val diff = now.time - globalLastRequest!!.time
 
-        if (diff > MAX_TIME_OF_STATE_MILI) {
+        if (diff > MAX_TIME_OF_STATE_MILLIS) {
             requestTimeMap.clear()
         }
     }
@@ -126,7 +123,7 @@ internal class ChatClientStateCalls internal constructor(
         val now = Date()
         val diff = now.time - requestTimeMap[requestHash]!!.time
 
-        return diff > MAX_TIME_OF_STATE_MILI
+        return diff > MAX_TIME_OF_STATE_MILLIS
     }
 
     companion object {
