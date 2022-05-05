@@ -69,19 +69,26 @@ If you want a stock chat experience that works out of the box, either SDK is a g
 Don't feel apprehensive about trying it out if your developers are not familiar with Jetpack Compose and/or if your app is written using XML and Views.
 Jetpack Compose is easy to learn and is inter-operable with View based technology. The time saved by not having to write boilerplate code such as `ViewHolder`s will most likely offset the time spent on learning Jetpack Compose. On top of that, Compose code is often easier to maintain and produces fewer bugs.
 
-## Implementation Time
+## Implementation Cost
 
-Before we proceed, we have to state a small caveat: Implementation time was measured for one of our developers.
-This means that it is most likely going to be slightly quicker than usual. However we have taken the time to go through both our [UI Components](https://getstream.io/tutorials/android-chat/) and [Compose](https://getstream.io/chat/compose/tutorial/) tutorials and complete the steps individually in order to make the experience as close as possible to a first time implementation.
+Implementation cost will be reflected upon from our experience implementing our chat tutorial applications.
+If you want to check out how to build those, take a look at the [UI Components](https://getstream.io/tutorials/android-chat/) and [Compose](https://getstream.io/chat/compose/tutorial/) tutorials.
 
-The implementation will follow the tutorials exactly, with the result presented in the following table:
+| SDK | Time Cost | Development Cost |
+|:---:|:-------------:|:-----: |
+| UI Components | Good | 4 files, 180 line insertions, 12 line deletions |
+| Compose | Excellent | 2 files, 86 line insertions, 29 line deletions |
 
+- Development Cost: Changes in Gradle and Manifest files were not counted, only the code changes directly contributing to chat implementation were counted.
 
-| SDK | Implementation Time |
-|:---:|:-------------:|
-| | |
-| | |
+You are able to extract a full chat experience with rich multimedia support in under 200 lines of code for UI Components, and under 100 for Compose!
 
+Notice how due to a lack of XML layouts Compose generates fewer new files and has fewer lines of code changed?
+As you naturally move toward a more customized chat experience, this difference will only grow.
+
+### Results Conclusion
+
+Both technologies provide good developer experience, however Compose simply outmatches UI Components when it comes to saving time and lessening code generation and complexity.
 
 ## Performance
 
