@@ -56,7 +56,9 @@ public class Result<T : Any> private constructor(
      * Returns the [ChatError] error payload.
      */
     public fun error(): ChatError {
-        return checkNotNull(error) { "Result is successful, not an error. Check result.isSuccess before reading the error." }
+        return checkNotNull(error) {
+            "Result is successful, not an error. Check result.isSuccess before reading the error."
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -281,7 +283,8 @@ public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<
 }
 
 /**
- * Returns a transformed [Result] from results of the suspending [func] if the [Result] contains a successful data payload.
+ * Returns a transformed [Result] from results of the suspending [func] if the [Result] contains a successful data
+ * payload.
  * Returns an original [Result] if the [Result] contains an error payload.
  *
  * @param func A suspending lambda that returns [Result] of [R].
