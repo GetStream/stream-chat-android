@@ -25,7 +25,8 @@ import io.getstream.chat.android.compose.ui.util.isFile
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * TODO
+ * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] or
+ * [FileAttachmentQuotedContent] to build the UI for the quoted message.
  */
 @Suppress("FunctionName")
 public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(

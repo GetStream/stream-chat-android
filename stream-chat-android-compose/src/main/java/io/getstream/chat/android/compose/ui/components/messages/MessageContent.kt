@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onGiphyActionClick Handler for Giphy actions.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when selecting images in the default content.
  * @param giphyEphemeralContent Composable that represents the default Giphy message content.
  * @param deletedMessageContent Composable that represents the default content of a deleted message.
@@ -51,8 +52,8 @@ public fun MessageContent(
     message: Message,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
@@ -125,6 +126,7 @@ internal fun DefaultMessageDeletedContent(
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onImagePreviewResult Handler when selecting images in the default content.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @Composable
 internal fun DefaultMessageContent(

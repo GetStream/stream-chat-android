@@ -96,6 +96,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
@@ -118,8 +119,8 @@ public fun MessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit,
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },
@@ -380,6 +381,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param messageItem The message item to show the content for.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
@@ -387,8 +389,8 @@ internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isEmojiOnly()) {
@@ -419,6 +421,7 @@ internal fun DefaultMessageItemCenterContent(
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
@@ -427,8 +430,8 @@ internal fun EmojiMessageContent(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit
 ) {
     val message = messageItem.message
 
@@ -469,6 +472,7 @@ internal fun EmojiMessageContent(
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
@@ -477,8 +481,8 @@ internal fun RegularMessageContent(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
 
@@ -546,12 +550,13 @@ internal fun RegularMessageContent(
  *
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @Composable
 internal fun DefaultMessageTextContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit
+    onQuotedMessageClick: (Message) -> Unit,
 ) {
     val quotedMessage = message.replyTo
 

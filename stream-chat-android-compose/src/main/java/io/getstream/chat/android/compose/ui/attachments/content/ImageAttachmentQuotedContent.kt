@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * currently uploading images.
  *
  * @param attachment The attachment we wish to show to users.
+ * @param modifier Modifier for styling.
  */
 @Composable
 public fun ImageAttachmentQuotedContent(

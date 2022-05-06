@@ -538,7 +538,6 @@ internal class ChannelLogic(
      * @param baseMessageId Message id of the last available. Can be null then it calculates the last available message.
      */
     private fun watchChannelRequest(pagination: Pagination, limit: Int, baseMessageId: String?): WatchChannelRequest {
-        println("base message id: $baseMessageId, pagination: $pagination")
         val messageId = baseMessageId ?: getLoadMoreBaseMessageId(pagination)
         return QueryChannelPaginationRequest(limit).apply {
             messageId?.let {

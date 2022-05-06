@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
  * @param otherMessageBubble The bubble that wraps other people's message content.
  * @param inputField The shape of the input field.
  * @param attachment The shape of attachments.
+ * @param quotedAttachment The shape of quoted attachments.
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
  * @param suggestionList The shape of suggestion list popup.

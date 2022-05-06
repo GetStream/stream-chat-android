@@ -92,6 +92,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param rippleTheme Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
+ * @param quoteAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
@@ -109,9 +110,9 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    quoteAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    quoteAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),

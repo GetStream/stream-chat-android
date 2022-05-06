@@ -203,9 +203,8 @@ private val URL_SCHEMES = listOf("http://", "https://")
  *
  * @return The annotated String, with clickable links, if applicable.
  */
-
 @Composable
-internal fun buildAnnotatedMessageText(message: Message): AnnotatedString {
+private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
     val text = message.text
 
     return buildAnnotatedString {

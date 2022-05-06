@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param message Message to show.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

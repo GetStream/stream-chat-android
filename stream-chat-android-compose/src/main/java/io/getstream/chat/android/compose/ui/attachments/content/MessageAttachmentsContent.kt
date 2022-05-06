@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * @param message The message that contains the attachments.
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
+ * @param isQuote Determines if attachment is inside a quoted message or not.
  */
 @Composable
 public fun MessageAttachmentsContent(

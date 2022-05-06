@@ -60,7 +60,7 @@ import kotlin.math.abs
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
- * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
+ * @param onScrolledToBottom Handler when the user reaches the bottom of the list, also used for pagination.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -73,9 +73,8 @@ public fun Messages(
     messagesState: MessagesState,
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
-    onMessagesBottomReached: (Message) -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
-    onScrolledToBottom: () -> Unit,
+    onScrolledToBottom: (Message?) -> Unit,
     modifier: Modifier = Modifier,
     onScrolledToSelectedMessage: (Message) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
@@ -109,11 +108,9 @@ public fun Messages(
                 }
 
                 if (index == 0 && lazyListState.isScrollInProgress) {
-                    onScrolledToBottom()
-                    if (messages.isNotEmpty()) {
-                        (messagesState.messageItems.first { it is MessageItemState } as? MessageItemState)
-                            ?.message?.let(onMessagesBottomReached)
-                    }
+                    val message = (messagesState.messageItems.first { it is MessageItemState } as? MessageItemState)
+                        ?.message
+                    onScrolledToBottom(message)
                 }
 
                 if (!endOfMessages && index == messages.lastIndex &&
@@ -199,7 +196,11 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                 onScrolledToSelectedMessage(scrollToMessage.message)
             }
 
-            else -> Unit
+            else -> {
+                if (scrollToMessage != null && !lazyListState.isScrollInProgress && !messagesState.isLoading) {
+                    onScrolledToSelectedMessage(scrollToMessage.message)
+                }
+            }
         }
     }
 

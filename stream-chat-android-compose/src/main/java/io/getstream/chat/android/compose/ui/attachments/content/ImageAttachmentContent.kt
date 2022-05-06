@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,7 +70,13 @@ public fun ImageAttachmentContent(
 
     Row(
         modifier
-            .clip(ChatTheme.shapes.attachment),
+            .clip(ChatTheme.shapes.attachment)
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {},
+                onLongClick = { onLongItemClick(message) }
+            ),
         horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         val attachments =
