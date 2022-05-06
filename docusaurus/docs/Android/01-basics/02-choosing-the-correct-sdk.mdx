@@ -1,8 +1,7 @@
 # Choosing The Correct SDK
 
-There are many factors which contribute to deciding that a technology is appropriate for you and your team, and here at
-Stream we offer two different UI SDKs.
-One is UI Components which relies on the more traditional combination of XML and `View`s, and the other is Compose, which
+There are many factors which contribute to deciding that a technology is appropriate for you and your team and here at
+Stream we offer two different Android UI SDKs. One is **UI Components** which relies on the more traditional combination of XML and `View`s, and the other is **Compose**, which
 uses Jetpack Compose.
 
 In this guide we will present a detailed explanation of the practical differences between the two.
@@ -22,21 +21,21 @@ First, let's take a look into a high level overview of the differences between t
 
 |                                 |                                    UI Components                                     |                               Compose                                |
 |:-------------------------------:|:------------------------------------------------------------------------------------:|:--------------------------------------------------------------------:|
-| Main Building Blocks (no.)      |                                          5                                           |                                  5                                   |
-| Secondary Building Blocks (no.) |                                         ~10                                          |                                 ~70                                  |
-|      Ease of Theming            |                                     ✅ <br/> Good                                    |       ✅ <br/> Excellent. Also allows for easy runtime changes.      |
-|  Runtime Customizability   |                             ✅ <br/> As a custom feature                              |                  ✅ <br/> As idiomatic Compose code                   |
-|      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more files generated or changed) | ✅ Low <br/> (Less boilerplate, fewer files generated or changed) |
-|    Stateless Components    |                                          ⛔️                                          |                                  ✅                               |
-|  Extensive Layout Changes  |                                          ⛔️                                          |                                  ✅ <br/> Using slot APIs                                       |
+| Main Building Blocks* (no.)      |                                          5                                           |                                  5                                   |
+| Secondary Building Blocks* (no.) |                                         ~10                                          |                                 ~70                                  |
+|      Ease of Theming            |                                     ✅ Good                                    | ✅ Excellent. Supported runtime theme changes.      |
+|  Runtime Customizability   |  ✅ As a custom feature                                  | ✅ As idiomatic Compose code                   |
+|      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more files generated or changed)       | ✅ Low impact with fewer files generated or changed |
+|    Stateless Components*    | ⛔️ Main components support only ViewModel driven state.                                | ✅ Fully-independent variants that don't use ViewModels.                               |
+|  Extensive Layout Changes  | ⛔️No out-of-the-box support for replacing whole views.                                 | ✅ Using slot APIs*                                       |
 
-- Main building blocks: Large elements crucial to a chat experience such as lists, headers and message input.
-- Secondary building blocks: Smaller elements such as avatars, typing indicators, etc. Building Composables is a lot
-  easier than building Views, this enables us to deliver a higher amount of content.
-- Stateless Components: UI Components which do not hold state themselves, rather they are representations of state.
-  These lead to more reliable state updates.
-- Slots: APIs that let you replace a part of the UI with your own. They allow easy UI changes and the ability to decide
-  which parts of the UI you want to keep original, and which you want to customize.
+- **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message input.
+- **Secondary building blocks**: Smaller elements such as avatars, typing indicators, timestamps etc. Building Composables is a lot
+  easier than building Views and this enables us to deliver more reusable components.
+- **Stateless Components**: Components that don't rely on ViewModels and use only pure state, but offer the same behavior as our ViewModel-powered components. These give
+you the option of using your custom data sources to render the data.
+- **Slot APIs**: Parts of a View or Composable layout that let you replace them with your custom UI. They allow easy UI changes and the ability to decide
+  which parts of the UI you want to keep original and which you want to customize.
 
 ### Extensive Layout Changes
 
@@ -51,9 +50,9 @@ Let's see that in action:
 Notice how the image shows the header broken down into 3 distinct pieces?
 All of these are slots which allow you to pass in your own content.
 
-We are used to seeing small changes in XML, such as changing the background color, setting a different drawable inside an `ImageView` or so on, but Compose enables much more radical changes.
+We are used to seeing small changes in XML, such as changing the background color or setting a different drawable inside an `ImageView`, but Compose enables much more radical changes.
 
-In just dozen simple lines, you can leverage Compose to re-order and customize the content of this header like so:
+In just a few simple lines, you can leverage Compose to re-order and customize the content of this header like so:
 
 ![Custom MessageListHeader component](../assets/compose_custom_message_list_header_component.png)
 
@@ -67,7 +66,9 @@ This level of customization is miles above anything we can offer you with UI Com
 If you want a stock chat experience that works out of the box, either SDK is a good option. However, if you want a highly customizable chat, our Compose SDK is unparalleled in this regard.
 
 Don't feel apprehensive about trying it out if your developers are not familiar with Jetpack Compose and/or if your app is written using XML and Views.
-Jetpack Compose is easy to learn and is inter-operable with View based technology. The time saved by not having to write boilerplate code such as `ViewHolder`s will most likely offset the time spent on learning Jetpack Compose. On top of that, Compose code is often easier to maintain and produces fewer bugs.
+Jetpack Compose is easy to learn and is interoperable with View based technology. The time saved by not having to write boilerplate code such as `ViewHolder`s will most likely offset the time spent on learning Jetpack Compose.
+
+On top of that, Compose code is fully state-driven and its lifecycle is much simpler than that of Views, so it's often easier to maintain. Because of a simpler lifecycle, it produces fewer bugs and runtime crashes, as compared to Views, where changing View properties can cause a crash if you don't follow the lifecycle correctly.
 
 ## Implementation Cost
 
@@ -76,14 +77,16 @@ If you want to check out how to build those, take a look at the [UI Components](
 
 | SDK | Time Cost | Development Cost |
 |:---:|:-------------:|:-----: |
-| UI Components | Good | 4 files, 180 line insertions, 12 line deletions |
-| Compose | Excellent | 2 files, 86 line insertions, 29 line deletions |
+| **UI Components** | Good | 4 files, 180 line insertions, 12 line deletions |
+| **Compose** | Excellent | 2 files, 86 line insertions, 29 line deletions |
 
 - Development Cost: Changes in Gradle and Manifest files were not counted, only the code changes directly contributing to chat implementation were counted.
 
-You are able to extract a full chat experience with rich multimedia support in under 200 lines of code for UI Components, and under 100 for Compose!
+You are able to extract a full chat experience with rich multimedia support in under 200 lines of code for UI Components and under 100 for Compose!
 
-Notice how due to a lack of XML layouts Compose generates fewer new files and has fewer lines of code changed?
+Notice how Compose Compose generates fewer new files and has fewer lines of code changed, due to a lack of XML layouts?
+Also all the code you write is Kotlin, so it's much easier to context shift, which makes the development experience faster and more smooth.
+
 As you naturally move toward a more customized chat experience, this difference will only grow.
 
 ### Results Conclusion
@@ -92,8 +95,7 @@ Both technologies provide good developer experience, however Compose simply outm
 
 ## Performance
 
-There are many important aspects to what makes a certain technology a good candidate for your project, and performance
-is one of them.
+There are many important aspects to what makes a certain technology a good candidate for your project and performance is one of them.
 Having that in mind we tested the building blocks of our SDK using
 Google's [Macrobenchmark](https://developer.android.com/studio/profile/macrobenchmark-overview).
 
@@ -117,7 +119,7 @@ the app has connected to the server, logged the user in, fetched a set of channe
 
 #### Cold Startup
 
-This type of startup means that the app's process is not alive, and has to be started. Once the process has been
+This type of startup means that the app's process is not alive and has to be started. Once the process has been
 started the app will be launched and the Activity created.
 
 The average time that it takes for UI Components to complete the startup procedure is 397.5ms while it takes Compose
@@ -149,7 +151,7 @@ counts.
 
 UI Components manage to draw all of the frames without any overrun while Compose displayed some overrun in 5% of the
 frames.
-Neither displayed any visible UI jank.
+While there is a small amount of overrun in Compose, neither SDK displayed any visible UI jank.
 
 You can check out the CPU load graphs down below.
 
@@ -174,7 +176,7 @@ The channel contains mixed types of messages, including plain text messages, lin
 Here we see a slight reversal of fortunes. Once again both apps manage to draw the frames without any frame overrun the
 vast majority of times, however they do experience some frame overrun 1% of the time with Compose performing better than
 UI Components.
-No UI jank was visible in either SDK.
+Again, no UI jank was visible in either SDK.
 
 #### UI Components:
 
@@ -217,12 +219,16 @@ collection events.
 
 ### Results Conclusion
 
-Both SDKs are good performers with slightly different strong points. UI Components dealing with a list of channels
+Both SDKs are good performers with slightly different strong points. UI Components renders a list of channels
 slightly better while Compose renders a list of messages better.
-Performance wise, none of these results exclude the other.
 
-It should be noted though that Jetpack Compose is a much more recent technology and that as such, it will certainly
-receive performance improvements in the future. If you choose our Compose SDK, you should probably expect a performance
+Performance wise, none of these results exclude the other and both SDKs show no UI jank or high memory overhead after regular garbage collection events.
+
+It should be noted that the View toolkit has been active for more than a decade and has been the native way of rendering UI in Android, so it's bound to have better performance
+in some scenarios.
+
+However, Jetpack Compose has been out for less than a year - it's a much more recent technology and that as such, it will keep
+receiving performance improvements in the future. It already outperforms our UI Components SDK in some aspects, but if you choose our Compose SDK, you should expect a performance
 bump with every Jetpack Compose Compiler and Runtime improvement.
 
 ## SDK Size Comparison
@@ -242,5 +248,5 @@ For a side by side size comparison see the following table:
 
 Both SDKs pack a lot of features into a minuscule application size. You can expect minimal size overhead for a fully functional chat experience with broad multimedia support.
 
-UI Components still lead the way here. This is because we have to include View reliant technology for certain solutions such as our media player.
-As technology progresses Compose alternatives will be offered for these and we will manage to substantially reduce the size of our Compose SDK.
+UI Components still lead the way here. This is because, currently in Compose, we have to include View reliant technology for certain solutions such as our media player.
+As the framework improves, we'll get Compose alternatives for these scenarios and we will manage to completely remove the View toolkit in Compose, substantially reducing the size of our Compose SDK.
