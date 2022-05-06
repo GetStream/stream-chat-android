@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 
 private const val MAX_TIME_OF_STATE_MILLIS = 300
 
@@ -42,8 +43,7 @@ internal class ChatClientStateCalls internal constructor(
 ) {
 
     private val requestTimeMap: MutableMap<Int, Date> = ConcurrentHashMap()
-
-    private var globalLastRequest: Date? = null
+    private var globalLastRequest: AtomicReference<Date?> = AtomicReference()
 
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
@@ -102,15 +102,15 @@ internal class ChatClientStateCalls internal constructor(
             block.invoke()
 
             requestTimeMap[queryHashCode] = now
-            globalLastRequest = now
+            globalLastRequest.set(now)
         }
     }
 
     private fun evaluateGlobalState() {
-        if (globalLastRequest == null) return
+        val lastRequest = globalLastRequest.get() ?: return
 
         val now = Date()
-        val diff = now.time - globalLastRequest!!.time
+        val diff = now.time - lastRequest.time
 
         if (diff > MAX_TIME_OF_STATE_MILLIS) {
             requestTimeMap.clear()
