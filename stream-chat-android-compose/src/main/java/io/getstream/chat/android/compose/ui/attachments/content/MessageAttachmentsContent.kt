@@ -41,14 +41,14 @@ public fun MessageAttachmentsContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    isQuote: Boolean = false
+    isQuote: Boolean = false,
 ) {
     if (message.attachments.isNotEmpty()) {
         val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != ModelType.attach_giphy }
 
         val quoteAttachmentFactory = if (isQuote) {
             ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
-        }else {
+        } else {
             null
         }
 
@@ -72,7 +72,12 @@ public fun MessageAttachmentsContent(
 
         when {
             quoteAttachmentFactory != null -> {
-                quoteAttachmentFactory.content(Modifier.padding(top = 6.dp, bottom = 6.dp, start = 8.dp).size(36.dp), attachmentState)
+                quoteAttachmentFactory.content(
+                    Modifier
+                        .padding(top = 6.dp, bottom = 6.dp, start = 8.dp)
+                        .size(36.dp),
+                    attachmentState
+                )
             }
             attachmentFactory != null -> {
                 attachmentFactory.content(Modifier.padding(2.dp), attachmentState)

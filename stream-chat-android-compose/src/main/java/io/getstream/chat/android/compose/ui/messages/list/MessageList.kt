@@ -80,7 +80,8 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
+    onMessagesBottomReached: (Message) -> Unit = { viewModel.loadNewerMessages(it.id) },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
@@ -89,12 +90,16 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it) },
-    onScrolledToQuotedMessage: (Message) -> Unit = { viewModel.scrollToMessage(null) },
+    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedToMessage(it) },
+    onScrolledToQuotedMessage: (Message) -> Unit = { viewModel.scrollToSelectedToMessage(null) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState, onScrolledToQuotedMessage, viewModel::loadMore)
+        DefaultMessagesHelperContent(
+            messagesState = viewModel.currentMessagesState,
+            lazyListState = lazyListState,
+            onScrolledToSelectedMessage = onScrolledToQuotedMessage
+        )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
@@ -115,6 +120,7 @@ public fun MessageList(
         currentState = viewModel.currentMessagesState,
         lazyListState = lazyListState,
         onMessagesStartReached = onMessagesStartReached,
+        onMessagesBottomReached = onMessagesBottomReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -126,7 +132,7 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
-        onScrolledToSelectedMessage = onScrolledToQuotedMessage,
+        onScrolledToSelectedMessage = onScrolledToQuotedMessage
     )
 }
 
@@ -224,6 +230,7 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
+    onMessagesBottomReached: (Message) -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -233,11 +240,10 @@ public fun MessageList(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onScrolledToSelectedMessage: (Message) -> Unit = {},
-    loadNextPage: () -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(currentState, lazyListState, onScrolledToSelectedMessage, loadNextPage)
+        DefaultMessagesHelperContent(currentState, lazyListState, onScrolledToSelectedMessage)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
@@ -262,6 +268,7 @@ public fun MessageList(
             messagesState = currentState,
             lazyListState = lazyListState,
             onMessagesStartReached = onMessagesStartReached,
+            onMessagesBottomReached = onMessagesBottomReached,
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,

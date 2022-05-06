@@ -45,11 +45,11 @@ internal fun Attachment.hasLink(): Boolean = titleLink != null || ogUrl != null
  * @return If the [Attachment] is a file or not.
  */
 internal fun Attachment.isFile(): Boolean {
-    return uploadId != null
-        || upload != null
-        || type == ModelType.attach_file
-        || type == ModelType.attach_video
-        || type == ModelType.attach_audio
+    return uploadId != null ||
+        upload != null ||
+        type == ModelType.attach_file ||
+        type == ModelType.attach_video ||
+        type == ModelType.attach_audio
 }
 
 /**

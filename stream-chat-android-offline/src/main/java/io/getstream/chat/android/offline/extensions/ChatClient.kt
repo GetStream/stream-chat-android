@@ -233,6 +233,30 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
 }
 
 /**
+ * Loads newer messages for the channel.
+ *
+ * @param messageId The oldest message in the list after which we request data.
+ * @param cid The full channel id i.e. "messaging:123".
+ * @param messageLimit How many new messages to load.
+ *
+ * @return The channel wrapped in [Call]. This channel contains older requested messages.
+ */
+public fun ChatClient.loadNewerMessages(messageId: String, cid: String, messageLimit: Int): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult<Channel>(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId).run {
+                loadNewerMessages(messageId = messageId, limit = messageLimit)
+            }
+        } else {
+            cidValidationResult
+        }
+    }
+}
+
+/**
  * Cancels the message of "ephemeral" type.
  * Removes the message from local storage and state.
  *
@@ -272,6 +296,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  * @param messageId The id of the message.
  * @param olderMessagesOffset How many new messages to load before the requested message.
  * @param newerMessagesOffset How many new messages to load after the requested message.
+ * @param clearMessages If the channel messages should be cleared before messages fetch.
  *
  * @return Executable async [Call] responsible for loading a message.
  */
@@ -281,6 +306,7 @@ public fun ChatClient.loadMessageById(
     messageId: String,
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
+    clearMessages: Boolean = false
 ): Call<Message> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Message>(cid)
@@ -293,6 +319,7 @@ public fun ChatClient.loadMessageById(
                 val (channelType, channelId) = cid.cidToTypeAndId()
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
+                    if (clearMessages) clearChannelMessages()
                     storeMessageLocally(listOf(message))
                     upsertMessages(listOf(message))
                     loadOlderMessages(newerMessagesOffset, messageId)

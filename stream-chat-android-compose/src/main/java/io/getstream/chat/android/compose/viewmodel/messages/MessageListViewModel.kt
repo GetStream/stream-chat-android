@@ -48,10 +48,8 @@ import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.NoScroll
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.Scroll
-import io.getstream.chat.android.compose.state.messages.ScrollToMessage
+import io.getstream.chat.android.compose.state.messages.ScrollToMessageState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -74,6 +72,8 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
@@ -243,6 +243,11 @@ public class MessageListViewModel(
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
 
     /**
+     * Represents the message we wish to scroll to
+     */
+    private var scrollToMessageState: ScrollToMessageState? by mutableStateOf(null)
+
+    /**
      * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
      */
     private val logger = ChatLogger.get("MessageListViewModel")
@@ -303,10 +308,12 @@ public class MessageListViewModel(
 
                         messagesState = if (hasNewMessage) {
                             val newMessageState = getNewMessageState(newLastMessage)
+                            val scrollToMessage = determineScrollToMessage(newState, newLastMessage)
 
                             newState.copy(
                                 newMessageState = newMessageState,
-                                unreadCount = getUnreadMessageCount(newMessageState)
+                                unreadCount = getUnreadMessageCount(newMessageState),
+                                scrollToMessageState = scrollToMessage
                             )
                         } else {
                             newState
@@ -317,6 +324,33 @@ public class MessageListViewModel(
                             setCurrentChannel(channel)
                         }
                     }
+            }
+        }
+    }
+
+    /**
+     * Determines if the dataset has a new message to which we need to scroll at.
+     *
+     * @param newState New list [MessagesState] after new data arrives.
+     * @param newLastMessage New last message arrived with [newState].
+     *
+     * @return Returns if we need to scroll to a message, otherwise null.
+     */
+    private fun determineScrollToMessage(newState: MessagesState, newLastMessage: Message?): ScrollToMessageState? {
+        return if (messagesState.scrollToMessageState != null) {
+            messagesState.scrollToMessageState
+        } else {
+            val currentSize = messagesState.messageItems.size
+            val lastSize = newState.messageItems.size
+
+            val diff = lastSize - currentSize
+
+            // if paginating to newer messages and if there are more than 5 new items a new page
+            // has been queried and we don't want to keep scrolling down all the way
+            if (diff in 0..NewMessageLimit) {
+                newLastMessage?.let { ScrollToMessageState.ScrollToNewMessage(it) }
+            } else {
+                messagesState.scrollToMessageState
             }
         }
     }
@@ -480,35 +514,30 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user loads more data by reaching the end of the current messages.
+     * Triggered when the user loads more data by reaching the top of the current messages.
      */
-    public fun loadMore() {
+    public fun loadOlderMessages() {
         if (chatClient.globalState.isOffline()) return
         val messageMode = messageMode
 
-        if (currentMessagesState.scrollToMessage is Scroll) {
-            val scroll = currentMessagesState.scrollToMessage as Scroll
-            if (!scroll.shouldLoadNext()) {
-                if (isInThread) {
-                    threadMessagesState = threadMessagesState.copy(scrollToMessage = NoScroll)
-                }else {
-                    messagesState = messagesState.copy(scrollToMessage = NoScroll)
-                }
-                return
-            }
-
-            if (isInThread) {
-                threadMessagesState = threadMessagesState.copy(scrollToMessage = scroll.copy(currentScrollLoads = scroll.currentScrollLoads + 1))
-            }else {
-                messagesState = messagesState.copy(scrollToMessage = scroll.copy(currentScrollLoads = scroll.currentScrollLoads + 1))
-            }
-        }
-
         if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
+            threadLoadOlderMessages(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
+        }
+    }
+
+    /**
+     * Triggered when the user loads more data by reaching the bottom of the current messages.
+     */
+    public fun loadNewerMessages(messageId: String) {
+        if (chatClient.globalState.isOffline()) return
+        val messageMode = messageMode
+
+        if (messageMode !is MessageMode.MessageThread) {
+            messagesState = messagesState.copy(isLoadingMore = true)
+            chatClient.loadNewerMessages(messageId, channelId, messageLimit).enqueue()
         }
     }
 
@@ -517,7 +546,7 @@ public class MessageListViewModel(
      *
      * @param threadMode Current thread mode.
      */
-    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
+    private fun threadLoadOlderMessages(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
@@ -529,6 +558,21 @@ public class MessageListViewModel(
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
             logger.logW("Thread state must be not null for offline plugin thread load more!")
         }
+    }
+
+    /**
+     * Loads the selected message we wish to scroll to when the message can't be found in the current list.
+     *
+     * @param message The selected message we wish to scroll to.
+     */
+    private fun loadMessage(message: Message) {
+        val cid = channelState.value?.cid
+        if (cid == null || chatClient.globalState.isOffline()) {
+            scrollToMessage(null)
+            return
+        }
+
+        chatClient.loadMessageById(cid, message.id, DefaultMessageLimit, DefaultMessageLimit, true).enqueue()
     }
 
     /**
@@ -1024,14 +1068,36 @@ public class MessageListViewModel(
     }
 
     /**
-     * TODO
+     * Scrolls to message if in list.
+     *
+     * @param message The message we wish to scroll to or null when scroll to or canceled.
      */
-    public fun scrollToMessage(message: Message?, maxLoads: Int = DefaultMaxNextLoadCallsOnScrollTo) {
-        val scroll: ScrollToMessage = if (message != null) Scroll(message = message, maxScrollLoads = maxLoads) else NoScroll
+    public fun scrollToSelectedToMessage(message: Message?) {
+        if (message == null) scrollToMessage(null)
+
+        val isMessageInList = currentMessagesState.messageItems.firstOrNull {
+            it is MessageItemState && it.message.id == message?.id
+        } != null
+
+        if (isMessageInList) {
+            scrollToMessage(message = message)
+        } else {
+            message?.let { loadMessage(message = it) }
+        }
+    }
+
+    /**
+     * Scrolls to message if in list otherwise get the message from backend.
+     *
+     * @param message The message we wish to scroll to or null when scroll to or canceled.
+     */
+    private fun scrollToMessage(message: Message?) {
+        scrollToMessageState = message?.let { ScrollToMessageState.ScrollToSelectedMessage(it) }
+
         if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(scrollToMessage = scroll)
-        }else {
-            messagesState = messagesState.copy(scrollToMessage = scroll)
+            threadMessagesState = threadMessagesState.copy(scrollToMessageState = scrollToMessageState)
+        } else {
+            messagesState = messagesState.copy(scrollToMessageState = scrollToMessageState)
         }
     }
 
@@ -1053,8 +1119,8 @@ public class MessageListViewModel(
         private const val RemoveMessageFocusDelay: Long = 2000
 
         /**
-         * TODO
+         * Limit after in which the last message of page is treated as last message.
          */
-        private const val DefaultMaxNextLoadCallsOnScrollTo: Int = 5
+        private const val NewMessageLimit: Int = 3
     }
 }
