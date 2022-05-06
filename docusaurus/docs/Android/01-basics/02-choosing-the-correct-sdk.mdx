@@ -1,10 +1,14 @@
-# Choosing The Correct SDK
+# Choosing The Right SDK
 
 There are many factors which contribute to deciding that a technology is appropriate for you and your team and here at
 Stream we offer two different Android UI SDKs. One is **UI Components** which relies on the more traditional combination of XML and `View`s, and the other is **Compose**, which
 uses Jetpack Compose.
 
 In this guide we will present a detailed explanation of the practical differences between the two.
+
+:::note
+If you're just interested in a TL;DR / our final overview of the SDKs, [scroll to the bottom](#the-right-sdk-for-you).
+:::
 
 ## Customizability
 
@@ -250,3 +254,15 @@ Both SDKs pack a lot of features into a minuscule application size. You can expe
 
 UI Components still lead the way here. This is because, currently in Compose, we have to include View reliant technology for certain solutions such as our media player.
 As the framework improves, we'll get Compose alternatives for these scenarios and we will manage to completely remove the View toolkit in Compose, substantially reducing the size of our Compose SDK.
+
+## The Right SDK for You
+
+We've shared several points of comparison between our **UI Components (XML)** and **Compose (Jetpack Compose)** SDKs. But here's a short summary.
+
+If your use case requires a very high level of customization, runtime theming changes, replacing whole parts of the default UI or stateless components that don't rely on our ViewModels,
+the **Compose SDK is the way to go**. It offers deep customization through several layers - the theme, modifiers for components, bound and stateless component overloads, smaller reusable components and slot APIs.
+
+If, instead, you're looking for a simpler, less customizable SDK which currently offers slightly better performance in some scenarios or your project is limited by technology, then
+the **UI Components SDK is a great option**. It still offers a fair amount of customization through the theme and its attributes and some programmatic ways to customize the UI.
+
+Whichever SDK you choose, **we guarantee you'll be happy and we'll provide amazing support** with your integration, through detailed documentation, guides and direct support!
