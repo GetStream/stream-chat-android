@@ -430,14 +430,20 @@ internal class EventHandlerImpl(
                 is MemberRemovedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.removeMember(currentUserId, event.user.id)
+                            channel.removeMember(event.user.id)
+                                .removeMembership(currentUserId)
                         )
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
-                    batch.addChannel(
-                        event.channel.removeMembership(currentUserId)
-                    )
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        batch.addChannel(
+                            channel.removeMembership(currentUserId).apply {
+                                memberCount = event.channel.memberCount
+                                members = event.channel.members
+                            }
+                        )
+                    }
                 }
                 is ChannelUpdatedEvent -> {
                     batch.addChannel(event.channel)

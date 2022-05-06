@@ -57,9 +57,8 @@ internal fun Channel.updateLastMessage(message: Message) {
  * @param currentUserId User id of the currently logged in user.
  * @param memberUserId User id of the removed member.
  */
-internal fun Channel.removeMember(currentUserId: String?, memberUserId: String?): Channel {
+internal fun Channel.removeMember(memberUserId: String?): Channel {
     memberUserId ?: return this
-    if (currentUserId == memberUserId) return this
     members = members.filterNot { it.user.id == memberUserId }
     memberCount -= 1
     return this
@@ -151,7 +150,7 @@ internal fun Channel.updateMembership(memberUserId: String?, banned: Boolean): C
 }
 
 /**
- * Sets [Channel.membership] to null if [currentUser] equals to [Member.user].
+ * Sets [Channel.membership] to null if [currentUserId] equals to [membership.user.id].
  *
  * @param currentUserId User id of the currently logged in user.
  */
