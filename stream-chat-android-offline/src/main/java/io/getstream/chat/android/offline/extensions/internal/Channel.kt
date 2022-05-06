@@ -22,7 +22,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.logging.StreamLog
 import java.util.Date
+
+private const val TAG = "Chat:ChannelTools"
 
 /**
  * Returns all users including watchers of a channel that are associated with it.
@@ -130,8 +133,12 @@ internal fun Channel.addMembership(currentUserId: String?, member: Member?): Cha
  * @param member Updated member.
  */
 internal fun Channel.updateMembership(member: Member?): Channel {
-    if (member?.user?.id == membership?.user?.id) {
+    val memberUserId = member?.user?.id
+    val membershipUserId = membership?.user?.id
+    if (memberUserId == membershipUserId) {
         membership = member
+    } else StreamLog.w(TAG) {
+        "[updateMembership] rejected; memberUserId($memberUserId) != membershipUserId($membershipUserId)"
     }
     return this
 }
