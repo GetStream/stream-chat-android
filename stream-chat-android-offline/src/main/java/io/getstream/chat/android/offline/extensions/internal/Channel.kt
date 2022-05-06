@@ -79,7 +79,7 @@ internal fun Channel.addMember(member: Member?): Channel {
 }
 
 /**
- * Updates member to the [Channel.members].
+ * Updates [Channel] member.
  *
  * @param member Updated member.
  */
@@ -95,12 +95,12 @@ internal fun Channel.updateMember(member: Member?): Channel {
 }
 
 /**
- * Updates member in the [Channel.members].
+ * Updates [Member.banned] property inside the [Channel.members].
  *
  * @param memberUserId Updated member user id.
  * @param banned Shows whether a user is banned or not in this channel.
  */
-internal fun Channel.updateMember(memberUserId: String?, banned: Boolean): Channel {
+internal fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean): Channel {
     members = members.map { member ->
         member.apply {
             if (this.user.id == memberUserId) {
@@ -142,7 +142,7 @@ internal fun Channel.updateMembership(member: Member?): Channel {
  * @param memberUserId Member user id.
  * @param banned Shows whether a user is banned or not in this channel.
  */
-internal fun Channel.updateMembership(memberUserId: String?, banned: Boolean): Channel {
+internal fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean): Channel {
     if (membership?.user?.id == memberUserId) {
         membership?.banned = banned
     }

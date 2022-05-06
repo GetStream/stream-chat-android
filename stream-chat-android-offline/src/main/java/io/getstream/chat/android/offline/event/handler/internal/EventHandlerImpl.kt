@@ -83,7 +83,9 @@ import io.getstream.chat.android.offline.extensions.internal.mergeReactions
 import io.getstream.chat.android.offline.extensions.internal.removeMember
 import io.getstream.chat.android.offline.extensions.internal.removeMembership
 import io.getstream.chat.android.offline.extensions.internal.updateMember
+import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
 import io.getstream.chat.android.offline.extensions.internal.updateMembership
+import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -302,7 +304,7 @@ internal class EventHandlerImpl(
         // actually fetch the data
         val batch = batchBuilder.build(repos, mutableGlobalState._user)
 
-        val currentUserId = mutableGlobalState.user.value?.id
+        val currentUserId = client.getCurrentUser()?.id
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
@@ -399,16 +401,16 @@ internal class EventHandlerImpl(
                 is ChannelUserBannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMember(event.user.id, banned = true)
-                                .updateMembership(event.user.id, banned = true)
+                            channel.updateMemberBanned(event.user.id, banned = true)
+                                .updateMembershipBanned(event.user.id, banned = true)
                         )
                     }
                 }
                 is ChannelUserUnbannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMember(event.user.id, banned = false)
-                                .updateMembership(event.user.id, banned = false)
+                            channel.updateMemberBanned(event.user.id, banned = false)
+                                .updateMembershipBanned(event.user.id, banned = false)
                         )
                     }
                 }
