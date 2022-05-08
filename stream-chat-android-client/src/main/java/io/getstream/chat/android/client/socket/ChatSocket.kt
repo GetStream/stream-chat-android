@@ -39,9 +39,6 @@ import kotlinx.coroutines.withContext
 import kotlin.math.pow
 import kotlin.properties.Delegates
 
-private const val RETRY_LIMIT = 3
-private const val DEFAULT_DELAY = 500
-
 @Suppress("TooManyFunctions", "LongParameterList")
 internal open class ChatSocket constructor(
     private val apiKey: String,
@@ -52,7 +49,7 @@ internal open class ChatSocket constructor(
     private val parser: ChatParser,
     private val coroutineScope: CoroutineScope,
 ) {
-    private val logger = ChatLogger.get("SocketService")
+    private val logger = ChatLogger.get("ChatSocket")
     private var connectionConf: ConnectionConf = ConnectionConf.None
     private var socket: Socket? = null
     private var eventsParser: EventsParser? = null
@@ -275,6 +272,11 @@ internal open class ChatSocket constructor(
                 eventUiHandler.post { call(listener) }
             }
         }
+    }
+
+    private companion object {
+        private const val RETRY_LIMIT = 3
+        private const val DEFAULT_DELAY = 500
     }
 
     internal sealed class ConnectionConf {
