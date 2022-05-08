@@ -23,18 +23,18 @@ import kotlin.reflect.KClass
 
 @InternalStreamChatApi
 @FSMBuilderMarker
-public class StateHandlerBuilder<S : Any, E : Any, S1 : S> {
+public class StateHandlerBuilder<STATE : Any, EVENT : Any, S1 : STATE> {
     @PublishedApi
-    internal val eventHandlers: MutableMap<KClass<out E>, FiniteStateMachine<S, E>.(S1, E) -> S> = mutableMapOf()
+    internal val eventHandlers: MutableMap<KClass<out EVENT>, (STATE, EVENT) -> STATE> = mutableMapOf()
 
     @FSMBuilderMarker
-    public inline fun <reified E1 : E> onEvent(noinline func: FiniteStateMachine<S, E>.(S1, E1) -> S) {
+    public inline fun <reified E : EVENT> onEvent(noinline func: STATE.(E) -> STATE) {
         @Suppress("UNCHECKED_CAST")
-        eventHandlers[E1::class] = func as FiniteStateMachine<S, E>.(S1, E) -> S
+        eventHandlers[E::class] = func as STATE.(EVENT) -> STATE
     }
 
     @PublishedApi
     @Suppress("UNCHECKED_CAST")
-    internal fun get(): Map<KClass<out E>, StateFunction<S, E>> =
-        eventHandlers as Map<KClass<out E>, StateFunction<S, E>>
+    internal fun get(): Map<KClass<out EVENT>, StateFunction<STATE, EVENT>> =
+        eventHandlers as Map<KClass<out EVENT>, StateFunction<STATE, EVENT>>
 }

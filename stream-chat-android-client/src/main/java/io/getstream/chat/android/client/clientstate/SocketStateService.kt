@@ -46,32 +46,32 @@ internal class SocketStateService {
             defaultHandler { state, event -> state.failedToHandleEvent(event) }
 
             state<SocketState.Idle> {
-                onEvent<ClientStateEvent.ConnectionRequested> { _, _ -> SocketState.Pending }
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> stay() }
+                onEvent<ClientStateEvent.ConnectionRequested> { SocketState.Pending }
+                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { stay() }
+                onEvent<ClientStateEvent.ConnectedEvent> { stay() }
+                onEvent<ClientStateEvent.ForceDisconnect> { stay() }
             }
 
             state<SocketState.Pending> {
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> SocketState.Connected(event.connectionId) }
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
-                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { event -> SocketState.Connected(event.connectionId) }
+                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
+                onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
             }
 
             state<SocketState.Connected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> SocketState.Disconnected }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
+                onEvent<ClientStateEvent.DisconnectedEvent> { SocketState.Disconnected }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { stay() }
+                onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
             }
 
             state<SocketState.Disconnected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> SocketState.Connected(event.connectionId) }
-                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
+                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
+                onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
+                onEvent<ClientStateEvent.ConnectedEvent> { event -> SocketState.Connected(event.connectionId) }
+                onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
             }
         }
     }

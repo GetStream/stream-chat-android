@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 public class FSMBuilder<S : Any, E : Any> {
     private lateinit var _initialState: S
     public val stateFunctions: MutableMap<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>> = mutableMapOf()
-    private var _defaultHandler: (S, E) -> Unit = { _, _ -> Unit }
+    private var _defaultHandler: (S, E) -> S = { s, _ -> s }
 
     @FSMBuilderMarker
     public fun initialState(state: S) {
@@ -34,7 +34,7 @@ public class FSMBuilder<S : Any, E : Any> {
     }
 
     @FSMBuilderMarker
-    public fun defaultHandler(defaultHandler: (S, E) -> Unit) {
+    public fun defaultHandler(defaultHandler: (S, E) -> S) {
         _defaultHandler = defaultHandler
     }
 

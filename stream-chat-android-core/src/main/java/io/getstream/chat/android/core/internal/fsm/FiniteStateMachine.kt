@@ -37,7 +37,7 @@ import kotlin.reflect.KClass
 public class FiniteStateMachine<S : Any, E : Any>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
-    private val defaultEventHandler: (S, E) -> Unit,
+    private val defaultEventHandler: (S, E) -> S,
 ) {
     private val mutex = Mutex()
     private var _state: S = initialState
