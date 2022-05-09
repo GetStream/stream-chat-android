@@ -140,6 +140,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -476,19 +477,16 @@ internal constructor(
     public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
-            val result = getGuestToken(userId, username).await()
-            if (result.isSuccess) {
-                val guestUser = result.data()
-                setUser(guestUser.user, ConstantTokenProvider(guestUser.token))
-            } else {
-                Result.error(result.error())
-            }.also { finalResult ->
-                logger.logV(
-                    "[connectAnonymousUser] completed: ${
-                    finalResult.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                    }"
-                )
-            }
+            getGuestToken(userId, username).await()
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token)) }
+                .data()
+                .also { result ->
+                    logger.logV(
+                        "[connectAnonymousUser] completed: ${
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        }"
+                    )
+                }
         }
     }
 
