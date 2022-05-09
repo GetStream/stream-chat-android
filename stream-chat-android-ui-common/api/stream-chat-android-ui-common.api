@@ -315,6 +315,7 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun syncStatusWithAttachments (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/utils/SyncStatus;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/StringKt {
