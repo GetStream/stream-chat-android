@@ -27,6 +27,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
+- Fixed bug that made impossible to retry attachments that were not fully sent. [3485](https://github.com/GetStream/stream-chat-android/pull/3485)
 
 ### ⬆️ Improved
 
