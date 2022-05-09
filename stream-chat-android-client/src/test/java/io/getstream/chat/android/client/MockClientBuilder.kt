@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
@@ -62,7 +62,7 @@ internal class MockClientBuilder(
         connectionId
     )
 
-    private lateinit var socket: FakeChatSocket
+    private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
     lateinit var api: MoshiChatApi
@@ -81,7 +81,7 @@ internal class MockClientBuilder(
 
         val tokenUtil: TokenUtils = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        socket = FakeChatSocket()
+        socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
 
