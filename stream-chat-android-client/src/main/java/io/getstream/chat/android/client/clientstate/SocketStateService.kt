@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.client.clientstate
 
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
 internal class SocketStateService {
+    private val logger = ChatLogger.get("SocketStateService")
+
     fun onConnected(connectionId: String) {
         stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(connectionId))
     }
@@ -43,19 +46,17 @@ internal class SocketStateService {
         FiniteStateMachine {
             initialState(SocketState.Idle)
 
-            defaultHandler { state, event -> state.failedToHandleEvent(event) }
+            defaultHandler { state, event ->
+                logger.logE("Cannot handle event $event while being in inappropriate state $this")
+                state
+            }
 
             state<SocketState.Idle> {
                 onEvent<ClientStateEvent.ConnectionRequested> { SocketState.Pending }
-                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { stay() }
-                onEvent<ClientStateEvent.ConnectedEvent> { stay() }
-                onEvent<ClientStateEvent.ForceDisconnect> { stay() }
             }
 
             state<SocketState.Pending> {
                 onEvent<ClientStateEvent.ConnectedEvent> { event -> SocketState.Connected(event.connectionId) }
-                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
                 onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
             }
@@ -63,12 +64,10 @@ internal class SocketStateService {
             state<SocketState.Connected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { SocketState.Disconnected }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { stay() }
                 onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
             }
 
             state<SocketState.Disconnected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { SocketState.Idle }
                 onEvent<ClientStateEvent.ConnectedEvent> { event -> SocketState.Connected(event.connectionId) }
                 onEvent<ClientStateEvent.ForceDisconnect> { SocketState.Idle }
@@ -78,9 +77,6 @@ internal class SocketStateService {
 
     internal val state
         get() = stateMachine.state
-
-    private fun SocketState.failedToHandleEvent(event: ClientStateEvent): Nothing =
-        error("Cannot handle event $event while being in inappropriate state $this")
 
     private sealed class ClientStateEvent {
         object ConnectionRequested : ClientStateEvent()

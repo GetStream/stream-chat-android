@@ -19,6 +19,7 @@ package io.getstream.chat.android.core.internal.fsm
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilder
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
+import io.getstream.chat.android.core.internal.fsm.builder.StateFunction
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -65,12 +66,8 @@ public class FiniteStateMachine<S : Any, E : Any>(
         runBlocking {
             mutex.withLock {
                 val currentState = _state
-                val handler = stateFunctions[currentState::class]?.get(event::class)
-                if (handler != null) {
-                    _state = handler.invoke(this@FiniteStateMachine, currentState, event)
-                } else {
-                    defaultEventHandler(currentState, event)
-                }
+                val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
+                _state = handler(currentState, event)
             }
         }
     }

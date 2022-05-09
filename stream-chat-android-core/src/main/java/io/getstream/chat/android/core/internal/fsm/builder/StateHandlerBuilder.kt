@@ -17,24 +17,22 @@
 package io.getstream.chat.android.core.internal.fsm.builder
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
-import io.getstream.chat.android.core.internal.fsm.StateFunction
 import kotlin.reflect.KClass
+
+internal typealias StateFunction<S, E> = (S, E) -> S
 
 @InternalStreamChatApi
 @FSMBuilderMarker
-public class StateHandlerBuilder<STATE : Any, EVENT : Any, S1 : STATE> {
+public class StateHandlerBuilder<STATE : Any, EVENT : Any, S : STATE> {
     @PublishedApi
-    internal val eventHandlers: MutableMap<KClass<out EVENT>, (STATE, EVENT) -> STATE> = mutableMapOf()
+    internal val eventHandlers: MutableMap<KClass<out EVENT>, StateFunction<STATE, EVENT>> = mutableMapOf()
 
     @FSMBuilderMarker
-    public inline fun <reified E : EVENT> onEvent(noinline func: STATE.(E) -> STATE) {
+    public inline fun <reified E : EVENT> onEvent(noinline func: S.(E) -> STATE) {
         @Suppress("UNCHECKED_CAST")
-        eventHandlers[E::class] = func as STATE.(EVENT) -> STATE
+        eventHandlers[E::class] = func as (STATE, EVENT) -> STATE
     }
 
     @PublishedApi
-    @Suppress("UNCHECKED_CAST")
-    internal fun get(): Map<KClass<out EVENT>, StateFunction<STATE, EVENT>> =
-        eventHandlers as Map<KClass<out EVENT>, StateFunction<STATE, EVENT>>
+    internal fun get(): Map<KClass<out EVENT>, StateFunction<STATE, EVENT>> = eventHandlers
 }
