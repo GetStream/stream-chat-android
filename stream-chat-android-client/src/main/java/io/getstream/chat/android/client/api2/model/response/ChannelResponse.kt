@@ -29,6 +29,7 @@ internal data class ChannelResponse(
     val channel: DownstreamChannelDto,
     val messages: List<DownstreamMessageDto> = emptyList(),
     val members: List<DownstreamMemberDto> = emptyList(),
+    val membership: DownstreamMemberDto?,
     val watchers: List<DownstreamUserDto> = emptyList(),
     val read: List<DownstreamChannelUserRead> = emptyList(),
     val watcher_count: Int = 0,

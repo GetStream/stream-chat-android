@@ -41,6 +41,7 @@ import java.util.Date
  * @param team Team the channel belongs to (multi-tenant only).
  * @param extraData A map of custom fields for the channel.
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
+ * @param membership Represents relationship of the current user to the channel.
  */
 public data class ChannelData(
     var channelId: String,
@@ -58,6 +59,7 @@ public data class ChannelData(
     var team: String = "",
     var extraData: MutableMap<String, Any> = mutableMapOf(),
     var ownCapabilities: Set<String> = setOf(),
+    var membership: Member? = null,
 ) {
 
     /**
@@ -83,6 +85,7 @@ public data class ChannelData(
         team = channel.team,
         ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
             ?: currentOwnCapabilities,
+        membership = channel.membership,
     )
 
     /**
@@ -124,7 +127,8 @@ public data class ChannelData(
             read = reads,
             team = team,
             memberCount = memberCount,
-            ownCapabilities = ownCapabilities
+            ownCapabilities = ownCapabilities,
+            membership = membership
         )
     }
 

@@ -62,6 +62,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         watcherCount = watcherCount,
         team = team,
         ownCapabilities = ownCapabilities,
+        membership = membership?.toEntity()
     )
 }
 
@@ -93,4 +94,5 @@ internal suspend fun ChannelEntity.toModel(
     watcherCount = watcherCount,
     team = team,
     ownCapabilities = ownCapabilities,
+    membership = membership?.toModel(getUser),
 )

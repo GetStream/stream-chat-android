@@ -282,9 +282,10 @@ public data class NotificationAddedToChannelEvent(
     override val channelType: String,
     override val channelId: String,
     override val channel: Channel,
+    override val member: Member,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasUnreadCounts
+) : CidEvent(), HasChannel, HasMember, HasUnreadCounts
 
 /**
  * Triggered when a channel is deleted
