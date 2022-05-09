@@ -168,16 +168,6 @@ public fun QuotedMessageText(
 
     val styledText = buildAnnotatedMessageText(quotedMessage)
 
-    val isEmojiOnly = message.isEmojiOnly()
-    val isSingleEmoji = message.isSingleEmoji()
-
-    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
-    val style = when {
-        isSingleEmoji -> ChatTheme.typography.singleEmoji
-        isEmojiOnly -> ChatTheme.typography.emojiOnly
-        else -> ChatTheme.typography.bodyBold
-    }
-
     val horizontalPadding = 8.dp
     val verticalPadding = 5.dp
 
@@ -187,9 +177,9 @@ public fun QuotedMessageText(
             bottom = verticalPadding,
             start = horizontalPadding,
             end = horizontalPadding
-        ),
+        ).clipToBounds(),
         text = styledText,
-        style = style
+        style = ChatTheme.typography.bodyBold
     )
 }
 

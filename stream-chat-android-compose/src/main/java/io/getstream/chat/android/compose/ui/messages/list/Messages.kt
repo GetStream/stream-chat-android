@@ -62,6 +62,7 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
+ * @param focusedMessageOffset Scroll to focused item offset.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
  * on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
@@ -76,8 +77,9 @@ public fun Messages(
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    focusedMessageOffset: Int = DefaultFocusedMessageOffset,
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState)
+        DefaultMessagesHelperContent(messagesState, lazyListState, focusedMessageOffset)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
@@ -133,11 +135,13 @@ public fun Messages(
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
+ * @param focusedMessageOffset Scroll to focused item offset.
  */
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    focusedMessageOffset: Int = DefaultFocusedMessageOffset
 ) {
     val (_, _, _, messages, _, _, newMessageState) = messagesState
     val coroutineScope = rememberCoroutineScope()
@@ -151,9 +155,9 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         firstVisibleItemIndex,
         focusedItemIndex
     ) {
-        if (focusedItemIndex != -1) {
+        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress) {
             coroutineScope.launch {
-                lazyListState.scrollToItem(focusedItemIndex)
+                lazyListState.scrollToItem(focusedItemIndex, focusedMessageOffset)
             }
         }
 
@@ -200,3 +204,8 @@ internal fun DefaultMessagesLoadingMoreIndicator() {
             .padding(8.dp)
     )
 }
+
+/**
+ * Default item offset so that the quoted message wont end up below scroll to bottom button.
+ */
+internal const val DefaultFocusedMessageOffset: Int = -200

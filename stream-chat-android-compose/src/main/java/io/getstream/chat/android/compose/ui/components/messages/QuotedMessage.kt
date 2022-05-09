@@ -91,21 +91,23 @@ public fun QuotedMessage(
                     }
 
                     QuotedMessageText(
-                        message = message,
+                        message = message
                     )
                 }
             }
         )
 
         if (isMyMessage) {
+            Spacer(modifier = Modifier.size(8.dp))
+
             Avatar(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier
+                    .padding(start = 2.dp)
+                    .size(24.dp),
                 imageUrl = user.image,
                 initials = user.initials,
                 textStyle = ChatTheme.typography.captionBold,
             )
-
-            Spacer(modifier = Modifier.size(8.dp))
         }
     }
 }

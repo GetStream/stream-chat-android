@@ -243,7 +243,7 @@ public class MessageListViewModel(
     /**
      * Represents the message we wish to scroll to.
      */
-    private var scrollToMessageState: Message? by mutableStateOf(null)
+    private var scrollToMessage: Message? = null
 
     /**
      * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
@@ -316,10 +316,9 @@ public class MessageListViewModel(
                         }
 
                         messagesState.messageItems.firstOrNull {
-                            it is MessageItemState && it.message.id == scrollToMessageState?.id
+                            it is MessageItemState && it.message.id == scrollToMessage?.id
                         }?.let {
                             focusMessage((it as MessageItemState).message.id)
-                            scrollToMessageState = null
                         }
 
                         lastLoadedMessage = newLastMessage
@@ -498,7 +497,7 @@ public class MessageListViewModel(
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
-            threadLoadOMore(messageMode)
+            threadLoadMore(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
@@ -510,7 +509,7 @@ public class MessageListViewModel(
      *
      * @param threadMode Current thread mode.
      */
-    private fun threadLoadOMore(threadMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
@@ -985,6 +984,10 @@ public class MessageListViewModel(
             }
         }
 
+        if (scrollToMessage?.id == messageId) {
+            scrollToMessage = null
+        }
+
         updateMessages(messages)
     }
 
@@ -1034,8 +1037,6 @@ public class MessageListViewModel(
      * @param message The message we wish to scroll null when scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
-        scrollToMessageState = message
-
         val isMessageInList = currentMessagesState.messageItems.firstOrNull {
             it is MessageItemState && it.message.id == message.id
         } != null
@@ -1043,6 +1044,7 @@ public class MessageListViewModel(
         if (isMessageInList) {
             focusMessage(message.id)
         } else {
+            scrollToMessage = message
             loadMessage(message = message)
         }
     }
