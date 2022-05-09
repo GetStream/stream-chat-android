@@ -29,7 +29,7 @@ import okhttp3.WebSocket
 @Suppress("TooManyFunctions")
 internal class EventsParser(
     private val parser: ChatParser,
-    private val service: ChatSocket,
+    private val chatSocket: ChatSocket,
 ) : okhttp3.WebSocketListener() {
 
     private var connectionEventReceived = false
@@ -113,19 +113,19 @@ internal class EventsParser(
 
     private fun onSocketError(error: ChatError) {
         if (!closedByClient) {
-            service.onSocketError(error)
+            chatSocket.onSocketError(error)
         }
     }
 
     private fun onConnectionResolved(event: ConnectedEvent) {
         if (!closedByClient) {
-            service.onConnectionResolved(event)
+            chatSocket.onConnectionResolved(event)
         }
     }
 
     private fun onEvent(event: ChatEvent) {
         if (!closedByClient) {
-            service.onEvent(event)
+            chatSocket.onEvent(event)
         }
     }
 

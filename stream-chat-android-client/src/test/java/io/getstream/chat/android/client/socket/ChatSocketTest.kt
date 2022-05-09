@@ -49,7 +49,7 @@ internal class ChatSocketTest {
     private lateinit var chatParser: ChatParser
     private lateinit var networkStateProvider: NetworkStateProvider
     private lateinit var socketListener: SocketListener
-    private lateinit var socketService: ChatSocket
+    private lateinit var chatSocket: ChatSocket
 
     @BeforeEach
     fun setup() {
@@ -58,7 +58,7 @@ internal class ChatSocketTest {
         chatParser = mock()
         networkStateProvider = mock()
         socketListener = mock()
-        socketService = ChatSocket(
+        chatSocket = ChatSocket(
             randomString(),
             randomString(),
             tokenManager,
@@ -67,16 +67,16 @@ internal class ChatSocketTest {
             chatParser,
             testCoroutines.scope
         )
-        socketService.addListener(socketListener)
+        chatSocket.addListener(socketListener)
     }
 
     @Test
     fun `Should start connecting to socket when connecting and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        socketService.connect(randomUser())
+        chatSocket.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -86,27 +86,27 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        socketService.connect(randomUser())
+        chatSocket.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
     fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        socketService.connect(randomUser())
+        chatSocket.connect(randomUser())
 
-        socketService.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
+        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
     fun `Should start connecting to socket when connecting with anymous user and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        socketService.connectAnonymously()
+        chatSocket.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
@@ -116,18 +116,18 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        socketService.connectAnonymously()
+        chatSocket.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
 
     @Test
     fun `Should not start connecting to socket when connecting with anymous user  and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        socketService.connectAnonymously()
+        chatSocket.connectAnonymously()
 
-        socketService.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
+        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
@@ -140,11 +140,11 @@ internal class ChatSocketTest {
             statusCode = 500,
         )
 
-        socketService.connectAnonymously()
-        socketService.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.connectAnonymously()
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false
-        socketService.onSocketError(networkError)
+        chatSocket.onSocketError(networkError)
 
         // Socket was recreated
         verify(socketFactory, times(2)).createAnonymousSocket(any(), any(), any())
