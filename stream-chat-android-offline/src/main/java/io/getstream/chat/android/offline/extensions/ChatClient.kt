@@ -280,7 +280,7 @@ public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
     olderMessagesOffset: Int,
-    newerMessagesOffset: Int
+    newerMessagesOffset: Int,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Message>(cid)
