@@ -70,7 +70,6 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -78,8 +77,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.extensions.internal.addMember
+import io.getstream.chat.android.offline.extensions.internal.addMembership
 import io.getstream.chat.android.offline.extensions.internal.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.updateMembers
+import io.getstream.chat.android.offline.extensions.internal.removeMember
+import io.getstream.chat.android.offline.extensions.internal.removeMembership
+import io.getstream.chat.android.offline.extensions.internal.updateMember
+import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
+import io.getstream.chat.android.offline.extensions.internal.updateMembership
+import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -87,11 +93,14 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
+
+private const val TAG = "Chat:EventHandler"
 
 internal class EventHandlerImpl(
     private val recoveryEnabled: Boolean,
@@ -102,7 +111,8 @@ internal class EventHandlerImpl(
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) {
-    private var logger = ChatLogger.get("EventHandler")
+
+    private val logger = StreamLog.getLogger(TAG)
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
     private var initJob: Deferred<*>? = null
@@ -141,6 +151,7 @@ internal class EventHandlerImpl(
      */
     @VisibleForTesting
     internal suspend fun handleEvent(event: ChatEvent) {
+        logger.i { "[handleEvent] event: $event" }
         handleConnectEvents(listOf(event))
         handleEventsInternal(listOf(event), isFromSync = false)
     }
@@ -157,6 +168,7 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+        logger.i { "[replayEventsForChannels] cids: $cids" }
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
@@ -173,6 +185,7 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun handleEvents(events: List<ChatEvent>) {
+        logger.i { "[handleEvents] events.size: ${events.size}" }
         handleConnectEvents(events)
         handleEventsInternal(events, isFromSync = false)
     }
@@ -180,14 +193,15 @@ internal class EventHandlerImpl(
     private suspend fun handleConnectEvents(sortedEvents: List<ChatEvent>) {
         // send out the connect events
         sortedEvents.forEach { event ->
+            logger.i { "[handleConnectEvents] event: $event" }
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> {
-                    logger.logI("[handleConnectEvents] received DisconnectedEvent")
+                    logger.i { "[handleConnectEvents] received DisconnectedEvent" }
                     mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> {
-                    logger.logI("[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled")
+                    logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
                     updateCurrentUser(event.me)
 
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
@@ -204,12 +218,12 @@ internal class EventHandlerImpl(
                     }
                 }
                 is HealthEvent -> {
-                    logger.logV("[handleConnectEvents] received HealthEvent")
+                    logger.v { "[handleConnectEvents] received HealthEvent" }
                     syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
-                    logger.logI("[handleConnectEvents] received ConnectingEvent")
+                    logger.i { "[handleConnectEvents] received ConnectingEvent" }
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
                 }
 
@@ -222,8 +236,6 @@ internal class EventHandlerImpl(
         client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
-        events.sortedBy(ChatEvent::createdAt)
-
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
@@ -292,6 +304,8 @@ internal class EventHandlerImpl(
         // actually fetch the data
         val batch = batchBuilder.build(repos, mutableGlobalState._user)
 
+        val currentUserId = client.getCurrentUser()?.id
+
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
             @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -333,7 +347,9 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
                 is NotificationAddedToChannelEvent -> {
-                    batch.addChannel(event.channel)
+                    batch.addChannel(
+                        event.channel.addMembership(currentUserId, event.member)
+                    )
                 }
                 is NotificationInvitedEvent -> {
                     batch.addUser(event.user)
@@ -382,51 +398,53 @@ internal class EventHandlerImpl(
                     event.message.enrichWithOwnReactions(batch, event.user)
                     batch.addMessage(event.message)
                 }
-                is MemberAddedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                is ChannelUserBannedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.member.user.id,
-                                    member = event.member,
-                                    isUpdate = false
-                                )
-                            }
+                            channel.updateMemberBanned(event.user.id, banned = true)
+                                .updateMembershipBanned(event.user.id, banned = true)
+                        )
+                    }
+                }
+                is ChannelUserUnbannedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        batch.addChannel(
+                            channel.updateMemberBanned(event.user.id, banned = false)
+                                .updateMembershipBanned(event.user.id, banned = false)
+                        )
+                    }
+                }
+                is MemberAddedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        batch.addChannel(
+                            channel.addMember(event.member)
                         )
                     }
                 }
                 is MemberUpdatedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.member.user.id,
-                                    member = event.member,
-                                    isUpdate = true
-                                )
-                            }
+                            channel.updateMember(event.member)
+                                .updateMembership(event.member)
                         )
                     }
                 }
                 is MemberRemovedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.user.id,
-                                    member = null,
-                                    isUpdate = false
-                                )
-                            }
+                            channel.removeMember(event.user.id)
+                                .removeMembership(currentUserId)
                         )
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
-                        event.user?.let { user ->
-                            channel.updateMembers(user.id, null, isUpdate = false)
-                        }
-                        batch.addChannel(channel)
+                        batch.addChannel(
+                            channel.removeMembership(currentUserId).apply {
+                                memberCount = event.channel.memberCount
+                                members = event.channel.members
+                            }
+                        )
                     }
                 }
                 is ChannelUpdatedEvent -> {
@@ -545,7 +563,7 @@ internal class EventHandlerImpl(
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
-            logger.logD("Received event: $chatEvent")
+            logger.d { "[handleEventsInternal] chatEvent: $chatEvent" }
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }
@@ -642,7 +660,9 @@ internal class EventHandlerImpl(
             if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
                 true
             } else {
-                logger.logD("Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing.")
+                logger.d {
+                    "Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."
+                }
                 false
             }
         }
