@@ -79,6 +79,7 @@ public fun QuotedMessage(
         }
 
         MessageBubble(
+            modifier = Modifier.weight(1f, fill = false),
             shape = messageBubbleShape, color = ChatTheme.colors.barsBackground,
             content = {
                 Row {
