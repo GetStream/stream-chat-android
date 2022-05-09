@@ -29,6 +29,7 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import java.util.concurrent.TimeUnit
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -56,7 +57,8 @@ public class MessagesViewModelFactory(
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)
 ) : ViewModelProvider.Factory {
 
     /**
@@ -84,7 +86,8 @@ public class MessagesViewModelFactory(
                 showDateSeparators = showDateSeparators,
                 showSystemMessages = showSystemMessages,
                 deletedMessageVisibility = deletedMessageVisibility,
-                messageFooterVisibility = messageFooterVisibility
+                messageFooterVisibility = messageFooterVisibility,
+                dateSeparatorThresholdMillis = dateSeparatorThresholdMillis
             )
         },
         AttachmentsPickerViewModel::class.java to {

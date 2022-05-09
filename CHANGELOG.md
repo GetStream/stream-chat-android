@@ -62,6 +62,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the behavior of `DeletedMessageVisibility` and `MessageFooterVisibility` when used in par. Now the `DeletedMessageVisibility` and its "only visible to you" mode respects the `MessageFooterVisibility` and vice-versa. [#3467](https://github.com/GetStream/stream-chat-android/pull/3467)
 
 ### ✅ Added
 
