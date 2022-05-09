@@ -75,6 +75,8 @@ fun MessagesScreen(
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
+    deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     ... // action handlers and state
 )
 ```
@@ -84,6 +86,8 @@ fun MessagesScreen(
 * `enforceUniqueReactions`: Controls whether the user can leave multiple reactions to a message.
 * `showDateSeparators`: Controls if we show date separator items.
 * `showSystemMessages`: Controls if we show system message items.
+* `deletedMessageVisibility`: Controls the visibility of deleted messages. By default, all deleted messages are visible in the "deleted" state.
+* `messageFooterVisibility`: Controls the visibility of the message footer. By default, determined by a time difference.
 
 If you set `showHeader` to `false` you'll get the following UI:
 

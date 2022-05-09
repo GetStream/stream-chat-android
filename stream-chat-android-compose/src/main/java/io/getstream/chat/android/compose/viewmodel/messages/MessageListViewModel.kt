@@ -779,7 +779,8 @@ public class MessageListViewModel(
                         isMine = user.id == currentUser?.id,
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
-                        shouldShowFooter = shouldShowFooter
+                        shouldShowFooter = shouldShowFooter,
+                        deletedMessageVisibility = deletedMessageVisibility
                     )
                 )
             }
