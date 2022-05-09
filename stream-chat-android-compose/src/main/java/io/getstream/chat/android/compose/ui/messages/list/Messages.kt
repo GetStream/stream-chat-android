@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.ScrollToMessageState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -60,7 +59,7 @@ import kotlin.math.abs
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
- * @param onScrolledToBottom Handler when the user reaches the bottom of the list, also used for pagination.
+ * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -74,12 +73,11 @@ public fun Messages(
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
-    onScrolledToBottom: (Message?) -> Unit,
+    onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
-    onScrolledToSelectedMessage: (Message) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState, onScrolledToSelectedMessage)
+        DefaultMessagesHelperContent(messagesState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
@@ -108,9 +106,7 @@ public fun Messages(
                 }
 
                 if (index == 0 && lazyListState.isScrollInProgress) {
-                    val message = (messagesState.messageItems.first { it is MessageItemState } as? MessageItemState)
-                        ?.message
-                    onScrolledToBottom(message)
+                    onScrolledToBottom()
                 }
 
                 if (!endOfMessages && index == messages.lastIndex &&
@@ -137,15 +133,13 @@ public fun Messages(
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
- * @param onScrolledToSelectedMessage Handler that notifies us when the list has scrolled to the selected [Message].
  */
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
-    lazyListState: LazyListState,
-    onScrolledToSelectedMessage: (Message) -> Unit,
+    lazyListState: LazyListState
 ) {
-    val (_, _, _, messages, _, _, newMessageState, _, _, scrollToMessage) = messagesState
+    val (_, _, _, messages, _, _, newMessageState) = messagesState
     val coroutineScope = rememberCoroutineScope()
 
     val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
@@ -155,9 +149,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     LaunchedEffect(
         newMessageState,
         firstVisibleItemIndex,
-        focusedItemIndex,
-        scrollToMessage,
-        messagesState.isLoading
+        focusedItemIndex
     ) {
         if (focusedItemIndex != -1) {
             coroutineScope.launch {
@@ -166,40 +158,16 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
 
         when {
-            scrollToMessage is ScrollToMessageState.ScrollToSelectedMessage &&
-                !messagesState.isLoading -> coroutineScope.launch {
-                val message = messages.firstOrNull {
-                    it is MessageItemState && it.message.id == scrollToMessage.message.id
-                } as? MessageItemState
-
-                if (message != null) {
-                    lazyListState.scrollToItem(messages.indexOf(message))
-                    onScrolledToSelectedMessage(message.message)
-                }
-            }
-
-            scrollToMessage is ScrollToMessageState.ScrollToNewMessage &&
-                !lazyListState.isScrollInProgress &&
-                newMessageState == Other &&
+            !lazyListState.isScrollInProgress && newMessageState == Other &&
                 firstVisibleItemIndex < 3 -> coroutineScope.launch {
                 lazyListState.animateScrollToItem(0)
-                onScrolledToSelectedMessage(scrollToMessage.message)
             }
 
-            scrollToMessage is ScrollToMessageState.ScrollToNewMessage &&
-                !lazyListState.isScrollInProgress &&
-                newMessageState == MyOwn -> coroutineScope.launch {
+            !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)
                 }
                 lazyListState.animateScrollToItem(0)
-                onScrolledToSelectedMessage(scrollToMessage.message)
-            }
-
-            else -> {
-                if (scrollToMessage != null && !lazyListState.isScrollInProgress && !messagesState.isLoading) {
-                    onScrolledToSelectedMessage(scrollToMessage.message)
-                }
             }
         }
     }

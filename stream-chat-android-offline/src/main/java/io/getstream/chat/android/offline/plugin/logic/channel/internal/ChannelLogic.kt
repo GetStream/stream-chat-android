@@ -709,10 +709,6 @@ internal class ChannelLogic(
         }
     }
 
-    internal fun clearChannelMessages() {
-        mutableState._messages.value = emptyMap()
-    }
-
     internal fun setTyping(userId: String, event: ChatEvent?) {
         val copy = mutableState._typing.value.toMutableMap()
         if (event == null) {

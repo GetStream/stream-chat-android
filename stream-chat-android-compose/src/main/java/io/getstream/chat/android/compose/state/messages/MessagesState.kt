@@ -31,7 +31,6 @@ import io.getstream.chat.android.compose.state.messages.list.MessageListItemStat
  * @param newMessageState The state that represents any new messages.
  * @param parentMessageId The id of the parent message - if we're in a thread.
  * @param unreadCount The count of messages we haven't read yet.
- * @param scrollToMessageState The message we wish to scroll to.
  */
 public data class MessagesState(
     val isLoading: Boolean = true,
@@ -42,6 +41,5 @@ public data class MessagesState(
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
-    val unreadCount: Int = 0,
-    val scrollToMessageState: ScrollToMessageState? = null
+    val unreadCount: Int = 0
 )
