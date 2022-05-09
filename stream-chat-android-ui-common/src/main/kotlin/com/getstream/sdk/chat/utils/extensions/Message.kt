@@ -43,6 +43,9 @@ public fun Message.getCreatedAtOrNull(): Date? {
     return createdAt ?: createdLocallyAt
 }
 
+/**
+ * Returns the [SyncStatus] of the [Message] considering its attachments.
+ */
 public fun Message.syncStatusWithAttachments(): SyncStatus {
     val reducedSyncStatus = attachments.map { it.uploadState }
         .reduce(::accumulateUploadState) ?: Attachment.UploadState.Idle
@@ -71,4 +74,3 @@ private fun accumulateUploadState(
         else -> newState ?: Attachment.UploadState.Idle
     }
 }
-
