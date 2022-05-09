@@ -16,9 +16,7 @@
 
 package com.getstream.sdk.chat.utils.extensions
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
@@ -41,36 +39,4 @@ public fun Message.getCreatedAtOrThrow(): Date {
  */
 public fun Message.getCreatedAtOrNull(): Date? {
     return createdAt ?: createdLocallyAt
-}
-
-/**
- * Returns the [SyncStatus] of the [Message] considering its attachments.
- */
-public fun Message.syncStatusWithAttachments(): SyncStatus {
-    val reducedSyncStatus = attachments.map { it.uploadState }
-        .reduce(::accumulateUploadState) ?: Attachment.UploadState.Idle
-
-    return when (reducedSyncStatus) {
-        is Attachment.UploadState.Failed -> SyncStatus.FAILED_PERMANENTLY
-        Attachment.UploadState.Idle -> this.syncStatus
-        is Attachment.UploadState.InProgress -> SyncStatus.IN_PROGRESS
-        Attachment.UploadState.Success -> this.syncStatus
-    }
-}
-
-private fun accumulateUploadState(
-    acc: Attachment.UploadState?,
-    newState: Attachment.UploadState?,
-): Attachment.UploadState {
-    return when {
-        acc is Attachment.UploadState.Failed -> acc
-
-        newState is Attachment.UploadState.Failed -> newState
-
-        newState is Attachment.UploadState.InProgress -> newState
-
-        acc is Attachment.UploadState.InProgress -> acc
-
-        else -> newState ?: Attachment.UploadState.Idle
-    }
 }

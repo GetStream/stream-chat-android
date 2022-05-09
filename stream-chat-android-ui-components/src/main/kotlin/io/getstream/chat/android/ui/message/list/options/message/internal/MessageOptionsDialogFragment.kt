@@ -28,7 +28,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.syncStatusWithAttachments
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -236,7 +235,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 configuration = configuration,
                 style = style,
                 isMessageTheirs = messageItem.isTheirs,
-                syncStatus = messageItem.message.syncStatusWithAttachments(),
+                syncStatus = messageItem.message.syncStatus,
                 isMessageAuthorMuted = isMessageAuthorMuted,
                 isMessagePinned = message.pinned
             )
