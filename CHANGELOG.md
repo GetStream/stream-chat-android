@@ -16,6 +16,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 
 ### ⚠️ Changed
 
@@ -23,6 +26,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
 
 ### ⬆️ Improved
 

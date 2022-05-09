@@ -184,6 +184,7 @@ internal data class NotificationAddedToChannelEventDto(
     val channel_type: String,
     val channel_id: String,
     val channel: DownstreamChannelDto,
+    val member: DownstreamMemberDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
 ) : ChatEventDto()
