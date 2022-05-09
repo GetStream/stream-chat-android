@@ -7,6 +7,24 @@ on:
       - completed
 
 jobs:
+  develop_to_main:
+    name: Sync main with develop
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps: 
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: Sync main
+        run: | 
+          git pull
+          git merge --ff-only origin/develop
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
   update_changelog:
     name: Update Changelog - Model
     runs-on: ubuntu-latest
@@ -15,7 +33,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: develop
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
       - name: Commit changes
@@ -28,16 +46,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-      - name: Create PR to develop
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          destination_branch: develop 
-          pr_title: "Post Release - Main to develop"
-          pr_body: "Post Release - Main to develop"
-          pr_draft: false
-          pr_label: "auto-pr"  
+          branch: develop
   publish:
     name: Dokka docs
     runs-on: ubuntu-latest

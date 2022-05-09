@@ -23,12 +23,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: main
-      - name: Sync main
-        if: "${{ github.event.inputs.skip_main_sync != 'true' }}"
-        run: | 
-          git pull
-          git merge --ff-only origin/develop
+          ref: develop
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew minor-bump
