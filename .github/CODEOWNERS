@@ -25,6 +25,11 @@ stream-chat-android-compose-sample      @GetStream/android-developers-ui
 # UI testing
 stream-chat-android-ui-uitests          @GetStream/android-developers-ui
 
+# Libraries
+libraries/logging/stream-logger              @GetStream/android-developers-core
+libraries/logging/stream-logger-android      @GetStream/android-developers-core
+libraries/logging/stream-logger-file         @GetStream/android-developers-core
+
 ### Top level files and directories
 # Git and GitHub
 .gitattributes              @GetStream/android-developers

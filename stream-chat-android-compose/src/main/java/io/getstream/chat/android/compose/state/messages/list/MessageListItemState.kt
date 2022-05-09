@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.state.messages.list
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import java.util.Date
 
 /**
@@ -57,6 +58,8 @@ public data class SystemMessageState(val message: Message) : MessageListItemStat
  * @param isInThread If the message is being displayed in a thread.
  * @param currentUser The currently logged in user.
  * @param isMessageRead If the message is read by any member.
+ * @param shouldShowFooter If the message footer should be shown.
+ * @param deletedMessageVisibility The deleted message visibility logic used to show or hide messages in the list.
  */
 public data class MessageItemState(
     val message: Message,
@@ -67,4 +70,6 @@ public data class MessageItemState(
     val isInThread: Boolean = false,
     val currentUser: User? = null,
     val isMessageRead: Boolean = false,
+    val shouldShowFooter: Boolean = false,
+    val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
 ) : MessageListItemState()

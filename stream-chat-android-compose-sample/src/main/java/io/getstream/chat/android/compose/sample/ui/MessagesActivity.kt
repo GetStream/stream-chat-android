@@ -79,7 +79,7 @@ class MessagesActivity : BaseConnectedActivity() {
         MessagesViewModelFactory(
             context = this,
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
+            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         )
     }
 

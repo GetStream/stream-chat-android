@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 
@@ -42,18 +43,20 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param showDateSeparators If we should show date separator items in the list.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val enforceUniqueReactions: Boolean = true,
-    private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
+    private val messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
 ) : ViewModelProvider.Factory {
 
     /**
@@ -80,7 +83,8 @@ public class MessagesViewModelFactory(
                 ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
                 showDateSeparators = showDateSeparators,
                 showSystemMessages = showSystemMessages,
-                deletedMessageVisibility = deletedMessageVisibility
+                deletedMessageVisibility = deletedMessageVisibility,
+                messageFooterVisibility = messageFooterVisibility
             )
         },
         AttachmentsPickerViewModel::class.java to {
