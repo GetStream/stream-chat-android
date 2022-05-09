@@ -77,8 +77,15 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.extensions.internal.addMember
+import io.getstream.chat.android.offline.extensions.internal.addMembership
 import io.getstream.chat.android.offline.extensions.internal.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.updateMembers
+import io.getstream.chat.android.offline.extensions.internal.removeMember
+import io.getstream.chat.android.offline.extensions.internal.removeMembership
+import io.getstream.chat.android.offline.extensions.internal.updateMember
+import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
+import io.getstream.chat.android.offline.extensions.internal.updateMembership
+import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -229,8 +236,6 @@ internal class EventHandlerImpl(
         client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
-        events.sortedBy(ChatEvent::createdAt)
-
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
@@ -299,6 +304,8 @@ internal class EventHandlerImpl(
         // actually fetch the data
         val batch = batchBuilder.build(repos, mutableGlobalState._user)
 
+        val currentUserId = client.getCurrentUser()?.id
+
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
             @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -340,7 +347,9 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
                 is NotificationAddedToChannelEvent -> {
-                    batch.addChannel(event.channel)
+                    batch.addChannel(
+                        event.channel.addMembership(currentUserId, event.member)
+                    )
                 }
                 is NotificationInvitedEvent -> {
                     batch.addUser(event.user)
@@ -389,51 +398,53 @@ internal class EventHandlerImpl(
                     event.message.enrichWithOwnReactions(batch, event.user)
                     batch.addMessage(event.message)
                 }
-                is MemberAddedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                is ChannelUserBannedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.member.user.id,
-                                    member = event.member,
-                                    isUpdate = false
-                                )
-                            }
+                            channel.updateMemberBanned(event.user.id, banned = true)
+                                .updateMembershipBanned(event.user.id, banned = true)
+                        )
+                    }
+                }
+                is ChannelUserUnbannedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        batch.addChannel(
+                            channel.updateMemberBanned(event.user.id, banned = false)
+                                .updateMembershipBanned(event.user.id, banned = false)
+                        )
+                    }
+                }
+                is MemberAddedEvent -> {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
+                        batch.addChannel(
+                            channel.addMember(event.member)
                         )
                     }
                 }
                 is MemberUpdatedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.member.user.id,
-                                    member = event.member,
-                                    isUpdate = true
-                                )
-                            }
+                            channel.updateMember(event.member)
+                                .updateMembership(event.member)
                         )
                     }
                 }
                 is MemberRemovedEvent -> {
-                    batch.getCurrentChannel(event.cid)?.let {
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            it.apply {
-                                updateMembers(
-                                    userId = event.user.id,
-                                    member = null,
-                                    isUpdate = false
-                                )
-                            }
+                            channel.removeMember(event.user.id)
+                                .removeMembership(currentUserId)
                         )
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
-                        event.user?.let { user ->
-                            channel.updateMembers(user.id, null, isUpdate = false)
-                        }
-                        batch.addChannel(channel)
+                        batch.addChannel(
+                            channel.removeMembership(currentUserId).apply {
+                                memberCount = event.channel.memberCount
+                                members = event.channel.members
+                            }
+                        )
                     }
                 }
                 is ChannelUpdatedEvent -> {

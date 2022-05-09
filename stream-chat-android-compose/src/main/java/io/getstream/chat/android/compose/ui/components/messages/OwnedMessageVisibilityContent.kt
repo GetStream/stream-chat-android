@@ -45,12 +45,12 @@ public fun OwnedMessageVisibilityContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(start = 4.dp, end = 4.dp, top = 4.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             modifier = Modifier
-                .padding(end = 8.dp)
+                .padding(end = 4.dp)
                 .size(12.dp),
             painter = painterResource(id = R.drawable.stream_compose_ic_visible_to_you),
             contentDescription = null
@@ -63,7 +63,7 @@ public fun OwnedMessageVisibilityContent(
         )
 
         Timestamp(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
             date = message.updatedAt ?: message.createdAt ?: Date()
         )
     }
