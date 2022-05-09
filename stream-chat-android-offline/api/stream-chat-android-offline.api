@@ -115,8 +115,8 @@ public final class io/getstream/chat/android/offline/extensions/internal/PairKt 
 }
 
 public final class io/getstream/chat/android/offline/model/channel/ChannelData {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Date;
 	public final fun component11 ()Ljava/util/Date;
@@ -124,6 +124,7 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun component13 ()Ljava/lang/String;
 	public final fun component14 ()Ljava/util/Map;
 	public final fun component15 ()Ljava/util/Set;
+	public final fun component16 ()Lio/getstream/chat/android/client/models/Member;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
@@ -132,8 +133,8 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun component7 ()I
 	public final fun component8 ()Z
 	public final fun component9 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;)Lio/getstream/chat/android/offline/model/channel/ChannelData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/model/channel/ChannelData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/offline/model/channel/ChannelData;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/offline/model/channel/ChannelData;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/model/channel/ChannelData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/offline/model/channel/ChannelData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getCid ()Ljava/lang/String;
@@ -145,6 +146,7 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun getFrozen ()Z
 	public final fun getImage ()Ljava/lang/String;
 	public final fun getMemberCount ()I
+	public final fun getMembership ()Lio/getstream/chat/android/client/models/Member;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOwnCapabilities ()Ljava/util/Set;
 	public final fun getTeam ()Ljava/lang/String;
@@ -162,6 +164,7 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun setFrozen (Z)V
 	public final fun setImage (Ljava/lang/String;)V
 	public final fun setMemberCount (I)V
+	public final fun setMembership (Lio/getstream/chat/android/client/models/Member;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setTeam (Ljava/lang/String;)V

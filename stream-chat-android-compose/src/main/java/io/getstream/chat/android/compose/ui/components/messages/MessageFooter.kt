@@ -61,7 +61,7 @@ public fun MessageFooter(
 
     if (messageItem.shouldShowFooter) {
         Row(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (!messageItem.isMine) {

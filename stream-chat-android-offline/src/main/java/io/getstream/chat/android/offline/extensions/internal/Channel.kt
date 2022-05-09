@@ -22,7 +22,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.logging.StreamLog
 import java.util.Date
+
+private const val TAG = "Chat:ChannelTools"
 
 /**
  * Returns all users including watchers of a channel that are associated with it.
@@ -52,24 +55,117 @@ internal fun Channel.updateLastMessage(message: Message) {
 }
 
 /**
- * Updates member counts and list of members of this channel based on whether [member] is added, removed or updated.
+ * Removes member from the [Channel.members] and aligns [Channel.memberCount].
  *
- * @param userId User id of the added/removed/updated member.
- * @param member Member object.
- * @param isUpdate True if a member is updated but not added/removed, false otherwise.
+ * @param currentUserId User id of the currently logged in user.
+ * @param memberUserId User id of the removed member.
  */
-internal fun Channel.updateMembers(userId: String, member: Member?, isUpdate: Boolean) {
-    if (member == null) {
-        members.firstOrNull { it.user.id == userId }?.also { foundMember ->
-            members = members - foundMember
-            memberCount -= 1
-        }
-    } else {
-        members = members + member
-        if (!isUpdate) {
-            memberCount += 1
+internal fun Channel.removeMember(memberUserId: String?): Channel {
+    memberUserId ?: return this
+    members = members.filterNot { it.user.id == memberUserId }
+    memberCount -= 1
+    return this
+}
+
+/**
+ * Adds member to the [Channel.members] and aligns [Channel.memberCount].
+ *
+ * @param member Added member.
+ */
+internal fun Channel.addMember(member: Member?): Channel {
+    val memberUserId = member?.user?.id ?: return this
+    val foundMember = members.find { it.user.id == memberUserId }
+    if (foundMember != null) return this
+    members = members + member
+    memberCount += 1
+    return this
+}
+
+/**
+ * Updates [Channel] member.
+ *
+ * @param member Updated member.
+ */
+internal fun Channel.updateMember(member: Member?): Channel {
+    val memberUserId = member?.user?.id ?: return this
+    members = members.map { iterableMember ->
+        when (iterableMember.user.id == memberUserId) {
+            true -> member
+            else -> iterableMember
         }
     }
+    return this
+}
+
+/**
+ * Updates [Member.banned] property inside the [Channel.members].
+ *
+ * @param memberUserId Updated member user id.
+ * @param banned Shows whether a user is banned or not in this channel.
+ */
+internal fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean): Channel {
+    members = members.map { member ->
+        member.apply {
+            if (this.user.id == memberUserId) {
+                this.banned = banned
+            }
+        }
+    }
+    return this
+}
+
+/**
+ * Sets [Channel.membership] to [member] if [currentUserId] equals to [member.user.id].
+ *
+ * @param currentUserId User id of the currently logged in user.
+ * @param member Added member.
+ */
+internal fun Channel.addMembership(currentUserId: String?, member: Member?): Channel {
+    if (member?.user?.id == currentUserId) {
+        membership = member
+    }
+    return this
+}
+
+/**
+ * Sets [Channel.membership] to [member] if [member.user.id] equals to [Channel.membership.user.id].
+ *
+ * @param member Updated member.
+ */
+internal fun Channel.updateMembership(member: Member?): Channel {
+    val memberUserId = member?.user?.id
+    val membershipUserId = membership?.user?.id
+    if (memberUserId == membershipUserId) {
+        membership = member
+    } else StreamLog.w(TAG) {
+        "[updateMembership] rejected; memberUserId($memberUserId) != membershipUserId($membershipUserId)"
+    }
+    return this
+}
+
+/**
+ * Sets [Channel.membership.banned] to [banned] if [memberUserId] equals to [membership.user.id].
+ *
+ * @param memberUserId Member user id.
+ * @param banned Shows whether a user is banned or not in this channel.
+ */
+internal fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean): Channel {
+    if (membership?.user?.id == memberUserId) {
+        membership?.banned = banned
+    }
+    return this
+}
+
+/**
+ * Sets [Channel.membership] to null if [currentUserId] equals to [membership.user.id].
+ *
+ * @param currentUserId User id of the currently logged in user.
+ */
+internal fun Channel.removeMembership(currentUserId: String?): Channel {
+    if (membership?.user?.id == currentUserId) {
+        membership = null
+    }
+    return this
 }
 
 internal fun Channel.updateReads(newRead: ChannelUserRead) {

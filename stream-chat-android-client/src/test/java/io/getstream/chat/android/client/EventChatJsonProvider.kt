@@ -193,6 +193,7 @@ internal fun createNotificationAddedToChannelEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "channel": ${createChannelJsonString()},
+            "member": ${createMemberJsonString()},
             "total_unread_count": 4,
             "unread_channels": 5
         """.trimIndent()
