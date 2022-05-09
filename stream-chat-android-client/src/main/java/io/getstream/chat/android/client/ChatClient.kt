@@ -60,12 +60,10 @@ import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEv
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.experimental.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.QueryMembersErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.onCreateChannelError
-import io.getstream.chat.android.client.experimental.errorhandler.onMessageError
 import io.getstream.chat.android.client.experimental.errorhandler.onQueryMembersError
 import io.getstream.chat.android.client.experimental.errorhandler.onReactionError
 import io.getstream.chat.android.client.experimental.interceptor.Interceptor
@@ -681,13 +679,10 @@ internal constructor(
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
-
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->

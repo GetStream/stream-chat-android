@@ -1885,10 +1885,6 @@ public final class io/getstream/chat/android/client/experimental/errorhandler/Cr
 	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/CreateChannelErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
 }
 
-public final class io/getstream/chat/android/client/experimental/errorhandler/DeleteReactionErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/experimental/errorhandler/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/experimental/errorhandler/ErrorHandler;)I
-}
-
 public final class io/getstream/chat/android/client/experimental/errorhandler/ErrorHandler$Companion {
 	public static final field DEFAULT_PRIORITY I
 }

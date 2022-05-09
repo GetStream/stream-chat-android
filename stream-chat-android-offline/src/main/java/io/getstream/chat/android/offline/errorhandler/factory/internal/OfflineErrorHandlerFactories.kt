@@ -21,10 +21,8 @@ import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorH
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
-import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.QueryMembersErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.SendReactionErrorHandlerImpl
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 
@@ -39,25 +37,10 @@ internal object OfflineErrorHandlerFactoriesProvider {
      * @return A List of [ErrorHandlerFactory].
      */
     fun createErrorHandlerFactories(): List<ErrorHandlerFactory> = listOf(
-        DeleteReactionErrorHandlerFactory(),
         SendReactionErrorHandlerFactory(),
         QueryMembersErrorHandlerFactory(),
         CreateChannelErrorHandlerFactory(),
     )
-}
-
-/**
- * Factory for [DeleteReactionErrorHandlerImpl].
- */
-private class DeleteReactionErrorHandlerFactory : ErrorHandlerFactory {
-
-    override fun create(): ErrorHandler {
-        return DeleteReactionErrorHandlerImpl(
-            scope = StateRegistry.get().scope,
-            logic = LogicRegistry.get(),
-            globalState = GlobalMutableState.getOrCreate(),
-        )
-    }
 }
 
 /**

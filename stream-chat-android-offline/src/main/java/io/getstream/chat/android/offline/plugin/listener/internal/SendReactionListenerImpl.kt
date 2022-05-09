@@ -120,10 +120,9 @@ internal class SendReactionListenerImpl(
             reactionType = reaction.type,
             messageId = reaction.messageId,
             userId = currentUser.id,
-        )
-            ?.let { cachedReaction ->
-                repos.insertReaction(cachedReaction.updateSyncStatus(result))
-            }
+        )?.let { cachedReaction ->
+            repos.insertReaction(cachedReaction.updateSyncStatus(result))
+        }
     }
 
     /**
