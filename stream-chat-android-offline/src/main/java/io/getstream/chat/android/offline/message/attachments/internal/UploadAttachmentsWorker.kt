@@ -41,6 +41,8 @@ internal class UploadAttachmentsWorker(
         channelId: String,
         messageId: String,
     ): Result<Unit> {
+        val message = messageRepository.selectMessage(messageId)
+
         return try {
             chatClient.apply {
                 if (getCurrentUser() == null) {
@@ -51,8 +53,6 @@ internal class UploadAttachmentsWorker(
                     chatClient.setUserWithoutConnectingIfNeeded()
                 }
             }
-
-            val message = messageRepository.selectMessage(messageId)
 
             if (message == null) {
                 Result.success(Unit)
@@ -72,6 +72,8 @@ internal class UploadAttachmentsWorker(
                     channelId
                 )
 
+                updateMessages(message, channelType, channelId)
+
                 if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                     Result.success(Unit)
                 } else {
@@ -79,6 +81,7 @@ internal class UploadAttachmentsWorker(
                 }
             }
         } catch (e: Exception) {
+            message?.let { updateMessages(it, channelType, channelId) }
             Result.error(e)
         }
     }
@@ -119,14 +122,21 @@ internal class UploadAttachmentsWorker(
             message.attachments = attachments
             // TODO refactor this place. A lot of side effects happening here.
             //  We should extract it to entity that will handle logic of uploading only.
-            if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
-                message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-            }
-            // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-            messageRepository.deleteChannelMessage(message)
-            messageRepository.insertMessage(message)
-            logic.channel(channelType, channelId).upsertMessage(message)
         }
+    }
+
+    private suspend fun updateMessages(
+        message: Message,
+        channelType: String,
+        channelId: String,
+    ) {
+        if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
+            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+        }
+        logic.channel(channelType, channelId).upsertMessage(message)
+        // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
+        messageRepository.deleteChannelMessage(message)
+        messageRepository.insertMessage(message)
     }
 
     private class ProgressCallbackImpl(
