@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.runTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import org.amshove.kluent.`should be equal to`
