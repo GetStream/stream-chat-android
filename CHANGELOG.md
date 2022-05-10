@@ -28,6 +28,7 @@
 ### 🐞 Fixed
 - Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
 - Fixed bug that made impossible to retry attachments that were not fully sent. [3485](https://github.com/GetStream/stream-chat-android/pull/3485)
+- Fixed deleting reactions while offline. [3486](https://github.com/GetStream/stream-chat-android/pull/3486)
 
 ### ⬆️ Improved
 
@@ -41,6 +42,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the attachment upload size limit to 100MB from 20MB. [#3490](https://github.com/GetStream/stream-chat-android/pull/3490)
 
 ### ✅ Added
 
@@ -90,6 +92,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Upgrade Firebase Messaging dependency to version `23.0.4`. [#3484](https://github.com/GetStream/stream-chat-android/pull/3484)
 
 ### ❌ Removed
 
