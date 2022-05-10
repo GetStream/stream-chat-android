@@ -27,6 +27,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
+- Fixed refreshing channels list when syncing the channel. [#3492](https://github.com/GetStream/stream-chat-android/pull/3492)
 - Fixed deleting reactions while offline. [3486](https://github.com/GetStream/stream-chat-android/pull/3486)
 
 ### ⬆️ Improved
