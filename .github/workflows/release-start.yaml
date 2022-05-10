@@ -43,7 +43,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: ${{ github.ref }}
           tags: true
       - name: Create GITHUB_TAG_RELEASE_VERSION 
@@ -60,7 +60,7 @@ jobs:
         with:
           artifacts: "release.tar.gz,foo/*.txt"
           bodyFile: "CHANGELOG_PARSED.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
 
 

@@ -2,7 +2,7 @@ name: ChangelogAutomation
 
 on:
   workflow_run:
-    workflows: ["SyncMain"]
+    workflows: ["Publish"]
     types:
       - completed
 
@@ -27,7 +27,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: develop
   publish:
     name: Dokka docs
@@ -46,7 +46,7 @@ jobs:
       - name: Deploy to GitHub pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           publish_dir: ./build/dokka/htmlMultiModule
           publish_branch: gh-pages
   push_docusaurus:

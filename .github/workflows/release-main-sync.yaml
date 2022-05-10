@@ -2,7 +2,7 @@ name: SyncMain
 
 on:
   workflow_run:
-    workflows: ["Publish"]
+    workflows: ["ReleaseStart"]
     types:
       - completed
 
@@ -23,5 +23,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: main
