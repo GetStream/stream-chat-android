@@ -22,6 +22,7 @@ import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod.Companion.set
+import io.getstream.chat.android.ui.utils.isXiaomi
 
 /**
  * A customized [LinkMovementMethod] implementation that lets you handle links being
@@ -39,10 +40,12 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
     private var isLongClick = false
 
     init {
+        // isXiaomi check fixes issue https://github.com/GetStream/stream-chat-android/issues/3255
+        // return false as before for other manufacturers
         textView.setOnLongClickListener {
             isLongClick = true
             longClickTarget.performLongClick()
-            false
+            isXiaomi()
         }
         textView.doAfterTextChanged {
             textView.movementMethod = this
