@@ -104,7 +104,8 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
-	public static synthetic fun queryChannelsAsState$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
+	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;Z)Lkotlinx/coroutines/flow/StateFlow;
+	public static synthetic fun queryChannelsAsState$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;ZILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;

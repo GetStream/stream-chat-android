@@ -185,7 +185,8 @@ public class ChannelListViewModel(
                     memberLimit = memberLimit,
                 )
 
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+                queryChannelsState =
+                    chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope, forceRefresh = false)
                 observeChannels(searchQuery = query)
             }
     }
@@ -314,7 +315,7 @@ public class ChannelListViewModel(
             filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
             querySort = currentConfig.querySort
         )?.let { queryChannelsRequest ->
-            chatClient.queryChannels(queryChannelsRequest).enqueue()
+            chatClient.queryChannels(queryChannelsRequest, forceRefresh = false).enqueue()
         }
     }
 

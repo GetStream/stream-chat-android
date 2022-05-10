@@ -37,12 +37,13 @@ internal class ChatClientStateCalls(
     private val scope: CoroutineScope
 ) {
     /** Reference request of the channels query. */
-    internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
-        chatClient.queryChannels(request).launch(scope)
+    internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
+        chatClient.queryChannels(request, forceRefresh).launch(scope)
         return state.queryChannels(request.filter, request.querySort)
     }
 
     /** Reference request of the channel query. */
+    // Todo: Put cache here!
     private fun queryChannel(
         channelType: String,
         channelId: String,
@@ -53,6 +54,7 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the watch channel query. */
+    // Todo: Put cache here!
     internal fun watchChannel(cid: String, messageLimit: Int): ChannelState {
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!

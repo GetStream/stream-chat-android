@@ -30,7 +30,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
 internal class ChannelsApiCallsTests {
@@ -362,7 +364,7 @@ internal class ChannelsApiCallsTests {
         )
 
         Mockito.`when`(
-            mock.api.queryChannels(request)
+            mock.api.queryChannels(eq(request), any())
         ).thenReturn(RetroSuccess(listOf(channel)).toRetrofitCall())
 
         val result = client.queryChannels(request).execute()
@@ -382,7 +384,7 @@ internal class ChannelsApiCallsTests {
         )
 
         Mockito.`when`(
-            mock.api.queryChannels(request)
+            mock.api.queryChannels(eq(request), any())
         ).thenReturn(RetroError<List<Channel>>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.queryChannels(request).execute()

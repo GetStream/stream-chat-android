@@ -166,7 +166,7 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope, forceRefresh = false)
         viewModelScope.launch {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
                 queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)

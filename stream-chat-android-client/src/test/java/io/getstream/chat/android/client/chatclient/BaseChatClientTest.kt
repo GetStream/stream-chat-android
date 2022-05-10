@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.chatclient
 
+import io.getstream.chat.android.client.CachedChatApi
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -59,7 +59,7 @@ internal open class BaseChatClientTest {
     protected lateinit var plugins: MutableList<Plugin>
 
     @Mock
-    protected lateinit var api: ChatApi
+    protected lateinit var api: CachedChatApi
 
     protected val initializationCoordinator = InitializationCoordinator.create()
 

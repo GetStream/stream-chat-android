@@ -25,7 +25,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -165,7 +164,7 @@ public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
     public val config: ChatClientConfig,
-    private val api: ChatApi,
+    private val api: CachedChatApi,
     private val socket: ChatSocket,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -1359,11 +1358,12 @@ internal constructor(
      * @return Executable async [Call] responsible for querying channels.
      */
     @CheckResult
-    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+    @JvmOverloads
+    public fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean = true): Call<List<Channel>> {
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
 
         return queryChannelsPostponeHelper.postponeQueryChannels {
-            api.queryChannels(request)
+            api.queryChannels(request, forceRefresh)
         }.doOnStart(scope) {
             relevantPluginsLazy().forEach { it.onQueryChannelsRequest(request) }
         }.doOnResult(scope) { result ->

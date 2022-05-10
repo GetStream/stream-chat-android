@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.api2.CachedMoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -65,7 +65,7 @@ internal class MockClientBuilder(
     private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
-    lateinit var api: MoshiChatApi
+    lateinit var api: CachedMoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
 

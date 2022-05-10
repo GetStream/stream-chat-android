@@ -89,9 +89,10 @@ public val ChatClient.globalState: GlobalState
 public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    forceRefresh: Boolean = true
 ): StateFlow<QueryChannelsState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request)
+        requestsAsState(coroutineScope).queryChannels(request, forceRefresh)
     }
 }
 

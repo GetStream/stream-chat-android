@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -51,7 +50,7 @@ internal class ConnectUsersTest {
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private val socket: FakeSocket = FakeSocket()
-    private val chatApi: ChatApi = mock()
+    private val chatApi: CachedChatApi = mock()
 
     val client = ChatClient(
         config = mock(),
