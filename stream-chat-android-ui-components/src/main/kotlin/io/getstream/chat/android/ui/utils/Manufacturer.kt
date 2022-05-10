@@ -20,7 +20,7 @@ import android.os.Build
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- * Checks whether the device manufacturer is Xiaomi ot not.
+ * Checks whether the device manufacturer should consume long tap.
  * Fixes issue [#3255](https://github.com/GetStream/stream-chat-android/issues/3255)
  *
  * @return if manufacturer should consume long tap or not.
