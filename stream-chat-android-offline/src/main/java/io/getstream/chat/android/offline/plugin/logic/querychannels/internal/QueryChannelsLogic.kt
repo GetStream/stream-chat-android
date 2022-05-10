@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
+import io.getstream.chat.android.offline.extensions.internal.toCid
 import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -61,7 +62,7 @@ internal class QueryChannelsLogic(
     private val repos: RepositoryFacade,
     private val globalState: GlobalMutableState,
     private val logicRegistry: LogicRegistry,
-    private val stateRegistry: StateRegistry
+    private val stateRegistry: StateRegistry,
 ) {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
@@ -257,7 +258,10 @@ internal class QueryChannelsLogic(
             channelRepository.selectChannelWithoutMessages(event.cid)
         } else null
 
-        when (val handlingResult = mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)) {
+        when (
+            val handlingResult =
+                mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
+        ) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit
@@ -289,9 +293,19 @@ internal class QueryChannelsLogic(
     private fun refreshChannels(cidList: Collection<String>) {
         mutableState._channels.value += mutableState.queryChannelsSpec.cids
             .intersect(cidList)
-            .associateWith { cid ->
-                val (channelType, channelId) = cid.cidToTypeAndId()
-                stateRegistry.channel(channelType, channelId).toChannel()
+            .map { cid -> cid.cidToTypeAndId() }
+            .filter { (channelType, channelId) ->
+                stateRegistry.isActiveChannel(
+                    channelType = channelType,
+                    channelId = channelId,
+                )
+            }
+            .associate { (channelType, channelId) ->
+                val cid = (channelType to channelId).toCid()
+                cid to stateRegistry.channel(
+                    channelType = channelType,
+                    channelId = channelId,
+                ).toChannel()
             }
     }
 
