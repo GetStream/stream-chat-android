@@ -258,8 +258,10 @@ internal class QueryChannelsLogic(
             channelRepository.selectChannelWithoutMessages(event.cid)
         } else null
 
-        when (val handlingResult =
-            mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)) {
+        when (
+            val handlingResult =
+                mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
+        ) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit

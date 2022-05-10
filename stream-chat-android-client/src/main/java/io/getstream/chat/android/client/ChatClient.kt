@@ -687,7 +687,6 @@ internal constructor(
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -711,6 +710,7 @@ internal constructor(
                 }
             }
             .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
     }
 
     /**
