@@ -1035,7 +1035,7 @@ public class MessageListViewModel(
     /**
      * Scrolls to message if in list otherwise get the message from backend.
      *
-     * @param message The message we wish to scroll null when scroll to.
+     * @param message The message we wish to scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
         val isMessageInList = currentMessagesState.messageItems.firstOrNull {
