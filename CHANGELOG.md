@@ -40,6 +40,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the attachment upload size limit to 100MB from 20MB. [#3490](https://github.com/GetStream/stream-chat-android/pull/3490)
 
 ### ✅ Added
 
