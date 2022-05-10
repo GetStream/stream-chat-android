@@ -284,6 +284,7 @@ internal fun randomNotificationAddedToChannelEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
+    member: Member = randomMember(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
 ): NotificationAddedToChannelEvent {
@@ -294,6 +295,7 @@ internal fun randomNotificationAddedToChannelEvent(
         channelType = channelType,
         channelId = channelId,
         channel = channel,
+        member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
     )
@@ -791,7 +793,8 @@ internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
 
 internal fun randomNotificationAddedToChannelEvent(
     cid: String = randomString(),
-    channel: Channel = randomChannel()
+    channel: Channel = randomChannel(),
+    member: Member = randomMember()
 ): NotificationAddedToChannelEvent {
     return NotificationAddedToChannelEvent(
         type = randomString(),
@@ -800,6 +803,7 @@ internal fun randomNotificationAddedToChannelEvent(
         channelType = randomString(),
         channelId = randomString(),
         channel = channel,
+        member = member,
         totalUnreadCount = randomInt(),
         unreadChannels = randomInt(),
     )

@@ -100,6 +100,7 @@ internal class TestDataHelper {
     val watcher1 = user1
     val member1 = Member(user = user1, role = "user", isInvited = false)
     val member2 = Member(user = user2, role = "user", isInvited = false)
+    val member3 = Member(user = user3, role = "user", isInvited = false)
 
     val parentMessageId = "parentMessageId"
 
@@ -465,6 +466,7 @@ internal class TestDataHelper {
         channel1.type,
         channel1.id,
         channel1,
+        member1,
         0,
         0
     )
@@ -475,6 +477,7 @@ internal class TestDataHelper {
         channel2.type,
         channel2.id,
         channel2,
+        member2,
         0,
         0
     )
@@ -487,6 +490,7 @@ internal class TestDataHelper {
         channel3.type,
         channel3.id,
         channel3,
+        member3,
         0,
         0
     )

@@ -16,6 +16,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 
 ### ⚠️ Changed
 
@@ -59,6 +62,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the behavior of `DeletedMessageVisibility` and `MessageFooterVisibility` when used in pair. Now the `DeletedMessageVisibility` and its "only visible to you" mode respects the `MessageFooterVisibility` and vice-versa. [#3467](https://github.com/GetStream/stream-chat-android/pull/3467)
 
 ### ✅ Added
 

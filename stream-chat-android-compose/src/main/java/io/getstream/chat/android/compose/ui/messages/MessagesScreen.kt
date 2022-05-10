@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
@@ -89,6 +90,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * @param messageLimit The limit of messages per query.
  * @param showHeader If we're showing the header or not.
  * @param enforceUniqueReactions If we need to enforce unique reactions or not.
+ * @param showDateSeparators If we should show date separators or not.
+ * @param showSystemMessages If we should show system messages or not.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
@@ -103,6 +108,7 @@ public fun MessagesScreen(
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
     deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -113,7 +119,8 @@ public fun MessagesScreen(
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
         showDateSeparators = showDateSeparators,
-        deletedMessageVisibility = deletedMessageVisibility
+        deletedMessageVisibility = deletedMessageVisibility,
+        messageFooterVisibility = messageFooterVisibility
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -385,7 +392,10 @@ public fun MessagesScreen(
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
- * @param deletedMessageVisibility The behavior of deleted messages in the list.
+ * @param showDateSeparators If we should show date separators or not.
+ * @param showSystemMessages If we should show system messages or not. * @param deletedMessageVisibility The behavior of deleted messages in the list.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  */
 private fun buildViewModelFactory(
     context: Context,
@@ -395,6 +405,7 @@ private fun buildViewModelFactory(
     showDateSeparators: Boolean,
     showSystemMessages: Boolean,
     deletedMessageVisibility: DeletedMessageVisibility,
+    messageFooterVisibility: MessageFooterVisibility,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -403,6 +414,7 @@ private fun buildViewModelFactory(
         messageLimit = messageLimit,
         showDateSeparators = showDateSeparators,
         showSystemMessages = showSystemMessages,
-        deletedMessageVisibility = deletedMessageVisibility
+        deletedMessageVisibility = deletedMessageVisibility,
+        messageFooterVisibility = messageFooterVisibility
     )
 }
