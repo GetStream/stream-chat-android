@@ -23,9 +23,19 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * Checks whether the device manufacturer is Xiaomi ot not.
  * Fixes issue [#3255](https://github.com/GetStream/stream-chat-android/issues/3255)
  *
- * @return is manufacturer Xiaomi or not.
+ * @return if manufacturer should consume long tap or not.
  */
 @InternalStreamChatApi
-internal fun isXiaomi(): Boolean {
-    return Build.MANUFACTURER.lowercase() == "xiaomi"
+internal fun shouldConsumeLongTap(): Boolean {
+    val manufacturer = Build.MANUFACTURER.lowercase()
+    return MANUFACTURERS_TO_CONSUME_LONG_TAP.any { it.lowercase() in manufacturer }
 }
+
+private const val MANUFACTURER_XIAOMI = "xiaomi"
+
+/**
+ * List of manufacturers which need to consume the long tap action.
+ */
+private val MANUFACTURERS_TO_CONSUME_LONG_TAP = listOf(
+    MANUFACTURER_XIAOMI
+)
