@@ -483,7 +483,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }
