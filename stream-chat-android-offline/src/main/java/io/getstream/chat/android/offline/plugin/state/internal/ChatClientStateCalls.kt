@@ -27,11 +27,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
-import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicReference
-
-private const val MAX_TIME_OF_STATE_MILLIS = 300
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
@@ -42,14 +37,11 @@ internal class ChatClientStateCalls internal constructor(
     private val scope: CoroutineScope,
 ) {
 
-    private val requestTimeMap: MutableMap<Int, Date> = ConcurrentHashMap()
-    private var globalLastRequest: AtomicReference<Date?> = AtomicReference()
+    private val cacheCoordinator = CacheCoordinator()
 
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest, forceRefresh: Boolean): QueryChannelsState {
-        evaluateGlobalState()
-
-        cachedBlock(request.hashCode(), forceRefresh) {
+        cacheCoordinator.cachedBlock(request.hashCode(), forceRefresh) {
             chatClient.queryChannels(request).launch(scope)
         }
 
@@ -65,7 +57,7 @@ internal class ChatClientStateCalls internal constructor(
     ): ChannelState {
         val queryHashCode = QueryChannelCacheKey(request, channelType, channelId).hashCode()
 
-        cachedBlock(queryHashCode, forceRefresh) {
+        cacheCoordinator.cachedBlock(queryHashCode, forceRefresh) {
             chatClient.queryChannel(channelType, channelId, request).launch(scope)
         }
 
@@ -74,8 +66,6 @@ internal class ChatClientStateCalls internal constructor(
 
     /** Reference request of the watch channel query. */
     internal fun watchChannel(cid: String, messageLimit: Int, forceRefresh: Boolean): ChannelState {
-        evaluateGlobalState()
-
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
@@ -84,46 +74,13 @@ internal class ChatClientStateCalls internal constructor(
 
     /** Reference request of the get thread replies query. */
     internal fun getReplies(messageId: String, messageLimit: Int, forceRefresh: Boolean): ThreadState {
-        evaluateGlobalState()
-
         val repliesHashCode = GetRepliesCacheKey(messageId, messageLimit).hashCode()
 
-        cachedBlock(repliesHashCode, forceRefresh) {
+        cacheCoordinator.cachedBlock(repliesHashCode, forceRefresh) {
             chatClient.getReplies(messageId, messageLimit).launch(scope)
         }
 
         return state.thread(messageId)
-    }
-
-    private fun cachedBlock(queryHashCode: Int, forceRefresh: Boolean, block: () -> Unit) {
-        if (isStateOld(queryHashCode) || forceRefresh) {
-            val now = Date()
-
-            block.invoke()
-
-            requestTimeMap[queryHashCode] = now
-            globalLastRequest.set(now)
-        }
-    }
-
-    private fun evaluateGlobalState() {
-        val lastRequest = globalLastRequest.get() ?: return
-
-        val now = Date()
-        val diff = now.time - lastRequest.time
-
-        if (diff > MAX_TIME_OF_STATE_MILLIS) {
-            requestTimeMap.clear()
-        }
-    }
-
-    private fun isStateOld(requestHash: Int): Boolean {
-        if (!requestTimeMap.containsKey(requestHash)) return true
-
-        val now = Date()
-        val diff = now.time - requestTimeMap[requestHash]!!.time
-
-        return diff > MAX_TIME_OF_STATE_MILLIS
     }
 
     companion object {
