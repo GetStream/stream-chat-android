@@ -89,6 +89,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Upgrade Firebase Messaging dependency to version `23.0.4`. [#3484](https://github.com/GetStream/stream-chat-android/pull/3484)
 
 ### ❌ Removed
 
