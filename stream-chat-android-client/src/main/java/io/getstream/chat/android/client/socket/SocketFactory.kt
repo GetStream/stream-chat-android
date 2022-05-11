@@ -37,12 +37,19 @@ internal class SocketFactory(
 
     @Throws(UnsupportedEncodingException::class)
     fun createAnonymousSocket(eventsParser: EventsParser, endpoint: String, apiKey: String): Socket =
-        create(eventsParser, endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
+        create(eventsParser, endpoint, apiKey, User(ANONYMOUS_USER_ID), isAnonymous = true, isReconnection = false)
 
     @Throws(UnsupportedEncodingException::class)
-    fun createNormalSocket(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User): Socket =
-        create(eventsParser, endpoint, apiKey, user, false)
+    fun createNormalSocket(
+        eventsParser: EventsParser,
+        endpoint: String,
+        apiKey: String,
+        user: User,
+        isReconnection: Boolean,
+    ): Socket =
+        create(eventsParser, endpoint, apiKey, user, isAnonymous = false, isReconnection = isReconnection)
 
+    @Suppress("LongParameterList")
     @Throws(UnsupportedEncodingException::class)
     private fun create(
         eventsParser: EventsParser,
@@ -50,8 +57,9 @@ internal class SocketFactory(
         apiKey: String,
         user: User,
         isAnonymous: Boolean,
+        isReconnection: Boolean,
     ): Socket {
-        val url = buildUrl(endpoint, apiKey, user, isAnonymous)
+        val url = buildUrl(endpoint, apiKey, user, isAnonymous, isReconnection)
         val request = Request.Builder().url(url).build()
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
 
@@ -62,8 +70,14 @@ internal class SocketFactory(
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)
-    private fun buildUrl(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): String {
-        var json = buildUserDetailJson(user)
+    private fun buildUrl(
+        endpoint: String,
+        apiKey: String,
+        user: User,
+        isAnonymous: Boolean,
+        isReconnection: Boolean,
+    ): String {
+        var json = buildUserDetailJson(user, isReconnection)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
             val baseWsUrl: String =
@@ -79,9 +93,9 @@ internal class SocketFactory(
         }
     }
 
-    private fun buildUserDetailJson(user: User): String {
+    private fun buildUserDetailJson(user: User, isReconnection: Boolean): String {
         val data = mapOf(
-            "user_details" to user.reduceUserDetails(),
+            "user_details" to user.reduceUserDetails(isReconnection),
             "user_id" to user.id,
             "server_determines_connection_id" to true,
             "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders()
@@ -103,18 +117,23 @@ internal class SocketFactory(
      *
      * @return A map of User's properties to update.
      */
-    private fun User.reduceUserDetails(): Map<String, Any> {
-        val details = mutableMapOf(
-            "id" to id,
-            "role" to role,
-            "banned" to banned,
-            "invisible" to invisible,
-            "teams" to teams,
-        ).apply {
-            if (image.isNotBlank()) put("image", image)
-            if (name.isNotBlank()) put("name", name)
-            putAll(extraData)
-        }
+    private fun User.reduceUserDetails(isReconnection: Boolean): Map<String, Any> {
+        val details = mutableMapOf<String, Any>("id" to id)
+            .apply {
+                if (!isReconnection) {
+                    putAll(
+                        mapOf(
+                            "role" to role,
+                            "banned" to banned,
+                            "invisible" to invisible,
+                            "teams" to teams,
+                        )
+                    )
+                    if (image.isNotBlank()) put("image", image)
+                    if (name.isNotBlank()) put("name", name)
+                    putAll(extraData)
+                }
+            }
 
         return details
     }
