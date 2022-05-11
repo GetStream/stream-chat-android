@@ -124,7 +124,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
@@ -141,20 +140,22 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
+import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -178,9 +179,9 @@ internal constructor(
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
 ) {
-    private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
-    private val eventsObservable = ChatEventsObservable(socket, this)
+    private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
+    private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope)
     private val lifecycleObserver = StreamLifecycleObserver(
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
@@ -246,7 +247,7 @@ internal constructor(
                 storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
             }
         }
-        logger.logI("Initialised: " + buildSdkTrackingHeaders())
+        logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
     }
 
     internal fun addPlugins(plugins: List<Plugin>) {
@@ -277,42 +278,6 @@ internal constructor(
     //region Set user
 
     /**
-     * Creates a [Call] implementation that wraps a call that would otherwise be
-     * asynchronous and provide results to an [InitConnectionListener].
-     *
-     * @param performCall This should perform the call, passing in the
-     *                    [initListener] to it.
-     */
-    private fun createInitListenerCall(
-        performCall: (initListener: InitConnectionListener) -> Unit,
-    ): Call<ConnectionData> {
-        return CoroutineCall(scope) {
-            performCall.awaitResult()
-        }
-    }
-
-    /**
-     * Awaits [InitConnectionListener] being invoked from either [setUser] or [setGuestUser] or [setAnonymousUser].
-     */
-    private suspend fun ((initListener: InitConnectionListener) -> Unit).awaitResult(): Result<ConnectionData> {
-        return suspendCoroutine { continuation ->
-            invoke(
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        val connectionData =
-                            io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
-                        continuation.resume(Result.success(connectionData))
-                    }
-
-                    override fun onError(error: ChatError) {
-                        continuation.resume(Result.error(error))
-                    }
-                }
-            )
-        }
-    }
-
-    /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
@@ -325,49 +290,49 @@ internal constructor(
      * @param tokenProvider A [TokenProvider] implementation.
      * @param listener Socket connection listener.
      */
-    private fun setUser(
+    private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
-        listener: InitConnectionListener? = null,
-    ) {
+    ): Result<ConnectionData> {
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
             logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            listener?.onError(
+            return Result.error(
                 ChatError(
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 )
             )
-            return
         }
         val userState = userStateService.state
-        when {
+        return when {
             userState is UserState.UserSet &&
                 userState.user.id == user.id &&
                 socketStateService.state == SocketState.Idle -> {
+                logger.logV("[setUser] user is Set & socket.state is Idle")
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(cacheableTokenProvider)
-                connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
                 initializationCoordinator.userConnected(user)
+                waitConnection.first()
             }
             userState is UserState.NotSet -> {
+                logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
-                connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
+                waitConnection.first()
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
                 logger.logE(
-                    "Trying to set user without disconnecting the previous one - make sure that previously set " +
-                        "user is disconnected."
+                    "[setUser] Trying to set user without disconnecting the previous one - " +
+                        "make sure that previously set user is disconnected."
                 )
-                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+                Result.error(ChatError("User cannot be set until the previous one is disconnected."))
             }
             else -> {
-                logger.logE("Failed to connect user. Please check you don't have connected user already")
-                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+                logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
+                Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
         }
     }
@@ -414,7 +379,16 @@ internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
+        return CoroutineCall(scope) {
+            logger.logD("[connectUser] userId: '${user.id}', username: '${user.name}'")
+            setUser(user, tokenProvider).also { result ->
+                logger.logV(
+                    "[connectUser] completed: ${
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    }"
+                )
+            }
+        }
     }
 
     /**
@@ -467,48 +441,53 @@ internal constructor(
         )
     }
 
-    private fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        if (userStateService.state is UserState.NotSet) {
+    private suspend fun setAnonymousUser(): Result<ConnectionData> {
+        return if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
-            connectionListener = object : InitConnectionListener() {
-                override fun onSuccess(data: ConnectionData) {
-                    initializationCoordinator.userConnected(data.user)
-                    listener?.onSuccess(data)
-                }
-
-                override fun onError(error: ChatError) {
-                    listener?.onError(error)
-                }
-            }
             config.isAnonymous = true
             warmUp()
             socket.connectAnonymously()
+            waitConnection.first().also { result ->
+                if (result.isSuccess) {
+                    initializationCoordinator.userConnected(result.data().user)
+                }
+            }
         } else {
             logger.logE("Failed to connect user. Please check you don't have connected user already")
-            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            Result.error(ChatError("User cannot be set until previous one is disconnected."))
         }
     }
 
     @CheckResult
     public fun connectAnonymousUser(): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setAnonymousUser(initListener) }
-    }
-
-    private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
-        getGuestToken(userId, username).enqueue { result ->
-            if (result.isSuccess) {
-                val guestUser = result.data()
-                setUser(guestUser.user, ConstantTokenProvider(guestUser.token), listener)
-            } else {
-                listener?.onError(result.error())
+        return CoroutineCall(scope) {
+            logger.logD("[connectAnonymousUser] no args")
+            setAnonymousUser().also { result ->
+                logger.logV(
+                    "[connectAnonymousUser] completed: ${
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    }"
+                )
             }
         }
     }
 
     @CheckResult
     public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setGuestUser(userId, username, initListener) }
+        return CoroutineCall(scope) {
+            logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
+            getGuestToken(userId, username).await()
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token)) }
+                .data()
+                .also { result ->
+                    logger.logV(
+                        "[connectAnonymousUser] completed: ${
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        }"
+                    )
+                }
+        }
     }
 
     @CheckResult
@@ -687,7 +666,6 @@ internal constructor(
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
-            .onMessageError(relevantErrorHandlers, cid, messageId)
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
@@ -711,6 +689,7 @@ internal constructor(
                 }
             }
             .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
     }
 
     /**
@@ -916,10 +895,10 @@ internal constructor(
     }
 
     public fun disconnect() {
+        logger.logI("[disconnect] no args")
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
         getCurrentUser().let(initializationCoordinator::userDisconnected)
-        connectionListener = null
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
@@ -2153,17 +2132,6 @@ internal constructor(
             }
     }
 
-    internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
-        if (connectedEvent != null) {
-            val user = connectedEvent.me
-            val connectionId = connectedEvent.connectionId
-            connectionListener?.onSuccess(InitConnectionListener.ConnectionData(user, connectionId))
-        } else if (error != null) {
-            connectionListener?.onError(error)
-        }
-        connectionListener = null
-    }
-
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
@@ -2389,6 +2357,10 @@ internal constructor(
             }
         }
 
+        public override fun build(): ChatClient {
+            return super.build()
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2467,7 +2439,7 @@ internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild()
+        public open fun build(): ChatClient = internalBuild()
             .also {
                 instance = it
             }

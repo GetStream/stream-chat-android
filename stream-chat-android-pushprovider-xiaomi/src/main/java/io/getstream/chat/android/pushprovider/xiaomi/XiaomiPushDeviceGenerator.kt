@@ -27,13 +27,23 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
  *
  * @property appId The App ID for the app registered on Xiaomi Developer Console.
  * @property appKey The App Key for the app registered on Xiaomi Developer Console.
+ * @property providerName Optional name for the provider name.
  */
-public class XiaomiPushDeviceGenerator(context: Context, private val appId: String, private val appKey: String) :
+public class XiaomiPushDeviceGenerator(
+    context: Context,
+    private val appId: String,
+    private val appKey: String,
+    private val providerName: String? = null,
+) :
     PushDeviceGenerator {
     private val appContext = context.applicationContext
     private val logger = ChatLogger.get("ChatNotifications")
 
     override fun isValidForThisDevice(context: Context): Boolean = true
+
+    override fun onPushDeviceGeneratorSelected() {
+        XiaomiMessagingDelegate.fallbackProviderName = providerName
+    }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Xiaomi token")

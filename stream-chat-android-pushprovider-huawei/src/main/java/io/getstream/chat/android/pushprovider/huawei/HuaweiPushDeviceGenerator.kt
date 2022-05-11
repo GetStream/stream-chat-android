@@ -32,8 +32,11 @@ import kotlinx.coroutines.launch
 /**
  * Generator responsible for providing information needed to register Huawei push notifications provider
  */
-public class HuaweiPushDeviceGenerator(context: Context, private val appId: String) :
-    PushDeviceGenerator {
+public class HuaweiPushDeviceGenerator(
+    context: Context,
+    private val appId: String,
+    private val providerName: String? = null
+) : PushDeviceGenerator {
     private val hmsInstanceId: HmsInstanceId = HmsInstanceId.getInstance(context)
     private val logger = ChatLogger.get("ChatNotifications")
 
@@ -41,6 +44,10 @@ public class HuaweiPushDeviceGenerator(context: Context, private val appId: Stri
         (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(context) == SUCCESS).also {
             logger.logI("Is Huawei available on on this device -> $it")
         }
+
+    override fun onPushDeviceGeneratorSelected() {
+        HuaweiMessagingDelegate.fallbackProviderName = providerName
+    }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Huawei token")
@@ -55,6 +62,7 @@ public class HuaweiPushDeviceGenerator(context: Context, private val appId: Stri
                         Device(
                             token = this,
                             pushProvider = PushProvider.HUAWEI,
+                            providerName = providerName,
                         )
                     )
                 }

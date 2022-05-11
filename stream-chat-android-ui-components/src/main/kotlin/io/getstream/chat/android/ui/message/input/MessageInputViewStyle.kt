@@ -33,8 +33,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 
-private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
-
 /**
  * Style for [MessageInputView].
  *
@@ -121,7 +119,7 @@ public data class MessageInputViewStyle(
     public val editInputModeIcon: Drawable,
     public val replyInputModeIcon: Drawable,
     @ColorInt public val commandButtonRippleColor: Int?,
-    @ColorInt public val attachmentButtonRippleColor: Int?
+    @ColorInt public val attachmentButtonRippleColor: Int?,
 ) {
 
     public companion object {
@@ -260,7 +258,7 @@ public data class MessageInputViewStyle(
 
                 val attachmentMaxFileSize = a.getInt(
                     R.styleable.MessageInputView_streamUiAttachmentMaxFileSizeMb,
-                    DEFAULT_ATTACHMENT_MAX_SIZE_MB
+                    AttachmentConstants.MAX_UPLOAD_SIZE_IN_MB
                 )
 
                 val maxAttachmentsCount = a.getInt(
@@ -379,8 +377,9 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentSelectionAttachIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
-                val attachmentDialogTabButtonColorStateList = a.getColorStateList(R.styleable.MessageInputView_streamUiAttachmentTabButtonColorStateList)
-                    ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
+                val attachmentDialogTabButtonColorStateList =
+                    a.getColorStateList(R.styleable.MessageInputView_streamUiAttachmentTabButtonColorStateList)
+                        ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
 
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
