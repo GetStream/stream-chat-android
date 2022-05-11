@@ -7,6 +7,10 @@ public interface ApiRequestsAnalyser {
     public fun dumpAllRequests(): String
 
     public companion object {
-        public fun get(): ApiRequestsAnalyser = ApiRequestsDumper()
+        private var instance: ApiRequestsAnalyser? = null
+
+        public fun get(): ApiRequestsAnalyser = instance ?: ApiRequestsDumper().also { dumper ->
+            instance = dumper
+        }
     }
 }

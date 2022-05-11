@@ -72,6 +72,7 @@ class ChatInitializer(private val context: Context) {
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
             .withApiRequestAnalyser(ApiRequestsAnalyser.get())
+            .debugRequests(true)
             .build()
 
         // Using markdown as text transformer

@@ -61,13 +61,11 @@ internal class ApiRequestsDumper(
                 val time = dateFormat.format(requestData.time)
                 val params = requestData.extraData.entries.joinToString { (key, value) -> "$key - $value" }
                 appendLine("Call $i. Time: $time. Params: $params")
-                appendLine()
             }
         }
 
         return StringBuilder().apply {
             appendLine("Request: $requestName. Count: $count")
-            appendLine()
             append(extraDataBuilder)
         }
     }
