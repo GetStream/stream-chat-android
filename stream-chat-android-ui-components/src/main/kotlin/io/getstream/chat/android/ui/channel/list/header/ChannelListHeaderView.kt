@@ -212,6 +212,17 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.onlineTextView.setOnClickListener { func.invoke() }
     }
 
+    public fun setTextLongClickListener(func: () -> Unit) {
+        binding.offlineTextView.setOnLongClickListener {
+            func.invoke()
+            true
+        }
+        binding.onlineTextView.setOnLongClickListener {
+            func.invoke()
+            true
+        }
+    }
+
     /**
      * Shows the title that indicates the network state is offline.
      */

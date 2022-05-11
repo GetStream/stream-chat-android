@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -90,7 +91,12 @@ class HomeFragment : Fragment() {
             }
             if (BuildConfig.DEBUG) {
                 setTextClickListener {
-                    Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAllRequests())
+                    Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
+                }
+
+                setTextLongClickListener {
+                    ApiRequestsAnalyser.get().clearAll()
+                    Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
                 }
 
                 setOnUserAvatarLongClickListener {
