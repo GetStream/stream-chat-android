@@ -178,7 +178,6 @@ internal constructor(
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
-    public val apiRequestsAnalyser: ApiRequestsAnalyser?,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -1361,11 +1360,6 @@ internal constructor(
     ): Call<Channel> {
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
-        apiRequestsAnalyser?.registerRequest(
-            "queryChannel",
-            mapOf("channelType" to channelType, "channelId" to channelId)
-        )
-
         return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
                 relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
@@ -2466,7 +2460,6 @@ internal constructor(
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
-                apiRequestsAnalyser = apiRequestsAnalyser
             ).also {
                 configureInitializer(it)
             }
