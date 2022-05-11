@@ -54,6 +54,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed Xiaomi crash when long clicking on links inside messages. [#3491](https://github.com/GetStream/stream-chat-android/pull/3491)
 
 ### ⬆️ Improved
 
