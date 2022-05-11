@@ -20,7 +20,17 @@ public interface ApiRequestsAnalyser {
 
     public fun registerRequest(requestName: String, data: Map<String, String>)
 
-    public fun dumpAllRequests(): String
+    public fun dumpRequestByName(requestName: String): String
+
+    public fun dumpAll(): String
+
+    public fun clearAll()
+
+    public fun clearRequestContaining(queryText: String)
+
+    public fun countRequestByName(requestName: String): Int
+
+    public fun countAllRequests(): Int
 
     public companion object {
         private var instance: ApiRequestsAnalyser? = null

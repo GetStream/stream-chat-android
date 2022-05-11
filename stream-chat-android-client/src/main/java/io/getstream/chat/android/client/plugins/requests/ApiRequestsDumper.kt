@@ -40,22 +40,34 @@ internal class ApiRequestsDumper(
         }
     }
 
-    internal fun countRequestByName(requestName: String): Int {
+    override fun clearAll() {
+        requestsDataMap.clear()
+    }
+
+    override fun clearRequestContaining(queryText: String) {
+        val keys = requestsDataMap.keys.filter { key ->
+            key.contains(queryText)
+        }
+
+        keys.forEach(requestsDataMap::remove)
+    }
+
+    override fun countRequestByName(requestName: String): Int {
         return requestsDataMap[requestName]?.count() ?: 0
     }
 
-    internal fun countAllRequests(): Int {
+    override fun countAllRequests(): Int {
         return requestsDataMap.values.fold(0) { acc, list -> acc + list.count() }
     }
 
-    internal fun dumpRequestByName(requestName: String): String {
+    override fun dumpRequestByName(requestName: String): String {
         return requestsDataMap[requestName]
             ?.toHumanReadableStringBuilder()
             ?.toString()
             ?: NOT_FOUND
     }
 
-    override fun dumpAllRequests(): String {
+    override fun dumpAll(): String {
         return buildString {
             requestsDataMap.values.forEach { requestDataList ->
                 append(requestDataList.toHumanReadableStringBuilder())
