@@ -800,6 +800,27 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/channel/ChannelClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
 
+public abstract interface class io/getstream/chat/android/client/channel/manager/ChannelStateManager {
+	public abstract fun removeMessagesBefore (Ljava/util/Date;Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun setWatcherCount (I)V
+	public abstract fun updateAttachmentUploadState (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment$UploadState;)V
+	public abstract fun updateChannelData (Lio/getstream/chat/android/client/models/Channel;)V
+	public abstract fun updateDataFromChannel (Lio/getstream/chat/android/client/models/Channel;)V
+	public abstract fun updateOldMessagesFromChannel (Lio/getstream/chat/android/client/models/Channel;)V
+	public abstract fun updateOldMessagesFromLocalChannel (Lio/getstream/chat/android/client/models/Channel;)V
+	public abstract fun updateReads (Ljava/util/List;)V
+	public abstract fun upsertMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun upsertMessages (Ljava/util/List;)V
+}
+
+public final class io/getstream/chat/android/client/channel/manager/ChannelStateManager$DefaultImpls {
+	public static synthetic fun removeMessagesBefore$default (Lio/getstream/chat/android/client/channel/manager/ChannelStateManager;Ljava/util/Date;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
+}
+
+public abstract interface class io/getstream/chat/android/client/channel/manager/ChannelsManager {
+	public abstract fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/manager/ChannelStateManager;
+}
+
 public abstract class io/getstream/chat/android/client/clientstate/DisconnectCause {
 }
 
