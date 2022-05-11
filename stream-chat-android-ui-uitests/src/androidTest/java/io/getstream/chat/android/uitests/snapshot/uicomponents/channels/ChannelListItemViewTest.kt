@@ -23,6 +23,8 @@ import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.CurrentUserProvider
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemViewType
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -39,6 +41,7 @@ class ChannelListItemViewTest : ScreenshotTest {
     @Before
     fun setup() {
         StreamCoil.setImageLoader { FakeImageLoader(context) }
+        ChatUI.currentUserProvider = CurrentUserProvider { TestData.user1() }
     }
 
     @Test
@@ -54,23 +57,6 @@ class ChannelListItemViewTest : ScreenshotTest {
                     TestData.message2()
                 )
                 unreadCount = 2
-                lastMessageAt = TestData.date2()
-            }
-        )
-    }
-
-    @Test
-    fun channelItemWithoutCurrentUser() {
-        renderChannelListItemView(
-            TestData.channel1().apply {
-                members = listOf(
-                    TestData.member1(),
-                    TestData.member2(),
-                )
-                messages = listOf(
-                    TestData.message1(),
-                    TestData.message2()
-                )
                 lastMessageAt = TestData.date2()
             }
         )

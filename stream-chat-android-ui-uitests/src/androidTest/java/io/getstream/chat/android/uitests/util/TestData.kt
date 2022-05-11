@@ -98,6 +98,7 @@ object TestData {
         text = "Ladies and gentlemen, we have liftoff"
         createdAt = date1()
         type = ModelType.message_regular
+        user = user1()
     }
 
     fun message2(): Message = Message().apply {
@@ -105,6 +106,7 @@ object TestData {
         text = "Space!"
         createdAt = date2()
         type = ModelType.message_regular
+        user = user2()
     }
 
     fun message3(): Message = Message().apply {
@@ -112,6 +114,7 @@ object TestData {
         text = "They ain't in space yet"
         createdAt = date3()
         type = ModelType.message_regular
+        user = user3()
     }
 
     fun message4(): Message = Message().apply {
@@ -119,6 +122,7 @@ object TestData {
         text = "OK, not to be that guy, but by my calculations, they’re technically in space now"
         createdAt = date4()
         type = ModelType.message_regular
+        user = user4()
     }
 
     fun channel1() = Channel().apply {

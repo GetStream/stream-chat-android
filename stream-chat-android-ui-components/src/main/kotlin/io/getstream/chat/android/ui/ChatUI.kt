@@ -109,4 +109,9 @@ public object ChatUI {
      * Allows adding support for custom attachments in the message list.
      */
     public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
+
+    /**
+     * Provides the currently logged in user.
+     */
+    public var currentUserProvider: CurrentUserProvider = CurrentUserProviderImpl()
 }

@@ -10,6 +10,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
 	public final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
 	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
@@ -21,6 +22,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/ChannelNameFormatter;)V
+	public final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/CurrentUserProvider;)V
 	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
@@ -29,6 +31,15 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/CurrentUserProvider {
+	public abstract fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+}
+
+public final class io/getstream/chat/android/ui/CurrentUserProviderImpl : io/getstream/chat/android/ui/CurrentUserProvider {
+	public fun <init> ()V
+	public fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
