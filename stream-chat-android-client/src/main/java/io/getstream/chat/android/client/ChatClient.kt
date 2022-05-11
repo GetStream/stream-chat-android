@@ -2371,8 +2371,13 @@ internal constructor(
             userCredentialStorage = credentialStorage
         }
 
-        public fun withApiRequestAnalyser(apiRequestsAnalyser: ApiRequestsAnalyser): Builder = apply {
-            this.apiRequestsAnalyser = apiRequestsAnalyser
+        public fun withApiRequestAnalyser(
+            apiRequestsAnalyser: ApiRequestsAnalyser,
+            debugOnly: Boolean = true,
+        ): Builder = apply {
+            if (debugOnly && BuildConfig.DEBUG) {
+                this.apiRequestsAnalyser = apiRequestsAnalyser
+            }
         }
 
         public fun debugRequests(shouldDebug: Boolean): Builder = apply {
