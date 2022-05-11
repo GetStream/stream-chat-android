@@ -1,29 +1,10 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# May 11th, 2022 - 5.2.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 - Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 - Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 - Add `provideName` property to `Device` entity to support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -32,97 +13,32 @@
 - Fixed refreshing channels list when syncing the channel. [#3492](https://github.com/GetStream/stream-chat-android/pull/3492)
 - Fixed deleting reactions while offline. [3486](https://github.com/GetStream/stream-chat-android/pull/3486)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Updated the attachment upload size limit to 100MB from 20MB. [#3490](https://github.com/GetStream/stream-chat-android/pull/3490)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed Xiaomi crash when long clicking on links inside messages. [#3491](https://github.com/GetStream/stream-chat-android/pull/3491)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improved the behavior of `DeletedMessageVisibility` and `MessageFooterVisibility` when used in pair. Now the `DeletedMessageVisibility` and its "only visible to you" mode respects the `MessageFooterVisibility` and vice-versa. [#3467](https://github.com/GetStream/stream-chat-android/pull/3467)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 ### ⚠️ Changed
 - Upgrade Firebase Messaging dependency to version `23.0.4`. [#3484](https://github.com/GetStream/stream-chat-android/pull/3484)
 
-### ❌ Removed
-
 ## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # May 3rd, 2022 - 5.1.0
 ## stream-chat-android-client
