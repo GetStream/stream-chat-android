@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: develop
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
       - name: Commit changes
@@ -27,17 +27,8 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-      - name: Create PR to develop
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          destination_branch: develop 
-          pr_title: "Post Release - Main to develop"
-          pr_body: "Post Release - Main to develop"
-          pr_draft: false
-          pr_label: "auto-pr"  
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: develop
   publish:
     name: Dokka docs
     runs-on: ubuntu-latest
@@ -55,7 +46,7 @@ jobs:
       - name: Deploy to GitHub pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           publish_dir: ./build/dokka/htmlMultiModule
           publish_branch: gh-pages
   push_docusaurus:
