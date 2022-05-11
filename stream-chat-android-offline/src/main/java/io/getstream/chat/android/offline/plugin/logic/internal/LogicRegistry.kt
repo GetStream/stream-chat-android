@@ -20,10 +20,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.channel.manager.ChannelsManager
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -48,7 +50,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
-) {
+) : ChannelsManager {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
@@ -73,13 +75,21 @@ internal class LogicRegistry internal constructor(
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
-    fun channel(channelType: String, channelId: String): ChannelLogic {
+    override fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
+            val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
+
+            val channelStateLogic = ChannelStateLogic(
+                mutableState = mutableState,
+                globalMutableState = globalState
+            )
+
             ChannelLogic(
-                mutableState = stateRegistry.channel(channelType, channelId).toMutableState(),
+                mutableState = mutableState,
                 globalMutableState = globalState,
                 repos = repos,
-                userPresence = userPresence
+                userPresence = userPresence,
+                channelStateLogic = channelStateLogic
             )
         }
     }

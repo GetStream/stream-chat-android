@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.manager.ChannelStateManager
+import io.getstream.chat.android.client.channel.manager.ChannelsManager
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -26,11 +28,9 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 internal class UploadAttachmentsWorker(
-    private val logic: LogicRegistry,
+    private val channelsManager: ChannelsManager?,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -101,7 +101,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            logic.channel(channelType, channelId)
+                            channelsManager?.channel(channelType, channelId)
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
@@ -121,7 +121,7 @@ internal class UploadAttachmentsWorker(
         }.also { attachments ->
             message.attachments = attachments
             // TODO refactor this place. A lot of side effects happening here.
-            //  We should extract it to entity that will handle logic of uploading only.
+            //  We should extract it to entity that will handle channelsManager of uploading only.
         }
     }
 
@@ -133,7 +133,7 @@ internal class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
-        logic.channel(channelType, channelId).upsertMessage(message)
+        channelsManager?.channel(channelType, channelId)?.upsertMessage(message)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
         messageRepository.insertMessage(message)
@@ -142,19 +142,19 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val channel: ChannelLogic,
+        private val channelState: ChannelStateManager?,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
+            channelState?.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
         override fun onError(error: ChatError) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
+            channelState?.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
-            channel.updateAttachmentUploadState(
+            channelState?.updateAttachmentUploadState(
                 messageId,
                 uploadId,
                 Attachment.UploadState.InProgress(bytesUploaded, totalBytes)

@@ -322,7 +322,7 @@ internal class WhenUploadAttachmentsTests {
 
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
-                logic = logicRegistry,
+                channelsManager = logicRegistry,
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader
