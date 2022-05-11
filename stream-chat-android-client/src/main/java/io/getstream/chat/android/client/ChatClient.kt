@@ -445,6 +445,7 @@ internal constructor(
         return if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
+            tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
             config.isAnonymous = true
             warmUp()
             socket.connectAnonymously()
