@@ -40,8 +40,9 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
     private var isLongClick = false
 
     init {
-        // isXiaomi check fixes issue https://github.com/GetStream/stream-chat-android/issues/3255
-        // return false as before for other manufacturers
+        /** [shouldConsumeLongTap] check fixes issue https://github.com/GetStream/stream-chat-android/issues/3255
+         * return false as before for other manufacturers
+         */
         textView.setOnLongClickListener {
             isLongClick = true
             longClickTarget.performLongClick()

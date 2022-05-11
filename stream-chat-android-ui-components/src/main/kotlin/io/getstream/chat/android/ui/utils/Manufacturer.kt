@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.utils
 
 import android.os.Build
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Checks whether the device manufacturer should consume long tap.
@@ -25,7 +24,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  *
  * @return if manufacturer should consume long tap or not.
  */
-@InternalStreamChatApi
 internal fun shouldConsumeLongTap(): Boolean {
     val manufacturer = Build.MANUFACTURER.lowercase()
     return MANUFACTURERS_TO_CONSUME_LONG_TAP.any { it.lowercase() in manufacturer }
