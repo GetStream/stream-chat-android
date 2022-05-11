@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.models.PushProvider
  */
 public object FirebaseMessagingDelegate {
 
+    internal var fallbackProviderName: String? = null
+
     /**
      * Handles [remoteMessage] from Firebase.
      * If the [remoteMessage] wasn't sent from the Stream Server and doesn't contain the needed data,
@@ -52,16 +54,21 @@ public object FirebaseMessagingDelegate {
      * Register new Firebase Token.
      *
      * @param token provided by Firebase.
+     * @param providerName Optional name for the provider name.
      *
      * @throws IllegalStateException if called before initializing ChatClient.
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun registerFirebaseToken(token: String) {
+    public fun registerFirebaseToken(
+        token: String,
+        providerName: String? = fallbackProviderName,
+    ) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.FIREBASE,
+                providerName = providerName,
             )
         )
     }
