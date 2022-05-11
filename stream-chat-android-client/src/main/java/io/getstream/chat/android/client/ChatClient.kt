@@ -2357,6 +2357,10 @@ internal constructor(
             }
         }
 
+        public override fun build(): ChatClient {
+            return super.build()
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2435,7 +2439,7 @@ internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild()
+        public open fun build(): ChatClient = internalBuild()
             .also {
                 instance = it
             }
