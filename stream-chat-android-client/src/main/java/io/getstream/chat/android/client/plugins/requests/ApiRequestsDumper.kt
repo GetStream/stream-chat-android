@@ -1,12 +1,14 @@
 package io.getstream.chat.android.client.plugins.requests
 
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 private const val NOT_FOUND = "not found"
 
 internal class ApiRequestsDumper(
-    private val dateFormat: DateFormat = DateFormat.getTimeInstance(DateFormat.LONG),
+    private val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
 ) : ApiRequestsAnalyser {
 
     private val requestsDataMap: MutableMap<String, MutableList<RequestData>> = mutableMapOf()
@@ -37,7 +39,7 @@ internal class ApiRequestsDumper(
             ?: NOT_FOUND
     }
 
-    internal fun dumpAllRequests(): String {
+    override fun dumpAllRequests(): String {
         return buildString {
             requestsDataMap.values.forEach { requestDataList ->
                 append(requestDataList.toHumanReadableStringBuilder())
@@ -58,12 +60,14 @@ internal class ApiRequestsDumper(
             dataList.forEachIndexed { i, requestData ->
                 val time = dateFormat.format(requestData.time)
                 val params = requestData.extraData.entries.joinToString { (key, value) -> "$key - $value" }
-                appendLine("Call #$i. Time: $time. Params: $params")
+                appendLine("Call $i. Time: $time. Params: $params")
+                appendLine()
             }
         }
 
         return StringBuilder().apply {
             appendLine("Request: $requestName. Count: $count")
+            appendLine()
             append(extraDataBuilder)
         }
     }

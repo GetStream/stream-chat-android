@@ -178,7 +178,7 @@ internal constructor(
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
-    private val apiRequestsAnalyser: ApiRequestsAnalyser
+    public val apiRequestsAnalyser: ApiRequestsAnalyser?
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -1361,7 +1361,7 @@ internal constructor(
     ): Call<Channel> {
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
-        apiRequestsAnalyser.registerRequest(
+        apiRequestsAnalyser?.registerRequest(
             "queryChannel",
             mapOf("channelType" to channelType, "channelId" to channelId)
         )
@@ -2376,6 +2376,10 @@ internal constructor(
             userCredentialStorage = credentialStorage
         }
 
+        public fun withApiRequestAnalyser(apiRequestsAnalyser: ApiRequestsAnalyser): Builder = apply {
+            this.apiRequestsAnalyser = apiRequestsAnalyser
+        }
+
         /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
@@ -2456,7 +2460,7 @@ internal constructor(
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
-
+                apiRequestsAnalyser = apiRequestsAnalyser
             ).also {
                 configureInitializer(it)
             }
