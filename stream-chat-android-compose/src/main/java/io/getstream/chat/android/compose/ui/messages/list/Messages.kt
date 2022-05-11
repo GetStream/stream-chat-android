@@ -141,7 +141,7 @@ public fun Messages(
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
     lazyListState: LazyListState,
-    focusedMessageOffset: Int = DefaultFocusedMessageOffset
+    focusedMessageOffset: Int = DefaultFocusedMessageOffset,
 ) {
     val (_, _, _, messages, _, _, newMessageState) = messagesState
     val coroutineScope = rememberCoroutineScope()

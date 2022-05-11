@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.dp
  * @param otherMessageBubble The bubble that wraps other people's message content.
  * @param inputField The shape of the input field.
  * @param attachment The shape of attachments.
- * @param quotedAttachment The shape of quoted attachments.
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
  * @param suggestionList The shape of suggestion list popup.
  * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
  * @param header The shape of the headers, such as the ones appearing on the Channel or Message screens.
+ * @param quotedAttachment The shape of quoted attachments.
  */
 @Immutable
 public data class StreamShapes(
@@ -45,12 +45,12 @@ public data class StreamShapes(
     public val otherMessageBubble: Shape,
     public val inputField: Shape,
     public val attachment: Shape,
-    public val quotedAttachment: Shape,
     public val imageThumbnail: Shape,
     public val bottomSheet: Shape,
     public val suggestionList: Shape,
     public val attachmentSiteLabel: Shape,
-    public val header: Shape
+    public val header: Shape,
+    public val quotedAttachment: Shape,
 ) {
     public companion object {
         /**

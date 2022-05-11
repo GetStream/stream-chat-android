@@ -41,5 +41,5 @@ public data class MessagesState(
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
-    val unreadCount: Int = 0
+    val unreadCount: Int = 0,
 )

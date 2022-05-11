@@ -28,8 +28,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
- * currently uploading images.
+ * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
+ * image, link preview or giphy.
  *
  * @param attachment The attachment we wish to show to users.
  * @param modifier Modifier for styling.

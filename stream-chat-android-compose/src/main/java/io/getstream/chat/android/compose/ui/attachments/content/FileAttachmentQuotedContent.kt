@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
 /**
- * Builds a file attachment quoted message which shows a list of files.
+ * Builds a file attachment quoted message which shows a single file in the attachments list.
  *
  * @param attachment The attachment we wish to show to users.
  */

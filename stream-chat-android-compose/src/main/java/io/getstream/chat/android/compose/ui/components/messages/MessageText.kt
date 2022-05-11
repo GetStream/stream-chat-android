@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -46,6 +47,93 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isFile
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+
+/**
+ * Default text element for messages, with extra styling and padding for the chat bubble.
+ *
+ * It detects if we have any annotations/links in the message, and if so, it uses the [ClickableText]
+ * component to allow for clicks on said links, that will open the link.
+ *
+ * Alternatively, it just shows a basic [Text] element.
+ *
+ * @param message Message to show.
+ * @param modifier Modifier for styling.
+ * @param isQuote Is the message is a quote inside another message.
+ * @param onLongItemClick Handler used for long pressing on the message text.
+ */
+@Deprecated(
+    message = "Deprecated after moving the quoted text composition logic to QuotedMessageText which will is now " +
+        "used to compose quoted messages. Use MessageText for regular message text.",
+    replaceWith = ReplaceWith(
+        expression = "MessageText(message: Message, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit)",
+        imports = ["io.getstream.chat.android.compose.ui.components.messages.MessageText"]
+    ),
+    level = DeprecationLevel.WARNING
+)
+@Composable
+public fun MessageText(
+    message: Message,
+    modifier: Modifier = Modifier,
+    isQuote: Boolean = false,
+    onLongItemClick: (Message) -> Unit,
+) {
+    val context = LocalContext.current
+
+    val styledText = buildAnnotatedMessageText(message)
+    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
+
+    val isEmojiOnly = message.isEmojiOnly() && !isQuote
+    val isSingleEmoji = message.isSingleEmoji() && !isQuote
+
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    val style = when {
+        isSingleEmoji -> ChatTheme.typography.singleEmoji
+        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
+
+    if (annotations.isNotEmpty()) {
+        ClickableText(
+            modifier = modifier
+                .padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
+                ),
+            text = styledText,
+            style = style,
+            onLongPress = { onLongItemClick(message) }
+        ) { position ->
+            val targetUrl = annotations.firstOrNull {
+                position in it.start..it.end
+            }?.item
+
+            if (targetUrl != null && targetUrl.isNotEmpty()) {
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(targetUrl)
+                    )
+                )
+            }
+        }
+    } else {
+        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
+        Text(
+            modifier = modifier
+                .padding(
+                    start = horizontalPadding,
+                    end = horizontalPadding,
+                    top = if (isEmojiOnly) 0.dp else 8.dp,
+                    bottom = if (isEmojiOnly) 0.dp else 8.dp
+                )
+                .clipToBounds(),
+            text = styledText,
+            style = style
+        )
+    }
+}
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -128,58 +216,54 @@ public fun MessageText(
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param quoteMaxLines Max number of lines quoted text can have.
  */
 @Composable
 public fun QuotedMessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    maxQuoteLength: Int = DefaultQuoteMaxLength,
+    quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
-    val context = LocalContext.current
+    val attachment = message.attachments.firstOrNull()
 
-    val quotedMessage = when {
-        message.text.count() > DefaultQuoteMaxLength -> {
-            val text = context.getString(
-                R.string.stream_compose_quoted_message_ellipsize,
-                message.text.take(maxQuoteLength)
-            )
-            message.copy(text = text)
-        }
+    val quotedMessageText = when {
+        message.text.isNotBlank() -> message.text
 
-        message.text.isBlank() -> {
-            val attachment = message.attachments.first()
-            val text = when {
+        attachment?.name != null -> attachment.name!!
+
+        attachment?.text != null -> attachment.text!!
+
+        attachment != null -> {
+            when {
                 attachment.type == ModelType.attach_image -> {
-                    context.getString(R.string.stream_compose_quoted_message_image_tag)
+                    stringResource(R.string.stream_compose_quoted_message_image_tag)
                 }
                 attachment.type == ModelType.attach_giphy -> {
-                    context.getString(R.string.stream_compose_quoted_message_giphy_tag)
+                    stringResource(R.string.stream_compose_quoted_message_giphy_tag)
                 }
                 attachment.isFile() -> {
-                    attachment.name ?: context.getString(R.string.stream_compose_quoted_message_file_tag)
+                    stringResource(R.string.stream_compose_quoted_message_file_tag)
                 }
                 else -> message.text
             }
-            message.copy(text = text)
         }
 
-        else -> message
+        else -> message.text
     }
 
-    val styledText = buildAnnotatedMessageText(quotedMessage)
-
-    val horizontalPadding = 8.dp
-    val verticalPadding = 5.dp
+    val styledText = buildAnnotatedMessageText(quotedMessageText)
 
     Text(
-        modifier = modifier.padding(
-            top = verticalPadding,
-            bottom = verticalPadding,
-            start = horizontalPadding,
-            end = horizontalPadding
-        ).clipToBounds(),
+        modifier = modifier
+            .padding(
+                horizontal = 8.dp,
+                vertical = 5.dp
+            )
+            .clipToBounds(),
         text = styledText,
-        style = ChatTheme.typography.bodyBold
+        style = ChatTheme.typography.bodyBold,
+        maxLines = quoteMaxLines,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -195,8 +279,19 @@ private val URL_SCHEMES = listOf("http://", "https://")
  */
 @Composable
 private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
-    val text = message.text
+    return buildAnnotatedMessageText(message.text)
+}
 
+/**
+ * Takes the given message text and builds an annotated message text that shows links and allows for clicks,
+ * if there are any links available.
+ *
+ * @param text The message text to style.
+ *
+ * @return The annotated String, with clickable links, if applicable.
+ */
+@Composable
+private fun buildAnnotatedMessageText(text: String): AnnotatedString {
     return buildAnnotatedString {
         // First we add the whole text to the [AnnotatedString] and style it as a regular text.
         append(text)
@@ -294,4 +389,4 @@ private fun ClickableText(
 /**
  * The max length of quote message. After that it gets ellipsized.
  */
-private const val DefaultQuoteMaxLength: Int = 170
+private const val DefaultQuoteMaxLines: Int = 3

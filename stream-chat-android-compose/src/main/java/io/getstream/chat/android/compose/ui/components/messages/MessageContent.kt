@@ -53,7 +53,7 @@ public fun MessageContent(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
-    onQuotedMessageClick: (Message) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(

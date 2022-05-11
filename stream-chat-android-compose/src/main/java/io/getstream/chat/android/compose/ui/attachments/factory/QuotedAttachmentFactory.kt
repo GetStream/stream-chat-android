@@ -25,14 +25,19 @@ import io.getstream.chat.android.compose.ui.util.isFile
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] or
- * [FileAttachmentQuotedContent] to build the UI for the quoted message.
+ * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] in case the
+ * attachment is a media attachment or [FileAttachmentQuotedContent] in case the attachment is a file to build the UI
+ * for the quoted message.
  */
 @Suppress("FunctionName")
 public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
-    canHandle = { it.isNotEmpty() },
+    canHandle = {
+        if (it.isEmpty()) return@AttachmentFactory false
+        val attachment = it.first()
+        attachment.isFile() || attachment.isMedia() || attachment.hasLink()
+    },
     content = content@ @Composable { modifier, attachmentState ->
-        val attachment = attachmentState.message.attachments.firstOrNull() ?: return@content
+        val attachment = attachmentState.message.attachments.first()
 
         val isFile = attachment.isFile()
         val isImage = attachment.isMedia()

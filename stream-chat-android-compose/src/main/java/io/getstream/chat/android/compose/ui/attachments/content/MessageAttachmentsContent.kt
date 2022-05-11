@@ -35,23 +35,15 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * @param message The message that contains the attachments.
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
- * @param isQuote Determines if attachment is inside a quoted message or not.
  */
 @Composable
 public fun MessageAttachmentsContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    isQuote: Boolean = false,
 ) {
     if (message.attachments.isNotEmpty()) {
         val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != ModelType.attach_giphy }
-
-        val quoteAttachmentFactory = if (isQuote) {
-            ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
-        } else {
-            null
-        }
 
         val linkFactory = if (links.isNotEmpty()) {
             ChatTheme.attachmentFactories.firstOrNull { it.canHandle(links) }
@@ -71,21 +63,45 @@ public fun MessageAttachmentsContent(
             onImagePreviewResult = onImagePreviewResult
         )
 
-        when {
-            quoteAttachmentFactory != null -> {
-                quoteAttachmentFactory.content(
-                    Modifier
-                        .padding(top = 6.dp, bottom = 6.dp, start = 8.dp)
-                        .size(36.dp),
-                    attachmentState
-                )
-            }
-            attachmentFactory != null -> {
-                attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
-            }
-            linkFactory != null -> {
-                linkFactory.content(Modifier.padding(8.dp), attachmentState)
-            }
+        if (attachmentFactory != null) {
+            attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
+        } else if (linkFactory != null) {
+            linkFactory.content(Modifier.padding(8.dp), attachmentState)
         }
     }
+}
+
+/**
+ * Represents the content that's shown in a quoted message attachments if the attachments are not empty.
+ *
+ * @param message The message that contains the attachments.
+ * @param onLongItemClick Handler for long item taps on this content.
+ * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
+ */
+@Composable
+public fun QuotedMessageAttachmentContent(
+    message: Message,
+    onLongItemClick: (Message) -> Unit,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val attachments = message.attachments
+
+    val quoteAttachmentFactory = if (attachments.isNotEmpty()) {
+        ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
+    } else {
+        null
+    }
+
+    val attachmentState = AttachmentState(
+        message = message,
+        onLongItemClick = onLongItemClick,
+        onImagePreviewResult = onImagePreviewResult
+    )
+
+    quoteAttachmentFactory?.content?.invoke(
+        modifier = Modifier
+            .padding(top = 6.dp, bottom = 6.dp, start = 8.dp)
+            .size(36.dp),
+        attachmentState = attachmentState
+    )
 }
