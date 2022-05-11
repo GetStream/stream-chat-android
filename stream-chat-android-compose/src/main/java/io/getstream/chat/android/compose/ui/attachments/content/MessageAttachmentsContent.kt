@@ -75,12 +75,14 @@ public fun MessageAttachmentsContent(
  * Represents the content that's shown in a quoted message attachments if the attachments are not empty.
  *
  * @param message The message that contains the attachments.
+ * @param modifier Modifier for customization of attachment preview.
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
  */
 @Composable
 public fun QuotedMessageAttachmentContent(
     message: Message,
+    modifier: Modifier = Modifier.padding(top = 6.dp, bottom = 6.dp, end = 8.dp).size(36.dp),
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
@@ -99,9 +101,7 @@ public fun QuotedMessageAttachmentContent(
     )
 
     quoteAttachmentFactory?.content?.invoke(
-        modifier = Modifier
-            .padding(top = 6.dp, bottom = 6.dp, start = 8.dp)
-            .size(36.dp),
+        modifier = modifier,
         attachmentState = attachmentState
     )
 }

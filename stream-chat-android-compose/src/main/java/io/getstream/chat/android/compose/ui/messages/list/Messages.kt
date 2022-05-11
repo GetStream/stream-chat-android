@@ -29,9 +29,17 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
@@ -62,7 +70,6 @@ import kotlin.math.abs
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
- * @param focusedMessageOffset Scroll to focused item offset.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
  * on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
@@ -77,18 +84,30 @@ public fun Messages(
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    focusedMessageOffset: Int = DefaultFocusedMessageOffset,
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState, focusedMessageOffset)
+        DefaultMessagesHelperContent(messagesState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
 
+    var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
+
+    val density = LocalDensity.current
+
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned {
+                    val bottomPadding = contentPadding.calculateBottomPadding()
+                    val topPadding = contentPadding.calculateTopPadding()
+                    parentSize = IntSize(
+                        width = it.size.width,
+                        height = it.size.height - with(density) { bottomPadding.roundToPx() + topPadding.roundToPx() }
+                    )
+                },
             state = lazyListState,
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
@@ -101,21 +120,29 @@ public fun Messages(
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                itemContent(item)
-
-                if (item is MessageItemState) {
-                    onLastVisibleMessageChanged(item.message)
-                }
-
-                if (index == 0 && lazyListState.isScrollInProgress) {
-                    onScrolledToBottom()
-                }
-
-                if (!endOfMessages && index == messages.lastIndex &&
-                    messages.isNotEmpty() &&
-                    lazyListState.isScrollInProgress
+                Box(
+                    Modifier.onGloballyPositioned {
+                        if (item is MessageItemState && item.focusState == MessageFocused) {
+                            messagesState.calculateMessageOffset(parentSize, it.size)
+                        }
+                    }
                 ) {
-                    onMessagesStartReached()
+                    itemContent(item)
+
+                    if (item is MessageItemState) {
+                        onLastVisibleMessageChanged(item.message)
+                    }
+
+                    if (index == 0 && lazyListState.isScrollInProgress) {
+                        onScrolledToBottom()
+                    }
+
+                    if (!endOfMessages && index == messages.lastIndex &&
+                        messages.isNotEmpty() &&
+                        lazyListState.isScrollInProgress
+                    ) {
+                        onMessagesStartReached()
+                    }
                 }
             }
 
@@ -135,13 +162,11 @@ public fun Messages(
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
- * @param focusedMessageOffset Scroll to focused item offset.
  */
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
     lazyListState: LazyListState,
-    focusedMessageOffset: Int = DefaultFocusedMessageOffset,
 ) {
     val (_, _, _, messages, _, _, newMessageState) = messagesState
     val coroutineScope = rememberCoroutineScope()
@@ -150,14 +175,17 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
+    val offset = messagesState.focusedMessageOffset.collectAsState()
+
     LaunchedEffect(
         newMessageState,
         firstVisibleItemIndex,
-        focusedItemIndex
+        focusedItemIndex,
+        offset.value
     ) {
         if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress) {
             coroutineScope.launch {
-                lazyListState.scrollToItem(focusedItemIndex, focusedMessageOffset)
+                lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
             }
         }
 

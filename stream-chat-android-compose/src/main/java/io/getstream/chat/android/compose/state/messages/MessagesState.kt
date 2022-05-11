@@ -16,8 +16,12 @@
 
 package io.getstream.chat.android.compose.state.messages
 
+import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.abs
 
 /**
  * UI representation of the Conversation/Messages screen. Holds all the data required to show messages.
@@ -41,5 +45,31 @@ public data class MessagesState(
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
-    val unreadCount: Int = 0,
-)
+    val unreadCount: Int = 0
+) {
+
+    /**
+     * Notifies the UI of the calculated message offset to center it on the screen.
+     */
+    private val _focusedMessageOffset: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val focusedMessageOffset: StateFlow<Int?> = _focusedMessageOffset
+
+    /**
+     * Calculates the message offset needed for the message to center inside the list on scroll.
+     *
+     * @param parentSize The size of the list which contains the message.
+     * @param focusedMessageSize The size of the message item we wish to bring to the center and focus.
+     */
+    public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
+        val sizeDiff = parentSize.height - focusedMessageSize.height
+        _focusedMessageOffset.value = -abs(sizeDiff / 2)
+    }
+
+    /**
+     * Clears the message offset once the message has been scrolled to center to prevent any jank
+     * while scrolling yhe list.
+     */
+    public fun clearMessagesOffset() {
+        _focusedMessageOffset.value = null
+    }
+}
