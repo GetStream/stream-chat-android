@@ -227,7 +227,7 @@ internal open class ChatSocket constructor(
 
     private fun reconnect(connectionConf: ConnectionConf) {
         shutdownSocketConnection()
-        setupSocket(connectionConf)
+        setupSocket(connectionConf.asReconnectionConf())
     }
 
     private fun setupSocket(connectionConf: ConnectionConf) {
@@ -246,7 +246,13 @@ internal open class ChatSocket constructor(
                     socketConnectionJob = coroutineScope.launch {
                         tokenManager.ensureTokenLoaded()
                         withContext(DispatcherProvider.Main) {
-                            socket = socketFactory.createNormalSocket(createNewEventsParser(), endpoint, apiKey, user)
+                            socket = socketFactory.createNormalSocket(
+                                createNewEventsParser(),
+                                endpoint,
+                                apiKey,
+                                user,
+                                isReconnection,
+                            )
                         }
                     }
                 }
@@ -280,9 +286,18 @@ internal open class ChatSocket constructor(
     }
 
     internal sealed class ConnectionConf {
+        var isReconnection: Boolean = false
+            private set
+
         object None : ConnectionConf()
         data class AnonymousConnectionConf(val endpoint: String, val apiKey: String) : ConnectionConf()
-        data class UserConnectionConf(val endpoint: String, val apiKey: String, val user: User) : ConnectionConf()
+        data class UserConnectionConf(
+            val endpoint: String,
+            val apiKey: String,
+            val user: User,
+        ) : ConnectionConf()
+
+        internal fun asReconnectionConf(): ConnectionConf = this.also { isReconnection = true }
     }
 
     @VisibleForTesting
