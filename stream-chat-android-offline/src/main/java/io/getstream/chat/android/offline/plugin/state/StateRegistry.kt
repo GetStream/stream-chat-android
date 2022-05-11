@@ -97,7 +97,7 @@ public class StateRegistry private constructor(
      * @return true if the channel is active.
      */
     internal fun isActiveChannel(channelType: String, channelId: String): Boolean {
-        return channels.contains(channelType to channelId)
+        return channels.containsKey(channelType to channelId)
     }
 
     /**
