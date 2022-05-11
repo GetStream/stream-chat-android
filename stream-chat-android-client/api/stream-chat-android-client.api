@@ -158,6 +158,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 public final class io/getstream/chat/android/client/ChatClient$Builder : io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -172,7 +173,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
-	public final fun build ()Lio/getstream/chat/android/client/ChatClient;
+	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	protected final fun getPluginFactories ()Ljava/util/List;
 }
 
