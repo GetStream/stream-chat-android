@@ -30,10 +30,10 @@ import java.nio.charset.StandardCharsets
 internal class SocketFactory(
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
+    private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
 
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
-    private val httpClient = OkHttpClient()
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
