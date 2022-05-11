@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeChatSocket
+import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
@@ -61,7 +61,7 @@ internal class ChatClientTest {
         val eventF = UnknownEvent("f", Date(), null, emptyMap<Any, Any>())
     }
 
-    lateinit var socket: FakeChatSocket
+    lateinit var socket: FakeSocket
     lateinit var client: ChatClient
     lateinit var result: MutableList<ChatEvent>
     val token = randomString()
@@ -81,7 +81,7 @@ internal class ChatClientTest {
             false
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
-        socket = FakeChatSocket()
+        socket = FakeSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)

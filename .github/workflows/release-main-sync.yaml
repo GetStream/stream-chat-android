@@ -1,4 +1,4 @@
-name: SyncRelease
+name: SyncMain
 
 on:
   workflow_run:
@@ -7,10 +7,11 @@ on:
       - completed
 
 jobs:
-  sync_release:
+  develop_to_main:
+    name: Sync main with develop
     runs-on: ubuntu-latest
-    environment: 'publish'
-    steps:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps: 
       - name: Check out code
         uses: actions/checkout@v3
         with:
@@ -19,28 +20,8 @@ jobs:
         run: | 
           git pull
           git merge --ff-only origin/develop
-      - name: Create Tag
-        run: |
-          ./gradlew version-print
-          version="$(cat temp-version)"
-          echo GITHUB_TAG_VERSION=$version >> $GITHUB_ENV
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git tag -a v$version -m "Release version $version"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-          tags: true
-      - name: Generate release file
-        run: ./gradlew generate-release
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "release.tar.gz,foo/*.txt"
-          bodyFile: "CHANGELOG_PARSED.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.GITHUB_TAG_VERSION }}
-
-
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: main

@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.WebSocket
 
-internal class Socket(val socket: WebSocket, val parser: ChatParser) {
+internal class Socket(private val socket: WebSocket, private val parser: ChatParser) {
 
     fun send(event: ChatEvent) {
         socket.send(parser.toJson(event))

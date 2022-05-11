@@ -21,7 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Message

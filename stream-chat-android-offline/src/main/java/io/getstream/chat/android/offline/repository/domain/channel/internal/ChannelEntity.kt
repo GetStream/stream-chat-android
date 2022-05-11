@@ -51,6 +51,7 @@ import java.util.Date
  * @param syncStatus If the channel has been synced.
  * @param team Team the channel belongs to (multi-tenant only).
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
+ * @param membership Represents relationship of the current user to this channel.
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -77,6 +78,7 @@ internal data class ChannelEntity(
     val syncStatus: SyncStatus,
     val team: String,
     val ownCapabilities: Set<String>,
+    val membership: MemberEntity?,
 ) {
     /**
      * The channel id in the format messaging:123.

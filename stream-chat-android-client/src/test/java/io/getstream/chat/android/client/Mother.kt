@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.test.randomBoolean
 import org.mockito.kotlin.mock
 import java.util.UUID
 
@@ -58,10 +59,12 @@ internal object Mother {
     fun randomDevice(
         token: String = randomString(),
         pushProvider: PushProvider = PushProvider.values().random(),
+        providerName: String? = randomString().takeIf { randomBoolean() }
     ): Device =
         Device(
             token = token,
             pushProvider = pushProvider,
+            providerName = providerName,
         )
 
     fun randomUserPresenceChangedEvent(user: User = randomUser()): UserPresenceChangedEvent {

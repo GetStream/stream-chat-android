@@ -26,8 +26,10 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import java.util.concurrent.TimeUnit
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -38,22 +40,26 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  * @param showDateSeparators If we should show date separator items in the list.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
+ * @param dateSeparatorThresholdMillis The millisecond amount that represents the threshold for adding date separators.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val enforceUniqueReactions: Boolean = true,
-    private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
+    private val messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold),
 ) : ViewModelProvider.Factory {
 
     /**
@@ -80,7 +86,9 @@ public class MessagesViewModelFactory(
                 ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
                 showDateSeparators = showDateSeparators,
                 showSystemMessages = showSystemMessages,
-                deletedMessageVisibility = deletedMessageVisibility
+                deletedMessageVisibility = deletedMessageVisibility,
+                messageFooterVisibility = messageFooterVisibility,
+                dateSeparatorThresholdMillis = dateSeparatorThresholdMillis
             )
         },
         AttachmentsPickerViewModel::class.java to {

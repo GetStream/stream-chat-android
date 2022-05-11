@@ -88,6 +88,19 @@ public class StateRegistry private constructor(
     }
 
     /**
+     * Checks if the channel is already present in the state.
+     * Should be used to prevent creating [ChannelState] objects without populated data.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     *
+     * @return true if the channel is active.
+     */
+    internal fun isActiveChannel(channelType: String, channelId: String): Boolean {
+        return channels.containsKey(channelType to channelId)
+    }
+
+    /**
      * Returns [ThreadState] of thread replies with parent message that has id equal to [messageId].
      *
      * @param messageId Thread's parent message id.

@@ -51,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -221,8 +222,12 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    val position = messageItem.groupPosition
-    if (!messageItem.isMine && (position == Bottom || position == None)) {
+    if (!messageItem.isMine && (
+        messageItem.shouldShowFooter ||
+            messageItem.groupPosition == Bottom ||
+            messageItem.groupPosition == None
+        )
+    ) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
@@ -334,10 +339,11 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message
             )
         }
-        message.isDeleted() && messageItem.isMine && messageItem.groupPosition == Bottom -> {
+        message.isDeleted() &&
+            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             OwnedMessageVisibilityContent(message = message)
         }
-        !message.isDeleted() -> {
+        else -> {
             MessageFooter(messageItem = messageItem)
         }
     }

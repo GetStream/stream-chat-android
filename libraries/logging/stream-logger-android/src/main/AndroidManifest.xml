@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.getstream.logging.android"
+    >
+
+    <application>
+
+        <service
+            android:name=".file.StreamLogFileService"
+            android:enabled="true"
+            android:exported="true"
+            >
+
+            <intent-filter>
+                <action android:name="io.getstream.logging.android.SHARE" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="io.getstream.logging.android.CLEAR" />
+            </intent-filter>
+
+        </service>
+
+        <provider
+            android:name=".file.StreamLogFileProvider"
+            android:authorities="${applicationId}.streamlogfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/log_file_paths"
+                />
+        </provider>
+
+    </application>
+
+</manifest>

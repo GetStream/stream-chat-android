@@ -29,6 +29,11 @@ public interface PushDeviceGenerator {
     public fun isValidForThisDevice(context: Context): Boolean
 
     /**
+     * Called when this [PushDeviceGenerator] has been selected to be used.
+     */
+    public fun onPushDeviceGeneratorSelected()
+
+    /**
      * Asynchronously generates a [Device] and calls [onDeviceGenerated] callback once it's ready
      */
     public fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit)
