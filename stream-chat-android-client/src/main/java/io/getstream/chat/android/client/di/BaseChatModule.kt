@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
+import io.getstream.chat.android.client.api.interceptor.ApiRequestAnalyserInterceptor
 import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
 import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
@@ -53,6 +54,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.token.TokenManager
@@ -173,6 +175,11 @@ internal open class BaseChatModule(
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .apply {
+                if (config.debugRequests) {
+                    addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
+                }
+            }
             .let(httpClientConfig)
             .addInterceptor(
                 TokenAuthInterceptor(

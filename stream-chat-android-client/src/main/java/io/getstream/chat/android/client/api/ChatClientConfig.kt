@@ -25,6 +25,7 @@ public class ChatClientConfig(
     public var wssUrl: String,
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
+    public val debugRequests: Boolean
 ) {
     public var isAnonymous: Boolean = false
 }

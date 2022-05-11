@@ -178,7 +178,7 @@ internal constructor(
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
-    public val apiRequestsAnalyser: ApiRequestsAnalyser?
+    public val apiRequestsAnalyser: ApiRequestsAnalyser?,
 ) {
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
@@ -2231,6 +2231,7 @@ internal constructor(
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var apiRequestsAnalyser: ApiRequestsAnalyser? = null
+        private var debugRequests: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -2380,6 +2381,10 @@ internal constructor(
             this.apiRequestsAnalyser = apiRequestsAnalyser
         }
 
+        public fun debugRequests(shouldDebug: Boolean): Builder = apply {
+            this.debugRequests = shouldDebug
+        }
+
         /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
@@ -2427,6 +2432,7 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                debugRequests
             )
 
             if (ToggleService.isInitialized().not()) {
