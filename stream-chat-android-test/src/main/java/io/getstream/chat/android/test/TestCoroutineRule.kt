@@ -22,9 +22,11 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -50,3 +52,6 @@ public class TestCoroutineRule : TestWatcher() {
         DispatcherProvider.reset()
     }
 }
+
+public fun TestCoroutineRule.runTest(testBody: suspend TestScope.() -> Unit): TestResult =
+    scope.runTest(testBody = testBody)

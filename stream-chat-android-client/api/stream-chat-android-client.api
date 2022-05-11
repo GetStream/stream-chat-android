@@ -2551,16 +2551,17 @@ public final class io/getstream/chat/android/client/models/CustomObject$DefaultI
 }
 
 public final class io/getstream/chat/android/client/models/Device {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Lio/getstream/chat/android/client/models/PushProvider;
-	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;)Lio/getstream/chat/android/client/models/Device;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Device;Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Device;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Device;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Device;Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Device;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProviderName ()Ljava/lang/String;
 	public final fun getPushProvider ()Lio/getstream/chat/android/client/models/PushProvider;
 	public final fun getToken ()Ljava/lang/String;
 	public fun hashCode ()I
-	public final fun setPushProvider (Lio/getstream/chat/android/client/models/PushProvider;)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -3109,6 +3110,7 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
+	public abstract fun onPushDeviceGeneratorSelected ()V
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
