@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.utils.observable
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
@@ -25,15 +24,24 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.launch
 import java.util.Date
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
-    private var client: ChatClient,
+    private val waitConnection: FlowCollector<Result<ConnectionData>>,
+    private val scope: CoroutineScope
 ) {
+
+    private val logger = ChatLogger.get("EventsObservable")
 
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
@@ -44,17 +52,23 @@ internal class ChatEventsObservable(
                 subscription.onNext(event)
             }
         }
-        when (event) {
-            is ConnectedEvent -> {
-                client.callConnectionListener(event, null)
-            }
-            is ErrorEvent -> {
-                client.callConnectionListener(null, event.error)
-            }
-            else -> Unit // Ignore other events
-        }
+        emitConnectionEvents(event)
         subscriptions = subscriptions.filterNot(Disposable::isDisposed).toSet()
         checkIfEmpty()
+    }
+
+    private fun emitConnectionEvents(event: ChatEvent) {
+        scope.launch {
+            when (event) {
+                is ConnectedEvent -> {
+                    waitConnection.emit(Result.success(ConnectionData(event.me, event.connectionId)))
+                }
+                is ErrorEvent -> {
+                    waitConnection.emit(Result.error(event.error))
+                }
+                else -> Unit // Ignore other events
+            }
+        }
     }
 
     private fun checkIfEmpty() {

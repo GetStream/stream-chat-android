@@ -28,6 +28,8 @@ import kotlin.jvm.Throws
  */
 public object HuaweiMessagingDelegate {
 
+    internal var fallbackProviderName: String? = null
+
     /**
      * Handles [remoteMessage] from Huawei.
      * If the [remoteMessage] wasn't sent from the Stream Server and doesn't contain the needed data,
@@ -53,16 +55,21 @@ public object HuaweiMessagingDelegate {
      * Register new Huawei Token.
      *
      * @param token provided by Huawei.
+     * @param providerName Optional name for the provider name.
      *
      * @throws IllegalStateException if called before initializing ChatClient.
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun registerHuaweiToken(token: String) {
+    public fun registerHuaweiToken(
+        token: String,
+        providerName: String? = fallbackProviderName,
+    ) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.HUAWEI,
+                providerName = providerName,
             )
         )
     }

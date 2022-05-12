@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
 import io.getstream.chat.android.client.socket.EventsParser
-import io.getstream.chat.android.client.utils.observable.FakeSocketService
+import io.getstream.chat.android.client.utils.observable.FakeSocket
 import okhttp3.Response
 import okhttp3.WebSocket
 import org.amshove.kluent.shouldBeEqualTo
@@ -39,7 +39,7 @@ internal class EventsParserTests {
 
     private val socket = Mockito.mock(WebSocket::class.java)
     private lateinit var eventsCollector: MutableList<ChatEvent>
-    private lateinit var service: FakeSocketService
+    private lateinit var fakeSocket: FakeSocket
     private lateinit var parser: EventsParser
     private val userId = "hello-user"
     private val eventType = EventType.HEALTH_CHECK
@@ -93,8 +93,8 @@ internal class EventsParserTests {
     @Before
     fun before() {
         eventsCollector = mutableListOf()
-        service = FakeSocketService(eventsCollector)
-        parser = EventsParser(MoshiChatParser(), service)
+        fakeSocket = FakeSocket(eventsCollector)
+        parser = EventsParser(MoshiChatParser(), fakeSocket)
     }
 
     @Test
@@ -102,14 +102,14 @@ internal class EventsParserTests {
         parser.onOpen(socket, response)
         parser.onMessage(socket, connectedEvent)
 
-        service.verifyConnectionUserId(userId)
+        fakeSocket.verifyConnectionUserId(userId)
     }
 
     @Test
     fun firstInvalidEvent() {
         parser.onMessage(socket, """{ "type": "$eventType" }""")
 
-        service.verifyNoConnectionUserId()
+        fakeSocket.verifyNoConnectionUserId()
     }
 
     @Test
