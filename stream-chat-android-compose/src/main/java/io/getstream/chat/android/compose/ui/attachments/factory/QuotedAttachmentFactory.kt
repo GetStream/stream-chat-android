@@ -36,13 +36,14 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
         val attachment = it.first()
         attachment.isFile() || attachment.isMedia() || attachment.hasLink()
     },
-    content = content@ @Composable { modifier, attachmentState ->
+    content = @Composable { modifier, attachmentState ->
         val attachment = attachmentState.message.attachments.first()
 
         val isFile = attachment.isFile()
         val isImage = attachment.isMedia()
         val isLink = attachment.hasLink()
 
+        // TODO fix UI of attachment previews/icons
         when {
             isImage || isLink -> ImageAttachmentQuotedContent(modifier = modifier, attachment = attachment)
             isFile -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,14 +40,10 @@ public fun ImageAttachmentQuotedContent(
 ) {
     val imagePainter = rememberImagePainter(attachment.imagePreviewUrl)
 
-    Box(
-        modifier = modifier
-            .clip(ChatTheme.shapes.quotedAttachment)
-    ) {
-        Image(
-            painter = imagePainter,
-            contentDescription = "",
-            contentScale = ContentScale.Crop
-        )
-    }
+    Image(
+        modifier = modifier.clip(ChatTheme.shapes.quotedAttachment),
+        painter = imagePainter,
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }

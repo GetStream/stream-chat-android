@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -46,11 +45,10 @@ public fun FileAttachmentQuotedContent(
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }
 
-    Box(modifier = modifier) {
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
-        )
-    }
+    Image(
+        modifier = modifier,
+        painter = painter,
+        contentDescription = null,
+        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
+    )
 }

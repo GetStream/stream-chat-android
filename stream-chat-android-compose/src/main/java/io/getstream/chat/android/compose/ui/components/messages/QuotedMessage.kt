@@ -111,6 +111,8 @@ public fun QuotedMessage(
 public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
+    quotedAttachmentContentSlot: @Composable () -> Unit = { DefaultQuotedMessageAttachmentContent() },
+    // TODO - add slots as described below
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -128,6 +130,7 @@ public fun QuotedMessage(
         ),
         verticalAlignment = Alignment.Bottom
     ) {
+        // TODO - leadingContent, centerContent, trailingContent
         if (!isMyMessage) {
             Avatar(
                 modifier = Modifier
@@ -141,6 +144,7 @@ public fun QuotedMessage(
             Spacer(modifier = Modifier.size(8.dp))
         }
 
+        // TODO - QuotedMessageContent | attachmentContent, textContent
         MessageBubble(
             modifier = Modifier.weight(1f, fill = false),
             shape = messageBubbleShape, color = ChatTheme.colors.barsBackground,
@@ -173,4 +177,8 @@ public fun QuotedMessage(
             )
         }
     }
+}
+
+@Composable
+internal fun DefaultQuotedMessageAttachmentContent() {
 }

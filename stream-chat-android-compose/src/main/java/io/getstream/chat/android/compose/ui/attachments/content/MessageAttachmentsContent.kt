@@ -88,8 +88,12 @@ public fun QuotedMessageAttachmentContent(
 ) {
     val attachments = message.attachments
 
+    /**
+     *
+     */
     val quoteAttachmentFactory = if (attachments.isNotEmpty()) {
-        ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
+        val quotedFactory = ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
+        quotedFactory ?: ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
     } else {
         null
     }
