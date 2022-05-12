@@ -20,14 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Regular scroll listener which checks the layout manager of a recycler view and based on if the layout is reversed or
- * not, it listens for scrolling gestures and triggers pagination when reaching the end top or end bottom of the list.
+ * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
+ * and triggers pagination when reaching the end top of the list.
  *
  * @param loadMoreThreshold The number of items or positions ahead of the end of the list where we can trigger the
  * pagination.
  * @param loadMoreListener The handler which is called when pagination should be triggered.
  */
-public class EndlessScrollListener(
+public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
@@ -59,14 +59,7 @@ public class EndlessScrollListener(
             throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
         }
 
-        /**
-         * If the layout is reversed, we should check that the scroll is going up, otherwise it should be going down.
-         */
-        if (layoutManager.reverseLayout) {
-            checkScrollUp(dy, layoutManager, recyclerView)
-        } else {
-            checkScrollDown(dy, layoutManager, recyclerView)
-        }
+        checkScrollUp(dy, layoutManager, recyclerView)
     }
 
     /**
@@ -83,42 +76,12 @@ public class EndlessScrollListener(
     }
 
     /**
-     * Checks if the scroll is going down and if the threshold number of items has been shown. If the scroll is upwards,
-     * then it stops the check.
-     */
-    private fun checkScrollDown(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        if (dy <= 0) {
-            // Scrolling upwards
-            return
-        }
-
-        handleScrollDown(layoutManager, recyclerView)
-    }
-
-    /**
      * Handles a valid scroll up. If the threshold has been met and the scroll state has been reset previously, we
      * trigger pagination.
      */
     private fun handleScrollUp(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
         if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
-            scrollStateReset = false
-            recyclerView.post {
-                if (paginationEnabled) {
-                    loadMoreListener()
-                }
-            }
-        }
-    }
-
-    /**
-     * Handles a valid scroll down. If the threshold has been met and the scroll state has been reset previously, we
-     * trigger pagination.
-     */
-    private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-        val itemCount = layoutManager.itemCount
-        if (scrollStateReset && (itemCount - loadMoreThreshold) <= lastVisibleItemPosition) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {
