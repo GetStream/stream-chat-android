@@ -16,9 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
-- Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
-- Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
 
 ### ⚠️ Changed
 
@@ -26,7 +23,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
 
 ### ⬆️ Improved
 
@@ -62,7 +58,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved the behavior of `DeletedMessageVisibility` and `MessageFooterVisibility` when used in pair. Now the `DeletedMessageVisibility` and its "only visible to you" mode respects the `MessageFooterVisibility` and vice-versa. [#3467](https://github.com/GetStream/stream-chat-android/pull/3467)
 
 ### ✅ Added
 
@@ -113,6 +108,48 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# May 11th, 2022 - 5.2.0
+## stream-chat-android-client
+### ✅ Added
+- Added `Channel.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `ChannelData.membership` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Added `NotificationAddedToChannelEvent.member` property. [#3367](https://github.com/GetStream/stream-chat-android/pull/3367)
+- Add `provideName` property to `Device` entity to support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed sorting channels by `Channel::lastMessageAt` when the channel contains not synced messages. [#3470](https://github.com/GetStream/stream-chat-android/pull/3470)
+- Fixed bug that made impossible to retry attachments that were not fully sent. [3485](https://github.com/GetStream/stream-chat-android/pull/3485)
+- Fixed refreshing channels list when syncing the channel. [#3492](https://github.com/GetStream/stream-chat-android/pull/3492)
+- Fixed deleting reactions while offline. [3486](https://github.com/GetStream/stream-chat-android/pull/3486)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Updated the attachment upload size limit to 100MB from 20MB. [#3490](https://github.com/GetStream/stream-chat-android/pull/3490)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed Xiaomi crash when long clicking on links inside messages. [#3491](https://github.com/GetStream/stream-chat-android/pull/3491)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improved the behavior of `DeletedMessageVisibility` and `MessageFooterVisibility` when used in pair. Now the `DeletedMessageVisibility` and its "only visible to you" mode respects the `MessageFooterVisibility` and vice-versa. [#3467](https://github.com/GetStream/stream-chat-android/pull/3467)
+
+## stream-chat-android-pushprovider-firebase
+### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
+
+### ⚠️ Changed
+- Upgrade Firebase Messaging dependency to version `23.0.4`. [#3484](https://github.com/GetStream/stream-chat-android/pull/3484)
+
+## stream-chat-android-pushprovider-huawei
+### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
+
+## stream-chat-android-pushprovider-xiaomi
+### ✅ Added
+- Support Multi-Bundle [#3396](https://github.com/GetStream/stream-chat-android/pull/3396)
 
 # May 3rd, 2022 - 5.1.0
 ## stream-chat-android-client
