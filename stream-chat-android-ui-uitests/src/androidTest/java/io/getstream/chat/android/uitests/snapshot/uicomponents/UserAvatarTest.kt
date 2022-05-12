@@ -27,7 +27,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.uitests.R
 import io.getstream.chat.android.uitests.util.FakeImageLoader
-import io.getstream.chat.android.uitests.util.TestUsers
+import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before
 import org.junit.Test
 
@@ -47,7 +47,7 @@ class UserAvatarTest : ScreenshotTest {
             .from(context)
             .inflate(R.layout.view_avatar, null, false) as AvatarView
 
-        avatarView.setUserData(TestUsers.user1)
+        avatarView.setUserData(TestData.user1())
 
         compareScreenshot(view = avatarView, widthInPx = SCREENSHOT_SIZE, heightInPx = SCREENSHOT_SIZE)
     }
@@ -60,9 +60,9 @@ class UserAvatarTest : ScreenshotTest {
         val channel = Channel(
             cid = "messaging:123",
             members = listOf(
-                Member(user = TestUsers.user1),
-                Member(user = TestUsers.user2),
-                Member(user = TestUsers.user3),
+                Member(user = TestData.user1()),
+                Member(user = TestData.user2()),
+                Member(user = TestData.user3()),
             )
         )
 
