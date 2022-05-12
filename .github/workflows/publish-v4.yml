@@ -1,10 +1,9 @@
-name: Publish
+name: Publish_v4
 
 on:
-  workflow_run:
-    workflows: ["SyncMain"]
-    types:
-      - completed
+  push:
+    tags:
+      - 'v4\.[0-9]+\.[0-9]+'
 
 jobs:
   publish:
@@ -14,8 +13,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-        with:
-          ref: main
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
