@@ -147,7 +147,8 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
             pagination = PinnedMessagesPagination.BeforeDate(
                 date = currentState.nextDate,
                 inclusive = false,
-            )
+            ),
+            forceRefresh = false
         )
             .await()
 

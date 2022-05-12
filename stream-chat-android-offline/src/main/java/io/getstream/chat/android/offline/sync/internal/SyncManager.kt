@@ -225,7 +225,7 @@ internal class SyncManager(
         if (cids.isNotEmpty() && online) {
             val filter = Filters.`in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
-            chatClient.queryChannelsInternal(request)
+            chatClient.queryChannelsInternal(request, forceRefresh = true)
                 .await()
                 .onSuccessSuspend { channels ->
                     val foundChannelIds = channels.map { it.id }

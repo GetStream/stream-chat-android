@@ -259,7 +259,7 @@ internal class ChannelLogic(
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
-            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
+            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request, forceRefresh = false)
                 .await().also { result ->
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }

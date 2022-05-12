@@ -58,7 +58,8 @@ class GroupChatInfoMemberOptionsViewModel(
                     querySort = QuerySort.desc(Channel::lastUpdated),
                     messageLimit = 0,
                     limit = 1,
-                )
+                ),
+                forceRefresh = false
             ).await()
 
             _state.value = if (result.isSuccess && result.data().isNotEmpty()) {

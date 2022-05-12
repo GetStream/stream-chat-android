@@ -383,7 +383,7 @@ internal constructor(
             setUser(user, tokenProvider).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -465,7 +465,7 @@ internal constructor(
             setAnonymousUser().also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -482,7 +482,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }
@@ -509,6 +509,7 @@ internal constructor(
      */
     @Suppress("LongParameterList")
     @CheckResult
+    @JvmOverloads
     public fun queryMembers(
         channelType: String,
         channelId: String,
@@ -517,10 +518,11 @@ internal constructor(
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
+        forceRefresh: Boolean = true
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
-        return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+        return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members, forceRefresh)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
                     plugin.onQueryMembersResult(
@@ -636,8 +638,9 @@ internal constructor(
         messageId: String,
         offset: Int,
         limit: Int,
+        forceRefresh: Boolean,
     ): Call<List<Reaction>> {
-        return api.getReactions(messageId, offset, limit)
+        return api.getReactions(messageId, offset, limit, forceRefresh)
     }
 
     /**
@@ -985,12 +988,14 @@ internal constructor(
      * @return Executable async [Call] responsible for getting pinned messages.
      */
     @CheckResult
+    @JvmOverloads
     public fun getPinnedMessages(
         channelType: String,
         channelId: String,
         limit: Int,
         sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
+        forceRefresh: Boolean = true,
     ): Call<List<Message>> {
         return api.getPinnedMessages(
             channelType = channelType,
@@ -998,6 +1003,7 @@ internal constructor(
             limit = limit,
             sort = sort,
             pagination = pagination,
+            forceRefresh = forceRefresh
         )
     }
 
@@ -1060,10 +1066,11 @@ internal constructor(
     }
 
     @CheckResult
-    public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
+    @JvmOverloads
+    public fun getReplies(messageId: String, limit: Int, forceRefresh: Boolean = true): Call<List<Message>> {
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
-        return api.getReplies(messageId, limit)
+        return api.getReplies(messageId, limit, forceRefresh)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin -> plugin.onGetRepliesRequest(messageId, limit) }
             }
@@ -1074,14 +1081,16 @@ internal constructor(
     }
 
     @CheckResult
+    @JvmOverloads
     public fun getRepliesMore(
         messageId: String,
         firstId: String,
         limit: Int,
+        forceRefresh: Boolean = true,
     ): Call<List<Message>> {
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
-        return api.getRepliesMore(messageId, firstId, limit)
+        return api.getRepliesMore(messageId, firstId, limit, forceRefresh)
             .doOnStart(scope) { relevantPlugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
@@ -1162,8 +1171,9 @@ internal constructor(
     }
 
     @CheckResult
-    public fun getMessage(messageId: String): Call<Message> {
-        return api.getMessage(messageId)
+    @JvmOverloads
+    public fun getMessage(messageId: String, forceRefresh: Boolean = true): Call<Message> {
+        return api.getMessage(messageId, forceRefresh)
     }
 
     /**
@@ -1318,8 +1328,9 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
+    @JvmOverloads
+    public fun queryChannelsInternal(request: QueryChannelsRequest, forceRefresh: Boolean = true): Call<List<Channel>> =
+        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request, forceRefresh) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1327,17 +1338,20 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+        forceRefresh: Boolean
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request, forceRefresh)
 
     @CheckResult
+    @JvmOverloads
     public fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
+        forceRefresh: Boolean = true
     ): Call<Channel> {
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
-        return api.queryChannel(channelType, channelId, request)
+        return api.queryChannel(channelType, channelId, request, forceRefresh)
             .doOnStart(scope) {
                 relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
             }
@@ -1894,6 +1908,7 @@ internal constructor(
         createdAtAfterOrEqual: Date? = null,
         createdAtBefore: Date? = null,
         createdAtBeforeOrEqual: Date? = null,
+        forceRefresh: Boolean = true
     ): Call<List<BannedUser>> {
         return api.queryBannedUsers(
             filter = filter,
@@ -1904,6 +1919,7 @@ internal constructor(
             createdAtAfterOrEqual = createdAtAfterOrEqual,
             createdAtBefore = createdAtBefore,
             createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+            forceRefresh = forceRefresh
         )
     }
 
@@ -1999,6 +2015,7 @@ internal constructor(
             channelType = channelType,
             channelId = channelId,
             request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds)),
+            forceRefresh = true
         )
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnStart(scope) {

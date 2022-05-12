@@ -239,13 +239,15 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun query(request: QueryChannelRequest): Call<Channel> {
-        return client.queryChannel(channelType, channelId, request)
+    @JvmOverloads
+    public fun query(request: QueryChannelRequest, forceRefresh: Boolean = true): Call<Channel> {
+        return client.queryChannel(channelType, channelId, request, forceRefresh)
     }
 
     @CheckResult
-    public fun watch(request: WatchChannelRequest): Call<Channel> {
-        return client.queryChannel(channelType, channelId, request)
+    @JvmOverloads
+    public fun watch(request: WatchChannelRequest, forceRefresh: Boolean = true): Call<Channel> {
+        return client.queryChannel(channelType, channelId, request, forceRefresh)
     }
 
     @CheckResult
@@ -256,8 +258,9 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun watch(): Call<Channel> {
-        return client.queryChannel(channelType, channelId, WatchChannelRequest())
+    @JvmOverloads
+    public fun watch(forceRefresh: Boolean = true): Call<Channel> {
+        return client.queryChannel(channelType, channelId, WatchChannelRequest(), forceRefresh)
     }
 
     @CheckResult
@@ -266,8 +269,9 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun getMessage(messageId: String): Call<Message> {
-        return client.getMessage(messageId)
+    @JvmOverloads
+    public fun getMessage(messageId: String, forceRefresh: Boolean = true): Call<Message> {
+        return client.getMessage(messageId, forceRefresh)
     }
 
     @CheckResult
@@ -346,6 +350,7 @@ public class ChannelClient internal constructor(
         createdAtAfterOrEqual: Date? = null,
         createdAtBefore: Date? = null,
         createdAtBeforeOrEqual: Date? = null,
+        forceRefresh: Boolean = true
     ): Call<List<BannedUser>> {
         val channelCidFilter = Filters.eq("channel_cid", cid)
         return client.queryBannedUsers(
@@ -357,6 +362,7 @@ public class ChannelClient internal constructor(
             createdAtAfterOrEqual = createdAtAfterOrEqual,
             createdAtBefore = createdAtBefore,
             createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+            forceRefresh = forceRefresh
         )
     }
 
@@ -519,17 +525,20 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
-        return client.getReactions(messageId, offset, limit)
+    @JvmOverloads
+    public fun getReactions(messageId: String, offset: Int, limit: Int, forceRefresh: Boolean = true): Call<List<Reaction>> {
+        return client.getReactions(messageId, offset, limit, forceRefresh)
     }
 
     @CheckResult
+    @JvmOverloads
     public fun getReactions(
         messageId: String,
         firstReactionId: String,
         limit: Int,
+        forceRefresh: Boolean = true
     ): Call<List<Message>> {
-        return client.getRepliesMore(messageId, firstReactionId, limit)
+        return client.getRepliesMore(messageId, firstReactionId, limit, forceRefresh)
     }
 
     /**
@@ -759,14 +768,16 @@ public class ChannelClient internal constructor(
      * @return [Call] with a list of members or an error.
      */
     @CheckResult
+    @JvmOverloads
     public fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
+        forceRefresh: Boolean = true
     ): Call<List<Member>> {
-        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members, forceRefresh)
     }
 
     @CheckResult
@@ -810,10 +821,12 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for getting pinned messages.
      */
     @CheckResult
+    @JvmOverloads
     public fun getPinnedMessages(
         limit: Int,
         sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
+        forceRefresh: Boolean = true
     ): Call<List<Message>> {
         return client.getPinnedMessages(
             channelType = channelType,
@@ -821,6 +834,7 @@ public class ChannelClient internal constructor(
             limit = limit,
             sort = sort,
             pagination = pagination,
+            forceRefresh = forceRefresh
         )
     }
 

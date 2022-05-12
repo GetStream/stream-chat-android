@@ -245,7 +245,7 @@ internal class MessagesApiCallsTests {
             )
         ).thenReturn(RetroSuccess(listOf(message)).toRetrofitCall())
 
-        val result = client.getReplies(messageId, limit).execute()
+        val result = client.getReplies(messageId, limit, true).execute()
 
         verifySuccess(result, listOf(message))
     }

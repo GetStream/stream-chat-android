@@ -62,7 +62,7 @@ public class ImagePreviewViewModel(
      * Loads the message data, which then updates the UI state to shows images.
      */
     init {
-        chatClient.getMessage(messageId).enqueue { result ->
+        chatClient.getMessage(messageId, forceRefresh = false).enqueue { result ->
             if (result.isSuccess) {
                 this.message = result.data()
             }

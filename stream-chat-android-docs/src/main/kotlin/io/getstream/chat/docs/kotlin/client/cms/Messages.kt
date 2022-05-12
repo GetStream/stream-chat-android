@@ -253,6 +253,7 @@ class Messages(
                 messageId = "message-id",
                 offset = 0,
                 limit = 10,
+                forceRefresh = false
             ).enqueue { result ->
                 if (result.isSuccess) {
                     val reactions: List<Reaction> = result.data()
@@ -266,6 +267,7 @@ class Messages(
                 messageId = "message-id",
                 offset = 10,
                 limit = 10,
+                forceRefresh = false
             ).enqueue { /* ... */ }
 
             // Get 10 reactions after particular reaction
@@ -273,6 +275,7 @@ class Messages(
                 messageId = "message-id",
                 firstReactionId = "reaction-id",
                 limit = 10,
+                forceRefresh = false
             ).enqueue { /* ... */ }
         }
 
@@ -323,6 +326,7 @@ class Messages(
                 messageId = parentMessage.id,
                 firstId = "42",
                 limit = 20,
+                forceRefresh = false
             ).enqueue { /* ... */ }
         }
 

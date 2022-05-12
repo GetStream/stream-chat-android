@@ -531,7 +531,8 @@ public class MessageListViewModel(
                         cid,
                         event.messageId,
                         DEFAULT_MESSAGES_LIMIT,
-                        DEFAULT_MESSAGES_LIMIT
+                        DEFAULT_MESSAGES_LIMIT,
+                        forceRefresh = false
                     ).enqueue { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()
@@ -548,7 +549,8 @@ public class MessageListViewModel(
                     cid,
                     event.messageId,
                     DEFAULT_MESSAGES_LIMIT,
-                    DEFAULT_MESSAGES_LIMIT
+                    DEFAULT_MESSAGES_LIMIT,
+                    forceRefresh = true
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -580,7 +582,8 @@ public class MessageListViewModel(
                     cid,
                     messageId,
                     DEFAULT_MESSAGES_LIMIT,
-                    DEFAULT_MESSAGES_LIMIT
+                    DEFAULT_MESSAGES_LIMIT,
+                    forceRefresh = true
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -684,6 +687,7 @@ public class MessageListViewModel(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
+                forceRefresh = false
             ).enqueue {
                 threadListData?.loadingMoreChanged(false)
             }
@@ -727,7 +731,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT, forceRefresh = false)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }

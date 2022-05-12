@@ -48,7 +48,7 @@ internal class ChatClientStateCalls(
         channelId: String,
         request: QueryChannelRequest,
     ): ChannelState {
-        chatClient.queryChannel(channelType, channelId, request).launch(scope)
+        chatClient.queryChannel(channelType, channelId, request, forceRefresh = false).launch(scope)
         return state.channel(channelType, channelId)
     }
 
@@ -61,8 +61,8 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the get thread replies query. */
-    internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
-        chatClient.getReplies(messageId, messageLimit).launch(scope)
+    internal fun getReplies(messageId: String, messageLimit: Int, forceRefresh: Boolean): ThreadState {
+        chatClient.getReplies(messageId, messageLimit, forceRefresh).launch(scope)
         return state.thread(messageId)
     }
 }

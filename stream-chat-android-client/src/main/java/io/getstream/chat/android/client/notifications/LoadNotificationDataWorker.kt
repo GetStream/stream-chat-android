@@ -52,8 +52,8 @@ internal class LoadNotificationDataWorker(
 
         return try {
             val client: ChatClient = ChatClient.instance()
-            val getMessage = client.getMessage(messageId)
-            val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
+            val getMessage = client.getMessage(messageId, forceRefresh = true)
+            val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest(), forceRefresh = true)
 
             val result = getChannel.zipWith(getMessage).await()
             if (result.isSuccess) {

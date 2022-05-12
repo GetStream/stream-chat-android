@@ -84,7 +84,8 @@ class ChatInfoViewModel(
                         offset = 0,
                         limit = 1,
                         filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
-                        sort = QuerySort()
+                        sort = QuerySort(),
+                        forceRefresh = false
                     ).await()
 
                 if (result.isSuccess) {

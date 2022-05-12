@@ -503,6 +503,7 @@ public class MessageListViewModel(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
                 limit = DefaultMessageLimit,
+                forceRefresh = false
             ).enqueue()
         } else {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
@@ -635,7 +636,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val threadState = chatClient.getRepliesAsState(parentMessage.id, DefaultMessageLimit)
+        val threadState = chatClient.getRepliesAsState(parentMessage.id, DefaultMessageLimit, forceRefresh = false)
         val channelState = channelState.value ?: return
 
         messageMode = MessageMode.MessageThread(parentMessage, threadState)

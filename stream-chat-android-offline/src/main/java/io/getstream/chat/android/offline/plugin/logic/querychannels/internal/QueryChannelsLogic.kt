@@ -142,7 +142,7 @@ internal class QueryChannelsLogic(
     }
 
     internal suspend fun runQueryOnline(request: QueryChannelsRequest): Result<List<Channel>> {
-        return client.queryChannelsInternal(request).await()
+        return client.queryChannelsInternal(request, forceRefresh = false).await()
             .also { onQueryChannelsResult(it, request) }
     }
 

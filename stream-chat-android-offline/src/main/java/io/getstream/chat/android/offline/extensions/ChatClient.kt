@@ -132,8 +132,9 @@ public fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    forceRefresh: Boolean = true
 ): ThreadState {
-    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit, forceRefresh)
 }
 
 /**
@@ -282,12 +283,13 @@ public fun ChatClient.loadMessageById(
     messageId: String,
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
+    forceRefresh: Boolean = true
 ): Call<Message> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Message>(cid)
 
         if (cidValidationResult.isSuccess) {
-            val result = getMessage(messageId).await()
+            val result = getMessage(messageId, forceRefresh).await()
 
             if (result.isSuccess) {
                 val message = result.data()

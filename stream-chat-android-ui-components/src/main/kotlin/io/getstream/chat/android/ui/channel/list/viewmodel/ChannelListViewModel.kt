@@ -299,7 +299,7 @@ public class ChannelListViewModel(
 
             queryChannelsState.nextPageRequest.value?.let {
                 viewModelScope.launch {
-                    chatClient.queryChannels(it).enqueue(
+                    chatClient.queryChannels(it, forceRefresh = false).enqueue(
                         onError = { chatError ->
                             logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
                         }
