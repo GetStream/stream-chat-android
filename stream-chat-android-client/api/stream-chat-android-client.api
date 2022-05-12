@@ -201,8 +201,13 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;)V
+	public static final field Companion Lio/getstream/chat/android/client/api/ChatClientConfig$Companion;
+	public static final field DEFAULT_CACHE_MILLIS I
+	public static final field NEVER_CACHE I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;I)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getApiKey ()Ljava/lang/String;
+	public final fun getCacheApiCallTimeout ()I
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
@@ -213,6 +218,9 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun setCdnHttpUrl (Ljava/lang/String;)V
 	public final fun setHttpUrl (Ljava/lang/String;)V
 	public final fun setWssUrl (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/api/ChatClientConfig$Companion {
 }
 
 public final class io/getstream/chat/android/client/api/models/AndFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
@@ -693,6 +701,10 @@ public final class io/getstream/chat/android/client/api/models/WatchChannelReque
 	public fun withMessages (Lio/getstream/chat/android/client/api/models/Pagination;Ljava/lang/String;I)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
 	public synthetic fun withWatchers (II)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withWatchers (II)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
+}
+
+public abstract interface class io/getstream/chat/android/client/cache/CacheCoordinator {
+	public abstract fun cachedCall (IZLio/getstream/chat/android/client/call/Call;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/client/channel/ChannelClient {
