@@ -113,5 +113,5 @@ public object ChatUI {
     /**
      * Provides the currently logged in user.
      */
-    public var currentUserProvider: CurrentUserProvider = CurrentUserProviderImpl()
+    public var currentUserProvider: CurrentUserProvider = CurrentUserProvider.defaultCurrentUserProvider()
 }

@@ -33,13 +33,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/CurrentUserProvider {
-	public abstract fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
-}
-
-public final class io/getstream/chat/android/ui/CurrentUserProviderImpl : io/getstream/chat/android/ui/CurrentUserProvider {
-	public fun <init> ()V
-	public fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+public final class io/getstream/chat/android/ui/CurrentUserProvider$Companion {
+	public final fun defaultCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {

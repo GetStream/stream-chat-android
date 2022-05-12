@@ -18,12 +18,14 @@ package io.getstream.chat.android.ui
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 
 /**
  * Provides the currently logged in user.
  */
+@InternalStreamChatApi
 public fun interface CurrentUserProvider {
 
     /**
@@ -32,13 +34,22 @@ public fun interface CurrentUserProvider {
      *  @return The currently logged in user.
      */
     public fun getCurrentUser(): User?
+
+    public companion object {
+        /**
+         * Builds the default current user provider.
+         */
+        public fun defaultCurrentUserProvider(): CurrentUserProvider {
+            return DefaultCurrentUserProvider()
+        }
+    }
 }
 
 /**
  * The default implementation of [CurrentUserProvider] that returns a user
  * from [GlobalState] object.
  */
-public class CurrentUserProviderImpl : CurrentUserProvider {
+private class DefaultCurrentUserProvider : CurrentUserProvider {
 
     /**
      * Returns the currently logged in user.
