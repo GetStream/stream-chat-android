@@ -120,9 +120,9 @@ public fun Messages(
             ) { index, item ->
                 Box(
                     Modifier.onGloballyPositioned {
-                        if (item is MessageItemState
-                            && item.focusState == MessageFocused
-                            && messagesState.focusedMessageOffset.value == null
+                        if (item is MessageItemState &&
+                            item.focusState == MessageFocused &&
+                            messagesState.focusedMessageOffset.value == null
                         ) {
                             messagesState.calculateMessageOffset(parentSize, it.size)
                         }

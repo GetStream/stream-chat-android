@@ -57,6 +57,11 @@ import androidx.compose.ui.unit.dp
  * @param reactionOptionItemIconSize The size of a reaction option icon in the reaction options menu.
  * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
  * @param messageItemMaxWidth The max width of message items inside message list.
+ * @param quotedMessageTextVerticalPadding The vertical padding of text inside quoted message.
+ * @param quotedMessageTextHorizontalPadding The horizontal padding of text inside quoted message.
+ * @param quotedMessageAttachmentPreviewSize The size of the quoted message attachment preview.
+ * @param quotedMessageAttachmentVerticalPadding The vertical padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
  */
 @Immutable
 public data class StreamDimens(
@@ -93,7 +98,12 @@ public data class StreamDimens(
     public val userReactionItemIconSize: Dp,
     public val reactionOptionItemIconSize: Dp,
     public val headerElevation: Dp,
-    public val messageItemMaxWidth: Dp
+    public val messageItemMaxWidth: Dp,
+    public val quotedMessageTextVerticalPadding: Dp,
+    public val quotedMessageTextHorizontalPadding: Dp,
+    public val quotedMessageAttachmentPreviewSize: Dp,
+    public val quotedMessageAttachmentVerticalPadding: Dp,
+    public val quotedMessageAttachmentStartPadding: Dp
 ) {
     public companion object {
         /**
@@ -135,7 +145,12 @@ public data class StreamDimens(
             userReactionItemAvatarSize = 64.dp,
             reactionOptionItemIconSize = 24.dp,
             headerElevation = 4.dp,
-            messageItemMaxWidth = 250.dp
+            messageItemMaxWidth = 250.dp,
+            quotedMessageTextHorizontalPadding = 8.dp,
+            quotedMessageTextVerticalPadding = 6.dp,
+            quotedMessageAttachmentPreviewSize = 36.dp,
+            quotedMessageAttachmentVerticalPadding = 6.dp,
+            quotedMessageAttachmentStartPadding = 8.dp
         )
     }
 }

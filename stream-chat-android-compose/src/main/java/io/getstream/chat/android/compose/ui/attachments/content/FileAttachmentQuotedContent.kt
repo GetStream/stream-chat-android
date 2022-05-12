@@ -17,12 +17,15 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
 /**
@@ -45,8 +48,14 @@ public fun FileAttachmentQuotedContent(
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }
 
+    val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
+    val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentVerticalPadding
+    val size = ChatTheme.dimens.quotedMessageAttachmentPreviewSize
+
     Image(
-        modifier = modifier,
+        modifier = modifier
+            .padding(start = startPadding, top = verticalPadding, bottom = verticalPadding)
+            .size(size),
         painter = painter,
         contentDescription = null,
         contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit

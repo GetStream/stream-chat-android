@@ -253,11 +253,14 @@ public fun QuotedMessageText(
 
     val styledText = buildAnnotatedMessageText(quotedMessageText)
 
+    val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
+    val verticalPadding = ChatTheme.dimens.quotedMessageTextVerticalPadding
+
     Text(
         modifier = modifier
             .padding(
-                horizontal = 8.dp,
-                vertical = 5.dp
+                horizontal = horizontalPadding,
+                vertical = verticalPadding
             )
             .clipToBounds(),
         text = styledText,
