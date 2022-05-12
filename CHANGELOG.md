@@ -66,6 +66,7 @@
 
 ### ✅ Added
 - Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
+- Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
 
 ### ⚠️ Changed
 - Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
