@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -42,8 +43,12 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.docs.R
+import java.lang.StringBuilder
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/)
@@ -252,6 +257,99 @@ private object AddingCustomAttachmentsSnippet {
                     .padding(4.dp),
                 onClick = { onAttachmentRemoved(attachment) }
             )
+        }
+    }
+
+    /**
+     * Rename to [MessagesActivity] when adding to docs. This is so we can avoid name conflicts.
+     */
+    class QuotedMessagesActivity : AppCompatActivity() {
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
+
+            val customFactories = listOf(dateAttachmentFactory)
+            val defaultFactories = StreamAttachmentFactories.defaultFactories()
+
+            val customQuotedFactories = listOf(quotedDateAttachmentFactory)
+            val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()
+
+            setContent {
+                // pass in custom factories or combine them with the default ones
+                ChatTheme(attachmentFactories = customFactories + defaultFactories, quoteAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
+                    CustomMessagesScreen(
+                        channelId = channelId,
+                        onBackPressed = { finish() }
+                    )
+                }
+            }
+        }
+
+        companion object {
+            private const val KEY_CHANNEL_ID = "channelId"
+
+            fun getIntent(context: Context, channelId: String): Intent {
+                return Intent(context, MessagesActivity::class.java).apply {
+                    putExtra(KEY_CHANNEL_ID, channelId)
+                }
+            }
+        }
+    }
+
+    @ExperimentalStreamChatApi
+    val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
+        canHandle = { attachments -> attachments.any { it.type == "date" } },
+        content = @Composable { modifier, attachmentState ->
+            QuotedDateAttachmentContent(
+                modifier = modifier,
+                attachmentState = attachmentState
+            )
+        }
+    )
+
+    @Composable
+    fun QuotedDateAttachmentContent(
+        attachmentState: AttachmentState,
+        modifier: Modifier = Modifier,
+    ) {
+        val attachment = attachmentState.message.attachments.first { it.type == "date" }
+        val date = attachment.extraData["payload"].toString()
+        val formattedDate = StringBuilder().apply {
+            val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
+            val year = Calendar.getInstance().apply {
+                timeInMillis = dateTime.time
+            }.get(Calendar.YEAR)
+            if (Calendar.getInstance().get(Calendar.YEAR) != year) {
+                append(year).append("\n")
+            }
+            append(date.replace(", $year", ""))
+        }.toString()
+
+        Column(
+            modifier = modifier
+                .padding(4.dp)
+                .clip(ChatTheme.shapes.attachment)
+                .background(ChatTheme.colors.infoAccent)
+                .padding(8.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textHighEmphasis,
+                )
+
+                Text(
+                    text = formattedDate,
+                    style = ChatTheme.typography.body,
+                    color = ChatTheme.colors.textHighEmphasis,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

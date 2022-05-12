@@ -310,3 +310,131 @@ Date attachments should be now correctly rendered in the message composer and in
 ![Rendering Custom Attachment](../../assets/compose_rendering_custom_attachments.png)
 
 With just a few lines of code, you're able to render any custom UI within the `MessageComposer` and `MessageList` components of our SDK. This gives the ability to build powerful features without having to change our default components — you just need a custom `AttachmentFactory`!
+
+## Quoted Messages
+
+Stream SDK supports quoting the messages which are shown inside the regular message content. Being nested inside a message they heave less space available and require different layouts and with that factories.
+
+If you don't wish or have no need to customize the layout there is no need since the factories are of the same type and can be reused. If there is no `quotedAttachmentFactory` that can render that type of attachment we default to `attachmentFactory` in our default components to one that can if there is one.
+
+## Rendering Quoted Date Attachments
+
+We will be using the same [AttachmentFactory](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) type for quoted messages.
+
+Let's start with creating a component that will be used to render the quoted message inside the regular message content:
+
+```kotlin
+@Composable
+fun QuotedDateAttachmentContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val attachment = attachmentState.message.attachments.first { it.type == "date" }
+    val date = attachment.extraData["payload"].toString()
+    val formattedDate = StringBuilder().apply {
+        val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
+        val year = Calendar.getInstance().apply {
+            timeInMillis = dateTime.time
+        }.get(Calendar.YEAR)
+        if (Calendar.getInstance().get(Calendar.YEAR) != year) {
+            append(year).append("\n")
+        }
+        append(date.replace(", $year", ""))
+    }.toString()
+
+    Column(
+        modifier = modifier
+            .padding(4.dp)
+            .clip(ChatTheme.shapes.attachment)
+            .background(ChatTheme.colors.infoAccent)
+            .padding(8.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = null,
+                tint = ChatTheme.colors.textHighEmphasis,
+            )
+
+            Text(
+                text = formattedDate,
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textHighEmphasis,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+```
+
+As before we are fetching the custom attachment data using `attachment.extraData["payload"]`. Difference here is we hide the year if it is the current one and newline the date for a more compact preview.
+
+This time we don't need the `textFormatter` or `previewContent`. The `textFormatter` is used to show the description of the attachment in the `ChannelList` and that will be handled by the parent message. `previewContent` is used in the `MessageComposer` and it only shows the parent message.
+
+Now your attachment factory should be complete and look like this:
+
+```kotlin
+@ExperimentalStreamChatApi
+val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
+    canHandle = { attachments -> attachments.any { it.type == "date" } },
+    content = @Composable { modifier, attachmentState ->
+        QuotedDateAttachmentContent(
+            modifier = modifier,
+            attachmentState = attachmentState
+        )
+    }
+)
+```
+
+To complete the quoted date sharing feature you just need to provide `quotedDateAttachmentFactory` along with the default quoted attachment factories via `ChatTheme`:
+
+```kotlin
+class MessagesActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
+
+        val customFactories = listOf(dateAttachmentFactory)
+        val defaultFactories = StreamAttachmentFactories.defaultFactories()
+
+        val customQuotedFactories = listOf(quotedDateAttachmentFactory)
+        val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()
+
+        setContent {
+            // pass in custom factories or combine them with the default ones
+            ChatTheme(attachmentFactories = customFactories + defaultFactories, quoteAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
+                CustomMessagesScreen(
+                    channelId = channelId,
+                    onBackPressed = { finish() }
+                )
+            }
+        }
+    }
+
+    companion object {
+        private const val KEY_CHANNEL_ID = "channelId"
+
+        fun getIntent(context: Context, channelId: String): Intent {
+            return Intent(context, MessagesActivity::class.java).apply {
+                putExtra(KEY_CHANNEL_ID, channelId)
+            }
+        }
+    }
+}
+```
+
+Quoted date attachments should now be correctly rendered in the quoted message in the message list like on the screenshot below:
+
+![Rendering Custom Attachment](../../assets/compose_custom_quoted_message_attachment_factory.png)
+
+With even less lines of code than the previous custom attachment factory we have adjusted the date preview to fit a smaller layout retaining all the relevant data. This gives you even more fine grained customization to build powerful and responsive UI with the same reusable components.
+
+
+
+
+
+
