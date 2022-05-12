@@ -26,7 +26,7 @@ jobs:
           disable-animations: true
           profile: pixel
           emulator-options: -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
-          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
       - name: Upload screnshot results
         if: always()
         uses: actions/upload-artifact@v2
