@@ -2,11 +2,12 @@ name: Snapshot-Test
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - # Every midnight
+    - cron: '0 0 * * *'
 
 jobs:
   run_snapshot_tests:
-    name: Record snapshots
+    name: Verify snapshots
     runs-on: macos-latest
     steps:
       - name: Check out code
