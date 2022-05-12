@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Class that coordinates cache for call. If a call is make another time too soon, the cached call gets propagated instead
- * of making another new call.
+ * Class that coordinates cache for call. If a call is make another time too soon, the cached call gets propagated
+ * instead of making another new call.
  *
  * @param cacheTime Int. The value of milli seconds that the cache is not considered to be old.
  */

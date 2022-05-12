@@ -17,14 +17,76 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import java.util.Date
 
 /**
  * Cached version of [ChatApi]
  */
 internal interface CachedChatApi : ChatApi {
 
+    fun getRepliesMore(
+        messageId: String,
+        firstId: String,
+        limit: Int,
+        forceRefresh: Boolean,
+    ): Call<List<Message>>
+
+    fun getReplies(messageId: String, limit: Int, forceRefresh: Boolean): Call<List<Message>>
+
+    fun getReactions(messageId: String, offset: Int, limit: Int, forceRefresh: Boolean): Call<List<Reaction>>
+
+    fun getMessage(messageId: String, forceRefresh: Boolean): Call<Message>
+
+    fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+        forceRefresh: Boolean
+    ): Call<List<Message>>
+
     fun queryChannels(query: QueryChannelsRequest, forceRefresh: Boolean): Call<List<Channel>>
+
+    fun queryChannel(
+        channelType: String,
+        channelId: String = "",
+        query: QueryChannelRequest,
+        forceRefresh: Boolean
+    ): Call<Channel>
+
+    fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+        forceRefresh: Boolean
+    ): Call<List<Member>>
+
+    fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+        forceRefresh: Boolean
+    ): Call<List<BannedUser>>
 }
