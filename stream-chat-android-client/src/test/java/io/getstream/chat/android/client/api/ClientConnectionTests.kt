@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.CachedMoshiChatApi
-import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
