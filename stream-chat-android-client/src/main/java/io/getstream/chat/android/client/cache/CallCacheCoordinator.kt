@@ -21,15 +21,24 @@ import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * Class that coordinates cache for call. If a call is make another time too soon, the cached call gets propagated instead
+ * of making another new call.
+ *
+ * @param cacheTime Int. The value of milli seconds that the cache is not considered to be old.
+ */
 internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinator {
 
     private val requestTimeMap: MutableMap<Int, CallData<out Any>> = ConcurrentHashMap()
     private var globalLastRequest: AtomicReference<Date?> = AtomicReference()
 
+    /**
+     * Creates a cached [Call] instead of a normal [Call].
+     */
     override fun <T : Any> cachedCall(hashCode: Int, forceRefresh: Boolean, call: Call<T>): Call<T> {
         evaluateGlobalState()
 
-        return if (isStateOld(hashCode) || forceRefresh) {
+        return if (isCallOld(hashCode) || forceRefresh) {
             val now = Date()
 
             requestTimeMap[hashCode] = CallData(now, call)
@@ -43,6 +52,9 @@ internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinat
         }
     }
 
+    /**
+     * Evaluates if the last call is olders than the cache time. If it is, all the cache is cleaned.
+     */
     private fun evaluateGlobalState() {
         val lastRequest = globalLastRequest.get() ?: return
 
@@ -54,7 +66,12 @@ internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinat
         }
     }
 
-    private fun isStateOld(requestHash: Int): Boolean {
+    /**
+     * Evaluates if a call is to old based on its request hash.
+     *
+     * @param requestHash Int. The hash of the call.
+     */
+    private fun isCallOld(requestHash: Int): Boolean {
         if (!requestTimeMap.containsKey(requestHash)) return true
 
         val now = Date()

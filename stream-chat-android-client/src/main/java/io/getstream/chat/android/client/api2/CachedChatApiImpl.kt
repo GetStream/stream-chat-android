@@ -26,7 +26,13 @@ import io.getstream.chat.android.client.models.Channel
 
 private const val DEFAULT_CACHE_MILLIS = 300
 
-internal class CachedMoshiChatApi(
+/**
+ * Cached version of ChatApi.
+ *
+ * @param chatApi [ChatApi]. The [ChatApi] without cache.
+ * @param callCacheCoordinator [CacheCoordinator] The coordinator of the cache.
+ */
+internal class CachedChatApiImpl(
     private val chatApi: ChatApi,
     private val callCacheCoordinator: CacheCoordinator = CallCacheCoordinator(DEFAULT_CACHE_MILLIS),
 ) : ChatApi by chatApi, CachedChatApi {

@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.cache
 
 import io.getstream.chat.android.client.call.Call
 
+/**
+ * Implementation of [CacheCoordinator] that by pass the cache. Use this when cache is not desired.
+ */
 internal class DummyCallCacheCoordinator : CacheCoordinator {
 
     override fun <T : Any> cachedCall(hashCode: Int, forceRefresh: Boolean, call: Call<T>): Call<T> = call

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api2.CachedMoshiChatApi
+import io.getstream.chat.android.client.api2.CachedChatApiImpl
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -80,7 +80,7 @@ internal class ClientConnectionTests {
     )
     private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    private lateinit var api: CachedMoshiChatApi
+    private lateinit var api: CachedChatApiImpl
     private lateinit var socket: ChatSocket
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient

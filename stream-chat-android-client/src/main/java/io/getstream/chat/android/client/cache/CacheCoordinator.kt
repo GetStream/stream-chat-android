@@ -18,7 +18,13 @@ package io.getstream.chat.android.client.cache
 
 import io.getstream.chat.android.client.call.Call
 
+/**
+ * Interface for classes responsible for caching [Call]s
+ */
 public interface CacheCoordinator {
 
+    /**
+     * Caches the call and returns it. If another call is made too soon, the cached call is returns.
+     */
     public fun <T : Any> cachedCall(hashCode: Int, forceRefresh: Boolean, call: Call<T>): Call<T>
 }

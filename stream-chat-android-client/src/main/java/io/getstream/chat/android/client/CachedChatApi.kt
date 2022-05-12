@@ -21,6 +21,9 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 
+/**
+ * Cached version of [ChatApi]
+ */
 internal interface CachedChatApi : ChatApi {
 
     fun queryChannels(query: QueryChannelsRequest, forceRefresh: Boolean): Call<List<Channel>>

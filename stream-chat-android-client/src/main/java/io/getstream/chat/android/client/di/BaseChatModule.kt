@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.di
 import android.content.Context
 import android.net.ConnectivityManager
 import com.moczul.ok2curl.CurlInterceptor
-import io.getstream.chat.android.client.CachedChatApi
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -31,7 +30,6 @@ import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
-import io.getstream.chat.android.client.api2.CachedMoshiChatApi
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.ConfigApi
 import io.getstream.chat.android.client.api2.DeviceApi
@@ -107,7 +105,7 @@ internal open class BaseChatModule(
 
     //region Modules
 
-    fun api(): CachedChatApi {
+    fun api(): io.getstream.chat.android.client.CachedChatApi {
         return defaultApi
     }
 
@@ -220,7 +218,7 @@ internal open class BaseChatModule(
     }
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(): CachedChatApi {
+    private fun buildApi(): io.getstream.chat.android.client.CachedChatApi {
         return MoshiChatApi(
             fileUploader ?: defaultFileUploader,
             buildRetrofitApi<UserApi>(),
@@ -243,7 +241,7 @@ internal open class BaseChatModule(
                 else -> CallCacheCoordinator(config.cacheApiCallTimeout)
             }
 
-            CachedMoshiChatApi(validatedApi, cacheCoordinator)
+            io.getstream.chat.android.client.api2.CachedChatApiImpl(validatedApi, cacheCoordinator)
         }
     }
 

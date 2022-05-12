@@ -1354,6 +1354,7 @@ internal constructor(
      * @see [QueryChannelsPostponeHelper]
      *
      * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     * @param forceRefresh Can we used to force refresh the cache. If this value is true, an API call must happen.
      *
      * @return Executable async [Call] responsible for querying channels.
      */
