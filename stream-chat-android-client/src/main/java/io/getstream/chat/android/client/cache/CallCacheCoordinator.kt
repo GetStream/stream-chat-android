@@ -17,9 +17,8 @@
 package io.getstream.chat.android.client.cache
 
 import io.getstream.chat.android.client.call.Call
-import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Class that coordinates cache for call. If a call is make another time too soon, the cached call gets propagated
@@ -29,56 +28,47 @@ import java.util.concurrent.atomic.AtomicReference
  */
 internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinator {
 
-    private val requestTimeMap: MutableMap<Int, CallData<out Any>> = ConcurrentHashMap()
-    private var globalLastRequest: AtomicReference<Date?> = AtomicReference()
+    private val cachedCalls: MutableMap<Int, CachedCall<out Any>> = ConcurrentHashMap()
+    private val lastRequestTime: AtomicLong = AtomicLong()
 
     /**
      * Creates a cached [Call] instead of a normal [Call].
      */
     override fun <T : Any> cachedCall(hashCode: Int, forceRefresh: Boolean, call: Call<T>): Call<T> {
-        evaluateGlobalState()
-
-        return if (isCallOld(hashCode) || forceRefresh) {
-            val now = Date()
-
-            requestTimeMap[hashCode] = CallData(now, call)
-            globalLastRequest.set(now)
-
-            call
-        } else {
-            requestTimeMap[hashCode]!!.call.let { data ->
-                data as Call<T>
+        cachedCalls.clearIfStale()
+        val callData = cachedCalls[hashCode]
+        return if (forceRefresh || callData == null || callData.isStale()) {
+            call.also {
+                val now = System.currentTimeMillis()
+                cachedCalls[hashCode] = CachedCall(now, it)
+                lastRequestTime.set(now)
             }
+        } else {
+            callData.call as Call<T>
         }
     }
 
     /**
      * Evaluates if the last call is olders than the cache time. If it is, all the cache is cleaned.
      */
-    private fun evaluateGlobalState() {
-        val lastRequest = globalLastRequest.get() ?: return
+    private fun MutableMap<Int, CachedCall<out Any>>.clearIfStale() {
+        val lastRequestTime = lastRequestTime.get()
+        if (lastRequestTime == 0L) return
 
-        val now = Date()
-        val diff = now.time - lastRequest.time
-
+        val diff = System.currentTimeMillis() - lastRequestTime
         if (diff > cacheTime) {
-            requestTimeMap.clear()
+            clear()
         }
     }
 
     /**
      * Evaluates if a call is to old based on its request hash.
-     *
-     * @param requestHash Int. The hash of the call.
      */
-    private fun isCallOld(requestHash: Int): Boolean {
-        if (!requestTimeMap.containsKey(requestHash)) return true
-
-        val now = Date()
-        val diff = now.time - requestTimeMap[requestHash]!!.requestTime.time
-
+    private fun CachedCall<out Any>.isStale(): Boolean {
+        val now = System.currentTimeMillis()
+        val diff = now - requestTime
         return diff > cacheTime
     }
 }
 
-private data class CallData<T : Any>(val requestTime: Date, val call: Call<T>)
+private data class CachedCall<T : Any>(val requestTime: Long, val call: Call<T>)
