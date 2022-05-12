@@ -62,11 +62,12 @@ internal class ChannelsApiCallsTests {
             mock.api.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                request
+                request,
+                true
             )
         ).thenReturn(RetroSuccess(response).toRetrofitCall())
 
-        val result = client.queryChannel(mock.channelType, mock.channelId, request).execute()
+        val result = client.queryChannel(mock.channelType, mock.channelId, request, true).execute()
 
         verifySuccess(result, response)
     }
@@ -79,12 +80,13 @@ internal class ChannelsApiCallsTests {
             mock.api.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                request
+                request,
+                true
             )
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, request).execute()
+            client.queryChannel(mock.channelType, mock.channelId, request, true).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

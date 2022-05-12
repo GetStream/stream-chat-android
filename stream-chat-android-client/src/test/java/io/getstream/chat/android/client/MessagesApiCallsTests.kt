@@ -55,12 +55,12 @@ internal class MessagesApiCallsTests {
         val message = Message(text = "a-message")
 
         Mockito.`when`(
-            mock.api.getMessage(messageId)
+            mock.api.getMessage(messageId, true)
         ).thenReturn(
             RetroSuccess(message).toRetrofitCall()
         )
 
-        val result = client.getMessage(messageId).execute()
+        val result = client.getMessage(messageId, true).execute()
 
         verifySuccess(result, message)
     }
@@ -70,12 +70,12 @@ internal class MessagesApiCallsTests {
         val messageId = "message-id"
 
         Mockito.`when`(
-            mock.api.getMessage(messageId)
+            mock.api.getMessage(messageId, true)
         ).thenReturn(
             RetroError<Message>(mock.serverErrorCode).toRetrofitCall()
         )
 
-        val result = client.getMessage(messageId).execute()
+        val result = client.getMessage(messageId, true).execute()
 
         verifyError(
             result,
@@ -242,6 +242,7 @@ internal class MessagesApiCallsTests {
             mock.api.getReplies(
                 messageId,
                 limit,
+                true
             )
         ).thenReturn(RetroSuccess(listOf(message)).toRetrofitCall())
 
@@ -259,10 +260,11 @@ internal class MessagesApiCallsTests {
             mock.api.getReplies(
                 messageId,
                 limit,
+                true
             )
         ).thenReturn(RetroError<List<Message>>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.getReplies(messageId, limit).execute()
+        val result = client.getReplies(messageId, limit, true).execute()
 
         verifyError(result, mock.serverErrorCode)
     }
@@ -280,10 +282,11 @@ internal class MessagesApiCallsTests {
                 messageId,
                 firstId,
                 limit,
+                true
             )
         ).thenReturn(RetroSuccess(listOf(message)).toRetrofitCall())
 
-        val result = client.getRepliesMore(messageId, firstId, limit).execute()
+        val result = client.getRepliesMore(messageId, firstId, limit, true).execute()
 
         verifySuccess(result, listOf(message))
     }
@@ -299,10 +302,11 @@ internal class MessagesApiCallsTests {
                 messageId,
                 firstId,
                 limit,
+                true
             )
         ).thenReturn(RetroError<List<Message>>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.getRepliesMore(messageId, firstId, limit).execute()
+        val result = client.getRepliesMore(messageId, firstId, limit, true).execute()
 
         verifyError(result, mock.serverErrorCode)
     }
@@ -357,10 +361,11 @@ internal class MessagesApiCallsTests {
                 messageId,
                 offset,
                 limit,
+                true
             )
         ).thenReturn(RetroSuccess(listOf(reaction)).toRetrofitCall())
 
-        val result = client.getReactions(messageId, offset, limit).execute()
+        val result = client.getReactions(messageId, offset, limit, true).execute()
 
         verifySuccess(result, listOf(reaction))
     }
@@ -376,10 +381,11 @@ internal class MessagesApiCallsTests {
                 messageId,
                 offset,
                 limit,
+                true
             )
         ).thenReturn(RetroError<List<Reaction>>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.getReactions(messageId, offset, limit).execute()
+        val result = client.getReactions(messageId, offset, limit, true).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

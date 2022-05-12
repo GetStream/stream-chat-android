@@ -350,7 +350,7 @@ public class ChannelClient internal constructor(
         createdAtAfterOrEqual: Date? = null,
         createdAtBefore: Date? = null,
         createdAtBeforeOrEqual: Date? = null,
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<BannedUser>> {
         val channelCidFilter = Filters.eq("channel_cid", cid)
         return client.queryBannedUsers(
@@ -526,7 +526,12 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     @JvmOverloads
-    public fun getReactions(messageId: String, offset: Int, limit: Int, forceRefresh: Boolean = true): Call<List<Reaction>> {
+    public fun getReactions(
+        messageId: String,
+        offset: Int,
+        limit: Int,
+        forceRefresh: Boolean = true,
+    ): Call<List<Reaction>> {
         return client.getReactions(messageId, offset, limit, forceRefresh)
     }
 
@@ -536,7 +541,7 @@ public class ChannelClient internal constructor(
         messageId: String,
         firstReactionId: String,
         limit: Int,
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<Message>> {
         return client.getRepliesMore(messageId, firstReactionId, limit, forceRefresh)
     }
@@ -775,7 +780,7 @@ public class ChannelClient internal constructor(
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members, forceRefresh)
     }
@@ -826,7 +831,7 @@ public class ChannelClient internal constructor(
         limit: Int,
         sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<Message>> {
         return client.getPinnedMessages(
             channelType = channelType,

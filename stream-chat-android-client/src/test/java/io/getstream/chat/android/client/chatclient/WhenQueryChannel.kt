@@ -44,7 +44,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
 
-        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest(), true).execute()
 
         result.isError `should be` true
         isNetworkApiCalled `should be` false
@@ -58,7 +58,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
 
-        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest(), true).execute()
 
         result.isSuccess `should be` true
         isNetworkApiCalled `should be` true
@@ -87,7 +87,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             mock()
         }.get()
 
-        sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        sut.queryChannel("channelType", "channelId", QueryChannelRequest(), true).execute()
 
         list `should be equal to` listOf(1, 2, 3, 4)
     }
@@ -95,7 +95,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     private inner class Fixture {
 
         init {
-            whenever(api.queryChannel(any(), any(), any())) doReturn mock<Channel>().asCall()
+            whenever(api.queryChannel(any(), any(), any(), any())) doReturn mock<Channel>().asCall()
         }
 
         fun givenPlugin(plugin: Plugin) = apply {
@@ -103,7 +103,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         }
 
         fun givenChannelResponse(channelProvider: () -> Channel) = apply {
-            whenever(api.queryChannel(any(), any(), any())) doAnswer {
+            whenever(api.queryChannel(any(), any(), any(), any())) doAnswer {
                 CoroutineCall(coroutineRule.scope) {
                     Result.success(channelProvider())
                 }
