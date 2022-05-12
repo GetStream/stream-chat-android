@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2
 import io.getstream.chat.android.client.CachedChatApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.cache.CacheCoordinator
 import io.getstream.chat.android.client.cache.CallCacheCoordinator
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
@@ -27,7 +28,7 @@ private const val DEFAULT_CACHE_MILLIS = 300
 
 internal class CachedMoshiChatApi(
     private val chatApi: ChatApi,
-    private val callCacheCoordinator: CallCacheCoordinator = CallCacheCoordinator(DEFAULT_CACHE_MILLIS),
+    private val callCacheCoordinator: CacheCoordinator = CallCacheCoordinator(DEFAULT_CACHE_MILLIS),
 ) : ChatApi by chatApi, CachedChatApi {
 
     override fun queryChannels(query: QueryChannelsRequest, forceRefresh: Boolean): Call<List<Channel>> {

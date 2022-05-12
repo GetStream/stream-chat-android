@@ -41,6 +41,8 @@ import io.getstream.chat.android.client.api2.MessageApi
 import io.getstream.chat.android.client.api2.ModerationApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.UserApi
+import io.getstream.chat.android.client.cache.CallCacheCoordinator
+import io.getstream.chat.android.client.cache.DummyCallCacheCoordinator
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
@@ -231,7 +233,17 @@ internal open class BaseChatModule(
             buildRetrofitApi<ConfigApi>(),
             networkScope,
         ).let { originalApi ->
-            CachedMoshiChatApi(ExtraDataValidator(originalApi))
+            val validatedApi = ExtraDataValidator(originalApi)
+
+            val cacheCoordinator = when {
+                config.cacheApiCallTimeout == ChatClientConfig.NEVER_CACHE -> DummyCallCacheCoordinator()
+
+                config.cacheApiCallTimeout < 0 -> DummyCallCacheCoordinator()
+
+                else -> CallCacheCoordinator(config.cacheApiCallTimeout)
+            }
+
+            CachedMoshiChatApi(validatedApi, cacheCoordinator)
         }
     }
 

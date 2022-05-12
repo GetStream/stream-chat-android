@@ -25,6 +25,12 @@ public class ChatClientConfig(
     public var wssUrl: String,
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
+    public val cacheApiCallTimeout: Int = DEFAULT_CACHE_MILLIS
 ) {
     public var isAnonymous: Boolean = false
+
+    public companion object {
+        public const val DEFAULT_CACHE_MILLIS: Int = 300
+        public const val NEVER_CACHE: Int = -1
+    }
 }
