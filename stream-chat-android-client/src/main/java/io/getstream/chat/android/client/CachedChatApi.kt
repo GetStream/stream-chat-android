@@ -49,6 +49,7 @@ internal interface CachedChatApi : ChatApi {
 
     fun getMessage(messageId: String, forceRefresh: Boolean): Call<Message>
 
+    @Suppress("LongParameterList")
     fun getPinnedMessages(
         channelType: String,
         channelId: String,
@@ -67,6 +68,7 @@ internal interface CachedChatApi : ChatApi {
         forceRefresh: Boolean
     ): Call<Channel>
 
+    @Suppress("LongParameterList")
     fun queryMembers(
         channelType: String,
         channelId: String,
@@ -78,6 +80,7 @@ internal interface CachedChatApi : ChatApi {
         forceRefresh: Boolean
     ): Call<List<Member>>
 
+    @Suppress("LongParameterList")
     fun queryBannedUsers(
         filter: FilterObject,
         sort: QuerySort<BannedUsersSort>,

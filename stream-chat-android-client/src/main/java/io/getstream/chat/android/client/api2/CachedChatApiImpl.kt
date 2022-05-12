@@ -87,9 +87,11 @@ internal class CachedChatApiImpl(
         forceRefresh: Boolean,
     ): Call<List<Message>> {
         val hash = GetPinnedMessagesHash(channelType, channelId, limit, sort, pagination).hashCode()
-        return callCacheCoordinator.cachedCall(hash,
+        return callCacheCoordinator.cachedCall(
+            hash,
             forceRefresh,
-            getPinnedMessages(channelType, channelId, limit, sort, pagination))
+            getPinnedMessages(channelType, channelId, limit, sort, pagination)
+        )
     }
 
     override fun queryChannels(query: QueryChannelsRequest, forceRefresh: Boolean): Call<List<Channel>> {
@@ -146,7 +148,16 @@ internal class CachedChatApiImpl(
             createdAtBeforeOrEqual
         ).hashCode()
 
-        val call = queryBannedUsers(filter, sort, offset, limit, createdAtAfter, createdAtAfterOrEqual, createdAtBefore, createdAtBeforeOrEqual)
+        val call = queryBannedUsers(
+            filter,
+            sort,
+            offset,
+            limit,
+            createdAtAfter,
+            createdAtAfterOrEqual,
+            createdAtBefore,
+            createdAtBeforeOrEqual
+        )
         return callCacheCoordinator.cachedCall(hash, forceRefresh, call)
     }
 }
