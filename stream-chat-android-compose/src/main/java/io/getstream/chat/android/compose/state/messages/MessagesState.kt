@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.math.abs
 
 /**
  * UI representation of the Conversation/Messages screen. Holds all the data required to show messages.
@@ -62,12 +61,12 @@ public data class MessagesState(
      */
     public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
         val sizeDiff = parentSize.height - focusedMessageSize.height
-        _focusedMessageOffset.value = -abs(sizeDiff / 2)
+        _focusedMessageOffset.value = -sizeDiff / 2
     }
 
     /**
      * Clears the message offset once the message has been scrolled to center to prevent any jank
-     * while scrolling yhe list.
+     * while scrolling the list.
      */
     public fun clearMessagesOffset() {
         _focusedMessageOffset.value = null

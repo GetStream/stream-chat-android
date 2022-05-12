@@ -43,7 +43,6 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
         val isImage = attachment.isMedia()
         val isLink = attachment.hasLink()
 
-        // TODO fix UI of attachment previews/icons
         when {
             isImage || isLink -> ImageAttachmentQuotedContent(modifier = modifier, attachment = attachment)
             isFile -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)

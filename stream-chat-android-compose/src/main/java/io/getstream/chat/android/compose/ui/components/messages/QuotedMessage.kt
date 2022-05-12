@@ -21,6 +21,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -98,29 +99,31 @@ public fun QuotedMessage(
 }
 
 /**
- * Wraps the quoted message into a special component, that doesn't show some information, like
- * the timestamp, thread participants and similar.
+ * Wraps the quoted message into a special component, open to customization. By default wraps the quoted message
+ * into a special component that shows only sender avatar, text and single attachment preview.
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param leadingContent The content shown at the start of the quoted message. By default we provide
+ * [DefaultQuotedMessageLeadingContent] which shows the sender avatar in case the sender is not the current user.
+ * @param centerContent The content shown at the center of the quoted message. By default we provide
+ * [DefaultQuotedMessageCenterContent] which shows single attachment preview and message text inside a bubble.
+ * @param trailingContent The content shown at the end of the quoted message. By default we provide
+ * [DefaultQuotedMessageTrailingContent] which shows the sender avatar in case the sender is the current user.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun QuotedMessage(
     message: Message,
     modifier: Modifier = Modifier,
-    quotedAttachmentContentSlot: @Composable () -> Unit = { DefaultQuotedMessageAttachmentContent() },
-    // TODO - add slots as described below
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    leadingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageLeadingContent(message = it) },
+    centerContent: @Composable RowScope.(Message) -> Unit = { DefaultQuotedMessageCenterContent(it) },
+    trailingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTrailingContent(message = it) },
 ) {
-    val user = message.user
-    val isMyMessage = message.isMine()
-
-    val messageBubbleShape = if (isMyMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-
     Row(
         modifier = modifier.combinedClickable(
             interactionSource = MutableInteractionSource(),
@@ -130,55 +133,123 @@ public fun QuotedMessage(
         ),
         verticalAlignment = Alignment.Bottom
     ) {
-        // TODO - leadingContent, centerContent, trailingContent
-        if (!isMyMessage) {
-            Avatar(
-                modifier = Modifier
-                    .padding(start = 2.dp)
-                    .size(24.dp),
-                imageUrl = user.image,
-                initials = user.initials,
-                textStyle = ChatTheme.typography.captionBold,
-            )
+        leadingContent(message)
 
-            Spacer(modifier = Modifier.size(8.dp))
-        }
+        centerContent(message)
 
-        // TODO - QuotedMessageContent | attachmentContent, textContent
-        MessageBubble(
-            modifier = Modifier.weight(1f, fill = false),
-            shape = messageBubbleShape, color = ChatTheme.colors.barsBackground,
-            content = {
-                Row {
-                    if (message.attachments.isNotEmpty()) {
-                        QuotedMessageAttachmentContent(
-                            message = message,
-                            onLongItemClick = {},
-                        )
-                    }
-
-                    QuotedMessageText(
-                        message = message
-                    )
-                }
-            }
-        )
-
-        if (isMyMessage) {
-            Spacer(modifier = Modifier.size(8.dp))
-
-            Avatar(
-                modifier = Modifier
-                    .padding(start = 2.dp)
-                    .size(24.dp),
-                imageUrl = user.image,
-                initials = user.initials,
-                textStyle = ChatTheme.typography.captionBold,
-            )
-        }
+        trailingContent(message)
     }
 }
 
+/**
+ * Represents the default content show at the start of the quoted message.
+ *
+ * By default we show the user avatar if the message doesn't belong to the current user.
+ *
+ * @param message The quoted message.
+ */
 @Composable
-internal fun DefaultQuotedMessageAttachmentContent() {
+internal fun DefaultQuotedMessageLeadingContent(message: Message) {
+    if (!message.isMine()) {
+        Avatar(
+            modifier = Modifier
+                .padding(start = 2.dp)
+                .size(24.dp),
+            imageUrl = message.user.image,
+            initials = message.user.initials,
+            textStyle = ChatTheme.typography.captionBold,
+        )
+
+        Spacer(modifier = Modifier.size(8.dp))
+    }
+}
+
+/**
+ * Represents the default content show at the end of the quoted message.
+ *
+ * By default we show the user avatar if the message belongs to the current user.
+ *
+ * @param message The quoted message.
+ */
+@Composable
+internal fun DefaultQuotedMessageTrailingContent(message: Message) {
+    if (message.isMine()) {
+        Spacer(modifier = Modifier.size(8.dp))
+
+        Avatar(
+            modifier = Modifier
+                .padding(start = 2.dp)
+                .size(24.dp),
+            imageUrl = message.user.image,
+            initials = message.user.initials,
+            textStyle = ChatTheme.typography.captionBold,
+        )
+    }
+}
+
+/**
+ * Represents the default content shown in the center of the quoted message wrapped inside a message bubble.
+ *
+ * By default shows a single message attachment if one is found inside attachments and the message text or the
+ * attachment name if no text has been sent.
+ *
+ * @param message The quoted message.
+ * @param attachmentContent The content shown at the start of center content used to preview the attachment. By default
+ * we provide [DefaultQuotedMessageAttachmentContent] which show a single attachment preview.
+ * @param textContent The content shown at the end of center quoted message content to shows the sent message text or
+ * attachment name. By default we provide [DefaultQuotedMessageTextContent] which show the message text if there is any
+ * or previewed attachment name.
+ */
+@Composable
+public fun RowScope.DefaultQuotedMessageCenterContent(
+    message: Message,
+    attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
+    textContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTextContent(it) },
+) {
+    val isMyMessage = message.isMine()
+
+    val messageBubbleShape = if (isMyMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+
+    MessageBubble(
+        modifier = Modifier.weight(1f, fill = false),
+        shape = messageBubbleShape, color = ChatTheme.colors.barsBackground,
+        content = {
+            Row {
+                attachmentContent(message)
+
+                textContent(message)
+            }
+        }
+    )
+}
+
+/**
+ * Represents the default attachment preview of the quoted message.
+ *
+ * By default we show the first attachment that is sent inside the message.
+ *
+ * @param message The quoted message.
+ */
+@Composable
+internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
+    if (message.attachments.isNotEmpty()) {
+        QuotedMessageAttachmentContent(
+            message = message,
+            onLongItemClick = {},
+        )
+    }
+}
+
+/**
+ * Represents the default text preview of the quoted message.
+ *
+ * By default we show the message text if there is any or show the previewed attachment name.
+ *
+ * @param message The quoted message.
+ */
+@Composable
+internal fun DefaultQuotedMessageTextContent(message: Message) {
+    QuotedMessageText(
+        message = message
+    )
 }

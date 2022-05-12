@@ -84,9 +84,7 @@ public fun Messages(
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState)
-    },
+    helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
@@ -122,7 +120,10 @@ public fun Messages(
             ) { index, item ->
                 Box(
                     Modifier.onGloballyPositioned {
-                        if (item is MessageItemState && item.focusState == MessageFocused && messagesState.focusedMessageOffset.value == null) {
+                        if (item is MessageItemState
+                            && item.focusState == MessageFocused
+                            && messagesState.focusedMessageOffset.value == null
+                        ) {
                             messagesState.calculateMessageOffset(parentSize, it.size)
                         }
                     }
@@ -232,8 +233,3 @@ internal fun DefaultMessagesLoadingMoreIndicator() {
             .padding(8.dp)
     )
 }
-
-/**
- * Default item offset so that the quoted message wont end up below scroll to bottom button.
- */
-internal const val DefaultFocusedMessageOffset: Int = -200

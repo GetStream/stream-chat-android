@@ -507,7 +507,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Link
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MessageAttachmentsContentKt {
 	public static final fun MessageAttachmentsContent (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
-	public static final fun QuotedMessageAttachmentContent (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun QuotedMessageAttachmentContent-jIwJxvA (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;FLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$FileAttachmentFactoryKt {
@@ -994,9 +994,17 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Comp
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$QuotedMessageKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$QuotedMessageKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public static field lambda-2 Lkotlin/jvm/functions/Function4;
+	public static field lambda-3 Lkotlin/jvm/functions/Function3;
+	public static field lambda-4 Lkotlin/jvm/functions/Function3;
+	public static field lambda-5 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/GiphyMessageContentKt {
@@ -1044,8 +1052,9 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Owne
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/QuotedMessageKt {
+	public static final fun DefaultQuotedMessageCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 	public static final fun QuotedMessage (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
-	public static final fun QuotedMessage (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun QuotedMessage (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ThreadParticipantsKt {

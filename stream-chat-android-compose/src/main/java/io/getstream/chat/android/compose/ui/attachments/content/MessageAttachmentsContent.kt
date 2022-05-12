@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
@@ -76,20 +78,25 @@ public fun MessageAttachmentsContent(
  *
  * @param message The message that contains the attachments.
  * @param modifier Modifier for customization of attachment preview.
+ * @param padding Padding to be applied around the attachment preview.
+ * @param size The size of the attachment preview.
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
  */
 @Composable
 public fun QuotedMessageAttachmentContent(
     message: Message,
-    modifier: Modifier = Modifier.padding(top = 6.dp, bottom = 6.dp, end = 8.dp).size(36.dp),
+    modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(start = 8.dp, top = 6.dp, bottom = 6.dp),
+    size: Dp = 36.dp,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     val attachments = message.attachments
 
     /**
-     *
+     * Looks for quoted message attachment factory and if none can handle it looks for a standard attachment factory
+     * that can handle the attachmentContent.
      */
     val quoteAttachmentFactory = if (attachments.isNotEmpty()) {
         val quotedFactory = ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
@@ -105,7 +112,9 @@ public fun QuotedMessageAttachmentContent(
     )
 
     quoteAttachmentFactory?.content?.invoke(
-        modifier = modifier,
+        modifier = modifier
+            .padding(padding)
+            .size(size),
         attachmentState = attachmentState
     )
 }
