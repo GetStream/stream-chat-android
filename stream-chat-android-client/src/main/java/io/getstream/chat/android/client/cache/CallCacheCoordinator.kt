@@ -21,7 +21,7 @@ import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 
-internal class CallCacheCoordinator(private val cacheTime: Int): CacheCoordinator {
+internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinator {
 
     private val requestTimeMap: MutableMap<Int, CallData<out Any>> = ConcurrentHashMap()
     private var globalLastRequest: AtomicReference<Date?> = AtomicReference()
