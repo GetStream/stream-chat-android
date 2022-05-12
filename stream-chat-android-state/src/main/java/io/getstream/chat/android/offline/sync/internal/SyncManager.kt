@@ -39,10 +39,9 @@ import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.WritableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -59,7 +58,7 @@ private const val QUERIES_TO_RETRY = 3
  */
 internal class SyncManager(
     private val chatClient: ChatClient,
-    private val globalState: GlobalMutableState,
+    private val globalState: WritableGlobalState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -90,12 +89,12 @@ internal class SyncManager(
      */
     internal fun clearState() {
         globalState.run {
-            _totalUnreadCount.value = 0
-            _channelUnreadCount.value = 0
-            _initialized.value = false
-            _connectionState.value = ConnectionState.OFFLINE
-            _banned.value = false
-            _mutedUsers.value = emptyList()
+            setTotalUnreadCount(0)
+            setChannelUnreadCount(0)
+            setInitialized(false)
+            setConnectionState(ConnectionState.OFFLINE)
+            setBanned(false)
+            setMutedUsers(emptyList())
         }
     }
 
@@ -376,6 +375,6 @@ internal class SyncManager(
     }
 
     private suspend fun addTypingChannel(channelLogic: ChannelLogic) {
-        globalState._typingChannels.emitAll(channelLogic.state().typing)
+        globalState.emitTypingUpdates(channelLogic.state().typing)
     }
 }

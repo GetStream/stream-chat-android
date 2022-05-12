@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.QueryMembersErrorHandlerImpl
@@ -32,16 +31,14 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * Provides all offline support related error handler factories.
  */
-@InternalStreamChatApi
-public object OfflineErrorHandlerFactoriesProvider {
+internal object OfflineErrorHandlerFactoriesProvider {
 
     /**
      * Creates a list of available offline support related error handler factories.
      *
      * @return A List of [ErrorHandlerFactory].
      */
-    @InternalStreamChatApi
-    public fun createErrorHandlerFactories(scope: CoroutineScope): List<ErrorHandlerFactory> = listOf(
+    fun createErrorHandlerFactories(scope: CoroutineScope): List<ErrorHandlerFactory> = listOf(
         DeleteReactionErrorHandlerFactory(scope),
         SendReactionErrorHandlerFactory(scope),
         QueryMembersErrorHandlerFactory(scope),

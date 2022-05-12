@@ -29,8 +29,7 @@ import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.Que
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.WritableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.runBlocking
@@ -44,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
-    private val globalState: GlobalMutableState,
+    private val globalState: WritableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -61,7 +60,7 @@ internal class LogicRegistry internal constructor(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
-                GlobalMutableState.get().toMutableState(),
+                globalState,
                 this,
                 stateRegistry
             )
@@ -139,7 +138,7 @@ internal class LogicRegistry internal constructor(
          * Creates and returns new instance of LogicRegistry.
          *
          * @param stateRegistry [StateRegistry].
-         * @param globalState [GlobalMutableState] state of the SDK.
+         * @param globalState [WritableGlobalState] state of the SDK.
          * @param userPresence True if userPresence should be enabled, false otherwise.
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
@@ -150,7 +149,7 @@ internal class LogicRegistry internal constructor(
          */
         internal fun create(
             stateRegistry: StateRegistry,
-            globalState: GlobalMutableState,
+            globalState: WritableGlobalState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,

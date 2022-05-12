@@ -46,7 +46,7 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.WritableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -59,7 +59,7 @@ internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
     private val repos: RepositoryFacade,
-    private val globalState: GlobalMutableState,
+    private val globalState: WritableGlobalState,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry
 ) {
@@ -149,7 +149,7 @@ internal class QueryChannelsLogic(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
         channelConfigRepository: ChannelConfigRepository,
-        globalState: GlobalMutableState,
+        globalState: WritableGlobalState,
     ) {
         if (result.isSuccess) {
             mutableState._recoveryNeeded.value = false
@@ -167,7 +167,7 @@ internal class QueryChannelsLogic(
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
             mutableState._recoveryNeeded.value = true
-            globalState._errorEvent.value = Event(result.error())
+            globalState.setErrorEvent(Event(result.error()))
         }
     }
 

@@ -205,7 +205,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         ).enqueue()
 
         // manually configure the user since client is mocked
-        GlobalMutableState.getOrCreate()._user.value = data.user1
+        GlobalMutableState.getOrCreate().setUser(data.user1)
 
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         repos.insertUsers(data.userMap.values.toList())

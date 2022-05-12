@@ -19,43 +19,36 @@ package io.getstream.chat.android.offline.plugin.state.global.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import kotlinx.coroutines.flow.Flow
 
 /**
- * Editable global state of [StatePlugin].
+ * Writable global state of [StatePlugin].
  */
-@InternalStreamChatApi
-public interface EditableGlobalState : GlobalState {
+internal interface WritableGlobalState : GlobalState {
 
-    @InternalStreamChatApi
-    public fun setErrorEvent(errorEvent: Event<ChatError>)
+    fun setErrorEvent(errorEvent: Event<ChatError>)
 
-    @InternalStreamChatApi
-    public fun setUser(user: User)
+    fun setUser(user: User)
 
-    @InternalStreamChatApi
-    public fun setConnectionState(connectionState: ConnectionState)
+    fun setConnectionState(connectionState: ConnectionState)
 
-    @InternalStreamChatApi
-    public fun setInitialized(initialized: Boolean)
+    fun setInitialized(initialized: Boolean)
 
-    @InternalStreamChatApi
-    public fun setTotalUnreadCount(totalUnreadCount: Int)
+    fun setTotalUnreadCount(totalUnreadCount: Int)
 
-    @InternalStreamChatApi
-    public fun setChannelUnreadCount(channelUnreadCount: Int)
+    fun setChannelUnreadCount(channelUnreadCount: Int)
 
-    @InternalStreamChatApi
-    public fun setBanned(banned: Boolean)
+    fun setBanned(banned: Boolean)
 
-    @InternalStreamChatApi
-    public fun setChannelMutes(channelMutes: List<ChannelMute>)
+    fun setChannelMutes(channelMutes: List<ChannelMute>)
 
-    @InternalStreamChatApi
-    public fun setMutedUsers(mutedUsers: List<Mute>)
+    fun setMutedUsers(mutedUsers: List<Mute>)
+
+    suspend fun emitTypingUpdates(typingUpdates: Flow<TypingEvent>)
 }

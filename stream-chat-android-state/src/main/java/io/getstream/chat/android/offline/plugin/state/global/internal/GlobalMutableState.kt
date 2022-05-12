@@ -24,28 +24,28 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
 
-@InternalStreamChatApi
-public class GlobalMutableState private constructor() : EditableGlobalState {
+internal class GlobalMutableState private constructor() : WritableGlobalState {
 
-    internal val _initialized = MutableStateFlow(false)
-    internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
-    internal val _totalUnreadCount = MutableStateFlow(0)
-    internal val _channelUnreadCount = MutableStateFlow(0)
-    internal val _errorEvent = MutableStateFlow(Event(ChatError()))
-    internal val _banned = MutableStateFlow(false)
+    private val _initialized = MutableStateFlow(false)
+    private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val _totalUnreadCount = MutableStateFlow(0)
+    private val _channelUnreadCount = MutableStateFlow(0)
+    private val _errorEvent = MutableStateFlow(Event(ChatError()))
+    private val _banned = MutableStateFlow(false)
 
-    internal val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
-    internal val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
+    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
+    private val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
 
-    internal val _user = MutableStateFlow<User?>(null)
+    private val _user = MutableStateFlow<User?>(null)
 
     override val user: StateFlow<User?> = _user
 
@@ -77,15 +77,13 @@ public class GlobalMutableState private constructor() : EditableGlobalState {
         return _initialized.value
     }
 
-    @InternalStreamChatApi
-    public companion object {
+    internal companion object {
         private var instance: GlobalMutableState? = null
 
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
-        @InternalStreamChatApi
-        public fun getOrCreate(): GlobalMutableState {
+        internal fun getOrCreate(): GlobalMutableState {
             return instance ?: GlobalMutableState().also { globalState ->
                 instance = globalState
             }
@@ -120,49 +118,44 @@ public class GlobalMutableState private constructor() : EditableGlobalState {
         _user.value = null
     }
 
-    @InternalStreamChatApi
     override fun setErrorEvent(errorEvent: Event<ChatError>) {
         _errorEvent.value = errorEvent
     }
 
-    @InternalStreamChatApi
     override fun setUser(user: User) {
         _user.value = user
     }
 
-    @InternalStreamChatApi
     override fun setConnectionState(connectionState: ConnectionState) {
         _connectionState.value = connectionState
     }
 
-    @InternalStreamChatApi
     override fun setInitialized(initialized: Boolean) {
         _initialized.value = initialized
     }
 
-    @InternalStreamChatApi
     override fun setTotalUnreadCount(totalUnreadCount: Int) {
         _totalUnreadCount.value = totalUnreadCount
     }
 
-    @InternalStreamChatApi
     override fun setChannelUnreadCount(channelUnreadCount: Int) {
         _channelUnreadCount.value = channelUnreadCount
     }
 
-    @InternalStreamChatApi
     override fun setBanned(banned: Boolean) {
         _banned.value = banned
     }
 
-    @InternalStreamChatApi
     override fun setChannelMutes(channelMutes: List<ChannelMute>) {
         _channelMutes.value = channelMutes
     }
 
-    @InternalStreamChatApi
     override fun setMutedUsers(mutedUsers: List<Mute>) {
         _mutedUsers.value = mutedUsers
+    }
+
+    override suspend fun emitTypingUpdates(typingUpdates: Flow<TypingEvent>) {
+        _typingChannels.emitAll(typingUpdates)
     }
 }
 

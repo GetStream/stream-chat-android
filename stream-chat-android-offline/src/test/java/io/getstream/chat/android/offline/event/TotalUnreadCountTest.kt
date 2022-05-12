@@ -50,7 +50,7 @@ internal class TotalUnreadCountTest {
 
     private val data = TestDataHelper()
     private val globalMutableState = GlobalMutableState.create().apply {
-        _user.value = data.user1
+        setUser(data.user1)
     }
 
     @Test
@@ -70,8 +70,8 @@ internal class TotalUnreadCountTest {
 
             sut.handleEvent(newMessageEventWithUnread)
 
-            globalMutableState._totalUnreadCount.value `should be equal to` 5
-            globalMutableState._channelUnreadCount.value `should be equal to` 2
+            globalMutableState.totalUnreadCount.value `should be equal to` 5
+            globalMutableState.channelUnreadCount.value `should be equal to` 2
         }
 
     @Test
@@ -90,8 +90,8 @@ internal class TotalUnreadCountTest {
             )
             sut.handleEvent(markReadEventWithUnread)
 
-            globalMutableState._totalUnreadCount.value `should be equal to` 0
-            globalMutableState._channelUnreadCount.value `should be equal to` 0
+            globalMutableState.totalUnreadCount.value `should be equal to` 0
+            globalMutableState.channelUnreadCount.value `should be equal to` 0
         }
 
     @Test
@@ -106,7 +106,7 @@ internal class TotalUnreadCountTest {
         sut.handleEvent(connectedEvent)
 
         // unread count are updated internally when a user is updated
-        globalMutableState._user.value `should be equal to` userWithUnread
+        globalMutableState.user.value `should be equal to` userWithUnread
     }
 
     private class Fixture(globalMutableState: GlobalMutableState) {

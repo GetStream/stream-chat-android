@@ -72,7 +72,7 @@ internal class EventHandlerImplTest {
 
     @BeforeEach
     fun setUp() {
-        globalState._user.value = user
+        globalState.setUser(user)
     }
 
     @Test

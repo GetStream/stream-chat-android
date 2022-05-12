@@ -99,7 +99,7 @@ import io.getstream.chat.android.offline.model.querychannels.pagination.internal
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.EditableGlobalState
+import io.getstream.chat.android.offline.plugin.state.global.internal.WritableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
@@ -110,7 +110,7 @@ import kotlin.math.max
  * This class contains all the logic to manipulate and modify the state of the corresponding channel.
  *
  * @property mutableState [ChannelMutableState] Mutable state instance of the channel.
- * @property globalMutableState [EditableGlobalState] Global state of the SDK.
+ * @property globalMutableState [WritableGlobalState] Global state of the SDK.
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
@@ -118,7 +118,7 @@ import kotlin.math.max
 @Suppress("TooManyFunctions")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
-    private val globalMutableState: EditableGlobalState,
+    private val globalMutableState: WritableGlobalState,
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),

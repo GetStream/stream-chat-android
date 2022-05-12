@@ -83,7 +83,7 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.EditableGlobalState
+import io.getstream.chat.android.offline.plugin.state.global.internal.WritableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
@@ -100,7 +100,7 @@ internal class EventHandlerImpl(
     private val client: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
-    private val mutableGlobalState: EditableGlobalState,
+    private val mutableGlobalState: WritableGlobalState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) {
