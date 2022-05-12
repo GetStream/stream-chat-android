@@ -39,6 +39,7 @@ internal class PushTokenUpdateHandler(context: Context) {
                 .putString(KEY_USER_ID, value.userId)
                 .putString(KEY_TOKEN, value.token)
                 .putString(KEY_PUSH_PROVIDER, value.pushProvider)
+                .putString(KEY_PUSH_PROVIDER_NAME, value.providerName)
                 .apply()
         }
         get() {
@@ -46,6 +47,7 @@ internal class PushTokenUpdateHandler(context: Context) {
                 userId = prefs.getNonNullString(KEY_USER_ID, ""),
                 token = prefs.getNonNullString(KEY_TOKEN, ""),
                 pushProvider = prefs.getNonNullString(KEY_PUSH_PROVIDER, ""),
+                providerName = prefs.getString(KEY_PUSH_PROVIDER_NAME, null)
             )
         }
 
@@ -72,7 +74,7 @@ internal class PushTokenUpdateHandler(context: Context) {
             .takeIf { it.isValid() }
             ?.let {
                 if (ChatClient.instance().deleteDevice(it).await().isSuccess) {
-                    userPushToken = UserPushToken("", "", "")
+                    userPushToken = UserPushToken("", "", "", null)
                 }
             }
     }
@@ -81,6 +83,7 @@ internal class PushTokenUpdateHandler(context: Context) {
         val userId: String,
         val token: String,
         val pushProvider: String,
+        val providerName: String?,
     )
 
     companion object {
@@ -88,15 +91,21 @@ internal class PushTokenUpdateHandler(context: Context) {
         private const val KEY_USER_ID = "user_id"
         private const val KEY_TOKEN = "token"
         private const val KEY_PUSH_PROVIDER = "push_provider"
+        private const val KEY_PUSH_PROVIDER_NAME = "push_provider_name"
     }
 
     private fun Device.toUserPushToken() = UserPushToken(
         userId = ChatClient.instance().getCurrentUser()?.id ?: "",
         token = token,
-        pushProvider = pushProvider.key
+        pushProvider = pushProvider.key,
+        providerName = providerName,
     )
 
-    private fun UserPushToken.toDevice() = Device(token = token, pushProvider = PushProvider.fromKey(pushProvider))
+    private fun UserPushToken.toDevice() = Device(
+        token = token,
+        pushProvider = PushProvider.fromKey(pushProvider),
+        providerName = providerName,
+    )
 
     private fun Device.isValid() = pushProvider != PushProvider.UNKNOWN
 }

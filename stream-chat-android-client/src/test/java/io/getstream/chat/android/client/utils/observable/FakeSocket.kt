@@ -20,31 +20,41 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.ChatSocketService
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
+import org.mockito.kotlin.mock
 
-internal class FakeSocketService(
-    val eventsCollector: MutableList<ChatEvent> = mutableListOf()
-) : ChatSocketService {
+internal class FakeSocket(
+    val eventsCollector: MutableList<ChatEvent> = mutableListOf(),
+) : ChatSocket(
+    randomString(),
+    randomString(),
+    mock(),
+    mock(),
+    mock(),
+    mock(),
+    mock()
+) {
 
     private var connectionUserId: String? = null
 
-    override fun anonymousConnect(endpoint: String, apiKey: String) {
-        // no-op
-    }
+    private val listeners = mutableSetOf<SocketListener>()
 
-    override fun userConnect(endpoint: String, apiKey: String, user: User) {
-        // no-op
-    }
-
-    private val listeners = mutableListOf<SocketListener>()
-
-    fun sendEvent(event: ChatEvent) {
+    override fun sendEvent(event: ChatEvent) {
         listeners.forEach {
             it.onEvent(event)
         }
+    }
+
+    override fun connectAnonymously() {
+        // no-op
+    }
+
+    override fun connect(user: User) {
+        // no-op
     }
 
     override fun disconnect() {
