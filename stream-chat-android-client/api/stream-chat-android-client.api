@@ -2026,6 +2026,24 @@ public final class io/getstream/chat/android/client/extensions/StringExtensionsK
 	public static final fun cidToTypeAndId (Ljava/lang/String;)Lkotlin/Pair;
 }
 
+public final class io/getstream/chat/android/client/extensions/internal/ChannelKt {
+	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
+	public static final fun updateLastMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/client/extensions/internal/MemberKt {
+}
+
+public final class io/getstream/chat/android/client/extensions/internal/MessageKt {
+	public static final fun getNEVER ()Ljava/util/Date;
+}
+
+public final class io/getstream/chat/android/client/extensions/internal/ReactionKt {
+}
+
+public final class io/getstream/chat/android/client/extensions/internal/UserKt {
+}
+
 public final class io/getstream/chat/android/client/logger/ChatLogLevel : java/lang/Enum {
 	public static final field ALL Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static final field DEBUG Lio/getstream/chat/android/client/logger/ChatLogLevel;
@@ -3391,6 +3409,9 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
+}
+
+public final class io/getstream/chat/android/client/utils/internal/ValidationKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {

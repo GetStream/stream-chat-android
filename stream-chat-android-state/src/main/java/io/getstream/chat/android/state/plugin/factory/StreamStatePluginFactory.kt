@@ -1,0 +1,300 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.state.plugin.factory
+
+import android.content.Context
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.experimental.plugin.Plugin
+import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
+import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
+import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
+import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerImpl
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
+import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+
+/**
+ * Implementation of [PluginFactory] that provides [StatePlugin].
+ *
+ * @param config [Config] Configuration of persistance of the SDK.
+ * @param appContext [Context]
+ */
+public open class StreamStatePluginFactory(
+    private val config: StatePluginConfig,
+    private val appContext: Context,
+) : PluginFactory {
+
+    /**
+     * Creates a [Plugin]
+     *
+     * @return The [Plugin] instance.
+     */
+    override fun get(user: User): Plugin = createStatePlugin(user)
+
+    private var repositoryFactory: RepositoryFactory? = null
+
+    /**
+     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
+     */
+    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
+        this.repositoryFactory = repositoryFactory
+    }
+
+    /**
+     * Creates the [StatePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
+     */
+    private fun createStatePlugin(user: User): StatePlugin {
+        val scope = CoroutineScope(SupervisorJob() + DispatcherProvider.IO)
+        val repositoryFactory = repositoryFactory
+            ?: createRepositoryFactory(scope, appContext, user)
+        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
+
+        return createStatePlugin(user, scope, repositoryFactory)
+    }
+
+    @InternalStreamChatApi
+    public fun createStatePlugin(
+        user: User,
+        scope: CoroutineScope,
+        repositoryFactory: RepositoryFactory
+    ): StatePlugin {
+
+        val chatClient = ChatClient.instance()
+        val globalState = GlobalMutableState.getOrCreate().apply {
+            clearState()
+        }
+        val repos: RepositoryFacade = createRepositoryFacade(scope, user, repositoryFactory)
+
+        val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
+        val stateRegistry = StateRegistry.create(
+            scope.coroutineContext.job, scope, userStateFlow, repos, repos.observeLatestUsers()
+        )
+        val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
+
+        val sendMessageInterceptor = createSendMessageInterceptor(
+            logic, globalState, repos, scope
+        )
+        val defaultInterceptor = DefaultInterceptor(
+            sendMessageInterceptor = sendMessageInterceptor
+        )
+
+        val channelMarkReadHelper = ChannelMarkReadHelper(
+            chatClient = chatClient,
+            logic = logic,
+            state = stateRegistry,
+            globalState = globalState,
+        )
+
+        chatClient.apply {
+            addInterceptor(defaultInterceptor)
+            addErrorHandlers(
+                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(scope)
+                    .map { factory -> factory.create() }
+            )
+        }
+
+        val syncManager = createSyncManager(chatClient, globalState, repos, logic, stateRegistry)
+
+        val eventHandler = createEventHandler(
+            chatClient, logic, stateRegistry, globalState, repos, syncManager, user, scope
+        )
+
+        setupInitializationCoordinator(
+            sendMessageInterceptor, chatClient, stateRegistry, logic,
+            globalState, scope, syncManager, eventHandler
+        )
+
+        if (config.backgroundSyncEnabled) {
+            chatClient.setPushNotificationReceivedListener { channelType, channelId ->
+                OfflineSyncFirebaseMessagingHandler().syncMessages(appContext, "$channelType:$channelId")
+            }
+        }
+
+        globalState.setUser(user)
+
+        return StatePlugin(
+            queryChannelsListener = QueryChannelsListenerImpl(logic),
+            queryChannelListener = QueryChannelListenerImpl(logic),
+            threadQueryListener = ThreadQueryListenerImpl(logic),
+            channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
+            editMessageListener = EditMessageListenerImpl(logic, globalState),
+            hideChannelListener = HideChannelListenerImpl(logic, repos),
+            markAllReadListener = MarkAllReadListenerImpl(logic, scope, channelMarkReadHelper),
+            deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
+            sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
+            sendMessageListener = SendMessageListenerImpl(logic, repos),
+            sendGiphyListener = SendGiphyListenerImpl(logic),
+            shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
+            queryMembersListener = QueryMembersListenerImpl(repos),
+            typingEventListener = TypingEventListenerImpl(stateRegistry),
+            createChannelListener = CreateChannelListenerImpl(globalState, repos),
+        )
+    }
+
+    private fun setupInitializationCoordinator(
+        sendMessageInterceptor: SendMessageInterceptorImpl,
+        chatClient: ChatClient,
+        stateRegistry: StateRegistry,
+        logic: LogicRegistry,
+        globalState: GlobalMutableState,
+        scope: CoroutineScope,
+        syncManager: SyncManager,
+        eventHandler: EventHandlerImpl,
+    ) {
+        InitializationCoordinator.getOrCreate().run {
+            addUserDisconnectedListener {
+                sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
+                chatClient.removeAllInterceptors()
+                stateRegistry.clear()
+                logic.clear()
+                globalState.clearState()
+                scope.launch { syncManager.storeSyncState() }
+                eventHandler.stopListening()
+            }
+        }
+    }
+
+    private fun createEventHandler(
+        chatClient: ChatClient,
+        logic: LogicRegistry,
+        stateRegistry: StateRegistry,
+        globalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        syncManager: SyncManager,
+        user: User,
+        scope: CoroutineScope,
+    ): EventHandlerImpl {
+        val eventHandler = EventHandlerImpl(
+            recoveryEnabled = true,
+            client = chatClient,
+            logic = logic,
+            state = stateRegistry,
+            mutableGlobalState = globalState,
+            repos = repos,
+            syncManager = syncManager,
+        ).also { eventHandler ->
+            EventHandlerProvider.eventHandler = eventHandler
+            eventHandler.initialize(user, scope)
+            eventHandler.startListening(scope)
+        }
+        return eventHandler
+    }
+
+    private fun createSyncManager(
+        chatClient: ChatClient,
+        globalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        logic: LogicRegistry,
+        stateRegistry: StateRegistry,
+    ): SyncManager {
+        val syncManager = SyncManager(
+            chatClient = chatClient,
+            globalState = globalState,
+            repos = repos,
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
+            userPresence = config.userPresence,
+        ).also { syncManager ->
+            syncManager.clearState()
+        }
+        return syncManager
+    }
+
+    private fun createSendMessageInterceptor(
+        logic: LogicRegistry,
+        globalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        scope: CoroutineScope,
+    ): SendMessageInterceptorImpl {
+        return SendMessageInterceptorImpl(
+            context = appContext,
+            logic = logic,
+            globalState = globalState,
+            channelRepository = repos,
+            messageRepository = repos,
+            attachmentRepository = repos,
+            scope = scope,
+            networkType = config.uploadAttachmentsNetworkType
+        )
+    }
+
+    private fun createRepositoryFacade(
+        scope: CoroutineScope,
+        user: User,
+        repositoryFactory: RepositoryFactory,
+    ): RepositoryFacade {
+        val repos: RepositoryFacade = RepositoryFacadeBuilder {
+            context(appContext)
+            scope(scope)
+            defaultConfig(
+                Config(
+                    connectEventsEnabled = true,
+                    muteEnabled = true
+                )
+            )
+            currentUser(user)
+            repositoryFactory(repositoryFactory)
+        }.build()
+        return repos
+    }
+
+    protected open fun createRepositoryFactory(
+        scope: CoroutineScope,
+        context: Context,
+        user: User?,
+    ): RepositoryFactory {
+        TODO("createRepositoryFactory is not implemented")
+    }
+}

@@ -8,7 +8,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = io.getstream.chat.android.Configuration.artifactGroup
-    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-common'
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-state'
     PUBLISH_VERSION = rootVersionName
 }
 
@@ -54,7 +54,50 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
+    api project(":stream-chat-android-client")
+
+    // Kotlin
+    implementation Dependencies.kotlinReflect
+    implementation Dependencies.coroutinesCore
+
+    // Google libs
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAnnotations
     implementation Dependencies.androidxAppCompat
+    implementation Dependencies.workRuntimeKtx
+
+    // Tests
+    testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.moshiKotlin
+
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.androidxTest
+    testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.androidxArchCoreTest
+    testImplementation Dependencies.androidxRecyclerview // for performance test
+    testImplementation Dependencies.roomTesting
+    testImplementation Dependencies.workTesting
+
+    testImplementation Dependencies.coroutinesTest
+
+    testImplementation Dependencies.robolectric
+    testImplementation Dependencies.dotenv
+
+    testImplementation Dependencies.kfixture
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.turbine
+
+    // Instrumentation tests
+    androidTestImplementation Dependencies.androidxTestJunit
+    androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.junit4
+    androidTestImplementation Dependencies.kluent
+    androidTestImplementation Dependencies.mockito
+    androidTestImplementation Dependencies.mockitoKotlin
 }
