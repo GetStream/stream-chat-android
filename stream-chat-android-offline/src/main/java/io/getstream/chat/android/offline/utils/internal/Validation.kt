@@ -18,7 +18,9 @@ package io.getstream.chat.android.offline.utils.internal
 
 import android.util.Log
 import io.getstream.chat.android.client.utils.Result
+import java.util.regex.Pattern
 
+private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+$")
 /**
  * Validates a cid. Verifies it's not empty and in the format messaging:123.
  *
@@ -29,7 +31,10 @@ import io.getstream.chat.android.client.utils.Result
 @Throws(IllegalArgumentException::class)
 internal fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }
-    require(':' in cid) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
+    require(cid.isNotBlank()) { "cid can not be blank" }
+    require(cidPattern.matcher(cid).matches()) {
+        "cid needs to be in the format channelType:channelId. For example, messaging:123"
+    }
 }
 
 /**
@@ -46,7 +51,7 @@ internal fun validateCidBoolean(cid: String): Boolean {
             false
         }
 
-        cid.contains(":") -> {
+        !cidPattern.matcher(cid).matches() -> {
             Log.d("Validation", "cid needs to be in the format channelType:channelId. For example, messaging:123")
             false
         }
