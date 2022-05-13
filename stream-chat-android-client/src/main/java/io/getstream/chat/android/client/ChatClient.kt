@@ -383,7 +383,7 @@ internal constructor(
             setUser(user, tokenProvider).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -465,7 +465,7 @@ internal constructor(
             setAnonymousUser().also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -482,7 +482,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }
@@ -518,7 +518,7 @@ internal constructor(
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
@@ -1338,7 +1338,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-        forceRefresh: Boolean
+        forceRefresh: Boolean,
     ): Call<Channel> {
         return api.queryChannel(channelType, channelId, request, forceRefresh)
     }
@@ -1349,7 +1349,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<Channel> {
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
@@ -1910,7 +1910,7 @@ internal constructor(
         createdAtAfterOrEqual: Date? = null,
         createdAtBefore: Date? = null,
         createdAtBeforeOrEqual: Date? = null,
-        forceRefresh: Boolean = true
+        forceRefresh: Boolean = true,
     ): Call<List<BannedUser>> {
         return api.queryBannedUsers(
             filter = filter,
@@ -2350,7 +2350,7 @@ internal constructor(
             pluginFactories.add(pluginFactory)
         }
 
-        public fun apiCacheCallTimeout(cacheTime: Int = ChatClientConfig.DEFAULT_CACHE_MILLIS) {
+        public fun apiCacheCallTimeout(cacheTime: Int = ChatClientConfig.DEFAULT_CACHE_MILLIS): Builder = apply {
             apiCacheCallTimeout = cacheTime
         }
 
