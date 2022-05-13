@@ -2349,7 +2349,7 @@ internal constructor(
             pluginFactories.add(pluginFactory)
         }
 
-        public fun apiCacheCallTimeout(cacheTime: Int = ChatClientConfig.DEFAULT_CACHE_MILLIS): Builder = apply {
+        public fun apiCacheCallTimeout(cacheTime: Long = ChatClientConfig.DEFAULT_CACHE_MILLIS): Builder = apply {
             apiCacheCallTimeout = cacheTime
         }
 

@@ -40,7 +40,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import java.util.Date
 
-private const val DEFAULT_CACHE_MILLIS = 300
+private const val DEFAULT_CACHE_MILLIS = 300L
 
 /**
  * Cached version of ChatApi.

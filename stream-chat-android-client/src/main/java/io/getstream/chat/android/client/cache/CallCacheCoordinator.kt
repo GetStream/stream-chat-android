@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.cache
 
+import io.getstream.chat.android.client.call.CacheAwareCall
 import io.getstream.chat.android.client.call.Call
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong
  *
  * @param cacheTime Int. The value of milli seconds that the cache is not considered to be old.
  */
-internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinator {
+internal class CallCacheCoordinator(private val cacheTime: Long) : CacheCoordinator {
 
     private val cachedCalls: MutableMap<Int, CachedCall<out Any>> = ConcurrentHashMap()
     private val lastRequestTime: AtomicLong = AtomicLong()
@@ -38,13 +39,12 @@ internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinat
         cachedCalls.clearIfStale()
         val callData = cachedCalls[hashCode]
         return if (forceRefresh || callData == null || callData.isStale()) {
-            call.also {
-                val now = System.currentTimeMillis()
-                cachedCalls[hashCode] = CachedCall(now, it)
-                lastRequestTime.set(now)
+            call.toCacheAwareCall().also { cacheAwareCall ->
+                cachedCalls[hashCode] = CachedCall(cacheAwareCall.creationTime, cacheAwareCall)
+                lastRequestTime.set(cacheAwareCall.creationTime)
             }
         } else {
-            callData.call as Call<T>
+            callData.call as CacheAwareCall<T>
         }
     }
 
@@ -68,6 +68,15 @@ internal class CallCacheCoordinator(private val cacheTime: Int) : CacheCoordinat
         val now = System.currentTimeMillis()
         val diff = now - requestTime
         return diff > cacheTime
+    }
+
+    private fun <T: Any> Call<T>.toCacheAwareCall(): CacheAwareCall<T> {
+        return CacheAwareCall(
+            originalCall = this,
+            creationTime = System.currentTimeMillis(),
+            interval = cacheTime,
+            observers = mutableListOf(),
+        )
     }
 }
 
