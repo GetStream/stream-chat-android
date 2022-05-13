@@ -45,7 +45,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed Xiaomi crash when long clicking on links inside messages. [#3491](https://github.com/GetStream/stream-chat-android/pull/3491)
 
 ### ⬆️ Improved
 
@@ -110,8 +109,17 @@
 
 ### ❌ Removed
 
+# May 13th, 2022 - 4.30.2
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed `ChatClient.Builder.build` accessibility when calling it from Java code and using Android Studio Bumblebee or higher. [#3499](https://github.com/GetStream/stream-chat-android/pull/3499)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed Xiaomi crash when long clicking on links inside messages. [#3491](https://github.com/GetStream/stream-chat-android/pull/3491)
+
+
 # March 9th, 2022 - 4.30.1
-<!-- UNRELEASED START -->
 ## stream-chat-android-client
 ### ✅ Added
 - Added `notificationChannel` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to create a `NotificationChannel`.
@@ -138,7 +146,6 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed display of read status indicators [#3181](https://github.com/GetStream/stream-chat-android/pull/3181)
-<!-- UNRELEASED END -->
 
 # March 2nd, 2022 - 4.30.0
 ## Common changes for all artifacts
