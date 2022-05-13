@@ -43,6 +43,7 @@ class FakeImageLoader(
         AVATAR_AMIT to R.drawable.avatar_amit,
         AVATAR_RAFAL to R.drawable.avatar_rafal,
         AVATAR_FILIP to R.drawable.avatar_filip,
+        AVATAR_BELAL to R.drawable.avatar_belal,
         AVATAR_USER to R.drawable.avatar_user,
     ),
 ) : ImageLoader {
@@ -95,10 +96,11 @@ class FakeImageLoader(
     }
 
     companion object {
-        const val AVATAR_JC: String = "https://example.com/jc.jpg"
-        const val AVATAR_AMIT: String = "https://example.com/amit.png"
-        const val AVATAR_RAFAL: String = "https://example.com/rafal.png"
-        const val AVATAR_FILIP: String = "https://example.com/filip.png"
-        const val AVATAR_USER: String = "https://example.com/user.png"
+        const val AVATAR_JC: String = "https://example.com/jc.jpeg"
+        const val AVATAR_AMIT: String = "https://example.com/amit.jpeg"
+        const val AVATAR_RAFAL: String = "https://example.com/rafal.jpeg"
+        const val AVATAR_FILIP: String = "https://example.com/filip.jpeg"
+        const val AVATAR_BELAL: String = "https://example.com/belal.jpeg"
+        const val AVATAR_USER: String = "https://example.com/user.jpeg"
     }
 }

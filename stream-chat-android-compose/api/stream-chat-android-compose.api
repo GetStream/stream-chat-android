@@ -1770,8 +1770,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;J)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

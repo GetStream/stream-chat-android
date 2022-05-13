@@ -24,10 +24,12 @@ internal fun Device.toDto(): DeviceDto =
     DeviceDto(
         id = token,
         push_provider = pushProvider.key,
+        provider_name = providerName,
     )
 
 internal fun DeviceDto.toDomain(): Device =
     Device(
         token = id,
         pushProvider = PushProvider.fromKey(push_provider),
+        providerName = provider_name,
     )

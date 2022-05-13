@@ -15,12 +15,15 @@ public final class io/getstream/chat/android/pushprovider/xiaomi/ChatXiaomiMessa
 public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiMessagingDelegate {
 	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/xiaomi/XiaomiMessagingDelegate;
 	public static final fun handleMiPushMessage (Lcom/xiaomi/mipush/sdk/MiPushMessage;)Z
-	public static final fun registerXiaomiToken (Lcom/xiaomi/mipush/sdk/MiPushCommandMessage;)V
+	public static final fun registerXiaomiToken (Lcom/xiaomi/mipush/sdk/MiPushCommandMessage;Ljava/lang/String;)V
+	public static synthetic fun registerXiaomiToken$default (Lcom/xiaomi/mipush/sdk/MiPushCommandMessage;Ljava/lang/String;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiPushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public fun isValidForThisDevice (Landroid/content/Context;)Z
+	public fun onPushDeviceGeneratorSelected ()V
 }
 
