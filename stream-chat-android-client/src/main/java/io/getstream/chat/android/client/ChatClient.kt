@@ -1339,7 +1339,9 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
         forceRefresh: Boolean
-    ): Call<Channel> = api.queryChannel(channelType, channelId, request, forceRefresh)
+    ): Call<Channel> {
+        return api.queryChannel(channelType, channelId, request, forceRefresh)
+    }
 
     @CheckResult
     @JvmOverloads
@@ -2209,6 +2211,7 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var apiCacheCallTimeout = ChatClientConfig.NEVER_CACHE
 
         /**
          * Sets the log level to be used by the client.
@@ -2347,6 +2350,10 @@ internal constructor(
             pluginFactories.add(pluginFactory)
         }
 
+        public fun apiCacheCallTimeout(cacheTime: Int = ChatClientConfig.DEFAULT_CACHE_MILLIS) {
+            apiCacheCallTimeout = cacheTime
+        }
+
         /**
          * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
          */
@@ -2405,6 +2412,7 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                apiCacheCallTimeout = apiCacheCallTimeout
             )
 
             if (ToggleService.isInitialized().not()) {

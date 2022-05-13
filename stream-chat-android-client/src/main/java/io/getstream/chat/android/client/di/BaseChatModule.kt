@@ -234,11 +234,11 @@ internal open class BaseChatModule(
             val validatedApi = ExtraDataValidator(originalApi)
 
             val cacheCoordinator = when {
-                config.cacheApiCallTimeout == ChatClientConfig.NEVER_CACHE -> DummyCallCacheCoordinator()
+                config.apiCacheCallTimeout == ChatClientConfig.NEVER_CACHE -> DummyCallCacheCoordinator()
 
-                config.cacheApiCallTimeout < 0 -> DummyCallCacheCoordinator()
+                config.apiCacheCallTimeout < 0 -> DummyCallCacheCoordinator()
 
-                else -> CallCacheCoordinator(config.cacheApiCallTimeout)
+                else -> CallCacheCoordinator(config.apiCacheCallTimeout)
             }
 
             io.getstream.chat.android.client.api2.CachedChatApiImpl(validatedApi, cacheCoordinator)
