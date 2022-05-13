@@ -1,5 +1,17 @@
+public final class io/getstream/chat/android/client/call/CacheAwareCall : io/getstream/chat/android/client/call/Call {
+	public fun <init> (Lio/getstream/chat/android/client/call/Call;JJLjava/util/List;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/call/Call;JJLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun cancel ()V
+	public fun clone ()Lio/getstream/chat/android/client/call/Call;
+	public fun enqueue ()V
+	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
+	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
+	public final fun getCreationTime ()J
+}
+
 public abstract interface class io/getstream/chat/android/client/call/Call {
 	public abstract fun cancel ()V
+	public abstract fun clone ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun enqueue ()V
 	public abstract fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
 	public abstract fun execute ()Lio/getstream/chat/android/client/utils/Result;
@@ -21,6 +33,7 @@ public final class io/getstream/chat/android/client/call/CallKt {
 public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/getstream/chat/android/client/call/Call {
 	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function2;)V
 	public fun cancel ()V
+	public fun clone ()Lio/getstream/chat/android/client/call/Call;
 	public fun enqueue ()V
 	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
 	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
@@ -30,6 +43,7 @@ public class io/getstream/chat/android/client/errors/ChatError {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clone ()Lio/getstream/chat/android/client/errors/ChatError;
 	public final fun getCause ()Ljava/lang/Throwable;
 	public final fun getMessage ()Ljava/lang/String;
 }

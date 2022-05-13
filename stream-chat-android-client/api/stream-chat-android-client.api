@@ -173,6 +173,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 
 public final class io/getstream/chat/android/client/ChatClient$Builder : io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
+	public final fun apiCacheCallTimeout (J)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public static synthetic fun apiCacheCallTimeout$default (Lio/getstream/chat/android/client/ChatClient$Builder;JILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -216,12 +218,11 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public static final field Companion Lio/getstream/chat/android/client/api/ChatClientConfig$Companion;
-	public static final field DEFAULT_CACHE_MILLIS I
-	public static final field NEVER_CACHE I
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;I)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final field DEFAULT_CACHE_MILLIS J
+	public static final field NEVER_CACHE J
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;J)V
+	public final fun getApiCacheCallTimeout ()J
 	public final fun getApiKey ()Ljava/lang/String;
-	public final fun getCacheApiCallTimeout ()I
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
@@ -523,6 +524,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getState ()Z
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
+	public fun hashCode ()I
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
 	public final fun membersOffset ()I
@@ -836,8 +838,10 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun watch (Lio/getstream/chat/android/client/api/models/WatchChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun watch (Lio/getstream/chat/android/client/api/models/WatchChannelRequest;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun watch (Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
+	public final fun watch (Ljava/util/Map;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun watch (Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun watch$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/client/api/models/WatchChannelRequest;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun watch$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/Map;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun watch$default (Lio/getstream/chat/android/client/channel/ChannelClient;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
