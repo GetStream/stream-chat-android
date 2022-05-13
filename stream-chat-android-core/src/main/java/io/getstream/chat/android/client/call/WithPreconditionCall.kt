@@ -54,4 +54,6 @@ internal class WithPreconditionCall<T : Any>(
     override fun cancel() {
         job?.cancel()
     }
+
+    override fun clone(): Call<T> = WithPreconditionCall(originalCall.clone(), scope, precondition)
 }

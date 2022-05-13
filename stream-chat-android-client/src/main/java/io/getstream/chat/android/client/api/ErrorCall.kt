@@ -39,4 +39,6 @@ internal class ErrorCall<T : Any>(private val e: ChatError) : Call<T> {
             callback.onResult(Result(e))
         }
     }
+
+    override fun clone(): Call<T>  = ErrorCall(e.clone())
 }

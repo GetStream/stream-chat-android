@@ -45,4 +45,6 @@ internal class DoOnStartCall<T : Any>(
     override fun cancel() {
         job?.cancel()
     }
+
+    override fun clone(): Call<T> = DoOnStartCall(originalCall.clone(), scope, sideEffect)
 }

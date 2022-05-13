@@ -55,4 +55,6 @@ public class CoroutineCall<T : Any>(
             }
         }
     }
+
+    override fun clone(): Call<T> = CoroutineCall(scope, suspendingTask)
 }

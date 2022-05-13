@@ -57,6 +57,12 @@ public interface Call<T : Any> {
     public fun enqueue(): Unit = enqueue {}
 
     /**
+     * Clones the current call. Calls can't be used more than once,  use this if you need to use the same call for
+     * many requests.
+     */
+    public fun clone(): Call<T>
+
+    /**
      * Cancels the execution of the call, if cancellation is supported for the operation.
      *
      * Note that calls can not be cancelled when running them with [execute].

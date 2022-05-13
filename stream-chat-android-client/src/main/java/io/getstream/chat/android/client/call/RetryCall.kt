@@ -62,4 +62,6 @@ internal class RetryCall<T : Any>(
     override fun cancel() {
         job?.cancel()
     }
+
+    override fun clone(): Call<T> = RetryCall(originalCall.clone(), scope, callRetryService)
 }

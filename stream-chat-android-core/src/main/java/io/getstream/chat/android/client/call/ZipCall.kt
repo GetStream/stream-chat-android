@@ -85,6 +85,8 @@ internal class ZipCall<A : Any, B : Any>(
         }
     }
 
+    override fun clone(): Call<Pair<A, B>> = ZipCall(callA.clone(), callB.clone())
+
     private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
         return Result(ChatError("Error executing callA", resultA.error().cause))
     }

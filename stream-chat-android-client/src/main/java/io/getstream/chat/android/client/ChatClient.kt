@@ -1197,7 +1197,6 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
         return CoroutineCall(scope) {
-
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
             relevantInterceptors.fold(Result.success(message)) { message, interceptor ->

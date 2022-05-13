@@ -44,4 +44,6 @@ internal class DoOnResultCall<T : Any>(
     override fun cancel() {
         job?.cancel()
     }
+
+    override fun clone(): Call<T> = DoOnResultCall(originalCall.clone(), scope, consumer)
 }

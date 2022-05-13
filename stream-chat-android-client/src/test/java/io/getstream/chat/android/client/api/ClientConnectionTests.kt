@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatClientConfig.Companion.NEVER_CACHE
 import io.getstream.chat.android.client.api2.CachedChatApiImpl
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -69,7 +70,7 @@ internal class ClientConnectionTests {
         "socket.url",
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
-
+        NEVER_CACHE
     )
 
     private val connectedEvent = ConnectedEvent(

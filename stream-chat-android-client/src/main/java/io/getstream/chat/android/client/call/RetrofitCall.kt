@@ -52,6 +52,8 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
+    override fun clone(): Call<T> = RetrofitCall(call.clone(), parser, callbackExecutor)
+
     private fun execute(call: retrofit2.Call<T>): Result<T> {
         return getResult(call)
     }
@@ -80,9 +82,6 @@ internal class RetrofitCall<T : Any>(
 
     private fun failedError(t: Throwable): ChatError {
         return when (t) {
-            is ChatError -> {
-                t
-            }
             is ChatRequestError -> {
                 ChatNetworkError.create(t.streamCode, t.message.toString(), t.statusCode, t.cause)
             }

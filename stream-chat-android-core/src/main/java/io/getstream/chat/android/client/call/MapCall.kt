@@ -57,4 +57,6 @@ internal class MapCall<T : Any, K : Any>(
             }
         }
     }
+
+    override fun clone(): Call<K> = MapCall(call.clone(), mapper)
 }

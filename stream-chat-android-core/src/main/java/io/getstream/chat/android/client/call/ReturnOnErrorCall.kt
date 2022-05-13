@@ -58,4 +58,6 @@ public class ReturnOnErrorCall<T : Any>(
     override fun cancel() {
         job?.cancel()
     }
+
+    override fun clone(): Call<T> = ReturnOnErrorCall(originalCall.clone(), scope, onErrorReturn)
 }
