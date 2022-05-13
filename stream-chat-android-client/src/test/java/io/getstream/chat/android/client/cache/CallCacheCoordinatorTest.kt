@@ -38,7 +38,7 @@ internal class CallCacheCoordinatorTest {
         repeat(5) {
             val cachedCall = cacheCoordinator.cachedCall(hashCode, forceRefresh = false, testCall2)
 
-            cachedCall `should be` testCall
+            cachedCall.execute() `should be` testCall.execute()
         }
     }
 
@@ -53,7 +53,7 @@ internal class CallCacheCoordinatorTest {
         repeat(5) {
             val cachedCall = cacheCoordinator.cachedCall(hashCode, forceRefresh = true, testCall2)
 
-            cachedCall `should be` testCall2
+            cachedCall.execute() `should be` testCall2.execute()
         }
     }
 
@@ -80,9 +80,9 @@ internal class CallCacheCoordinatorTest {
             val cachedCall2 = cacheCoordinator.cachedCall(hashCode2, forceRefresh = false, ignoredCall2)
             val cachedCall3 = cacheCoordinator.cachedCall(hashCode3, forceRefresh = false, ignoredCall3)
 
-            cachedCall `should be` testCall
-            cachedCall2 `should be` testCall2
-            cachedCall3 `should be` testCall3
+            cachedCall.execute() `should be` testCall.execute()
+            cachedCall2.execute() `should be` testCall2.execute()
+            cachedCall3.execute() `should be` testCall3.execute()
         }
     }
 }
