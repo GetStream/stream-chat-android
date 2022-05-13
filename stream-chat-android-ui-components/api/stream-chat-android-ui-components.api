@@ -1104,6 +1104,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setAttachmentButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener;)V
 	public final fun setChatMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;)V
 	public final fun setCommands (Ljava/util/List;)V
+	public final fun setCommandsButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$CommandsButtonClickListener;)V
 	public final fun setCommandsEnabled (Z)V
 	public final fun setCooldownInterval (I)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
@@ -1124,6 +1125,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
 	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V
+	public final fun switchToCommandMode (Lio/getstream/chat/android/client/models/Command;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener {
@@ -1139,6 +1141,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$C
 	public static final field GROUP_CHAT Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$CommandsButtonClickListener {
+	public abstract fun onCommandsButtonClicked ()V
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
