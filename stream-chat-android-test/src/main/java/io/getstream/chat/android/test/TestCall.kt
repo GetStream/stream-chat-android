@@ -34,6 +34,8 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
     override fun execute(): Result<T> {
         return result
     }
+
+    override fun clone(): Call<T> = TestCall(result)
 }
 
 public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result(valueProvider()))
@@ -42,7 +44,7 @@ public fun <T : Any> T.asCall(): Call<T> = TestCall(Result(this))
 
 public inline fun <reified T : Any> failedCall(message: String = "", cause: Throwable? = null): Call<T> {
     return object : Call<T> {
-        public var cancelled: Boolean = false
+        var cancelled: Boolean = false
 
         override fun execute(): Result<T> = Result(ChatError(message, cause))
 
@@ -53,5 +55,7 @@ public inline fun <reified T : Any> failedCall(message: String = "", cause: Thro
         override fun cancel() {
             cancelled = true
         }
+
+        override fun clone(): Call<T> = this
     }
 }
