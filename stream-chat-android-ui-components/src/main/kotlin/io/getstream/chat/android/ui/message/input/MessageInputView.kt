@@ -217,11 +217,11 @@ public class MessageInputView : ConstraintLayout {
      */
     private var messageInputMentionListener: MessageInputMentionListener = MessageInputMentionListener { }
 
-    public constructor(context: Context) : this(context, null)
+    public constructor (context: Context) : this(context, null)
 
-    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor (context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor (context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
@@ -645,13 +645,22 @@ public class MessageInputView : ConstraintLayout {
         }
 
     /**
-     * Sets a click listener for the attachment button. If you want to implement custom attachment flow do not forget
+     * Sets a click listener for the attachment button. If you want to implement a custom attachment flow do not forget
      * to set selected attachments via the [submitAttachments] method.
      *
-     * @param listener Listener that being invoked when user clicks on the attachment button in [MessageInputView].
+     * @param listener Listener that is invoked when the user clicks on the attachment button in [MessageInputView].
      */
     public fun setAttachmentButtonClickListener(listener: AttachmentButtonClickListener) {
         binding.attachmentsButton.setOnClickListener { listener.onAttachmentButtonClicked() }
+    }
+
+    /**
+     * Sets a click listener for the commands button.
+     *
+     * @param listener Listener that is invoked when the user clicks on the commands button in [MessageInputView].
+     */
+    public fun setCommandsButtonClickListener(listener: CommandsButtonClickListener) {
+        binding.commandsButton.setOnClickListener { listener.onCommandsButtonClicked() }
     }
 
     /**
@@ -735,6 +744,19 @@ public class MessageInputView : ConstraintLayout {
         }
 
         binding.sendMessageButtonEnabled.isEnabled = isSendButtonEnabled
+    }
+
+    /**
+     * Switches the input to command mode using the provided command.
+     *
+     * You can use this method to provide a shortcut to a certain command instead of
+     * activating it by selecting it from the list of suggestions.
+     *
+     * @param command The command used to switch the mode.
+     * Different commands transform the message input in different ways.
+     */
+    public fun switchToCommandMode(command: Command) {
+        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.CommandMode(command)
     }
 
     private fun configTextInput() {
@@ -1282,13 +1304,23 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
-     * Functional interface for a listener on the attachment button clicks.
+     * Functional interface for a listener set on the attachment button.
      */
     public fun interface AttachmentButtonClickListener {
         /**
          * Function to be invoked when a click on the attachment button happens.
          */
         public fun onAttachmentButtonClicked()
+    }
+
+    /**
+     * Functional interface for a listener set on the commands button.
+     */
+    public fun interface CommandsButtonClickListener {
+        /**
+         * Function to be invoked when a click on the commands button happens.
+         */
+        public fun onCommandsButtonClicked()
     }
 
     /**
