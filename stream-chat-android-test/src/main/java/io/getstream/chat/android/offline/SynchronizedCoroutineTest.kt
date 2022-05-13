@@ -21,20 +21,20 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
-import org.bouncycastle.util.test.SimpleTest.runTest
+import kotlinx.coroutines.test.runTest
 
 /**
  * Test interface that helps to synchronize test coroutine scope and test scope. Use only when [runTest] is not
  * possible.
  */
 @ExperimentalCoroutinesApi
-internal interface SynchronizedCoroutineTest {
+public interface SynchronizedCoroutineTest {
 
     /** Returns test scope. */
-    fun getTestScope(): TestScope
+    public fun getTestScope(): TestScope
 
     /** Helper function that synchronize test scope and run your test in another scope blocking. */
-    fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runBlocking {
+    public fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runBlocking {
         getTestScope().launch(block = block).join()
     }
 }
