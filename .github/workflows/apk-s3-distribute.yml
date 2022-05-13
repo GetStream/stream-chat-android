@@ -2,7 +2,7 @@ name: App Distribute CI
 
 on:
   workflow_run:
-    workflows: ["SyncRelease"]
+    workflows: ["SyncMain"]
     types:
       - completed
 
