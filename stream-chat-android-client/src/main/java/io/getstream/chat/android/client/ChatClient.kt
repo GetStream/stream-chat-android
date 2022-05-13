@@ -1957,6 +1957,10 @@ public class ChatClient internal constructor(
             userCredentialStorage = credentialStorage
         }
 
+        public override fun build(): ChatClient {
+            return super.build()
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -2023,7 +2027,7 @@ public class ChatClient internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild().also {
+        public open fun build(): ChatClient = internalBuild().also {
             instance = it
         }
 
