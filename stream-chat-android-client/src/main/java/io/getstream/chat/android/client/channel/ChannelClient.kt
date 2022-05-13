@@ -251,10 +251,11 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun watch(data: Map<String, Any>): Call<Channel> {
+    @JvmOverloads
+    public fun watch(data: Map<String, Any>, forceRefresh: Boolean = true): Call<Channel> {
         val request = WatchChannelRequest()
         request.data.putAll(data)
-        return watch(request)
+        return watch(request, forceRefresh)
     }
 
     @CheckResult
