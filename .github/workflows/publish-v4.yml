@@ -1,6 +1,7 @@
 name: Publish_v4
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'hotfix-v4\.[0-9]+\.[0-9]+'
@@ -9,7 +10,6 @@ jobs:
   publish:
     name: Release build and publish
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
