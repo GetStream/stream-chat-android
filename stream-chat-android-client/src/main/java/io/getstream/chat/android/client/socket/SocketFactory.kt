@@ -36,28 +36,28 @@ internal class SocketFactory(
     private val httpClient = OkHttpClient()
 
     @Throws(UnsupportedEncodingException::class)
-    fun createAnonymousSocket(eventsParser: EventsParser, endpoint: String, apiKey: String): Socket =
-        create(eventsParser, endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
+    fun createAnonymousSocket(endpoint: String, apiKey: String): OkHttpWebSocket =
+        create(endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
 
     @Throws(UnsupportedEncodingException::class)
-    fun createNormalSocket(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User): Socket =
-        create(eventsParser, endpoint, apiKey, user, false)
+    fun createNormalSocket(endpoint: String, apiKey: String, user: User): OkHttpWebSocket =
+        create(endpoint, apiKey, user, false)
 
     @Throws(UnsupportedEncodingException::class)
     private fun create(
-        eventsParser: EventsParser,
         endpoint: String,
         apiKey: String,
         user: User,
         isAnonymous: Boolean,
-    ): Socket {
+    ): OkHttpWebSocket {
         val url = buildUrl(endpoint, apiKey, user, isAnonymous)
         val request = Request.Builder().url(url).build()
-        val newWebSocket = httpClient.newWebSocket(request, eventsParser)
+        val eventsObserver = WebSocketEventObserver()
+        httpClient.newWebSocket(request, eventsObserver)
 
         logger.logI("new web socket: $url")
 
-        return Socket(newWebSocket, parser)
+        return OkHttpWebSocket(SocketHolder(), eventsObserver, parser)
     }
 
     @Suppress("TooGenericExceptionCaught")

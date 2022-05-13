@@ -31,11 +31,16 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.WebSocket
 import kotlin.math.pow
 import kotlin.properties.Delegates
 
@@ -63,6 +68,7 @@ internal open class ChatSocket constructor(
                     this@ChatSocket.reconnect(connectionConf)
                 }
             }
+
             override fun check() {
                 (state as? State.Connected)?.let {
                     sendEvent(it.event)
@@ -70,6 +76,8 @@ internal open class ChatSocket constructor(
             }
         }
     )
+
+    private val webSocketEventObserver = WebSocketEventObserver()
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
             logger.logI("Network connected. Socket state: ${state.javaClass.simpleName}")
@@ -131,6 +139,18 @@ internal open class ChatSocket constructor(
         }
     }
         private set
+
+    private val stateMachine: FiniteStateMachine<State, Event> by lazy {
+        FiniteStateMachine {
+            initialState(State.Disconnected)
+
+            defaultHandler { state, event ->
+                logger.logE("Cannot handle event $event while being in inappropriate state $this")
+                state
+            }
+
+        }
+    }
 
     open fun onSocketError(error: ChatError) {
         if (state !is State.DisconnectedPermanently) {
@@ -194,6 +214,11 @@ internal open class ChatSocket constructor(
     private fun connect(connectionConf: ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
         logger.logI("Connect. Network available: $isNetworkConnected")
+
+        webSocketEventObserver.eventsFlow
+            .onEach(::handleWebSocketEvent)
+            .launchIn(coroutineScope)
+
         this.connectionConf = connectionConf
         if (isNetworkConnected) {
             setupSocket(connectionConf)
@@ -221,8 +246,12 @@ internal open class ChatSocket constructor(
         callListeners { listener -> listener.onEvent(event) }
     }
 
-    internal open fun sendEvent(event: ChatEvent) {
-        socket?.send(event)
+    internal open fun sendEvent(event: ChatEvent): Boolean {
+        // TODO: Replace this with local read only state var.
+        return when (stateMachine.state) {
+            is State.Connected -> stateMachine.state.session.okHttpWebSocket.send(event)
+            else -> false
+        }
     }
 
     private fun reconnect(connectionConf: ConnectionConf) {
@@ -238,15 +267,15 @@ internal open class ChatSocket constructor(
                     state = State.DisconnectedPermanently(null)
                 }
                 is ConnectionConf.AnonymousConnectionConf -> {
-                    state = State.Connecting
-                    socket = socketFactory.createAnonymousSocket(createNewEventsParser(), endpoint, apiKey)
+                    val socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
+                    state = State.Connecting(Session(socket))
                 }
                 is ConnectionConf.UserConnectionConf -> {
-                    state = State.Connecting
                     socketConnectionJob = coroutineScope.launch {
                         tokenManager.ensureTokenLoaded()
                         withContext(DispatcherProvider.Main) {
-                            socket = socketFactory.createNormalSocket(createNewEventsParser(), endpoint, apiKey, user)
+                            val socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
+                            state = State.Connecting(Session(socket))
                         }
                     }
                 }
@@ -254,15 +283,11 @@ internal open class ChatSocket constructor(
         }
     }
 
-    private fun createNewEventsParser(): EventsParser = EventsParser(parser, this).also {
-        eventsParser = it
-    }
-
     private fun shutdownSocketConnection() {
         socketConnectionJob?.cancel()
         eventsParser?.closeByClient()
         eventsParser = null
-        socket?.close(EventsParser.CODE_CLOSE_SOCKET_FROM_CLIENT, "Connection close by client")
+        socketHolder.close(EventsParser.CODE_CLOSE_SOCKET_FROM_CLIENT, "Connection close by client")
         socket = null
     }
 
@@ -287,11 +312,60 @@ internal open class ChatSocket constructor(
 
     @VisibleForTesting
     internal sealed class State {
-        object Connecting : State()
-        data class Connected(val event: ConnectedEvent) : State()
+        data class Connecting(val session: Session) : State()
+        data class Connected(val event: ConnectedEvent, val session: Session) : State()
         object NetworkDisconnected : State()
         class DisconnectedTemporarily(val error: ChatNetworkError?) : State()
         class DisconnectedPermanently(val error: ChatNetworkError?) : State()
         object DisconnectedByRequest : State()
+
+        object Disconnecting : State()
+        object Disconnected : State()
+        object Destroyed : State()
+
+        internal fun connectionIdOrError(): String = when (this) {
+            is Connected -> event.connectionId
+            else -> error("This state doesn't contain connectionId")
+        }
+    }
+
+    internal data class Session(val socket: OkHttpWebSocket)
+
+    internal sealed class Event {
+        sealed class Lifecycle : Event() {
+            object Started : Lifecycle()
+            object Stopped : Lifecycle()
+        }
+
+        sealed class WebSocket : Event() {
+            object Terminate : WebSocket()
+
+            data class OnConnectionOpened<out WEB_SOCKET : Any>(val webSocket: WEB_SOCKET) : WebSocket()
+
+            data class OnMessageReceived(val message: String) : WebSocket()
+
+            /**
+             * Invoked when the peer has indicated that no more incoming messages will be transmitted.
+             *
+             * @property shutdownReason Reason to shutdown from the peer.
+             */
+            data class OnConnectionClosing(val shutdownReason: ShutdownReason) : WebSocket()
+
+            /**
+             * Invoked when both peers have indicated that no more messages will be transmitted and the connection has been
+             * successfully released. No further calls to this listener will be made.
+             *
+             * @property shutdownReason Reason to shutdown from the peer.
+             */
+            data class OnConnectionClosed(val shutdownReason: ShutdownReason) : WebSocket()
+
+            /**
+             * Invoked when a web socket has been closed due to an error reading from or writing to the network. Both outgoing
+             * and incoming messages may have been lost. No further calls to this listener will be made.
+             *
+             * @property throwable The error causing the failure.
+             */
+            data class OnConnectionFailed(val throwable: Throwable) : WebSocket()
+        }
     }
 }

@@ -78,7 +78,7 @@ internal class SocketStateService {
     internal val state
         get() = stateMachine.state
 
-    private sealed class ClientStateEvent {
+    sealed class ClientStateEvent {
         object ConnectionRequested : ClientStateEvent()
         data class ConnectedEvent(val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()

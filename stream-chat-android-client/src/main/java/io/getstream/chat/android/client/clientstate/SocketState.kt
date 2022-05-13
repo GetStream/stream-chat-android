@@ -27,3 +27,11 @@ internal sealed class SocketState {
         else -> error("This state doesn't contain connectionId")
     }
 }
+
+internal sealed class SocketLifecycle {
+    data class Connected(val connectionId: String) : SocketLifecycle()
+    object Connecting : SocketState()
+    object Disconnecting : SocketLifecycle()
+    object Disconnected : SocketLifecycle()
+    object Destroyed : SocketLifecycle()
+}

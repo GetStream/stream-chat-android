@@ -767,15 +767,17 @@ internal constructor(
     }
     //endregion
 
-    //endregion
-
     public fun disconnectSocket() {
         socket.disconnect()
     }
 
     public fun reconnectSocket() {
-        when (socketStateService.state) {
-            is SocketState.Disconnected -> when (val userState = userStateService.state) {
+        when (socket.state) {
+            is ChatSocket.State.NetworkDisconnected,
+            is ChatSocket.State.DisconnectedPermanently,
+            is ChatSocket.State.DisconnectedTemporarily,
+            is ChatSocket.State.DisconnectedByRequest -> when (val userState =
+                userStateService.state) {
                 is UserState.UserSet -> socket.connect(userState.user)
                 is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
                 else -> error("Invalid user state $userState without user being set!")
@@ -1935,7 +1937,7 @@ internal constructor(
     }
 
     public fun getConnectionId(): String? {
-        return runCatching { socketStateService.state.connectionIdOrError() }.getOrNull()
+        return runCatching { socket.state.connectionIdOrError() }.getOrNull()
     }
 
     public fun getCurrentUser(): User? {
@@ -1961,7 +1963,7 @@ internal constructor(
     }
 
     public fun isSocketConnected(): Boolean {
-        return socketStateService.state is SocketState.Connected
+        return socket.state is ChatSocket.State.Connected
     }
 
     /**
