@@ -383,7 +383,7 @@ internal constructor(
             setUser(user, tokenProvider).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -465,7 +465,7 @@ internal constructor(
             setAnonymousUser().also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -482,7 +482,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }

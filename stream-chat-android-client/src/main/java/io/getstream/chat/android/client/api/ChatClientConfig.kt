@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.logger.ChatLogger
 
+@Suppress("LongParameterList")
 public class ChatClientConfig(
     public val apiKey: String,
     public var httpUrl: String,

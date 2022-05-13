@@ -148,6 +148,20 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             messages.hashCode() +
             watchers.hashCode() +
             members.hashCode() +
-            data .hashCode()
+            data.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is QueryChannelRequest) {
+            state == other.state ||
+                watch == other.watch ||
+                presence == other.presence ||
+                messages == other.messages ||
+                watchers == other.watchers ||
+                members == other.members ||
+                data == other.data
+        } else {
+            false
+        }
     }
 }

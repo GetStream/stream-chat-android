@@ -70,7 +70,7 @@ internal class CallCacheCoordinator(private val cacheTime: Long) : CacheCoordina
         return diff > cacheTime
     }
 
-    private fun <T: Any> Call<T>.toCacheAwareCall(): CacheAwareCall<T> {
+    private fun <T : Any> Call<T>.toCacheAwareCall(): CacheAwareCall<T> {
         return CacheAwareCall(
             originalCall = this,
             creationTime = System.currentTimeMillis(),
