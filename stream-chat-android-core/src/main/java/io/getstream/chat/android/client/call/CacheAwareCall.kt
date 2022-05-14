@@ -27,9 +27,10 @@ public class CacheAwareCall<T : Any>(
 
     private var isExecuted: Boolean = false
     private var isRunning = false
+    private var cachedData: Result<T>? = null
 
     override fun execute(): Result<T> {
-        return if (isExecutionAllowed() && !isExecuted) {
+        return if (callUpdated() && !isExecuted) {
             isExecuted = true
             originalCall.execute()
         } else {
@@ -38,18 +39,28 @@ public class CacheAwareCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
+
         when {
-            !isRunning && isExecutionAllowed() -> {
+            // The call has already run and the cache is updarted
+            hasCache() && callUpdated()  -> {
+                callback.onResult(cachedData!!)
+            }
+
+            /* The call didn't run yet, is not running and is updated. This is the first run of this call. */
+            !hasCache() && !isRunning -> {
                 observers.add(callback)
                 isRunning = true
                 originalCall.enqueue(::handleResult)
             }
 
-            isRunning && isExecutionAllowed() -> {
+            /* The call was called more than once before completing */
+            !hasCache() && callUpdated() && isRunning-> {
                 observers.add(callback)
             }
 
-            !isExecutionAllowed() -> {
+            /* The call has already run, but its cache is too old. Clone it and run again. */
+            !callUpdated() && hasCache() -> {
+                observers.add(callback)
                 originalCall.clone().enqueue(::handleResult)
             }
         }
@@ -72,10 +83,14 @@ public class CacheAwareCall<T : Any>(
         originalCall.cancel()
     }
 
-    private fun isExecutionAllowed(): Boolean =
+    private fun callUpdated(): Boolean =
         System.currentTimeMillis() < creationTime + interval
 
+    private fun hasCache() = cachedData != null && cachedData?.isSuccess == true
+
     private fun handleResult(result: Result<T>) {
+        cachedData = result
+
         observers.forEach { observer ->
             observer.onResult(result)
         }
