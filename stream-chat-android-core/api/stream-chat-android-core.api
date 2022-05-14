@@ -1,14 +1,3 @@
-public final class io/getstream/chat/android/client/call/CacheAwareCall : io/getstream/chat/android/client/call/Call {
-	public fun <init> (Lio/getstream/chat/android/client/call/Call;JJLjava/util/List;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/call/Call;JJLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun cancel ()V
-	public fun clone ()Lio/getstream/chat/android/client/call/Call;
-	public fun enqueue ()V
-	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
-	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
-	public final fun getCreationTime ()J
-}
-
 public abstract interface class io/getstream/chat/android/client/call/Call {
 	public abstract fun cancel ()V
 	public abstract fun clone ()Lio/getstream/chat/android/client/call/Call;

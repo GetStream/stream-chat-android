@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 
-
 /**
  * Implementation of [Call] that can be used with cache. Use the Call when you need to share Calls as a cache.
  */
