@@ -42,7 +42,7 @@ public class CacheAwareCall<T : Any>(
 
         when {
             // The call has already run and the cache is updarted
-            hasCache() && callUpdated()  -> {
+            hasCache() && callUpdated() -> {
                 callback.onResult(cachedData!!)
             }
 
@@ -54,7 +54,7 @@ public class CacheAwareCall<T : Any>(
             }
 
             /* The call was called more than once before completing */
-            !hasCache() && callUpdated() && isRunning-> {
+            !hasCache() && callUpdated() && isRunning -> {
                 observers.add(callback)
             }
 
