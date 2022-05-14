@@ -30,10 +30,24 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     api project(":libraries:logging:stream-logger")
 
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
+
+    // Tests
+    testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.coroutinesTest
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
 }

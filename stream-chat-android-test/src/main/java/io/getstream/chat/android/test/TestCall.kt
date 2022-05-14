@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
+public class TestCall<T : Any>(public val result: Result<T>, private val delay: Long = NO_DELAY) : Call<T> {
     public var cancelled: Boolean = false
 
     override fun cancel() {
@@ -28,14 +28,24 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
+        if (delay != NO_DELAY) {
+            Thread.sleep(delay)
+        }
         callback.onResult(result)
     }
 
     override fun execute(): Result<T> {
+        if (delay != NO_DELAY) {
+            Thread.sleep(delay)
+        }
         return result
     }
 
     override fun clone(): Call<T> = TestCall(result)
+
+    public companion object {
+        public const val NO_DELAY: Long = -1
+    }
 }
 
 public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result(valueProvider()))

@@ -39,9 +39,8 @@ public class CacheAwareCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-
         when {
-            // The call has already run and the cache is updarted
+            // The call has already run and the cache is updated
             hasCache() && callUpdated() -> {
                 callback.onResult(cachedData!!)
             }
@@ -56,6 +55,12 @@ public class CacheAwareCall<T : Any>(
             /* The call was called more than once before completing */
             !hasCache() && callUpdated() && isRunning -> {
                 observers.add(callback)
+            }
+
+            /* The call is running for a long time and it was called again */
+            !hasCache() && !callUpdated() && isRunning -> {
+                observers.add(callback)
+                originalCall.clone().enqueue(::handleResult)
             }
 
             /* The call has already run, but its cache is too old. Clone it and run again. */
