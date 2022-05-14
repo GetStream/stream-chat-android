@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Implementation of [Call] that can be used with cache. Use the Call when you need to share Calls as a cache.
  */
+@InternalStreamChatApi
 public class CacheAwareCall<T : Any>(
     private val originalCall: Call<T>,
     public val creationTime: Long,
