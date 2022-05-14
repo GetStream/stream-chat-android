@@ -99,7 +99,7 @@ public class CacheAwareCall<T : Any>(
     }
 
     /**
-     * Cancels the call. 
+     * Cancels the call.
      */
     override fun cancel() {
         originalCall.cancel()
