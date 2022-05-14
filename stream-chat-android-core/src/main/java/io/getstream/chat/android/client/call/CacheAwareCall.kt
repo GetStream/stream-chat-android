@@ -26,6 +26,7 @@ public class CacheAwareCall<T : Any>(
 ) : Call<T> {
 
     private var isExecuted: Boolean = false
+    private var isRunning = false
 
     override fun execute(): Result<T> {
         return if (isExecutionAllowed() && !isExecuted) {
@@ -37,19 +38,20 @@ public class CacheAwareCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        val call = if (isExecutionAllowed()) {
-            observers.add(callback)
-            this
-        } else {
-            clone()
-        }
-
-        call.enqueue { result ->
-            observers.forEach { observer ->
-                observer.onResult(result)
+        when {
+            !isRunning && isExecutionAllowed() -> {
+                observers.add(callback)
+                isRunning = true
+                originalCall.enqueue(::handleResult)
             }
 
-            observers.clear()
+            isRunning && isExecutionAllowed() -> {
+                observers.add(callback)
+            }
+
+            !isExecutionAllowed() -> {
+                originalCall.clone().enqueue(::handleResult)
+            }
         }
     }
 
@@ -71,5 +73,14 @@ public class CacheAwareCall<T : Any>(
     }
 
     private fun isExecutionAllowed(): Boolean =
-        System.currentTimeMillis() > creationTime + interval
+        System.currentTimeMillis() < creationTime + interval
+
+    private fun handleResult(result: Result<T>) {
+        observers.forEach { observer ->
+            observer.onResult(result)
+        }
+
+        observers.clear()
+        isRunning = false
+    }
 }
