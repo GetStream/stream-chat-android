@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 
+/**
+ * Implementation of [Call] that can be used with cache. Use the Call when you need to share Calls as a cache.
+ */
 public class CacheAwareCall<T : Any>(
     private val originalCall: Call<T>,
     public val creationTime: Long,
@@ -29,6 +32,10 @@ public class CacheAwareCall<T : Any>(
     private var isRunning = false
     private var cachedData: Result<T>? = null
 
+    /**
+     * Methods that executes the Call synchronously and return the data. It can be called more than once.
+     * Due to limitation, this method of calling this Call doesn't work with cache.
+     */
     override fun execute(): Result<T> {
         return if (callUpdated() && !isExecuted) {
             isExecuted = true
@@ -38,6 +45,10 @@ public class CacheAwareCall<T : Any>(
         }
     }
 
+    /**
+     * Enqueues the request to the API respecting the Cache. If the cache is up to date, no async request will be
+     * made and the cached Result will be provided.
+     */
     override fun enqueue(callback: Call.Callback<T>) {
         when {
             // The call has already run and the cache is updated
@@ -71,6 +82,9 @@ public class CacheAwareCall<T : Any>(
         }
     }
 
+    /**
+     * Clones the class. Observers of the Call will be passed along.
+     */
     override fun clone(): Call<T> {
         val clonedObservers = mutableListOf<Call.Callback<T>>().apply {
             addAll(observers)
@@ -84,6 +98,9 @@ public class CacheAwareCall<T : Any>(
         )
     }
 
+    /**
+     * Cancels the call. 
+     */
     override fun cancel() {
         originalCall.cancel()
     }
