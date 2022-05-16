@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
 
 ### ⬆️ Improved
 
