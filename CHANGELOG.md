@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `DistinctChatApi` to prevent multiple query requests being fired. [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 
 ### ⚠️ Changed
 
