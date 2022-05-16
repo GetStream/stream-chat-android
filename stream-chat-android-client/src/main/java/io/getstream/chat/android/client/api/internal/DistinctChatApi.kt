@@ -49,7 +49,8 @@ internal class DistinctChatApi(
     }
 
     private fun <T : Any> getOrCreate(
-        uniqueKey: Int, callBuilder: () -> Call<T>,
+        uniqueKey: Int,
+        callBuilder: () -> Call<T>,
     ): Call<T> {
         return distinctCalls[uniqueKey] as? DistinctCall<T>
             ?: DistinctCall(callBuilder, uniqueKey) {
@@ -99,18 +100,20 @@ private class DistinctCall<T : Any>(
             subscribers.add(callback)
         }
         if (isRunning.compareAndSet(false, true)) {
-            delegate.set(callBuilder().apply {
-                enqueue { result ->
-                    try {
-                        synchronized(subscribers) {
-                            StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
-                            subscribers.onResultCatching(result)
+            delegate.set(
+                callBuilder().apply {
+                    enqueue { result ->
+                        try {
+                            synchronized(subscribers) {
+                                StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
+                                subscribers.onResultCatching(result)
+                            }
+                        } finally {
+                            doFinally()
                         }
-                    } finally {
-                        doFinally()
                     }
                 }
-            })
+            )
         }
     }
 
