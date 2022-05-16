@@ -112,7 +112,6 @@
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView.UserLookupHandler$*</ID>
     <ID>MaxLineLength:MessageInputViewStyle.kt$MessageInputViewStyle$*</ID>
     <ID>MaxLineLength:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$require(maxAttachmentsCount &lt;= AttachmentConstants.MAX_ATTACHMENTS_COUNT) { "maxAttachmentsCount cannot by greater than ${AttachmentConstants.MAX_ATTACHMENTS_COUNT}! Current value: $maxAttachmentsCount" }</ID>
-    <ID>MaxLineLength:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val</ID>
     <ID>MaxLineLength:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle$*</ID>
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date</ID>

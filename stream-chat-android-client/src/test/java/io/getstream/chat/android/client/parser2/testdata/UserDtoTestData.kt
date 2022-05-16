@@ -123,7 +123,8 @@ internal object UserDtoTestData {
             "devices": [
              {
               "id": "deviceId",
-              "push_provider": "provider"
+              "push_provider": "provider",
+              "provider_name": "provider_name"
              }
             ],
             "online": true,
@@ -154,7 +155,7 @@ internal object UserDtoTestData {
             image = "image",
             invisible = false,
             role = "owner",
-            devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
+            devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
             online = true,
             updated_at = Date(1591787071588),
             created_at = Date(1591787071000),
@@ -213,7 +214,8 @@ internal object UserDtoTestData {
             "devices": [
              {
               "id": "deviceId",
-              "push_provider": "provider"
+              "push_provider": "provider",
+              "provider_name": "provider_name"
              }
             ],
             "teams": [ "team1", "team2"]
@@ -224,7 +226,7 @@ internal object UserDtoTestData {
         role = "owner",
         invisible = false,
         banned = false,
-        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
+        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
         teams = listOf("team1", "team2"),
         name = "username",
         image = "image",

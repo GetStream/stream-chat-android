@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 
+import android.content.Context
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
@@ -68,6 +69,8 @@ public open class ChannelListItemViewHolderFactory {
     }
 
     protected open fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+        ensureInitialized(parentView.context)
+
         return ChannelViewHolder(
             parentView,
             listenerContainer.channelClickListener,
@@ -82,5 +85,17 @@ public open class ChannelListItemViewHolderFactory {
 
     protected open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
         return ChannelListLoadingMoreViewHolder(parentView, style)
+    }
+
+    /**
+     * Initializes the fields with the default values for testing.
+     */
+    private fun ensureInitialized(context: Context) {
+        if (!::listenerContainer.isInitialized) {
+            listenerContainer = ChannelListListenerContainerImpl()
+        }
+        if (!::style.isInitialized) {
+            style = ChannelListViewStyle(context, null)
+        }
     }
 }
