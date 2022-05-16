@@ -91,12 +91,17 @@ class HomeFragment : Fragment() {
             }
             if (BuildConfig.DEBUG) {
                 setTextClickListener {
-                    Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
+                    if (ApiRequestsAnalyser.isInitialized()) {
+                        Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
+                    }
+
                 }
 
                 setTextLongClickListener {
-                    ApiRequestsAnalyser.get().clearAll()
-                    Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
+                    if (ApiRequestsAnalyser.isInitialized()) {
+                        ApiRequestsAnalyser.get().clearAll()
+                        Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
                 setOnUserAvatarLongClickListener {

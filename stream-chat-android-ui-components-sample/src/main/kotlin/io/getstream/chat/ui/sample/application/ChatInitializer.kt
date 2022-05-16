@@ -71,7 +71,6 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
-            .withApiRequestAnalyser(ApiRequestsAnalyser.get())
             .debugRequests(true)
             .build()
 

@@ -2192,7 +2192,6 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
-        private var apiRequestsAnalyser: ApiRequestsAnalyser? = null
         private var debugRequests: Boolean = false
 
         /**
@@ -2339,15 +2338,10 @@ internal constructor(
             userCredentialStorage = credentialStorage
         }
 
-        public fun withApiRequestAnalyser(
-            apiRequestsAnalyser: ApiRequestsAnalyser,
-            debugOnly: Boolean = true,
-        ): Builder = apply {
-            if (debugOnly && BuildConfig.DEBUG) {
-                this.apiRequestsAnalyser = apiRequestsAnalyser
-            }
-        }
-
+        /**
+         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
+         * release builds as it uses a memory cache.
+         */
         public fun debugRequests(shouldDebug: Boolean): Builder = apply {
             this.debugRequests = shouldDebug
         }

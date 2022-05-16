@@ -22,13 +22,23 @@ import java.util.Date
 import java.util.Locale
 
 private const val NOT_FOUND = "not found"
+private const val NOT_FOUND_INT = -1
 
+/**
+ * Class for analyse requests of the SDK. It can be use to understand how the SDK is calling the backend API.
+ */
 internal class ApiRequestsDumper(
     private val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
 ) : ApiRequestsAnalyser {
 
     private val requestsDataMap: MutableMap<String, MutableList<RequestData>> = mutableMapOf()
 
+    /**
+     * Registers the request using the name as an ID.
+     *
+     * @param name Name of the request.
+     * @param data All the data that should be included in the analyser about the request.
+     */
     override fun registerRequest(requestName: String, data: Map<String, String>) {
         val requestData = RequestData(requestName, Date(), data)
         val requestDataList = requestsDataMap[requestName]
@@ -40,10 +50,40 @@ internal class ApiRequestsDumper(
         }
     }
 
+    /**
+     * Gets the information about the request by name
+     *
+     * @param requestName The name of the request.
+     */
+    override fun dumpRequestByName(requestName: String): String {
+        return requestsDataMap[requestName]
+            ?.toHumanReadableStringBuilder()
+            ?.toString()
+            ?: NOT_FOUND
+    }
+
+    /**
+     * Gets all the information in the analyser.
+     */
+    override fun dumpAll(): String {
+        return buildString {
+            requestsDataMap.values.forEach { requestDataList ->
+                append(requestDataList.toHumanReadableStringBuilder())
+                appendLine()
+            }
+        }
+    }
+
+    /**
+     * Clears all the information of the analyser. Should be used to avoid batches of data that are too big to understand.
+     */
     override fun clearAll() {
         requestsDataMap.clear()
     }
 
+    /**
+     * Clear an specific requests containing some string in its name. Return -1 it the request is not found.
+     */
     override fun clearRequestContaining(queryText: String) {
         val keys = requestsDataMap.keys.filter { key ->
             key.contains(queryText)
@@ -52,28 +92,22 @@ internal class ApiRequestsDumper(
         keys.forEach(requestsDataMap::remove)
     }
 
-    override fun countRequestByName(requestName: String): Int {
-        return requestsDataMap[requestName]?.count() ?: 0
+    /**
+     * Returns the number of times that a requests was made using name.
+     */
+    override fun countRequestContaining(requestName: String): Int {
+        val matchKey = requestsDataMap.keys.find { key ->
+            key.contains(requestName)
+        }
+
+        return requestsDataMap[matchKey]?.count() ?: NOT_FOUND_INT
     }
 
+    /**
+     * Counts all the requests made.
+     */
     override fun countAllRequests(): Int {
         return requestsDataMap.values.fold(0) { acc, list -> acc + list.count() }
-    }
-
-    override fun dumpRequestByName(requestName: String): String {
-        return requestsDataMap[requestName]
-            ?.toHumanReadableStringBuilder()
-            ?.toString()
-            ?: NOT_FOUND
-    }
-
-    override fun dumpAll(): String {
-        return buildString {
-            requestsDataMap.values.forEach { requestDataList ->
-                append(requestDataList.toHumanReadableStringBuilder())
-                appendLine()
-            }
-        }
     }
 
     /**
