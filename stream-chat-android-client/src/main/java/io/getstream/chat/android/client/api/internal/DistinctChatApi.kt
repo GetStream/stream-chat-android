@@ -42,17 +42,21 @@ internal class DistinctChatApi(
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
         val uniqueKey = ChannelQueryKey.from(channelType, channelId, query).hashCode()
         StreamLog.d(TAG) { "[queryChannel] channelType: $channelType, channelId: $channelId, uniqueKey: $uniqueKey" }
-        return (ongoingCalls[uniqueKey] as? OngoingCall<Channel>)
-            ?: delegate.queryChannel(channelType, channelId, query).asOngoing(uniqueKey) {
+        return getOrCreate(uniqueKey) {
+            delegate.queryChannel(channelType, channelId, query)
+        }
+    }
+
+    private fun <T : Any> getOrCreate(
+        uniqueKey: Int, callBuilder: () -> Call<T>
+    ): Call<T> {
+        return ongoingCalls[uniqueKey] as? OngoingCall<T>
+            ?: OngoingCall(callBuilder(), uniqueKey) {
                 ongoingCalls.remove(uniqueKey)
             }.also {
                 ongoingCalls[uniqueKey] = it
             }
     }
-
-    private fun <T : Any> Call<T>.asOngoing(uniqueKey: Int, onComplete: () -> Unit) = OngoingCall(
-        this, uniqueKey, onComplete
-    )
 
     private companion object {
         private const val TAG = "Chat:DistinctApi"
@@ -69,7 +73,7 @@ private class OngoingCall<T : Any>(
 ) : Call<T> {
 
     init {
-        StreamLog.i(TAG_ONGOING) { "<init> uniqueKey: $uniqueKey" }
+        StreamLog.i(TAG) { "<init> uniqueKey: $uniqueKey" }
     }
 
     private val subscribers = arrayListOf<Call.Callback<T>>()
@@ -77,10 +81,10 @@ private class OngoingCall<T : Any>(
 
     override fun execute(): Result<T> {
         return runBlocking {
-            StreamLog.d(TAG_ONGOING) { "[execute] uniqueKey: $uniqueKey" }
+            StreamLog.d(TAG) { "[execute] uniqueKey: $uniqueKey" }
             suspendCoroutine { continuation ->
                 enqueue { result ->
-                    StreamLog.v(TAG_ONGOING) { "[execute] completed($uniqueKey)" }
+                    StreamLog.v(TAG) { "[execute] completed($uniqueKey)" }
                     continuation.resume(result)
                 }
             }
@@ -88,14 +92,14 @@ private class OngoingCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        StreamLog.d(TAG_ONGOING) { "[enqueue] callback($$uniqueKey): $callback" }
+        StreamLog.d(TAG) { "[enqueue] callback($$uniqueKey): $callback" }
         synchronized(subscribers) {
             subscribers.add(callback)
         }
         if (isRunning.compareAndSet(false, true)) {
             delegate.enqueue { result ->
                 synchronized(subscribers) {
-                    StreamLog.v(TAG_ONGOING) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
+                    StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
                     subscribers.onResult(result)
                     subscribers.clear()
                 }
@@ -106,7 +110,7 @@ private class OngoingCall<T : Any>(
 
     override fun cancel() {
         return try {
-            StreamLog.d(TAG_ONGOING) { "[enqueue] uniqueKey: $uniqueKey" }
+            StreamLog.d(TAG) { "[enqueue] uniqueKey: $uniqueKey" }
             delegate.cancel()
             synchronized(subscribers) {
                 subscribers.clear()
@@ -121,7 +125,7 @@ private class OngoingCall<T : Any>(
     }
 
     private companion object {
-        private const val TAG_ONGOING = "Chat:OngoingCall"
+        private const val TAG = "Chat:OngoingCall"
     }
 }
 
