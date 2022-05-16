@@ -118,9 +118,6 @@ private class DistinctCall<T : Any>(
         try {
             StreamLog.d(TAG) { "[enqueue] uniqueKey: $uniqueKey" }
             delegate.get()?.cancel()
-            synchronized(subscribers) {
-                subscribers.clear()
-            }
         } finally {
             doFinally()
         }
