@@ -104,6 +104,7 @@ private class OngoingCall<T : Any>(
                     subscribers.clear()
                 }
                 onFinished()
+                isRunning.set(false)
             }
         }
     }
@@ -117,6 +118,7 @@ private class OngoingCall<T : Any>(
             }
         } finally {
             onFinished()
+            isRunning.set(false)
         }
     }
 
