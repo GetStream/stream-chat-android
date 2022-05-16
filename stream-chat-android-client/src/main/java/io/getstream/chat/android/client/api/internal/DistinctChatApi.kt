@@ -48,7 +48,7 @@ internal class DistinctChatApi(
     }
 
     private fun <T : Any> getOrCreate(
-        uniqueKey: Int, callBuilder: () -> Call<T>
+        uniqueKey: Int, callBuilder: () -> Call<T>,
     ): Call<T> {
         return ongoingCalls[uniqueKey] as? OngoingCall<T>
             ?: OngoingCall(callBuilder(), uniqueKey) {
