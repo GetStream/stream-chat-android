@@ -80,11 +80,6 @@ private class DistinctCall<T : Any>(
     private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean()
     private val subscribers = arrayListOf<Call.Callback<T>>()
-    private val _onFinished = {
-        isRunning.set(false)
-        delegate.set(null)
-        onFinished()
-    }
 
     override fun execute(): Result<T> {
         return runBlocking {
@@ -110,10 +105,9 @@ private class DistinctCall<T : Any>(
                         synchronized(subscribers) {
                             StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
                             subscribers.onResultCatching(result)
-                            subscribers.clear()
                         }
                     } finally {
-                        _onFinished()
+                        doFinally()
                     }
                 }
             })
@@ -121,15 +115,24 @@ private class DistinctCall<T : Any>(
     }
 
     override fun cancel() {
-        return try {
+        try {
             StreamLog.d(TAG) { "[enqueue] uniqueKey: $uniqueKey" }
             delegate.get()?.cancel()
             synchronized(subscribers) {
                 subscribers.clear()
             }
         } finally {
-            _onFinished()
+            doFinally()
         }
+    }
+
+    private fun doFinally() {
+        synchronized(subscribers) {
+            subscribers.clear()
+        }
+        isRunning.set(false)
+        delegate.set(null)
+        onFinished()
     }
 
     private fun Collection<Call.Callback<T>>.onResultCatching(result: Result<T>) = forEach { callback ->
