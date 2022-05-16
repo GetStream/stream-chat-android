@@ -25,6 +25,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Change the order of offline message so it matches the order of online messages. Now the reshufling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
 
 ### ✅ Added
 
