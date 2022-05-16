@@ -91,7 +91,6 @@ public fun Messages(
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
 
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
-
     val density = LocalDensity.current
 
     Box(modifier = modifier) {
@@ -101,9 +100,14 @@ public fun Messages(
                 .onGloballyPositioned {
                     val bottomPadding = contentPadding.calculateBottomPadding()
                     val topPadding = contentPadding.calculateTopPadding()
+
+                    val paddingPixels = with(density) {
+                        bottomPadding.roundToPx() + topPadding.roundToPx()
+                    }
+
                     parentSize = IntSize(
                         width = it.size.width,
-                        height = it.size.height - with(density) { bottomPadding.roundToPx() + topPadding.roundToPx() }
+                        height = it.size.height - paddingPixels
                     )
                 },
             state = lazyListState,
@@ -118,16 +122,17 @@ public fun Messages(
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                Box(
+                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
                     Modifier.onGloballyPositioned {
-                        if (item is MessageItemState &&
-                            item.focusState == MessageFocused &&
-                            messagesState.focusedMessageOffset.value == null
-                        ) {
+                        if (messagesState.focusedMessageOffset.value == null) {
                             messagesState.calculateMessageOffset(parentSize, it.size)
                         }
                     }
-                ) {
+                } else {
+                    Modifier
+                }
+
+                Box(modifier = messageItemModifier) {
                     itemContent(item)
 
                     if (item is MessageItemState) {

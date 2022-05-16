@@ -24,18 +24,18 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents the content that's shown in a quoted message attachments if the attachments are not empty.
+ * Represents the content that's shown in a quoted message if the attachments are not empty.
  *
  * @param message The message that contains the attachments.
- * @param modifier Modifier for customization of attachment preview.
- * @param onLongItemClick Handler for long item taps on this content.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler for long item taps.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
  */
 @Composable
 public fun QuotedMessageAttachmentContent(
     message: Message,
-    modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
+    modifier: Modifier = Modifier,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     val attachments = message.attachments
