@@ -25,6 +25,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest as QueryChannelRequestDto
@@ -51,7 +52,7 @@ internal class DistinctChatApi(
         uniqueKey: Int, callBuilder: () -> Call<T>,
     ): Call<T> {
         return ongoingCalls[uniqueKey] as? OngoingCall<T>
-            ?: OngoingCall(callBuilder(), uniqueKey) {
+            ?: OngoingCall(callBuilder, uniqueKey) {
                 ongoingCalls.remove(uniqueKey)
             }.also {
                 ongoingCalls[uniqueKey] = it
@@ -67,7 +68,7 @@ internal class DistinctChatApi(
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
 private class OngoingCall<T : Any>(
-    private val delegate: Call<T>,
+    private val callBuilder: () -> Call<T>,
     private val uniqueKey: Int,
     private val onFinished: () -> Unit,
 ) : Call<T> {
@@ -76,8 +77,9 @@ private class OngoingCall<T : Any>(
         StreamLog.i(TAG) { "<init> uniqueKey: $uniqueKey" }
     }
 
-    private val subscribers = arrayListOf<Call.Callback<T>>()
+    private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean()
+    private val subscribers = arrayListOf<Call.Callback<T>>()
 
     override fun execute(): Result<T> {
         return runBlocking {
@@ -97,22 +99,25 @@ private class OngoingCall<T : Any>(
             subscribers.add(callback)
         }
         if (isRunning.compareAndSet(false, true)) {
-            delegate.enqueue { result ->
-                synchronized(subscribers) {
-                    StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
-                    subscribers.onResult(result)
-                    subscribers.clear()
+            val call = callBuilder().apply {
+                enqueue { result ->
+                    synchronized(subscribers) {
+                        StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
+                        subscribers.onResult(result)
+                        subscribers.clear()
+                    }
+                    onFinished()
+                    isRunning.set(false)
                 }
-                onFinished()
-                isRunning.set(false)
             }
+            delegate.set(call)
         }
     }
 
     override fun cancel() {
         return try {
             StreamLog.d(TAG) { "[enqueue] uniqueKey: $uniqueKey" }
-            delegate.cancel()
+            delegate.get()?.cancel()
             synchronized(subscribers) {
                 subscribers.clear()
             }
