@@ -313,9 +313,15 @@ With just a few lines of code, you're able to render any custom UI within the `M
 
 ## Quoted Messages
 
-Stream SDK supports quoting the messages which are shown inside the regular message content. Being nested inside a message they heave less space available and require different layouts and with that factories.
+Stream SDK supports quoting, or replying to, messages, even if they contain attachments. These quoted messages are shown inside the message bubble above the text you wrote when quoting, which is a common pattern in various chat services.
 
-If you don't wish or have no need to customize the layout there is no need since the factories are of the same type and can be reused. If there is no `quotedAttachmentFactory` that can render that type of attachment we default to `attachmentFactory` in our default components to one that can if there is one.
+![Compose Quoted Attachment Sample](../../assets/compose_quoted_attachment_example.png)
+
+Since the quoted content is nested inside a regular message, they have less space available and require different layouts. For this reason, the Compose SDK provides separate attachment factories just for the quoted content. This allows you to provide different UI for custom attachments that are quoted, as compared to when they represent a message.
+
+In code, the "quoted attachment factories" are of the same type as regular attachment factories, they are interchangeable. If you don't provide a `quotedAttachmentFactory` that can render your custom type of attachments, we will use your custom `attachmentFactory` by default in our UI, instead.
+
+Let's see how to build a custom **quoted attachment factory**.
 
 ## Rendering Quoted Date Attachments
 
@@ -370,14 +376,13 @@ fun QuotedDateAttachmentContent(
 }
 ```
 
-As before we are fetching the custom attachment data using `attachment.extraData["payload"]`. Difference here is we hide the year if it is the current one and newline the date for a more compact preview.
+As before, we are fetching the custom attachment data using `attachment.extraData["payload"]`. We also hide the year if it's the same as the current one and we add a newline before the date for a more compact preview.
 
-This time we don't need the `textFormatter` or `previewContent`. The `textFormatter` is used to show the description of the attachment in the `ChannelList` and that will be handled by the parent message. `previewContent` is used in the `MessageComposer` and it only shows the parent message.
+This time we don't need the `textFormatter` or `previewContent`. The `textFormatter` is used to show the description of the attachment in the `ChannelList` and that will be handled by the parent message. The `previewContent` is used in the `MessageComposer` and it only shows the parent message before it's sent.
 
 Now your attachment factory should be complete and look like this:
 
 ```kotlin
-@ExperimentalStreamChatApi
 val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.type == "date" } },
     content = @Composable { modifier, attachmentState ->
@@ -427,11 +432,11 @@ class MessagesActivity : AppCompatActivity() {
 }
 ```
 
-Quoted date attachments should now be correctly rendered in the quoted message in the message list like on the screenshot below:
+Quoted date attachments should now be correctly rendered in messages where they're quoted, like on the screenshot below:
 
 ![Rendering Custom Attachment](../../assets/compose_custom_quoted_message_attachment_factory.png)
 
-With even less lines of code than the previous custom attachment factory we have adjusted the date preview to fit a smaller layout retaining all the relevant data. This gives you even more fine grained customization to build powerful and responsive UI with the same reusable components.
+With even fewer lines of code than the previous custom attachment factory we have adjusted the date preview to fit a smaller layout retaining all the relevant data. This gives you even more fine grained customization to build powerful and responsive UI with the same reusable components.
 
 
 
