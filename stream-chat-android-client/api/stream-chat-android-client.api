@@ -170,8 +170,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public static synthetic fun notifications$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/chat/android/client/utils/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun withApiRequestAnalyser (Lio/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser;Z)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public static synthetic fun withApiRequestAnalyser$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser;ZILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugin (Lio/getstream/chat/android/client/experimental/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
@@ -3242,7 +3240,7 @@ public abstract interface class io/getstream/chat/android/client/plugins/request
 	public abstract fun clearAll ()V
 	public abstract fun clearRequestContaining (Ljava/lang/String;)V
 	public abstract fun countAllRequests ()I
-	public abstract fun countRequestByName (Ljava/lang/String;)I
+	public abstract fun countRequestContaining (Ljava/lang/String;)I
 	public abstract fun dumpAll ()Ljava/lang/String;
 	public abstract fun dumpRequestByName (Ljava/lang/String;)Ljava/lang/String;
 	public abstract fun registerRequest (Ljava/lang/String;Ljava/util/Map;)V
@@ -3250,6 +3248,7 @@ public abstract interface class io/getstream/chat/android/client/plugins/request
 
 public final class io/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser$Companion {
 	public final fun get ()Lio/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser;
+	public final fun isInitialized ()Z
 }
 
 public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
