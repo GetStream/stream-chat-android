@@ -38,7 +38,7 @@ internal class DistinctChatApi(
     private val delegate: ChatApi,
 ) : ChatApi by delegate {
 
-    private val ongoingCalls = ConcurrentHashMap<Int, OngoingCall<out Any>>()
+    private val distinctCalls = ConcurrentHashMap<Int, DistinctCall<out Any>>()
 
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
         val uniqueKey = ChannelQueryKey.from(channelType, channelId, query).hashCode()
@@ -51,11 +51,11 @@ internal class DistinctChatApi(
     private fun <T : Any> getOrCreate(
         uniqueKey: Int, callBuilder: () -> Call<T>,
     ): Call<T> {
-        return ongoingCalls[uniqueKey] as? OngoingCall<T>
-            ?: OngoingCall(callBuilder, uniqueKey) {
-                ongoingCalls.remove(uniqueKey)
+        return distinctCalls[uniqueKey] as? DistinctCall<T>
+            ?: DistinctCall(callBuilder, uniqueKey) {
+                distinctCalls.remove(uniqueKey)
             }.also {
-                ongoingCalls[uniqueKey] = it
+                distinctCalls[uniqueKey] = it
             }
     }
 
@@ -67,7 +67,7 @@ internal class DistinctChatApi(
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
-private class OngoingCall<T : Any>(
+private class DistinctCall<T : Any>(
     private val callBuilder: () -> Call<T>,
     private val uniqueKey: Int,
     private val onFinished: () -> Unit,
@@ -80,6 +80,11 @@ private class OngoingCall<T : Any>(
     private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean()
     private val subscribers = arrayListOf<Call.Callback<T>>()
+    private val _onFinished = {
+        isRunning.set(false)
+        delegate.set(null)
+        onFinished()
+    }
 
     override fun execute(): Result<T> {
         return runBlocking {
@@ -99,18 +104,19 @@ private class OngoingCall<T : Any>(
             subscribers.add(callback)
         }
         if (isRunning.compareAndSet(false, true)) {
-            val call = callBuilder().apply {
+            delegate.set(callBuilder().apply {
                 enqueue { result ->
-                    synchronized(subscribers) {
-                        StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
-                        subscribers.onResult(result)
-                        subscribers.clear()
+                    try {
+                        synchronized(subscribers) {
+                            StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
+                            subscribers.onResultCatching(result)
+                            subscribers.clear()
+                        }
+                    } finally {
+                        _onFinished()
                     }
-                    onFinished()
-                    isRunning.set(false)
                 }
-            }
-            delegate.set(call)
+            })
         }
     }
 
@@ -122,17 +128,20 @@ private class OngoingCall<T : Any>(
                 subscribers.clear()
             }
         } finally {
-            onFinished()
-            isRunning.set(false)
+            _onFinished()
         }
     }
 
-    private fun Collection<Call.Callback<T>>.onResult(result: Result<T>) = forEach { callback ->
-        callback.onResult(result)
+    private fun Collection<Call.Callback<T>>.onResultCatching(result: Result<T>) = forEach { callback ->
+        try {
+            callback.onResult(result)
+        } catch (_: Throwable) {
+            /* no-op */
+        }
     }
 
     private companion object {
-        private const val TAG = "Chat:OngoingCall"
+        private const val TAG = "Chat:DistinctCall"
     }
 }
 
