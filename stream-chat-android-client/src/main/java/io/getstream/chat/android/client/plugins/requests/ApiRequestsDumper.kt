@@ -75,7 +75,8 @@ internal class ApiRequestsDumper(
     }
 
     /**
-     * Clears all the information of the analyser. Should be used to avoid batches of data that are too big to understand.
+     * Clears all the information of the analyser. Should be used to avoid batches of data that are too big
+     * to understand.
      */
     override fun clearAll() {
         requestsDataMap.clear()

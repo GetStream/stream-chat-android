@@ -94,7 +94,6 @@ class HomeFragment : Fragment() {
                     if (ApiRequestsAnalyser.isInitialized()) {
                         Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
                     }
-
                 }
 
                 setTextLongClickListener {

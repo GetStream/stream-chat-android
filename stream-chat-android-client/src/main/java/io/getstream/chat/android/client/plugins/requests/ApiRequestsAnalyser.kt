@@ -42,7 +42,8 @@ public interface ApiRequestsAnalyser {
     public fun dumpAll(): String
 
     /**
-     * Clears all the information of the analyser. Should be used to avoid batches of data that are too big to understand.
+     * Clears all the information of the analyser. Should be used to avoid batches of data that are too big
+     * to understand.
      */
     public fun clearAll()
 
