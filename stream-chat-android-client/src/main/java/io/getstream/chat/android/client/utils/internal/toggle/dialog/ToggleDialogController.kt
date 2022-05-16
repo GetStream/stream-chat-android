@@ -28,7 +28,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         initialState(ToggleState.Initial)
 
         state<ToggleState.Initial> {
-            onEvent<ToggleEvent.AttachView> { _, event ->
+            onEvent<ToggleEvent.AttachView> { event ->
                 viewRef = WeakReference(event.view)
                 val toggles = toggleService.getToggles()
                 ToggleState.StateData(toggles, emptyMap()).also {
@@ -38,18 +38,18 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         }
 
         state<ToggleState.StateData> {
-            onEvent<ToggleEvent.Dismiss> { _, _ ->
+            onEvent<ToggleEvent.Dismiss> {
                 viewRef.get()?.dismiss()
                 ToggleState.Final
             }
-            onEvent<ToggleEvent.CommitChanges> { state, event ->
-                state.changes.entries.forEach { (toggle, value) -> toggleService.setToggle(toggle, value) }
-                state.changes.toList().let(event.togglesChangesCommittedListener::invoke)
+            onEvent<ToggleEvent.CommitChanges> { event ->
+                changes.entries.forEach { (toggle, value) -> toggleService.setToggle(toggle, value) }
+                changes.toList().let(event.togglesChangesCommittedListener::invoke)
                 viewRef.get()?.dismiss()
                 ToggleState.Final
             }
-            onEvent<ToggleEvent.ToggleChanged> { stateData, event ->
-                handleToggleChanged(stateData, event)
+            onEvent<ToggleEvent.ToggleChanged> { event ->
+                handleToggleChanged(this, event)
             }
         }
     }
@@ -101,7 +101,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         class ToggleChanged(val toggleName: String, val value: Boolean) : ToggleEvent()
         object Dismiss : ToggleEvent()
         class CommitChanges(
-            val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit
+            val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit,
         ) : ToggleEvent()
     }
 }
