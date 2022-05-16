@@ -116,7 +116,7 @@ private class DistinctCall<T : Any>(
 
     override fun cancel() {
         try {
-            StreamLog.d(TAG) { "[enqueue] uniqueKey: $uniqueKey" }
+            StreamLog.d(TAG) { "[cancel] uniqueKey: $uniqueKey" }
             delegate.get()?.cancel()
         } finally {
             doFinally()
