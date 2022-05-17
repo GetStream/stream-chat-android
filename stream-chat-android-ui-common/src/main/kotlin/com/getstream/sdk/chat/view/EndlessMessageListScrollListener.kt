@@ -16,11 +16,8 @@
 
 package com.getstream.sdk.chat.view
 
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.MessageListItem
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -83,20 +80,12 @@ public class EndlessMessageListScrollListener(
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
-        Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition")
-
         if (lastVisiblePosition >= loadMoreThreshold && shouldLoadMessagesAtBottom) {
             recyclerView.post {
                 if (paginationEnabled) {
                     loadMoreAtBottomListener()
                 }
             }
-        }
-    }
-
-    private fun parseAdapter(recyclerView: RecyclerView): ListAdapter<MessageListItem, *> {
-        return requireNotNull(recyclerView.adapter as? ListAdapter<MessageListItem, *>) {
-            "EndlessMessageListScrollListener must be used with ListAdapter<MessageListItem, *>"
         }
     }
 
