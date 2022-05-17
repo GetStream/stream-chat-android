@@ -32,6 +32,8 @@ internal fun SocketErrorResponse.ErrorResponse.toDomain(): ErrorResponse {
         code = dto.code,
         message = dto.message,
         statusCode = dto.StatusCode,
+        exceptionFields = dto.exception_fields,
+        moreInfo = dto.more_info
     ).apply {
         duration = dto.duration
     }
