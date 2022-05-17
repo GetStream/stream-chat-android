@@ -55,6 +55,7 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : Que
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+        // Nothing to do
     }
 
     private companion object {
