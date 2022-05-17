@@ -11,7 +11,9 @@ This involves doing the following steps:
 2. Adding support for `date` attachments by creating a custom [AttachmentFactory](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/).
 
 :::note
-All the code from this guide is available on [GitHub](https://github.com/GetStream/Android-Samples/tree/main/compose-custom-attachments).
+In this guide, we'll show only the main points concerning custom attachments and their factories. Smaller parts will be omitted for the sake of being concise.
+
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/Android-Samples/tree/main/compose-custom-attachments).
 :::
 
 ## Sending Date Attachments
@@ -107,7 +109,7 @@ fun CustomMessagesScreen(
                 )
             }
         ) {
-            // Message list
+            // Message list setup - available in the full code sample
         }
     }
 }
@@ -248,7 +250,6 @@ textFormatter = { attachment ->
 Now your attachment factory is complete and looks like that:
 
 ```kotlin
-@ExperimentalStreamChatApi
 val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.type == "date" } },
     content = @Composable { modifier, attachmentState ->
@@ -411,7 +412,7 @@ class MessagesActivity : AppCompatActivity() {
 
         setContent {
             // pass in custom factories or combine them with the default ones
-            ChatTheme(attachmentFactories = customFactories + defaultFactories, quoteAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
+            ChatTheme(attachmentFactories = customFactories + defaultFactories, quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() }
@@ -431,6 +432,12 @@ class MessagesActivity : AppCompatActivity() {
     }
 }
 ```
+
+:::note
+To show the `MessageOptions`, you need to add the component to the `CustomMessagesScreen`. We'll skip this part for the sake of the guide.
+
+You can find the full source code of the `CustomMessagesScreen` component [here](https://github.com/GetStream/Android-Samples/blob/main/compose-custom-attachments/src/main/java/io/getstream/chat/android/compose/customattachments/ui/CustomMessagesScreen.kt), where everything is set up.
+:::
 
 Quoted date attachments should now be correctly rendered in messages where they're quoted, like in the screenshot below:
 
