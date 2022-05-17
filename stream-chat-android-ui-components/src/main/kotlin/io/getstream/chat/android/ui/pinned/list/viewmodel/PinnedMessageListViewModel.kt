@@ -126,8 +126,12 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
                 return@launch
             }
 
+            /**
+             * In the case of loading more, we append a new empty message to indicate pagination.
+             */
             _state.value = currentState.copy(
                 isLoading = true,
+                results = currentState.results + Message()
             )
             fetchServerResults()
         }
@@ -155,7 +159,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
             val messages = result.data()
             logger.logD("Got ${messages.size} messages")
             _state.value = currentState.copy(
-                results = currentState.results + messages,
+                results = (currentState.results + messages).filter { it.id.isNotEmpty() },
                 isLoading = false,
                 canLoadMore = messages.size == QUERY_LIMIT,
                 // currentState.nextDate should only be assigned when messages are empty
