@@ -313,13 +313,13 @@ With just a few lines of code, you're able to render any custom UI within the `M
 
 ## Quoted Messages
 
-Stream SDK supports quoting, or replying to, messages, even if they contain attachments. These quoted messages are shown inside the message bubble above the text you wrote when quoting, which is a common pattern in various chat services.
+Stream SDK supports quoting or replying to messages, even if they contain attachments. These quoted messages are shown inside the message bubble above the text you wrote when quoting, which is a common pattern in various chat services.
 
-![Compose Quoted Attachment Sample](../../assets/compose_quoted_attachment_example.png)
+![Compose Quoted Attachment Sample](../../assets/compose_quoted_attachment_example.PNG)
 
-Since the quoted content is nested inside a regular message, they have less space available and require different layouts. For this reason, the Compose SDK provides separate attachment factories just for the quoted content. This allows you to provide different UI for custom attachments that are quoted, as compared to when they represent a message.
+Since the quoted content is nested inside a regular message, it has less space available and requires a different layout. For this reason, the Compose SDK provides separate attachment factories just for the quoted content. This allows you to provide a different UI for attachments that are displayed as a part of the quoted content.
 
-In code, the "quoted attachment factories" are of the same type as regular attachment factories, they are interchangeable. If you don't provide a `quotedAttachmentFactory` that can render your custom type of attachments, we will use your custom `attachmentFactory` by default in our UI, instead.
+Attachment factories used for displaying quoted content extend the same `class` as regular attachment factories. As such, they are interchangeable. If you don't provide a `quotedAttachmentFactory` that can render your custom type of attachments, we will use your custom `attachmentFactory` by default in our UI, instead.
 
 Let's see how to build a custom **quoted attachment factory**.
 
@@ -376,7 +376,7 @@ fun QuotedDateAttachmentContent(
 }
 ```
 
-As before, we are fetching the custom attachment data using `attachment.extraData["payload"]`. We also hide the year if it's the same as the current one and we add a newline before the date for a more compact preview.
+As before, we are fetching the custom attachment data using `attachment.extraData["payload"]`. We also hide the year if it's the same as the current one and we add a new line before the date for a more compact preview.
 
 This time we don't need the `textFormatter` or `previewContent`. The `textFormatter` is used to show the description of the attachment in the `ChannelList` and that will be handled by the parent message. The `previewContent` is used in the `MessageComposer` and it only shows the parent message before it's sent.
 

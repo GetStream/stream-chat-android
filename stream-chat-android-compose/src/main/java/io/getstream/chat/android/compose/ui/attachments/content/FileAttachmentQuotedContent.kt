@@ -49,7 +49,7 @@ public fun FileAttachmentQuotedContent(
     }
 
     val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
-    val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentVerticalPadding
+    val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentTopPadding
     val size = ChatTheme.dimens.quotedMessageAttachmentPreviewSize
 
     Image(

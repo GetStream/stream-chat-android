@@ -41,9 +41,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.docs.R
-import java.lang.StringBuilder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -167,7 +165,6 @@ private object AddingCustomAttachmentsSnippet {
         )
     }
 
-    @ExperimentalStreamChatApi
     val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == "date" } },
         content = @Composable { modifier, attachmentState ->
@@ -262,6 +259,7 @@ private object AddingCustomAttachmentsSnippet {
 
     /**
      * Rename to [MessagesActivity] when adding to docs. This is so we can avoid name conflicts.
+     * Snippets used in (https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/).
      */
     class QuotedMessagesActivity : AppCompatActivity() {
 
@@ -277,7 +275,8 @@ private object AddingCustomAttachmentsSnippet {
 
             setContent {
                 // pass in custom factories or combine them with the default ones
-                ChatTheme(attachmentFactories = customFactories + defaultFactories, quoteAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
+                ChatTheme(attachmentFactories = customFactories + defaultFactories,
+                    quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
                     CustomMessagesScreen(
                         channelId = channelId,
                         onBackPressed = { finish() }
@@ -297,7 +296,6 @@ private object AddingCustomAttachmentsSnippet {
         }
     }
 
-    @ExperimentalStreamChatApi
     val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == "date" } },
         content = @Composable { modifier, attachmentState ->

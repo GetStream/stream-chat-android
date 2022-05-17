@@ -60,8 +60,10 @@ import androidx.compose.ui.unit.dp
  * @param quotedMessageTextVerticalPadding The vertical padding of text inside quoted message.
  * @param quotedMessageTextHorizontalPadding The horizontal padding of text inside quoted message.
  * @param quotedMessageAttachmentPreviewSize The size of the quoted message attachment preview.
- * @param quotedMessageAttachmentVerticalPadding The vertical padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentTopPadding The top padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentBottomPadding The bottom padding of the quoted message attachment preview.
  * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
  */
 @Immutable
 public data class StreamDimens(
@@ -102,8 +104,10 @@ public data class StreamDimens(
     public val quotedMessageTextVerticalPadding: Dp,
     public val quotedMessageTextHorizontalPadding: Dp,
     public val quotedMessageAttachmentPreviewSize: Dp,
-    public val quotedMessageAttachmentVerticalPadding: Dp,
-    public val quotedMessageAttachmentStartPadding: Dp
+    public val quotedMessageAttachmentTopPadding: Dp,
+    public val quotedMessageAttachmentBottomPadding: Dp,
+    public val quotedMessageAttachmentStartPadding: Dp,
+    public val quotedMessageAttachmentEndPadding: Dp,
 ) {
     public companion object {
         /**
@@ -149,8 +153,10 @@ public data class StreamDimens(
             quotedMessageTextHorizontalPadding = 8.dp,
             quotedMessageTextVerticalPadding = 6.dp,
             quotedMessageAttachmentPreviewSize = 36.dp,
-            quotedMessageAttachmentVerticalPadding = 6.dp,
-            quotedMessageAttachmentStartPadding = 8.dp
+            quotedMessageAttachmentBottomPadding = 6.dp,
+            quotedMessageAttachmentTopPadding = 6.dp,
+            quotedMessageAttachmentStartPadding = 8.dp,
+            quotedMessageAttachmentEndPadding = 0.dp,
         )
     }
 }

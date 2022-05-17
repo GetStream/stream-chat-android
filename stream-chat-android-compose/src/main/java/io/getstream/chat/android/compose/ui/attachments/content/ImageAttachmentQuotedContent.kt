@@ -42,14 +42,15 @@ public fun ImageAttachmentQuotedContent(
 ) {
     val imagePainter = rememberImagePainter(attachment.imagePreviewUrl)
 
-    val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
-    val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentVerticalPadding
-    val size = ChatTheme.dimens.quotedMessageAttachmentPreviewSize
-
     Image(
         modifier = modifier
-            .padding(start = startPadding, top = verticalPadding, bottom = verticalPadding)
-            .size(size)
+            .padding(
+                start = ChatTheme.dimens.quotedMessageAttachmentStartPadding,
+                top = ChatTheme.dimens.quotedMessageAttachmentTopPadding,
+                bottom = ChatTheme.dimens.quotedMessageAttachmentBottomPadding,
+                end = ChatTheme.dimens.quotedMessageAttachmentEndPadding
+            )
+            .size(ChatTheme.dimens.quotedMessageAttachmentPreviewSize)
             .clip(ChatTheme.shapes.quotedAttachment),
         painter = imagePainter,
         contentDescription = null,

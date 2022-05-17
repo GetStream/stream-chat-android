@@ -45,7 +45,9 @@ public fun QuotedMessageAttachmentContent(
      * that can handle the attachmentContent.
      */
     val quoteAttachmentFactory = if (attachments.isNotEmpty()) {
-        val quotedFactory = ChatTheme.quoteAttachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
+        val quotedFactory = ChatTheme.quotedAttachmentFactories.firstOrNull {
+            it.canHandle(message.attachments.take(1))
+        }
         quotedFactory ?: ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
     } else {
         null
