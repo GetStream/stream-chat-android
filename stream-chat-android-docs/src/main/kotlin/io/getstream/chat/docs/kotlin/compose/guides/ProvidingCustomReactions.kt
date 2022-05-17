@@ -1,3 +1,5 @@
+// ktlint-disable filename
+
 package io.getstream.chat.docs.kotlin.compose.guides
 
 import android.content.Context
@@ -13,6 +15,9 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.docs.R
 
+/**
+ * [Providing Custom Reactions](https://getstream.io/chat/docs/sdk/android/compose/guides/providing-custom-reactions/)
+ */
 private object ProvidingCustomReactionsSnippet {
 
     class MessagesActivity : AppCompatActivity() {
