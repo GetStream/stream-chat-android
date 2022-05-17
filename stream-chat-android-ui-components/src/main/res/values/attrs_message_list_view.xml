@@ -296,6 +296,13 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiMessageOptionsUserReactionBubbleAlignment" format="enum">
+            <enum name="start" value="0" />
+            <enum name="end" value="1" />
+            <enum name="by_user" value="2" />
+            <enum name="by_user_inverted" value="3" />
+        </attr>
+
         <!-- User reactions card -->
         <attr name="streamUiUserReactionsBackgroundColor" format="color" />
 

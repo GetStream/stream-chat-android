@@ -23,14 +23,18 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
+import io.getstream.chat.android.ui.message.list.reactions.view.ReactionBubbleOrientation
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.message.list.reactions.view.getUserReactionOrientation
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsBubbleDrawer
+import io.getstream.chat.android.ui.message.list.reactions.view.isOrientedTowardsStart
 
 internal class SingleReactionView : FrameLayout {
     private val binding = StreamUiItemMessageReactionBinding.inflate(streamThemeInflater, this, true)
     private lateinit var reactionsViewStyle: ViewReactionsViewStyle
     private lateinit var bubbleDrawer: ViewReactionsBubbleDrawer
     private var isMyMessage: Boolean = false
+    private val messageOrientation: ReactionBubbleOrientation get() = reactionsViewStyle.messageOptionsUserReactionBubbleOrientation.getUserReactionOrientation()
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -51,20 +55,23 @@ internal class SingleReactionView : FrameLayout {
     fun setReaction(userReactionItem: UserReactionItem) {
         // according to the design, current user reactions have the same style
         // as reactions on the current user messages in the message list
-        this.isMyMessage = !userReactionItem.isMine
+        this.isMyMessage = userReactionItem.isMine
         binding.reactionIcon.setImageDrawable(userReactionItem.drawable)
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        val isOrientedTowardsStart = messageOrientation.isOrientedTowardsStart(isMyMessage)
+
         bubbleDrawer.drawReactionsBubble(
             context,
             canvas,
             width,
             isMyMessage = isMyMessage,
             isSingleReaction = true,
-            inverseBubbleStyle = true
+            isOrientedTowardsStart = isOrientedTowardsStart
         )
     }
 

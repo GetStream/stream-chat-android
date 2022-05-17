@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
+import io.getstream.chat.android.common.UserReactionAlignment
+import io.getstream.chat.android.common.isStartAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -34,10 +36,16 @@ internal class UserReactionAdapter(
     private val userReactionClickListener: UserReactionClickListener,
 ) : ListAdapter<UserReactionItem, UserReactionAdapter.UserReactionViewHolder>(UserReactionItemDiffCallback) {
 
+    var userReactionAlignment: UserReactionAlignment = UserReactionAlignment.BY_USER
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
         return StreamUiItemUserReactionBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { UserReactionViewHolder(it, userReactionClickListener) }
+            .let { UserReactionViewHolder(it, userReactionClickListener, userReactionAlignment) }
     }
 
     override fun onBindViewHolder(holder: UserReactionViewHolder, position: Int) {
@@ -47,6 +55,7 @@ internal class UserReactionAdapter(
     class UserReactionViewHolder(
         private val binding: StreamUiItemUserReactionBinding,
         private val userReactionClickListener: UserReactionClickListener,
+        private val userReactionAlignment: UserReactionAlignment = UserReactionAlignment.BY_USER,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var userReactionItem: UserReactionItem
@@ -76,8 +85,10 @@ internal class UserReactionAdapter(
                     clear(R.id.userReactionView, ConstraintSet.START)
                     clear(R.id.userReactionView, ConstraintSet.END)
                 }
+                val isEndAlignment = !userReactionAlignment.isStartAlignment(userReactionItem.isMine)
+
                 userReactionView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    if (userReactionItem.isMine) {
+                    if (isEndAlignment) {
                         endToEnd = ConstraintSet.PARENT_ID
                         marginEnd = context.getDimension(R.dimen.stream_ui_spacing_small)
                     } else {

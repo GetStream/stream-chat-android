@@ -22,6 +22,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.common.UserReactionAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -49,6 +50,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
+    public val messageOptionsUserReactionBubbleOrientation: Int
 ) {
 
     internal companion object {
@@ -61,8 +63,8 @@ public data class ViewReactionsViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ViewReactionsView,
-                0,
-                0,
+                R.attr.streamUiMessageListViewReactionsStyle,
+                R.style.StreamUi_ViewReactions,
             ).use { a ->
                 return Builder(a, context)
                     .bubbleBorderColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorMine)
@@ -71,6 +73,9 @@ public data class ViewReactionsViewStyle(
                     .bubbleBorderWidthTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthTheirs)
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
+                    .messageOptionsUserReactionBubbleOrientation(
+                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionBubbleOrientation
+                    )
                     .build()
             }
         }
@@ -88,6 +93,7 @@ public data class ViewReactionsViewStyle(
             private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
             @Px
             private var bubbleBorderWidthTheirs: Float? = null
+            private var messageOptionsUSerReactionBubbleOrientation: Int = UserReactionAlignment.BY_USER.value
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
                 bubbleColorTheirs =
@@ -114,6 +120,10 @@ public data class ViewReactionsViewStyle(
 
             fun bubbleBorderWidthTheirs(@StyleableRes bubbleBorderWidthAttribute: Int) = apply {
                 bubbleBorderWidthTheirs = array.getDimensionOrNull(bubbleBorderWidthAttribute)
+            }
+
+            fun messageOptionsUserReactionBubbleOrientation(@StyleableRes bubbleOrientation: Int) = apply {
+                this.messageOptionsUSerReactionBubbleOrientation = array.getInt(bubbleOrientation, UserReactionAlignment.BY_USER.value)
             }
 
             fun build(): ViewReactionsViewStyle {
@@ -158,6 +168,7 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
                     smallTailBubbleOffset = smallTailBubbleOffset,
+                    messageOptionsUserReactionBubbleOrientation = messageOptionsUSerReactionBubbleOrientation,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
             }
         }

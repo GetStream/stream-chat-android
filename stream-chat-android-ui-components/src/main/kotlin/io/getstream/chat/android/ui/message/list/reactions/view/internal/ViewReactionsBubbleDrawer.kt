@@ -59,6 +59,10 @@ internal class ViewReactionsBubbleDrawer(
     private var bubbleWidth: Int = 0
     private var isMyMessage: Boolean = false
     private var isSingleReaction: Boolean = false
+    private var isOrientedTowardsStart: Boolean = false
+
+    // TODO delete alongside deprecated [drawReactionsBubble]
+    private var isOldImplementation: Boolean = false
 
     /**
      * Draws the bubble of reactions choosing the correct direction.
@@ -70,6 +74,22 @@ internal class ViewReactionsBubbleDrawer(
      * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
      * @param inverseBubbleStyle Used to invert the side of the bubble.
      */
+    @Deprecated(
+        message = "Deprecated in favor of new implementation which provides the ability to customise the orientation" +
+            "of the message bubble.",
+        ReplaceWith(
+            expression = "fun drawReactionsBubble(" +
+                "context: Context," +
+                "canvas: Canvas," +
+                "bubbleWidth: Int," +
+                "isMyMessage: Boolean," +
+                "isSingleReaction: Boolean," +
+                "isOrientedTowardsStart: Boolean," +
+                "inverseBubbleStyle: Boolean = false,)",
+            imports = ["io.getstream.chat.android.ui.message.list.reactions.view.internal"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     fun drawReactionsBubble(
         context: Context,
         canvas: Canvas,
@@ -78,9 +98,56 @@ internal class ViewReactionsBubbleDrawer(
         isSingleReaction: Boolean,
         inverseBubbleStyle: Boolean = false,
     ) {
+        isOldImplementation = true
+
         this.isMyMessage = isMyMessage
         this.bubbleWidth = bubbleWidth
         this.isSingleReaction = isSingleReaction
+
+        val isRtl = context.isRtlLayout
+
+        val path = Path().apply {
+            op(createBubbleRoundRectPath(), Path.Op.UNION)
+            op(createLargeTailBubblePath(isRtl), Path.Op.UNION)
+            op(createSmallTailBubblePath(isRtl), Path.Op.UNION)
+        }
+
+        val outlineStyle = if (inverseBubbleStyle) !isMyMessage else isMyMessage
+        if (outlineStyle) {
+            canvas.drawPath(path, bubblePaintMine)
+            canvas.drawPath(path, bubbleStrokePaintMine)
+        } else {
+            canvas.drawPath(path, bubblePaintTheirs)
+            if (shouldDrawTheirsBorder()) {
+                canvas.drawPath(path, bubbleStrokePaintTheirs)
+            }
+        }
+    }
+
+    /**
+     * Draws the bubble of reactions choosing the correct direction.
+     *
+     * @param context [Context].
+     * @param canvas [Canvas].
+     * @param bubbleWidth The width of the bubble. This should be at least bigger than all the columns of reactions.
+     * @param isMyMessage Whether this is the message of the current user or not.
+     * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
+     * @param isOrientedTowardsStart Whether the bubble is oriented towards start or not.
+     * @param inverseBubbleStyle Used to invert the side of the bubble.
+     */
+    fun drawReactionsBubble(
+        context: Context,
+        canvas: Canvas,
+        bubbleWidth: Int,
+        isMyMessage: Boolean,
+        isSingleReaction: Boolean,
+        isOrientedTowardsStart: Boolean,
+        inverseBubbleStyle: Boolean = false,
+    ) {
+        this.isMyMessage = isMyMessage
+        this.bubbleWidth = bubbleWidth
+        this.isSingleReaction = isSingleReaction
+        this.isOrientedTowardsStart = isOrientedTowardsStart
 
         val isRtl = context.isRtlLayout
 
@@ -167,6 +234,23 @@ internal class ViewReactionsBubbleDrawer(
     }
 
     private fun calculateBubbleCenterX(bubbleOffset: Float): Float {
+        return if (!isOrientedTowardsStart) {
+            if (isSingleReaction) {
+                bubbleWidth / 2 + bubbleOffset
+            } else {
+                bubbleWidth + bubbleOffset - MULTIPLE_REACTIONS_BASELINE_OFFSET
+            }
+        } else {
+            if (isSingleReaction) {
+                bubbleWidth / 2 - bubbleOffset
+            } else {
+                MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
+            }
+        }
+    }
+
+    // TODO delete alongside deprecated [drawReactionsBubble]
+    private fun oldCalculateBubbleCenterX(bubbleOffset: Float): Float {
         return if (isMyMessage) {
             if (isSingleReaction) {
                 bubbleWidth / 2 + bubbleOffset
@@ -189,7 +273,11 @@ internal class ViewReactionsBubbleDrawer(
      * @param bubbleOffset The offset to apply.
      */
     private fun positionBubble(isRtl: Boolean, bubbleOffset: Float): Float {
-        return calculateBubbleCenterX(bubbleOffset).let { offset ->
+        return if (isOldImplementation) {
+            oldCalculateBubbleCenterX(bubbleOffset)
+        } else {
+            calculateBubbleCenterX(bubbleOffset)
+        }.let { offset ->
             if (isRtl) {
                 bubbleWidth.toFloat() - offset
             } else {

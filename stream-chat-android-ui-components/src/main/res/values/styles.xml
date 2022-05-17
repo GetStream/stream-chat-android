@@ -246,6 +246,7 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
+        <item name="streamUiMessageListViewReactionsStyle">@style/StreamUi.ViewReactions</item>
     </style>
 
     <style name="StreamUi">
@@ -1040,4 +1041,9 @@
     <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
         <item name="streamUiShowActionButton">false</item>
     </style>
+
+    <style name="StreamUi.ViewReactions" parent="StreamUi">
+        <item name="streamUiMessageOptionsUserReactionBubbleOrientation">by_user</item>
+    </style>
+
 </resources>
