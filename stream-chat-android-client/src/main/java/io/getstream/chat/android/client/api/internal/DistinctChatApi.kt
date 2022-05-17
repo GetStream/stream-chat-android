@@ -31,11 +31,11 @@ import kotlin.coroutines.suspendCoroutine
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest as QueryChannelRequestDto
 
 /**
- * Prevents simultaneous requests of the same requests.
+ * Prevents simultaneous network calls of the same request.
  */
 @Suppress("UNCHECKED_CAST")
 internal class DistinctChatApi(
-    private val delegate: ChatApi,
+    internal val delegate: ChatApi,
 ) : ChatApi by delegate {
 
     private val distinctCalls = ConcurrentHashMap<Int, DistinctCall<out Any>>()

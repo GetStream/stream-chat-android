@@ -2191,6 +2191,7 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var distinctApiCalls: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -2347,6 +2348,14 @@ internal constructor(
             this.retryPolicy = retryPolicy
         }
 
+        /**
+         * Prevents simultaneous network calls of the same request by merging those into a single one.
+         * By default [distinctApiCalls] is disabled.
+         */
+        public fun distinctApiCalls(): Builder = apply {
+            this.distinctApiCalls = true
+        }
+
         private fun configureInitializer(chatClient: ChatClient) {
             chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
@@ -2387,6 +2396,7 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                distinctApiCalls = distinctApiCalls
             )
 
             if (ToggleService.isInitialized().not()) {
