@@ -23,6 +23,8 @@ import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 internal class UserStateService {
     private val logger = ChatLogger.get("UserStateService")
 
+
+
     fun onUserUpdated(user: User) {
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
@@ -54,18 +56,14 @@ internal class UserStateService {
         initialState(UserState.NotSet)
         state<UserState.NotSet> {
             onEvent<UserStateEvent.ConnectUser> { event -> UserState.UserSet(event.user) }
-            onEvent<UserStateEvent.ConnectAnonymous> { UserState.Anonymous.Pending }
+            onEvent<UserStateEvent.ConnectAnonymous> { UserState.AnonymousUserSet(null) }
         }
         state<UserState.UserSet> {
             onEvent<UserStateEvent.UserUpdated> { event -> UserState.UserSet(event.user) }
             onEvent<UserStateEvent.UnsetUser> { UserState.NotSet }
         }
-        state<UserState.Anonymous.Pending> {
-            onEvent<UserStateEvent.UserUpdated> { event -> UserState.Anonymous.AnonymousUserSet(event.user) }
-            onEvent<UserStateEvent.UnsetUser> { UserState.NotSet }
-        }
-        state<UserState.Anonymous.AnonymousUserSet> {
-            onEvent<UserStateEvent.UserUpdated> { event -> UserState.Anonymous.AnonymousUserSet(event.user) }
+        state<UserState.AnonymousUserSet> {
+            onEvent<UserStateEvent.UserUpdated> { event -> UserState.AnonymousUserSet(event.user) }
             onEvent<UserStateEvent.UnsetUser> { UserState.NotSet }
         }
     }

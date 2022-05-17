@@ -125,6 +125,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.socket.State
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
@@ -182,14 +183,6 @@ internal constructor(
     private val logger = ChatLogger.get("Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope)
-    private val lifecycleObserver = StreamLifecycleObserver(
-        object : LifecycleHandler {
-            override fun resume() = reconnectSocket()
-            override fun stopped() {
-                socket.releaseConnection()
-            }
-        }
-    )
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -752,13 +745,10 @@ internal constructor(
 
     public fun reconnectSocket() {
         when (socket.state) {
-            is ChatSocket.State.NetworkDisconnected,
-            is ChatSocket.State.DisconnectedPermanently,
-            is ChatSocket.State.DisconnectedTemporarily,
-            is ChatSocket.State.DisconnectedByRequest -> when (val userState =
+            is State.Disconnected -> when (val userState =
                 userStateService.state) {
                 is UserState.UserSet -> socket.connect(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                is UserState.AnonymousUserSet -> socket.connectAnonymously()
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -1942,7 +1932,7 @@ internal constructor(
     }
 
     public fun isSocketConnected(): Boolean {
-        return socket.state is ChatSocket.State.Connected
+        return socket.state is State.Connected
     }
 
     /**

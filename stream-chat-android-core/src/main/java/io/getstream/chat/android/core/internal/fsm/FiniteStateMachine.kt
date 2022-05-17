@@ -38,6 +38,7 @@ import kotlin.reflect.KClass
 public class FiniteStateMachine<S : Any, E : Any>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
+    private val enterListeners: MutableMap<KClass<out S>, List<(S, E) -> Unit>>,
     private val defaultEventHandler: (S, E) -> S,
 ) {
     private val mutex = Mutex()
@@ -65,9 +66,14 @@ public class FiniteStateMachine<S : Any, E : Any>(
     public fun sendEvent(event: E) {
         runBlocking {
             mutex.withLock {
-                val currentState = _state
-                val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
-                _state = handler(currentState, event)
+                val oldState = _state
+                val handler = stateFunctions[oldState::class]?.get(event::class) ?: defaultEventHandler
+                _state = handler(oldState, event)
+                if (_state != oldState) {
+                    with(_state) {
+                        notifyOnEnter(event)
+                    }
+                }
             }
         }
     }
@@ -90,4 +96,10 @@ public class FiniteStateMachine<S : Any, E : Any>(
             return FSMBuilder<S, E>().apply(builder).build()
         }
     }
+
+    private fun S.notifyOnEnter(event: E) {
+        enterListeners[this::class]?.forEach { it(this, event) }
+    }
 }
+
+

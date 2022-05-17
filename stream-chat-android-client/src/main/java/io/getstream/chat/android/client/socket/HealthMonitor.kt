@@ -80,6 +80,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     fun onDisconnected() {
         disconnected = true
         resetHealthMonitor()
+        delayHandler.postDelayed(monitor, MONITOR_START_DELAY)
     }
 
     private fun resetHealthMonitor() {

@@ -57,7 +57,7 @@ internal class SocketFactory(
 
         logger.logI("new web socket: $url")
 
-        return OkHttpWebSocket(SocketHolder(), eventsObserver, parser)
+        return OkHttpWebSocket(eventsObserver, parser)
     }
 
     @Suppress("TooGenericExceptionCaught")

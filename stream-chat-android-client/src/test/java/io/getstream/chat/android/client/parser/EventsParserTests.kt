@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
-import io.getstream.chat.android.client.socket.EventsParser
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import okhttp3.Response
 import okhttp3.WebSocket

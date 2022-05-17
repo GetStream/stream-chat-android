@@ -6,7 +6,7 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import io.getstream.chat.android.client.socket.ChatSocket.Event.WebSocket as WebSocketEvent
+import io.getstream.chat.android.client.socket.Event.WebSocket as WebSocketEvent
 
 internal class WebSocketEventObserver : WebSocketListener() {
     private val _eventsFlow = MutableSharedFlow<WebSocketEvent>(extraBufferCapacity = 1)

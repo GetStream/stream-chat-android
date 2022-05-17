@@ -76,7 +76,7 @@ internal class ChatSocketTest {
 
         chatSocket.connect(randomUser())
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo State.Connecting
     }
 
     @Test
@@ -88,7 +88,7 @@ internal class ChatSocketTest {
 
         chatSocket.connect(randomUser())
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo State.Connecting
     }
 
     @Test
@@ -97,7 +97,7 @@ internal class ChatSocketTest {
 
         chatSocket.connect(randomUser())
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
+        chatSocket.state shouldBeEqualTo State.NetworkDisconnected
     }
 
     @Test
@@ -106,7 +106,7 @@ internal class ChatSocketTest {
 
         chatSocket.connectAnonymously()
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo State.Connecting
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class ChatSocketTest {
 
         chatSocket.connectAnonymously()
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo State.Connecting
     }
 
     @Test
@@ -127,7 +127,7 @@ internal class ChatSocketTest {
 
         chatSocket.connectAnonymously()
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
+        chatSocket.state shouldBeEqualTo State.NetworkDisconnected
     }
 
     @Test
@@ -141,7 +141,7 @@ internal class ChatSocketTest {
         )
 
         chatSocket.connectAnonymously()
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false
         chatSocket.onSocketError(networkError)

@@ -5,35 +5,43 @@ import io.getstream.chat.android.client.parser.ChatParser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import okhttp3.WebSocket
+import okio.ByteString
 
+/**
+ * A wrapper around [WebSocket] which allows us to observe the events
+ * and also handles some of the events before they are propagated to downstream.
+ */
 internal class OkHttpWebSocket constructor(
-    private val socketHolder: SocketHolder,
-    private val webSocketEventObserver: WebSocketEventObserver,
+    private val eventsObserver: WebSocketEventObserver,
     private val parser: ChatParser,
 ) {
-    fun open(): Flow<ChatSocket.Event.WebSocket> {
-        return webSocketEventObserver.eventsFlow.onEach(::handleWebSocketEvent)
+    private var webSocket: WebSocket? = null
+
+    fun open(): Flow<Event.WebSocket> {
+        return eventsObserver.eventsFlow.onEach(::handleWebSocketEvent)
     }
 
-    fun send(event: ChatEvent): Boolean = socketHolder.send(parser.toJson(event))
+    fun send(event: ChatEvent): Boolean = webSocket?.send(parser.toJson(event)) ?: false
+
+    fun send(bytes: ByteString) = webSocket?.send(bytes) ?: false
 
     fun close(shutdownReason: ShutdownReason): Boolean {
         val (code, reasonText) = shutdownReason
-        return socketHolder.close(code, reasonText)
+        return webSocket?.close(code, reasonText) ?: false
     }
 
     private fun handleConnectionShutdown() {
-        socketHolder.shutdown()
-        webSocketEventObserver.terminate()
+        webSocket = null
+        eventsObserver.terminate()
     }
 
-    fun cancel() = socketHolder.cancel()
+    fun cancel() = webSocket?.cancel() ?: Unit
 
-    private fun handleWebSocketEvent(event: ChatSocket.Event.WebSocket) {
+    private fun handleWebSocketEvent(event: Event.WebSocket) {
         when (event) {
-            is ChatSocket.Event.WebSocket.OnConnectionOpened<*> -> socketHolder.initiate(event.webSocket as WebSocket)
-            is ChatSocket.Event.WebSocket.OnConnectionClosing -> close(ShutdownReason.GRACEFUL)
-            is ChatSocket.Event.WebSocket.OnConnectionClosed, is ChatSocket.Event.WebSocket.OnConnectionFailed -> handleConnectionShutdown()
+            is Event.WebSocket.OnConnectionOpened<*> -> webSocket = event.webSocket as WebSocket
+            is Event.WebSocket.OnConnectionClosing -> close(ShutdownReason.GRACEFUL)
+            is Event.WebSocket.OnConnectionClosed, is Event.WebSocket.OnConnectionFailed -> handleConnectionShutdown()
             else -> Unit
         }
     }

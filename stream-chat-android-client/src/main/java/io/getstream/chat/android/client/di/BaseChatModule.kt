@@ -211,8 +211,8 @@ internal open class BaseChatModule(
             tokenManager,
             SocketFactory(parser, tokenManager),
             NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
-            parser,
             networkScope,
+            parser,
         )
     }
 

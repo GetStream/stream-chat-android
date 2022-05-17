@@ -19,18 +19,28 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import io.getstream.chat.android.client.clientstate.DisconnectCause
+import io.getstream.chat.android.client.socket.Event
+import io.getstream.chat.android.client.socket.LifecycleObserver
+import io.getstream.chat.android.client.socket.ShutdownReason
+import io.getstream.chat.android.client.socket.Timed
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : DefaultLifecycleObserver {
+internal class StreamLifecycleObserver : DefaultLifecycleObserver, LifecycleObserver {
     private var recurringResumeEvent = false
 
     @Volatile
     private var isObserving = false
 
-    fun observe() {
+    private var _lifecycleEvents = MutableSharedFlow<Timed<Event.Lifecycle>>(extraBufferCapacity = 1)
+    override val lifecycleEvents = _lifecycleEvents.asSharedFlow()
+
+    override fun observe() {
         if (isObserving.not()) {
             isObserving = true
             @OptIn(DelicateCoroutinesApi::class)
@@ -42,7 +52,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
         }
     }
 
-    fun dispose() {
+    override fun dispose() {
         @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(DispatcherProvider.Main) {
             ProcessLifecycleOwner.get()
@@ -56,17 +66,14 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
     override fun onResume(owner: LifecycleOwner) {
         // ignore event when we just started observing the lifecycle
         if (recurringResumeEvent) {
-            handler.resume()
+            _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
         }
         recurringResumeEvent = true
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        handler.stopped()
+        _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Stopped.WithReason(shutdownReason = ShutdownReason(1000,
+            "App is paused"),
+            cause = DisconnectCause.ConnectionReleased), System.currentTimeMillis()))
     }
-}
-
-internal interface LifecycleHandler {
-    fun resume()
-    fun stopped()
 }
