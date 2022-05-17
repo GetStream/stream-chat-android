@@ -61,6 +61,10 @@ public data class MessagesState(
      */
     public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
         val sizeDiff = parentSize.height - focusedMessageSize.height
-        _focusedMessageOffset.value = -sizeDiff / 2
+        if (sizeDiff > 0) {
+            _focusedMessageOffset.value = -sizeDiff / 2
+        } else {
+            _focusedMessageOffset.value = -sizeDiff
+        }
     }
 }
