@@ -28,34 +28,61 @@ import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
+import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListLoadingMoreViewBinding
 import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
-import io.getstream.chat.android.ui.pinned.list.internal.PinnedMessageListAdapter.MessagePreviewViewHolder
 
 internal class PinnedMessageListAdapter(
-    private val globalState: GlobalState = ChatClient.instance().globalState
-) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+    private val globalState: GlobalState = ChatClient.instance().globalState,
+) : ListAdapter<Message, RecyclerView.ViewHolder>(MessageDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
 
     var messagePreviewStyle: MessagePreviewStyle? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamUiItemMentionListBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { binding ->
-                messagePreviewStyle?.let(binding.root::styleView)
-                MessagePreviewViewHolder(binding)
-            }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == ITEM_MESSAGE) {
+            StreamUiItemMentionListBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let { binding ->
+                    messagePreviewStyle?.let(binding.root::styleView)
+                    MessagePreviewViewHolder(binding)
+                }
+        } else {
+            StreamUiPinnedMessageListLoadingMoreViewBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let { binding ->
+                    PinnedMessageLoadingMoreView(binding)
+                }
+        }
     }
 
-    override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is MessagePreviewViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (getItem(position).id.isNotEmpty()) {
+            ITEM_MESSAGE
+        } else {
+            ITEM_LOADING_MORE
+        }
     }
 
     fun setPinnedMessageSelectedListener(pinnedMessageSelectedListener: PinnedMessageSelectedListener?) {
         this.pinnedMessageSelectedListener = pinnedMessageSelectedListener
     }
+
+    companion object {
+        private const val ITEM_MESSAGE = 0
+        private const val ITEM_LOADING_MORE = 1
+    }
+
+    inner class PinnedMessageLoadingMoreView(
+        private val binding: StreamUiPinnedMessageListLoadingMoreViewBinding,
+    ) : RecyclerView.ViewHolder(binding.root)
 
     inner class MessagePreviewViewHolder(
         private val binding: StreamUiItemMentionListBinding,
