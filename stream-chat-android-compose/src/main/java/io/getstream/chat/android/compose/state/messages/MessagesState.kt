@@ -63,12 +63,4 @@ public data class MessagesState(
         val sizeDiff = parentSize.height - focusedMessageSize.height
         _focusedMessageOffset.value = -sizeDiff / 2
     }
-
-    /**
-     * Clears the message offset once the message has been scrolled to center to prevent any jank
-     * while scrolling the list.
-     */
-    public fun clearMessagesOffset() {
-        _focusedMessageOffset.value = null
-    }
 }

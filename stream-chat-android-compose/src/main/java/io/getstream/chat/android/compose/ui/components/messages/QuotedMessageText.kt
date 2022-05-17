@@ -48,23 +48,21 @@ public fun QuotedMessageText(
     val quotedMessageText = when {
         message.text.isNotBlank() -> message.text
 
-        attachment?.name != null -> attachment.name
+        attachment != null -> when {
+            attachment.name != null -> attachment.name
 
-        attachment?.text != null -> attachment.text
+            attachment.text != null -> attachment.text
 
-        attachment != null -> {
-            when {
-                attachment.type == ModelType.attach_image -> {
-                    stringResource(R.string.stream_compose_quoted_message_image_tag)
-                }
-                attachment.type == ModelType.attach_giphy -> {
-                    stringResource(R.string.stream_compose_quoted_message_giphy_tag)
-                }
-                attachment.isFile() -> {
-                    stringResource(R.string.stream_compose_quoted_message_file_tag)
-                }
-                else -> message.text
+            attachment.type == ModelType.attach_image -> {
+                stringResource(R.string.stream_compose_quoted_message_image_tag)
             }
+            attachment.type == ModelType.attach_giphy -> {
+                stringResource(R.string.stream_compose_quoted_message_giphy_tag)
+            }
+            attachment.isFile() -> {
+                stringResource(R.string.stream_compose_quoted_message_file_tag)
+            }
+            else -> message.text
         }
 
         else -> message.text
