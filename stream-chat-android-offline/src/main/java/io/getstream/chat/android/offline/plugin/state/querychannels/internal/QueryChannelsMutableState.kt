@@ -47,12 +47,12 @@ internal class QueryChannelsMutableState(
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)
-    private val _sortedChannels =
+    private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap.values.updateUsers(userMap)
         }
             .map { it.sortedWith(sort.comparator) }
-            .stateIn(scope, SharingStarted.Eagerly, emptyList())
+            .stateIn(scope, SharingStarted.Eagerly, null)
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -73,11 +73,11 @@ internal class QueryChannelsMutableState(
     override val loading: StateFlow<Boolean> = _loading
     override val loadingMore: StateFlow<Boolean> = _loadingMore
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels
-    override val channels: StateFlow<List<Channel>> = _sortedChannels
+    override val channels: StateFlow<List<Channel>?> = _sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
-        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
+        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel>? ->
             when {
-                loading -> ChannelsStateData.Loading
+                loading || channels == null -> ChannelsStateData.Loading
                 channels.isEmpty() -> ChannelsStateData.OfflineNoResults
                 else -> ChannelsStateData.Result(channels)
             }

@@ -78,7 +78,11 @@ internal class QueryChannelsLogic(
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
-        val loading = if (mutableState.channels.value.isEmpty()) mutableState._loading else mutableState._loadingMore
+        val loading = if (mutableState.channels.value.isNullOrEmpty()) {
+            mutableState._loading
+        } else {
+            mutableState._loadingMore
+        }
 
         if (loading.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")

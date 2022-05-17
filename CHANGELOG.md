@@ -25,6 +25,9 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
+  The change was introduced in order to distuinguish between initial state when channels are not loaded yet
+  and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
 
 ### ✅ Added
 
