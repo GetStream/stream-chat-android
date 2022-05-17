@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.snapshot.compose
+package io.getstream.chat.android.uitests.snapshot.compose.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
@@ -36,11 +36,10 @@ class ReactionOptionsTest : ScreenshotTest {
                 ReactionOptions(
                     ownReactions = emptyList(),
                     onReactionOptionSelected = {},
-                    onShowMoreReactionsSelected = { }
+                    onShowMoreReactionsSelected = {},
                 )
             }
         }
-
         compareScreenshot(composeRule.onRoot())
     }
 }

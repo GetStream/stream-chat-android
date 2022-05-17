@@ -58,7 +58,6 @@ dependencies {
     api project(':stream-chat-android-client')
 
     api Dependencies.firebaseMessaging
-    implementation Dependencies.googlePlayServicesBase
 
     // Tests
     testImplementation project(':stream-chat-android-test')

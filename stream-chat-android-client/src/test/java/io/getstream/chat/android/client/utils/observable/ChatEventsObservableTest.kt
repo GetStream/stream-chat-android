@@ -24,13 +24,18 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.test.TestCoroutineRule
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import java.util.Date
 
 internal class ChatEventsObservableTest {
+
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     private lateinit var socket: FakeSocket
     private lateinit var observable: ChatEventsObservable
@@ -39,7 +44,7 @@ internal class ChatEventsObservableTest {
     @Before
     fun before() {
         socket = FakeSocket()
-        observable = ChatEventsObservable(socket, mock())
+        observable = ChatEventsObservable(socket, mock(), testCoroutines.scope)
         result = mutableListOf()
     }
 

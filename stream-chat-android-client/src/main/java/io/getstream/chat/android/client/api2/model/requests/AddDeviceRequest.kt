@@ -22,4 +22,5 @@ import com.squareup.moshi.JsonClass
 internal data class AddDeviceRequest(
     val id: String,
     val push_provider: String,
+    val provider_name: String?,
 )

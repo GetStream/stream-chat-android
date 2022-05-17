@@ -131,3 +131,17 @@ ChatClient.dismissChannelNotifications("messaging", "general")
 ```
 
 Notifications are also automatically dismissed when the user logs out from the SDK.
+
+### Multi-Bundle
+
+In some cases you could be interested on configure different PushProvider by the same Provider (For example, 2 different Firebase project) with different configuration.
+To achieve it you need to setup Multi-Bundle configuration on the `Dashboard` giving a name to each provider. Then, when a new device is registered, you need to add the desired `providerName`.
+```kotlin {4}
+Device(
+    token = "token-generated-by-provider",
+    pushProvider = yourPushProvider,
+    providerName = "providerName",
+)
+```
+
+If you are using any of the artifacts integration we support, you can configure it by an extra attribute on the constructor of the `PushProviderGenerator` class implementation.

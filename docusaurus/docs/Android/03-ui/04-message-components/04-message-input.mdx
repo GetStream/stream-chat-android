@@ -306,10 +306,10 @@ You can also use your own implementation of `StreamTransliterator` to add suppor
 
 ## Attachment Size Limits
 
-There is a limit for the size of attachments in this View. The default value is 20MB, and selecting a file larger than that limit will notify the user:
+There is a limit for the size of attachments you can send. The default value is 100MB and selecting a file larger than that limit will notify the user:
 
 ![Big file feedback](../../assets/big_attachment.png)
 
-You can use `MessageInputViewStyle.attachmentMaxFileSize` to change the maximum allowed size of attachments. However, there's a 20MB limit in Stream Chat's CDN as well. To send larger attachments, you can [use your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
+You can use `MessageInputViewStyle.attachmentMaxFileSize` to change the maximum allowed size of attachments. However, the same default limit applies to Stream Chat's CDN as well. To send larger attachments, you can [use your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
 You can listen for large attachments being added to the list of attachments (for example, to present a custom message to the user in this case) with `MessageInputView.listenForBigAttachments`. 

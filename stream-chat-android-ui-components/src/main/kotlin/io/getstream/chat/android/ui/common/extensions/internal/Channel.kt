@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
@@ -61,7 +61,7 @@ internal fun Channel.getLastMessagePreviewText(
             val sender = message.getSenderDisplayName(context, isDirectMessaging)
 
             // bold mentions of the current user
-            val currentUserMention = ChatClient.instance().globalState.user.value?.asMention(context)
+            val currentUserMention = ChatUI.currentUserProvider.getCurrentUser()?.asMention(context)
             val previewText: SpannableString =
                 message.text.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
 

@@ -37,7 +37,7 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         try {
-            FirebaseMessagingDelegate.registerFirebaseToken(token)
+            FirebaseMessagingDelegate.registerFirebaseToken(token, null)
         } catch (exception: IllegalStateException) {
             Log.e(TAG, "Error while registering Firebase Token", exception)
         }

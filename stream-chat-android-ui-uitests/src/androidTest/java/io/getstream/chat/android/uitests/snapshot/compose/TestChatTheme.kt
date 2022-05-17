@@ -14,31 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.util
+package io.getstream.chat.android.uitests.snapshot.compose
 
-import io.getstream.chat.android.client.models.User
+import androidx.compose.runtime.Composable
+import androidx.test.platform.app.InstrumentationRegistry
+import coil.ImageLoader
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.uitests.util.FakeImageLoader
 
 /**
- * Provides sample users for UI tests.
+ * A wrapper for [ChatTheme] that provides a fake Coil [ImageLoader].
  */
-object TestUsers {
+@Composable
+fun TestChatTheme(content: @Composable () -> Unit) {
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    val user1: User = User().apply {
-        id = "jc1"
-        name = "Jc Miñarro"
-        image = FakeImageLoader.AVATAR_JC
-        online = true
-    }
-
-    val user2: User = User().apply {
-        id = "amit"
-        name = "Amit Kumar"
-        image = FakeImageLoader.AVATAR_AMIT
-    }
-
-    val user3: User = User().apply {
-        id = "filip"
-        name = "Filip Babić"
-        image = FakeImageLoader.AVATAR_FILIP
-    }
+    ChatTheme(
+        imageLoaderFactory = { FakeImageLoader(context) },
+        content = content
+    )
 }

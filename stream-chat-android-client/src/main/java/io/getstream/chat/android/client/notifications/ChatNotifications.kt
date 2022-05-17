@@ -56,7 +56,10 @@ internal class ChatNotificationsImpl constructor(
 
     override fun onSetUser() {
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
-            ?.asyncGenerateDevice(::setDevice)
+            ?.let {
+                it.onPushDeviceGeneratorSelected()
+                it.asyncGenerateDevice(::setDevice)
+            }
     }
 
     override fun setDevice(device: Device) {
