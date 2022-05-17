@@ -175,7 +175,6 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 	public fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;I)V
 	public synthetic fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun calculateMessageOffset-TemP2vQ (JJ)V
-	public final fun clearMessagesOffset ()V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
