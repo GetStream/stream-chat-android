@@ -16,8 +16,16 @@
 
 package io.getstream.chat.android.client.api2.optimisation.hash
 
-internal data class GetRepliesHash(
-    val messageId: String,
-    val firstId: String?,
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Member
+
+internal data class QueryMembersHash(
+    val channelType: String,
+    val channelId: String,
+    val offset: Int,
     val limit: Int,
+    val filter: FilterObject,
+    val sort: QuerySort<Member>,
+    val members: List<Member>,
 )
