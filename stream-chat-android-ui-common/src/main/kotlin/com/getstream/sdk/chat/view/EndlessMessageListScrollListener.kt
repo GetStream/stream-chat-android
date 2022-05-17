@@ -16,8 +16,11 @@
 
 package com.getstream.sdk.chat.view
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.MessageListItem
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -25,16 +28,19 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * @param loadMoreThreshold The number of items or positions ahead of the end of the list where we can trigger the
  * pagination.
- * @param loadMoreListener The handler which is called when pagination should be triggered.
+ * @param loadMoreAtTopListener The handler which is called when pagination should be triggered.
  */
 public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
-    private inline val loadMoreListener: () -> Unit,
+    private inline val loadMoreAtTopListener: () -> Unit,
+    private inline val loadMoreAtBottomListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
     init {
         require(loadMoreThreshold >= 0) { "Load more threshold must not be negative" }
     }
+
+    internal var shouldLoadMessagesAtBottom: Boolean = false
 
     /**
      * Helper flag which marks the state if we should disable pagination.
@@ -59,20 +65,39 @@ public class EndlessMessageListScrollListener(
             throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
         }
 
-        checkScrollUp(dy, layoutManager, recyclerView)
+        handleScroll(dy, layoutManager, recyclerView)
     }
 
     /**
      * Checks if the scroll is going up and if the threshold number of items has been shown. If the scroll is downwards,
      * then it stops the check.
      */
-    private fun checkScrollUp(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        if (dy >= 0) {
-            // Scrolling downwards
-            return
-        }
+    private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        when {
+            dy >= 0 -> { handleScrollDown(layoutManager, recyclerView) }
 
-        handleScrollUp(layoutManager, recyclerView)
+            dy < 0 -> { handleScrollUp(layoutManager, recyclerView) }
+        }
+    }
+
+    private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+
+        Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition")
+
+        if (lastVisiblePosition >= loadMoreThreshold && shouldLoadMessagesAtBottom) {
+            recyclerView.post {
+                if (paginationEnabled) {
+                    loadMoreAtBottomListener()
+                }
+            }
+        }
+    }
+
+    private fun parseAdapter(recyclerView: RecyclerView): ListAdapter<MessageListItem, *> {
+        return requireNotNull(recyclerView.adapter as? ListAdapter<MessageListItem, *>) {
+            "EndlessMessageListScrollListener must be used with ListAdapter<MessageListItem, *>"
+        }
     }
 
     /**
@@ -81,11 +106,12 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScrollUp(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+
         if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {
-                    loadMoreListener()
+                    loadMoreAtTopListener()
                 }
             }
         }
