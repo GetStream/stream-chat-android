@@ -40,7 +40,7 @@ import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
-import com.getstream.sdk.chat.view.EndlessScrollListener
+import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
@@ -304,7 +304,7 @@ public class MessageListView : ConstraintLayout {
     internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
         MutableLiveData(null)
 
-    private lateinit var loadMoreListener: EndlessScrollListener
+    private lateinit var loadMoreListener: EndlessMessageListScrollListener
 
     private lateinit var channel: Channel
 
@@ -607,7 +607,7 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
                     endRegionReachedHandler.onEndRegionReached()
                 }
             }

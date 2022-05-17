@@ -294,9 +294,9 @@ public fun ChatClient.loadMessageById(
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
-                    upsertMessages(listOf(message))
                     loadOlderMessages(newerMessagesOffset, messageId)
                     loadNewerMessages(messageId, olderMessagesOffset)
+                    upsertMessages(listOf(message))
                 }
                 result
             } else {

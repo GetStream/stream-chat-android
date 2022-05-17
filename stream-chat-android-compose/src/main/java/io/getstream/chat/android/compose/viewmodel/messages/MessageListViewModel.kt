@@ -71,6 +71,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
@@ -240,6 +241,11 @@ public class MessageListViewModel(
     private var lastSeenThreadMessage: Message? by mutableStateOf(null)
 
     /**
+     * Represents the message we wish to scroll to.
+     */
+    private var scrollToMessage: Message? = null
+
+    /**
      * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
      */
     private val logger = ChatLogger.get("MessageListViewModel")
@@ -308,6 +314,13 @@ public class MessageListViewModel(
                         } else {
                             newState
                         }
+
+                        messagesState.messageItems.firstOrNull {
+                            it is MessageItemState && it.message.id == scrollToMessage?.id
+                        }?.let {
+                            focusMessage((it as MessageItemState).message.id)
+                        }
+
                         lastLoadedMessage = newLastMessage
                         channelState.toChannel().let { channel ->
                             ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
@@ -508,6 +521,18 @@ public class MessageListViewModel(
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
             logger.logW("Thread state must be not null for offline plugin thread load more!")
         }
+    }
+
+    /**
+     * Loads the selected message we wish to scroll to when the message can't be found in the current list.
+     *
+     * @param message The selected message we wish to scroll to.
+     */
+    private fun loadMessage(message: Message) {
+        val cid = channelState.value?.cid
+        if (cid == null || chatClient.globalState.isOffline()) return
+
+        chatClient.loadMessageById(cid, message.id, DefaultMessageLimit, DefaultMessageLimit).enqueue()
     }
 
     /**
@@ -960,6 +985,10 @@ public class MessageListViewModel(
             }
         }
 
+        if (scrollToMessage?.id == messageId) {
+            scrollToMessage = null
+        }
+
         updateMessages(messages)
     }
 
@@ -1001,6 +1030,24 @@ public class MessageListViewModel(
             is ShuffleGiphy -> chatClient.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
         }.exhaustive.enqueue()
+    }
+
+    /**
+     * Scrolls to message if in list otherwise get the message from backend.
+     *
+     * @param message The message we wish to scroll to.
+     */
+    public fun scrollToSelectedMessage(message: Message) {
+        val isMessageInList = currentMessagesState.messageItems.firstOrNull {
+            it is MessageItemState && it.message.id == message.id
+        } != null
+
+        if (isMessageInList) {
+            focusMessage(message.id)
+        } else {
+            scrollToMessage = message
+            loadMessage(message = message)
+        }
     }
 
     internal companion object {
