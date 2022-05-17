@@ -7,7 +7,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  *
  * @param value The int value of the enum used for xml attributes.
  */
-public enum class UserReactionAlignment(public val value: Int) {
+public enum class MessageOptionsUserReactionAlignment(public val value: Int) {
     /**
      * Aligns the reaction to the start of the user avatar.
      */
@@ -25,13 +25,14 @@ public enum class UserReactionAlignment(public val value: Int) {
     BY_USER(2),
 
     /**
-     *
+     * Aligns the reaction to the start of user avatar if the reaction is from the current user otherwise aligns it
+     * to the end of the avatar.
      */
     BY_USER_INVERTED(3)
 }
 
-public fun Int.getUserReactionAlignment(): UserReactionAlignment {
-    return UserReactionAlignment.values().firstOrNull { it.value == this } ?: error("No such alignment")
+public fun Int.getUserReactionAlignment(): MessageOptionsUserReactionAlignment {
+    return MessageOptionsUserReactionAlignment.values().firstOrNull { it.value == this } ?: error("No such alignment")
 }
 
 /**
@@ -42,8 +43,8 @@ public fun Int.getUserReactionAlignment(): UserReactionAlignment {
  * @return If the reaction is aligned to the start or not.
  */
 @InternalStreamChatApi
-public fun UserReactionAlignment.isStartAlignment(isMine: Boolean): Boolean {
-    return this == UserReactionAlignment.START
-        || (!isMine && this == UserReactionAlignment.BY_USER)
-        || (isMine && this == UserReactionAlignment.BY_USER_INVERTED)
+public fun MessageOptionsUserReactionAlignment.isStartAlignment(isMine: Boolean): Boolean {
+    return this == MessageOptionsUserReactionAlignment.START
+        || (!isMine && this == MessageOptionsUserReactionAlignment.BY_USER)
+        || (isMine && this == MessageOptionsUserReactionAlignment.BY_USER_INVERTED)
 }

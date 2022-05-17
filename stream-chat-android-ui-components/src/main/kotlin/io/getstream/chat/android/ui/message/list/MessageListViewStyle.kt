@@ -22,7 +22,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
-import io.getstream.chat.android.common.UserReactionAlignment
+import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -79,7 +79,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property loadingView Layout for the loading view. Default value is [R.layout.stream_ui_default_loading_view].
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
- * @property userReactionBubbleAlignment Alignment of the message options user reaction bubble. Default value is [UserReactionAlignment.BY_USER].
+ * @property userReactionBubbleAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -398,7 +398,7 @@ public data class MessageListViewStyle(
 
                 val userReactionBubbleAlignment = attributes.getInt(
                     R.styleable.MessageListView_streamUiMessageOptionsUserReactionBubbleAlignment,
-                    UserReactionAlignment.BY_USER.value
+                    MessageOptionsUserReactionAlignment.BY_USER.value
                 )
 
                 return MessageListViewStyle(
