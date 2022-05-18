@@ -360,11 +360,13 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 }
 
 public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
-	public fun <init> (ILkotlin/jvm/functions/Function0;)V
+	public fun <init> (ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
 	public final fun enablePagination ()V
+	public final fun getShouldFetchBottomMessages ()Z
 	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
 	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
+	public final fun setShouldFetchBottomMessages (Z)V
 }
 
 public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
@@ -440,8 +442,10 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
+	public final fun getMessageAtGapTopLimit ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
+	public final fun getShouldFetchBottomMessages ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
@@ -545,6 +549,10 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$DeleteMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {

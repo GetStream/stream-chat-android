@@ -184,6 +184,7 @@ internal class ChannelLogic(
      * NOTE: This method must be always called before messageIdsSet is called
      */
     private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel) {
+        logger.logD("handling message limits")
         val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
 
         if (request.isFilteringNewerMessages()) {
@@ -197,20 +198,22 @@ internal class ChannelLogic(
         mutableState._endOfNewerMessages.value = !moreMessagesAvailable
 
         when {
-            /* The messages list was not linear but the end of messages of an overlap was found.
+            /* The messages list has gaps but the end of messages of an overlap was found.
              * The message list is linear again. */
-            !mutableState.hasGapsInMessageList.value && (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
-                logger.logD("Has gaps in messages!!! -------------------")
+            mutableState.hasGapsInMessageList.value && (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
+                mutableState._messageAtGapTopLimit.value = null
+                mutableState._hasGapsInMessageList.value = false
+            }
+
+            /* The messages list had no gaps but newer messages were loaded. As it didn't reach the end of the
+             * messages nor has an overlap between messages, the list is not linear anymore. */
+            !mutableState.hasGapsInMessageList.value && moreMessagesAvailable && !messageList.hasMessageOverlap() -> {
                 mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
                 mutableState._hasGapsInMessageList.value = true
             }
 
-            /* The messages list was linear but newer messages were loaded. As it didn't reach the end of the
-             * messages nor has an overlap between messages, the list is not linear anymore. */
-            mutableState.hasGapsInMessageList.value && moreMessagesAvailable && !messageList.hasMessageOverlap() -> {
-                logger.logD("Has NO gaps in messages!!! -------------------")
-                mutableState._messageAtGapTopLimit.value = null
-                mutableState._hasGapsInMessageList.value = false
+            mutableState.hasGapsInMessageList.value -> {
+                mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
             }
         }
     }
@@ -267,9 +270,7 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        //Todo: If new messages were loaded, then the state stopped being linear
-        logger.logD("Loding newer messages!!!!")
-        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId), )
+        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId),)
     }
 
     /**
@@ -297,7 +298,6 @@ internal class ChannelLogic(
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
                 .await()
                 .also { result ->
-                    //Aqui eu posso atualizar as mensages do set de IDs se o resultado for positivo e ver se houve um overlap.
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }
 

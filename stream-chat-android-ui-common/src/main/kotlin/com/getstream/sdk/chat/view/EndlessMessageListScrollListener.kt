@@ -31,6 +31,7 @@ public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
     private inline val loadMoreAtBottomListener: () -> Unit,
+    private inline val firstMessageAfterGapPosition: () -> Int?
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -71,7 +72,7 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 && shouldFetchBottomMessages  -> {
+            dy >= 0 && shouldFetchBottomMessages -> {
                 handleScrollDown(layoutManager, recyclerView)
             }
 
@@ -84,7 +85,7 @@ public class EndlessMessageListScrollListener(
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
-        if (lastVisiblePosition >= loadMoreThreshold) {
+        if (lastVisiblePosition >= loadMoreThreshold + (firstMessageAfterGapPosition() ?: 0)) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {

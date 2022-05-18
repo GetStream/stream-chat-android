@@ -232,7 +232,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
     }
 }
 
-public fun ChatClient.loadNewerMessages(channelCid: String, baseMessageId: String,  messageLimit: Int): Call<Channel> {
+public fun ChatClient.loadNewerMessages(channelCid: String, baseMessageId: String, messageLimit: Int): Call<Channel> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Channel>(channelCid)
 

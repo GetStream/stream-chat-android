@@ -1627,6 +1627,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
+	public final fun firstMessageAfterGap (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
 	public final fun hideEmptyStateView ()V
@@ -1643,6 +1644,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setBlockUserEnabled (Z)V
+	public final fun setBottomEndRegionReachedHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
@@ -1700,6 +1702,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
 	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
+	public final fun shouldFetchBottomMessages (Z)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 	public final fun showLoadingView ()V
@@ -1715,6 +1718,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler {
 	public abstract fun onAttachmentDownload (Lkotlin/jvm/functions/Function0;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler {
+	public abstract fun onBottomEndRegionReached ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler {

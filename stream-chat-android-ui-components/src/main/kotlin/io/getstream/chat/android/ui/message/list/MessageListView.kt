@@ -145,6 +145,8 @@ public class MessageListView : ConstraintLayout {
 
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
+    private var firstMessageAfterGapPosition: Int? = null
+
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var loadingView: View
     private lateinit var loadingViewContainer: ViewGroup
@@ -616,7 +618,8 @@ public class MessageListView : ConstraintLayout {
                 loadMoreListener = EndlessMessageListScrollListener(
                     loadMoreThreshold,
                     { endRegionReachedHandler.onEndRegionReached() },
-                    { bottomEndRegionReachedHandler.onBottomEndRegionReached() }
+                    { bottomEndRegionReachedHandler.onBottomEndRegionReached() },
+                    { firstMessageAfterGapPosition }
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
                 }
@@ -635,6 +638,14 @@ public class MessageListView : ConstraintLayout {
 
     public fun shouldFetchBottomMessages(shouldFetch: Boolean) {
         scrollListener.shouldFetchBottomMessages = shouldFetch
+    }
+
+    public fun firstMessageAfterGap(message: Message) {
+        firstMessageAfterGapPosition = adapter.currentList.asSequence()
+            .filterIsInstance<MessageListItem.MessageItem>()
+            .indexOfFirst { messageItem ->
+                messageItem.message.id == message.id
+            }
     }
 
     /**

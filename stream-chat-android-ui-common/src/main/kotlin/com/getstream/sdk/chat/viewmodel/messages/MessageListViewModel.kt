@@ -693,7 +693,7 @@ public class MessageListViewModel(
         }
     }
 
-    //I need to add the find the first
+    // I need to add the find the first
     private fun onBottomEndRegionReached() {
         val baseMessageId = messageAtGapTopLimit.value?.id
 
