@@ -69,6 +69,7 @@ public final class io/getstream/chat/android/client/utils/ResultKt {
 	public static final synthetic fun recover (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun recoverSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun toResult (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
+	public static final fun toResultError (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/utils/Result;
 }
 
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {
