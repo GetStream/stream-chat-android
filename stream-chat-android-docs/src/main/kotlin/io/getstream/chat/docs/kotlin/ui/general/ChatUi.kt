@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import coil.imageLoader
 import coil.request.ImageRequest
-import coil.transform.BlurTransformation
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
@@ -83,11 +82,6 @@ private class ChatUiSnippets {
                 val imageResult = context.imageLoader.execute(
                     ImageRequest.Builder(context)
                         .data(user.image)
-                        .apply {
-                            if (!user.online) {
-                                transformations(BlurTransformation(context))
-                            }
-                        }
                         .build()
                 )
 

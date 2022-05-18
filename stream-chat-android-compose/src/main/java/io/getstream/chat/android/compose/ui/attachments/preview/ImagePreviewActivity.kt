@@ -478,6 +478,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
      */
+    @Suppress("LongMethod", "ComplexMethod")
     @Composable
     private fun ImagePreviewContent(
         pagerState: PagerState,
