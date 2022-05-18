@@ -25,7 +25,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadAny
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.R
@@ -110,7 +110,7 @@ public class AttachmentActivity : AppCompatActivity() {
         binding.ivImage.isVisible = true
         binding.webView.isVisible = false
 
-        binding.ivImage.load(
+        binding.ivImage.loadAny(
             data = url,
             placeholderResId = R.drawable.stream_ui_placeholder,
         )

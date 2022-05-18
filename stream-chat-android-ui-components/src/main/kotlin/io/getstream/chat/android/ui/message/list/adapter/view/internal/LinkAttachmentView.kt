@@ -22,7 +22,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadAny
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
@@ -76,7 +76,7 @@ internal class LinkAttachmentView : FrameLayout {
         }
 
         if (attachment.imagePreviewUrl != null) {
-            binding.linkPreviewImageView.load(
+            binding.linkPreviewImageView.loadAny(
                 data = attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_picture_placeholder,
                 onStart = { binding.progressBar.isVisible = true },

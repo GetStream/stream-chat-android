@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
-import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.images.loadAny
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
@@ -177,7 +177,7 @@ public open class AttachmentDestination(
         val attachmentIndex = message.attachments.indexOf(attachment)
 
         StfalconImageViewer
-            .Builder(context, imageUrls, ImageView::load)
+            .Builder(context, imageUrls, ImageView::loadAny)
             .withStartPosition(
                 if (attachmentIndex in imageUrls.indices) attachmentIndex else 0
             )

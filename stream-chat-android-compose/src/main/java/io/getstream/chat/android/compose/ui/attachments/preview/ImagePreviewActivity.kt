@@ -88,8 +88,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
@@ -478,7 +478,6 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
      */
-    @OptIn(ExperimentalCoilApi::class)
     @Composable
     private fun ImagePreviewContent(
         pagerState: PagerState,
@@ -498,7 +497,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
+                val painter = rememberAsyncImagePainter(model = attachments[page].imagePreviewUrl)
 
                 val density = LocalDensity.current
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -509,7 +508,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
 
                 val scale by animateFloatAsState(targetValue = currentScale)
 
-                val transformModifier = if (painter.state is ImagePainter.State.Success) {
+                val transformModifier = if (painter.state is AsyncImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Modifier.aspectRatio(size.width / size.height, true)
                 } else {

@@ -27,8 +27,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -79,9 +79,9 @@ public fun Avatar(
         return
     }
 
-    val painter = rememberImagePainter(data = imageUrl)
+    val painter = rememberAsyncImagePainter(model = imageUrl)
 
-    if (painter.state is ImagePainter.State.Error) {
+    if (painter.state is AsyncImagePainter.State.Error) {
         InitialsAvatar(
             modifier = modifier,
             initials = initials,
@@ -89,7 +89,7 @@ public fun Avatar(
             textStyle = textStyle,
             onClick = onClick
         )
-    } else if (painter.state is ImagePainter.State.Loading && placeholderPainter != null) {
+    } else if (painter.state is AsyncImagePainter.State.Loading && placeholderPainter != null) {
         ImageAvatar(
             modifier = modifier,
             shape = shape,

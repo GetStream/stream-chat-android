@@ -26,7 +26,7 @@ import com.getstream.sdk.chat.coil.StreamImageLoaderFactory
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.internal.AvatarFetcher
+import io.getstream.chat.android.ui.common.internal.AvatarFetcherFactory
 
 /**
  * Jetpack Startup Initializer for Stream's Chat UI Components.
@@ -37,16 +37,15 @@ public class ChatUIInitializer : Initializer<ChatUI> {
         ChatUI.appContext = context
 
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
-            componentRegistry {
+            components {
                 // duplicated as we can not extend component
                 // registry of existing image loader builder
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(context))
+                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
-
-                add(AvatarFetcher())
+                add((AvatarFetcherFactory()))
             }
         }
         StreamCoil.setImageLoader(imageLoaderFactory)
