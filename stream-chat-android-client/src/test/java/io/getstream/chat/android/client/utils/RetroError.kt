@@ -119,8 +119,8 @@ internal class RetroError<T : Any>(
             }
 
             errorJsonMembers.add(
-                """"exception_fields":"""
-                    + exceptionFieldMembers.joinToString(separator = ",", prefix = "{", postfix = "}")
+                """"exception_fields":""" +
+                    exceptionFieldMembers.joinToString(separator = ",", prefix = "{", postfix = "}")
             )
         }
 
