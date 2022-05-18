@@ -58,6 +58,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -86,9 +87,6 @@ public class MessageListViewModel(
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
-    private val _shouldFetchBottomMessages = MutableLiveData(false)
-    public val shouldFetchBottomMessages: LiveData<Boolean> = _shouldFetchBottomMessages
-
     /**
      * Holds information about the current channel and is actively updated.
      */
@@ -98,6 +96,20 @@ public class MessageListViewModel(
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope
         )
+
+    public val messageAtGapTopLimit: StateFlow<Message?> =
+        channelState.flatMapLatest { channelState ->
+            channelState?.messageAtGapTopLimit ?: MutableStateFlow(null)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
+
+    public val shouldFetchBottomMessages: LiveData<Boolean> = channelState.filterNotNull()
+        .flatMapLatest { channelState ->
+            channelState.hasGapsInMessageList.map { hasGaps -> hasGaps && currentMode is Mode.Normal }
+        }.asLiveData()
 
     /**
      * Holds information about the abilities the current user
@@ -237,8 +249,6 @@ public class MessageListViewModel(
      * and other things to log.
      */
     private val logger: TaggedLogger = ChatLogger.get("MessageListViewModel")
-
-    private var firstNotLinearMessageId: Long? = null
 
     /**
      * Evaluates whether date separators should be added to the message list.
@@ -683,13 +693,18 @@ public class MessageListViewModel(
         }
     }
 
+    //I need to add the find the first
     private fun onBottomEndRegionReached() {
-        if (currentMode == Mode.Normal && firstNotLinearMessageId != null) {
+        val baseMessageId = messageAtGapTopLimit.value?.id
+
+        if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
-            chatClient.loadNewerMessages(cid, firstNotLinearMessageId!!.toString(), DEFAULT_MESSAGES_LIMIT)
+            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
                 .enqueue { result ->
                     messageListData?.loadingMoreChanged(false)
                 }
+        } else {
+            logger.logE("There's no base message to request more message at bottom of limit")
         }
     }
 

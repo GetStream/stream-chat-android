@@ -84,7 +84,7 @@ public class EndlessMessageListScrollListener(
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
-        if (lastVisiblePosition >= loadMoreThreshold && shouldFetchBottomMessages) {
+        if (lastVisiblePosition >= loadMoreThreshold) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {

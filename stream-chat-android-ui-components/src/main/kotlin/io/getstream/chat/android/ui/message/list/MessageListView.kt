@@ -172,8 +172,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
-        // throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
-        // Todo: Uncomment this
+        throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
     }
 
     private var lastMessageReadHandler = LastMessageReadHandler {

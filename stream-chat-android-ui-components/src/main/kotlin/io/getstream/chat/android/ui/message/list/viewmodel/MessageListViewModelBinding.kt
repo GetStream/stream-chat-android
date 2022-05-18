@@ -21,6 +21,7 @@ package io.getstream.chat.android.ui.message.list.viewmodel
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -74,7 +75,7 @@ public fun MessageListViewModel.bindView(
         view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
-    view.setBottomEndRegionReachedHandler { onEvent(EndRegionReached) }
+    view.setBottomEndRegionReachedHandler { onEvent(BottomEndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }

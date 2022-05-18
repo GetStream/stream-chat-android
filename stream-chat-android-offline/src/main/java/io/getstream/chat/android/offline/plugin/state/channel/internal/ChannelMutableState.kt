@@ -51,7 +51,8 @@ internal class ChannelMutableState(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
-    internal val isMessageListLinear = MutableStateFlow(false)
+    internal val _hasGapsInMessageList = MutableStateFlow(false)
+    internal val _messageAtGapTopLimit = MutableStateFlow<Message?>(null)
     internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     internal val _watcherCount = MutableStateFlow(0)
     internal val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
@@ -179,6 +180,8 @@ internal class ChannelMutableState(
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
+    override val hasGapsInMessageList: StateFlow<Boolean> = _hasGapsInMessageList
+    override val messageAtGapTopLimit: StateFlow<Message?> = _messageAtGapTopLimit
     override var recoveryNeeded: Boolean = false
 
     override fun toChannel(): Channel {

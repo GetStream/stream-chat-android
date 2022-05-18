@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a channel.*/
 public interface ChannelState {
+
     /** Type of this channel.*/
     public val channelType: String
 
@@ -96,6 +97,12 @@ public interface ChannelState {
 
     /** If there are no more newer messages to load. */
     public val endOfNewerMessages: StateFlow<Boolean>
+
+    /** If the are gaps in the list of messages and then requests for newer messages are also necessary
+     * when scrolling */
+    public val hasGapsInMessageList: StateFlow<Boolean>
+
+    public val messageAtGapTopLimit: StateFlow<Message?>
 
     /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean

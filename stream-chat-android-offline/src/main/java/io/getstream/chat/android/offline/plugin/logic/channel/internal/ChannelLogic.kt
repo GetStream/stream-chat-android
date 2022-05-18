@@ -124,6 +124,8 @@ internal class ChannelLogic(
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : QueryChannelListener {
 
+    private val messageIdsHashCodeSet = mutableSetOf<Int>()
+
     private val logger = ChatLogger.get("Query channel request")
 
     val cid: String
@@ -163,28 +165,58 @@ internal class ChannelLogic(
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
+        }.onSuccess { channel ->
+            mutableState.recoveryNeeded = false
+            handleMessageLimits(request, channel)
+            updateDataFromChannel(channel)
+        }.onError { error ->
+            if (error.isPermanent()) {
+                logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
+            } else {
+                logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
+                mutableState.recoveryNeeded = true
+            }
+            globalMutableState._errorEvent.value = Event(error)
         }
-            .onSuccess { channel ->
-                mutableState.recoveryNeeded = false
-                if (request.messagesLimit() > channel.messages.size) {
-                    if (request.isFilteringNewerMessages()) {
-                        mutableState._endOfNewerMessages.value = true
-                    } else {
-                        mutableState._endOfOlderMessages.value = true
-                    }
-                }
-                updateDataFromChannel(channel)
-                loadingStateByRequest(request).value = false
+    }
+
+    /**
+     * NOTE: This method must be always called before messageIdsSet is called
+     */
+    private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel) {
+        val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
+
+        if (request.isFilteringNewerMessages()) {
+            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages)
+        } else {
+            mutableState._endOfOlderMessages.value = noMoreMessagesAvailable
+        }
+    }
+
+    private fun handleNewerMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
+        mutableState._endOfNewerMessages.value = !moreMessagesAvailable
+
+        when {
+            /* The messages list was not linear but the end of messages of an overlap was found.
+             * The message list is linear again. */
+            !mutableState.hasGapsInMessageList.value && (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
+                logger.logD("Has gaps in messages!!! -------------------")
+                mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
+                mutableState._hasGapsInMessageList.value = true
             }
-            .onError { error ->
-                if (error.isPermanent()) {
-                    logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
-                } else {
-                    logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
-                    mutableState.recoveryNeeded = true
-                }
-                globalMutableState._errorEvent.value = Event(error)
+
+            /* The messages list was linear but newer messages were loaded. As it didn't reach the end of the
+             * messages nor has an overlap between messages, the list is not linear anymore. */
+            mutableState.hasGapsInMessageList.value && moreMessagesAvailable && !messageList.hasMessageOverlap() -> {
+                logger.logD("Has NO gaps in messages!!! -------------------")
+                mutableState._messageAtGapTopLimit.value = null
+                mutableState._hasGapsInMessageList.value = false
             }
+        }
+    }
+
+    private fun List<Message>.hasMessageOverlap(): Boolean {
+        return this.map { it.id.hashCode() }.any(messageIdsHashCodeSet::contains)
     }
 
     private suspend fun storeStateForChannel(channel: Channel) {
@@ -235,7 +267,9 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+        //Todo: If new messages were loaded, then the state stopped being linear
+        logger.logD("Loding newer messages!!!!")
+        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId), )
     }
 
     /**
@@ -250,6 +284,7 @@ internal class ChannelLogic(
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
+    // Colocar se as mensagens são mais novas ou mais velhas
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val preconditionResult = onQueryChannelPrecondition(mutableState.channelType, mutableState.channelId, request)
         if (preconditionResult.isError) {
@@ -260,7 +295,9 @@ internal class ChannelLogic(
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
-                .await().also { result ->
+                .await()
+                .also { result ->
+                    //Aqui eu posso atualizar as mensages do set de IDs se o resultado for positivo e ver se houve um overlap.
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }
 
@@ -336,6 +373,8 @@ internal class ChannelLogic(
 
         mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
         mutableState._membersCount.value = c.memberCount
+
+        messageIdsHashCodeSet.addAll(c.messages.map { it.id.hashCode() })
 
         updateReads(c.read)
 
@@ -478,9 +517,9 @@ internal class ChannelLogic(
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
         return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
-            currentMessage?.lastUpdateTime() ?: NEVER.time <= newMessage.lastUpdateTime()
+            (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
         } else {
-            currentMessage?.lastLocalUpdateTime() ?: NEVER.time <= newMessage.lastLocalUpdateTime()
+            (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
         }
     }
 
