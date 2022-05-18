@@ -43,11 +43,9 @@ internal fun validateCid(cid: String): String = cid.apply {
  *
  * @return Successful [Result] if the cid is valid.
  */
-@Suppress("UNCHECKED_CAST")
-internal fun <T : Any> validateCidWithResult(cid: String): Result<T> {
+internal fun validateCidWithResult(cid: String): Result<String> {
     return try {
-        validateCid(cid)
-        Result.success(Unit as T)
+        Result.success(validateCid(cid))
     } catch (exception: IllegalArgumentException) {
         Result.error(exception)
     }
