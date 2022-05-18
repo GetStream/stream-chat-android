@@ -188,8 +188,16 @@ internal open class ChatSocket constructor(
     open fun connectAnonymously() =
         connect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
 
+    fun reconnectAnonymously() {
+        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+    }
+
     open fun connect(user: User) =
         connect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
+
+    fun reconnectUser(user: User) {
+        reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
+    }
 
     private fun connect(connectionConf: SocketFactory.ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
