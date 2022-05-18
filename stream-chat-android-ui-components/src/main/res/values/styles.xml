@@ -1043,7 +1043,7 @@
     </style>
 
     <style name="StreamUi.ViewReactions" parent="StreamUi">
-        <item name="streamUiMessageOptionsUserReactionBubbleOrientation">by_user</item>
+        <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
     </style>
 
 </resources>

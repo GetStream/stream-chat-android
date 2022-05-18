@@ -14,7 +14,7 @@
         <!-- Border width of the reactions bubble for the message sent by another user -->
         <attr name="streamUiReactionsBubbleBorderWidthTheirs" format="dimension|reference" />
         <!-- Orientation of the bubble -->
-        <attr name="streamUiMessageOptionsUserReactionBubbleOrientation" format="enum">
+        <attr name="streamUiMessageOptionsUserReactionOrientation" format="enum">
             <enum name="start" value="0" />
             <enum name="end" value="1" />
             <enum name="by_user" value="2" />

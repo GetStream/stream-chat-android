@@ -50,7 +50,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
-    public val messageOptionsUserReactionBubbleOrientation: Int,
+    public val messageOptionsUserReactionOrientation: Int,
 ) {
 
     internal companion object {
@@ -74,7 +74,7 @@ public data class ViewReactionsViewStyle(
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
                     .messageOptionsUserReactionBubbleOrientation(
-                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionBubbleOrientation
+                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation
                     )
                     .build()
             }
@@ -93,7 +93,7 @@ public data class ViewReactionsViewStyle(
             private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
             @Px
             private var bubbleBorderWidthTheirs: Float? = null
-            private var messageOptionsUSerReactionBubbleOrientation: Int =
+            private var messageOptionsUSerReactionOrientation: Int =
                 MessageOptionsUserReactionAlignment.BY_USER.value
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
@@ -124,7 +124,7 @@ public data class ViewReactionsViewStyle(
             }
 
             fun messageOptionsUserReactionBubbleOrientation(@StyleableRes bubbleOrientation: Int) = apply {
-                this.messageOptionsUSerReactionBubbleOrientation =
+                this.messageOptionsUSerReactionOrientation =
                     array.getInt(bubbleOrientation, MessageOptionsUserReactionAlignment.BY_USER.value)
             }
 
@@ -170,7 +170,7 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
                     smallTailBubbleOffset = smallTailBubbleOffset,
-                    messageOptionsUserReactionBubbleOrientation = messageOptionsUSerReactionBubbleOrientation,
+                    messageOptionsUserReactionOrientation = messageOptionsUSerReactionOrientation,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
             }
         }

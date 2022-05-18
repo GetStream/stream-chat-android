@@ -23,7 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  *
  * @param value The int value of the enum used for xml attributes.
  */
-public enum class MessageOptionsUserReactionBubbleOrientation(public val value: Int) {
+public enum class MessageOptionsUserReactionOrientation(public val value: Int) {
     /**
      * Aligns the reaction to the start of the user avatar.
      */
@@ -46,8 +46,11 @@ public enum class MessageOptionsUserReactionBubbleOrientation(public val value: 
     BY_USER_INVERTED(3)
 }
 
-public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionBubbleOrientation {
-    return MessageOptionsUserReactionBubbleOrientation.values().firstOrNull { it.value == this }
+/**
+ * @return The corresponding [MessageOptionsUserReactionOrientation] for the passed attribute in xml.
+ */
+public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionOrientation {
+    return MessageOptionsUserReactionOrientation.values().firstOrNull { it.value == this }
         ?: error("No such alignment")
 }
 
@@ -59,8 +62,8 @@ public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionBubbleOri
  * @return If the reaction is aligned to the start or not.
  */
 @InternalStreamChatApi
-public fun MessageOptionsUserReactionBubbleOrientation.isOrientedTowardsStart(isMine: Boolean): Boolean {
-    return this == MessageOptionsUserReactionBubbleOrientation.START ||
-        (isMine && this == MessageOptionsUserReactionBubbleOrientation.BY_USER) ||
-        (!isMine && this == MessageOptionsUserReactionBubbleOrientation.BY_USER_INVERTED)
+public fun MessageOptionsUserReactionOrientation.isOrientedTowardsStart(isMine: Boolean): Boolean {
+    return this == MessageOptionsUserReactionOrientation.START ||
+        (isMine && this == MessageOptionsUserReactionOrientation.BY_USER) ||
+        (!isMine && this == MessageOptionsUserReactionOrientation.BY_USER_INVERTED)
 }

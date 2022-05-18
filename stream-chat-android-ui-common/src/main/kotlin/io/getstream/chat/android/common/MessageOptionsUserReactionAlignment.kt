@@ -47,6 +47,9 @@ public enum class MessageOptionsUserReactionAlignment(public val value: Int) {
     BY_USER_INVERTED(3)
 }
 
+/**
+ * @return The corresponding [MessageOptionsUserReactionAlignment] for the passed attribute in xml.
+ */
 public fun Int.getUserReactionAlignment(): MessageOptionsUserReactionAlignment {
     return MessageOptionsUserReactionAlignment.values().firstOrNull { it.value == this } ?: error("No such alignment")
 }

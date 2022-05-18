@@ -23,7 +23,7 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
-import io.getstream.chat.android.ui.message.list.reactions.view.MessageOptionsUserReactionBubbleOrientation
+import io.getstream.chat.android.ui.message.list.reactions.view.MessageOptionsUserReactionOrientation
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.getUserReactionOrientation
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsBubbleDrawer
@@ -34,8 +34,8 @@ internal class SingleReactionView : FrameLayout {
     private lateinit var reactionsViewStyle: ViewReactionsViewStyle
     private lateinit var bubbleDrawer: ViewReactionsBubbleDrawer
     private var isMyMessage: Boolean = false
-    private val messageOrientation: MessageOptionsUserReactionBubbleOrientation
-        get() = reactionsViewStyle.messageOptionsUserReactionBubbleOrientation.getUserReactionOrientation()
+    private val messageOrientation: MessageOptionsUserReactionOrientation
+        get() = reactionsViewStyle.messageOptionsUserReactionOrientation.getUserReactionOrientation()
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
