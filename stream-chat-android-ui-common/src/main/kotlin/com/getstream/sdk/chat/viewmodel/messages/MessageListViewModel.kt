@@ -89,7 +89,8 @@ public class MessageListViewModel(
 
     private val messageIdsSet = mutableSetOf<Long>()
 
-    public var shouldFetchBottomMessages: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _shouldFetchBottomMessages = MutableLiveData(false)
+    public val shouldFetchBottomMessages: LiveData<Boolean> = _shouldFetchBottomMessages
 
     /**
      * Holds information about the current channel and is actively updated.

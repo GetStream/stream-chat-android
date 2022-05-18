@@ -117,6 +117,9 @@ public fun MessageListViewModel.bindView(
             MessageListViewModel.State.NavigateUp -> Unit // Not handled here
         }
     }
+
+    shouldFetchBottomMessages.observe(lifecycleOwner, view::shouldFetchBottomMessages)
+
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
 
