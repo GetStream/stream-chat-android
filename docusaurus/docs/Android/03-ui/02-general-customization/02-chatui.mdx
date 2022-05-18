@@ -149,11 +149,6 @@ ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
         val imageResult = context.imageLoader.execute(
             ImageRequest.Builder(context)
                 .data(user.image)
-                .apply {
-                    if (!user.online) {
-                        transformations(BlurTransformation(context))
-                    }
-                }
                 .build()
         )
 
