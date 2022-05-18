@@ -41,6 +41,7 @@
     <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, configuration: MessageOptionsView.Configuration, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
     <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.MessageOptionsHandlers$( val threadReplyHandler: MessageListView.ThreadStartHandler, val retryHandler: MessageListView.MessageRetryHandler, val editClickHandler: MessageListView.MessageEditHandler, val flagClickHandler: MessageListView.MessageFlagHandler, val pinClickHandler: MessageListView.MessagePinHandler, val unpinClickHandler: MessageListView.MessageUnpinHandler, val muteClickHandler: MessageListView.UserMuteHandler, val unmuteClickHandler: MessageListView.UserUnmuteHandler, val blockClickHandler: MessageListView.UserBlockHandler, val deleteClickHandler: MessageListView.MessageDeleteHandler, val replyClickHandler: MessageListView.MessageReplyHandler, )</ID>
     <ID>LongParameterList:MessageOptionsView.kt$MessageOptionsView$( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
+    <ID>LongParameterList:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, isMyMessage: Boolean, isSingleReaction: Boolean, isOrientedTowardsStart: Boolean, inverseBubbleStyle: Boolean = false, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
     <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>
@@ -60,6 +61,7 @@
     <ID>MagicNumber:MessageListScrollHelper.kt$MessageListScrollHelper$3</ID>
     <ID>MagicNumber:MessageListView.kt$MessageListView$20</ID>
     <ID>MagicNumber:MessageListView.kt$MessageListView$500</ID>
+    <ID>MagicNumber:MessageOptionsUserReactionBubbleOrientation.kt$MessageOptionsUserReactionBubbleOrientation.BY_USER_INVERTED$3</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$0.5f</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$255</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>

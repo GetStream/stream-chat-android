@@ -78,7 +78,10 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
-    error("No LocalMessageOptionsUserReactionAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+    error(
+        "No LocalMessageOptionsUserReactionAlignmentProvider provided! Make sure to wrap all usages of Stream" +
+            " components in a ChatTheme."
+    )
 }
 
 /**

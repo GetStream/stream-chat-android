@@ -773,6 +773,20 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/common/MessageOptionsUserReactionAlignment : java/lang/Enum {
+	public static final field BY_USER Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field BY_USER_INVERTED Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field END Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field START Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static fun values ()[Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+}
+
+public final class io/getstream/chat/android/common/MessageOptionsUserReactionAlignmentKt {
+	public static final fun getUserReactionAlignment (I)Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+}
+
 public final class io/getstream/chat/android/common/composer/MessageComposerState {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;)V

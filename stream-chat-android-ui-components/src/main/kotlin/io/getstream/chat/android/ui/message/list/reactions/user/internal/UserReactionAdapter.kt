@@ -37,12 +37,13 @@ internal class UserReactionAdapter(
     private val userReactionClickListener: UserReactionClickListener,
 ) : ListAdapter<UserReactionItem, UserReactionAdapter.UserReactionViewHolder>(UserReactionItemDiffCallback) {
 
-    var messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.BY_USER
+    var messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment =
+        MessageOptionsUserReactionAlignment.BY_USER
         @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+            set(value) {
+                field = value
+                notifyDataSetChanged()
+            }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
         return StreamUiItemUserReactionBinding
@@ -57,7 +58,8 @@ internal class UserReactionAdapter(
     class UserReactionViewHolder(
         private val binding: StreamUiItemUserReactionBinding,
         private val userReactionClickListener: UserReactionClickListener,
-        private val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.BY_USER,
+        private val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment =
+            MessageOptionsUserReactionAlignment.BY_USER,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var userReactionItem: UserReactionItem
