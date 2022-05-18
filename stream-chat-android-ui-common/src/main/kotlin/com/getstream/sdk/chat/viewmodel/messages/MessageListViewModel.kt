@@ -49,6 +49,7 @@ import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -57,6 +58,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -84,6 +86,10 @@ public class MessageListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    private val messageIdsSet = mutableSetOf<Long>()
+
+    public var shouldFetchBottomMessages: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /**
      * Holds information about the current channel and is actively updated.
@@ -233,6 +239,8 @@ public class MessageListViewModel(
      * and other things to log.
      */
     private val logger: TaggedLogger = ChatLogger.get("MessageListViewModel")
+
+    private var firstNotLinearMessageId: Long? = null
 
     /**
      * Evaluates whether date separators should be added to the message list.
@@ -393,6 +401,11 @@ public class MessageListViewModel(
             is Event.EndRegionReached -> {
                 onEndRegionReached()
             }
+
+            is Event.BottomEndRegionReached -> {
+                onBottomEndRegionReached()
+            }
+
             is Event.LastMessageRead -> {
                 cid.cidToTypeAndId().let { (channelType, channelId) ->
                     chatClient.markRead(channelType, channelId).enqueue(
@@ -672,6 +685,16 @@ public class MessageListViewModel(
         }
     }
 
+    private fun onBottomEndRegionReached() {
+        if (currentMode == Mode.Normal && firstNotLinearMessageId != null) {
+            messageListData?.loadingMoreChanged(true)
+            chatClient.loadNewerMessages(cid, firstNotLinearMessageId!!.toString(), DEFAULT_MESSAGES_LIMIT)
+                .enqueue { result ->
+                    messageListData?.loadingMoreChanged(false)
+                }
+        }
+    }
+
     /**
      * Load older messages for the specified thread [Mode.Thread.parentMessage].
      *
@@ -839,6 +862,8 @@ public class MessageListViewModel(
          * When the oldest loaded message in the list has been reached.
          */
         public object EndRegionReached : Event()
+
+        public object BottomEndRegionReached : Event()
 
         /**
          * When the newest message in the channel has been read.

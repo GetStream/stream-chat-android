@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -220,15 +221,23 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Channel>(cid)
+        validateCidWithResult<Channel>(cid)
+            .flatMapSuspend {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .loadOlderMessages(messageLimit = messageLimit)
+            }
+    }
+}
 
-        if (cidValidationResult.isSuccess) {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            logic.channel(channelType = channelType, channelId = channelId)
-                .loadOlderMessages(messageLimit = messageLimit)
-        } else {
-            cidValidationResult
-        }
+public fun ChatClient.loadNewerMessages(channelCid: String, baseMessageId: String,  messageLimit: Int): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        validateCidWithResult<Channel>(channelCid)
+            .flatMapSuspend {
+                val (channelType, channelId) = channelCid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+            }
     }
 }
 

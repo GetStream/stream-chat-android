@@ -153,8 +153,6 @@ public class MessageListView : ConstraintLayout {
     private lateinit var scrollHelper: MessageListScrollHelper
     private lateinit var scrollListener: EndlessMessageListScrollListener
 
-    private val messageIdsSet = mutableSetOf<Long>()
-
     /**
      * Used to enable or disable parts of the UI depending
      * on which abilities the user has in the given channel.
@@ -1096,19 +1094,6 @@ public class MessageListView : ConstraintLayout {
                         true
                     }
                 }.let(messageListItemTransformer::transform)
-
-
-            val ids = filteredList.map { messageListItem ->
-                messageListItem.getStableId()
-            }
-
-            /* There's an overlap in the messages, so MessageListView should not be fetching
-             * messages at the bottom anymore. */
-            if (scrollListener.shouldFetchBottomMessages && ids.any(messageIdsSet::contains)) {
-                shouldFetchBottomMessages(false)
-            }
-
-            messageIdsSet.addAll(ids)
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
