@@ -37,12 +37,12 @@ public class EndlessMessageListScrollListener(
         require(loadMoreThreshold >= 0) { "Load more threshold must not be negative" }
     }
 
-    internal var shouldLoadMessagesAtBottom: Boolean = false
-
     /**
      * Helper flag which marks the state if we should disable pagination.
      */
     private var paginationEnabled: Boolean = false
+
+    public var shouldFetchBottomMessages: Boolean = false
 
     /**
      * Helper flag which marks  if we should wait for the scroll state reset.
@@ -71,16 +71,21 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 -> { handleScrollDown(layoutManager, recyclerView) }
+            dy >= 0 -> {
+                handleScrollDown(layoutManager, recyclerView)
+            }
 
-            dy < 0 -> { handleScrollUp(layoutManager, recyclerView) }
+            dy < 0 && shouldFetchBottomMessages -> {
+                handleScrollUp(layoutManager, recyclerView)
+            }
         }
     }
 
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
-        if (lastVisiblePosition >= loadMoreThreshold && shouldLoadMessagesAtBottom) {
+        if (lastVisiblePosition >= loadMoreThreshold && shouldFetchBottomMessages) {
+            scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {
                     loadMoreAtBottomListener()

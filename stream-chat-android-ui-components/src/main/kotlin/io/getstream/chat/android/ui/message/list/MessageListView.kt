@@ -151,6 +151,9 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
+    private lateinit var scrollListener: EndlessMessageListScrollListener
+
+    private val messageIdsSet = mutableSetOf<Long>()
 
     /**
      * Used to enable or disable parts of the UI depending
@@ -169,6 +172,12 @@ public class MessageListView : ConstraintLayout {
     private var endRegionReachedHandler = EndRegionReachedHandler {
         throw IllegalStateException("endRegionReachedHandler must be set.")
     }
+
+    private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
+        // throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
+        // Todo: Uncomment this
+    }
+
     private var lastMessageReadHandler = LastMessageReadHandler {
         throw IllegalStateException("lastMessageReadHandler must be set.")
     }
@@ -607,8 +616,12 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
-                    endRegionReachedHandler.onEndRegionReached()
+                loadMoreListener = EndlessMessageListScrollListener(
+                    loadMoreThreshold,
+                    endRegionReachedHandler::onEndRegionReached,
+                    bottomEndRegionReachedHandler::onBottomEndRegionReached
+                ).also { scrollListener ->
+                    this.scrollListener = scrollListener
                 }
             }
 
@@ -621,6 +634,10 @@ public class MessageListView : ConstraintLayout {
         if (background == null) {
             setBackgroundColor(requireStyle().backgroundColor)
         }
+    }
+
+    internal fun shouldFetchBottomMessages(shouldFetch: Boolean) {
+        scrollListener.shouldFetchBottomMessages = shouldFetch
     }
 
     /**
@@ -1080,6 +1097,19 @@ public class MessageListView : ConstraintLayout {
                     }
                 }.let(messageListItemTransformer::transform)
 
+
+            val ids = filteredList.map { messageListItem ->
+                messageListItem.getStableId()
+            }
+
+            /* There's an overlap in the messages, so MessageListView should not be fetching
+             * messages at the bottom anymore. */
+            if (scrollListener.shouldFetchBottomMessages && ids.any(messageIdsSet::contains)) {
+                shouldFetchBottomMessages(false)
+            }
+
+            messageIdsSet.addAll(ids)
+
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
@@ -1268,6 +1298,16 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setEndRegionReachedHandler(endRegionReachedHandler: EndRegionReachedHandler) {
         this.endRegionReachedHandler = endRegionReachedHandler
+    }
+
+    /**
+     * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
+     * view becomes non linear and ti will be called until it becomes linear again.
+     *
+     * @param bottomEndRegionReachedHandler The handler to use.
+     */
+    public fun setBottomEndRegionReachedHandler(bottomEndRegionReachedHandler: BottomEndRegionReachedHandler) {
+        this.bottomEndRegionReachedHandler = bottomEndRegionReachedHandler
     }
 
     /**
@@ -1546,6 +1586,10 @@ public class MessageListView : ConstraintLayout {
     //region Handler declarations
     public fun interface EndRegionReachedHandler {
         public fun onEndRegionReached()
+    }
+
+    public fun interface BottomEndRegionReachedHandler {
+        public fun onBottomEndRegionReached()
     }
 
     public fun interface LastMessageReadHandler {
