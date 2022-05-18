@@ -61,7 +61,7 @@
     <ID>MagicNumber:MessageListScrollHelper.kt$MessageListScrollHelper$3</ID>
     <ID>MagicNumber:MessageListView.kt$MessageListView$20</ID>
     <ID>MagicNumber:MessageListView.kt$MessageListView$500</ID>
-    <ID>MagicNumber:MessageOptionsUserReactionBubbleOrientation.kt$MessageOptionsUserReactionBubbleOrientation.BY_USER_INVERTED$3</ID>
+    <ID>MagicNumber:MessageOptionsUserReactionOrientation.kt$MessageOptionsUserReactionOrientation.BY_USER_INVERTED$3</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$0.5f</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$255</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>

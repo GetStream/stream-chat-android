@@ -1929,6 +1929,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getLoadingView ()I
 	public final fun getMessageOptionsBackgroundColor ()I
 	public final fun getMessageOptionsText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getMessageOptionsUserReactionAlignment ()I
 	public final fun getMessagesStart ()I
 	public final fun getMuteEnabled ()Z
 	public final fun getMuteIcon ()I
@@ -1948,7 +1949,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getThreadsEnabled ()Z
 	public final fun getUnmuteIcon ()I
 	public final fun getUnpinIcon ()I
-	public final fun getUserReactionBubbleAlignment ()I
 	public final fun getUserReactionsBackgroundColor ()I
 	public final fun getUserReactionsTitleText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getWarningMessageOptionsText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2319,18 +2319,18 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
 }
 
-public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation : java/lang/Enum {
-	public static final field BY_USER Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
-	public static final field BY_USER_INVERTED Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
-	public static final field END Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
-	public static final field START Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
+public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation : java/lang/Enum {
+	public static final field BY_USER Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field BY_USER_INVERTED Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field END Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field START Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
 	public final fun getValue ()I
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
-	public static fun values ()[Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static fun values ()[Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
 }
 
-public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientationKt {
-	public static final fun getUserReactionOrientation (I)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionBubbleOrientation;
+public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientationKt {
+	public static final fun getUserReactionOrientation (I)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
@@ -2369,7 +2369,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun getLargeTailBubbleCy ()I
 	public final fun getLargeTailBubbleOffset ()I
 	public final fun getLargeTailBubbleRadius ()I
-	public final fun getMessageOptionsUserReactionBubbleOrientation ()I
+	public final fun getMessageOptionsUserReactionOrientation ()I
 	public final fun getSmallTailBubbleCy ()I
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I

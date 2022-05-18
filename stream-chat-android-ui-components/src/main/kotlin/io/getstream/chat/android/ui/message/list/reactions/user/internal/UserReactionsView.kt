@@ -70,8 +70,8 @@ public class UserReactionsView : FrameLayout {
     internal fun configure(messageListViewStyle: MessageListViewStyle) {
         binding.userReactionsContainer.setCardBackgroundColor(messageListViewStyle.userReactionsBackgroundColor)
         messageListViewStyle.userReactionsTitleText.apply(binding.userReactionsTitleTextView)
-        userReactionsAdapter.messageOptionsUserReactionAlignment = messageListViewStyle.userReactionBubbleAlignment
-            .getUserReactionAlignment()
+        userReactionsAdapter.messageOptionsUserReactionAlignment = messageListViewStyle
+            .messageOptionsUserReactionAlignment.getUserReactionAlignment()
     }
 
     private fun bindTitle(message: Message) {

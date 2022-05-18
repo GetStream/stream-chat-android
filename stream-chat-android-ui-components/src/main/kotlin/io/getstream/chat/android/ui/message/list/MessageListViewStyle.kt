@@ -79,7 +79,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property loadingView Layout for the loading view. Default value is [R.layout.stream_ui_default_loading_view].
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
- * @property userReactionBubbleAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
+ * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -123,7 +123,7 @@ public data class MessageListViewStyle(
     @LayoutRes public val loadingView: Int,
     public val messagesStart: Int,
     public val threadMessagesStart: Int,
-    public val userReactionBubbleAlignment: Int,
+    public val messageOptionsUserReactionAlignment: Int,
 ) {
 
     internal companion object {
@@ -396,8 +396,8 @@ public data class MessageListViewStyle(
                     MessageListView.MessagesStart.BOTTOM.value,
                 )
 
-                val userReactionBubbleAlignment = attributes.getInt(
-                    R.styleable.MessageListView_streamUiMessageOptionsUserReactionBubbleAlignment,
+                val messageOptionsUserReactionAlignment = attributes.getInt(
+                    R.styleable.MessageListView_streamUiMessageOptionsUserReactionAlignment,
                     MessageOptionsUserReactionAlignment.BY_USER.value
                 )
 
@@ -443,7 +443,7 @@ public data class MessageListViewStyle(
                     loadingView = loadingView,
                     messagesStart = messagesStart,
                     threadMessagesStart = threadMessagesStart,
-                    userReactionBubbleAlignment = userReactionBubbleAlignment,
+                    messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

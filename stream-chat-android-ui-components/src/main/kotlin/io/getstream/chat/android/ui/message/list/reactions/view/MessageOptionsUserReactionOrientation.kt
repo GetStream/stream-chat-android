@@ -25,23 +25,24 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 public enum class MessageOptionsUserReactionOrientation(public val value: Int) {
     /**
-     * Aligns the reaction to the start of the user avatar.
+     * Orients the reaction to the start of the user avatar.
      */
     START(0),
 
     /**
-     * Aligns the reaction to the end of user avatar.
+     * Orients the reaction to the end of user avatar.
      */
     END(1),
 
     /**
-     * Aligns the reaction to the end of user avatar if the reaction is from the current user otherwise aligns it
+     * Orients the reaction to the end of user avatar if the reaction is from the current user otherwise orients it
      * to the start of the avatar.
      */
     BY_USER(2),
 
     /**
-     *
+     * Orients the reaction to the start of user avatar if the reaction is from the current user otherwise orients it
+     * to the end of the avatar.
      */
     BY_USER_INVERTED(3)
 }
@@ -55,11 +56,11 @@ public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionOrientati
 }
 
 /**
- * Determines if the user reaction should be aligned to start or end.
+ * Determines if the user reaction should be oriented to start or end.
  *
  * @param isMine Is the reaction the current users reaction.
  *
- * @return If the reaction is aligned to the start or not.
+ * @return If the reaction is oriented towards start or not.
  */
 @InternalStreamChatApi
 public fun MessageOptionsUserReactionOrientation.isOrientedTowardsStart(isMine: Boolean): Boolean {
