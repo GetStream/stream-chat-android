@@ -28,13 +28,6 @@ import kotlin.reflect.KClass
 
 internal class ValidationKtTest {
 
-    /** [argumentsValidateCidBoolean] */
-    @ParameterizedTest
-    @MethodSource("argumentsValidateCidBoolean")
-    fun testValidateCidBoolean(cid: String, expectedValidation: Boolean) {
-        validateCidBoolean(cid) `should be equal to` expectedValidation
-    }
-
     /** [argumentsValidateCidError] */
     @ParameterizedTest
     @MethodSource("argumentsValidateCidError")
@@ -51,23 +44,6 @@ internal class ValidationKtTest {
 
     @Suppress("MaxLineLength")
     companion object {
-
-        @JvmStatic
-        fun argumentsValidateCidBoolean() = listOf(
-            Arguments.of("messaging:123", true),
-            Arguments.of("a:e", true),
-            Arguments.of("messaging:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU", true),
-            Arguments.of("!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU", true),
-            Arguments.of("", false),
-            Arguments.of("   ", false),
-            Arguments.of("messaging 123", false),
-            Arguments.of("messaging123", false),
-            Arguments.of("messaging::123", false),
-            Arguments.of("messaging:", false),
-            Arguments.of(":123", false),
-            Arguments.of("mess aging:123", false),
-            Arguments.of(":", false),
-        )
 
         @JvmStatic
         fun argumentsValidateCid() = listOf(
