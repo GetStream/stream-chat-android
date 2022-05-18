@@ -35,7 +35,7 @@ public sealed interface StreamImageLoader {
     public var imageHeadersProvider: ImageHeadersProvider
 
     @Suppress("LongParameterList")
-    public fun load(
+    public fun loadAny(
         target: ImageView,
         data: Any?,
         @DrawableRes placeholderResId: Int? = null,
@@ -45,7 +45,7 @@ public sealed interface StreamImageLoader {
     ): Disposable
 
     @Suppress("LongParameterList")
-    public fun load(
+    public fun loadAny(
         target: ImageView,
         data: Any?,
         placeholderDrawable: Drawable? = null,

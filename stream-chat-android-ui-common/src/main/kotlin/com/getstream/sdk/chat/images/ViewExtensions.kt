@@ -25,14 +25,14 @@ import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
-public fun ImageView.load(
+public fun ImageView.loadAny(
     data: Any?,
     @DrawableRes placeholderResId: Int? = null,
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
 ): Disposable {
-    return StreamImageLoader.instance().load(
+    return StreamImageLoader.instance().loadAny(
         target = this,
         data = data,
         placeholderResId = placeholderResId,
@@ -43,14 +43,14 @@ public fun ImageView.load(
 }
 
 @InternalStreamChatApi
-public fun ImageView.load(
+public fun ImageView.loadAny(
     data: Any?,
     placeholderDrawable: Drawable,
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
 ): Disposable {
-    return StreamImageLoader.instance().load(
+    return StreamImageLoader.instance().loadAny(
         target = this,
         data = data,
         placeholderDrawable = placeholderDrawable,
