@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.toResult
 import org.amshove.kluent.invoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -38,68 +40,60 @@ internal class ValidationKtTest {
     /** [argumentsValidateCid] */
     @ParameterizedTest
     @MethodSource("argumentsValidateCid")
-    fun testValidateCid(cid: String) {
-        validateCid(cid) `should be equal to` cid
+    fun testValidateCid(cid: String, expectedCid: String) {
+        validateCid(cid) `should be equal to` expectedCid
+    }
+
+    /** [argumentsValidCidResult] */
+    @ParameterizedTest
+    @MethodSource("argumentsValidCidResult")
+    fun testValidateCidResult(cid: String, expectedResult: Result<String>) {
+        validateCidWithResult(cid) `should be equal to` expectedResult
     }
 
     @Suppress("MaxLineLength")
     companion object {
 
         @JvmStatic
-        fun argumentsValidateCid() = listOf(
-            Arguments.of("messaging:123"),
-            Arguments.of("a:e"),
-            Arguments.of("messaging:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU"),
-            Arguments.of("!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU"),
-        )
+        fun argumentsValidCidResult() =
+            validCids().map {
+                Arguments.of(it, it.toResult())
+            } +
+                invalidCids().map {
+                    Arguments.of(it.first, Result.error<String>(it.second))
+                }
 
         @JvmStatic
-        fun argumentsValidateCidError() = listOf(
+        fun argumentsValidateCid() = validCids().map {
+            Arguments.of(it, it)
+        }
+
+        @JvmStatic
+        fun argumentsValidateCidError() = invalidCids().map {
             Arguments.of(
-                "",
-                IllegalArgumentException::class,
-                "cid can not be empty"
-            ),
-            Arguments.of(
-                "   ",
-                IllegalArgumentException::class,
-                "cid can not be blank"
-            ),
-            Arguments.of(
-                "messaging 123",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                "messaging123",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                "messaging::123",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                "messaging:",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                ":123",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                "mess aging:123",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
-            Arguments.of(
-                ":",
-                IllegalArgumentException::class,
-                "cid needs to be in the format channelType:channelId. For example, messaging:123"
-            ),
+                it.first,
+                it.second::class,
+                it.second.message
+            )
+        }
+
+        private fun invalidCids(): List<Pair<String, Exception>> = listOf(
+            "" to IllegalArgumentException("cid can not be empty"),
+            "   " to IllegalArgumentException("cid can not be blank"),
+            "messaging 123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "messaging123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "messaging::123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "messaging:" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            ":123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "mess aging:123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            ":" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+        )
+
+        private fun validCids() = listOf(
+            "messaging:123",
+            "a:e",
+            "messaging:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU",
+            "!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU",
         )
     }
 }
