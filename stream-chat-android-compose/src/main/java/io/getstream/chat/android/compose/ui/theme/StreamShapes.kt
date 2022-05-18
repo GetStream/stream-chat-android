@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
  * @param suggestionList The shape of suggestion list popup.
  * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
  * @param header The shape of the headers, such as the ones appearing on the Channel or Message screens.
+ * @param quotedAttachment The shape of quoted attachments.
  */
 @Immutable
 public data class StreamShapes(
@@ -48,7 +49,8 @@ public data class StreamShapes(
     public val bottomSheet: Shape,
     public val suggestionList: Shape,
     public val attachmentSiteLabel: Shape,
-    public val header: Shape
+    public val header: Shape,
+    public val quotedAttachment: Shape,
 ) {
     public companion object {
         /**
@@ -66,7 +68,8 @@ public data class StreamShapes(
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             suggestionList = RoundedCornerShape(16.dp),
             attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
-            header = RectangleShape
+            header = RectangleShape,
+            quotedAttachment = RoundedCornerShape(4.dp)
         )
     }
 }
