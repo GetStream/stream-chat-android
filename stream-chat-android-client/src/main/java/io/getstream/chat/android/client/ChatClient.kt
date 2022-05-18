@@ -756,8 +756,8 @@ internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.connect(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectAnonymously()
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
