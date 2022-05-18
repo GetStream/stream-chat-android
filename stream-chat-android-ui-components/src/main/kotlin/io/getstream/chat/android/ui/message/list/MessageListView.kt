@@ -616,8 +616,8 @@ public class MessageListView : ConstraintLayout {
             ).also { loadMoreThreshold ->
                 loadMoreListener = EndlessMessageListScrollListener(
                     loadMoreThreshold,
-                    endRegionReachedHandler::onEndRegionReached,
-                    bottomEndRegionReachedHandler::onBottomEndRegionReached
+                    { endRegionReachedHandler.onEndRegionReached() },
+                    { bottomEndRegionReachedHandler.onBottomEndRegionReached() }
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
                 }
@@ -634,7 +634,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    internal fun shouldFetchBottomMessages(shouldFetch: Boolean) {
+    public fun shouldFetchBottomMessages(shouldFetch: Boolean) {
         scrollListener.shouldFetchBottomMessages = shouldFetch
     }
 

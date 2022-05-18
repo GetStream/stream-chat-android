@@ -58,7 +58,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -86,8 +85,6 @@ public class MessageListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
-
-    private val messageIdsSet = mutableSetOf<Long>()
 
     private val _shouldFetchBottomMessages = MutableLiveData(false)
     public val shouldFetchBottomMessages: LiveData<Boolean> = _shouldFetchBottomMessages

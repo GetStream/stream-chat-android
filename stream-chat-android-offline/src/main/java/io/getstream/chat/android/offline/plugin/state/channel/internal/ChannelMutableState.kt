@@ -51,6 +51,7 @@ internal class ChannelMutableState(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
+    internal val isMessageListLinear = MutableStateFlow(false)
     internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     internal val _watcherCount = MutableStateFlow(0)
     internal val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())

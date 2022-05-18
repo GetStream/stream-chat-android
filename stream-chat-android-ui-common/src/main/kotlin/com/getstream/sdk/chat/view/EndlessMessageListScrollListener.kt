@@ -71,11 +71,11 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 -> {
+            dy >= 0 && shouldFetchBottomMessages  -> {
                 handleScrollDown(layoutManager, recyclerView)
             }
 
-            dy < 0 && shouldFetchBottomMessages -> {
+            dy < 0 -> {
                 handleScrollUp(layoutManager, recyclerView)
             }
         }
