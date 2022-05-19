@@ -78,7 +78,11 @@ internal class QueryChannelsLogic(
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
-        val loading = if (mutableState.channels.value.isEmpty()) mutableState._loading else mutableState._loadingMore
+        val loading = if (mutableState.channels.value.isNullOrEmpty()) {
+            mutableState._loading
+        } else {
+            mutableState._loadingMore
+        }
 
         if (loading.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
@@ -129,7 +133,8 @@ internal class QueryChannelsLogic(
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = mutableState._channels.value + channels.map { it.cid to it }
+        val existingChannels = mutableState._channels.value ?: emptyMap()
+        mutableState._channels.value = existingChannels + channels.map { it.cid to it }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -215,8 +220,9 @@ internal class QueryChannelsLogic(
         channels: List<Channel>,
         isFirstPage: Boolean,
     ) {
-        if (isFirstPage) {
-            (mutableState._channels.value - channels.map { it.cid }).values
+        val existingChannels = mutableState._channels.value
+        if (isFirstPage && !existingChannels.isNullOrEmpty()) {
+            (existingChannels - channels.map { it.cid }).values
                 .map(Channel::cid)
                 .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it, repos) }
@@ -230,9 +236,14 @@ internal class QueryChannelsLogic(
         removeChannels(listOf(cid), repos)
 
     private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
+        val existingChannels = mutableState._channels.value
+        if (existingChannels.isNullOrEmpty()) {
+            logger.logW("Skipping remove channels as they are not loaded yet.")
+            return
+        }
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = mutableState._channels.value - cidList
+        mutableState._channels.value = existingChannels - cidList
     }
 
     /**
@@ -291,7 +302,12 @@ internal class QueryChannelsLogic(
      * @param cidList The channels to refresh.
      */
     private fun refreshChannels(cidList: Collection<String>) {
-        mutableState._channels.value += mutableState.queryChannelsSpec.cids
+        val existingChannels = mutableState._channels.value
+        if (existingChannels == null) {
+            logger.logW("Aborting refresh as channels are not available yet.")
+            return
+        }
+        mutableState._channels.value = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList)
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
@@ -335,8 +351,12 @@ internal class QueryChannelsLogic(
      */
     private fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
-
-        val affectedChannels = mutableState._channels.value
+        val existingChannels = mutableState._channels.value
+        if (existingChannels == null) {
+            logger.logW("Aborting refresh member state as channels are not available yet.")
+            return
+        }
+        val affectedChannels = existingChannels
             .filter { (_, channel) -> channel.users().any { it.id == userId } }
             .mapValues { (_, channel) ->
                 channel.copy(
@@ -346,6 +366,6 @@ internal class QueryChannelsLogic(
                 )
             }
 
-        mutableState._channels.value += affectedChannels
+        mutableState._channels.value = existingChannels + affectedChannels
     }
 }

@@ -854,9 +854,11 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode$Compani
 public final class io/getstream/chat/android/client/errors/ChatNetworkError : io/getstream/chat/android/client/errors/ChatError {
 	public static final field Companion Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getStatusCode ()I
 	public final fun getStreamCode ()I
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
