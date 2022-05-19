@@ -25,7 +25,7 @@ public class ChatClientConfig @JvmOverloads constructor(
     public var wssUrl: String,
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
-    public var distinctApiCalls: Boolean = false
+    public var distinctApiCalls: Boolean = true
 ) {
     public var isAnonymous: Boolean = false
 }

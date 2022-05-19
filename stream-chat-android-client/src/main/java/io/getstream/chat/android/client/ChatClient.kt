@@ -2191,7 +2191,7 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
-        private var distinctApiCalls: Boolean = false
+        private var distinctApiCalls: Boolean = true
 
         /**
          * Sets the log level to be used by the client.
@@ -2349,11 +2349,11 @@ internal constructor(
         }
 
         /**
-         * Prevents simultaneous network calls of the same request by merging those into a single one.
+         * Allows simultaneous network calls of the same request by avoiding to merge those into a single one.
          * By default [distinctApiCalls] is disabled.
          */
-        public fun distinctApiCalls(): Builder = apply {
-            this.distinctApiCalls = true
+        public fun disableDistinctApiCalls(): Builder = apply {
+            this.distinctApiCalls = false
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
