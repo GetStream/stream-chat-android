@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client
+package io.getstream.chat.android.client.socket.lifecycle
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.socket.Event
-import io.getstream.chat.android.client.socket.LifecycleObserver
 import io.getstream.chat.android.client.socket.ShutdownReason
 import io.getstream.chat.android.client.socket.Timed
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
-internal class StreamLifecycleObserver : DefaultLifecycleObserver, LifecycleObserver {
+internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePublisher {
     private var recurringResumeEvent = false
 
     @Volatile
     private var isObserving = false
 
-    private var _lifecycleEvents = MutableSharedFlow<Timed<Event.Lifecycle>>(extraBufferCapacity = 1)
-    override val lifecycleEvents = _lifecycleEvents.asSharedFlow()
+    private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
 
     override fun observe() {
         if (isObserving.not()) {
@@ -47,7 +47,7 @@ internal class StreamLifecycleObserver : DefaultLifecycleObserver, LifecycleObse
             GlobalScope.launch(DispatcherProvider.Main) {
                 ProcessLifecycleOwner.get()
                     .lifecycle
-                    .addObserver(this@StreamLifecycleObserver)
+                    .addObserver(this@StreamLifecyclePublisher)
             }
         }
     }
@@ -57,18 +57,14 @@ internal class StreamLifecycleObserver : DefaultLifecycleObserver, LifecycleObse
         GlobalScope.launch(DispatcherProvider.Main) {
             ProcessLifecycleOwner.get()
                 .lifecycle
-                .removeObserver(this@StreamLifecycleObserver)
+                .removeObserver(this@StreamLifecyclePublisher)
         }
         isObserving = false
         recurringResumeEvent = false
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        // ignore event when we just started observing the lifecycle
-        if (recurringResumeEvent) {
-            _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
-        }
-        recurringResumeEvent = true
+        _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
     }
 
     override fun onStop(owner: LifecycleOwner) {

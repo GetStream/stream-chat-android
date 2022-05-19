@@ -20,14 +20,3 @@ package io.getstream.chat.android.client.socket
  * A wrapper that contains timestamp along with the [value].
  */
 internal data class Timed<T>(val value: T, val time: Long)
-
-internal fun List<Timed<Event.Lifecycle>>.combineLifecycleState() =
-    if (any { it.value.isStoppedAndAborted() }) {
-        filter { it.value.isStoppedAndAborted() }
-            .minByOrNull { it.time }!!
-            .value
-    } else if (any { it.value.isStopped() }) {
-        filter { it.value.isStopped() }
-            .minByOrNull { it.time }!!
-            .value
-    } else Event.Lifecycle.Started

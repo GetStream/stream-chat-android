@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.token.TokenManager
 import okhttp3.OkHttpClient
 import okhttp3.Request

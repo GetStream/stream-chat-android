@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent

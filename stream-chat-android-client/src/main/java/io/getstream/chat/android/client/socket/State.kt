@@ -20,6 +20,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.socket.ws.OkHttpWebSocket
 
 /**
  * State of the socket connection.
@@ -30,12 +31,12 @@ internal sealed class State {
     /**
      * State of socket when connection is being established.
      */
-    data class Connecting(val session: Session) : State()
+    data class Connecting(val webSocket: OkHttpWebSocket) : State()
 
     /**
      * State of socket when the connection is established.
      */
-    data class Connected(val event: ConnectedEvent?, val session: Session) : State()
+    data class Connected(val event: ConnectedEvent?, val webSocket: OkHttpWebSocket) : State()
 
     /**
      * State of socket when the connection is permanently disabled.

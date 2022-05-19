@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.network
+package io.getstream.chat.android.client.socket.lifecycle
 
 import android.net.ConnectivityManager
 import android.net.Network
@@ -24,18 +24,18 @@ import android.os.Build
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.socket.Event
-import io.getstream.chat.android.client.socket.LifecycleObserver
 import io.getstream.chat.android.client.socket.Timed
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class NetworkLifecycleObserver(private val connectivityManager: ConnectivityManager) : LifecycleObserver {
+internal class NetworkLifecyclePublisher(private val connectivityManager: ConnectivityManager) : LifecyclePublisher {
 
     private val logger = ChatLogger.get("NetworkStateProvider")
-    private var _lifecycleEvents = MutableSharedFlow<Timed<Event.Lifecycle>>(extraBufferCapacity = 1)
 
-    override val lifecycleEvents = _lifecycleEvents.asSharedFlow()
+    private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
 
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {

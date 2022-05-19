@@ -40,12 +40,10 @@ import io.getstream.chat.android.client.api2.MessageApi
 import io.getstream.chat.android.client.api2.ModerationApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.UserApi
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
@@ -55,6 +53,8 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.client.socket.lifecycle.NetworkLifecyclePublisher
+import io.getstream.chat.android.client.socket.lifecycle.StreamLifecyclePublisher
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -93,13 +93,16 @@ internal open class BaseChatModule(
     }
 
     val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
-    val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
-            socketStateService,
+            defaultSocket,
             networkScope,
         )
+    }
+
+    val connectLifecyclePublisher: ConnectLifecyclePublisher by lazy {
+        ConnectLifecyclePublisher()
     }
 
     //region Modules
@@ -210,9 +213,13 @@ internal open class BaseChatModule(
             chatConfig.wssUrl,
             tokenManager,
             SocketFactory(parser, tokenManager),
-            NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
             networkScope,
             parser,
+            listOf(
+                StreamLifecyclePublisher(),
+                NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+                connectLifecyclePublisher
+            )
         )
     }
 

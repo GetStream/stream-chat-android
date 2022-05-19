@@ -45,8 +45,6 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.clientstate.SocketState
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
@@ -124,7 +122,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ConnectLifecycleObserver
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.socket.State
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -171,7 +168,6 @@ internal constructor(
     private val socket: ChatSocket,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
@@ -184,7 +180,6 @@ internal constructor(
     private val logger = ChatLogger.get("Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope)
-    private val connectLifecycleObserver = ConnectLifecycleObserver()
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -209,7 +204,6 @@ internal constructor(
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
-                    socketStateService.onConnected(connectionId)
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
                 }
@@ -218,10 +212,9 @@ internal constructor(
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
                         is DisconnectCause.Error,
-                        -> socketStateService.onDisconnected()
+                        -> Unit
                         is DisconnectCause.UnrecoverableError -> {
                             userStateService.onSocketUnrecoverableError()
-                            socketStateService.onSocketUnrecoverableError()
                         }
                     }
                 }
@@ -233,7 +226,7 @@ internal constructor(
 
             val currentUser = when {
                 event is HasOwnUser -> event.me
-                event is UserEvent && event.user.id == getCurrentUser()?.id ?: "" -> event.user
+                (event is UserEvent) && (event.user.id == (getCurrentUser()?.id ?: "")) -> event.user
                 else -> null
             }
             currentUser?.let { updatedCurrentUser ->
@@ -300,21 +293,18 @@ internal constructor(
         val userState = userStateService.state
         return when {
             userState is UserState.UserSet &&
-                userState.user.id == user.id &&
-                socketStateService.state == SocketState.Idle -> {
+                userState.user.id == user.id -> {
                 logger.logV("[setUser] user is Set & socket.state is Idle")
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(cacheableTokenProvider)
-                socketStateService.onConnectionRequested()
-                socket.setConnectionConf(user).also { connectLifecycleObserver.onConnect() }
+                socket.connect(user)
                 initializationCoordinator.userConnected(user)
                 waitConnection.first()
             }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
-                socketStateService.onConnectionRequested()
-                socket.setConnectionConf(user).also { connectLifecycleObserver.onConnect() }
+                socket.connect(user)
                 waitConnection.first()
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
@@ -437,12 +427,11 @@ internal constructor(
 
     private suspend fun setAnonymousUser(): Result<ConnectionData> {
         return if (userStateService.state is UserState.NotSet) {
-            socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
             tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
             config.isAnonymous = true
             warmUp()
-            socket.setConnectionConf(null).also { connectLifecycleObserver.onConnect() }
+            socket.connect(null)
             waitConnection.first().also { result ->
                 if (result.isSuccess) {
                     initializationCoordinator.userConnected(result.data().user)
@@ -742,21 +731,7 @@ internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        socket.disconnect()
-    }
-
-    public fun reconnectSocket() {
-        when (socket.state) {
-            is State.Disconnected -> when (
-                val userState =
-                    userStateService.state
-            ) {
-                is UserState.UserSet -> socket.setConnectionConf(userState.user).also { connectLifecycleObserver.onConnect() }
-                is UserState.AnonymousUserSet -> socket.setConnectionConf(null).also { connectLifecycleObserver.onConnect() }
-                else -> error("Invalid user state $userState without user being set!")
-            }
-            else -> Unit
-        }
+        socket.disconnect(DisconnectCause.UnrecoverableError(null))
     }
 
     public fun addSocketListener(listener: SocketListener) {
@@ -895,9 +870,8 @@ internal constructor(
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
         getCurrentUser().let(initializationCoordinator::userDisconnected)
-        socketStateService.onDisconnectRequested()
         userStateService.onLogout()
-        socket.disconnect()
+        socket.disconnect(DisconnectCause.UnrecoverableError(null))
         userCredentialStorage.clear()
         appSettingsManager.clear()
     }
@@ -2386,7 +2360,6 @@ internal constructor(
                 module.socket(),
                 module.notifications(),
                 tokenManager,
-                module.socketStateService,
                 module.queryChannelsPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager

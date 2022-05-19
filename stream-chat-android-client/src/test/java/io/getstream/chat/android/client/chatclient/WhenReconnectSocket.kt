@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.randomString

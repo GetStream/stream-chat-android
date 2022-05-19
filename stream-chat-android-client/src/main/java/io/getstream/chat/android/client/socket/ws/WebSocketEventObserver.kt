@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.socket.ws
 
+import io.getstream.chat.android.client.socket.ShutdownReason
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.Response

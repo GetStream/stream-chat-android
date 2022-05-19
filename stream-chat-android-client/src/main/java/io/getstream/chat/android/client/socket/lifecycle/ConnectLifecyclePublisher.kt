@@ -14,41 +14,40 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.socket.lifecycle
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import io.getstream.chat.android.client.socket.Event
+import io.getstream.chat.android.client.socket.ShutdownReason
+import io.getstream.chat.android.client.socket.Timed
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
-internal class ConnectLifecycleObserver: LifecycleObserver {
+internal class ConnectLifecyclePublisher : LifecyclePublisher {
 
-    @Volatile
-    private var isObserving = false
-
-    private var _lifecycleEvents = MutableSharedFlow<Timed<Event.Lifecycle>>(extraBufferCapacity = 1)
-    override val lifecycleEvents = _lifecycleEvents.asSharedFlow()
+    private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
 
     override fun observe() {
-
     }
 
     override fun dispose() {
-
     }
 
     fun onConnect() {
         _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
     }
 
-    fun onDisconnect() {
+    fun onDisconnect(cause: DisconnectCause?) {
         _lifecycleEvents.tryEmit(
             Timed(
                 Event.Lifecycle.Stopped.WithReason(
                     shutdownReason = ShutdownReason(
                         1000,
-                        "App is paused"
+                        "Disconnected by request"
                     ),
-                    cause = DisconnectCause.ConnectionReleased
+                    cause = cause ?: DisconnectCause.ConnectionReleased
                 ),
                 System.currentTimeMillis()
             )

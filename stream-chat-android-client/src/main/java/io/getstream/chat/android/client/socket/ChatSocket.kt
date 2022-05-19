@@ -27,13 +27,14 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.socket.lifecycle.ConnectLifecyclePublisher
+import io.getstream.chat.android.client.socket.lifecycle.LifecyclePublisher
+import io.getstream.chat.android.client.socket.lifecycle.combine
+import io.getstream.chat.android.client.socket.ws.OkHttpWebSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -47,41 +48,33 @@ internal open class ChatSocket constructor(
     private val socketFactory: SocketFactory,
     private val coroutineScope: CoroutineScope,
     private val parser: ChatParser,
-    private val lifecycleObservers: List<LifecycleObserver>,
+    private val lifecycleObservers: List<LifecyclePublisher>,
 ) {
     private val logger = ChatLogger.get("ChatSocket")
 
+    private var connectLifecyclePublisher = ConnectLifecyclePublisher()
     private var connectionConf: SocketFactory.ConnectionConf? = null
-    private var socketConnectionJob: Job? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
-        object : HealthMonitor.HealthCallback {
-            override fun reconnect() {
-                val state = stateMachine.state
-                if (state is State.Disconnected && state.disconnectCause is DisconnectCause.Error) {
-                    this@ChatSocket.reconnect(connectionConf)
-                }
+        checkCallback = {
+            (stateMachine.state as? State.Connected)?.let { state -> state.event?.let { sendEvent(it) } }
+        },
+        reconnectCallback = {
+            val state = stateMachine.state
+            if (state is State.Disconnected && state.disconnectCause is DisconnectCause.Error) {
+                connectionConf?.let { connect(it.asReconnectionConf()) }
             }
-
-            override fun check() {
-                (stateMachine.state as? State.Connected)?.let { state -> state.event?.let { sendEvent(it) } }
-            }
-        }
-    )
+        })
 
     private var reconnectionAttempts = 0
 
     private var connectionEventReceived = false
 
     init {
-        combine(*lifecycleObservers.map { it.lifecycleEvents }.toTypedArray()) {
-            listOf(*it).combineLifecycleState()
-        }
-            .distinctUntilChanged { old, new -> old == new || old.isStopped() && new.isStopped() }
+        (lifecycleObservers + connectLifecyclePublisher).combine()
             .onEach { stateMachine.sendEvent(it) }
             .launchIn(coroutineScope)
-
         startObservers()
     }
 
@@ -94,16 +87,49 @@ internal open class ChatSocket constructor(
                 state
             }
 
+            state<State.Disconnected> {
+                onEnter {
+                    when (disconnectCause) {
+                        is DisconnectCause.NetworkNotAvailable, is DisconnectCause.ConnectionReleased -> {
+                            healthMonitor.stop()
+                        }
+                        is DisconnectCause.Error -> {
+                            healthMonitor.onDisconnected()
+                        }
+                        else -> {
+                            healthMonitor.stop()
+                            connectionConf = null
+                        }
+                    }
+                    callListeners { it.onDisconnected(this.disconnectCause) }
+                }
+                onEvent<Event.Lifecycle.Started> {
+                    connectionConf?.let {
+                        val webSocket = open(it)
+                        State.Connecting(webSocket = webSocket)
+                    } ?: this
+                }
+                onEvent<Event.Lifecycle.Stopped> {
+                    // no-op
+                    this
+                }
+                onEvent<Event.Lifecycle.Terminate> {
+                    State.Destroyed
+                }
+            }
+
             state<State.Connecting> {
                 onEnter {
                     healthMonitor.stop()
+                    callListeners { listener -> listener.onConnecting() }
                 }
                 onEvent<Event.WebSocket.OnConnectionOpened<*>> {
-                    State.Connected(event = null, session = session)
+                    State.Connected(event = null, webSocket = webSocket)
                 }
                 onEvent<Event.WebSocket.Terminate> {
-                    // TODO: transition to retry state here.
-                    this
+                    // We do transition to Disconnected state here because the connection can be reconnected with health callback.
+                    State.Disconnected(DisconnectCause.Error(null))
+                    // TODO: Improve retry logic independent of HealthMonitor.
                 }
             }
 
@@ -118,45 +144,26 @@ internal open class ChatSocket constructor(
                     // no-op
                     this
                 }
-                onEvent<Event.WebSocket.OnConnectedEventReceived> {
-                    State.Connected(event = it.connectedEvent, session = session)
-                }
                 onEvent<Event.Lifecycle.Stopped> { event ->
                     initiateShutdown(event)
                     State.Disconnecting(event.disconnectCause)
                 }
+                onEvent<Event.WebSocket.OnConnectedEventReceived> {
+                    State.Connected(event = it.connectedEvent, webSocket = webSocket)
+                }
                 onEvent<Event.Lifecycle.Terminate> {
-                    session.socket.cancel()
+                    webSocket.cancel()
                     State.Destroyed
                 }
                 onEvent<Event.WebSocket.Terminate> {
-                    // TODO: transition to retry state here.
-                    this
+                    // We do transition to Disconnected state here because the connection can be reconnected with health callback.
+                    State.Disconnected(DisconnectCause.Error(null))
+                    // TODO: Improve retry logic independent of HealthMonitor.
                 }
-            }
-
-            state<State.Disconnected> {
-                onEvent<Event.Lifecycle.Started> {
-                    connectionConf?.let {
-                        val webSocket = open(it)
-                        State.Connecting(session = Session(webSocket))
-                    } ?: this
-                }
-            }
-
-            state<State.DisconnectedPermanently> {
             }
 
             state<State.Disconnecting> {
-                onEnter {
-                    if (disconnectCause is DisconnectCause.NetworkNotAvailable || disconnectCause is DisconnectCause.ConnectionReleased) {
-                        healthMonitor.stop()
-                    } else if (disconnectCause is DisconnectCause.Error) {
-                        healthMonitor.onDisconnected()
-                    }
-                }
                 onEvent<Event.WebSocket.Terminate> {
-                    callListeners { it.onDisconnected(this.disconnectCause) }
                     State.Disconnected(this.disconnectCause)
                 }
             }
@@ -169,6 +176,21 @@ internal open class ChatSocket constructor(
 
     internal val state
         get() = stateMachine.state
+
+    fun connect(user: User?) {
+        connectionConf = user?.let { SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
+            ?: SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
+        connectLifecyclePublisher.onConnect()
+    }
+
+    private fun connect(connectionConf: SocketFactory.ConnectionConf) {
+        this.connectionConf = connectionConf
+        connectLifecyclePublisher.onConnect()
+    }
+
+    fun disconnect(cause: DisconnectCause? = null) {
+        connectLifecyclePublisher.onDisconnect(cause)
+    }
 
     private fun open(connectionConf: SocketFactory.ConnectionConf): OkHttpWebSocket {
         return with(connectionConf) {
@@ -189,8 +211,8 @@ internal open class ChatSocket constructor(
 
     private fun State.Connected.initiateShutdown(state: Event.Lifecycle.Stopped) {
         when (state) {
-            is Event.Lifecycle.Stopped.WithReason -> session.socket.close(state.shutdownReason)
-            is Event.Lifecycle.Stopped.AndAborted -> session.socket.cancel()
+            is Event.Lifecycle.Stopped.WithReason -> webSocket.close(state.shutdownReason)
+            is Event.Lifecycle.Stopped.AndAborted -> webSocket.cancel()
         }
     }
 
@@ -214,9 +236,11 @@ internal open class ChatSocket constructor(
             -> {
                 if (reconnectionAttempts < RETRY_LIMIT) {
                     coroutineScope.launch {
-                        delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
-                        reconnect(connectionConf)
-                        reconnectionAttempts += 1
+                        connectionConf?.let {
+                            delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
+                            reconnect(it)
+                            reconnectionAttempts += 1
+                        }
                     }
                 }
             }
@@ -225,11 +249,10 @@ internal open class ChatSocket constructor(
             ChatErrorCode.API_KEY_NOT_FOUND.code,
             ChatErrorCode.VALIDATION_ERROR.code,
             -> {
-                state = State.DisconnectedPermanently(error)
+                disconnect(DisconnectCause.UnrecoverableError(error))
             }
             else -> {
-                // state = State.DisconnectedTemporarily(error)
-                stateMachine.sendEvent(Event.Lifecycle.Stopped.WithReason(DisconnectCause.Error(error)))
+                disconnect(DisconnectCause.Error(error))
             }
         }
     }
@@ -246,11 +269,6 @@ internal open class ChatSocket constructor(
         }
     }
 
-    open fun setConnectionConf(user: User?) {
-        connectionConf = user?.let { SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
-            ?: SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
-    }
-
     fun reconnectAnonymously() {
         reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
     }
@@ -259,31 +277,34 @@ internal open class ChatSocket constructor(
         reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
     }
 
-    open fun disconnect() {
+    // TODO: Refactor disconnect with connect lifecycle observer
+    /*open fun disconnect() {
         reconnectionAttempts = 0
         state = State.DisconnectedPermanently(null)
-    }
+    }*/
 
     open fun onEvent(event: ChatEvent) {
         healthMonitor.ack()
         callListeners { listener -> listener.onEvent(event) }
     }
 
+    /**
+     * Attempt to send [event] to the web socket connection.
+     * This method returns true only if socket is connected and [okhttp3.WebSocket.send] returns true. In all other cases,
+     * it returns false.
+     *
+     * @see [okhttp3.WebSocket.send]
+     */
     internal open fun sendEvent(event: ChatEvent): Boolean {
         return when (val state = stateMachine.state) {
-            is State.Connected -> state.session.socket.send(event)
+            is State.Connected -> state.webSocket.send(event)
             else -> false
         }
     }
 
-    // TODO: Refactor reconnect logic.
-    private fun reconnect(connectionConf: SocketFactory.ConnectionConf?) {
-        shutdownSocketConnection()
-        setupSocket(connectionConf?.asReconnectionConf())
-    }
-
-    private fun setupSocket(connectionConf: SocketFactory.ConnectionConf?) {
-        logger.logI("setupSocket")
+    private fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
+        disconnect(DisconnectCause.Error(ChatNetworkError.create(ChatErrorCode.PARSER_ERROR)))
+        connect(connectionConf.asReconnectionConf())
     }
 
     private fun handleEvent(event: Event.WebSocket) {
@@ -324,10 +345,6 @@ internal open class ChatSocket constructor(
         } else {
             onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))
         }
-    }
-
-    private fun shutdownSocketConnection() {
-        socketConnectionJob?.cancel()
     }
 
     private fun callListeners(call: (SocketListener) -> Unit) {
