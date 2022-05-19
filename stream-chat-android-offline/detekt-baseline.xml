@@ -2,15 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanOrEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun inFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
     <ID>ComplexMethod:FilterObjectConverter.kt$private fun FilterObject.toMap(): Map&lt;String, Any></ID>
     <ID>ComplexMethod:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>ComplexMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun objectToStringArguments()</ID>
@@ -18,33 +9,13 @@
     <ID>ComplexMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
     <ID>EmptyFunctionBlock:BaseDomainTest2.kt$BaseDomainTest2.&lt;no name provided>${}</ID>
     <ID>ForbiddenComment:BaseDomainTest2.kt$BaseDomainTest2$// TODO: a chat domain without a user set should raise a clear error</ID>
-    <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun distinctFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanOrEqualsFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun inFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun objectToStringArguments()</ID>
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>
     <ID>LongMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
-    <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, )</ID>
     <ID>MaxLineLength:ChannelDao.kt$ChannelDao$@Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")</ID>
     <ID>MaxLineLength:ChannelEntity.kt$ChannelEntity$*</ID>
     <ID>MaxLineLength:Config.kt$Config$*</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt; 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt;= 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it >= 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$(expectedList + List(10) { randomChannel(members = List(positiveRandomInt(10)) { randomMember() }) }).shuffled()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
@@ -57,22 +28,15 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
     <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
-    <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
-    <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
     <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
     <ID>MaxLineLength:StreamOfflinePluginFactory.kt$StreamOfflinePluginFactory$* Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
     <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
-    <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
-    <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
-    <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>
   </CurrentIssues>
 </SmellBaseline>

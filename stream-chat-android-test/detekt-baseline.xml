@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:StateMother.kt$10</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$1.1</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$10</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$100</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$11</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$1988</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$2019</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$2020</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$22</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$232</ID>
+    <ID>MagicNumber:TestDataHelper.kt$TestDataHelper$444</ID>
+    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>
+    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
+    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$public val apiKey: String = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }</ID>
+    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$public val reaction1: Reaction = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }</ID>
+    <ID>TooManyFunctions:StateMother.kt$io.getstream.chat.android.offline.StateMother.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
