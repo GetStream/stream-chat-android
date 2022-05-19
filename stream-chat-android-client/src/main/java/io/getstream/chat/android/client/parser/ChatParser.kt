@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
 import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 
 internal interface ChatParser {
@@ -59,11 +60,45 @@ internal interface ChatParser {
                 } catch (_: Throwable) {
                     ErrorResponse().apply { message = body }
                 }
-                ChatNetworkError.create(error.code, error.message, statusCode)
+                ChatNetworkError.create(
+                    streamCode = error.code,
+                    description = error.message + moreInfoTemplate(error.moreInfo),
+                    statusCode = statusCode
+                )
             }
         } catch (expected: Throwable) {
             ChatLogger.instance.logE(tag, expected)
-            ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, expected, statusCode)
+            ChatNetworkError.create(
+                code = ChatErrorCode.NETWORK_FAILED,
+                cause = expected,
+                statusCode = statusCode
+            )
         }
+    }
+
+    fun toError(errorResponseBody: ResponseBody): ChatNetworkError {
+        return try {
+            val errorResponse: ErrorResponse = fromJson(errorResponseBody.string(), ErrorResponse::class.java)
+            val (code, message, statusCode, _, moreInfo) = errorResponse
+
+            ChatNetworkError.create(
+                streamCode = code,
+                description = message + moreInfoTemplate(moreInfo),
+                statusCode = statusCode
+            )
+        } catch (expected: Throwable) {
+            ChatLogger.instance.logE(tag, expected)
+            ChatNetworkError.create(
+                code = ChatErrorCode.NETWORK_FAILED,
+                cause = expected,
+                statusCode = -1
+            )
+        }
+    }
+
+    private fun moreInfoTemplate(moreInfo: String): String {
+        return if (moreInfo.isNotBlank()) {
+            "\nMore information available at $moreInfo"
+        } else ""
     }
 }

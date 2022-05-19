@@ -42,7 +42,6 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -228,7 +227,7 @@ internal class SyncManager(
             chatClient.queryChannelsInternal(request)
                 .await()
                 .onSuccessSuspend { channels ->
-                    val foundChannelIds = channels.map { it.id }
+                    val foundChannelCids = channels.map { it.cid }
 
                     channels.forEach { channel ->
                         val channelLogic = logicRegistry.channel(channel.type, channel.id)
@@ -236,7 +235,7 @@ internal class SyncManager(
                         channelLogic.updateDataFromChannel(channel)
                     }
 
-                    missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
+                    missingChannelIds = cids.filterNot { cid -> foundChannelCids.contains(cid) }
                     storeStateForChannels(channels)
                 }
 
@@ -375,7 +374,7 @@ internal class SyncManager(
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    private suspend fun addTypingChannel(channelLogic: ChannelLogic) {
-        globalState._typingChannels.emitAll(channelLogic.state().typing)
+    private fun addTypingChannel(channelLogic: ChannelLogic) {
+        globalState._typingChannels.tryEmit(channelLogic.state().typing.value)
     }
 }

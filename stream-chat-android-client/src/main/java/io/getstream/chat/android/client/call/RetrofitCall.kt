@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : Call<T> {
 
     private var canceled = AtomicBoolean(false)
@@ -111,7 +111,13 @@ internal class RetrofitCall<T : Any>(
                 Result(failedError(t))
             }
         } else {
-            Result(parser.toError(retrofitResponse.raw()))
+            val errorBody = retrofitResponse.errorBody()
+
+            if (errorBody != null) {
+                Result(parser.toError(errorBody))
+            } else {
+                Result(parser.toError(retrofitResponse.raw()))
+            }
         }
     }
 }

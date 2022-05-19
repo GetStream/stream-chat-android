@@ -31,7 +31,7 @@ public open class ChatEventHandlerFactory {
      *
      * @param channels The visible channels` list.
      */
-    public open fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
+    public open fun chatEventHandler(channels: StateFlow<List<Channel>?>): ChatEventHandler {
         return DefaultChatEventHandler(channels = channels)
     }
 }

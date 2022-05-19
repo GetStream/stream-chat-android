@@ -66,7 +66,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
         sut.reconnectSocket()
 
-        verify(socket).connect(user)
+        verify(socket).reconnectUser(user)
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
         sut.reconnectSocket()
 
-        verify(socket).connectAnonymously()
+        verify(socket).reconnectAnonymously()
     }
 
     @Test
