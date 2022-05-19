@@ -100,7 +100,9 @@ public class PinnedMessageListView : ViewFlipper {
     }
 
     public fun showLoading() {
-        displayedChild = Flipper.LOADING
+        if (adapter.itemCount == 0) {
+            displayedChild = Flipper.LOADING
+        }
         scrollListener.disablePagination()
     }
 

@@ -79,7 +79,8 @@ public fun MessageInput(
                     QuotedMessage(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         message = activeAction.message,
-                        onLongItemClick = {}
+                        onLongItemClick = {},
+                        onQuotedMessageClick = {}
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))

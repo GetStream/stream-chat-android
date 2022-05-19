@@ -32,13 +32,15 @@ import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView
 @JvmName("bind")
 public fun PinnedMessageListViewModel.bindView(view: PinnedMessageListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
+        val isLoadingMore = state.results.isNotEmpty() && state.results.last().id == ""
+
         when {
-            state.isLoading -> {
+            isLoadingMore -> {
                 view.showLoading()
-            }
-            else -> {
                 view.showMessages(state.results)
             }
+            state.isLoading -> view.showLoading()
+            else -> view.showMessages(state.results)
         }
     }
     errorEvents.observe(

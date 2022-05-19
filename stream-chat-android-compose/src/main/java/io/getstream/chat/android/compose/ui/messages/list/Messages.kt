@@ -29,9 +29,17 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
@@ -76,17 +84,32 @@ public fun Messages(
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(messagesState, lazyListState)
-    },
+    helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
 
+    var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
+    val density = LocalDensity.current
+
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned {
+                    val bottomPadding = contentPadding.calculateBottomPadding()
+                    val topPadding = contentPadding.calculateTopPadding()
+
+                    val paddingPixels = with(density) {
+                        bottomPadding.roundToPx() + topPadding.roundToPx()
+                    }
+
+                    parentSize = IntSize(
+                        width = it.size.width,
+                        height = it.size.height - paddingPixels
+                    )
+                },
             state = lazyListState,
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
@@ -99,21 +122,33 @@ public fun Messages(
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                itemContent(item)
-
-                if (item is MessageItemState) {
-                    onLastVisibleMessageChanged(item.message)
+                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
+                    Modifier.onGloballyPositioned {
+                        if (messagesState.focusedMessageOffset.value == null) {
+                            messagesState.calculateMessageOffset(parentSize, it.size)
+                        }
+                    }
+                } else {
+                    Modifier
                 }
 
-                if (index == 0 && lazyListState.isScrollInProgress) {
-                    onScrolledToBottom()
-                }
+                Box(modifier = messageItemModifier) {
+                    itemContent(item)
 
-                if (!endOfMessages && index == messages.lastIndex &&
-                    messages.isNotEmpty() &&
-                    lazyListState.isScrollInProgress
-                ) {
-                    onMessagesStartReached()
+                    if (item is MessageItemState) {
+                        onLastVisibleMessageChanged(item.message)
+                    }
+
+                    if (index == 0 && lazyListState.isScrollInProgress) {
+                        onScrolledToBottom()
+                    }
+
+                    if (!endOfMessages && index == messages.lastIndex &&
+                        messages.isNotEmpty() &&
+                        lazyListState.isScrollInProgress
+                    ) {
+                        onMessagesStartReached()
+                    }
                 }
             }
 
@@ -146,26 +181,32 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-    LaunchedEffect(key1 = newMessageState, key2 = firstVisibleItemIndex, focusedItemIndex) {
-        if (focusedItemIndex != -1) {
+    val offset = messagesState.focusedMessageOffset.collectAsState()
+
+    LaunchedEffect(
+        newMessageState,
+        firstVisibleItemIndex,
+        focusedItemIndex,
+        offset.value
+    ) {
+        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress) {
             coroutineScope.launch {
-                lazyListState.scrollToItem(focusedItemIndex)
+                lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
             }
         }
+
         when {
-            !lazyListState.isScrollInProgress && newMessageState == Other && firstVisibleItemIndex < 3 -> {
-                coroutineScope.launch {
-                    lazyListState.animateScrollToItem(0)
-                }
+            !lazyListState.isScrollInProgress && newMessageState == Other &&
+                firstVisibleItemIndex < 3 -> coroutineScope.launch {
+                lazyListState.animateScrollToItem(0)
             }
+
             !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)
                 }
                 lazyListState.animateScrollToItem(0)
             }
-
-            else -> Unit
         }
     }
 

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -31,16 +30,13 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
@@ -57,6 +53,15 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  * @param isQuote Is the message is a quote inside another message.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
+@Deprecated(
+    message = "Deprecated after moving the quoted text composition logic to QuotedMessageText which is now " +
+        "used to compose quoted messages. Use MessageText for regular message text.",
+    replaceWith = ReplaceWith(
+        expression = "MessageText(message: Message, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit)",
+        imports = ["io.getstream.chat.android.compose.ui.components.messages.MessageText"]
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 public fun MessageText(
     message: Message,
@@ -72,7 +77,6 @@ public fun MessageText(
     val isEmojiOnly = message.isEmojiOnly() && !isQuote
     val isSingleEmoji = message.isSingleEmoji() && !isQuote
 
-    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         isSingleEmoji -> ChatTheme.typography.singleEmoji
         isEmojiOnly -> ChatTheme.typography.emojiOnly
@@ -122,65 +126,79 @@ public fun MessageText(
     }
 }
 
-private val URL_SCHEMES = listOf("http://", "https://")
-
 /**
- * Takes the given message and builds an annotated message text that shows links and allows for clicks,
- * if there are any links available.
+ * Default text element for messages, with extra styling and padding for the chat bubble.
  *
- * @param message The message to extract the text from and style.
+ * It detects if we have any annotations/links in the message, and if so, it uses the [ClickableText]
+ * component to allow for clicks on said links, that will open the link.
  *
- * @return The annotated String, with clickable links, if applicable.
+ * Alternatively, it just shows a basic [Text] element.
+ *
+ * @param message Message to show.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
-private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
-    val text = message.text
+public fun MessageText(
+    message: Message,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit,
+) {
+    val context = LocalContext.current
 
-    return buildAnnotatedString {
-        // First we add the whole text to the [AnnotatedString] and style it as a regular text.
-        append(text)
-        addStyle(
-            SpanStyle(
-                fontStyle = ChatTheme.typography.body.fontStyle,
-                color = ChatTheme.colors.textHighEmphasis
-            ),
-            start = 0,
-            end = text.length
-        )
+    val styledText = buildAnnotatedMessageText(message)
+    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
-        // Then for each available link in the text, we add a different style, to represent the links,
-        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
-        @SuppressLint("RestrictedApi")
-        val matcher = PatternsCompat.AUTOLINK_WEB_URL.matcher(text)
-        while (matcher.find()) {
-            val start = matcher.start()
-            val end = matcher.end()
+    val isEmojiOnly = message.isEmojiOnly()
+    val isSingleEmoji = message.isSingleEmoji()
 
-            addStyle(
-                style = SpanStyle(
-                    color = ChatTheme.colors.primaryAccent,
-                    textDecoration = TextDecoration.Underline,
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    val style = when {
+        isSingleEmoji -> ChatTheme.typography.singleEmoji
+        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
+
+    if (annotations.isNotEmpty()) {
+        ClickableText(
+            modifier = modifier
+                .padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
                 ),
-                start = start,
-                end = end,
-            )
+            text = styledText,
+            style = style,
+            onLongPress = { onLongItemClick(message) }
+        ) { position ->
+            val targetUrl = annotations.firstOrNull {
+                position in it.start..it.end
+            }?.item
 
-            val linkText = requireNotNull(matcher.group(0)!!)
-
-            // Add "http://" prefix if link has no scheme in it
-            val url = if (URL_SCHEMES.none { scheme -> linkText.startsWith(scheme) }) {
-                URL_SCHEMES[0] + linkText
-            } else {
-                linkText
+            if (targetUrl != null && targetUrl.isNotEmpty()) {
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(targetUrl)
+                    )
+                )
             }
-
-            addStringAnnotation(
-                tag = "URL",
-                annotation = url,
-                start = start,
-                end = end,
-            )
         }
+    } else {
+        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
+        Text(
+            modifier = modifier
+                .padding(
+                    start = horizontalPadding,
+                    end = horizontalPadding,
+                    top = if (isEmojiOnly) 0.dp else 8.dp,
+                    bottom = if (isEmojiOnly) 0.dp else 8.dp
+                )
+                .clipToBounds(),
+            text = styledText,
+            style = style
+        )
     }
 }
 
