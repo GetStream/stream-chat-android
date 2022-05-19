@@ -30,27 +30,15 @@ import java.nio.charset.StandardCharsets
 internal class SocketFactory(
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
+    private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
 
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
-    private val httpClient = OkHttpClient()
 
     @Throws(UnsupportedEncodingException::class)
-    fun createAnonymousSocket(endpoint: String, apiKey: String): OkHttpWebSocket =
-        create(endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
 
-    @Throws(UnsupportedEncodingException::class)
-    fun createNormalSocket(endpoint: String, apiKey: String, user: User): OkHttpWebSocket =
-        create(endpoint, apiKey, user, false)
-
-    @Throws(UnsupportedEncodingException::class)
-    private fun create(
-        endpoint: String,
-        apiKey: String,
-        user: User,
-        isAnonymous: Boolean,
-    ): OkHttpWebSocket {
-        val url = buildUrl(endpoint, apiKey, user, isAnonymous)
+    fun createSocket(connectionConf: ConnectionConf): OkHttpWebSocket {
+        val url = buildUrl(connectionConf)
         val request = Request.Builder().url(url).build()
         val eventsObserver = WebSocketEventObserver()
         httpClient.newWebSocket(request, eventsObserver)
@@ -62,29 +50,29 @@ internal class SocketFactory(
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)
-    private fun buildUrl(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): String {
-        var json = buildUserDetailJson(user)
+    private fun buildUrl(connectionConf: ConnectionConf): String {
+        var json = buildUserDetailJson(connectionConf)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val baseWsUrl: String =
-                endpoint + "connect?json=" + json + "&api_key=" + apiKey
-            if (isAnonymous) {
-                "$baseWsUrl&stream-auth-type=anonymous"
-            } else {
-                val token = tokenManager.getToken()
-                "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
+            val baseWsUrl = "${connectionConf.endpoint}connect?json=$json&api_key=${connectionConf.apiKey}"
+            when (connectionConf) {
+                is ConnectionConf.AnonymousConnectionConf -> "$baseWsUrl&stream-auth-type=anonymous"
+                is ConnectionConf.UserConnectionConf -> {
+                    val token = tokenManager.getToken()
+                    "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
+                }
             }
         } catch (_: Throwable) {
             throw UnsupportedEncodingException("Unable to encode user details json: $json")
         }
     }
 
-    private fun buildUserDetailJson(user: User): String {
+    private fun buildUserDetailJson(connectionConf: ConnectionConf): String {
         val data = mapOf(
-            "user_details" to user.reduceUserDetails(),
-            "user_id" to user.id,
+            "user_details" to connectionConf.reduceUserDetails(),
+            "user_id" to connectionConf.user.id,
             "server_determines_connection_id" to true,
-            "X-Stream-Client" to ChatClient.instance().buildSdkTrackingHeaders()
+            "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
         )
         return parser.toJson(data)
     }
@@ -103,19 +91,39 @@ internal class SocketFactory(
      *
      * @return A map of User's properties to update.
      */
-    private fun User.reduceUserDetails(): Map<String, Any> {
-        val details = mutableMapOf(
-            "id" to id,
-            "role" to role,
-            "banned" to banned,
-            "invisible" to invisible,
-            "teams" to teams,
-        ).apply {
-            if (image.isNotBlank()) put("image", image)
-            if (name.isNotBlank()) put("name", name)
-            putAll(extraData)
+    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to user.id)
+        .apply {
+            if (!isReconnection) {
+                put("role", user.role)
+                put("banned", user.banned)
+                put("invisible", user.invisible)
+                put("teams", user.teams)
+                if (user.image.isNotBlank()) put("image", user.image)
+                if (user.name.isNotBlank()) put("name", user.name)
+                putAll(user.extraData)
+            }
         }
 
-        return details
+    internal sealed class ConnectionConf {
+        var isReconnection: Boolean = false
+            private set
+        abstract val endpoint: String
+        abstract val apiKey: String
+        abstract val user: User
+
+        data class AnonymousConnectionConf(
+            override val endpoint: String,
+            override val apiKey: String,
+        ) : ConnectionConf() {
+            override val user: User = User(ANONYMOUS_USER_ID)
+        }
+
+        data class UserConnectionConf(
+            override val endpoint: String,
+            override val apiKey: String,
+            override val user: User,
+        ) : ConnectionConf()
+
+        internal fun asReconnectionConf(): ConnectionConf = this.also { isReconnection = true }
     }
 }

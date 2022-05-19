@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
@@ -46,13 +45,13 @@ internal open class ChatSocket constructor(
     private val wssUrl: String,
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
-    private val networkStateProvider: NetworkStateProvider,
     private val coroutineScope: CoroutineScope,
     private val parser: ChatParser,
     private val lifecycleObservers: List<LifecycleObserver>,
 ) {
     private val logger = ChatLogger.get("ChatSocket")
-    private var connectionConf: ConnectionConf = ConnectionConf.None
+
+    private var connectionConf: SocketFactory.ConnectionConf? = null
     private var socketConnectionJob: Job? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
@@ -138,10 +137,10 @@ internal open class ChatSocket constructor(
 
             state<State.Disconnected> {
                 onEvent<Event.Lifecycle.Started> {
-                    if (connectionConf != ConnectionConf.None) {
-                        val webSocket = open(connectionConf)
+                    connectionConf?.let {
+                        val webSocket = open(it)
                         State.Connecting(session = Session(webSocket))
-                    } else this
+                    } ?: this
                 }
             }
 
@@ -168,26 +167,15 @@ internal open class ChatSocket constructor(
         }
     }
 
-    private fun open(connectionConf: ConnectionConf): OkHttpWebSocket {
+    internal val state
+        get() = stateMachine.state
+
+    private fun open(connectionConf: SocketFactory.ConnectionConf): OkHttpWebSocket {
         return with(connectionConf) {
-            when (this) {
-                is ConnectionConf.None -> {
-                    throw error("Can't open socket connection without setting connection conf.")
-                }
-                is ConnectionConf.AnonymousConnectionConf -> {
-                    val socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
-                    socket.open()
-                        .onEach { handleEvent(it) }.launchIn(coroutineScope)
-                    socket
-                }
-                is ConnectionConf.UserConnectionConf -> {
-                    tokenManager.ensureTokenLoaded()
-                    val socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
-                    socket.open()
-                        .onEach { handleEvent(it) }.launchIn(coroutineScope)
-                    socket
-                }
-            }
+            val socket = socketFactory.createSocket(this)
+            socket.open()
+                .onEach { handleEvent(it) }.launchIn(coroutineScope)
+            socket
         }
     }
 
@@ -259,8 +247,16 @@ internal open class ChatSocket constructor(
     }
 
     open fun setConnectionConf(user: User?) {
-        connectionConf = user?.let { ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
-            ?: ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
+        connectionConf = user?.let { SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
+            ?: SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
+    }
+
+    fun reconnectAnonymously() {
+        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+    }
+
+    fun reconnectUser(user: User) {
+        reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
     }
 
     open fun disconnect() {
@@ -280,12 +276,13 @@ internal open class ChatSocket constructor(
         }
     }
 
-    private fun reconnect(connectionConf: ConnectionConf) {
+    // TODO: Refactor reconnect logic.
+    private fun reconnect(connectionConf: SocketFactory.ConnectionConf?) {
         shutdownSocketConnection()
-        setupSocket(connectionConf)
+        setupSocket(connectionConf?.asReconnectionConf())
     }
 
-    private fun setupSocket(connectionConf: ConnectionConf) {
+    private fun setupSocket(connectionConf: SocketFactory.ConnectionConf?) {
         logger.logI("setupSocket")
     }
 
@@ -344,11 +341,5 @@ internal open class ChatSocket constructor(
     private companion object {
         private const val RETRY_LIMIT = 3
         private const val DEFAULT_DELAY = 500
-    }
-
-    internal sealed class ConnectionConf {
-        object None : ConnectionConf()
-        data class AnonymousConnectionConf(val endpoint: String, val apiKey: String) : ConnectionConf()
-        data class UserConnectionConf(val endpoint: String, val apiKey: String, val user: User) : ConnectionConf()
     }
 }

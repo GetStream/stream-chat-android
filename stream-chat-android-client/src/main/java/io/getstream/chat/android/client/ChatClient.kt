@@ -439,6 +439,7 @@ internal constructor(
         return if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
+            tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
             config.isAnonymous = true
             warmUp()
             socket.setConnectionConf(null).also { connectLifecycleObserver.onConnect() }
@@ -1559,28 +1560,6 @@ internal constructor(
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
-    /**
-     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and vendor
-     * and more.
-     *
-     * @return String formatted header that contains all the information.
-     */
-    @InternalStreamChatApi
-    public fun buildSdkTrackingHeaders(): String {
-        val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
-        val buildModel = Build.MODEL
-        val deviceManufacturer = Build.MANUFACTURER
-        val apiLevel = Build.VERSION.SDK_INT
-        val osName = "Android ${Build.VERSION.RELEASE}"
-
-        return clientInformation +
-            "|os=$osName" +
-            "|api_version=$apiLevel" +
-            "|device_vendor=$deviceManufacturer" +
-            "|device_model=$buildModel" +
-            "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
-    }
-
     @CheckResult
     public fun acceptInvite(
         channelType: String,
@@ -2540,6 +2519,27 @@ internal constructor(
         private fun ensureClientInitialized(): ChatClient {
             check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
+        }
+
+        /**
+         * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
+         * vendor and more.
+         *
+         * @return String formatted header that contains all the information.
+         */
+        internal fun buildSdkTrackingHeaders(): String {
+            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+            val buildModel = Build.MODEL
+            val deviceManufacturer = Build.MANUFACTURER
+            val apiLevel = Build.VERSION.SDK_INT
+            val osName = "Android ${Build.VERSION.RELEASE}"
+
+            return clientInformation +
+                "|os=$osName" +
+                "|api_version=$apiLevel" +
+                "|device_vendor=$deviceManufacturer" +
+                "|device_model=$buildModel" +
+                "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
         }
     }
 }

@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,6 +45,8 @@ internal class ChatSocketTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
+    private val endpoint: String = randomString()
+    private val apiKey: String = randomString()
     private lateinit var tokenManager: TokenManager
     private lateinit var socketFactory: SocketFactory
     private lateinit var chatParser: ChatParser
@@ -59,8 +62,8 @@ internal class ChatSocketTest {
         networkStateProvider = mock()
         socketListener = mock()
         chatSocket = ChatSocket(
-            randomString(),
-            randomString(),
+            apiKey,
+            endpoint,
             tokenManager,
             socketFactory,
             networkStateProvider,
@@ -147,6 +150,11 @@ internal class ChatSocketTest {
         chatSocket.onSocketError(networkError)
 
         // Socket was recreated
-        verify(socketFactory, times(2)).createAnonymousSocket(any(), any(), any())
+        verify(socketFactory, times(2)).createSocket(
+            any(),
+            org.mockito.kotlin.check {
+                it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey)
+            }
+        )
     }
 }
