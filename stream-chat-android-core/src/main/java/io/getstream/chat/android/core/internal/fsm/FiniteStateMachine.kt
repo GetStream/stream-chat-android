@@ -101,5 +101,3 @@ public class FiniteStateMachine<S : Any, E : Any>(
         enterListeners[this::class]?.forEach { it(this, event) }
     }
 }
-
-

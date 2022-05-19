@@ -359,6 +359,14 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
+	public fun <init> (ILkotlin/jvm/functions/Function0;)V
+	public final fun disablePagination ()V
+	public final fun enablePagination ()V
+	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
+	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
+}
+
 public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
 	public fun <init> (ILkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V

@@ -23,8 +23,12 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
 
 ### ⬆️ Improved
+- 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
+  The change was introduced in order to distuinguish between initial state when channels are not loaded yet
+  and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
 
 ### ✅ Added
 
@@ -45,10 +49,13 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the way pagination scrolling worked for various non-core components (e.g. search, gallery/media/pinned message lists) [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
+- Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the public method `switchToCommandMode(command: Command)` inside `MessageInputView`. This method allows switching the input to command mode using the desired command directly, instead of having to select it from the dialog. An example of its usage is provided inside the patch within the linked PR. [#3515](https://github.com/GetStream/stream-chat-android/pull/3515)
 
 ### ⚠️ Changed
 
@@ -60,8 +67,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
+- Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
 
 ### ⚠️ Changed
+- Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
 
 ### ❌ Removed
 

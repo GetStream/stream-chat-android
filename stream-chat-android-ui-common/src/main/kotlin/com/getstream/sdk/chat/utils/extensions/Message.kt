@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils.extensions
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
@@ -25,6 +26,12 @@ import java.util.Date
  */
 @InternalStreamChatApi
 internal fun Message.isDeleted(): Boolean = deletedAt != null
+
+/**
+ * @return if the message was sent by current user.
+ */
+@InternalStreamChatApi
+public fun Message.isMine(): Boolean = ChatClient.instance().getCurrentUser()?.id == user.id
 
 /**
  * @return when the message was created or throw an exception.

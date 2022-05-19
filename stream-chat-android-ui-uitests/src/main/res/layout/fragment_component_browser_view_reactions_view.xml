@@ -18,67 +18,60 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pageTitle"
         >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            android:id="@+id/viewReactionsView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-                android:id="@+id/viewReactionsView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

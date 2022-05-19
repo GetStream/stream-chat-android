@@ -37,6 +37,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -165,7 +167,7 @@ private fun <T> ChatClient.getStateOrNull(
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Unit>(cid)
+        val cidValidationResult = validateCidWithResult(cid)
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
@@ -174,7 +176,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
             }
             Result(Unit)
         } else {
-            cidValidationResult
+            cidValidationResult.error().toResultError()
         }
     }
 }
@@ -220,14 +222,14 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Channel>(cid)
+        val cidValidationResult = validateCidWithResult(cid)
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
             logic.channel(channelType = channelType, channelId = channelId)
                 .loadOlderMessages(messageLimit = messageLimit)
         } else {
-            cidValidationResult
+            cidValidationResult.error().toResultError()
         }
     }
 }
@@ -242,7 +244,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
  */
 public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Boolean>(message.cid)
+        val cidValidationResult = validateCidWithResult(message.cid)
 
         if (cidValidationResult.isSuccess) {
             try {
@@ -260,7 +262,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                 Result.error(exception)
             }
         } else {
-            cidValidationResult
+            cidValidationResult.error().toResultError()
         }
     }
 }
@@ -283,7 +285,7 @@ public fun ChatClient.loadMessageById(
     newerMessagesOffset: Int,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Message>(cid)
+        val cidValidationResult = validateCidWithResult(cid)
 
         if (cidValidationResult.isSuccess) {
             val result = getMessage(messageId).await()
@@ -294,9 +296,9 @@ public fun ChatClient.loadMessageById(
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
-                    upsertMessages(listOf(message))
                     loadOlderMessages(newerMessagesOffset, messageId)
                     loadNewerMessages(messageId, olderMessagesOffset)
+                    upsertMessages(listOf(message))
                 }
                 result
             } else {
@@ -310,7 +312,7 @@ public fun ChatClient.loadMessageById(
                 }
             }
         } else {
-            cidValidationResult
+            cidValidationResult.error().toResultError()
         }
     }
 }

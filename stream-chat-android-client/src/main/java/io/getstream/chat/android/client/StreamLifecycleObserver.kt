@@ -72,8 +72,17 @@ internal class StreamLifecycleObserver : DefaultLifecycleObserver, LifecycleObse
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Stopped.WithReason(shutdownReason = ShutdownReason(1000,
-            "App is paused"),
-            cause = DisconnectCause.ConnectionReleased), System.currentTimeMillis()))
+        _lifecycleEvents.tryEmit(
+            Timed(
+                Event.Lifecycle.Stopped.WithReason(
+                    shutdownReason = ShutdownReason(
+                        1000,
+                        "App is paused"
+                    ),
+                    cause = DisconnectCause.ConnectionReleased
+                ),
+                System.currentTimeMillis()
+            )
+        )
     }
 }

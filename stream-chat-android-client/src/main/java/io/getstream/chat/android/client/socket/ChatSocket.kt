@@ -102,8 +102,7 @@ internal open class ChatSocket constructor(
         } else Event.Lifecycle.Started
 
     @VisibleForTesting
-    internal var state: State by Delegates.observable(
-    ) { _, oldState, newState ->
+    internal var state: State by Delegates.observable() { _, oldState, newState ->
         if (oldState != newState) {
             logger.logI("updateState: ${newState.javaClass.simpleName}")
             when (newState) {
@@ -176,7 +175,6 @@ internal open class ChatSocket constructor(
             }
 
             state<State.DisconnectedPermanently> {
-
             }
 
             state<State.Disconnecting> {

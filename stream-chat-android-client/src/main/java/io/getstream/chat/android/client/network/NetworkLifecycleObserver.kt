@@ -79,8 +79,12 @@ internal class NetworkLifecycleObserver(private val connectivityManager: Connect
         } else if (isConnected && !isNowConnected) {
             logger.logI("Network disconnected.")
             isConnected = false
-            _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Stopped.AndAborted(DisconnectCause.NetworkNotAvailable),
-                System.currentTimeMillis()))
+            _lifecycleEvents.tryEmit(
+                Timed(
+                    Event.Lifecycle.Stopped.AndAborted(DisconnectCause.NetworkNotAvailable),
+                    System.currentTimeMillis()
+                )
+            )
         }
     }
 

@@ -20,11 +20,29 @@ public class ChatNetworkError private constructor(
     public val description: String,
     cause: Throwable? = null,
     public val streamCode: Int,
-    public val statusCode: Int
+    public val statusCode: Int,
 ) : ChatError(
     "Status code: $statusCode, with stream code: $streamCode, description: $description",
     cause
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other) &&
+            (other as? ChatNetworkError)?.let {
+                description == it.description &&
+                    streamCode == it.streamCode &&
+                    statusCode == it.statusCode
+            } ?: false
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + streamCode.hashCode()
+        result = 31 * result + statusCode.hashCode()
+        return result
+    }
+
     override fun toString(): String {
         return "ChatNetworkError http status $statusCode, stream error code $streamCode: $description"
     }
