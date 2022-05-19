@@ -28,7 +28,7 @@ import kotlin.coroutines.suspendCoroutine
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
 internal class DistinctCall<T : Any>(
-    private val callBuilder: () -> Call<T>,
+    internal val callBuilder: () -> Call<T>,
     private val uniqueKey: Int,
     private val onFinished: () -> Unit,
 ) : Call<T> {
