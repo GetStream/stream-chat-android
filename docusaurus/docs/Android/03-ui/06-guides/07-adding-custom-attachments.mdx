@@ -100,7 +100,8 @@ interface AttachmentFactory {
 
 There are two methods that needs to be implemented:
 
-* `canHandle`: Describes the condition that tells our components if the factory can handle a given set of attachments.
+* `canHandle`: Checks whether the factory can handle the given attachments.
+* ```
 * `createViewHolder`: Represents the attachment UI within the `MessageListView`.
 
 Let's see how to create an `AttachmentFactory` that is capable of handling date attachments:
