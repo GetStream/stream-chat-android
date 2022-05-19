@@ -98,7 +98,6 @@
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
     <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$*</ID>
     <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
-    <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$when</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
@@ -170,7 +169,7 @@
     <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _totalUnreadCount = MutableStateFlow(0)</ID>
     <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))</ID>
     <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _user = MutableStateFlow&lt;User?>(null)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _channels = MutableStateFlow&lt;Map&lt;String, Channel>>(emptyMap())</ID>
+    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _channels = MutableStateFlow&lt;Map&lt;String, Channel>?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _endOfChannels = MutableStateFlow(false)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loading = MutableStateFlow(false)</ID>
