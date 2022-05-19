@@ -34,54 +34,46 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pageTitle"
         >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
+            android:id="@+id/editReactionsView1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
+            android:layout_marginTop="8dp"
+            />
 
+        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
+            android:id="@+id/editReactionsView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
-                android:id="@+id/editReactionsView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
+            android:id="@+id/editReactionsView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
-                android:id="@+id/editReactionsView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
+        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
+            android:id="@+id/editReactionsView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
 
-            <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
-                android:id="@+id/editReactionsView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
-
-            <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
-                android:id="@+id/editReactionsView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

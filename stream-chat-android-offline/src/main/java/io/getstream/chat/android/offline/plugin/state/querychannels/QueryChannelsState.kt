@@ -43,8 +43,11 @@ public interface QueryChannelsState {
     public val loadingMore: StateFlow<Boolean>
     /** If the current state reached the final page. */
     public val endOfChannels: StateFlow<Boolean>
-    /** The collection of channels loaded by the query channels request. */
-    public val channels: StateFlow<List<Channel>>
+    /**
+     *  The collection of channels loaded by the query channels request.
+     *  The StateFlow is initialized with null which means that channels are not loaded yet.
+     */
+    public val channels: StateFlow<List<Channel>?>
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
