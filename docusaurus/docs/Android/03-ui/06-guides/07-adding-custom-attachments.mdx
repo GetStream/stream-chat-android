@@ -2,6 +2,112 @@
 
 ## Introduction
 
+By default Stream Chat supports several built-in attachment types like image, video, file and giphy. Apart from that, you can also add your own types of attachments such as location, contact, audio, sticker, etc.
+
+In this guide, we will demonstrate how to build a date sharing feature. Chat users will be able to pick a date from a calendar, preview their selection in the message composer and see the sent attachment within a message in the message list.
+
+```kotlin
+class DateAttachmentPreviewFactory : SelectedCustomAttachmentViewHolderFactory {
+    override fun createAttachmentViewHolder(
+        attachments: List<Attachment>,
+        parent: ViewGroup,
+    ): BaseSelectedCustomAttachmentViewHolder {
+        return ItemDateAttachmentPreviewBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .let(::DateAttachmentPreviewViewHolder)
+    }
+
+    class DateAttachmentPreviewViewHolder(
+        private val binding: ItemDateAttachmentPreviewBinding,
+    ) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
+
+        override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
+            binding.dateTextView.text = attachment.extraData["payload"].toString()
+            binding.deleteButton.setOnClickListener {
+                onAttachmentCancelled(attachment)
+            }
+        }
+    }
+}
+```
+
+```kotlin
+messageInputView.setAttachmentButtonClickListener { 
+    val dialogPickerDialog = MaterialDatePicker.Builder
+        .datePicker()
+        .build()
+
+    dialogPickerDialog.addOnPositiveButtonClickListener {
+        val date = DateFormat
+            .getDateInstance(DateFormat.LONG)
+            .format(Date(it))
+        val attachment = Attachment(
+            type = "date",
+            extraData = mutableMapOf("payload" to date)
+        )
+        messageInputView.submitCustomAttachments(
+            attachments = listOf(attachment),
+            viewHolderFactory = DateAttachmentPreviewFactory()
+        )
+    }
+
+    dialogPickerDialog.show(requireActivity().supportFragmentManager, null)
+}
+```
+
 ![Sending Custom Attachment](../../assets/sending_custom_attachments.png)
+
+```kotlin
+class DateAttachmentFactory : AttachmentFactory {
+
+    override fun canHandle(message: Message): Boolean {
+        return message.attachments.any { it.type == "date" }
+    }
+
+    override fun createViewHolder(
+        message: Message,
+        listeners: MessageListListenerContainer?,
+        parent: ViewGroup,
+    ): InnerAttachmentViewHolder {
+        return ItemDateAttachmentBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .let { DateAttachmentViewHolder(it, listeners) }
+    }
+
+    class DateAttachmentViewHolder(
+        private val binding: ItemDateAttachmentBinding,
+        listeners: MessageListListenerContainer?,
+    ) : InnerAttachmentViewHolder(binding.root) {
+
+        private lateinit var message: Message
+
+        init {
+            binding.dateTextView.setOnClickListener {
+                listeners?.attachmentClickListener?.onAttachmentClick(
+                    message,
+                    message.attachments.first()
+                )
+            }
+            binding.dateTextView.setOnLongClickListener {
+                listeners?.messageLongClickListener?.onMessageLongClick(message)
+                true
+            }
+        }
+
+        override fun onBindViewHolder(message: Message) {
+            this.message = message
+
+            binding.dateTextView.text = message.attachments
+                .first { it.type == "date" }
+                .extraData["payload"]
+                .toString()
+        }
+    }
+}
+```
+
+```kotlin
+ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
+```
 
 ![Rendering Custom Attachment](../../assets/rendering_custom_attachments.png)
