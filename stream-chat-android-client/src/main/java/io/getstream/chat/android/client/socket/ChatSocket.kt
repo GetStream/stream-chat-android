@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
@@ -30,7 +29,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -40,9 +38,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.pow
-import kotlin.properties.Delegates
 
 @Suppress("TooManyFunctions", "LongParameterList")
 internal open class ChatSocket constructor(
@@ -89,33 +85,6 @@ internal open class ChatSocket constructor(
 
         startObservers()
     }
-
-    private fun List<Timed<Event.Lifecycle>>.combineLifecycleState() =
-        if (any { it.value.isStoppedAndAborted() }) {
-            filter { it.value.isStoppedAndAborted() }
-                .minByOrNull { it.time }!!
-                .value
-        } else if (any { it.value.isStopped() }) {
-            filter { it.value.isStopped() }
-                .minByOrNull { it.time }!!
-                .value
-        } else Event.Lifecycle.Started
-
-    @VisibleForTesting
-    internal var state: State by Delegates.observable() { _, oldState, newState ->
-        if (oldState != newState) {
-            logger.logI("updateState: ${newState.javaClass.simpleName}")
-            when (newState) {
-                is State.DisconnectedPermanently -> {
-                    shutdownSocketConnection()
-                    connectionConf = ConnectionConf.None
-                    healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
-                }
-            }
-        }
-    }
-        private set
 
     private val stateMachine: FiniteStateMachine<State, Event> by lazy {
         FiniteStateMachine {
@@ -169,8 +138,10 @@ internal open class ChatSocket constructor(
 
             state<State.Disconnected> {
                 onEvent<Event.Lifecycle.Started> {
-                    healthMonitor.stop()
-                    State.Connecting()
+                    if (connectionConf != ConnectionConf.None) {
+                        val webSocket = open(connectionConf)
+                        State.Connecting(session = Session(webSocket))
+                    } else this
                 }
             }
 
@@ -197,6 +168,29 @@ internal open class ChatSocket constructor(
         }
     }
 
+    private fun open(connectionConf: ConnectionConf): OkHttpWebSocket {
+        return with(connectionConf) {
+            when (this) {
+                is ConnectionConf.None -> {
+                    throw error("Can't open socket connection without setting connection conf.")
+                }
+                is ConnectionConf.AnonymousConnectionConf -> {
+                    val socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
+                    socket.open()
+                        .onEach { handleEvent(it) }.launchIn(coroutineScope)
+                    socket
+                }
+                is ConnectionConf.UserConnectionConf -> {
+                    tokenManager.ensureTokenLoaded()
+                    val socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
+                    socket.open()
+                        .onEach { handleEvent(it) }.launchIn(coroutineScope)
+                    socket
+                }
+            }
+        }
+    }
+
     private fun startObservers() {
         lifecycleObservers.forEach { it.observe() }
     }
@@ -213,11 +207,9 @@ internal open class ChatSocket constructor(
     }
 
     open fun onSocketError(error: ChatError) {
-        if (state !is State.DisconnectedPermanently) {
-            logger.logE(error)
-            callListeners { it.onError(error) }
-            (error as? ChatNetworkError)?.let(::onChatNetworkError)
-        }
+        logger.logE(error)
+        callListeners { it.onError(error) }
+        (error as? ChatNetworkError)?.let(::onChatNetworkError)
     }
 
     private fun onChatNetworkError(error: ChatNetworkError) {
@@ -266,22 +258,9 @@ internal open class ChatSocket constructor(
         }
     }
 
-    open fun connectAnonymously() =
-        connect(ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
-
-    open fun connect(user: User) =
-        connect(ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
-
-    private fun connect(connectionConf: ConnectionConf) {
-        val isNetworkConnected = networkStateProvider.isConnected()
-        logger.logI("Connect. Network available: $isNetworkConnected")
-
-        this.connectionConf = connectionConf
-        if (isNetworkConnected) {
-            setupSocket(connectionConf)
-        } else {
-            state = State.NetworkDisconnectzed
-        }
+    open fun setConnectionConf(user: User?) {
+        connectionConf = user?.let { ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
+            ?: ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
     }
 
     open fun disconnect() {
@@ -308,30 +287,6 @@ internal open class ChatSocket constructor(
 
     private fun setupSocket(connectionConf: ConnectionConf) {
         logger.logI("setupSocket")
-        with(connectionConf) {
-            when (this) {
-                is ConnectionConf.None -> {
-                    state = State.DisconnectedPermanently(null)
-                }
-                is ConnectionConf.AnonymousConnectionConf -> {
-                    val socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
-                    socket.open()
-                        .onEach { handleEvent(it) }.launchIn(coroutineScope)
-                    state = State.Connecting(Session(socket))
-                }
-                is ConnectionConf.UserConnectionConf -> {
-                    socketConnectionJob = coroutineScope.launch {
-                        tokenManager.ensureTokenLoaded()
-                        withContext(DispatcherProvider.Main) {
-                            val socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
-                            socket.open()
-                                .onEach { }
-                            state = State.Connecting(Session(socket))
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun handleEvent(event: Event.WebSocket) {

@@ -124,6 +124,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.ConnectLifecycleObserver
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.socket.State
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -183,6 +184,7 @@ internal constructor(
     private val logger = ChatLogger.get("Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope)
+    private val connectLifecycleObserver = ConnectLifecycleObserver()
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -209,7 +211,6 @@ internal constructor(
                     val connectionId = event.connectionId
                     socketStateService.onConnected(connectionId)
                     api.setConnection(user.id, connectionId)
-                    lifecycleObserver.observe()
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -305,7 +306,7 @@ internal constructor(
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(cacheableTokenProvider)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
+                socket.setConnectionConf(user).also { connectLifecycleObserver.onConnect() }
                 initializationCoordinator.userConnected(user)
                 waitConnection.first()
             }
@@ -313,7 +314,7 @@ internal constructor(
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
+                socket.setConnectionConf(user).also { connectLifecycleObserver.onConnect() }
                 waitConnection.first()
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
@@ -440,7 +441,7 @@ internal constructor(
             userStateService.onSetAnonymous()
             config.isAnonymous = true
             warmUp()
-            socket.connectAnonymously()
+            socket.setConnectionConf(null).also { connectLifecycleObserver.onConnect() }
             waitConnection.first().also { result ->
                 if (result.isSuccess) {
                     initializationCoordinator.userConnected(result.data().user)
@@ -749,8 +750,8 @@ internal constructor(
                 val userState =
                     userStateService.state
             ) {
-                is UserState.UserSet -> socket.connect(userState.user)
-                is UserState.AnonymousUserSet -> socket.connectAnonymously()
+                is UserState.UserSet -> socket.setConnectionConf(userState.user).also { connectLifecycleObserver.onConnect() }
+                is UserState.AnonymousUserSet -> socket.setConnectionConf(null).also { connectLifecycleObserver.onConnect() }
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -897,7 +898,6 @@ internal constructor(
         userStateService.onLogout()
         socket.disconnect()
         userCredentialStorage.clear()
-        lifecycleObserver.dispose()
         appSettingsManager.clear()
     }
 
