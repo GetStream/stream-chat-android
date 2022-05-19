@@ -17,6 +17,7 @@
 
 ### ✅ Added
 - Added `DistinctChatApi` to prevent multiple query requests being fired. [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
+- Added new property `ChatClientConfig.distinctApiCalls` to enable `DistinctChatApi`, which is disabled by default. [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 
 ### ⚠️ Changed
 
