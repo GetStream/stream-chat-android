@@ -21,6 +21,7 @@ import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
@@ -74,12 +75,16 @@ public class StreamOfflinePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
+    private var cachedOfflinePluginInstance: OfflinePlugin? = null
+
+    private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+
     /**
      * Creates a [Plugin]
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin = createOfflinePlugin(user)
+    override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
 
     private var repositoryFactory: RepositoryFactory? = null
 
@@ -91,9 +96,21 @@ public class StreamOfflinePluginFactory(
     }
 
     /**
-     * Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
+     * Tries to get cached [OfflinePlugin] instance for the user if it exists or
+     * creates the new [OfflinePlugin] and initialized its dependencies.
+     *
+     * This method must be called after the user is set in the SDK.
      */
-    private fun createOfflinePlugin(user: User): OfflinePlugin {
+    private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin {
+        val cachedPlugin = cachedOfflinePluginInstance
+
+        if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
+            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            return cachedPlugin
+        } else {
+            cachedOfflinePluginInstance = null
+        }
+
         val chatClient = ChatClient.instance()
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
@@ -217,7 +234,8 @@ public class StreamOfflinePluginFactory(
             queryMembersListener = QueryMembersListenerImpl(repos),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
-        )
+            activeUser = user
+        ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 
     private fun createRepositoryFactory(

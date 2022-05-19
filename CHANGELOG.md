@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `ChatParser` failing to parse errors because it was trying to fetch the raw response from a converted body. [#3534](https://github.com/GetStream/stream-chat-android/pull/3534)
 
 ### ⬆️ Improved
 
@@ -23,8 +24,13 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
+- Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
 
 ### ⬆️ Improved
+- 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
+  The change was introduced in order to distuinguish between initial state when channels are not loaded yet
+  and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
 
 ### ✅ Added
 

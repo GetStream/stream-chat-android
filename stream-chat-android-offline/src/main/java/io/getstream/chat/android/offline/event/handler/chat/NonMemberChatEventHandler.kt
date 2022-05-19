@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @param channels The list of visible channels.
  */
 public class NonMemberChatEventHandler(
-    private val channels: StateFlow<List<Channel>>,
+    private val channels: StateFlow<List<Channel>?>,
 ) : BaseChatEventHandler() {
 
     /**
