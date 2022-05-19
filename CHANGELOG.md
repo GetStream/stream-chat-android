@@ -23,7 +23,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fix proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
+- Fixed proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
+- Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
 
 ### ⬆️ Improved
 - 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
