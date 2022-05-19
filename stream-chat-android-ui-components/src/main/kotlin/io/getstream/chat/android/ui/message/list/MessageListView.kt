@@ -20,6 +20,7 @@ import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -618,7 +619,10 @@ public class MessageListView : ConstraintLayout {
                 loadMoreListener = EndlessMessageListScrollListener(
                     loadMoreThreshold,
                     { endRegionReachedHandler.onEndRegionReached() },
-                    { bottomEndRegionReachedHandler.onBottomEndRegionReached() },
+                    {
+                        Log.d("EndlessScrollListener", "New messages are being fetched from bottom: ${firstMessageAfterGapPosition}")
+                        bottomEndRegionReachedHandler.onBottomEndRegionReached()
+                    },
                     { firstMessageAfterGapPosition }
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
@@ -637,14 +641,26 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun shouldFetchBottomMessages(shouldFetch: Boolean) {
+        if (shouldFetch) {
+            Log.d("MessageListView", "Now message list view will fetch at bottom")
+        } else {
+            Log.d("MessageListView", "Now message list view will NOT fetch at bottom")
+        }
+
         scrollListener.shouldFetchBottomMessages = shouldFetch
     }
 
-    public fun firstMessageAfterGap(message: Message) {
+    public fun firstMessageAfterGap(message: Message?) {
+        if (message == null) {
+            firstMessageAfterGapPosition = null
+        }
+
+        Log.d("MessageListView", "First message after gap: ${message?.text}")
+
         firstMessageAfterGapPosition = adapter.currentList.asSequence()
             .filterIsInstance<MessageListItem.MessageItem>()
             .indexOfFirst { messageItem ->
-                messageItem.message.id == message.id
+                messageItem.message.id == message?.id
             }
     }
 

@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.view
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -54,6 +55,7 @@ public class EndlessMessageListScrollListener(
      * Whenever we scroll, if the pagination is enabled, we check the scroll direction and validity.
      */
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        Log.d("EndlessScrollListener", "onScrolled")
         if (!paginationEnabled) {
             return
         }
@@ -71,6 +73,8 @@ public class EndlessMessageListScrollListener(
      * then it stops the check.
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        Log.d("EndlessScrollListener", "hasGaps: $shouldFetchBottomMessages")
+
         when {
             dy >= 0 && shouldFetchBottomMessages -> {
                 handleScrollDown(layoutManager, recyclerView)

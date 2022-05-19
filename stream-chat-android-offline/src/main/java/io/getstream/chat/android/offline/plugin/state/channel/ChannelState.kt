@@ -100,7 +100,7 @@ public interface ChannelState {
 
     /** If the are gaps in the list of messages and then requests for newer messages are also necessary
      * when scrolling */
-    public val hasGapsInMessageList: StateFlow<Boolean>
+    public val hasGapsInMessageList: StateFlow<Boolean?>
 
     public val messageAtGapTopLimit: StateFlow<Message?>
 

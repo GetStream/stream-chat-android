@@ -120,6 +120,7 @@ public fun MessageListViewModel.bindView(
     }
 
     shouldFetchBottomMessages.observe(lifecycleOwner, view::shouldFetchBottomMessages)
+    messageAtGapTopLimit.observe(lifecycleOwner, view::firstMessageAfterGap)
 
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)

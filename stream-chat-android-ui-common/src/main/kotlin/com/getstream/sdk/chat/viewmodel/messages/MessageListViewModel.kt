@@ -97,18 +97,16 @@ public class MessageListViewModel(
             coroutineScope = viewModelScope
         )
 
-    public val messageAtGapTopLimit: StateFlow<Message?> =
-        channelState.flatMapLatest { channelState ->
-            channelState?.messageAtGapTopLimit ?: MutableStateFlow(null)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-        )
+    public val messageAtGapTopLimit: LiveData<Message?> =
+        channelState.filterNotNull().flatMapLatest { channelState ->
+            channelState?.messageAtGapTopLimit
+        }.asLiveData()
 
     public val shouldFetchBottomMessages: LiveData<Boolean> = channelState.filterNotNull()
         .flatMapLatest { channelState ->
-            channelState.hasGapsInMessageList.map { hasGaps -> hasGaps && currentMode is Mode.Normal }
+            channelState.hasGapsInMessageList
+                .filterNotNull()
+                .map { hasGaps -> hasGaps && currentMode is Mode.Normal }
         }.asLiveData()
 
     /**
