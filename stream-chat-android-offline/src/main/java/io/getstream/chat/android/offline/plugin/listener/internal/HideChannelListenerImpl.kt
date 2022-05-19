@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.offline.extensions.internal.toCid
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -34,7 +34,7 @@ internal class HideChannelListenerImpl(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ): Result<Unit> = validateCidWithResult(Pair(channelType, channelId).toCid()).map { }
+    ): Result<Unit> = validateCidWithResult(Pair(channelType, channelId).toCid()).toUnitResult()
 
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
         logic.channel(channelType, channelId).setHidden(true)
