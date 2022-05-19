@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
  * Events
  */
 internal sealed class Event {
+
     sealed class Lifecycle : Event() {
 
         object Started : Lifecycle()

@@ -23,8 +23,6 @@ import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 internal class UserStateService {
     private val logger = ChatLogger.get("UserStateService")
 
-
-
     fun onUserUpdated(user: User) {
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }

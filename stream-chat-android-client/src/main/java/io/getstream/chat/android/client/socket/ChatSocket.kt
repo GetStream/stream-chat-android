@@ -155,11 +155,6 @@ internal open class ChatSocket constructor(
                     State.Connected(event = it.connectedEvent, session = session)
                 }
                 onEvent<Event.Lifecycle.Stopped> { event ->
-                    if (event.disconnectCause is DisconnectCause.NetworkNotAvailable || event.disconnectCause is DisconnectCause.ConnectionReleased) {
-                        healthMonitor.stop()
-                    } else if (event.disconnectCause is DisconnectCause.Error) {
-                        healthMonitor.onDisconnected()
-                    }
                     initiateShutdown(event)
                     State.Disconnecting(event.disconnectCause)
                 }
@@ -185,6 +180,13 @@ internal open class ChatSocket constructor(
             }
 
             state<State.Disconnecting> {
+                onEnter {
+                    if (disconnectCause is DisconnectCause.NetworkNotAvailable || disconnectCause is DisconnectCause.ConnectionReleased) {
+                        healthMonitor.stop()
+                    } else if (disconnectCause is DisconnectCause.Error) {
+                        healthMonitor.onDisconnected()
+                    }
+                }
                 onEvent<Event.WebSocket.Terminate> {
                     callListeners { it.onDisconnected(this.disconnectCause) }
                     State.Disconnected(this.disconnectCause)
