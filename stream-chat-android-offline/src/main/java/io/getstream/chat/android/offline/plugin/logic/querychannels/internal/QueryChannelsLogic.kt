@@ -220,9 +220,9 @@ internal class QueryChannelsLogic(
         channels: List<Channel>,
         isFirstPage: Boolean,
     ) {
-        if (isFirstPage) {
-            val existingChannels = mutableState._channels.value
-            ((mutableState._channels.value ?: emptyMap()) - channels.map { it.cid }).values
+        val existingChannels = mutableState._channels.value
+        if (isFirstPage && !existingChannels.isNullOrEmpty()) {
+            (existingChannels - channels.map { it.cid }).values
                 .map(Channel::cid)
                 .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it, repos) }
@@ -236,9 +236,14 @@ internal class QueryChannelsLogic(
         removeChannels(listOf(cid), repos)
 
     private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
+        val existingChannels = mutableState._channels.value
+        if (existingChannels.isNullOrEmpty()) {
+            logger.logW("Skipping remove channels as they are not loaded yet.")
+            return
+        }
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = (mutableState._channels.value ?: emptyMap()) - cidList
+        mutableState._channels.value = existingChannels - cidList
     }
 
     /**
