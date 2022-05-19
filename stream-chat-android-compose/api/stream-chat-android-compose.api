@@ -36,20 +36,6 @@ public final class io/getstream/chat/android/compose/state/OnlineIndicatorAlignm
 	public static fun values ()[Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
 }
 
-public final class io/getstream/chat/android/compose/state/QueryConfig {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun component2 ()Lio/getstream/chat/android/client/api/models/QuerySort;
-	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/compose/state/QueryConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/QueryConfig;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/QueryConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilters ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/QuerySort;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/state/channels/list/Cancel : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/channels/list/Cancel;

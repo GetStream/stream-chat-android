@@ -214,6 +214,19 @@ public final class com/getstream/sdk/chat/startup/ThreeTenInitializer : androidx
 	public fun dependencies ()Ljava/util/List;
 }
 
+public final class com/getstream/sdk/chat/state/QueryConfig {
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun component2 ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)Lcom/getstream/sdk/chat/state/QueryConfig;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/state/QueryConfig;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;ILjava/lang/Object;)Lcom/getstream/sdk/chat/state/QueryConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFilters ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class com/getstream/sdk/chat/utils/DateFormatter {
 	public static final field Companion Lcom/getstream/sdk/chat/utils/DateFormatter$Companion;
 	public abstract fun formatDate (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
@@ -304,6 +317,10 @@ public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt 
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
+}
+
+public final class com/getstream/sdk/chat/utils/extensions/FlowKt {
+	public static final fun buildDefaultFilterObject (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibilityKt {

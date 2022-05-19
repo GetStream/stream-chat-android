@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state
+package com.getstream.sdk.chat.utils.extensions
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.User
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
 /**
- * The configuration for querying various bits of data. It's generic, so it can be used to query
- * Channels, Messages or something else.
+ * Builds the default filter object using a [Flow] that
+ * emits [User] values.
  *
- * @param filters The [FilterObject] to apply to the query.
- * @param querySort The sorting option for the query results.
+ * You can use this function in conjunction with
+ * [io.getstream.chat.android.offline.extensions.globalState]'s user property
+ * to create a reactive set of filters that change when the user is switched.
  */
-public data class QueryConfig<T : Any>(
-    val filters: FilterObject,
-    val querySort: QuerySort<T>,
-)
+public fun Flow<User?>.buildDefaultFilterObject(): Flow<FilterObject> =
+    this.map(Filters::defaultChannelListFilter).filterNotNull()

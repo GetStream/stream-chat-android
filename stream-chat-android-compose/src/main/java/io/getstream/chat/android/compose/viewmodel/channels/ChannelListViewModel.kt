@@ -22,7 +22,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
+import com.getstream.sdk.chat.state.QueryConfig
+import com.getstream.sdk.chat.utils.extensions.buildDefaultFilterObject
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -32,7 +33,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
@@ -42,7 +42,6 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -133,13 +132,6 @@ public class ChannelListViewModel(
     public val channelMutes: StateFlow<List<ChannelMute>> = chatClient.globalState.channelMutes
 
     /**
-     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
-     */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
-
-    /**
      * Checks if the channel is muted for the current user.
      *
      * @param cid The CID of the channel that needs to be checked.
@@ -160,7 +152,7 @@ public class ChannelListViewModel(
     init {
         if (initialFilters == null) {
             viewModelScope.launch {
-                val filter = buildDefaultFilter().first()
+                val filter = chatClient.globalState.user.buildDefaultFilterObject().first()
 
                 this@ChannelListViewModel.filterFlow.value = filter
             }

@@ -17,13 +17,12 @@
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
+import com.getstream.sdk.chat.state.QueryConfig
+import com.getstream.sdk.chat.utils.extensions.buildDefaultFilterObject
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -35,7 +34,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
@@ -47,11 +45,16 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStat
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -77,19 +80,19 @@ public class ChannelListViewModel(
     private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
      * Represents the current state containing channel list
      * information that is a product of multiple sources.
      */
-    private val stateMerger = MediatorLiveData<State>()
+    private val stateFlow = MutableStateFlow(INITIAL_STATE)
 
     /**
      * Represents the current state containing channel list information.
      */
-    public val state: LiveData<State> = stateMerger
+    public val state: LiveData<State> = stateFlow.asLiveData()
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -101,14 +104,14 @@ public class ChannelListViewModel(
      * Represents the current pagination state that is a product
      * of multiple sources.
      */
-    private val paginationStateMerger = MediatorLiveData<PaginationState>()
+    private val paginationStateFlow = MutableStateFlow(PaginationState())
 
     /**
      * Represents the current pagination state by containing
      * information about the loading state and if we have
      * reached the end of all available channels.
      */
-    public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
+    public val paginationState: LiveData<PaginationState> = paginationStateFlow.asLiveData()
 
     /**
      * Used to update and emit error events.
@@ -128,70 +131,91 @@ public class ChannelListViewModel(
     /**
      * Filters the requested channels.
      */
-    private val filterLiveData: LiveData<FilterObject?> =
-        filter?.let(::MutableLiveData) ?: globalState.user.map(Filters::defaultChannelListFilter)
-            .asLiveData()
+    private val filterStateFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(filter)
+
+    /**
+     * Sorts the requested channels.
+     */
+    private val querySortStateFlow: MutableStateFlow<QuerySort<Channel>> = MutableStateFlow(sort)
 
     /**
      * Represents the current state of the channels query.
      */
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
+    /**
+     * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
+     * the initial [filter] parameter and [sort] values, but can be changed.
+     */
+    private val queryConfigFlow = filterStateFlow.filterNotNull().combine(querySortStateFlow) { filters, sort ->
+        QueryConfig(filters = filters, querySort = sort)
+    }
+
     init {
-        stateMerger.addSource(filterLiveData) { filter ->
-            if (filter != null) {
-                initData(filter)
+        viewModelScope.launch(Dispatchers.IO) {
+            if (filter == null) {
+                launch {
+                    val filter = chatClient.globalState.user.buildDefaultFilterObject().first()
+
+                    this@ChannelListViewModel.filterStateFlow.value = filter
+                }
             }
+
+            queryChannels()
         }
     }
 
     /**
-     * Initializes the data necessary for the screen.
+     * Collects emissions from [queryConfigFlow] and uses them to
+     * query channels.
      */
-    private fun initData(filterObject: FilterObject) {
-        stateMerger.value = INITIAL_STATE
-        init(filterObject)
+    private suspend fun queryChannels() {
+        queryConfigFlow.collectLatest { config ->
+            val queryChannelsRequest = QueryChannelsRequest(
+                filter = config.filters,
+                querySort = config.querySort,
+                limit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+
+            queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+            observeChannels()
+        }
+    }
+
+    /**
+     * Combines channel mutes and [QueryChannelsState] properties
+     * necessary for proper channel list function such as the channel state data
+     * and pagination related values.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun observeChannels() {
+        queryChannelsState.filterNotNull()
+            .flatMapLatest { queryChannelsState ->
+                combine(
+                    globalState.channelMutes,
+                    queryChannelsState.channelsStateData,
+                    queryChannelsState.loadingMore,
+                    queryChannelsState.endOfChannels,
+                ) { channelMutes, channelStateData, loadingMoreChannels, endOfChannels ->
+
+                    queryChannelsState.chatEventHandler =
+                        chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
+
+                    stateFlow.value = handleChannelStateNews(channelStateData, channelMutes)
+
+                    setPaginationState { copy(loadingMore = loadingMoreChannels) }
+
+                    setPaginationState { copy(endOfChannels = endOfChannels) }
+                }
+            }.collect()
     }
 
     /**
      * Initializes this ViewModel with OfflinePlugin implementation. It makes the initial query to request channels
      * and starts to observe state changes.
      */
-    private fun init(filterObject: FilterObject) {
-        val queryChannelsRequest =
-            QueryChannelsRequest(
-                filter = filterObject,
-                querySort = sort,
-                limit = limit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            )
-        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-        viewModelScope.launch {
-            queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-                queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
-                stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
-                    stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
-                }
-                stateMerger.addSource(globalState.channelMutes.asLiveData()) { channelMutes ->
-                    val state = stateMerger.value
-
-                    if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, channelMutes))
-                    } else {
-                        stateMerger.value = state?.copy()
-                    }
-                }
-
-                paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
-                    setPaginationState { copy(loadingMore = loadingMore) }
-                }
-                paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
-                    setPaginationState { copy(endOfChannels = endOfChannels) }
-                }
-            }
-        }
-    }
 
     /**
      * Handles update about [ChannelsStateData] changes and emit new [State].
@@ -218,6 +242,28 @@ public class ChannelListViewModel(
                 channels = parseMutedChannels(channelState.channels, channelMutes),
             )
         }
+    }
+
+    /**
+     * Allows for the change of filters used for channel queries.
+     *
+     * Use this if you need to support runtime filter changes, through custom filters UI.
+     *
+     * Warning: The filter that's applied will override the `initialFilters` set through the constructor.
+     *
+     * @param newFilters The new filters to be used as a baseline for filtering channels.
+     */
+    public fun setFilters(newFilters: FilterObject) {
+        this.filterStateFlow.tryEmit(value = newFilters)
+    }
+
+    /**
+     * Allows for the change of the query sort used for channel queries.
+     *
+     * Use this if you need to support runtime sort changes, through custom sort UI.
+     */
+    public fun setQuerySort(querySort: QuerySort<Channel>) {
+        this.querySortStateFlow.tryEmit(value = querySort)
     }
 
     /**
@@ -294,7 +340,7 @@ public class ChannelListViewModel(
      * Called when scrolling to the end of the list.
      */
     private fun requestMoreChannels() {
-        filterLiveData.value?.let { filter ->
+        filterStateFlow.value?.let { filter ->
             val queryChannelsState = queryChannelsState.value ?: return
 
             queryChannelsState.nextPageRequest.value?.let {
@@ -315,7 +361,7 @@ public class ChannelListViewModel(
      * @param reducer A lambda function that returns [PaginationState].
      */
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
-        paginationStateMerger.value = reducer(paginationStateMerger.value ?: PaginationState())
+        paginationStateFlow.value = reducer(paginationStateFlow.value)
     }
 
     /**
