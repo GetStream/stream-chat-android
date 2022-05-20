@@ -91,6 +91,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchResultListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getSingleReactionViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -111,6 +112,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchResultListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setSingleReactionViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSuggestionListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setTypingIndicatorViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -2282,12 +2284,13 @@ public abstract interface class io/getstream/chat/android/ui/message/list/reacti
 
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion;
-	public fun <init> (IIIIIIIIIIIII)V
+	public fun <init> (IIIIIIIIIIIIII)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()I
 	public final fun component12 ()I
 	public final fun component13 ()I
+	public final fun component14 ()I
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()I
@@ -2296,8 +2299,8 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (IIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;IIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public final fun copy (IIIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;IIIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBubbleColorMine ()I
 	public final fun getBubbleColorTheirs ()I
@@ -2312,11 +2315,53 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 	public final fun getSmallTailBubbleCyOffset ()I
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I
+	public final fun getVerticalPadding ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
+}
+
+public final class io/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle {
+	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIII)V
+	public final fun component1 ()I
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()I
+	public final fun component13 ()I
+	public final fun component14 ()I
+	public final fun component15 ()I
+	public final fun component16 ()I
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()F
+	public final fun component6 ()Ljava/lang/Float;
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBubbleBorderColorMine ()I
+	public final fun getBubbleBorderColorTheirs ()Ljava/lang/Integer;
+	public final fun getBubbleBorderWidthMine ()F
+	public final fun getBubbleBorderWidthTheirs ()Ljava/lang/Float;
+	public final fun getBubbleColorMine ()I
+	public final fun getBubbleColorTheirs ()I
+	public final fun getBubbleHeight ()I
+	public final fun getBubbleRadius ()I
+	public final fun getLargeTailBubbleCy ()I
+	public final fun getLargeTailBubbleOffset ()I
+	public final fun getLargeTailBubbleRadius ()I
+	public final fun getReactionOrientation ()I
+	public final fun getSmallTailBubbleCy ()I
+	public final fun getSmallTailBubbleOffset ()I
+	public final fun getSmallTailBubbleRadius ()I
+	public final fun getTotalHeight ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation : java/lang/Enum {
@@ -2334,7 +2379,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/Mess
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
-	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIII)V
+	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIII)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()I
@@ -2345,6 +2390,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun component16 ()I
 	public final fun component17 ()I
 	public final fun component18 ()I
+	public final fun component19 ()I
 	public final fun component2 ()Ljava/lang/Integer;
 	public final fun component3 ()I
 	public final fun component4 ()I
@@ -2353,8 +2399,8 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBubbleBorderColorMine ()I
 	public final fun getBubbleBorderColorTheirs ()Ljava/lang/Integer;
@@ -2374,6 +2420,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I
 	public final fun getTotalHeight ()I
+	public final fun getVerticalPadding ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

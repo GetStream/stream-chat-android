@@ -65,8 +65,12 @@ public class ViewReactionsView : RecyclerView {
         this.isSingleReaction = message.hasSingleReaction()
 
         reactionsAdapter.submitList(createReactionItems(message)) {
-            val horizontalPadding = if (isSingleReaction) 0 else reactionsViewStyle.horizontalPadding
-            setPadding(horizontalPadding, 0, horizontalPadding, 0)
+            setPadding(
+                reactionsViewStyle.horizontalPadding,
+                reactionsViewStyle.verticalPadding,
+                reactionsViewStyle.horizontalPadding,
+                reactionsViewStyle.verticalPadding
+            )
 
             commitCallback()
         }
@@ -78,7 +82,7 @@ public class ViewReactionsView : RecyclerView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        bubbleDrawer.drawReactionsBubble(context, canvas, width, isMyMessage, isSingleReaction, !isMyMessage, false)
+        bubbleDrawer.drawReactionsBubble(context, canvas, width, isMyMessage, isSingleReaction)
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
@@ -93,9 +97,12 @@ public class ViewReactionsView : RecyclerView {
         this.reactionsViewStyle = style
         this.bubbleDrawer = ViewReactionsBubbleDrawer(reactionsViewStyle)
         minimumHeight = reactionsViewStyle.totalHeight
-        reactionsViewStyle.horizontalPadding.let {
-            setPadding(it, 0, it, 0)
-        }
+        setPadding(
+            reactionsViewStyle.horizontalPadding,
+            reactionsViewStyle.verticalPadding,
+            reactionsViewStyle.horizontalPadding,
+            reactionsViewStyle.verticalPadding
+        )
 
         adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
             reactionClickListener?.onReactionClick(it)

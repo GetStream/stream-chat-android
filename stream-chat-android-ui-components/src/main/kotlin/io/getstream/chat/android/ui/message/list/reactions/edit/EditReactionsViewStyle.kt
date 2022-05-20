@@ -42,6 +42,7 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
     public val reactionsColumn: Int,
+    @Px public val verticalPadding: Int
 ) {
 
     internal data class Builder(private val array: TypedArray, private val context: Context) {
@@ -86,6 +87,8 @@ public data class EditReactionsViewStyle(
                 context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_radius)
             val smallTailBubbleOffset =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_offset)
+            val verticalPadding =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_vertical_padding)
 
             return EditReactionsViewStyle(
                 bubbleColorMine = bubbleColorMine,
@@ -101,6 +104,7 @@ public data class EditReactionsViewStyle(
                 smallTailBubbleRadius = smallTailBubbleRadius,
                 smallTailBubbleOffset = smallTailBubbleOffset,
                 reactionsColumn = reactionsColumn,
+                verticalPadding = verticalPadding
             ).let(TransformStyle.editReactionsStyleTransformer::transform)
         }
     }

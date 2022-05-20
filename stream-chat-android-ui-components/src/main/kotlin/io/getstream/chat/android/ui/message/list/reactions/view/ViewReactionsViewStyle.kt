@@ -50,6 +50,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
+    @Px public val verticalPadding: Int,
     public val messageOptionsUserReactionOrientation: Int,
 ) {
 
@@ -151,6 +152,8 @@ public data class ViewReactionsViewStyle(
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_radius)
                 val smallTailBubbleOffset =
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
+                val verticalPadding =
+                    context.getDimension(R.dimen.stream_ui_view_reactions_vertical_padding)
 
                 return ViewReactionsViewStyle(
                     bubbleBorderColorMine = bubbleBorderColorMine,
@@ -170,6 +173,7 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
                     smallTailBubbleOffset = smallTailBubbleOffset,
+                    verticalPadding = verticalPadding,
                     messageOptionsUserReactionOrientation = messageOptionsUSerReactionOrientation,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
             }
