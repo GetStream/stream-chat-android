@@ -103,7 +103,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     }
 
     /**
-     * Displays a Toast with a error if there was an issue playing the video.
+     * Displays a Toast with an error if there was an issue playing the video.
      */
     private fun showPlaybackError() {
         Toast.makeText(
