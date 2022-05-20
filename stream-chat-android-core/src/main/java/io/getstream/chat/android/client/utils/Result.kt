@@ -303,3 +303,10 @@ public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T)
  * @return A [Result] the contains an instance of [T] as a data payload.
  */
 public fun <T : Any> T.toResult(): Result<T> = Result.success(this)
+
+/**
+ * Returns a [Result] of type [T] that contains an they same error as payload.
+ *
+ * @return A [Result] of type [T] that contains an they same error as payload.
+ */
+public fun <T : Any> ChatError.toResultError(): Result<T> = Result.error(this)

@@ -445,14 +445,12 @@ internal constructor(
         return if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
+            tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
             config.isAnonymous = true
             warmUp()
             socket.connectAnonymously()
-            waitConnection.first().also { result ->
-                if (result.isSuccess) {
-                    initializationCoordinator.userConnected(result.data().user)
-                }
-            }
+            initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
+            waitConnection.first()
         } else {
             logger.logE("Failed to connect user. Please check you don't have connected user already")
             Result.error(ChatError("User cannot be set until previous one is disconnected."))
@@ -755,8 +753,8 @@ internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.connect(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectAnonymously()
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -1564,28 +1562,6 @@ internal constructor(
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
-
-    /**
-     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and vendor
-     * and more.
-     *
-     * @return String formatted header that contains all the information.
-     */
-    @InternalStreamChatApi
-    public fun buildSdkTrackingHeaders(): String {
-        val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
-        val buildModel = Build.MODEL
-        val deviceManufacturer = Build.MANUFACTURER
-        val apiLevel = Build.VERSION.SDK_INT
-        val osName = "Android ${Build.VERSION.RELEASE}"
-
-        return clientInformation +
-            "|os=$osName" +
-            "|api_version=$apiLevel" +
-            "|device_vendor=$deviceManufacturer" +
-            "|device_model=$buildModel" +
-            "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
-    }
 
     @CheckResult
     public fun acceptInvite(
@@ -2485,6 +2461,8 @@ internal constructor(
         @JvmField
         public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
 
+        private const val ANONYMOUS_USER_ID = "!anon"
+
         @JvmStatic
         public fun instance(): ChatClient {
             return instance
@@ -2556,6 +2534,27 @@ internal constructor(
         private fun ensureClientInitialized(): ChatClient {
             check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
+        }
+
+        /**
+         * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
+         * vendor and more.
+         *
+         * @return String formatted header that contains all the information.
+         */
+        internal fun buildSdkTrackingHeaders(): String {
+            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+            val buildModel = Build.MODEL
+            val deviceManufacturer = Build.MANUFACTURER
+            val apiLevel = Build.VERSION.SDK_INT
+            val osName = "Android ${Build.VERSION.RELEASE}"
+
+            return clientInformation +
+                "|os=$osName" +
+                "|api_version=$apiLevel" +
+                "|device_vendor=$deviceManufacturer" +
+                "|device_model=$buildModel" +
+                "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
         }
     }
 }
