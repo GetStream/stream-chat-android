@@ -126,6 +126,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val NOT_FOUND = -1
+
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
  * The most common customizations are
@@ -620,7 +622,8 @@ public class MessageListView : ConstraintLayout {
                     loadMoreThreshold,
                     { endRegionReachedHandler.onEndRegionReached() },
                     {
-                        Log.d("EndlessScrollListener", "New messages are being fetched from bottom: ${firstMessageAfterGapPosition}")
+                        Log.d("EndlessScrollListener",
+                            "New messages are being fetched from bottom: ${firstMessageAfterGapPosition}")
                         bottomEndRegionReachedHandler.onBottomEndRegionReached()
                     },
                     { firstMessageAfterGapPosition }
@@ -651,15 +654,17 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun firstMessageAfterGap(message: Message?) {
-        if (message == null) {
-            firstMessageAfterGapPosition = null
-        }
+        val listLastIndex = adapter.currentList.lastIndex
 
-        firstMessageAfterGapPosition = adapter.currentList.asSequence()
-            .filterIsInstance<MessageListItem.MessageItem>()
-            .indexOfFirst { messageItem ->
-                messageItem.message.id == message?.id
-            }
+        if (message == null) {
+            firstMessageAfterGapPosition = listLastIndex
+        } else {
+            firstMessageAfterGapPosition = adapter.currentList.asSequence()
+                .filterIsInstance<MessageListItem.MessageItem>()
+                .indexOfFirst { messageItem -> messageItem.message.id == message?.id }
+                .takeIf { index -> index != NOT_FOUND }
+                ?: listLastIndex
+        }
     }
 
     /**

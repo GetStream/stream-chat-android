@@ -16,8 +16,11 @@
 
 package com.getstream.sdk.chat.view
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
+private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 50
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -31,7 +34,7 @@ public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
     private inline val loadMoreAtBottomListener: () -> Unit,
-    private inline val firstMessageAfterGapPosition: () -> Int?
+    private inline val firstMessageAfterGapPosition: () -> Int?,
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -85,7 +88,18 @@ public class EndlessMessageListScrollListener(
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
-        if (lastVisiblePosition >= loadMoreThreshold + (firstMessageAfterGapPosition() ?: 0)) {
+        Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition -----")
+        Log.d("EndlessScroll", "firstMessageAfterGapPosition: ${firstMessageAfterGapPosition()}")
+        Log.d("EndlessScroll", "trigger begin: ${loadMoreThreshold + (firstMessageAfterGapPosition() ?: -1)}")
+        Log.d("EndlessScroll", "trigger end: ${loadMoreThreshold + (firstMessageAfterGapPosition() ?: -1) + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
+
+
+        if (isInBottomTriggerPosition(
+                lastVisiblePosition,
+                loadMoreThreshold,
+                getFirstAfterGap(-1),
+            )
+        ) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {
@@ -93,6 +107,21 @@ public class EndlessMessageListScrollListener(
                 }
             }
         }
+    }
+
+    private fun isInBottomTriggerPosition(
+        lastVisible: Int,
+        loadMoreThreshold: Int,
+        firstMessageAfterGap: Int,
+    ): Boolean {
+        val limitStart = loadMoreThreshold + firstMessageAfterGap
+        val limitEnd = limitStart + DEFAULT_BOTTOM_TRIGGER_LIMIT
+
+        return lastVisible >= limitStart && lastVisible < limitEnd
+    }
+
+    private fun getFirstAfterGap(totalSize: Int): Int {
+        return firstMessageAfterGapPosition() ?: totalSize
     }
 
     /**

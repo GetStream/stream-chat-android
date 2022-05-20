@@ -99,7 +99,7 @@ public class MessageListViewModel(
 
     public val messageAtGapTopLimit: LiveData<Message?> =
         channelState.filterNotNull().flatMapLatest { channelState ->
-            channelState?.messageAtGapTopLimit
+            channelState.messageAtGapTopLimit
         }.asLiveData()
 
     public val shouldFetchBottomMessages: LiveData<Boolean> = channelState.filterNotNull()

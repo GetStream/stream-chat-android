@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -206,22 +207,35 @@ internal class ChannelLogic(
              * The message list is linear again. */
             mutableState.hasGapsInMessageList.value == true &&
                 (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
+                Log.d("ChannelLogic", "A gap has been closed!!")
+                Log.d("ChannelLogic", "A gap has been closed!!")
+                Log.d("ChannelLogic", "A gap has been closed!!")
+
                 mutableState._messageAtGapTopLimit.value = null
                 mutableState._hasGapsInMessageList.value = false
             }
 
             /* The messages list had no gaps but newer messages were loaded. As it didn't reach the end of the
-             * messages nor has an overlap between messages, the list is not linear anymore. */
+             * messages nor has an overlap between messages, the list is  not linear anymore. */
             mutableState.hasGapsInMessageList.value != true &&
                 moreMessagesAvailable &&
                 !messageList.hasMessageOverlap() -> {
-                mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
+                messageList.takeIf { it.isNotEmpty() }
+                    ?.lastOrNull()
+                    ?.let { messageAfterGap ->
+                        mutableState._messageAtGapTopLimit.value = messageAfterGap
+                    }
+
                 mutableState._hasGapsInMessageList.value = true
             }
 
             // Has gaps and loading more messages
             mutableState.hasGapsInMessageList.value == true -> {
-                mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
+                messageList.takeIf { it.isNotEmpty() }
+                    ?.lastOrNull()
+                    ?.let { messageAfterGap ->
+                        mutableState._messageAtGapTopLimit.value = messageAfterGap
+                    }
             }
 
             else -> {
