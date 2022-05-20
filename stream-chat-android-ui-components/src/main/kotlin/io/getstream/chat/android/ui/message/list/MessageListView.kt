@@ -655,8 +655,6 @@ public class MessageListView : ConstraintLayout {
             firstMessageAfterGapPosition = null
         }
 
-        Log.d("MessageListView", "First message after gap: ${message?.text}")
-
         firstMessageAfterGapPosition = adapter.currentList.asSequence()
             .filterIsInstance<MessageListItem.MessageItem>()
             .indexOfFirst { messageItem ->

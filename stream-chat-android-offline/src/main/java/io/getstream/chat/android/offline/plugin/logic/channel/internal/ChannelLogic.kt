@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -185,19 +184,12 @@ internal class ChannelLogic(
      * NOTE: This method must be always called before messageIdsSet is called
      */
     private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel) {
-        try {
-            logger.logD("handling message limits")
-            val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
+        val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
 
-            if (request.isFilteringNewerMessages()) {
-                logger.logD("handling newer messages")
-                handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages)
-            } else {
-                logger.logD("handling oldder messages")
-                handleOlderMessagesLimit(noMoreMessagesAvailable, channel.messages)
-            }
-        } catch (e: Exception) {
-            logger.logD("an error happened")
+        if (request.isFilteringNewerMessages()) {
+            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages)
+        } else {
+            handleOlderMessagesLimit(noMoreMessagesAvailable, channel.messages)
         }
     }
 
@@ -207,10 +199,6 @@ internal class ChannelLogic(
     }
 
     private fun handleNewerMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
-        Log.d("ChannelLogic", "handleNewerMessagesLimit")
-        Log.d("ChannelLogic", "handleNewerMessagesLimit")
-        Log.d("ChannelLogic", "handleNewerMessagesLimit")
-        Log.d("ChannelLogic", "handleNewerMessagesLimit")
         mutableState._endOfNewerMessages.value = !moreMessagesAvailable
 
         when {
@@ -218,10 +206,6 @@ internal class ChannelLogic(
              * The message list is linear again. */
             mutableState.hasGapsInMessageList.value == true &&
                 (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
-                logger.logD("No gaps anymore. hadGaps: ${mutableState.hasGapsInMessageList.value} " +
-                    "more messages: $moreMessagesAvailable, " +
-                    "has overlap: ${messageList.hasMessageOverlap()}")
-
                 mutableState._messageAtGapTopLimit.value = null
                 mutableState._hasGapsInMessageList.value = false
             }
@@ -231,7 +215,6 @@ internal class ChannelLogic(
             mutableState.hasGapsInMessageList.value != true &&
                 moreMessagesAvailable &&
                 !messageList.hasMessageOverlap() -> {
-                logger.logD("Has gaps now!!")
                 mutableState._messageAtGapTopLimit.value = messageList.lastOrNull()
                 mutableState._hasGapsInMessageList.value = true
             }
@@ -247,14 +230,8 @@ internal class ChannelLogic(
         }
     }
 
-    private fun List<Message>.hasMessageOverlap(): Boolean {
-        return this.map { it.id.hashCode() }.any(messageIdsHashCodeSet::contains).also {
-            if (it) {
-                val messages = this.filter { messageIdsHashCodeSet.contains(it.id.hashCode()) }
-                Log.d("ChannelLogic", "has overlap. texts: ${messages.joinToString { it.text }}")
-            }
-        }
-    }
+    private fun List<Message>.hasMessageOverlap(): Boolean =
+        this.map { it.id.hashCode() }.any(messageIdsHashCodeSet::contains)
 
     private suspend fun storeStateForChannel(channel: Channel) {
         val users = channel.users().associateBy { it.id }.toMutableMap()
