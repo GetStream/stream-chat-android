@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `ChatParser` failing to parse errors because it was trying to fetch the raw response from a converted body. [#3534](https://github.com/GetStream/stream-chat-android/pull/3534)
 
 ### ⬆️ Improved
 
@@ -23,9 +24,14 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
+- Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
 
 ### ⬆️ Improved
 - Change the order of offline message so it matches the order of online messages. Now the reshufling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
+- 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
+  The change was introduced in order to distuinguish between initial state when channels are not loaded yet
+  and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
 
 ### ✅ Added
 
@@ -46,6 +52,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the way pagination scrolling worked for various non-core components (e.g. search, gallery/media/pinned message lists) [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
+- Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 
 ### ⬆️ Improved
 
@@ -62,8 +70,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
+- Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
 
 ### ⚠️ Changed
+- Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
 
 ### ❌ Removed
 

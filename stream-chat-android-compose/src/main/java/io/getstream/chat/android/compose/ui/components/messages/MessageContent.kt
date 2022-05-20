@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onGiphyActionClick Handler for Giphy actions.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when selecting images in the default content.
  * @param giphyEphemeralContent Composable that represents the default Giphy message content.
  * @param deletedMessageContent Composable that represents the default content of a deleted message.
@@ -52,6 +53,7 @@ public fun MessageContent(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
@@ -66,7 +68,8 @@ public fun MessageContent(
         DefaultMessageContent(
             message = message,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -123,12 +126,14 @@ internal fun DefaultMessageDeletedContent(
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onImagePreviewResult Handler when selecting images in the default content.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit
 ) {
     Column {
         MessageAttachmentsContent(
@@ -140,7 +145,8 @@ internal fun DefaultMessageContent(
         if (message.text.isNotEmpty()) {
             DefaultMessageTextContent(
                 message = message,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick
             )
         }
     }

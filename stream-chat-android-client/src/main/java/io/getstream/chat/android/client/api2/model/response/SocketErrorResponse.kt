@@ -33,5 +33,7 @@ internal data class SocketErrorResponse(
         val message: String = "",
         val StatusCode: Int = -1,
         val duration: String = "",
+        val exception_fields: Map<String, String> = mapOf(),
+        val more_info: String = ""
     )
 }
