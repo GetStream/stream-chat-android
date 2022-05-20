@@ -28,6 +28,7 @@
 - Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
 
 ### ⬆️ Improved
+- Change the order of offline message so it matches the order of online messages. Now the reshufling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
 - 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
   The change was introduced in order to distuinguish between initial state when channels are not loaded yet
   and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
