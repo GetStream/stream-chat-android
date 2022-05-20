@@ -25,6 +25,7 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.MediaController
+import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.compose.BackHandler
@@ -50,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.isVisible
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -201,14 +203,27 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 )
             }
 
+            val progressBar = ProgressBar(context).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
+            }
+
+            progressBar.isVisible = true
+
             val videoView = VideoView(context).apply {
                 setVideoURI(Uri.parse(url))
                 setMediaController(mediaController)
                 setOnErrorListener { _, _, _ ->
+                    progressBar.isVisible = false
                     onPlaybackError()
                     true
                 }
                 setOnPreparedListener {
+                    progressBar.isVisible = false
                     start()
                     mediaController.show()
                 }
@@ -222,7 +237,10 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 }
             }
 
-            frameLayout.apply { addView(videoView) }
+            frameLayout.apply {
+                addView(videoView)
+                addView(progressBar)
+            }
         }
 
         AndroidView(
