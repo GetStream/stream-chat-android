@@ -2014,6 +2014,10 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/client/extensions/CallKt {
+	public static final fun forceNewRequest (Lio/getstream/chat/android/client/call/Call;)Lio/getstream/chat/android/client/call/Call;
+}
+
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static synthetic fun getUsersExcludingCurrent$default (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
