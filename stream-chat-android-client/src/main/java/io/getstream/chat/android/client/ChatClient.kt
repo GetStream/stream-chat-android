@@ -432,11 +432,8 @@ internal constructor(
             config.isAnonymous = true
             warmUp()
             socket.connect(null)
-            waitConnection.first().also { result ->
-                if (result.isSuccess) {
-                    initializationCoordinator.userConnected(result.data().user)
-                }
-            }
+            initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
+            waitConnection.first()
         } else {
             logger.logE("Failed to connect user. Please check you don't have connected user already")
             Result.error(ChatError("User cannot be set until previous one is disconnected."))
@@ -2420,6 +2417,8 @@ internal constructor(
 
         @JvmField
         public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
+
+        private const val ANONYMOUS_USER_ID = "!anon"
 
         @JvmStatic
         public fun instance(): ChatClient {
