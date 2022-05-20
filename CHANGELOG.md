@@ -54,6 +54,7 @@
 ### 🐞 Fixed
 - Fixed the way pagination scrolling worked for various non-core components (e.g. search, gallery/media/pinned message lists) [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 - Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
+- Introduced public methods `setFilters(newFilters: FilterObject)` and `setQuerySort(querySort: QuerySort<Channel>)` into `ChannelListViewModel`. You can use these methods to adjust filters and sort queries at runtime. This also allows you to switch users without having to reinitialize the `ViewModel`, just remember to update your filters once you reconnect with a new user. [#3550](https://github.com/GetStream/stream-chat-android/pull/3550)
 
 ### ⬆️ Improved
 
