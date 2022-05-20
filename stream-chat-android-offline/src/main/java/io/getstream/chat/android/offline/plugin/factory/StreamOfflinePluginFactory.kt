@@ -61,7 +61,6 @@ import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFireb
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -137,8 +136,7 @@ public class StreamOfflinePluginFactory(
             repositoryFactory(repositoryFactory)
         }.build()
 
-        val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
-        val stateRegistry = StateRegistry.create(job, scope, userStateFlow, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.create(job, scope, globalState._user, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
