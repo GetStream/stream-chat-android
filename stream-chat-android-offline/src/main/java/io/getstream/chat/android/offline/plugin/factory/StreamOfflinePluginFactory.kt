@@ -108,7 +108,7 @@ public class StreamOfflinePluginFactory(
             logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
             return cachedPlugin
         } else {
-            cachedOfflinePluginInstance = null
+            clearCachedInstance()
         }
 
         val chatClient = ChatClient.instance()
@@ -204,6 +204,7 @@ public class StreamOfflinePluginFactory(
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
+                clearCachedInstance()
             }
         }
 
@@ -236,6 +237,10 @@ public class StreamOfflinePluginFactory(
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
             activeUser = user
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
+    }
+
+    private fun clearCachedInstance() {
+        cachedOfflinePluginInstance = null
     }
 
     private fun createRepositoryFactory(
