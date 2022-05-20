@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.SendReacti
 import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.models.User
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
@@ -54,6 +55,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEven
  * @param queryMembersListener [QueryMembersListener]
  * @param typingEventListener [TypingEventListener]
  * @param createChannelListener [CreateChannelListener]
+ * @param activeUser User associated with [OfflinePlugin] instance.
  */
 internal class OfflinePlugin(
     private val queryChannelsListener: QueryChannelsListener,
@@ -72,6 +74,7 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
+    internal val activeUser: User,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
