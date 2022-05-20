@@ -17,4 +17,5 @@
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
     </style>
+
 </resources>

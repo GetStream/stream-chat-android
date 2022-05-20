@@ -23,19 +23,18 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
+import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.MessageOptionsUserReactionOrientation
-import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.getUserReactionOrientation
-import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsBubbleDrawer
 import io.getstream.chat.android.ui.message.list.reactions.view.isOrientedTowardsStart
 
 internal class SingleReactionView : FrameLayout {
     private val binding = StreamUiItemMessageReactionBinding.inflate(streamThemeInflater, this, true)
-    private lateinit var reactionsViewStyle: ViewReactionsViewStyle
-    private lateinit var bubbleDrawer: ViewReactionsBubbleDrawer
+    private lateinit var reactionsViewStyle: SingleReactionViewStyle
+    private lateinit var bubbleDrawer: SingleReactionViewBubbleDrawer
     private var isMyMessage: Boolean = false
     private val messageOrientation: MessageOptionsUserReactionOrientation
-        get() = reactionsViewStyle.messageOptionsUserReactionOrientation.getUserReactionOrientation()
+        get() = reactionsViewStyle.reactionOrientation.getUserReactionOrientation()
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -77,8 +76,8 @@ internal class SingleReactionView : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        this.reactionsViewStyle = ViewReactionsViewStyle(context, attrs)
-        this.bubbleDrawer = ViewReactionsBubbleDrawer(reactionsViewStyle)
+        this.reactionsViewStyle = SingleReactionViewStyle(context, attrs)
+        this.bubbleDrawer = SingleReactionViewBubbleDrawer(reactionsViewStyle)
 
         setWillNotDraw(false)
         minimumHeight = reactionsViewStyle.totalHeight

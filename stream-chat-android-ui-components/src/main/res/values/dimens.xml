@@ -106,6 +106,17 @@
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_radius">3dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_offset">10dp</dimen>
 
+    <!--SingleReactionView-->
+    <dimen name="stream_ui_single_reaction_view_total_height">32dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_bubble_height">24dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_bubble_radius">12dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_large_tail_bubble_cy">22dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_large_tail_bubble_radius">5dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_large_tail_bubble_offset">5dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_small_tail_bubble_cy">29dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_small_tail_bubble_radius">3dp</dimen>
+    <dimen name="stream_ui_single_reaction_view_small_tail_bubble_offset">9dp</dimen>
+
     <!--ScrollButtonView-->
     <dimen name="stream_ui_scroll_button_size">40dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_size">20dp</dimen>
