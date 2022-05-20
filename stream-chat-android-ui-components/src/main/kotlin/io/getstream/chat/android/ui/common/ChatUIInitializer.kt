@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.internal.AvatarFetcherFactory
+import io.getstream.chat.android.ui.common.internal.AvatarKeyer
 
 /**
  * Jetpack Startup Initializer for Stream's Chat UI Components.
@@ -45,7 +46,8 @@ public class ChatUIInitializer : Initializer<ChatUI> {
                 } else {
                     add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
-                add((AvatarFetcherFactory()))
+                add(AvatarFetcherFactory())
+                add(AvatarKeyer)
             }
         }
         StreamCoil.setImageLoader(imageLoaderFactory)
