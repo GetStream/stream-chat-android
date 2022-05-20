@@ -20,7 +20,7 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 50
+private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 30
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -90,8 +90,8 @@ public class EndlessMessageListScrollListener(
 
         Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition -----")
         Log.d("EndlessScroll", "firstMessageAfterGapPosition: ${firstMessageAfterGapPosition()}")
-        Log.d("EndlessScroll", "trigger begin: ${loadMoreThreshold + (firstMessageAfterGapPosition() ?: -1)}")
-        Log.d("EndlessScroll", "trigger end: ${loadMoreThreshold + (firstMessageAfterGapPosition() ?: -1) + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
+        Log.d("EndlessScroll", "trigger begin: ${(firstMessageAfterGapPosition() ?: -1) - loadMoreThreshold}")
+        Log.d("EndlessScroll", "trigger end: ${(firstMessageAfterGapPosition() ?: -1) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
 
 
         if (isInBottomTriggerPosition(
@@ -114,7 +114,7 @@ public class EndlessMessageListScrollListener(
         loadMoreThreshold: Int,
         firstMessageAfterGap: Int,
     ): Boolean {
-        val limitStart = loadMoreThreshold + firstMessageAfterGap
+        val limitStart = firstMessageAfterGap - loadMoreThreshold
         val limitEnd = limitStart + DEFAULT_BOTTOM_TRIGGER_LIMIT
 
         return lastVisible >= limitStart && lastVisible < limitEnd
