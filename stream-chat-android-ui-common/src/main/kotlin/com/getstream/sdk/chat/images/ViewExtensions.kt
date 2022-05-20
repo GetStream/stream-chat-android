@@ -25,7 +25,7 @@ import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
-public fun ImageView.loadAny(
+public fun ImageView.load(
     data: Any?,
     @DrawableRes placeholderResId: Int? = null,
     transformation: ImageTransformation = ImageTransformation.None,
@@ -43,7 +43,7 @@ public fun ImageView.loadAny(
 }
 
 @InternalStreamChatApi
-public fun ImageView.loadAny(
+public fun ImageView.load(
     data: Any?,
     placeholderDrawable: Drawable,
     transformation: ImageTransformation = ImageTransformation.None,

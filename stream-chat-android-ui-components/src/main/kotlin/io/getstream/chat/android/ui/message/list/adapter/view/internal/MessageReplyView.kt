@@ -25,7 +25,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
@@ -234,7 +234,7 @@ internal class MessageReplyView : FrameLayout {
                 logoContainer.isVisible = true
                 thumbImageView.isVisible = true
                 fileTypeImageView.isVisible = false
-                thumbImageView.loadAny(
+                thumbImageView.load(
                     data = url,
                     transformation = RoundedCorners(REPLY_IMAGE_CORNER_RADIUS),
                 )

@@ -21,7 +21,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
@@ -74,7 +74,7 @@ internal class GiphyViewHolder(
                     it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
                 } ?: return
 
-                binding.giphyPreview.loadAny(
+                binding.giphyPreview.load(
                     data = url,
                     onStart = {
                         binding.loadingProgressBar.isVisible = true

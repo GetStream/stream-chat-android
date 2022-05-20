@@ -21,7 +21,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
@@ -103,7 +103,7 @@ internal class MediaAttachmentAdapter(
                 val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_white_smoke)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)
             } else {
-                binding.mediaThumbnailImageView.loadAny(data = attachment.uri)
+                binding.mediaThumbnailImageView.load(data = attachment.uri)
                 binding.mediaThumbnailImageView.setBackgroundColor(Color.TRANSPARENT)
             }
         }

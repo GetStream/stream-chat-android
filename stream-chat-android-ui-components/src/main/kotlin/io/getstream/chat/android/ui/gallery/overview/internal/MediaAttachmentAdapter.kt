@@ -21,7 +21,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -58,7 +58,7 @@ internal class MediaAttachmentAdapter(
         }
 
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
-            binding.mediaImageView.loadAny(
+            binding.mediaImageView.load(
                 data = attachmentGalleryItem.attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_placeholder,
             )

@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
@@ -74,7 +74,7 @@ internal class SelectedMediaAttachmentAdapter(
                     placeholderResId = R.drawable.stream_ui_placeholder,
                 )
             } else {
-                binding.ivMedia.loadAny(data = attachment.uri)
+                binding.ivMedia.load(data = attachment.uri)
             }
         }
 

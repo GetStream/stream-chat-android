@@ -24,7 +24,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
@@ -84,7 +84,7 @@ public class AvatarView : AppCompatImageView {
             }
 
             else -> {
-                loadAny(
+                load(
                     data = Avatar.ChannelAvatar(channel, avatarStyle),
                     transformation = avatarShape(avatarStyle),
                 )
@@ -101,7 +101,7 @@ public class AvatarView : AppCompatImageView {
      * @param user A user that includes user information.
      */
     public fun setUserData(user: User) {
-        loadAny(
+        load(
             data = Avatar.UserAvatar(user, avatarStyle),
             transformation = avatarShape(avatarStyle),
         )

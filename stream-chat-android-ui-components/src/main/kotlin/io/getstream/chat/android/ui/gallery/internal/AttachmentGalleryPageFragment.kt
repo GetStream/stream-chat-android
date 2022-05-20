@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
 
 internal class AttachmentGalleryPageFragment : Fragment() {
@@ -44,7 +44,7 @@ internal class AttachmentGalleryPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding.photoView) {
-            loadAny(data = imageUrl)
+            load(data = imageUrl)
             setOnClickListener {
                 imageClickListener()
             }

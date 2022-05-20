@@ -21,7 +21,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
@@ -125,7 +125,7 @@ internal class ImageAttachmentView : ConstraintLayout {
      * Loads the images.
      */
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
-        binding.imageView.loadAny(
+        binding.imageView.load(
             data = imageUrl,
             placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },

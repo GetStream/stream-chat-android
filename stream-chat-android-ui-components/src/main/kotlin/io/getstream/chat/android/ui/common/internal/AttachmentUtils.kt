@@ -21,7 +21,7 @@ import android.widget.ImageView
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.disposable.Disposable
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.loadAny
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
@@ -36,9 +36,9 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
     return with(attachment) {
         when {
             type == ModelType.attach_video && !thumbUrl.isNullOrBlank() ->
-                loadAny(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
+                load(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
             type == ModelType.attach_image && !imageUrl.isNullOrBlank() ->
-                loadAny(data = imageUrl, transformation = FILE_THUMB_TRANSFORMATION)
+                load(data = imageUrl, transformation = FILE_THUMB_TRANSFORMATION)
             else -> {
                 // The mime type, or a best guess based on the extension
                 val actualMimeType = mimeType ?: MimeTypeMap.getSingleton()
@@ -46,12 +46,12 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
 
                 // We don't have icons for image types, but we can load the actual image in this case
                 if (actualMimeType?.startsWith("image") == true && attachment.upload != null) {
-                    loadAny(
+                    load(
                         data = StreamFileUtil.getUriForFile(context, attachment.upload!!),
                         transformation = FILE_THUMB_TRANSFORMATION
                     )
                 } else {
-                    loadAny(data = ChatUI.mimeTypeIconProvider.getIconRes(actualMimeType))
+                    load(data = ChatUI.mimeTypeIconProvider.getIconRes(actualMimeType))
                 }
             }
         }
@@ -65,8 +65,8 @@ internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData): Disp
                 uri = uri,
                 transformation = FILE_THUMB_TRANSFORMATION
             )
-            ModelType.attach_image -> loadAny(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
-            else -> loadAny(data = ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
+            ModelType.attach_image -> load(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
+            else -> load(data = ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
         }
     }
 }
