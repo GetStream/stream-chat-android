@@ -32,7 +32,7 @@ public fun ImageView.loadAny(
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
 ): Disposable {
-    return StreamImageLoader.instance().loadAny(
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderResId = placeholderResId,
@@ -50,7 +50,7 @@ public fun ImageView.loadAny(
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
 ): Disposable {
-    return StreamImageLoader.instance().loadAny(
+    return StreamImageLoader.instance().load(
         target = this,
         data = data,
         placeholderDrawable = placeholderDrawable,

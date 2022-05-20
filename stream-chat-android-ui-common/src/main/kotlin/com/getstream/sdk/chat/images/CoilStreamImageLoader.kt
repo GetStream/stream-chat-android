@@ -59,7 +59,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             }
     }
 
-    override fun loadAny(
+    override fun load(
         target: ImageView,
         data: Any?,
         placeholderResId: Int?,
@@ -83,7 +83,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         return CoilDisposable(disposable)
     }
 
-    override fun loadAny(
+    override fun load(
         target: ImageView,
         data: Any?,
         placeholderDrawable: Drawable?,
