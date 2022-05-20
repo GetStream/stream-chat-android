@@ -305,17 +305,6 @@ internal constructor(
         }
         val userState = userStateService.state
         return when {
-            userState is UserState.UserSet &&
-                userState.user.id == user.id &&
-                socketStateService.state == SocketState.Idle -> {
-                logger.logV("[setUser] user is Set & socket.state is Idle")
-                userStateService.onUserUpdated(user)
-                tokenManager.setTokenProvider(cacheableTokenProvider)
-                socketStateService.onConnectionRequested()
-                socket.connect(user)
-                initializationCoordinator.userConnected(user)
-                waitConnection.first()
-            }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
