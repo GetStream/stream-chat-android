@@ -97,7 +97,7 @@ public class EndlessMessageListScrollListener(
         if (isInBottomTriggerPosition(
                 lastVisiblePosition,
                 loadMoreThreshold,
-                getFirstAfterGap(-1),
+                getFirstAfterGap(-1), //Todo: Fix the -1 value!!
             )
         ) {
             scrollStateReset = false

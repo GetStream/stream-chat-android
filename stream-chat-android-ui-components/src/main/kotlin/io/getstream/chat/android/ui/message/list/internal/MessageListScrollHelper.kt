@@ -143,6 +143,8 @@ internal class MessageListScrollHelper(
                                 }
                             }
                         }
+
+                        //Disable gap here
                     }
             },
             HIGHLIGHT_MESSAGE_DELAY
