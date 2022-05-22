@@ -29,6 +29,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePublisher {
@@ -38,7 +39,9 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
     private var isObserving = false
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
-    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
+        println("Lifecycle - Stream: $it")
+    }
 
     override fun observe() {
         if (isObserving.not()) {

@@ -101,10 +101,6 @@ internal open class BaseChatModule(
         )
     }
 
-    val connectLifecyclePublisher: ConnectLifecyclePublisher by lazy {
-        ConnectLifecyclePublisher()
-    }
-
     //region Modules
 
     fun api(): ChatApi {
@@ -218,7 +214,6 @@ internal open class BaseChatModule(
             listOf(
                 StreamLifecyclePublisher(),
                 NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
-                connectLifecyclePublisher
             )
         )
     }

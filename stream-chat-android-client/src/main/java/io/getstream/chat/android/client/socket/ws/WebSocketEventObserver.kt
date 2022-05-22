@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.socket.ws
 
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.socket.ShutdownReason
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,6 +27,8 @@ import okio.ByteString
 import io.getstream.chat.android.client.socket.Event.WebSocket as WebSocketEvent
 
 internal class WebSocketEventObserver : WebSocketListener() {
+    private val logger = ChatLogger.get("WebSocketListener")
+
     private val _eventsFlow = MutableSharedFlow<WebSocketEvent>(extraBufferCapacity = 1)
 
     val eventsFlow = _eventsFlow.asSharedFlow()
@@ -53,6 +56,7 @@ internal class WebSocketEventObserver : WebSocketListener() {
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        logger.logE("Web socket listener", t)
         _eventsFlow.tryEmit(WebSocketEvent.OnConnectionFailed(t))
     }
 }

@@ -71,9 +71,14 @@ internal open class ChatSocket constructor(
 
     private var connectionEventReceived = false
 
+    private var latestUnhandledLifecycleEvent: Event.Lifecycle? = null
+
     init {
         (lifecycleObservers + connectLifecyclePublisher).combine()
-            .onEach { stateMachine.sendEvent(it) }
+            .onEach {
+                logger.logD("Received lifecycle event: $it")
+                stateMachine.sendEvent(it)
+            }
             .launchIn(coroutineScope)
         startObservers()
     }
@@ -83,12 +88,13 @@ internal open class ChatSocket constructor(
             initialState(State.Disconnected(DisconnectCause.Error(null)))
 
             defaultHandler { state, event ->
-                logger.logE("Cannot handle event $event while being in inappropriate state $this")
+                logger.logE("Cannot handle event $event while being in inappropriate state $state")
                 state
             }
 
             state<State.Disconnected> {
                 onEnter {
+                    logger.logD("Entered into state $this from $it")
                     when (disconnectCause) {
                         is DisconnectCause.NetworkNotAvailable, is DisconnectCause.ConnectionReleased -> {
                             healthMonitor.stop()
@@ -101,7 +107,7 @@ internal open class ChatSocket constructor(
                             connectionConf = null
                         }
                     }
-                    callListeners { it.onDisconnected(this.disconnectCause) }
+                    callListeners { listener -> listener.onDisconnected(this.disconnectCause) }
                 }
                 onEvent<Event.Lifecycle.Started> {
                     connectionConf?.let {
@@ -135,7 +141,9 @@ internal open class ChatSocket constructor(
 
             state<State.Connected> {
                 onEnter {
+                    logger.logD("Entered into state $this from $it")
                     if (it is Event.WebSocket.OnConnectedEventReceived) {
+                        connectionEventReceived = true
                         healthMonitor.start()
                         callListeners { listener -> listener.onConnected(it.connectedEvent) }
                     }
@@ -172,6 +180,11 @@ internal open class ChatSocket constructor(
                 onEnter { disposeObservers() }
             }
         }
+    }
+
+    private fun handlePendingEvent() {
+        latestUnhandledLifecycleEvent?.let { stateMachine.sendEvent(it) }
+        latestUnhandledLifecycleEvent = null
     }
 
     internal val state
@@ -277,12 +290,6 @@ internal open class ChatSocket constructor(
         reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
     }
 
-    // TODO: Refactor disconnect with connect lifecycle observer
-    /*open fun disconnect() {
-        reconnectionAttempts = 0
-        state = State.DisconnectedPermanently(null)
-    }*/
-
     open fun onEvent(event: ChatEvent) {
         healthMonitor.ack()
         callListeners { listener -> listener.onEvent(event) }
@@ -334,7 +341,6 @@ internal open class ChatSocket constructor(
             val event = eventResult.data()
             if (!connectionEventReceived) {
                 if (event is ConnectedEvent) {
-                    connectionEventReceived = true
                     stateMachine.sendEvent(Event.WebSocket.OnConnectedEventReceived(event))
                 } else {
                     onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))

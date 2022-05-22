@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.socket.Timed
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkLifecyclePublisher(private val connectivityManager: ConnectivityManager) : LifecyclePublisher {
@@ -35,7 +36,9 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
     private val logger = ChatLogger.get("NetworkStateProvider")
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
-    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
+        println("Lifecycle - Network: $it")
+    }
 
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -50,9 +53,6 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
             notifyListenersIfNetworkStateChanged()
         }
     }
-
-    @Volatile
-    private var isConnected: Boolean = isConnected()
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
@@ -72,13 +72,9 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
 
     private fun notifyListenersIfNetworkStateChanged() {
         val isNowConnected = isConnected()
-        if (!isConnected && isNowConnected) {
-            logger.logI("Network connected.")
-            isConnected = true
+        if(isNowConnected) {
             _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
-        } else if (isConnected && !isNowConnected) {
-            logger.logI("Network disconnected.")
-            isConnected = false
+        } else {
             _lifecycleEvents.tryEmit(
                 Timed(
                     Event.Lifecycle.Stopped.AndAborted(DisconnectCause.NetworkNotAvailable),

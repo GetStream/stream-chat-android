@@ -67,7 +67,8 @@ public class FiniteStateMachine<S : Any, E : Any>(
         runBlocking {
             mutex.withLock {
                 val oldState = _state
-                val handler = stateFunctions[oldState::class]?.get(event::class) ?: defaultEventHandler
+                val functions = stateFunctions[oldState::class]
+                val handler = functions?.getHandler(event) ?: defaultEventHandler
                 _state = handler(oldState, event)
                 if (_state != oldState) {
                     with(_state) {
@@ -76,6 +77,19 @@ public class FiniteStateMachine<S : Any, E : Any>(
                 }
             }
         }
+    }
+
+    private fun Map<KClass<out E>, (S, E) -> S>.getHandler(event: E): (S, E) -> S {
+        var handler = this[event::class]
+        if (handler != null) {
+            return handler
+        }
+        for ((clazz: KClass<out E>, eventHandler: (S, E) -> S) in this) {
+            if (clazz.isInstance(event)) {
+                return eventHandler
+            }
+        }
+        return defaultEventHandler
     }
 
     /**

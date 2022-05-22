@@ -23,11 +23,14 @@ import io.getstream.chat.android.client.socket.Timed
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onEach
 
 internal class ConnectLifecyclePublisher : LifecyclePublisher {
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
-    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull()
+    override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
+        println("Lifecycle - Connect: $it")
+    }
 
     override fun observe() {
     }
