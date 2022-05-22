@@ -94,10 +94,10 @@ public class EndlessMessageListScrollListener(
         Log.d("EndlessScroll", "trigger end: ${(firstMessageAfterGapPosition() ?: -1) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
 
 
-        if (isInBottomTriggerPosition(
+        if (scrollStateReset && isInBottomTriggerPosition(
                 lastVisiblePosition,
                 loadMoreThreshold,
-                getFirstAfterGap(-1), //Todo: Fix the -1 value!!
+                firstMessageAfterGapPosition(),
             )
         ) {
             scrollStateReset = false
@@ -112,16 +112,14 @@ public class EndlessMessageListScrollListener(
     private fun isInBottomTriggerPosition(
         lastVisible: Int,
         loadMoreThreshold: Int,
-        firstMessageAfterGap: Int,
+        firstMessageAfterGap: Int?,
     ): Boolean {
+        if (firstMessageAfterGap == null) return false
+
         val limitStart = firstMessageAfterGap - loadMoreThreshold
         val limitEnd = limitStart + DEFAULT_BOTTOM_TRIGGER_LIMIT
 
-        return lastVisible >= limitStart && lastVisible < limitEnd
-    }
-
-    private fun getFirstAfterGap(totalSize: Int): Int {
-        return firstMessageAfterGapPosition() ?: totalSize
+        return lastVisible in limitStart until limitEnd
     }
 
     /**
