@@ -150,6 +150,8 @@ public class MessageListView : ConstraintLayout {
 
     private var firstMessageAfterGapPosition: Int? = null
 
+    private var firstMessageAfterGapId: String? = null
+
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var loadingView: View
     private lateinit var loadingViewContainer: ViewGroup
@@ -654,17 +656,17 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun firstMessageAfterGap(message: Message?) {
-        val listLastIndex = adapter.currentList.lastIndex
+        firstMessageAfterGapId = message?.id
+    }
 
-        if (message == null) {
-            firstMessageAfterGapPosition = listLastIndex
-        } else {
-            firstMessageAfterGapPosition = adapter.currentList.asSequence()
-                .filterIsInstance<MessageListItem.MessageItem>()
-                .indexOfFirst { messageItem -> messageItem.message.id == message?.id }
-                .takeIf { index -> index != NOT_FOUND }
-                ?: listLastIndex
-        }
+    private fun updateMessageAfterGap() {
+        firstMessageAfterGapPosition = adapter.currentList.asSequence()
+            .filterIsInstance<MessageListItem.MessageItem>()
+            .indexOfFirst { messageItem -> messageItem.message.id == firstMessageAfterGapId }
+            .takeIf { index -> index != NOT_FOUND }
+
+        Log.d("MessageListView", "updateMessageAfterGap. id: $firstMessageAfterGapId")
+        Log.d("MessageListView", "updateMessageAfterGap. position: $firstMessageAfterGapPosition")
     }
 
     /**
@@ -1151,6 +1153,8 @@ public class MessageListView : ConstraintLayout {
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty()
                     )
+
+                    updateMessageAfterGap()
 
                     buffer.active()
                 }
