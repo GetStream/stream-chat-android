@@ -121,6 +121,7 @@ Let's see how to create an `AttachmentFactory` that is capable of handling date 
 class DateAttachmentFactory : AttachmentFactory {
 
     override fun canHandle(message: Message): Boolean {
+        // Use the factory only for date attachments
         return message.attachments.any { it.type == "date" }
     }
 
@@ -129,6 +130,7 @@ class DateAttachmentFactory : AttachmentFactory {
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder {
+        // Create an inner ViewHolder with the attachment content
         return ItemDateAttachmentBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
             .let { DateAttachmentViewHolder(it, listeners) }
@@ -142,6 +144,7 @@ class DateAttachmentFactory : AttachmentFactory {
         private lateinit var message: Message
 
         init {
+            // Handle clicks on the attachment content
             binding.dateTextView.setOnClickListener {
                 listeners?.attachmentClickListener?.onAttachmentClick(
                     message,
@@ -157,6 +160,7 @@ class DateAttachmentFactory : AttachmentFactory {
         override fun onBindViewHolder(message: Message) {
             this.message = message
 
+            // Display the date from the attachment extras
             binding.dateTextView.text = message.attachments
                 .first { it.type == "date" }
                 .extraData["payload"]
