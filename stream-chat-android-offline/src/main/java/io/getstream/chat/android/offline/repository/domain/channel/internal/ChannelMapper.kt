@@ -33,10 +33,13 @@ import java.util.Date
 
 internal fun Channel.toEntity(): ChannelEntity {
     var lastMessage: MessageEntity? = null
-    var lastMessageAt: Date? = null
+    var lastMessageAt: Date? = this.lastMessageAt
     messages.lastOrNull()?.let { message ->
         lastMessage = message.toEntity()
-        lastMessageAt = message.createdAt ?: message.createdLocallyAt
+
+        if (lastMessageAt == null) {
+            lastMessageAt = message.createdAt ?: message.createdLocallyAt
+        }
     }
     return ChannelEntity(
         type = type,

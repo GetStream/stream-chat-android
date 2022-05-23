@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.extensions.internal.toCid
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -45,6 +46,8 @@ internal class QueryMembersErrorHandlerImpl(
     private val channelRepository: ChannelRepository,
 ) : QueryMembersErrorHandler {
 
+    private val logger = StreamLog.getLogger("QueryMembersError")
+
     override fun onQueryMembersError(
         originalCall: Call<List<Member>>,
         channelType: String,
@@ -56,6 +59,11 @@ internal class QueryMembersErrorHandlerImpl(
         members: List<Member>,
     ): ReturnOnErrorCall<List<Member>> {
         return originalCall.onErrorReturn(scope) { originalError ->
+            logger.d {
+                "An error happened while wuery members. " +
+                    "Error message: ${originalError.message}. Full error: $originalCall"
+            }
+
             if (globalState.isOnline()) {
                 Result.error(originalError)
             } else {

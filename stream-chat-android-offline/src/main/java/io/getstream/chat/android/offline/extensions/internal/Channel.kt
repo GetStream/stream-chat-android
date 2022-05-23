@@ -192,7 +192,22 @@ internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeen
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
-    return asSequence().sortedWith(pagination.sort.comparator)
+    val logger = StreamLog.getLogger("ChannelSort")
+
+    return asSequence()
+        .also { channelSequence ->
+            logger.d {
+                val ids = channelSequence.joinToString { channel -> channel.id }
+                "Sorting channels: $ids"
+            }
+        }
+        .sortedWith(pagination.sort.comparator)
+        .also { channelSequence ->
+            logger.d {
+                val ids = channelSequence.joinToString { channel -> channel.id }
+                "Sort for channels result: $ids"
+            }
+        }
         .drop(pagination.channelOffset)
         .take(pagination.channelLimit)
         .toList()
