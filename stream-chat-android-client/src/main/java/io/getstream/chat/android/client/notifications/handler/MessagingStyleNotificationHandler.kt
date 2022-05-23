@@ -59,7 +59,9 @@ internal class MessagingStyleNotificationHandler(
     }
 
     override fun showNotification(channel: Channel, message: Message) {
-        val currentUser = ChatClient.instance().getCurrentUser() ?: return
+        val currentUser = ChatClient.instance().getCurrentUser()
+            ?: ChatClient.instance().getStoredUser()
+            ?: return
         val notificationId = createNotificationId(channel.type, channel.id)
         val contentPendingIntent = PendingIntent.getActivity(
             context,

@@ -15,6 +15,7 @@
 - Fixed `ChatParser` failing to parse errors because it was trying to fetch the raw response from a converted body. [#3534](https://github.com/GetStream/stream-chat-android/pull/3534)
 
 ### ⬆️ Improved
+- CurrentUser is not initialized when a PN is received. [#3520](https://github.com/GetStream/stream-chat-android/pull/3520)
 
 ### ✅ Added
 
@@ -24,14 +25,16 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
+- Fixed process sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
 - Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
+- Fixed initializing `OfflinePlugin` when connecting anonymous user. It fixes the issue when after connecting headers stay in `Disconnected` state. [#3553](https://github.com/GetStream/stream-chat-android/pull/3553)
 
 ### ⬆️ Improved
-- Change the order of offline message so it matches the order of online messages. Now the reshufling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
+- Change the order of offline message so it matches the order of online messages. Now the reshuffling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
 - 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
-  The change was introduced in order to distuinguish between initial state when channels are not loaded yet
+  The change was introduced in order to distinguish between initial state when channels are not loaded yet
   and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
+- Adding logs for QuerySort: [3570](https://github.com/GetStream/stream-chat-android/pull/3570)
 
 ### ✅ Added
 
@@ -54,12 +57,15 @@
 ### 🐞 Fixed
 - Fixed the way pagination scrolling worked for various non-core components (e.g. search, gallery/media/pinned message lists) [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 - Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
+- Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
 - Introduced public methods `setFilters(newFilters: FilterObject)` and `setQuerySort(querySort: QuerySort<Channel>)` into `ChannelListViewModel`. You can use these methods to adjust filters and sort queries at runtime. This also allows you to switch users without having to reinitialize the `ViewModel`, just remember to update your filters once you reconnect with a new user. [#3550](https://github.com/GetStream/stream-chat-android/pull/3550)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added the public method `switchToCommandMode(command: Command)` inside `MessageInputView`. This method allows switching the input to command mode using the desired command directly, instead of having to select it from the dialog. An example of its usage is provided inside the patch within the linked PR. [#3515](https://github.com/GetStream/stream-chat-android/pull/3515)
+- Added loading indicator to the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
+- Added `streamUiMediaActivityProgressBarStyle` theme attribute to customize the appearance of loading indicator on the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
 
 ### ⚠️ Changed
 
@@ -67,12 +73,14 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
 - Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
+- Added loading indicator to the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
 
 ### ⚠️ Changed
 - Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
@@ -926,7 +934,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Removed ripple effect for attachements in message options.
+- Removed ripple effect for attachments in message options.
 ### ⬆️ Improved
 - More customization for AvatarView. Now it is possible to choose between Square and Circle. Use new fields in AvatarStyle to customize AvatarView the way you prefer. 
 ### ✅ Added

@@ -33,6 +33,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 
@@ -85,6 +86,14 @@ internal open class BaseChatClientTest {
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
+        )
+        Mockito.reset(
+            socketStateService,
+            userStateService,
+            socket,
+            tokenManager,
+            config,
+            api,
         )
     }
 }
