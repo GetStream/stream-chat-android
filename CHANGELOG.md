@@ -15,6 +15,7 @@
 - Fixed `ChatParser` failing to parse errors because it was trying to fetch the raw response from a converted body. [#3534](https://github.com/GetStream/stream-chat-android/pull/3534)
 
 ### ⬆️ Improved
+- CurrentUser is not initialized when a PN is received. [#3520](https://github.com/GetStream/stream-chat-android/pull/3520)
 
 ### ✅ Added
 
