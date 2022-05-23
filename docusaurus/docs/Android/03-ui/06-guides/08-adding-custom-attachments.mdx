@@ -20,6 +20,14 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 
 First of all, you'll need to customize [MessageInputView](../04-message-components/04-message-input.mdx) to let the user pick a date using the attachment button:
 
+```xml
+<io.getstream.chat.android.ui.message.input.MessageInputView
+    android:id="@+id/messageInputView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:streamUiAttachButtonIcon="@drawable/ic_calendar" />
+```
+
 ```kotlin
 // Build a date picker
 val datePickerDialog = MaterialDatePicker.Builder

@@ -29,26 +29,29 @@ class AddingCustomAttachmentsSnippet : Fragment() {
     private lateinit var messageInputView: MessageInputView
 
     fun sendingDateAttachments() {
+        // Build a date picker
+        val datePickerDialog = MaterialDatePicker.Builder
+            .datePicker()
+            .build()
+
+        // Add an attachment to the message input when the user selects a date
+        datePickerDialog.addOnPositiveButtonClickListener {
+            val date = DateFormat
+                .getDateInstance(DateFormat.LONG)
+                .format(Date(it))
+            val attachment = Attachment(
+                type = "date",
+                extraData = mutableMapOf("payload" to date)
+            )
+            messageInputView.submitCustomAttachments(
+                attachments = listOf(attachment),
+                viewHolderFactory = DateAttachmentPreviewFactory()
+            )
+        }
+
+        // Show the date picker dialog
         messageInputView.setAttachmentButtonClickListener {
-            val dialogPickerDialog = MaterialDatePicker.Builder
-                .datePicker()
-                .build()
-
-            dialogPickerDialog.addOnPositiveButtonClickListener {
-                val date = DateFormat
-                    .getDateInstance(DateFormat.LONG)
-                    .format(Date(it))
-                val attachment = Attachment(
-                    type = "date",
-                    extraData = mutableMapOf("payload" to date)
-                )
-                messageInputView.submitCustomAttachments(
-                    attachments = listOf(attachment),
-                    viewHolderFactory = DateAttachmentPreviewFactory()
-                )
-            }
-
-            dialogPickerDialog.show(requireActivity().supportFragmentManager, null)
+            datePickerDialog.show(requireActivity().supportFragmentManager, null)
         }
     }
 
