@@ -21,12 +21,12 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 First of all, you'll need to customize [MessageInputView](../04-message-components/04-message-input.mdx) to let the user pick a date using the attachment button:
 
 ```kotlin
-// 1. Build a date picker
+// Build a date picker
 val datePickerDialog = MaterialDatePicker.Builder
     .datePicker()
     .build()
 
-// 2. Add a listener that will add a date attachment on positive click
+// Add an attachment to the message input when the user selects a date
 datePickerDialog.addOnPositiveButtonClickListener {
     val date = DateFormat
         .getDateInstance(DateFormat.LONG)
@@ -41,7 +41,7 @@ datePickerDialog.addOnPositiveButtonClickListener {
     )
 }
 
-// 3. Show the date picker dialog
+// Show the date picker dialog
 messageInputView.setAttachmentButtonClickListener {
     datePickerDialog.show(requireActivity().supportFragmentManager, null)
 }
