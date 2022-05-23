@@ -59,7 +59,10 @@ internal class QueryMembersErrorHandlerImpl(
         members: List<Member>,
     ): ReturnOnErrorCall<List<Member>> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            logger.logD("An error happened while wuery members. Error message: ${originalError.message}. Full error: $originalCall")
+            logger.logD(
+                "An error happened while wuery members. " +
+                    "Error message: ${originalError.message}. Full error: $originalCall"
+            )
 
             if (globalState.isOnline()) {
                 Result.error(originalError)

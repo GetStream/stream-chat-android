@@ -170,7 +170,10 @@ public class QuerySort<T : Any> {
             }
             ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
                 .also { fieldNameSortAttribute ->
-                    logger.logD("[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute")
+                    logger.logD(
+                        "[getSortFeature] A field to sort was NOT found. " +
+                            "Using field by name: $fieldNameSortAttribute"
+                    )
                 }
     }
 
