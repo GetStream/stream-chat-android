@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.logging.StreamLog
 import java.util.Date
 
@@ -197,16 +196,16 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
 
     return asSequence()
         .also { channelSequence ->
-            if (BuildConfig.DEBUG) {
+            logger.d {
                 val ids = channelSequence.joinToString { channel -> channel.id }
-                logger.d { "Sorting channels: $ids" }
+                "Sorting channels: $ids"
             }
         }
         .sortedWith(pagination.sort.comparator)
         .also { channelSequence ->
-            if (BuildConfig.DEBUG) {
+            logger.d {
                 val ids = channelSequence.joinToString { channel -> channel.id }
-                logger.d { "Sort for channels result: $ids" }
+                "Sort for channels result: $ids"
             }
         }
         .drop(pagination.channelOffset)

@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
@@ -55,15 +54,19 @@ internal class QueryChannelsMutableState(
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap?.values?.updateUsers(userMap)
         }.map { channels ->
-            if (BuildConfig.DEBUG && channels?.isNotEmpty() == true) {
-                val ids = channels.joinToString { channel -> channel.id }
-                logger.d { "Sorting channels: $ids" }
+            if (channels?.isNotEmpty() == true) {
+                logger.d {
+                    val ids = channels.joinToString { channel -> channel.id }
+                    "Sorting channels: $ids"
+                }
             }
 
             channels?.sortedWith(sort.comparator).also { sortedChannels ->
-                if (BuildConfig.DEBUG && sortedChannels?.isNotEmpty() == true) {
-                    val ids = sortedChannels.joinToString { channel -> channel.id }
-                    logger.d { "Sorting result: $ids" }
+                if (sortedChannels?.isNotEmpty() == true) {
+                    logger.d {
+                        val ids = sortedChannels.joinToString { channel -> channel.id }
+                        "Sorting result: $ids"
+                    }
                 }
             }
         }.stateIn(scope, SharingStarted.Eagerly, null)
