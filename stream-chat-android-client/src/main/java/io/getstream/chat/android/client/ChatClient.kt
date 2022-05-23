@@ -151,6 +151,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -305,6 +306,7 @@ internal constructor(
     private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
@@ -323,7 +325,7 @@ internal constructor(
                 userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
-                waitConnection.first()
+                waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
                 logger.logE(
@@ -379,14 +381,20 @@ internal constructor(
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
      *
      * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
-    public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectUser] userId: '${user.id}', username: '${user.name}'")
-            setUser(user, tokenProvider).also { result ->
+            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -406,8 +414,13 @@ internal constructor(
      * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
-    public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token))
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
     }
 
     /**
@@ -446,26 +459,29 @@ internal constructor(
         )
     }
 
-    private suspend fun setAnonymousUser(): Result<ConnectionData> =
-        (if (userStateService.state is UserState.NotSet) {
-            socketStateService.onConnectionRequested()
-            userStateService.onSetAnonymous()
-            tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
-            config.isAnonymous = true
-            warmUp()
-            socket.connectAnonymously()
-            initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
-            waitConnection.first()
-        } else {
-            logger.logE("Failed to connect user. Please check you don't have connected user already")
-            Result.error(ChatError("User cannot be set until previous one is disconnected."))
-        }).onError { disconnect() }
+    private suspend fun setAnonymousUser(timeoutMilliseconds: Long?): Result<ConnectionData> =
+        (
+            if (userStateService.state is UserState.NotSet) {
+                socketStateService.onConnectionRequested()
+                userStateService.onSetAnonymous()
+                tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
+                config.isAnonymous = true
+                warmUp()
+                socket.connectAnonymously()
+                initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
+                waitFirstConnection(timeoutMilliseconds)
+            } else {
+                logger.logE("Failed to connect user. Please check you don't have connected user already")
+                Result.error(ChatError("User cannot be set until previous one is disconnected."))
+            }
+            ).onError { disconnect() }
 
     @CheckResult
-    public fun connectAnonymousUser(): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectAnonymousUser] no args")
-            setAnonymousUser().also { result ->
+            setAnonymousUser(timeoutMilliseconds).also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -475,12 +491,23 @@ internal constructor(
         }
     }
 
+    private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
+        timeoutMilliseconds?.let {
+            withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
+                ?: Result.error(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+        } ?: waitConnection.first()
+
     @CheckResult
-    public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectGuestUser(
+        userId: String,
+        username: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
             getGuestToken(userId, username).await()
-                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token)) }
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
                 .data()
                 .also { result ->
                     logger.logV(
