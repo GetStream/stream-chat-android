@@ -26,6 +26,7 @@
 ### 🐞 Fixed
 - Fixed proccess sync offline message when a push is received. [#3518](https://github.com/GetStream/stream-chat-android/pull/3518)
 - Fixed syncing the channel after bringing the app from background. [#3548](https://github.com/GetStream/stream-chat-android/pull/3548)
+- Fixed initializing `OfflinePlugin` when connecting annonymous user. It fixes the issue when after connecting headers stay in `Disconnected` state. [#3553](https://github.com/GetStream/stream-chat-android/pull/3553)
 
 ### ⬆️ Improved
 - Change the order of offline message so it matches the order of online messages. Now the reshufling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
