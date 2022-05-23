@@ -21,6 +21,7 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 First of all, you'll need to customize [MessageInputView](../04-message-components/04-message-input.mdx) to let the user pick a date using the attachment button:
 
 ```xml
+<!-- Customize the message input to show a custom icon for the attachment button -->
 <io.getstream.chat.android.ui.message.input.MessageInputView
     android:id="@+id/messageInputView"
     android:layout_width="match_parent"
@@ -49,7 +50,7 @@ datePickerDialog.addOnPositiveButtonClickListener {
     )
 }
 
-// Show the date picker dialog
+// Show the date picker dialog on a click on the attachment button
 messageInputView.setAttachmentButtonClickListener {
     datePickerDialog.show(requireActivity().supportFragmentManager, null)
 }

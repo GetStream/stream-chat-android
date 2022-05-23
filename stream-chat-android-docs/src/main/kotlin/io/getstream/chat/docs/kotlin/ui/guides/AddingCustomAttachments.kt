@@ -49,7 +49,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
             )
         }
 
-        // Show the date picker dialog
+        // Show the date picker dialog on a click on the attachment button
         messageInputView.setAttachmentButtonClickListener {
             datePickerDialog.show(requireActivity().supportFragmentManager, null)
         }
