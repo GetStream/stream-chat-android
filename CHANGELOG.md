@@ -34,6 +34,7 @@
 - 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
   The change was introduced in order to distinguish between initial state when channels are not loaded yet
   and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
+- Adding logs for QuerySort: [3570](https://github.com/GetStream/stream-chat-android/pull/3570)
 
 ### ✅ Added
 - Added `EventHandlingResult.WatchAndAdd` to results returned from `ChatEventHandler`.
