@@ -65,7 +65,8 @@ internal open class ChatSocket constructor(
             if (state is State.Disconnected && state.disconnectCause is DisconnectCause.Error) {
                 connectionConf?.let { connect(it.asReconnectionConf()) }
             }
-        })
+        }
+    )
 
     private var reconnectionAttempts = 0
 

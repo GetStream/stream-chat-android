@@ -53,5 +53,3 @@ private fun List<Timed<Event.Lifecycle>>.combineLifecycleEvents() =
             .minByOrNull { it.time }!!
             .value
     } else Event.Lifecycle.Started
-
-

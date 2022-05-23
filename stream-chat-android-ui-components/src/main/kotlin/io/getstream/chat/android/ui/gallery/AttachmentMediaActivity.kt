@@ -52,11 +52,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
         if ((type.isNullOrEmpty() && mimeType.isNullOrEmpty()) || url.isNullOrEmpty()) {
             logger.logE("This file can't be displayed. The TYPE or the URL are null")
-            Toast.makeText(
-                this,
-                R.string.stream_ui_message_list_attachment_display_error,
-                Toast.LENGTH_SHORT
-            ).show()
+            showPlaybackError()
             return
         }
 
@@ -71,7 +67,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private fun setupViews() {
         binding.headerLeftActionButton.setOnClickListener { onBackPressed() }
         binding.headerTitleTextView.text = title
-        binding.ivAudio.isVisible = type?.contains("audio") == true || mimeType?.contains("audio") == true
+        binding.audioImageView.isVisible = type?.contains("audio") == true || mimeType?.contains("audio") == true
     }
 
     /**
@@ -89,14 +85,32 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         val mediaController = createMediaController(this)
         mediaController.setAnchorView(binding.contentContainer)
 
+        binding.progressBar.isVisible = true
         binding.videoView.apply {
             setMediaController(mediaController)
             setOnPreparedListener {
+                binding.progressBar.isVisible = false
                 start()
                 mediaController.show()
             }
+            setOnErrorListener { _, _, _ ->
+                binding.progressBar.isVisible = false
+                showPlaybackError()
+                true
+            }
             setVideoURI(Uri.parse(url))
         }
+    }
+
+    /**
+     * Displays a Toast with an error if there was an issue playing the video.
+     */
+    private fun showPlaybackError() {
+        Toast.makeText(
+            this,
+            R.string.stream_ui_message_list_attachment_display_error,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     /**

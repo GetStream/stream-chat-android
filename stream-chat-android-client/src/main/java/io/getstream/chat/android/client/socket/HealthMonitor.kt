@@ -29,7 +29,7 @@ private const val MONITOR_INTERVAL = 1000L
 private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
 private const val MONITOR_START_DELAY = 1000L
 
-internal class HealthMonitor(private val checkCallback : () -> Unit, private val reconnectCallback: () -> Unit) {
+internal class HealthMonitor(private val checkCallback: () -> Unit, private val reconnectCallback: () -> Unit) {
 
     private val delayHandler = Handler(Looper.getMainLooper())
     private var consecutiveFailures = 0

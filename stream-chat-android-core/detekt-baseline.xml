@@ -20,5 +20,6 @@
     <ID>MaxLineLength:Call.kt$*</ID>
     <ID>MaxLineLength:Result.kt$*</ID>
     <ID>MaxLineLength:Result.kt$Result$return checkNotNull(error) { "Result is successful, not an error. Check result.isSuccess before reading the error." }</ID>
+    <ID>ReturnCount:FiniteStateMachine.kt$FiniteStateMachine$private fun Map&lt;KClass&lt;out E>, (S, E) -> S>.getHandler(event: E): (S, E) -> S</ID>
   </CurrentIssues>
 </SmellBaseline>

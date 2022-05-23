@@ -72,7 +72,7 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
 
     private fun notifyListenersIfNetworkStateChanged() {
         val isNowConnected = isConnected()
-        if(isNowConnected) {
+        if (isNowConnected) {
             _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
         } else {
             _lifecycleEvents.tryEmit(
