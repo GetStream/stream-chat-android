@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.offline.extensions.internal
 
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.logging.StreamLog
 import java.util.Date
 
@@ -192,7 +194,22 @@ internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeen
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
-    return asSequence().sortedWith(pagination.sort.comparator)
+    val logger = ChatLogger.get("ChannelSort")
+
+    return asSequence()
+        .also { channelSequence ->
+            if (BuildConfig.DEBUG) {
+                val ids = channelSequence.joinToString { channel -> channel.id }
+                logger.logD("Sorting channels: $ids")
+            }
+        }
+        .sortedWith(pagination.sort.comparator)
+        .also { channelSequence ->
+            if (BuildConfig.DEBUG) {
+                val ids = channelSequence.joinToString { channel -> channel.id }
+                logger.logD("Sort for channels result: $ids")
+            }
+        }
         .drop(pagination.channelOffset)
         .take(pagination.channelLimit)
         .toList()

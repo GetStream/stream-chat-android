@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.jvm.internal.Reflection
@@ -33,18 +34,27 @@ import kotlin.reflect.full.memberProperties
  */
 @Suppress("TooManyFunctions")
 public class QuerySort<T : Any> {
+    private val logger = ChatLogger.get("QuerySort")
+
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
     @InternalStreamChatApi
     /** Composite comparator based on sort attributes. */
     public val comparator: Comparator<in T>
-        get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
+        get() = CompositeComparator(sortSpecifications.map { it.comparator })
 
     private val SortSpecification<T>.comparator: Comparator<T>
         get() {
             return when (this.sortAttribute) {
                 is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
+                    .also { comparator ->
+                        logger.logD("Returning field sort with name: ${sortAttribute.field.name}")
+                    }
+
                 is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
+                    .also { comparator ->
+                        logger.logD("Returning field name sort comparator with name: ${sortAttribute.name}")
+                    }
             }
         }
 
@@ -84,9 +94,21 @@ public class QuerySort<T : Any> {
         name.snakeToLowerCamelCase().let { fieldName ->
             this::class.memberProperties
                 .firstOrNull { it.name == fieldName }
+                ?.also {
+                    logger.logD("Could find a member for property: $fieldName")
+                }
                 ?.getter
                 ?.call(this)
-                ?: (this as? CustomObject)?.extraData?.get(name)
+                ?: (this as? CustomObject)?.extraData?.get(name).also { extraDataObject ->
+                    buildString {
+                        append("Could not find a member for property named: $name")
+                        if (extraDataObject != null) {
+                            append(", but a fields was found in extraData.")
+                        } else {
+                            append("and nothing was found in the extra data")
+                        }
+                    }.let(logger::logD)
+                }
         }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
@@ -141,8 +163,15 @@ public class QuerySort<T : Any> {
 
     private fun getSortFeature(fieldName: String, kClass: KClass<T>): SortAttribute<T> {
         return kClass.members.filterIsInstance<KProperty1<T, Comparable<*>?>>()
-            .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }?.let { FieldSortAttribute(it, fieldName) }
-            ?: SortAttribute.FieldNameSortAttribute(fieldName)
+            .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }
+            ?.let { FieldSortAttribute(it, fieldName) }
+            .also { fieldSortAttribute ->
+                logger.logD("[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute")
+            }
+            ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
+                .also { fieldNameSortAttribute ->
+                    logger.logD("[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute")
+                }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -186,6 +215,7 @@ public class QuerySort<T : Any> {
     public enum class SortDirection(public val value: Int) {
         /** Descending sort order. */
         DESC(-1),
+
         /** Ascending sort order. */
         ASC(1)
     }

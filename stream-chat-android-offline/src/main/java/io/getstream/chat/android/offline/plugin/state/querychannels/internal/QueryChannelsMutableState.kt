@@ -19,9 +19,11 @@ package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
@@ -42,6 +44,8 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
+    private val logger = ChatLogger.get("QueryChannelsState")
+
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     internal val _channels = MutableStateFlow<Map<String, Channel>?>(null)
     internal val _loading = MutableStateFlow(false)
@@ -50,9 +54,19 @@ internal class QueryChannelsMutableState(
     private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap?.values?.updateUsers(userMap)
-        }
-            .map { it?.sortedWith(sort.comparator) }
-            .stateIn(scope, SharingStarted.Eagerly, null)
+        }.map { channels ->
+            if (BuildConfig.DEBUG && channels?.isNotEmpty() == true) {
+                val ids = channels.joinToString { channel -> channel.id }
+                logger.logD("Sorting channels: $ids")
+            }
+
+            channels?.sortedWith(sort.comparator).also { sortedChannels ->
+                if (BuildConfig.DEBUG && sortedChannels?.isNotEmpty() == true) {
+                    val ids = sortedChannels.joinToString { channel -> channel.id }
+                    logger.logD("Sorting result: $ids")
+                }
+            }
+        }.stateIn(scope, SharingStarted.Eagerly, null)
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
