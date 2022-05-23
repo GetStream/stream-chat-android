@@ -154,7 +154,7 @@ class DateAttachmentFactory : AttachmentFactory {
 }
 ```
 
-What's important here is how you're able to fetch the custom attachment data, using `attachment.extraData["payload"]`. You can format the data in any way you want here, which makes our attachments very powerful.
+The important thing is the ability to fetch custom attachment data using `attachment.extraData["payload"]`. You can format the data in any way you want here, which makes our attachments very powerful.
 
 To complete the date sharing feature you just need to provide `DateAttachmentFactory` via `ChatUI`:
 
