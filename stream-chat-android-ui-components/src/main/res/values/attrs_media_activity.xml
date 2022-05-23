@@ -20,5 +20,6 @@
         <attr name="streamUiMediaActivityHeader" format="reference" />
         <attr name="streamUiMediaActivityHeaderLeftActionButtonStyle" format="reference" />
         <attr name="streamUiMediaActivityHeaderTitleStyle" format="reference" />
+        <attr name="streamUiMediaActivityProgressBarStyle" format="reference"/>
     </declare-styleable>
 </resources>

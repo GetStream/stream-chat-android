@@ -82,9 +82,18 @@
             />
 
         <ImageView
-            android:id="@+id/ivAudio"
+            android:id="@+id/audioImageView"
             style="?attr/streamUiMediaActivityIconStyle"
             android:layout_gravity="center"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?attr/streamUiMediaActivityProgressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
             />
 
     </FrameLayout>
