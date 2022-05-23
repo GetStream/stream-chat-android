@@ -30,7 +30,7 @@ First of all, you'll need to customize [MessageInputView](../04-message-componen
 ```
 
 ```kotlin
-// Build a date picker
+// Create an instance of a date picker dialog
 val datePickerDialog = MaterialDatePicker.Builder
     .datePicker()
     .build()
@@ -166,7 +166,7 @@ class DateAttachmentFactory : AttachmentFactory {
 }
 ```
 
-The important thing is the ability to fetch custom attachment data using `attachment.extraData["payload"]`. You can format the data in any way you want here, which makes our attachments very powerful.
+What's really exciting here is the ability to fetch custom attachment data using `attachment.extraData["payload"]`. You can format the data in any way you want here, which makes our attachments very powerful.
 
 To complete the date sharing feature you just need to provide `DateAttachmentFactory` via `ChatUI`:
 

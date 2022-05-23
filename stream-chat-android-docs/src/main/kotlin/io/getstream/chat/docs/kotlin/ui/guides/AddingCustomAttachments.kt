@@ -29,7 +29,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
     private lateinit var messageInputView: MessageInputView
 
     fun sendingDateAttachments() {
-        // Build a date picker
+        // Create an instance of a date picker dialog
         val datePickerDialog = MaterialDatePicker.Builder
             .datePicker()
             .build()
