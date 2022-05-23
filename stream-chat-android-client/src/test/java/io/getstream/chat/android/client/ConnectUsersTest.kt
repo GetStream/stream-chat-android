@@ -59,7 +59,6 @@ internal class ConnectUsersTest {
         socket = socket,
         notifications = mock(),
         tokenManager = mock(),
-        socketStateService = mock(),
         queryChannelsPostponeHelper = mock(),
         userCredentialStorage = mock(),
         scope = testCoroutines.scope,

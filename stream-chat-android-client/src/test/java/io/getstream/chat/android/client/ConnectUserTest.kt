@@ -34,7 +34,6 @@ internal class ConnectUserTest {
         socket = mock(),
         notifications = mock(),
         tokenManager = mock(),
-        socketStateService = mock(),
         queryChannelsPostponeHelper = mock(),
         userCredentialStorage = mock(),
         scope = mock(),

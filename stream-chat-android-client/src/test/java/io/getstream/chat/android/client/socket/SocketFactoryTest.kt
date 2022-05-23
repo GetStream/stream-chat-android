@@ -30,7 +30,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.only
 import org.mockito.kotlin.verify
@@ -41,7 +40,6 @@ import java.util.Locale
 
 internal class SocketFactoryTest {
 
-    private val eventsParser: EventsParser = mock()
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
@@ -51,13 +49,13 @@ internal class SocketFactoryTest {
     @ParameterizedTest
     @MethodSource("arguments")
     internal fun test(connectionConf: SocketFactory.ConnectionConf, expectedUrl: String) {
-        socketFactory.createSocket(eventsParser, connectionConf)
+        socketFactory.createSocket(connectionConf)
 
         verify(httpClient, only()).newWebSocket(
             org.mockito.kotlin.check {
                 it.url.toString() `should be equal to` expectedUrl
             },
-            eq(eventsParser)
+            any()
         )
     }
 

@@ -41,9 +41,6 @@ internal open class BaseChatClientTest {
     val coroutineRule = TestCoroutineRule()
 
     @Mock
-    protected lateinit var socketStateService: SocketStateService
-
-    @Mock
     protected lateinit var userStateService: UserStateService
 
     @Mock
@@ -75,7 +72,6 @@ internal open class BaseChatClientTest {
             socket = socket,
             notifications = mock(),
             tokenManager = tokenManager,
-            socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,

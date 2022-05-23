@@ -86,16 +86,14 @@ internal class MockClientBuilder(
 
         api = mock()
 
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutineScope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutineScope)
         client = ChatClient(
             config,
             api,
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,

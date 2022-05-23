@@ -80,16 +80,14 @@ internal class ChatClientTest {
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = FakeSocket()
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
-            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,

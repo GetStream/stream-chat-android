@@ -75,12 +75,12 @@ internal class UserStateServiceTests {
     }
 
     @Test
-    fun `Given user not set state When set anonymous Should move to anonymous pending state`() {
+    fun `Given user not set state When set anonymous Should move to anonymous state with null user`() {
         val sut = Fixture().please()
 
         sut.onSetAnonymous()
 
-        sut.state shouldBeEqualTo UserState.Anonymous.Pending
+        sut.state shouldBeEqualTo UserState.AnonymousUserSet(null)
     }
 
     @Test
@@ -126,7 +126,7 @@ internal class UserStateServiceTests {
 
         sut.onUserUpdated(user)
 
-        sut.state.shouldBeInstanceOf<UserState.Anonymous.AnonymousUserSet>()
+        sut.state.shouldBeInstanceOf<UserState.AnonymousUserSet>()
     }
 
     private class Fixture {

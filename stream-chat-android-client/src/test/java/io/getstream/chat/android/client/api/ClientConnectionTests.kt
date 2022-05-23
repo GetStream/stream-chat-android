@@ -90,12 +90,11 @@ internal class ClientConnectionTests {
 
     @BeforeEach
     fun before() {
-        val socketStateService = SocketStateService()
+        socket = mock()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutines.scope)
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
-        socket = mock()
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
@@ -113,7 +112,6 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
