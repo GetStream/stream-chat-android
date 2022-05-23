@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.extensions.internal
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -194,20 +193,20 @@ internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeen
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
-    val logger = ChatLogger.get("ChannelSort")
+    val logger = StreamLog.getLogger("ChannelSort")
 
     return asSequence()
         .also { channelSequence ->
             if (BuildConfig.DEBUG) {
                 val ids = channelSequence.joinToString { channel -> channel.id }
-                logger.logD("Sorting channels: $ids")
+                logger.d { "Sorting channels: $ids" }
             }
         }
         .sortedWith(pagination.sort.comparator)
         .also { channelSequence ->
             if (BuildConfig.DEBUG) {
                 val ids = channelSequence.joinToString { channel -> channel.id }
-                logger.logD("Sort for channels result: $ids")
+                logger.d { "Sort for channels result: $ids" }
             }
         }
         .drop(pagination.channelOffset)

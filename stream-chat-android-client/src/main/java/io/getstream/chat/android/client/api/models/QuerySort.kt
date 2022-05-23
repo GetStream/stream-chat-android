@@ -19,9 +19,9 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.logging.StreamLog
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -34,7 +34,7 @@ import kotlin.reflect.full.memberProperties
  */
 @Suppress("TooManyFunctions")
 public class QuerySort<T : Any> {
-    private val logger = ChatLogger.get("QuerySort")
+    private val logger = StreamLog.getLogger("QuerySort")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
@@ -48,12 +48,12 @@ public class QuerySort<T : Any> {
             return when (this.sortAttribute) {
                 is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
                     .also { comparator ->
-                        logger.logD("Returning field sort with name: ${sortAttribute.field.name}")
+                        logger.d { "Returning field sort with name: ${sortAttribute.field.name}" }
                     }
 
                 is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
                     .also { comparator ->
-                        logger.logD("Returning field name sort comparator with name: ${sortAttribute.name}")
+                        logger.d { "Returning field name sort comparator with name: ${sortAttribute.name}" }
                     }
             }
         }
@@ -95,7 +95,7 @@ public class QuerySort<T : Any> {
             this::class.memberProperties
                 .firstOrNull { it.name == fieldName }
                 ?.also {
-                    logger.logD("Could find a member for property: $fieldName")
+                    logger.d { "Could find a member for property: $fieldName" }
                 }
                 ?.getter
                 ?.call(this)
@@ -107,7 +107,7 @@ public class QuerySort<T : Any> {
                         } else {
                             append("and nothing was found in the extra data")
                         }
-                    }.let(logger::logD)
+                    }.let { string -> logger.d { string } }
                 }
         }
 
@@ -166,14 +166,13 @@ public class QuerySort<T : Any> {
             .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }
             ?.let { FieldSortAttribute(it, fieldName) }
             .also { fieldSortAttribute ->
-                logger.logD("[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute")
+                logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
             ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
                 .also { fieldNameSortAttribute ->
-                    logger.logD(
-                        "[getSortFeature] A field to sort was NOT found. " +
-                            "Using field by name: $fieldNameSortAttribute"
-                    )
+                    logger.d {
+                        "[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute"
+                    }
                 }
     }
 

@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -29,6 +28,7 @@ import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHand
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +44,7 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
-    private val logger = ChatLogger.get("QueryChannelsState")
+    private val logger = StreamLog.getLogger("QueryChannelsState")
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     internal val _channels = MutableStateFlow<Map<String, Channel>?>(null)
@@ -57,13 +57,13 @@ internal class QueryChannelsMutableState(
         }.map { channels ->
             if (BuildConfig.DEBUG && channels?.isNotEmpty() == true) {
                 val ids = channels.joinToString { channel -> channel.id }
-                logger.logD("Sorting channels: $ids")
+                logger.d { "Sorting channels: $ids" }
             }
 
             channels?.sortedWith(sort.comparator).also { sortedChannels ->
                 if (BuildConfig.DEBUG && sortedChannels?.isNotEmpty() == true) {
                     val ids = sortedChannels.joinToString { channel -> channel.id }
-                    logger.logD("Sorting result: $ids")
+                    logger.d { "Sorting result: $ids" }
                 }
             }
         }.stateIn(scope, SharingStarted.Eagerly, null)
