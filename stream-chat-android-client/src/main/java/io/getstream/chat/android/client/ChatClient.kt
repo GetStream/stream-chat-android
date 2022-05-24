@@ -517,7 +517,7 @@ internal constructor(
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins).also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(scope) { result ->
