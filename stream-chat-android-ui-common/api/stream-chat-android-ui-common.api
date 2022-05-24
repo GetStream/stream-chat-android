@@ -319,10 +319,6 @@ public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt 
 public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/FlowKt {
-	public static final fun buildDefaultFilterObject (Lkotlinx/coroutines/flow/Flow;)Lkotlinx/coroutines/flow/Flow;
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibilityKt {
 }
 
