@@ -39,7 +39,7 @@ import io.getstream.chat.android.ui.utils.extensions.toSingleReactionViewStyle
  * Use this class together with [TransformStyle.singleReactionViewStyleTransformer] to change [SingleReactionView]
  * styles programmatically.
  *
- * @param bubbleBorderColorMine Reaction bubble border color for current user.
+ * @param bubbleBorderColorMine Reaction bubble border color for the current user.
  * @param bubbleBorderColorTheirs Reaction bubble border color for other user.
  * @param bubbleColorMine Reaction bubble color for current user.
  * @param bubbleColorTheirs Reaction bubble color for other user.
