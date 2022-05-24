@@ -30,6 +30,8 @@ import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
 import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
+import io.getstream.chat.android.client.api.internal.DistinctChatApi
+import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.ConfigApi
@@ -84,7 +86,7 @@ internal open class BaseChatModule(
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
-    private val defaultApi by lazy { buildApi() }
+    private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
     }
@@ -217,7 +219,7 @@ internal open class BaseChatModule(
     }
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(): ChatApi {
+    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return MoshiChatApi(
             fileUploader ?: defaultFileUploader,
             buildRetrofitApi<UserApi>(),
@@ -230,6 +232,10 @@ internal open class BaseChatModule(
             buildRetrofitApi<ConfigApi>(),
             networkScope,
         ).let { originalApi ->
+            DistinctChatApiEnabler(DistinctChatApi(originalApi)) {
+                chatConfig.distinctApiCalls
+            }
+        }.let { originalApi ->
             ExtraDataValidator(originalApi)
         }
     }

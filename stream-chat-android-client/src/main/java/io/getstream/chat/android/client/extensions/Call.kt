@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.DistinctCall
 import io.getstream.chat.android.client.call.RetryCall
 import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
@@ -33,3 +34,14 @@ import kotlinx.coroutines.CoroutineScope
 @InternalStreamChatApi
 internal fun <T : Any> Call<T>.retry(scope: CoroutineScope, retryPolicy: RetryPolicy): Call<T> =
     RetryCall(this, scope, CallRetryService(retryPolicy))
+
+/**
+ * Forces a regular call to be used instead of [DistinctCall].
+ */
+public fun <T : Any> Call<T>.forceNewRequest(): Call<T> {
+    return if (this is DistinctCall) {
+        this.callBuilder()
+    } else {
+        this
+    }
+}

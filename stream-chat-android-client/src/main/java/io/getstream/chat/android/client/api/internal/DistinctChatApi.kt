@@ -1,0 +1,193 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.client.api.internal
+
+import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
+import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
+import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
+import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
+import io.getstream.chat.android.client.api2.optimisation.hash.QueryBanedUsersHash
+import io.getstream.chat.android.client.api2.optimisation.hash.QueryMembersHash
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.DistinctCall
+import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.client.models.BannedUsersSort
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.logging.StreamLog
+import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
+
+/**
+ * Prevents simultaneous network calls of the same request.
+ */
+@Suppress("UNCHECKED_CAST")
+internal class DistinctChatApi(
+    internal val delegate: ChatApi,
+) : ChatApi by delegate {
+
+    private val distinctCalls = ConcurrentHashMap<Int, DistinctCall<out Any>>()
+
+    override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
+        val uniqueKey = ChannelQueryKey.from(channelType, channelId, query).hashCode()
+        StreamLog.d(TAG) { "[queryChannel] channelType: $channelType, channelId: $channelId, uniqueKey: $uniqueKey" }
+        return getOrCreate(uniqueKey) {
+            delegate.queryChannel(channelType, channelId, query)
+        }
+    }
+
+    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
+        val uniqueKey = GetRepliesHash(messageId, firstId, limit).hashCode()
+        StreamLog.d(TAG) {
+            "[getRepliesMore] messageId: $messageId, firstId: $firstId, limit: $limit, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getRepliesMore(messageId, firstId, limit)
+        }
+    }
+
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
+        val uniqueKey = GetRepliesHash(messageId, null, limit).hashCode()
+        StreamLog.d(TAG) { "[getReplies] messageId: $messageId, limit: $limit, uniqueKey: $uniqueKey" }
+        return getOrCreate(uniqueKey) {
+            delegate.getReplies(messageId, limit)
+        }
+    }
+
+    override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
+        val uniqueKey = GetReactionsHash(messageId, offset, limit).hashCode()
+        StreamLog.d(TAG) {
+            "[getReactions] messageId: $messageId, offset: $offset, limit: $limit, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getReactions(messageId, offset, limit)
+        }
+    }
+
+    override fun getMessage(messageId: String): Call<Message> {
+        val uniqueKey = messageId.hashCode()
+        StreamLog.d(TAG) { "[getMessage] messageId: $messageId, uniqueKey: $uniqueKey" }
+        return getOrCreate(uniqueKey) {
+            delegate.getMessage(messageId)
+        }
+    }
+
+    override fun getPinnedMessages(
+        channelType: String,
+        channelId: String,
+        limit: Int,
+        sort: QuerySort<Message>,
+        pagination: PinnedMessagesPagination,
+    ): Call<List<Message>> {
+        val uniqueKey = GetPinnedMessagesHash(channelType, channelId, limit, sort, pagination).hashCode()
+        StreamLog.d(TAG) {
+            "[getPinnedMessages] channelType: $channelType, channelId: $channelId, " +
+                "limit: $limit, sort: $sort, pagination: $pagination, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getPinnedMessages(channelType, channelId, limit, sort, pagination)
+        }
+    }
+
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+        val uniqueKey = query.hashCode()
+        StreamLog.d(TAG) { "[queryChannels] query: $query, uniqueKey: $uniqueKey" }
+        return getOrCreate(uniqueKey) {
+            delegate.queryChannels(query)
+        }
+    }
+
+    override fun queryBannedUsers(
+        filter: FilterObject,
+        sort: QuerySort<BannedUsersSort>,
+        offset: Int?,
+        limit: Int?,
+        createdAtAfter: Date?,
+        createdAtAfterOrEqual: Date?,
+        createdAtBefore: Date?,
+        createdAtBeforeOrEqual: Date?,
+    ): Call<List<BannedUser>> {
+        val uniqueKey = QueryBanedUsersHash(
+            filter,
+            sort,
+            offset,
+            limit,
+            createdAtAfter,
+            createdAtAfterOrEqual,
+            createdAtBefore,
+            createdAtBeforeOrEqual
+        ).hashCode()
+
+        StreamLog.d(TAG) { "[queryBannedUsers] uniqueKey: $uniqueKey" }
+
+        return getOrCreate(uniqueKey) {
+            delegate.queryBannedUsers(
+                filter,
+                sort,
+                offset,
+                limit,
+                createdAtAfter,
+                createdAtAfterOrEqual,
+                createdAtBefore,
+                createdAtBeforeOrEqual
+            )
+        }
+    }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+    ): Call<List<Member>> {
+        val uniqueKey = QueryMembersHash(channelType, channelId, offset, limit, filter, sort, members)
+            .hashCode()
+
+        StreamLog.d(TAG) { "[queryMembers] uniqueKey: $uniqueKey" }
+
+        return getOrCreate(uniqueKey) {
+            delegate.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+        }
+    }
+
+    private fun <T : Any> getOrCreate(
+        uniqueKey: Int,
+        callBuilder: () -> Call<T>,
+    ): Call<T> {
+        return distinctCalls[uniqueKey] as? DistinctCall<T>
+            ?: DistinctCall(callBuilder, uniqueKey) {
+                distinctCalls.remove(uniqueKey)
+            }.also {
+                distinctCalls[uniqueKey] = it
+            }
+    }
+
+    private companion object {
+        private const val TAG = "Chat:DistinctApi"
+    }
+}
