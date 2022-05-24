@@ -17,9 +17,9 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
