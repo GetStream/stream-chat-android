@@ -260,6 +260,9 @@ public object ChatTheme {
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
 
+    /**
+     * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
+     */
     public val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment
         @Composable
         @ReadOnlyComposable
