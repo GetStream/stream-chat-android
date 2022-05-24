@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
 @InternalStreamChatApi
 public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
@@ -32,3 +35,15 @@ public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
         )
     }
 }
+
+/**
+ * Builds the default filter object using a [Flow] that
+ * emits [User] values.
+ *
+ * You can use this function in conjunction with
+ * [io.getstream.chat.android.offline.extensions.globalState]'s user property
+ * to create a reactive set of filters that change when the user is switched.
+ */
+@InternalStreamChatApi
+public fun defaultUserFilterFlow(userFlow: Flow<User>): Flow<FilterObject> =
+    userFlow.map(Filters::defaultChannelListFilter).filterNotNull()

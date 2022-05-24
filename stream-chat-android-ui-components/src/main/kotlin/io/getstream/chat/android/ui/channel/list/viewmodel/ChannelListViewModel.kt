@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.state.QueryConfig
-import com.getstream.sdk.chat.utils.extensions.buildDefaultFilterObject
+import com.getstream.sdk.chat.utils.extensions.defaultUserFilterFlow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -55,6 +55,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -141,7 +143,7 @@ public class ChannelListViewModel(
     /**
      * Represents the current state of the channels query.
      */
-    private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
+    private var queryChannelsState: StateFlow<QueryChannelsState?>? = MutableStateFlow(null)
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
@@ -152,10 +154,12 @@ public class ChannelListViewModel(
     }
 
     init {
+        observeUser()
         viewModelScope.launch(Dispatchers.IO) {
             if (filter == null) {
                 launch {
-                    val filter = chatClient.globalState.user.buildDefaultFilterObject().first()
+                    val user = globalState.user.filterNotNull()
+                    val filter = defaultUserFilterFlow(user).first()
 
                     this@ChannelListViewModel.filtersState.value = filter
                 }
@@ -191,8 +195,8 @@ public class ChannelListViewModel(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun observeChannels() {
-        queryChannelsState.filterNotNull()
-            .flatMapLatest { queryChannelsState ->
+        queryChannelsState?.filterNotNull()
+            ?.flatMapLatest { queryChannelsState ->
                 combine(
                     globalState.channelMutes,
                     queryChannelsState.channelsStateData,
@@ -209,7 +213,7 @@ public class ChannelListViewModel(
 
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
-            }.collect()
+            }?.collect()
     }
 
     /**
@@ -341,7 +345,7 @@ public class ChannelListViewModel(
      */
     private fun requestMoreChannels() {
         filtersState.value?.let { filter ->
-            val queryChannelsState = queryChannelsState.value ?: return
+            val queryChannelsState = queryChannelsState?.value ?: return
 
             queryChannelsState.nextPageRequest.value?.let {
                 viewModelScope.launch {
@@ -353,6 +357,24 @@ public class ChannelListViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Observes changes [GlobalState.user].
+     *
+     * Used to clear the state once the user disconnects.
+     */
+    private fun observeUser() {
+        globalState.user.onEach { user ->
+            if (user == null) {
+                _state.value = State(
+                    channels = listOf(),
+                    isLoading = false
+                )
+
+                queryChannelsState = null
+            }
+        }.launchIn(viewModelScope)
     }
 
     /**

@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.state.QueryConfig
-import com.getstream.sdk.chat.utils.extensions.buildDefaultFilterObject
+import com.getstream.sdk.chat.utils.extensions.defaultUserFilterFlow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -144,15 +147,17 @@ public class ChannelListViewModel(
     /**
      * Current query channels state that contains filter, sort and other states related to channels query.
      */
-    private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
+    private var queryChannelsState: StateFlow<QueryChannelsState?>? = MutableStateFlow(null)
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
+        observeUser()
         if (initialFilters == null) {
             viewModelScope.launch {
-                val filter = chatClient.globalState.user.buildDefaultFilterObject().first()
+                val user = chatClient.globalState.user.filterNotNull()
+                val filter = defaultUserFilterFlow(user).first()
 
                 this@ChannelListViewModel.filterFlow.value = filter
             }
@@ -218,7 +223,7 @@ public class ChannelListViewModel(
      * @param searchQuery The search query string used to search channels.
      */
     private suspend fun observeChannels(searchQuery: String) {
-        queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+        queryChannelsState?.filterNotNull()?.collectLatest { queryChannelsState ->
             channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
                 .map { (channelMutes, state) ->
                     when (state) {
@@ -300,7 +305,7 @@ public class ChannelListViewModel(
 
         channelsState = channelsState.copy(isLoadingMore = true)
 
-        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
+        val currentQuery = queryChannelsState?.value?.nextPageRequest?.value
 
         currentQuery?.copy(
             filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
@@ -308,6 +313,20 @@ public class ChannelListViewModel(
         )?.let { queryChannelsRequest ->
             chatClient.queryChannels(queryChannelsRequest).enqueue()
         }
+    }
+
+    /**
+     * Observes changes [GlobalState.user].
+     *
+     * Used to clear the state once the user disconnects.
+     */
+    private fun observeUser() {
+        chatClient.globalState.user.onEach { user ->
+            if (user == null) {
+                channelsState = ChannelsState(isLoading = false, endOfChannels = true)
+                queryChannelsState = null
+            }
+        }.launchIn(viewModelScope)
     }
 
     /**
