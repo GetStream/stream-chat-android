@@ -28,6 +28,26 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
+/**
+ * Style for [EditReactionsView].
+ * Use this class together with [TransformStyle.editReactionsStyleTransformer] to change [EditReactionsView]
+ * styles programmatically.
+ *
+ * @param bubbleColorMine Reaction bubble color for the current user.
+ * @param bubbleColorTheirs Reaction bubble color for other users.
+ * @param horizontalPadding The horizontal padding to be applied to the start and end of the bubble.
+ * @param itemSize The size of the reaction item.
+ * @param bubbleHeight Height of the reactions part of the bubble.
+ * @param bubbleRadius The radius of the reactions part of the bubble.
+ * @param largeTailBubbleCyOffset The y axis offset of the large tail bubble center point
+ * @param largeTailBubbleRadius The radius of the large tail bubble.
+ * @param largeTailBubbleOffset The x axis offset of the large tail bubble center point.
+ * @param smallTailBubbleCyOffset The y axis offset of the small tail bubble center point.
+ * @param smallTailBubbleRadius The radius of the bubble small tail.
+ * @param smallTailBubbleOffset The x axis offset of the small tail bubble center point.
+ * @param reactionsColumn The number of reaction columns.
+ * @param verticalPadding The vertical padding to be applied to top and bottom of the view.
+ */
 public data class EditReactionsViewStyle(
     @ColorInt public val bubbleColorMine: Int,
     @ColorInt public val bubbleColorTheirs: Int,
@@ -42,6 +62,7 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
     public val reactionsColumn: Int,
+    @Px public val verticalPadding: Int
 ) {
 
     internal data class Builder(private val array: TypedArray, private val context: Context) {
@@ -86,6 +107,8 @@ public data class EditReactionsViewStyle(
                 context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_radius)
             val smallTailBubbleOffset =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_offset)
+            val verticalPadding =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_vertical_padding)
 
             return EditReactionsViewStyle(
                 bubbleColorMine = bubbleColorMine,
@@ -101,6 +124,7 @@ public data class EditReactionsViewStyle(
                 smallTailBubbleRadius = smallTailBubbleRadius,
                 smallTailBubbleOffset = smallTailBubbleOffset,
                 reactionsColumn = reactionsColumn,
+                verticalPadding = verticalPadding
             ).let(TransformStyle.editReactionsStyleTransformer::transform)
         }
     }

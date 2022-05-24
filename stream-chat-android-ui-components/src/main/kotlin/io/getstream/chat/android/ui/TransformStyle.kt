@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
+import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
@@ -46,6 +47,7 @@ public object TransformStyle {
     public var scrollButtonStyleTransformer: StyleTransformer<ScrollButtonViewStyle> = noopTransformer()
     public var viewReactionsStyleTransformer: StyleTransformer<ViewReactionsViewStyle> = noopTransformer()
     public var editReactionsStyleTransformer: StyleTransformer<EditReactionsViewStyle> = noopTransformer()
+    public var singleReactionViewStyleTransformer: StyleTransformer<SingleReactionViewStyle> = noopTransformer()
     public var channelActionsDialogStyleTransformer: StyleTransformer<ChannelActionsDialogViewStyle> = noopTransformer()
     public var giphyViewHolderStyleTransformer: StyleTransformer<GiphyViewHolderStyle> = noopTransformer()
     public var imageAttachmentStyleTransformer: StyleTransformer<ImageAttachmentViewStyle> = noopTransformer()
