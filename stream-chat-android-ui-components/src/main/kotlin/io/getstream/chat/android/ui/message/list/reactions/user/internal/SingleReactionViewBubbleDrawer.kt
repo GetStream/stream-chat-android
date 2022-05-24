@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
