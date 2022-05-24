@@ -1,6 +1,6 @@
 # Optimizations
 
-There are some optimizations in the SDK to avoid waste of resouces and improve performance. It is possible to configure it to disable or enabled then.
+The SDK is optimized to avoid waste of resources and improve performance. You can freely choose which optimizations should be enabled or disabled.
 
 ## Mutiple Calls to API
 
