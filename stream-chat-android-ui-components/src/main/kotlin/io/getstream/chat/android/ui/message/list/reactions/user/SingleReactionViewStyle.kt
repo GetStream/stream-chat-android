@@ -34,6 +34,27 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.utils.extensions.toSingleReactionViewStyle
 
+/**
+ * Style for [SingleReactionView].
+ * Use this class together with [TransformStyle.singleReactionViewStyleTransformer] to change [SingleReactionView]
+ * styles programmatically.
+ *
+ * @param bubbleBorderColorMine Reaction bubble border color for current user.
+ * @param bubbleBorderColorTheirs Reaction bubble border color for other user.
+ * @param bubbleColorMine Reaction bubble color for current user.
+ * @param bubbleColorTheirs Reaction bubble color for other user.
+ * @param bubbleBorderWidthMine Reaction bubble border width for current user.
+ * @param bubbleBorderWidthTheirs Reaction bubble border width for other user.
+ * @param totalHeight The total height of the reaction bubble.
+ * @param bubbleHeight Height of the reactions part of the bubble.
+ * @param bubbleRadius The radius of the reactions part of the bubble.
+ * @param largeTailBubbleCy The y axis position of the large tail bubble center point.
+ * @param largeTailBubbleRadius The radius of the large tail bubble.
+ * @param largeTailBubbleOffset The x axis offset of the large tail bubble center point.
+ * @param smallTailBubbleCy The y axis position of the large tail bubble center point.
+ * @param smallTailBubbleOffset The x axis offset of the small tail bubble center point
+ * @param reactionOrientation The orientation of the bubble. By default is [MessageOptionsUserReactionAlignment.BY_USER]
+ */
 public data class SingleReactionViewStyle(
     @ColorInt public val bubbleBorderColorMine: Int,
     @ColorInt public val bubbleBorderColorTheirs: Int?,
