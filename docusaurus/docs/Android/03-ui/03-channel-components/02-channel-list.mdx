@@ -435,6 +435,13 @@ public sealed class EventHandlingResult {
     public class Add(public val channel: Channel) : EventHandlingResult()
 
     /**
+     * Call watch and add the channel to a query channels collection.
+     *
+     * @param cid cid of the channel to watch and add.
+     */
+    public data class WatchAndAdd(public val cid: String) : EventHandlingResult()
+
+    /**
      * Remove a channel from a query channels collection.
      *
      * @param cid cid of channel to remove.
