@@ -24,10 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.models.Message
@@ -168,18 +165,11 @@ internal class MessageReplyView : FrameLayout {
     }
 
     private fun setAttachmentImage(message: Message) {
-        val attachment = message.attachments.lastOrNull()
-        if (attachment == null) {
-            binding.logoContainer.isVisible = false
-        } else {
-            when (attachment.type) {
-                ModelType.attach_file -> showFileTypeLogo(attachment.mimeType)
-                ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
-                ModelType.attach_giphy,
-                ModelType.attach_video,
-                -> showAttachmentThumb(attachment.thumbUrl)
-                else -> showAttachmentThumb(attachment.image)
-            }
+        if (ChatUI.quotedAttachmentFactoryManager.canHandle(message)) {
+            binding.attachmentContainer.isVisible = true
+            ChatUI.quotedAttachmentFactoryManager.createQuotedView(message, binding.attachmentContainer)
+        }else {
+            binding.attachmentContainer.isVisible = false
         }
     }
 
@@ -228,35 +218,9 @@ internal class MessageReplyView : FrameLayout {
         return ellipsizeText(text, MAX_ELLIPSIZE_CHAR_COUNT)
     }
 
-    private fun showAttachmentThumb(url: String?) {
-        with(binding) {
-            if (url != null) {
-                logoContainer.isVisible = true
-                thumbImageView.isVisible = true
-                fileTypeImageView.isVisible = false
-                thumbImageView.load(
-                    data = url,
-                    transformation = RoundedCorners(REPLY_IMAGE_CORNER_RADIUS),
-                )
-            } else {
-                logoContainer.isVisible = false
-            }
-        }
-    }
-
-    private fun showFileTypeLogo(mimeType: String?) {
-        with(binding) {
-            logoContainer.isVisible = true
-            fileTypeImageView.isVisible = true
-            thumbImageView.isVisible = false
-            fileTypeImageView.setImageResource(ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
-        }
-    }
-
     private companion object {
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()
         private val REPLY_CORNER_RADIUS = 12.dpToPxPrecise()
-        private val REPLY_IMAGE_CORNER_RADIUS = 7.dpToPxPrecise()
         private val CONTENT_MARGIN = 4.dpToPx()
         private const val MAX_ELLIPSIZE_CHAR_COUNT = 170
     }

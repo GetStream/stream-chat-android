@@ -153,7 +153,7 @@
     <dimen name="stream_ui_channel_item_title">15sp</dimen>
     <dimen name="stream_ui_channel_item_message">13sp</dimen>
     <dimen name="stream_ui_channel_item_message_date">13sp</dimen>
-    
+
     <dimen name="stream_ui_message_input_padding_end">16dp</dimen>
     <dimen name="stream_ui_message_input_padding_start">16dp</dimen>
 
@@ -166,6 +166,11 @@
     <dimen name="stream_ui_message_thread_reply_avatar_half_size">9dp</dimen>
     <dimen name="stream_ui_message_image_attachment_more_count_text_size">26sp</dimen>
     <dimen name="stream_ui_message_pin_indicator_icon_size">12dp</dimen>
+
+    <!-- QuotedAttachmentView -->
+    <dimen name="streamUiQuotedAttachmentViewHeight">40dp</dimen>
+    <dimen name="streamUiQuotedAttachmentViewWidth">34dp</dimen>
+    <dimen name="streamUiQuotedAttachmentImageRadius">7dp</dimen>
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_options_menu_corner_radius">16dp</dimen>

@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.QuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
@@ -60,6 +61,7 @@ public object TransformStyle {
     public var searchResultListViewStyleTransformer: StyleTransformer<SearchResultListViewStyle> = noopTransformer()
     public var typingIndicatorViewStyleTransformer: StyleTransformer<TypingIndicatorViewStyle> = noopTransformer()
     public var pinnedMessageListViewStyleTransformer: StyleTransformer<PinnedMessageListViewStyle> = noopTransformer()
+    public var quotedAttachmentViewStyleTransformer: StyleTransformer<QuotedAttachmentViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }
