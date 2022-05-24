@@ -25,6 +25,9 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import okhttp3.Dispatcher
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
 private const val DEFAULT_DISK_CACHE_PERCENTAGE = 0.02
@@ -39,6 +42,23 @@ public class StreamImageLoaderFactory(
             .memoryCache { MemoryCache.Builder(context).maxSizePercent(DEFAULT_MEMORY_PERCENTAGE).build() }
             .allowHardware(false)
             .crossfade(true)
+            .allowHardware(false)
+            .crossfade(true)
+            .okHttpClient {
+                val cacheControlInterceptor = Interceptor { chain ->
+                    chain.proceed(chain.request())
+                        .newBuilder()
+                        .header("Cache-Control", "max-age=3600,public")
+                        .build()
+                }
+                // Don't limit concurrent network requests by host.
+                val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
+
+                OkHttpClient.Builder()
+                    .dispatcher(dispatcher)
+                    .addNetworkInterceptor(cacheControlInterceptor)
+                    .build()
+            }
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY))
