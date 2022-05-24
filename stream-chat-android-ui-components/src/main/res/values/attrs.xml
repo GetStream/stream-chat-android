@@ -23,6 +23,8 @@
     <declare-styleable name="StreamUiStyleable">
         <attr name="streamUiTheme" format="reference" />
         <attr name="streamUiMessageListStyle" format="reference" />
+        <attr name="streamUiMessageListViewReactionsStyle" format="reference" />
+        <attr name="streamUiSingleReactionViewStyle" format="reference" />
         <attr name="streamUiMessageListGiphyAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListImageAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />

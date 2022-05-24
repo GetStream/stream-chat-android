@@ -22,9 +22,9 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.Timed
+import io.getstream.chat.android.client.logger.ChatLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -37,7 +37,7 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        println("Lifecycle - Network: $it")
+        logger.logD("Lifecycle - Network: $it")
     }
 
     private val callback = object : ConnectivityManager.NetworkCallback() {

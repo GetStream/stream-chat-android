@@ -69,8 +69,9 @@ internal class ClientConnectionTests {
         "socket.url",
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
+        false,
 
-        )
+    )
 
     private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,

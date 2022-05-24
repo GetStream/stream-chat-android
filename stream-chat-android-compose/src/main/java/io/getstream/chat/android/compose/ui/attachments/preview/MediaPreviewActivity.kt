@@ -34,7 +34,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -170,7 +169,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     text = title,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start,
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.body,
                     maxLines = 1,
                     color = Color.White
                 )
@@ -231,7 +230,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
 
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.MATCH_PARENT
                 ).apply {
                     gravity = Gravity.CENTER
                 }
@@ -246,7 +245,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 56.dp)
                 .background(Color.Black),
             factory = { contentView },
         )

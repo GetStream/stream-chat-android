@@ -1061,4 +1061,9 @@
     <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
         <item name="streamUiShowActionButton">false</item>
     </style>
+
+    <style name="StreamUi.ViewReactions" parent="StreamUi">
+        <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
+    </style>
+
 </resources>

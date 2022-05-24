@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.experimental.socket.ws
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
+import io.getstream.chat.android.client.logger.ChatLogger
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.Response

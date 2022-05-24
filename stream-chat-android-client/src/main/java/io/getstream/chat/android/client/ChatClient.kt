@@ -50,6 +50,15 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
+import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
+import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
+import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
+import io.getstream.chat.android.client.errorhandler.onCreateChannelError
+import io.getstream.chat.android.client.errorhandler.onMessageError
+import io.getstream.chat.android.client.errorhandler.onQueryMembersError
+import io.getstream.chat.android.client.errorhandler.onReactionError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -59,35 +68,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
-import io.getstream.chat.android.client.experimental.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.DeleteReactionErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.QueryMembersErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.SendReactionErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.onCreateChannelError
-import io.getstream.chat.android.client.experimental.errorhandler.onMessageError
-import io.getstream.chat.android.client.experimental.errorhandler.onQueryMembersError
-import io.getstream.chat.android.client.experimental.errorhandler.onReactionError
-import io.getstream.chat.android.client.experimental.interceptor.Interceptor
-import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
-import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.CreateChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -95,6 +75,8 @@ import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -122,6 +104,24 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
@@ -275,6 +275,17 @@ internal constructor(
         this.errorHandlers = errorHandlers.sorted()
     }
 
+    private fun logPlugins(plugins: List<Any>) {
+        if (plugins.isNotEmpty()) {
+            val jointString = plugins.joinToString { plugin ->
+                plugin::class.qualifiedName ?: "plugin without qualified name"
+            }
+            logger.logD("Plugins found: $jointString")
+        } else {
+            logger.logD("No plugins found for this request.")
+        }
+    }
+
     //region Set user
 
     /**
@@ -373,7 +384,7 @@ internal constructor(
             setUser(user, tokenProvider).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -453,7 +464,7 @@ internal constructor(
             setAnonymousUser().also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -470,7 +481,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }
@@ -506,11 +517,12 @@ internal constructor(
         sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryMembersResult")
                     plugin.onQueryMembersResult(
                         result,
                         channelType,
@@ -646,7 +658,7 @@ internal constructor(
      */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
+        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>().also(::logPlugins)
         val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
 
         val currentUser = getCurrentUser()
@@ -654,18 +666,19 @@ internal constructor(
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnStart(scope) {
-                relevantPlugins
-                    .forEach { plugin ->
-                        plugin.onDeleteReactionRequest(
-                            cid = cid,
-                            messageId = messageId,
-                            reactionType = reactionType,
-                            currentUser = currentUser!!,
-                        )
-                    }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onDeleteReactionRequest")
+                    plugin.onDeleteReactionRequest(
+                        cid = cid,
+                        messageId = messageId,
+                        reactionType = reactionType,
+                        currentUser = currentUser!!,
+                    )
+                }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onDeleteReactionResult")
                     plugin.onDeleteReactionResult(
                         cid = cid,
                         messageId = messageId,
@@ -700,7 +713,7 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
-        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>()
+        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>().also(::logPlugins)
         val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
@@ -709,6 +722,7 @@ internal constructor(
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
+                        logger.logD("Applying ${plugin::class.qualifiedName}.onSendReactionRequest")
                         plugin.onSendReactionRequest(
                             cid = cid,
                             reaction = reaction,
@@ -719,6 +733,7 @@ internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onSendReactionResult")
                     plugin.onSendReactionResult(
                         cid = cid,
                         reaction = reaction,
@@ -1049,14 +1064,20 @@ internal constructor(
 
     @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getReplies(messageId, limit)
             .doOnStart(scope) {
-                relevantPlugins.forEach { plugin -> plugin.onGetRepliesRequest(messageId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesRequest")
+                    plugin.onGetRepliesRequest(messageId, limit)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin -> plugin.onGetRepliesResult(result, messageId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesResult")
+                    plugin.onGetRepliesResult(result, messageId, limit)
+                }
             }
             .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
     }
@@ -1067,12 +1088,20 @@ internal constructor(
         firstId: String,
         limit: Int,
     ): Call<List<Message>> {
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getRepliesMore(messageId, firstId, limit)
-            .doOnStart(scope) { relevantPlugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesMoreRequest")
+                    plugin.onGetRepliesMoreRequest(messageId, firstId, limit)
+                }
+            }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesMoreResults")
+                    plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
+                }
             }
             .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
     }
@@ -1092,7 +1121,7 @@ internal constructor(
      * @return Executable async [Call] responsible for sending the Giphy.
      */
     public fun sendGiphy(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>()
+        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>().also(::logPlugins)
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
         }
@@ -1101,6 +1130,7 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onGiphySendResult")
                     listener.onGiphySendResult(cid = message.cid, result = result)
                 }
             }
@@ -1117,7 +1147,7 @@ internal constructor(
      * @return Executable async [Call] responsible for shuffling the Giphy.
      */
     public fun shuffleGiphy(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>()
+        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>().also(::logPlugins)
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
         }
@@ -1126,6 +1156,7 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onShuffleGiphyResult")
                     listener.onShuffleGiphyResult(cid = message.cid, result = result)
                 }
             }
@@ -1134,16 +1165,18 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
+        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>().also(::logPlugins)
 
         return api.deleteMessage(messageId, hard)
             .doOnStart(scope) {
                 relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onMessageDeleteRequest")
                     listener.onMessageDeleteRequest(messageId)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onMessageDeleteResult")
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
@@ -1172,7 +1205,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
         val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
         return CoroutineCall(scope) {
 
@@ -1186,8 +1219,9 @@ internal constructor(
                 api.sendMessage(channelType, channelId, newMessage)
                     .retry(scope, retryPolicy)
                     .doOnResult(scope) { result ->
-                        relevantPlugins.forEach {
-                            it.onMessageSendResult(
+                        relevantPlugins.forEach { listener ->
+                            logger.logD("Applying ${listener::class.qualifiedName}.onMessageSendResult")
+                            listener.onMessageSendResult(
                                 result,
                                 channelType,
                                 channelId,
@@ -1207,15 +1241,20 @@ internal constructor(
      */
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>()
+        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(message)
             .doOnStart(scope) {
-                relevantPlugins
-                    .forEach { plugin -> plugin.onMessageEditRequest(message) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMessageEditRequest")
+                    plugin.onMessageEditRequest(message)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin -> plugin.onMessageEditResult(message, result) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMessageEditResult")
+                    plugin.onMessageEditResult(message, result)
+                }
             }
     }
 
@@ -1315,7 +1354,10 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+    ): Call<Channel> {
+        logger.logD("Querying channel")
+        return api.queryChannel(channelType, channelId, request)
+    }
 
     @CheckResult
     public fun queryChannel(
@@ -1323,14 +1365,22 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
+        logger.logD("Querying single channel")
+
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
         return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
-                relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelRequest")
+                    plugin.onQueryChannelRequest(channelType, channelId, request)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelResult")
+                    plugin.onQueryChannelResult(result, channelType, channelId, request)
+                }
             }
             .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
     }
@@ -1347,14 +1397,23 @@ internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+        logger.logD("Querying channels")
+
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
+        logPlugins(relevantPluginsLazy())
 
         return queryChannelsPostponeHelper.postponeQueryChannels {
             api.queryChannels(request)
         }.doOnStart(scope) {
-            relevantPluginsLazy().forEach { it.onQueryChannelsRequest(request) }
+            relevantPluginsLazy().forEach { listener ->
+                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsRequest")
+                listener.onQueryChannelsRequest(request)
+            }
         }.doOnResult(scope) { result ->
-            relevantPluginsLazy().forEach { it.onQueryChannelsResult(result, request) }
+            relevantPluginsLazy().forEach { listener ->
+                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsResult")
+                listener.onQueryChannelsResult(result, request)
+            }
         }.precondition(relevantPluginsLazy()) {
             onQueryChannelsPrecondition(request)
         }
@@ -1396,13 +1455,19 @@ internal constructor(
         channelId: String,
         clearHistory: Boolean = false,
     ): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>()
+        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>().also(::logPlugins)
         return api.hideChannel(channelType, channelId, clearHistory)
             .doOnStart(scope) {
-                relevantPlugins.forEach { it.onHideChannelRequest(channelType, channelId, clearHistory) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onHideChannelRequest")
+                    plugin.onHideChannelRequest(channelType, channelId, clearHistory)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onHideChannelResult(result, channelType, channelId, clearHistory) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onHideChannelResult")
+                    plugin.onHideChannelResult(result, channelType, channelId, clearHistory)
+                }
             }
             .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
     }
@@ -1568,10 +1633,13 @@ internal constructor(
      */
     @CheckResult
     public fun markAllRead(): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>()
+        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>().also(::logPlugins)
         return api.markAllRead()
             .doOnStart(scope) {
-                relevantPlugins.forEach { it.onMarkAllReadRequest() }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMarkAllReadRequest")
+                    plugin.onMarkAllReadRequest()
+                }
             }
     }
 
@@ -1583,7 +1651,7 @@ internal constructor(
      */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>()
+        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>().also(::logPlugins)
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
@@ -1964,7 +2032,7 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>()
+        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>().also(::logPlugins)
         val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
@@ -1976,6 +2044,7 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onCreateChannelRequest")
                     plugin.onCreateChannelRequest(
                         channelType = channelType,
                         channelId = channelId,
@@ -1987,6 +2056,7 @@ internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onCreateChannelResult")
                     plugin.onCreateChannelResult(
                         channelType = channelType,
                         channelId = channelId,
@@ -2043,7 +2113,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
         val eventTime = Date()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
@@ -2054,11 +2124,13 @@ internal constructor(
         )
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventRequest")
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventResult")
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
@@ -2082,7 +2154,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
         val eventTime = Date()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
@@ -2093,11 +2165,13 @@ internal constructor(
         )
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventRequest")
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventResult")
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
@@ -2165,6 +2239,7 @@ internal constructor(
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var distinctApiCalls: Boolean = true
 
         /**
          * Sets the log level to be used by the client.
@@ -2321,6 +2396,14 @@ internal constructor(
             this.retryPolicy = retryPolicy
         }
 
+        /**
+         * Allows simultaneous network calls of the same request, avoiding combining them into one.
+         * By default [distinctApiCalls] is enabled.
+         */
+        public fun disableDistinctApiCalls(): Builder = apply {
+            this.distinctApiCalls = false
+        }
+
         private fun configureInitializer(chatClient: ChatClient) {
             chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
@@ -2361,6 +2444,7 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                distinctApiCalls = distinctApiCalls
             )
 
             if (ToggleService.isInitialized().not()) {

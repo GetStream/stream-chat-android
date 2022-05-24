@@ -40,6 +40,8 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
     public companion object {
         private const val PREFS_NAME = "toggle_storage"
 
+        public const val TOGGLE_KEY_SOCKET_REFACTOR: String = "SOCKET_REFACTORED_KEY"
+
         private var instance: ToggleService? = null
 
         /**
@@ -57,7 +59,7 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
             val sp = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).also {
                 predefinedValues.entries.forEach { (key, value) ->
                     if (it.contains(key).not()) {
-                        it.edit().putBoolean(key, value).commit()
+                        it.edit().putBoolean(key, value).apply()
                     }
                 }
             }
