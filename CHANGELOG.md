@@ -84,7 +84,7 @@
 - Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
 - Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
 - Added loading indicator to the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
-- Added the ability to customize message options user reaction alignment through `ChatTheme`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
+- Added the ability to customize user reaction alignment inside message options through `ChatTheme`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ⚠️ Changed
 - Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
