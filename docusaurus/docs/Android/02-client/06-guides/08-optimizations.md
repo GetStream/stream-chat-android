@@ -2,9 +2,9 @@
 
 The SDK is optimized to avoid waste of resources and improve performance. You can freely choose which optimizations should be enabled or disabled.
 
-## Mutiple Calls to API
+## Multiple Calls to API
 
-Prior to version 5.3.0, the SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both requesters of the `Call`. 
+After version `5.3.0`, the SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both requesters of the `Call`. 
 
 You can change the default behavior and force calls to always make new requests to API and never merge two requests into one by using:
 

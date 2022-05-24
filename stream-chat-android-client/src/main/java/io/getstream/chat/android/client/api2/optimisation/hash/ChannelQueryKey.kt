@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.api2.optimisation.hash
 
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
 
+/**
+ * A unique identifier of [QueryChannelRequest] per channel.
+ */
 internal data class ChannelQueryKey(
     val channelType: String,
     val channelId: String,

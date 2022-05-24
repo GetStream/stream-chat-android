@@ -2325,8 +2325,8 @@ internal constructor(
         }
 
         /**
-         * Allows simultaneous network calls of the same request by avoiding to merge those into a single one.
-         * By default [distinctApiCalls] is disabled.
+         * Allows simultaneous network calls of the same request, avoiding combining them into one.
+         * By default [distinctApiCalls] is enabled.
          */
         public fun disableDistinctApiCalls(): Builder = apply {
             this.distinctApiCalls = false

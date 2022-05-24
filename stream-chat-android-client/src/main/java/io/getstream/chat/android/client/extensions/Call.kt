@@ -35,6 +35,9 @@ import kotlinx.coroutines.CoroutineScope
 internal fun <T : Any> Call<T>.retry(scope: CoroutineScope, retryPolicy: RetryPolicy): Call<T> =
     RetryCall(this, scope, CallRetryService(retryPolicy))
 
+/**
+ * Forces a regular call to be used instead of [DistinctCall].
+ */
 public fun <T : Any> Call<T>.forceNewRequest(): Call<T> {
     return if (this is DistinctCall) {
         this.callBuilder()
