@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket.ws
+package io.getstream.chat.android.client.experimental.socket.ws
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.socket.Event
-import io.getstream.chat.android.client.socket.ShutdownReason
+import io.getstream.chat.android.client.experimental.socket.Event
+import io.getstream.chat.android.client.experimental.socket.ShutdownReason
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import okhttp3.WebSocket

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket.lifecycle
+package io.getstream.chat.android.client.experimental.socket.lifecycle
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.socket.Event
-import io.getstream.chat.android.client.socket.ShutdownReason
-import io.getstream.chat.android.client.socket.Timed
+import io.getstream.chat.android.client.experimental.socket.Event
+import io.getstream.chat.android.client.experimental.socket.ShutdownReason
+import io.getstream.chat.android.client.experimental.socket.Timed
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull

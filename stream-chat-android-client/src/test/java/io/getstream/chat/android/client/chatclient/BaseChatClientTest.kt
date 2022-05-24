@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.chatclient
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -32,6 +33,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 
@@ -39,6 +41,9 @@ import org.mockito.kotlin.mock
 internal open class BaseChatClientTest {
     @get:Rule
     val coroutineRule = TestCoroutineRule()
+
+    @Mock
+    protected lateinit var socketStateService: SocketStateService
 
     @Mock
     protected lateinit var userStateService: UserStateService
@@ -72,6 +77,7 @@ internal open class BaseChatClientTest {
             socket = socket,
             notifications = mock(),
             tokenManager = tokenManager,
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,
@@ -80,6 +86,14 @@ internal open class BaseChatClientTest {
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
+        )
+        Mockito.reset(
+            socketStateService,
+            userStateService,
+            socket,
+            tokenManager,
+            config,
+            api,
         )
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.experimental.socket
 
 /**
  * A wrapper that contains timestamp along with the [value].

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.experimental.socket
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 
 /**
  * State of the socket connection.

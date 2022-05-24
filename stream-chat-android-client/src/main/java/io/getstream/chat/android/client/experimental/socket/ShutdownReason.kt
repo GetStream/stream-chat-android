@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.experimental.socket
 
 /**
  * Used to initiate a shutdown of a WebSocket.

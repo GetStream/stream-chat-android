@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -80,14 +81,16 @@ internal class ChatClientTest {
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = FakeSocket()
+        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.experimental.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.token.TokenManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -36,14 +38,16 @@ internal class SocketFactory(
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
 
     @Throws(UnsupportedEncodingException::class)
-    fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
+
+    fun createSocket(connectionConf: ConnectionConf): OkHttpWebSocket {
         val url = buildUrl(connectionConf)
         val request = Request.Builder().url(url).build()
-        val newWebSocket = httpClient.newWebSocket(request, eventsParser)
+        val eventsObserver = WebSocketEventObserver()
+        httpClient.newWebSocket(request, eventsObserver)
 
         logger.logI("new web socket: $url")
 
-        return Socket(newWebSocket, parser)
+        return OkHttpWebSocket(eventsObserver, parser)
     }
 
     @Suppress("TooGenericExceptionCaught")

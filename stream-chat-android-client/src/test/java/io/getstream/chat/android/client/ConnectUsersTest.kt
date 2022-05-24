@@ -45,7 +45,7 @@ import java.util.Date
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(manifest = Config.NONE)
-internal class ConnectUsersTest {
+internal class  ConnectUsersTest {
 
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()

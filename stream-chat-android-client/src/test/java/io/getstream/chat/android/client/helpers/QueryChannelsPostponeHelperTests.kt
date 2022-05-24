@@ -18,10 +18,9 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.clientstate.DisconnectCause
+import io.getstream.chat.android.client.clientstate.SocketState
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.State
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomInt
@@ -30,14 +29,13 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsPostponeHelperTests {
-    private lateinit var chatSocket: ChatSocket
+    private lateinit var socketStateService: SocketStateService
 
     private lateinit var sut: QueryChannelsPostponeHelper
 
@@ -52,8 +50,8 @@ internal class QueryChannelsPostponeHelperTests {
 
     @BeforeEach
     fun setUp() {
-        chatSocket = mock()
-        sut = QueryChannelsPostponeHelper(chatSocket, testCoroutines.scope, DELAY_DURATION, ATTEMPTS_COUNT)
+        socketStateService = mock()
+        sut = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope, DELAY_DURATION, ATTEMPTS_COUNT)
     }
 
     @Test
@@ -61,7 +59,7 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
-        whenever(chatSocket.state) doReturn State.Connected(event = null, webSocket = mock())
+        whenever(socketStateService.state) doReturn SocketState.Connected(Mother.randomString())
 
         val result = sut.postponeQueryChannels(queryChannelsCallMock).execute().data()
 
@@ -70,10 +68,10 @@ internal class QueryChannelsPostponeHelperTests {
     }
 
     @Test
-    fun `Given disconnect connection state When query channel Should return a Error Call`() {
+    fun `Given idle connection state When query channel Should return a Error Call`() {
         val expectedErrorResult =
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
-        whenever(chatSocket.state) doReturn State.Disconnected(disconnectCause = DisconnectCause.Error(null))
+        whenever(socketStateService.state) doReturn SocketState.Idle
 
         val result = sut.postponeQueryChannels(mock()).execute().error()
         result.message `should be` expectedErrorResult
@@ -83,7 +81,7 @@ internal class QueryChannelsPostponeHelperTests {
     fun `Given long pending socket state When query channel Should return a Error Call`() {
         val expectedErrorResult =
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
-        whenever(chatSocket.state) doReturn State.Connecting(mock())
+        whenever(socketStateService.state) doReturn SocketState.Pending
 
         val result = sut.postponeQueryChannels(mock()).execute().error()
         result.message `should be` expectedErrorResult
@@ -94,9 +92,9 @@ internal class QueryChannelsPostponeHelperTests {
         val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
-        whenever(chatSocket.state)
-            .thenReturn(State.Connecting(any()))
-            .thenReturn(State.Connected(event = mock(), webSocket = mock()))
+        whenever(socketStateService.state)
+            .thenReturn(SocketState.Pending)
+            .thenReturn(SocketState.Connected(Mother.randomString()))
 
         val result = sut.postponeQueryChannels(queryChannelsCallMock).execute().data()
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket.lifecycle
+package io.getstream.chat.android.client.experimental.socket.lifecycle
 
-import io.getstream.chat.android.client.socket.Event
-import io.getstream.chat.android.client.socket.Timed
-import io.getstream.chat.android.client.socket.isStopped
-import io.getstream.chat.android.client.socket.isStoppedAndAborted
+import io.getstream.chat.android.client.experimental.socket.Event
+import io.getstream.chat.android.client.experimental.socket.Timed
+import io.getstream.chat.android.client.experimental.socket.isStopped
+import io.getstream.chat.android.client.experimental.socket.isStoppedAndAborted
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
@@ -86,14 +87,16 @@ internal class MockClientBuilder(
 
         api = mock()
 
+        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutineScope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutineScope)
         client = ChatClient(
             config,
             api,
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,

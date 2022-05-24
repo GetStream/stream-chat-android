@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -69,7 +70,7 @@ internal class ClientConnectionTests {
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
 
-    )
+        )
 
     private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
@@ -90,11 +91,12 @@ internal class ClientConnectionTests {
 
     @BeforeEach
     fun before() {
-        socket = mock()
+        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socket, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
+        socket = mock()
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
@@ -112,6 +114,7 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,

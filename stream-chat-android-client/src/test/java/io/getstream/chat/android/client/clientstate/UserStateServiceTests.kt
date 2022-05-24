@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -80,7 +81,12 @@ internal class UserStateServiceTests {
 
         sut.onSetAnonymous()
 
-        sut.state shouldBeEqualTo UserState.AnonymousUserSet(null)
+        val state = sut.state
+        state.shouldBeInstanceOf<UserState.AnonymousUserSet>()
+
+        if (state is UserState.AnonymousUserSet) {
+            state.anonymousUser shouldBe null
+        }
     }
 
     @Test
