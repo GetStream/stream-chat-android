@@ -23,6 +23,7 @@
   You can read more about `DistinctChatApi` [here](https://getstream.io/chat/docs/sdk/android/client/guides/optimizations/). [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `Plugin`, `PluginFactory` and plugin side-effect listeners (`CreatChannelListener`, `SendMessageListener` etc.) are moved out of `experimental` package. [#3583](https://github.com/GetStream/stream-chat-android/pull/3583/)
 
 ### ❌ Removed
 

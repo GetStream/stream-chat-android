@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.errorhandler.factory.internal
 
-import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl

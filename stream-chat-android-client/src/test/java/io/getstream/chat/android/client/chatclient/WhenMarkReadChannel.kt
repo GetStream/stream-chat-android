@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.asCall
 import org.amshove.kluent.`should be`

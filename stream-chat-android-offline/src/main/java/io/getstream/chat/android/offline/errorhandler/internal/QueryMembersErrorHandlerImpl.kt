@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
-import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.QueryMembersErrorHandler
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.Result
