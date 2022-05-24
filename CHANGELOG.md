@@ -52,6 +52,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageOptionsUserReactionAlignemnt` used to define the user reaction alignment inside message options. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ⚠️ Changed
 
@@ -70,9 +71,12 @@
 - Added the public method `switchToCommandMode(command: Command)` inside `MessageInputView`. This method allows switching the input to command mode using the desired command directly, instead of having to select it from the dialog. An example of its usage is provided inside the patch within the linked PR. [#3515](https://github.com/GetStream/stream-chat-android/pull/3515)
 - Added loading indicator to the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
 - Added `streamUiMediaActivityProgressBarStyle` theme attribute to customize the appearance of loading indicator on the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
+- Added the ability to customize user reaction alignment and orientation inside message options through `ViewReactionsViewStyle` or `SingleReactionViewStyle`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
+- Added `horizontalPadding` customization options to `ViewReactionsViewStyle` and `EditReactionsViewStyle`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ⚠️ Changed
 - Deprecated `Member.isOwnerOrAdmin` and `List<Member>?.isCurrentUserOwnerOrAdmin()`. Use `Channel::ownCapabilities` instead. [#3576](https://github.com/GetStream/stream-chat-android/pull/3576)
+- Changed how padding is applied to `ViewReactionsView`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ❌ Removed
 
@@ -87,6 +91,7 @@
 - Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
 - Added guides for `QuotedAttachmentFactory`. [You can read about it here](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/#quoted-messages)
 - Added loading indicator to the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
+- Added the ability to customize user reaction alignment inside message options through `ChatTheme`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ⚠️ Changed
 - Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)

@@ -34,10 +34,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.common.isStartAlignment
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.extensions.internal.isMine
 
 /**
  * Represent a reaction item with the user who left it.
@@ -57,6 +59,9 @@ public fun UserReactionItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        val isStartAlignment = ChatTheme.messageOptionsUserReactionAlignment.isStartAlignment(item.isMine())
+        val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
+
         Box(modifier = Modifier.width(64.dp)) {
             UserAvatar(
                 user = user,
@@ -69,7 +74,7 @@ public fun UserReactionItem(
                     .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
                     .size(ChatTheme.dimens.userReactionItemIconSize)
                     .padding(4.dp)
-                    .align(Alignment.BottomEnd),
+                    .align(alignment),
                 painter = painter,
                 contentDescription = type,
             )

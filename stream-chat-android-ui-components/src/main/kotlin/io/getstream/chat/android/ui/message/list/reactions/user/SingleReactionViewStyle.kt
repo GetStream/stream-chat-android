@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.list.reactions.view
+package io.getstream.chat.android.ui.message.list.reactions.user
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -31,10 +31,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.utils.extensions.toSingleReactionViewStyle
 
 /**
- * Style for [ViewReactionsView].
- * Use this class together with [TransformStyle.viewReactionsStyleTransformer] to change [ViewReactionsView]
+ * Style for [SingleReactionView].
+ * Use this class together with [TransformStyle.singleReactionViewStyleTransformer] to change [SingleReactionView]
  * styles programmatically.
  *
  * @param bubbleBorderColorMine Reaction bubble border color for the current user.
@@ -44,20 +46,16 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
  * @param bubbleBorderWidthMine Reaction bubble border width for the current user.
  * @param bubbleBorderWidthTheirs Reaction bubble border width for other users.
  * @param totalHeight The total height of the reaction bubble.
- * @param horizontalPadding The horizontal padding to be applied to the start and end of the bubble.
- * @param itemSize The size of the reaction item.
  * @param bubbleHeight Height of the reactions part of the bubble.
  * @param bubbleRadius The radius of the reactions part of the bubble.
  * @param largeTailBubbleCy The y axis position of the large tail bubble center point.
  * @param largeTailBubbleRadius The radius of the large tail bubble.
  * @param largeTailBubbleOffset The x axis offset of the large tail bubble center point.
- * @param smallTailBubbleCy The y axis position of the small tail bubble center point.
- * @param smallTailBubbleOffset The x axis offset of the small tail bubble center point.
- * @param verticalPadding The vertical padding to be applied to top and bottom of the view.
- * @param messageOptionsUserReactionOrientation The orientation of the bubble.
- * By default is [MessageOptionsUserReactionOrientation.BY_USER]
+ * @param smallTailBubbleCy The y axis position of the large tail bubble center point.
+ * @param smallTailBubbleOffset The x axis offset of the small tail bubble center point
+ * @param reactionOrientation The orientation of the bubble. By default is [MessageOptionsUserReactionAlignment.BY_USER]
  */
-public data class ViewReactionsViewStyle(
+public data class SingleReactionViewStyle(
     @ColorInt public val bubbleBorderColorMine: Int,
     @ColorInt public val bubbleBorderColorTheirs: Int?,
     @ColorInt public val bubbleColorMine: Int,
@@ -65,8 +63,6 @@ public data class ViewReactionsViewStyle(
     @Px public val bubbleBorderWidthMine: Float,
     @Px public val bubbleBorderWidthTheirs: Float?,
     @Px public val totalHeight: Int,
-    @Px public val horizontalPadding: Int,
-    @Px public val itemSize: Int,
     @Px public val bubbleHeight: Int,
     @Px public val bubbleRadius: Int,
     @Px public val largeTailBubbleCy: Int,
@@ -75,8 +71,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
-    @Px public val verticalPadding: Int,
-    public val messageOptionsUserReactionOrientation: Int,
+    public val reactionOrientation: Int,
 ) {
 
     internal companion object {
@@ -85,41 +80,62 @@ public data class ViewReactionsViewStyle(
         private val DEFAULT_BUBBLE_COLOR_THEIRS = R.color.stream_ui_grey_gainsboro
         private val DEFAULT_BUBBLE_BORDER_WIDTH_MINE = 1.dpToPx() * 1.5f
 
-        operator fun invoke(context: Context, attrs: AttributeSet?): ViewReactionsViewStyle {
+        operator fun invoke(context: Context, attrs: AttributeSet?): SingleReactionViewStyle {
             context.obtainStyledAttributes(
                 attrs,
-                R.styleable.ViewReactionsView,
-                R.attr.streamUiMessageListViewReactionsStyle,
+                R.styleable.SingleReactionView,
+                R.attr.streamUiSingleReactionViewStyle,
                 0,
             ).use { a ->
-                return Builder(a, context)
-                    .bubbleBorderColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorMine)
-                    .bubbleBorderColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorTheirs)
-                    .bubbleBorderWidthMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthMine)
-                    .bubbleBorderWidthTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthTheirs)
-                    .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
-                    .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
-                    .messageOptionsUserReactionBubbleOrientation(
-                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation
-                    )
-                    .build()
+                return if (a.indexCount != 0) {
+                    Builder(a, context)
+                        .bubbleBorderColorMine(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorMine
+                        )
+                        .bubbleBorderColorTheirs(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorTheirs
+                        )
+                        .bubbleBorderWidthMine(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthMine
+                        )
+                        .bubbleBorderWidthTheirs(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthTheirs
+                        )
+                        .bubbleColorMine(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorMine
+                        )
+                        .bubbleColorTheirs(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorTheirs
+                        )
+                        .messageOptionsUserReactionBubbleOrientation(
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleOrientation
+                        )
+                        .build()
+                } else {
+                    ViewReactionsViewStyle(context, attrs).toSingleReactionViewStyle()
+                }
             }
         }
 
         class Builder(private val array: TypedArray, private val context: Context) {
             @ColorInt
             private var bubbleColorTheirs: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_THEIRS)
+
             @ColorInt
             private var bubbleColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE)
+
             @ColorInt
             private var bubbleBorderColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR_MINE)
+
             @ColorInt
             private var bubbleBorderColorTheirs: Int? = null
+
             @Px
             private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
+
             @Px
             private var bubbleBorderWidthTheirs: Float? = null
-            private var messageOptionsUserReactionOrientation: Int =
+            private var reactionOrientation: Int =
                 MessageOptionsUserReactionAlignment.BY_USER.value
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
@@ -150,37 +166,31 @@ public data class ViewReactionsViewStyle(
             }
 
             fun messageOptionsUserReactionBubbleOrientation(@StyleableRes bubbleOrientation: Int) = apply {
-                this.messageOptionsUserReactionOrientation =
+                this.reactionOrientation =
                     array.getInt(bubbleOrientation, MessageOptionsUserReactionAlignment.BY_USER.value)
             }
 
-            fun build(): ViewReactionsViewStyle {
+            fun build(): SingleReactionViewStyle {
                 val totalHeight =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_total_height)
-                val horizontalPadding =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_horizontal_padding)
-                val itemSize =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_item_size)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_total_height)
                 val bubbleHeight =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_bubble_height)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_bubble_height)
                 val bubbleRadius =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_bubble_radius)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_bubble_radius)
                 val largeTailBubbleCy =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_large_tail_bubble_cy)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_large_tail_bubble_cy)
                 val largeTailBubbleRadius =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_large_tail_bubble_radius)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_large_tail_bubble_radius)
                 val largeTailBubbleOffset =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_large_tail_bubble_offset)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_large_tail_bubble_offset)
                 val smallTailBubbleCy =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_cy)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_small_tail_bubble_cy)
                 val smallTailBubbleRadius =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_radius)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_small_tail_bubble_radius)
                 val smallTailBubbleOffset =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
-                val verticalPadding =
-                    context.getDimension(R.dimen.stream_ui_view_reactions_vertical_padding)
+                    context.getDimension(R.dimen.stream_ui_single_reaction_view_small_tail_bubble_offset)
 
-                return ViewReactionsViewStyle(
+                return SingleReactionViewStyle(
                     bubbleBorderColorMine = bubbleBorderColorMine,
                     bubbleBorderColorTheirs = bubbleBorderColorTheirs,
                     bubbleBorderWidthMine = bubbleBorderWidthMine,
@@ -188,8 +198,6 @@ public data class ViewReactionsViewStyle(
                     bubbleColorMine = bubbleColorMine,
                     bubbleColorTheirs = bubbleColorTheirs,
                     totalHeight = totalHeight,
-                    horizontalPadding = horizontalPadding,
-                    itemSize = itemSize,
                     bubbleHeight = bubbleHeight,
                     bubbleRadius = bubbleRadius,
                     largeTailBubbleCy = largeTailBubbleCy,
@@ -198,9 +206,8 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
                     smallTailBubbleOffset = smallTailBubbleOffset,
-                    verticalPadding = verticalPadding,
-                    messageOptionsUserReactionOrientation = messageOptionsUserReactionOrientation,
-                ).let(TransformStyle.viewReactionsStyleTransformer::transform)
+                    reactionOrientation = reactionOrientation,
+                ).let(TransformStyle.singleReactionViewStyleTransformer::transform)
             }
         }
     }
