@@ -38,6 +38,10 @@
 - Adding logs for plugin usage, state calls usage and ChannelListView. [3572](https://github.com/GetStream/stream-chat-android/pull/3572)
 
 ### ✅ Added
+- Added `EventHandlingResult.WatchAndAdd` to results returned from `ChatEventHandler`.
+  After receiving the result, the SDK will call watch and adds the channel to the channels list. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
+- Added handling `ChannelVisibleEvent`. Default `ChatEventHandler` will return `EventHandlingResult.WatchAndAdd`.
+  It can be customizing by overriding `ChatEventHandler::handleChannelVisibleEvent`. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
 
 ### ⚠️ Changed
 
@@ -59,6 +63,7 @@
 - Fixed the way pagination scrolling worked for various non-core components (e.g. search, gallery/media/pinned message lists) [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 - Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 - Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
+- Fixed refreshing `ChannelListView` after unhiding the channel. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
 
 ### ⬆️ Improved
 
@@ -68,12 +73,14 @@
 - Added `streamUiMediaActivityProgressBarStyle` theme attribute to customize the appearance of loading indicator on the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
 
 ### ⚠️ Changed
+- Deprecated `Member.isOwnerOrAdmin` and `List<Member>?.isCurrentUserOwnerOrAdmin()`. Use `Channel::ownCapabilities` instead. [#3576](https://github.com/GetStream/stream-chat-android/pull/3576)
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
+- Fixed refreshing `ChannelListView` after unhiding the channel. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
 
 ### ⬆️ Improved
 
