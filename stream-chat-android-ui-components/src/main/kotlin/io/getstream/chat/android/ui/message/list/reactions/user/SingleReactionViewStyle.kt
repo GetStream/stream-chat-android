@@ -42,7 +42,7 @@ import io.getstream.chat.android.ui.utils.extensions.toSingleReactionViewStyle
  * @param bubbleBorderColorMine Reaction bubble border color for the current user.
  * @param bubbleBorderColorTheirs Reaction bubble border color for other users.
  * @param bubbleColorMine Reaction bubble color for the current user.
- * @param bubbleColorTheirs Reaction bubble color for other user.
+ * @param bubbleColorTheirs Reaction bubble color for other users.
  * @param bubbleBorderWidthMine Reaction bubble border width for current user.
  * @param bubbleBorderWidthTheirs Reaction bubble border width for other user.
  * @param totalHeight The total height of the reaction bubble.
