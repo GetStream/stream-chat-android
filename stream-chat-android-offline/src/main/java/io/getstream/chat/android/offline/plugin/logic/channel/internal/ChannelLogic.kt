@@ -128,6 +128,12 @@ internal class ChannelLogic(
     private val messageIdsBellowGap = mutableListOf<Long>()
     private val messageIdsAboveGap = mutableListOf<Long>()
 
+    /* This message divides gaps. Messages olders than this, are added bellow gap, messes newer than this are
+    * added bellow gap */
+    /* Todo: The request can notify that a gap will be created. Currently I'm assuming that only newer messages can
+     * Todo: create a new gap, which is not correct */
+    private var firstMessageBellowGap: Message? = null
+
     private val logger = ChatLogger.get("Query channel request")
 
     val cid: String
@@ -189,42 +195,57 @@ internal class ChannelLogic(
         val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
 
         if (request.isFilteringNewerMessages()) {
-            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages)
+            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages, messageIdsBellowGap)
         } else {
             handleOlderMessagesLimit(noMoreMessagesAvailable, channel.messages)
         }
     }
 
-    private fun handleOlderMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
+    private fun handleOlderMessagesLimit(moreMessagesAvailable: Boolean, newMessages: List<Message>) {
         mutableState._endOfOlderMessages.value = !moreMessagesAvailable
-        messageIdsBellowGap.addAll(messageList.map { message -> message.id.hashCode().toLong() })
+        addGapMessages(firstMessageBellowGap, newMessages)
     }
 
-    private fun handleNewerMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
-        messageIdsAboveGap.addAll(messageList.map { message -> message.id.hashCode().toLong() })
+    private fun handleNewerMessagesLimit(
+        moreMessagesAvailable: Boolean,
+        newMessages: List<Message>,
+        gapSideMessages: List<Long>,
+    ) {
         mutableState._endOfNewerMessages.value = !moreMessagesAvailable
 
         when {
             /* The messages list has gaps but the end of messages of an overlap was found.
              * The message list is linear again. */
             mutableState.gapsInMessageList.value?.first == true
-                && (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
+                && (!moreMessagesAvailable || newMessages.hasMessageOverlap(gapSideMessages)) -> {
                 Log.d("ChannelLogic", "A gap has been closed!!")
 
+                firstMessageBellowGap = null
+
                 mutableState._gapsInMessageList.value = false to null
+                messageIdsBellowGap.clear()
+                messageIdsAboveGap.clear()
             }
 
             /* The messages list had no gaps but newer messages were loaded. As it didn't reach the end of the
              * messages nor has an overlap between messages, the list is  not linear anymore. */
-            mutableState.gapsInMessageList.value?.first == true
+            mutableState.gapsInMessageList.value?.first != true
                 && moreMessagesAvailable
-                && !messageList.hasMessageOverlap() -> {
+                && !newMessages.hasMessageOverlap(gapSideMessages) -> {
+                Log.d("ChannelLogic", "A gap has been opened!!")
+
+                firstMessageBellowGap = newMessages.first()
+
+                addGapMessages(firstMessageBellowGap, newMessages)
                 mutableState._gapsInMessageList.value =
                     true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
 
             // Has gaps and loading more messages
             mutableState.gapsInMessageList.value?.first == true -> {
+                Log.d("ChannelLogic", "A gap keeps opened!!")
+
+                addGapMessages(firstMessageBellowGap, newMessages)
                 mutableState._gapsInMessageList.value =
                     true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
@@ -235,8 +256,20 @@ internal class ChannelLogic(
         }
     }
 
-    private fun List<Message>.hasMessageOverlap(): Boolean =
-        this.map { it.id.hashCode().toLong() }.any(messageIdsBellowGap::contains)
+    private fun addGapMessages(gapDivisor: Message?, newMessages: List<Message>) {
+        if (mutableState.gapsInMessageList.value?.first == true && gapDivisor != null) {
+            val (aboveGap, bellowGap) =
+                newMessages.partition { message -> message.createdAt?.before(gapDivisor.createdAt) == true }
+
+            messageIdsAboveGap.addAll(aboveGap.map { message -> message.id.hashCode().toLong() })
+            messageIdsBellowGap.addAll(bellowGap.map { message -> message.id.hashCode().toLong() })
+        } else {
+            messageIdsBellowGap.addAll(newMessages.map { message -> message.id.hashCode().toLong() })
+        }
+    }
+
+    private fun List<Message>.hasMessageOverlap(idsList: List<Long>): Boolean =
+        this.map { it.id.hashCode().toLong() }.any(idsList::contains)
 
     private suspend fun storeStateForChannel(channel: Channel) {
         val users = channel.users().associateBy { it.id }.toMutableMap()
