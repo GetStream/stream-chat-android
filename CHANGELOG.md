@@ -60,7 +60,7 @@
 
 ### ✅ Added
 - Added the public method `switchToCommandMode(command: Command)` inside `MessageInputView`. This method allows switching the input to command mode using the desired command directly, instead of having to select it from the dialog. An example of its usage is provided inside the patch within the linked PR. [#3515](https://github.com/GetStream/stream-chat-android/pull/3515)
-- Added the ability to customize message options user reaction alignment and orientation through `ViewReactionsViewStyle` or `SingleReactionViewStyle`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
+- Added the ability to customize user reaction alignment and orientation inside message options through `ViewReactionsViewStyle` or `SingleReactionViewStyle`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 - Added `horizontalPadding` customization options to `ViewReactionsViewStyle` and `EditReactionsViewStyle`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
 ### ⚠️ Changed
