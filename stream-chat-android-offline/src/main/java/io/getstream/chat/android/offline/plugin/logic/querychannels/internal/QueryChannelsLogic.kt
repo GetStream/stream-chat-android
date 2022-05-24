@@ -138,9 +138,7 @@ internal class QueryChannelsLogic(
     private suspend fun watchAndAddChannel(cid: String) {
         val result = client.channel(cid = cid).watch().await()
 
-        logger.logE(result.isSuccess.toString())
         if (result.isSuccess) {
-            logger.logE(result.data().toString())
             addChannel(result.data())
         }
     }
