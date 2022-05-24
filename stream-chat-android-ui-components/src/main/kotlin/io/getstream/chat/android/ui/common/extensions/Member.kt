@@ -24,12 +24,22 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 /**
  * @return if the member is the owner or an admin of a channel.
  */
+@Deprecated(
+    message = "Use Channel::ownCapabilities to determine user permissions!.",
+    replaceWith = ReplaceWith("Use Channel::ownCapabilities to determine user permissions!"),
+    level = DeprecationLevel.WARNING
+)
 public val Member.isOwnerOrAdmin: Boolean
     get() = role == "owner" || role == "admin"
 
 /**
  * @return if the current user is an owner or an admin of a channel.
  */
+@Deprecated(
+    message = "Use Channel::ownCapabilities to determine user permissions!.",
+    replaceWith = ReplaceWith("Use Channel::ownCapabilities to determine user permissions!"),
+    level = DeprecationLevel.WARNING
+)
 public fun List<Member>?.isCurrentUserOwnerOrAdmin(): Boolean {
     return if (isNullOrEmpty()) {
         false

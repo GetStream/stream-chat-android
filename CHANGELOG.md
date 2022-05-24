@@ -67,6 +67,7 @@
 - Added `streamUiMediaActivityProgressBarStyle` theme attribute to customize the appearance of loading indicator on the media preview screen. [#3549](https://github.com/GetStream/stream-chat-android/pull/3549)
 
 ### ⚠️ Changed
+- Deprecated `Member.isOwnerOrAdmin` and `List<Member>?.isCurrentUserOwnerOrAdmin()`. Use `Channel::ownCapabilities` instead. [#3576](https://github.com/GetStream/stream-chat-android/pull/3576)
 
 ### ❌ Removed
 
