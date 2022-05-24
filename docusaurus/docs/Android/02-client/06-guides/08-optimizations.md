@@ -8,13 +8,12 @@ Prior to version 5.3.0, the SDK prevents the user from making multiple calls to 
 
 You can change the default behavior and force calls to always make new requests to API and never merge two requests into one by using:
 
-To disable this option, use the option: 
 
 ```
 ChatClient.Builder.disableDistinctApiCalls()
 ```
 
-If you want to controll new requests to API in a more granular way, you can use the extension function:
+If you want to control new requests to API in a more granular way, you can use the extension function:
 
 ```
 Call<T>.forceNewRequest(): Call<T>
