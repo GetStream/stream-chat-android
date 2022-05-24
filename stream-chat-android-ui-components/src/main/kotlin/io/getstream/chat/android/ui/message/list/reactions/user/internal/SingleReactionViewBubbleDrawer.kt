@@ -66,7 +66,7 @@ internal class SingleReactionViewBubbleDrawer(
      * @param context [Context].
      * @param canvas [Canvas].
      * @param bubbleWidth The width of the bubble. This should be at least bigger than all the columns of reactions.
-     * @param isMyMessage Whether this is the message of the current user or not.
+     * @param isMyMessage Whether this is a message sent by the current user or not.
      * @param isOrientedTowardsStart Whether the bubble is oriented towards start or not.
      */
     fun drawReactionsBubble(
