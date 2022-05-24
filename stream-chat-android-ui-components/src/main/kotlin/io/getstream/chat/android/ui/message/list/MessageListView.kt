@@ -630,9 +630,8 @@ public class MessageListView : ConstraintLayout {
                     {
                         Log.d("EndlessScrollListener",
                             "New messages are being fetched from bottom: $firstMessageBellowGapPosition")
-                        bottomEndRegionReachedHandler.onBottomEndRegionReached(firstMessageBellowGap!!.id)
+                        firstMessageBellowGap?.let { bottomEndRegionReachedHandler.onBottomEndRegionReached(it.id) }
                     },
-                    { firstMessageBellowGapPosition }
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
                 }
@@ -649,22 +648,19 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    public fun shouldFetchBottomMessages(shouldFetch: Boolean) {
-        if (shouldFetch) {
-            Log.d("MessageListView", "Now message list view will fetch at bottom")
+    public fun gapInMessage(hasGap: Boolean, gapInfo: MessagesGapInfo?) {
+        if (hasGap) {
+            Log.d("MessageListView", "The message has gaps!!")
         } else {
-            Log.d("MessageListView", "Now message list view will NOT fetch at bottom")
+            Log.d("MessageListView", "The message has NO gaps anymore!!")
         }
 
-        scrollListener.shouldFetchBottomMessages = shouldFetch
-    }
-
-    public fun gapInMessage(hasGap: Boolean, gapInfo: MessagesGapInfo?) {
         this.hasGap = hasGap
-        messagesBellowGap = gapInfo?.messagesBellowGap
+        this.messagesBellowGap = gapInfo?.messagesBellowGap
     }
 
     private fun updateMessageAfterGap() {
+        Log.d("MessageListView", "updating messages after gap")
         if (this.hasGap == true && messagesBellowGap != null) {
             val messageList = adapter.currentList
 
@@ -677,15 +673,21 @@ public class MessageListView : ConstraintLayout {
                 allIds.contains(id)
             }
 
-            firstMessageBellowGapPosition = messageList.indexOfFirst { messageListItem ->
-                messageListItem.getStableId() == lastIdBellowGap
+            firstMessageBellowGapPosition = messageList
+                .indexOfLast { messageListItem ->
+                    messageListItem is MessageListItem.MessageItem && messageListItem.getStableId() == lastIdBellowGap
+                }
+
+            if (firstMessageBellowGapPosition != null) {
+                firstMessageBellowGap =
+                    (messageList[firstMessageBellowGapPosition!!] as MessageListItem.MessageItem).message
             }
 
-            firstMessageBellowGap = messageList
-                .asSequence()
-                .filterIsInstance<MessageListItem.MessageItem>()
-                .first { messageListItem -> messageListItem.getStableId() == lastIdBellowGap }
-                .message
+            Log.d("MessageListView", "firstMessageBellowGapPosition: $firstMessageBellowGapPosition")
+            Log.d("MessageListView", "firstMessageBellowGap text: ${firstMessageBellowGap?.text}")
+
+            scrollListener.shouldFetchBottomMessages = this.hasGap!!
+            scrollListener.firstMessageBellowGapPosition = firstMessageBellowGapPosition
         }
     }
 
