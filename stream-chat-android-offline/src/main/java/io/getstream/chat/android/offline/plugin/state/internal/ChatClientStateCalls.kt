@@ -26,6 +26,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -36,8 +37,11 @@ internal class ChatClientStateCalls(
     private val state: StateRegistry,
     private val scope: CoroutineScope
 ) {
+    private val logger = StreamLog.getLogger("ChatClientState")
+
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
+        logger.d { "querying state for channels" }
         chatClient.queryChannels(request).launch(scope)
         return state.queryChannels(request.filter, request.querySort)
     }
@@ -48,12 +52,14 @@ internal class ChatClientStateCalls(
         channelId: String,
         request: QueryChannelRequest,
     ): ChannelState {
+        logger.d { "querying state for channel with id: $channelId" }
         chatClient.queryChannel(channelType, channelId, request).launch(scope)
         return state.channel(channelType, channelId)
     }
 
     /** Reference request of the watch channel query. */
     internal fun watchChannel(cid: String, messageLimit: Int): ChannelState {
+        logger.d { "watching channel with cid: $cid" }
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
@@ -62,6 +68,7 @@ internal class ChatClientStateCalls(
 
     /** Reference request of the get thread replies query. */
     internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
+        logger.d { "getting replied for message with id: $messageId" }
         chatClient.getReplies(messageId, messageLimit).launch(scope)
         return state.thread(messageId)
     }
