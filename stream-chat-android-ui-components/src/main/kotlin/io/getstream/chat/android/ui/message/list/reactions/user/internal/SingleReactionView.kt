@@ -66,11 +66,10 @@ internal class SingleReactionView : FrameLayout {
         val isOrientedTowardsStart = messageOrientation.isOrientedTowardsStart(isMyMessage)
 
         bubbleDrawer.drawReactionsBubble(
-            context,
-            canvas,
-            width,
+            context = context,
+            canvas = canvas,
+            bubbleWidth = width,
             isMyMessage = isMyMessage,
-            isSingleReaction = true,
             isOrientedTowardsStart = isOrientedTowardsStart
         )
     }

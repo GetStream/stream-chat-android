@@ -59,7 +59,6 @@ internal class SingleReactionViewBubbleDrawer(
 
     private var bubbleWidth: Int = 0
     private var isMyMessage: Boolean = false
-    private var isSingleReaction: Boolean = false
     private var isOrientedTowardsStart: Boolean = false
 
     /**
@@ -69,22 +68,17 @@ internal class SingleReactionViewBubbleDrawer(
      * @param canvas [Canvas].
      * @param bubbleWidth The width of the bubble. This should be at least bigger than all the columns of reactions.
      * @param isMyMessage Whether this is the message of the current user or not.
-     * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
      * @param isOrientedTowardsStart Whether the bubble is oriented towards start or not.
-     * @param inverseBubbleStyle Used to invert the side of the bubble.
      */
     fun drawReactionsBubble(
         context: Context,
         canvas: Canvas,
         bubbleWidth: Int,
         isMyMessage: Boolean,
-        isSingleReaction: Boolean,
         isOrientedTowardsStart: Boolean,
-        inverseBubbleStyle: Boolean = false,
     ) {
         this.isMyMessage = isMyMessage
         this.bubbleWidth = bubbleWidth
-        this.isSingleReaction = isSingleReaction
         this.isOrientedTowardsStart = isOrientedTowardsStart
 
         val isRtl = context.isRtlLayout
@@ -95,8 +89,7 @@ internal class SingleReactionViewBubbleDrawer(
             op(createSmallTailBubblePath(isRtl), Path.Op.UNION)
         }
 
-        val outlineStyle = if (inverseBubbleStyle) !isMyMessage else isMyMessage
-        if (outlineStyle) {
+        if (isMyMessage) {
             canvas.drawPath(path, bubblePaintMine)
             canvas.drawPath(path, bubbleStrokePaintMine)
         } else {
@@ -173,17 +166,9 @@ internal class SingleReactionViewBubbleDrawer(
 
     private fun calculateBubbleCenterX(bubbleOffset: Float): Float {
         return if (!isOrientedTowardsStart) {
-            if (isSingleReaction) {
-                bubbleWidth / 2 + bubbleOffset
-            } else {
-                bubbleWidth + bubbleOffset - MULTIPLE_REACTIONS_BASELINE_OFFSET
-            }
+            bubbleWidth / 2 + bubbleOffset
         } else {
-            if (isSingleReaction) {
-                bubbleWidth / 2 - bubbleOffset
-            } else {
-                MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
-            }
+            bubbleWidth / 2 - bubbleOffset
         }
     }
 
@@ -201,9 +186,5 @@ internal class SingleReactionViewBubbleDrawer(
                 offset
             }
         }
-    }
-
-    private companion object {
-        private val MULTIPLE_REACTIONS_BASELINE_OFFSET = 32.dpToPx()
     }
 }
