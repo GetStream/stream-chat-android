@@ -34,7 +34,6 @@ public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
     private inline val loadMoreAtBottomListener: () -> Unit,
-    private inline val firstMessageAfterGapPosition: () -> Int?,
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -47,6 +46,8 @@ public class EndlessMessageListScrollListener(
     private var paginationEnabled: Boolean = false
 
     public var shouldFetchBottomMessages: Boolean = false
+
+    public var firstMessageBellowGapPosition: Int? = null
 
     /**
      * Helper flag which marks  if we should wait for the scroll state reset.
@@ -89,15 +90,15 @@ public class EndlessMessageListScrollListener(
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
         Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition -----")
-        Log.d("EndlessScroll", "firstMessageAfterGapPosition: ${firstMessageAfterGapPosition()}")
-        Log.d("EndlessScroll", "trigger begin: ${(firstMessageAfterGapPosition() ?: -1) - loadMoreThreshold}")
-        Log.d("EndlessScroll", "trigger end: ${(firstMessageAfterGapPosition() ?: -1) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
+        Log.d("EndlessScroll", "firstMessageAfterGapPosition: ${firstMessageBellowGapPosition}")
+        Log.d("EndlessScroll", "trigger begin: ${(firstMessageBellowGapPosition ?: -1) - loadMoreThreshold}")
+        Log.d("EndlessScroll", "trigger end: ${(firstMessageBellowGapPosition ?: -1) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
 
 
         if (scrollStateReset && isInBottomTriggerPosition(
                 lastVisiblePosition,
                 loadMoreThreshold,
-                firstMessageAfterGapPosition(),
+                firstMessageBellowGapPosition,
             )
         ) {
             scrollStateReset = false
