@@ -4,7 +4,7 @@ on:
   issue_comment:
     types: [created]
   schedule:
-    # Schedule at the end of every day
+    # Every midnight
     - cron: '0 0 * * *'
 
 jobs:
