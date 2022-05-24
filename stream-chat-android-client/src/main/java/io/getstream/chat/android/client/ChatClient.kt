@@ -305,20 +305,10 @@ internal constructor(
         }
         val userState = userStateService.state
         return when {
-            userState is UserState.UserSet &&
-                userState.user.id == user.id &&
-                socketStateService.state == SocketState.Idle -> {
-                logger.logV("[setUser] user is Set & socket.state is Idle")
-                userStateService.onUserUpdated(user)
-                tokenManager.setTokenProvider(cacheableTokenProvider)
-                socketStateService.onConnectionRequested()
-                socket.connect(user)
-                initializationCoordinator.userConnected(user)
-                waitConnection.first()
-            }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
+                userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
                 waitConnection.first()
@@ -342,7 +332,6 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
     ) {
         initializationCoordinator.userConnected(user)
-        userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
@@ -1883,6 +1872,15 @@ internal constructor(
     }
 
     //endregion
+
+    /**
+     * Return the [User] stored on the credential storage
+     *
+     * @return The stored user or null if it was logged out
+     */
+    internal fun getStoredUser(): User? = userCredentialStorage.get()?.let {
+        User(id = it.userId, name = it.userName)
+    }
 
     @InternalStreamChatApi
     public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {

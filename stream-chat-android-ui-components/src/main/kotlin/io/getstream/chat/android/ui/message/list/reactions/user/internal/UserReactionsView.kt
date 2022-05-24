@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.getUserReactionAlignment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -69,6 +70,8 @@ public class UserReactionsView : FrameLayout {
     internal fun configure(messageListViewStyle: MessageListViewStyle) {
         binding.userReactionsContainer.setCardBackgroundColor(messageListViewStyle.userReactionsBackgroundColor)
         messageListViewStyle.userReactionsTitleText.apply(binding.userReactionsTitleTextView)
+        userReactionsAdapter.messageOptionsUserReactionAlignment = messageListViewStyle
+            .messageOptionsUserReactionAlignment.getUserReactionAlignment()
     }
 
     private fun bindTitle(message: Message) {

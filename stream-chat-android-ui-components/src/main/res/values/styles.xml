@@ -228,7 +228,7 @@
         <item name="android:textColor">@color/stream_ui_literal_white</item>
         <item name="android:textDirection">locale</item>
     </style>
-    
+
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiAttachmentActivityProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
@@ -238,6 +238,7 @@
         <item name="streamUiMediaActivityHeader">@style/StreamUi.MediaActivity.Header</item>
         <item name="streamUiMediaActivityHeaderLeftActionButtonStyle">@style/StreamUi.MediaActivity.HeaderLeftActionButton</item>
         <item name="streamUiMediaActivityHeaderTitleStyle">@style/StreamUi.MediaActivity.HeaderTitle</item>
+        <item name="streamUiMediaActivityProgressBarStyle">@style/StreamUi.MediaActivity.ProgressBar</item>
         <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -903,6 +904,11 @@
         <item name="android:textAppearance">@style/StreamUiTextAppearance.MediaActivityHeaderTitle</item>
     </style>
 
+    <style name="StreamUi.MediaActivity.ProgressBar" parent="StreamUi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="StreamUi.SuggestionListView"  parent="StreamUi">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
@@ -1055,4 +1061,9 @@
     <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
         <item name="streamUiShowActionButton">false</item>
     </style>
+
+    <style name="StreamUi.ViewReactions" parent="StreamUi">
+        <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
+    </style>
+
 </resources>

@@ -125,9 +125,22 @@ internal class QueryChannelsLogic(
      *
      * @param channel [Channel]
      */
-    internal suspend fun addChannel(channel: Channel) {
+    private suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
         logicRegistry.channel(channel.type, channel.id).updateDataFromChannel(channel)
+    }
+
+    /**
+     * Calls watch channel and adds result to the query.
+     *
+     * @param cid cid of the channel.
+     */
+    private suspend fun watchAndAddChannel(cid: String) {
+        val result = client.channel(cid = cid).watch().await()
+
+        if (result.isSuccess) {
+            addChannel(result.data())
+        }
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
@@ -261,7 +274,7 @@ internal class QueryChannelsLogic(
      * Handles event received from the socket.
      * Responsible for synchronizing [QueryChannelsMutableState].
      */
-    internal suspend fun handleEvent(event: ChatEvent, channelRepository: ChannelRepository) {
+    private suspend fun handleEvent(event: ChatEvent, channelRepository: ChannelRepository) {
         // update the info for that channel from the channel repo
         logger.logI("Received channel event $event")
 
@@ -274,6 +287,7 @@ internal class QueryChannelsLogic(
                 mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
         ) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
+            is EventHandlingResult.WatchAndAdd -> watchAndAddChannel(handlingResult.cid)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit
         }
