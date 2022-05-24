@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.MessagesGapInfo
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +52,7 @@ internal class ChannelMutableState(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
-    internal val _hasGapsInMessageList = MutableStateFlow<Boolean?>(null)
+    internal val _gapsInMessageList = MutableStateFlow<Pair<Boolean, MessagesGapInfo?>?>(null)
     internal val _messageAtGapTopLimit = MutableStateFlow<Message?>(null)
     internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     internal val _watcherCount = MutableStateFlow(0)
@@ -180,8 +181,7 @@ internal class ChannelMutableState(
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
-    override val hasGapsInMessageList: StateFlow<Boolean?> = _hasGapsInMessageList
-    override val messageAtGapTopLimit: StateFlow<Message?> = _messageAtGapTopLimit
+    override val gapsInMessageList: StateFlow<Pair<Boolean, MessagesGapInfo?>?> = _gapsInMessageList
     override var recoveryNeeded: Boolean = false
 
     override fun toChannel(): Channel {

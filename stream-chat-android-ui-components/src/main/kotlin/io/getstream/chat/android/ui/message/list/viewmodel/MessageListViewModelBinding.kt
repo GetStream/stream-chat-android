@@ -75,7 +75,7 @@ public fun MessageListViewModel.bindView(
         view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
-    view.setBottomEndRegionReachedHandler { onEvent(BottomEndRegionReached) }
+    view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
@@ -119,8 +119,9 @@ public fun MessageListViewModel.bindView(
         }
     }
 
-    shouldFetchBottomMessages.observe(lifecycleOwner, view::shouldFetchBottomMessages)
-    messageAtGapTopLimit.observe(lifecycleOwner, view::firstMessageAfterGap)
+    messagesGap.observe(lifecycleOwner) { (hasHap, info) ->
+        view.gapInMessage(hasHap, info)
+    }
 
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)

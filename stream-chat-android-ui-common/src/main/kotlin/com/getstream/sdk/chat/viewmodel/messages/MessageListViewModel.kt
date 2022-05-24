@@ -53,12 +53,12 @@ import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.MessagesGapInfo
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -97,16 +97,9 @@ public class MessageListViewModel(
             coroutineScope = viewModelScope
         )
 
-    public val messageAtGapTopLimit: LiveData<Message?> =
+    public val messagesGap: LiveData<Pair<Boolean, MessagesGapInfo?>> =
         channelState.filterNotNull().flatMapLatest { channelState ->
-            channelState.messageAtGapTopLimit
-        }.asLiveData()
-
-    public val shouldFetchBottomMessages: LiveData<Boolean> = channelState.filterNotNull()
-        .flatMapLatest { channelState ->
-            channelState.hasGapsInMessageList
-                .filterNotNull()
-                .map { hasGaps -> hasGaps && currentMode is Mode.Normal }
+            channelState.gapsInMessageList.filterNotNull()
         }.asLiveData()
 
     /**
@@ -409,7 +402,7 @@ public class MessageListViewModel(
             }
 
             is Event.BottomEndRegionReached -> {
-                onBottomEndRegionReached()
+                onBottomEndRegionReached(event.messageId)
             }
 
             is Event.LastMessageRead -> {
@@ -692,9 +685,7 @@ public class MessageListViewModel(
     }
 
     // I need to add the find the first
-    private fun onBottomEndRegionReached() {
-        val baseMessageId = messageAtGapTopLimit.value?.id
-
+    private fun onBottomEndRegionReached(baseMessageId: String) {
         if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
             chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
@@ -874,7 +865,7 @@ public class MessageListViewModel(
          */
         public object EndRegionReached : Event()
 
-        public object BottomEndRegionReached : Event()
+        public data class BottomEndRegionReached(val messageId: String) : Event()
 
         /**
          * When the newest message in the channel has been read.

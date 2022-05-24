@@ -125,7 +125,8 @@ internal class ChannelLogic(
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : QueryChannelListener {
 
-    private val messageIdsHashCodeSet = mutableSetOf<Int>()
+    private val messageIdsBellowGap = mutableListOf<Long>()
+    private val messageIdsAboveGap = mutableListOf<Long>()
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -196,46 +197,36 @@ internal class ChannelLogic(
 
     private fun handleOlderMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
         mutableState._endOfOlderMessages.value = !moreMessagesAvailable
-        messageIdsHashCodeSet.addAll(messageList.map { it.id.hashCode() })
+        messageIdsBellowGap.addAll(messageList.map { message -> message.id.hashCode().toLong() })
     }
 
     private fun handleNewerMessagesLimit(moreMessagesAvailable: Boolean, messageList: List<Message>) {
+        messageIdsAboveGap.addAll(messageList.map { message -> message.id.hashCode().toLong() })
         mutableState._endOfNewerMessages.value = !moreMessagesAvailable
 
         when {
             /* The messages list has gaps but the end of messages of an overlap was found.
              * The message list is linear again. */
-            mutableState.hasGapsInMessageList.value == true &&
-                (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
-                Log.d("ChannelLogic", "A gap has been closed!!")
-                Log.d("ChannelLogic", "A gap has been closed!!")
+            mutableState.gapsInMessageList.value?.first == true
+                && (!moreMessagesAvailable || messageList.hasMessageOverlap()) -> {
                 Log.d("ChannelLogic", "A gap has been closed!!")
 
-                mutableState._messageAtGapTopLimit.value = null
-                mutableState._hasGapsInMessageList.value = false
+                mutableState._gapsInMessageList.value = false to null
             }
 
             /* The messages list had no gaps but newer messages were loaded. As it didn't reach the end of the
              * messages nor has an overlap between messages, the list is  not linear anymore. */
-            mutableState.hasGapsInMessageList.value != true &&
-                moreMessagesAvailable &&
-                !messageList.hasMessageOverlap() -> {
-                messageList.takeIf { it.isNotEmpty() }
-                    ?.lastOrNull()
-                    ?.let { messageAfterGap ->
-                        mutableState._messageAtGapTopLimit.value = messageAfterGap
-                    }
-
-                mutableState._hasGapsInMessageList.value = true
+            mutableState.gapsInMessageList.value?.first == true
+                && moreMessagesAvailable
+                && !messageList.hasMessageOverlap() -> {
+                mutableState._gapsInMessageList.value =
+                    true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
 
             // Has gaps and loading more messages
-            mutableState.hasGapsInMessageList.value == true -> {
-                messageList.takeIf { it.isNotEmpty() }
-                    ?.lastOrNull()
-                    ?.let { messageAfterGap ->
-                        mutableState._messageAtGapTopLimit.value = messageAfterGap
-                    }
+            mutableState.gapsInMessageList.value?.first == true -> {
+                mutableState._gapsInMessageList.value =
+                    true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
 
             else -> {
@@ -245,7 +236,7 @@ internal class ChannelLogic(
     }
 
     private fun List<Message>.hasMessageOverlap(): Boolean =
-        this.map { it.id.hashCode() }.any(messageIdsHashCodeSet::contains)
+        this.map { it.id.hashCode().toLong() }.any(messageIdsBellowGap::contains)
 
     private suspend fun storeStateForChannel(channel: Channel) {
         val users = channel.users().associateBy { it.id }.toMutableMap()

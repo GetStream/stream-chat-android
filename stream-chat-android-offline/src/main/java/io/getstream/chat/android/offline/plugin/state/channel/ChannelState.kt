@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.MessagesGapInfo
 import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a channel.*/
@@ -100,9 +101,7 @@ public interface ChannelState {
 
     /** If the are gaps in the list of messages and then requests for newer messages are also necessary
      * when scrolling */
-    public val hasGapsInMessageList: StateFlow<Boolean?>
-
-    public val messageAtGapTopLimit: StateFlow<Message?>
+    public val gapsInMessageList: StateFlow<Pair<Boolean, MessagesGapInfo?>?>
 
     /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean

@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.MessagesGapInfo
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
@@ -148,9 +149,12 @@ public class MessageListView : ConstraintLayout {
 
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
-    private var firstMessageAfterGapPosition: Int? = null
+    private var messagesBellowGap: List<Long>? = null
+    private var messagesAboveGap: List<Long>? = null
+    private var hasGap: Boolean? = null
 
-    private var firstMessageAfterGapId: String? = null
+    private var firstMessageBellowGapPosition: Int? = null
+    private var firstMessageBellowGap: Message? = null
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var loadingView: View
@@ -625,10 +629,10 @@ public class MessageListView : ConstraintLayout {
                     { endRegionReachedHandler.onEndRegionReached() },
                     {
                         Log.d("EndlessScrollListener",
-                            "New messages are being fetched from bottom: ${firstMessageAfterGapPosition}")
-                        bottomEndRegionReachedHandler.onBottomEndRegionReached()
+                            "New messages are being fetched from bottom: $firstMessageBellowGapPosition")
+                        bottomEndRegionReachedHandler.onBottomEndRegionReached(firstMessageBellowGap!!.id)
                     },
-                    { firstMessageAfterGapPosition }
+                    { firstMessageBellowGapPosition }
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
                 }
@@ -655,18 +659,34 @@ public class MessageListView : ConstraintLayout {
         scrollListener.shouldFetchBottomMessages = shouldFetch
     }
 
-    public fun firstMessageAfterGap(message: Message?) {
-        firstMessageAfterGapId = message?.id
+    public fun gapInMessage(hasGap: Boolean, gapInfo: MessagesGapInfo?) {
+        this.hasGap = hasGap
+        messagesBellowGap = gapInfo?.messagesBellowGap
     }
 
     private fun updateMessageAfterGap() {
-        firstMessageAfterGapPosition = adapter.currentList.asSequence()
-            .filterIsInstance<MessageListItem.MessageItem>()
-            .indexOfFirst { messageItem -> messageItem.message.id == firstMessageAfterGapId }
-            .takeIf { index -> index != NOT_FOUND }
+        if (this.hasGap == true && messagesBellowGap != null) {
+            val messageList = adapter.currentList
 
-        Log.d("MessageListView", "updateMessageAfterGap. id: $firstMessageAfterGapId")
-        Log.d("MessageListView", "updateMessageAfterGap. position: $firstMessageAfterGapPosition")
+            val allIds = messageList.map { messageListItem ->
+                messageListItem.getStableId()
+            }
+
+            //Some IDs bellow the gap may not be in MessageListView. They may be filtered out.
+            val lastIdBellowGap = messagesBellowGap!!.last { id ->
+                allIds.contains(id)
+            }
+
+            firstMessageBellowGapPosition = messageList.indexOfFirst { messageListItem ->
+                messageListItem.getStableId() == lastIdBellowGap
+            }
+
+            firstMessageBellowGap = messageList
+                .asSequence()
+                .filterIsInstance<MessageListItem.MessageItem>()
+                .first { messageListItem -> messageListItem.getStableId() == lastIdBellowGap }
+                .message
+        }
     }
 
     /**
@@ -1607,7 +1627,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface BottomEndRegionReachedHandler {
-        public fun onBottomEndRegionReached()
+        public fun onBottomEndRegionReached(messageId: String)
     }
 
     public fun interface LastMessageReadHandler {
