@@ -656,6 +656,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         this.hasGap = hasGap
+        scrollListener.shouldFetchBottomMessages = this.hasGap!!
         this.messagesBellowGap = gapInfo?.messagesBellowGap
     }
 
@@ -686,7 +687,6 @@ public class MessageListView : ConstraintLayout {
             Log.d("MessageListView", "firstMessageBellowGapPosition: $firstMessageBellowGapPosition")
             Log.d("MessageListView", "firstMessageBellowGap text: ${firstMessageBellowGap?.text}")
 
-            scrollListener.shouldFetchBottomMessages = this.hasGap!!
             scrollListener.firstMessageBellowGapPosition = firstMessageBellowGapPosition
         }
     }

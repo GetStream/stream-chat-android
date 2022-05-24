@@ -76,8 +76,8 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 && shouldFetchBottomMessages -> {
-                handleScrollDown(layoutManager, recyclerView)
+            dy >= 0 && shouldFetchBottomMessages && firstMessageBellowGapPosition != null-> {
+                handleScrollDown(layoutManager, recyclerView, firstMessageBellowGapPosition!!)
             }
 
             dy < 0 -> {
@@ -86,19 +86,24 @@ public class EndlessMessageListScrollListener(
         }
     }
 
-    private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+    private fun handleScrollDown(
+        layoutManager: LinearLayoutManager,
+        recyclerView: RecyclerView,
+        firstMessageBellowGap: Int,
+    ) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
         Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition -----")
-        Log.d("EndlessScroll", "firstMessageAfterGapPosition: ${firstMessageBellowGapPosition}")
-        Log.d("EndlessScroll", "trigger begin: ${(firstMessageBellowGapPosition ?: -1) - loadMoreThreshold}")
-        Log.d("EndlessScroll", "trigger end: ${(firstMessageBellowGapPosition ?: -1) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
+        Log.d("EndlessScroll", "firstMessageAfterGapPosition: $firstMessageBellowGap")
+        Log.d("EndlessScroll", "trigger begin: ${(firstMessageBellowGap) - loadMoreThreshold}")
+        Log.d("EndlessScroll",
+            "trigger end: ${(firstMessageBellowGap) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
 
 
         if (scrollStateReset && isInBottomTriggerPosition(
                 lastVisiblePosition,
                 loadMoreThreshold,
-                firstMessageBellowGapPosition,
+                firstMessageBellowGap,
             )
         ) {
             scrollStateReset = false
@@ -113,10 +118,8 @@ public class EndlessMessageListScrollListener(
     private fun isInBottomTriggerPosition(
         lastVisible: Int,
         loadMoreThreshold: Int,
-        firstMessageAfterGap: Int?,
+        firstMessageAfterGap: Int,
     ): Boolean {
-        if (firstMessageAfterGap == null) return false
-
         val limitStart = firstMessageAfterGap - loadMoreThreshold
         val limitEnd = limitStart + DEFAULT_BOTTOM_TRIGGER_LIMIT
 

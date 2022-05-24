@@ -132,7 +132,7 @@ internal class ChannelLogic(
     * added bellow gap */
     /* Todo: The request can notify that a gap will be created. Currently I'm assuming that only newer messages can
      * Todo: create a new gap, which is not correct */
-    private var firstMessageBellowGap: Message? = null
+    private var gapDivisorMessage: Message? = null
 
     private val logger = ChatLogger.get("Query channel request")
 
@@ -203,7 +203,7 @@ internal class ChannelLogic(
 
     private fun handleOlderMessagesLimit(moreMessagesAvailable: Boolean, newMessages: List<Message>) {
         mutableState._endOfOlderMessages.value = !moreMessagesAvailable
-        addGapMessages(firstMessageBellowGap, newMessages)
+        addGapMessages(gapDivisorMessage, newMessages)
     }
 
     private fun handleNewerMessagesLimit(
@@ -220,7 +220,7 @@ internal class ChannelLogic(
                 && (!moreMessagesAvailable || newMessages.hasMessageOverlap(gapSideMessages)) -> {
                 Log.d("ChannelLogic", "A gap has been closed!!")
 
-                firstMessageBellowGap = null
+                gapDivisorMessage = null
 
                 mutableState._gapsInMessageList.value = false to null
                 messageIdsBellowGap.clear()
@@ -234,9 +234,9 @@ internal class ChannelLogic(
                 && !newMessages.hasMessageOverlap(gapSideMessages) -> {
                 Log.d("ChannelLogic", "A gap has been opened!!")
 
-                firstMessageBellowGap = newMessages.first()
+                gapDivisorMessage = newMessages.first() //Todo: This should be moved out of here!!
 
-                addGapMessages(firstMessageBellowGap, newMessages)
+                addGapMessages(gapDivisorMessage, newMessages)
                 mutableState._gapsInMessageList.value =
                     true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
@@ -245,7 +245,7 @@ internal class ChannelLogic(
             mutableState.gapsInMessageList.value?.first == true -> {
                 Log.d("ChannelLogic", "A gap keeps opened!!")
 
-                addGapMessages(firstMessageBellowGap, newMessages)
+                addGapMessages(gapDivisorMessage, newMessages)
                 mutableState._gapsInMessageList.value =
                     true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
