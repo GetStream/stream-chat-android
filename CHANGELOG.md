@@ -18,6 +18,9 @@
 - CurrentUser is not initialized when a PN is received. [#3520](https://github.com/GetStream/stream-chat-android/pull/3520)
 
 ### ✅ Added
+- 🚨 Breaking change: Added `DistinctChatApi` to prevent multiple query requests being fired. [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
+- 🚨 Breaking change: Added new property `ChatClientConfig.disableDistinctApiCalls` to disable `DistinctChatApi`, which is enabled by default. 
+  You can read more about `DistinctChatApi` [here](https://getstream.io/chat/docs/sdk/android/client/guides/optimizations/). [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 
 ### ⚠️ Changed
 

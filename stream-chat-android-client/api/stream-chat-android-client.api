@@ -160,6 +160,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun disableDistinctApiCalls ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -200,8 +201,11 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
+	public final fun getDistinctApiCalls ()Z
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
 	public final fun getWarmUp ()Z
@@ -209,6 +213,7 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun isAnonymous ()Z
 	public final fun setAnonymous (Z)V
 	public final fun setCdnHttpUrl (Ljava/lang/String;)V
+	public final fun setDistinctApiCalls (Z)V
 	public final fun setHttpUrl (Ljava/lang/String;)V
 	public final fun setWssUrl (Ljava/lang/String;)V
 }
@@ -2009,6 +2014,10 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
 	public static final fun getUploadId (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 	public static final fun setUploadId (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/extensions/CallKt {
+	public static final fun forceNewRequest (Lio/getstream/chat/android/client/call/Call;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
