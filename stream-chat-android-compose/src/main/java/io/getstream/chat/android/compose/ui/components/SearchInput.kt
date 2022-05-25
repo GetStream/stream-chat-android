@@ -118,7 +118,8 @@ public fun SearchInput(
             }
         },
         maxLines = 1,
-        innerPadding = 4.dp,
+        verticalPadding = 4.dp,
+        horizontalPadding = 4.dp
     )
 }
 

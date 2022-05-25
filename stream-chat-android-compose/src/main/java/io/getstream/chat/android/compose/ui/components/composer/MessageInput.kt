@@ -73,6 +73,7 @@ public fun MessageInput(
         maxLines = maxLines,
         onValueChange = onValueChange,
         enabled = canSendMessage,
+        horizontalPadding = 18.dp,
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {

@@ -56,6 +56,24 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param innerPadding The padding inside the input field, around the label or input.
  * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
  */
+@Deprecated(
+    message = "Deprecated in favor of new InputField implementation providing more padding customization options.",
+    replaceWith = ReplaceWith(
+        expression =
+        "public fun InputField(" +
+            "value: String," +
+            "onValueChange: (String) -> Unit," +
+            "modifier: Modifier = Modifier," +
+            "enabled: Boolean = true," +
+            "maxLines: Int = Int.MAX_VALUE," +
+            "border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders)," +
+            "horizontalPadding: Dp = 18.dp," +
+            "verticalPadding: Dp = 8.dp," +
+            "decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit)",
+        imports = ["io.getstream.chat.android.compose.ui.components.composer"]
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 public fun InputField(
     value: String,
@@ -65,6 +83,48 @@ public fun InputField(
     maxLines: Int = Int.MAX_VALUE,
     border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
     innerPadding: Dp = 8.dp,
+    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
+) {
+    InputField(
+        value = value,
+        onValueChange = onValueChange,
+        enabled = enabled,
+        modifier = modifier,
+        maxLines = maxLines,
+        border = border,
+        horizontalPadding = innerPadding,
+        verticalPadding = innerPadding,
+        decorationBox = decorationBox
+    )
+}
+
+/**
+ * Custom input field that we use for our UI. It's fairly simple - shows a basic input with clipped
+ * corners and a border stroke, with some extra padding on each side.
+ *
+ * Within it, we allow for custom decoration, so that the user can define what the input field looks like
+ * when filled with content.
+ *
+ * @param value The current input value.
+ * @param onValueChange Handler when the value changes as the user types.
+ * @param modifier Modifier for styling.
+ * @param enabled If the Composable is enabled for text input or not.
+ * @param maxLines The number of lines that are allowed in the input, no limit by default.
+ * @param border The [BorderStroke] that will appear around the input field.
+ * @param horizontalPadding The horizontal padding inside the input field, around the label or input.
+ * @param verticalPadding The vertical padding inside the input field, around the label or input.
+ * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
+ */
+@Composable
+public fun InputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
+    horizontalPadding: Dp = 18.dp,
+    verticalPadding: Dp = 8.dp,
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
@@ -88,7 +148,7 @@ public fun InputField(
             .border(border = border, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
             .background(ChatTheme.colors.inputBackground)
-            .padding(innerPadding)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
             .semantics { contentDescription = description },
         value = textFieldValue,
         onValueChange = {
