@@ -34,6 +34,7 @@ jobs:
         if: "${{ github.event.inputs.skip_changelog_update != 'true' }}"
         run: ./gradlew changelog-release-section
       - name: Commit changes
+        if: "${{ github.event.inputs.skip_changelog_update != 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: | 
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -41,6 +42,7 @@ jobs:
           git add CHANGELOG.md
           git commit -m "AUTOMATION: version bump and changelog update"
       - name: Push changes
+        if: "${{ github.event.inputs.skip_changelog_update != 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
