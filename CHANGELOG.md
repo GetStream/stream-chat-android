@@ -1,15 +1,4 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# May 25th, 2022 - 5.3.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed `ChatParser` failing to parse errors because it was trying to fetch the raw response from a converted body. [#3534](https://github.com/GetStream/stream-chat-android/pull/3534)
@@ -20,12 +9,9 @@
 ### ✅ Added
 - 🚨 Breaking change: Added `DistinctChatApi` to prevent multiple query requests being fired. [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 - 🚨 Breaking change: Added new property `ChatClientConfig.disableDistinctApiCalls` to disable `DistinctChatApi`, which is enabled by default. 
-  You can read more about `DistinctChatApi` [here](https://getstream.io/chat/docs/sdk/android/client/guides/optimizations/). [#3521](https://github.com/GetStream/stream-chat-android/pull/3521)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `Plugin`, `PluginFactory` and plugin side-effect listeners (`CreatChannelListener`, `SendMessageListener` etc.) are moved out of `experimental` package. [#3583](https://github.com/GetStream/stream-chat-android/pull/3583/)
-
-### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -36,32 +22,16 @@
 ### ⬆️ Improved
 - Change the order of offline message so it matches the order of online messages. Now the reshuffling of messages when switching from offline to online doesn't happen anymore. [3524](https://github.com/GetStream/stream-chat-android/pull/3524)
 - 🚨 Breaking change: `QueryChannelsState::channels` can now return a null as an initial value. 
-  The change was introduced in order to distinguish between initial state when channels are not loaded yet
-  and a state when channels don't exist. [#3531](https://github.com/GetStream/stream-chat-android/pull/3531)
 - Adding logs for QuerySort: [3570](https://github.com/GetStream/stream-chat-android/pull/3570)
 - Adding logs for plugin usage, state calls usage and ChannelListView. [3572](https://github.com/GetStream/stream-chat-android/pull/3572)
 
 ### ✅ Added
 - Added `EventHandlingResult.WatchAndAdd` to results returned from `ChatEventHandler`.
-  After receiving the result, the SDK will call watch and adds the channel to the channels list. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
 - Added handling `ChannelVisibleEvent`. Default `ChatEventHandler` will return `EventHandlingResult.WatchAndAdd`.
-  It can be customizing by overriding `ChatEventHandler::handleChannelVisibleEvent`. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `MessageOptionsUserReactionAlignemnt` used to define the user reaction alignment inside message options. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -69,8 +39,6 @@
 - Added loading more indicator to PinnedMessageListView [#3507](https://github.com/GetStream/stream-chat-android/pull/3507)
 - Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
 - Fixed refreshing `ChannelListView` after unhiding the channel. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added the public method `switchToCommandMode(command: Command)` inside `MessageInputView`. This method allows switching the input to command mode using the desired command directly, instead of having to select it from the dialog. An example of its usage is provided inside the patch within the linked PR. [#3515](https://github.com/GetStream/stream-chat-android/pull/3515)
@@ -83,14 +51,10 @@
 - Deprecated `Member.isOwnerOrAdmin` and `List<Member>?.isCurrentUserOwnerOrAdmin()`. Use `Channel::ownCapabilities` instead. [#3576](https://github.com/GetStream/stream-chat-android/pull/3576)
 - Changed how padding is applied to `ViewReactionsView`. [#3541](https://github.com/GetStream/stream-chat-android/pull/3541)
 
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix video scaling issue on the media preview screen. [#3560](https://github.com/GetStream/stream-chat-android/pull/3560)
 - Fixed refreshing `ChannelListView` after unhiding the channel. [#3569](https://github.com/GetStream/stream-chat-android/pull/3569)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added scroll to quoted message on click. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
@@ -100,52 +64,6 @@
 
 ### ⚠️ Changed
 - Changed `QuotedMessage` design by adding `QuotedAttachmentFactory`, `ImageAttachmentQuotedContent` and `FileAttachmentQuotedContent`. [#3472](https://github.com/GetStream/stream-chat-android/pull/3472)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # May 11th, 2022 - 5.2.0
 ## stream-chat-android-client
