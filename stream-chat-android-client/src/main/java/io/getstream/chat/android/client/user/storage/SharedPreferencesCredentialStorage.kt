@@ -29,8 +29,14 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
         val userId = getString(KEY_USER_ID, "") ?: ""
         val userToken = getString(KEY_USER_TOKEN, "") ?: ""
         val userName = getString(KEY_USER_NAME, "") ?: ""
+        val isAnonymous = getBoolean(KEY_IS_ANONYMOUS, false)
 
-        val config = CredentialConfig(userId = userId, userToken = userToken, userName = userName)
+        val config = CredentialConfig(
+            userId = userId,
+            userToken = userToken,
+            userName = userName,
+            isAnonymous = isAnonymous,
+        )
 
         return config.takeIf(CredentialConfig::isValid)
     }
@@ -42,6 +48,7 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
             putString(KEY_USER_ID, credentialConfig.userId)
             putString(KEY_USER_TOKEN, credentialConfig.userToken)
             putString(KEY_USER_NAME, credentialConfig.userName)
+            putBoolean(KEY_IS_ANONYMOUS, credentialConfig.isAnonymous)
         }.apply()
     }
 
@@ -50,5 +57,6 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_TOKEN = "user_token"
         private const val KEY_USER_NAME = "user_name"
+        private const val KEY_IS_ANONYMOUS = "is_anonymous"
     }
 }

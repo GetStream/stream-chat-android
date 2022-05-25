@@ -246,7 +246,11 @@ internal constructor(
             }
             currentUser?.let { updatedCurrentUser ->
                 userStateService.onUserUpdated(updatedCurrentUser)
-                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
+                storePushNotificationsConfig(
+                    updatedCurrentUser.id,
+                    updatedCurrentUser.name,
+                    userStateService.state !is UserState.UserSet,
+                )
             }
         }
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
@@ -442,6 +446,7 @@ internal constructor(
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
+                isAnonymous = config.isAnonymous,
             )
         }
     }
@@ -451,12 +456,13 @@ internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun storePushNotificationsConfig(userId: String, userName: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String, isAnonymous: Boolean) {
         userCredentialStorage.put(
             CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
                 userName = userName,
+                isAnonymous = isAnonymous,
             ),
         )
     }
