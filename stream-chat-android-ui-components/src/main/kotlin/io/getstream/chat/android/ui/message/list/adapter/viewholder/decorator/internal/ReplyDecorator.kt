@@ -114,7 +114,7 @@ internal class ReplyDecorator(
         val replyToMessage = data.message.replyTo
         if (replyToMessage != null) {
             replyView.isVisible = true
-            replyView.setMessage(replyToMessage, replyToMessage.isMine(), style)
+            replyView.setMessage(replyToMessage, data.isMine, style)
         } else {
             replyView.isVisible = false
         }

@@ -25,6 +25,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.extensions.isMine
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.models.Message
@@ -68,9 +69,14 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
+    /**
+     * @param message [Message] that was replied to.
+     * @param isMine If the message containing the reply was current users or not.
+     * @param style The style to be applied to the view.
+     */
     fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
-        setAvatarPosition(isMine)
+        setAvatarPosition(message.isMine())
         setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
         setReplyText(message, isMine, style)
@@ -117,8 +123,8 @@ internal class MessageReplyView : FrameLayout {
     /**
      * Sets the background for message reply.
      *
-     * @param message [Message] The message containing reply.
-     * @param isMine Whether the message is from the current user or not.
+     * @param message [Message] The message replied message.
+     * @param isMine Whether the message containing the reply is from the current user or not.
      * @param style [MessageReplyStyle] contains the styles of the background.
      */
     private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
@@ -126,7 +132,7 @@ internal class MessageReplyView : FrameLayout {
             context,
             REPLY_CORNER_RADIUS,
             0f,
-            isMine,
+            message.isMine(),
             true
         )
 
@@ -141,10 +147,13 @@ internal class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                isMine -> {
+                message.isMine() -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    val color =
+                    val color = if (isMine) {
+                        style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
+                    } else {
                         style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    }
                     setTint(color)
                     style?.messageStrokeColorMine?.let(::setStrokeTint)
                     strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH

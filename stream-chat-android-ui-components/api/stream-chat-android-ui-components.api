@@ -1462,10 +1462,12 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 }
 
 public final class io/getstream/chat/android/ui/message/list/DefaultQuotedAttachmentViewStyle {
-	public fun <init> (III)V
-	public final fun getHeight ()I
-	public final fun getRadius ()I
-	public final fun getWidth ()I
+	public fun <init> (IIIII)V
+	public final fun getFileAttachmentHeight ()I
+	public final fun getFileAttachmentWidth ()I
+	public final fun getImageAttachmentHeight ()I
+	public final fun getImageAttachmentWidth ()I
+	public final fun getQuotedImageRadius ()I
 }
 
 public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {

@@ -26,26 +26,34 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
  * Style to be applied to [DefaultQuotedAttachmentView].
  * Use [TransformStyle.defaultQuotedAttachmentViewStyleTransformer] to change the style programmatically.
  *
- * @param height The height of the quoted attachment.
- * @param width The width of the quoted attachment.
- * @param radius The radius of the quoted attachment corners.
+ * @param fileAttachmentHeight The height of the quoted file attachment.
+ * @param fileAttachmentWidth The width of the quoted file attachment.
+ * @param imageAttachmentHeight The width of the quoted image attachment.
+ * @param imageAttachmentWidth The height of the quoted image attachment.
+ * @param quotedImageRadius The radius of the quoted attachment corners.
  */
 public class DefaultQuotedAttachmentViewStyle(
-    @Px public val height: Int,
-    @Px public val width: Int,
-    @Px public val radius: Int,
+    @Px public val fileAttachmentHeight: Int,
+    @Px public val fileAttachmentWidth: Int,
+    @Px public val imageAttachmentHeight: Int,
+    @Px public val imageAttachmentWidth: Int,
+    @Px public val quotedImageRadius: Int,
 ) {
 
     internal companion object {
         operator fun invoke(context: Context): DefaultQuotedAttachmentViewStyle {
-            val height: Int = context.getDimension(R.dimen.streamUiQuotedAttachmentViewHeight)
-            val width: Int = context.getDimension(R.dimen.streamUiQuotedAttachmentViewWidth)
-            val radius: Int = context.getDimension(R.dimen.streamUiQuotedAttachmentImageRadius)
+            val fileAttachmentHeight: Int = context.getDimension(R.dimen.streamUiQuotedFileAttachmentViewHeight)
+            val fileAttachmentWidth: Int = context.getDimension(R.dimen.streamUiQuotedFileAttachmentViewWidth)
+            val imageAttachmentHeight: Int = context.getDimension(R.dimen.streamUiQuotedImageAttachmentViewHeight)
+            val imageAttachmentWidth: Int = context.getDimension(R.dimen.streamUiQuotedImageAttachmentViewWidth)
+            val quotedImageRadius: Int = context.getDimension(R.dimen.streamUiQuotedImageAttachmentImageRadius)
 
             return DefaultQuotedAttachmentViewStyle(
-                height = height,
-                width = width,
-                radius = radius
+                fileAttachmentHeight = fileAttachmentHeight,
+                fileAttachmentWidth = fileAttachmentWidth,
+                imageAttachmentHeight = imageAttachmentHeight,
+                imageAttachmentWidth = imageAttachmentWidth,
+                quotedImageRadius = quotedImageRadius
             ).let(TransformStyle.defaultQuotedAttachmentViewStyleTransformer::transform)
         }
     }

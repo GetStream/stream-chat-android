@@ -168,9 +168,11 @@
     <dimen name="stream_ui_message_pin_indicator_icon_size">12dp</dimen>
 
     <!-- QuotedAttachmentView -->
-    <dimen name="streamUiQuotedAttachmentViewHeight">40dp</dimen>
-    <dimen name="streamUiQuotedAttachmentViewWidth">34dp</dimen>
-    <dimen name="streamUiQuotedAttachmentImageRadius">7dp</dimen>
+    <dimen name="streamUiQuotedFileAttachmentViewHeight">40dp</dimen>
+    <dimen name="streamUiQuotedFileAttachmentViewWidth">34dp</dimen>
+    <dimen name="streamUiQuotedImageAttachmentViewHeight">34dp</dimen>
+    <dimen name="streamUiQuotedImageAttachmentViewWidth">34dp</dimen>
+    <dimen name="streamUiQuotedImageAttachmentImageRadius">7dp</dimen>
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_options_menu_corner_radius">16dp</dimen>

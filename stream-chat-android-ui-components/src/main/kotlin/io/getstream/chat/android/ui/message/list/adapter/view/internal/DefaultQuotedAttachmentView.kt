@@ -50,12 +50,23 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     }
 
     private lateinit var style: DefaultQuotedAttachmentViewStyle
+    private lateinit var attachment: Attachment
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+
         layoutParams = layoutParams.apply {
-            height = style.height
-            width = style.width
+            when (attachment.type) {
+                ModelType.attach_file, ModelType.attach_video -> {
+                    width = style.fileAttachmentWidth
+                    height = style.fileAttachmentHeight
+                }
+
+                else -> {
+                    width = style.imageAttachmentWidth
+                    height = style.imageAttachmentHeight
+                }
+            }
         }
     }
 
@@ -65,6 +76,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
      * @param attachment The attachment we wish to show.
      */
     fun showAttachment(attachment: Attachment) {
+        this.attachment = attachment
         when (attachment.type) {
             ModelType.attach_file, ModelType.attach_video -> loadAttachmentThumb(attachment)
             ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
@@ -81,7 +93,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     private fun showAttachmentThumb(url: String?) {
         load(
             data = url,
-            transformation = StreamImageLoader.ImageTransformation.RoundedCorners(style.radius.toFloat())
+            transformation = StreamImageLoader.ImageTransformation.RoundedCorners(style.quotedImageRadius.toFloat())
         )
     }
 
