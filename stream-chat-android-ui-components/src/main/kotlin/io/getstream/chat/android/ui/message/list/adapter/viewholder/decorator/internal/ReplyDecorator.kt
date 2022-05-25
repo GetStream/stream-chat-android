@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
@@ -113,7 +114,7 @@ internal class ReplyDecorator(
         val replyToMessage = data.message.replyTo
         if (replyToMessage != null) {
             replyView.isVisible = true
-            replyView.setMessage(replyToMessage, data.isMine, style)
+            replyView.setMessage(replyToMessage, replyToMessage.isMine(), style)
         } else {
             replyView.isVisible = false
         }

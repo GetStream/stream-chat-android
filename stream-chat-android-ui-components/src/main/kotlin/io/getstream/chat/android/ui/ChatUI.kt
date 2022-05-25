@@ -28,8 +28,8 @@ import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
@@ -118,7 +118,7 @@ public object ChatUI {
      */
     public var quotedAttachmentFactoryManager: QuotedAttachmentFactoryManager by lazyVar {
         QuotedAttachmentFactoryManager(
-            listOf(QuotedAttachmentMessageFactory())
+            listOf(DefaultQuotedAttachmentMessageFactory())
         )
     }
 

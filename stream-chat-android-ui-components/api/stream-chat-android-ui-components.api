@@ -17,6 +17,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
+	public final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
@@ -29,6 +30,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
+	public final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 }
@@ -88,6 +90,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageReplyStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getPinnedMessageListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getQuotedAttachmentViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchResultListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -109,6 +112,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageReplyStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setPinnedMessageListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setQuotedAttachmentViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchResultListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -1991,6 +1995,13 @@ public final class io/getstream/chat/android/ui/message/list/MessageReplyStyle {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/message/list/QuotedAttachmentViewStyle {
+	public fun <init> (III)V
+	public final fun getHeight ()I
+	public final fun getRadius ()I
+	public final fun getWidth ()I
+}
+
 public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle {
 	public fun <init> (ZZIIIFLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Z
@@ -2160,6 +2171,12 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/DefaultQuotedAttachmentMessageFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
 public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
 	public fun <init> (Landroid/view/View;)V
 	public final fun getContext ()Landroid/content/Context;
@@ -2168,6 +2185,19 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/viewhold
 	public fun onUnbindViewHolder ()V
 	public fun onViewAttachedToWindow ()V
 	public fun onViewDetachedFromWindow ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public abstract fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun createQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {

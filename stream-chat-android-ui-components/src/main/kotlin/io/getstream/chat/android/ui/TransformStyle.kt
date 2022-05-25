@@ -26,9 +26,9 @@ import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
+import io.getstream.chat.android.ui.message.list.QuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.QuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
