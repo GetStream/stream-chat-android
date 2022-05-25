@@ -64,11 +64,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
         "public fun InputField(" +
             "value: String," +
             "onValueChange: (String) -> Unit," +
-            "modifier: Modifier = Modifier," +
-            "enabled: Boolean = true," +
-            "maxLines: Int = Int.MAX_VALUE," +
-            "border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders)," +
-            "innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)," +
+            "modifier: Modifier," +
+            "enabled: Boolean," +
+            "maxLines: Int," +
+            "border: BorderStroke," +
+            "innerPadding: PaddingValues," +
             "decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit)",
         imports = ["io.getstream.chat.android.compose.ui.components.composer"]
     ),
