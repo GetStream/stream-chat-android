@@ -18,19 +18,22 @@ package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.offline.event.model.EventHandlerType
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -39,8 +42,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class TotalUnreadCountTest {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField
@@ -48,16 +49,24 @@ internal class TotalUnreadCountTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val data = TestDataHelper()
-    private val globalMutableState = GlobalMutableState.create().apply {
-        _user.value = data.user1
+    private lateinit var data: TestDataHelper
+    private lateinit var globalMutableState: GlobalMutableState
+
+    @BeforeEach
+    fun setUp() {
+        data = TestDataHelper()
+        globalMutableState = GlobalMutableState.create().apply {
+            _user.value = data.user1
+        }
     }
 
-    @Test
-    fun `When new message event is received for channel with read capability Should properly update total unread counts`() =
-        runTest {
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `When new message event is received for channel with read capability Should properly update total unread counts`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(globalMutableState)
+            val sut = Fixture(globalMutableState, eventHandlerType)
                 .givenMockedRepositories()
                 .givenChannel(channelWithReadCapability)
                 .get()
@@ -74,11 +83,13 @@ internal class TotalUnreadCountTest {
             globalMutableState._channelUnreadCount.value `should be equal to` 2
         }
 
-    @Test
-    fun `When mark read event is received for channel with read capability Should properly update total unread counts`() =
-        runTest {
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
             val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(globalMutableState)
+            val sut = Fixture(globalMutableState, eventHandlerType)
                 .givenMockedRepositories()
                 .givenChannel(channelWithReadCapability)
                 .get()
@@ -94,9 +105,12 @@ internal class TotalUnreadCountTest {
             globalMutableState._channelUnreadCount.value `should be equal to` 0
         }
 
-    @Test
-    fun `when connected event is received, current user should be updated`() = runTest {
-        val sut = Fixture(globalMutableState)
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `when connected event is received, current user should be updated`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
+        val sut = Fixture(globalMutableState, eventHandlerType)
             .givenMockedRepositories()
             .get()
 
@@ -109,10 +123,24 @@ internal class TotalUnreadCountTest {
         globalMutableState._user.value `should be equal to` userWithUnread
     }
 
-    private class Fixture(globalMutableState: GlobalMutableState) {
+    private class Fixture(
+        globalMutableState: GlobalMutableState,
+        eventHandlerType: EventHandlerType
+    ) {
         private val repos: RepositoryFacade = mock()
-        private val eventHandlerImpl =
-            EventHandlerImpl(
+        private val eventHandler = when (eventHandlerType) {
+            EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
+                scope = testCoroutines.scope,
+                recoveryEnabled = true,
+                subscribeForEvents = { _ -> mock() },
+                logicRegistry = mock(),
+                stateRegistry = mock(),
+                mutableGlobalState = globalMutableState,
+                repos = repos,
+                syncManager = mock(),
+            )
+            EventHandlerType.DEFAULT -> EventHandlerImpl(
+                scope = testCoroutines.scope,
                 recoveryEnabled = true,
                 client = mock(),
                 logic = mock(),
@@ -121,6 +149,7 @@ internal class TotalUnreadCountTest {
                 repos = repos,
                 syncManager = mock()
             )
+        }
 
         fun givenMockedRepositories(): Fixture {
             runBlocking {
@@ -136,6 +165,6 @@ internal class TotalUnreadCountTest {
             }
         }
 
-        fun get(): EventHandlerImpl = eventHandlerImpl
+        fun get(): EventHandler = eventHandler
     }
 }
