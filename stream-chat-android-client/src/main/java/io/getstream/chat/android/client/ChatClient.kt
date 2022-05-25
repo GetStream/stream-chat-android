@@ -309,16 +309,18 @@ internal constructor(
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
-        if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
-            logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            return Result.error(
-                ChatError(
-                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
-                )
-            )
-        }
         val userState = userStateService.state
         return when {
+            tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
+                logger.logE(
+                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                )
+                Result.error(
+                    ChatError(
+                        "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                    )
+                )
+            }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider)
