@@ -26,12 +26,12 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
-import io.getstream.chat.android.ui.message.list.QuotedAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 
 /**
  * View tasked to show the attachments supported by default.
  */
-internal class QuotedAttachmentView : AppCompatImageView {
+internal class DefaultQuotedAttachmentView : AppCompatImageView {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context)
@@ -49,7 +49,7 @@ internal class QuotedAttachmentView : AppCompatImageView {
         init(context)
     }
 
-    private lateinit var style: QuotedAttachmentViewStyle
+    private lateinit var style: DefaultQuotedAttachmentViewStyle
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -62,7 +62,7 @@ internal class QuotedAttachmentView : AppCompatImageView {
     /**
      * Show the attachment sent inside the message.
      *
-     * @param message The message containing the attachments.
+     * @param attachment The attachment we wish to show.
      */
     fun showAttachment(attachment: Attachment) {
         when (attachment.type) {
@@ -86,6 +86,6 @@ internal class QuotedAttachmentView : AppCompatImageView {
     }
 
     private fun init(context: Context) {
-        this.style = QuotedAttachmentViewStyle(context)
+        this.style = DefaultQuotedAttachmentViewStyle(context)
     }
 }
