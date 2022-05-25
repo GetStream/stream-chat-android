@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -118,8 +119,7 @@ public fun SearchInput(
             }
         },
         maxLines = 1,
-        verticalPadding = 4.dp,
-        horizontalPadding = 4.dp
+        innerPadding = PaddingValues(4.dp)
     )
 }
 

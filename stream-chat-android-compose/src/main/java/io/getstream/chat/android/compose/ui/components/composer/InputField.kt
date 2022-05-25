@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.composer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
@@ -67,8 +68,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
             "enabled: Boolean = true," +
             "maxLines: Int = Int.MAX_VALUE," +
             "border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders)," +
-            "horizontalPadding: Dp = 18.dp," +
-            "verticalPadding: Dp = 8.dp," +
+            "innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)," +
             "decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit)",
         imports = ["io.getstream.chat.android.compose.ui.components.composer"]
     ),
@@ -92,8 +92,7 @@ public fun InputField(
         modifier = modifier,
         maxLines = maxLines,
         border = border,
-        horizontalPadding = innerPadding,
-        verticalPadding = innerPadding,
+        innerPadding = PaddingValues(innerPadding),
         decorationBox = decorationBox
     )
 }
@@ -111,8 +110,7 @@ public fun InputField(
  * @param enabled If the Composable is enabled for text input or not.
  * @param maxLines The number of lines that are allowed in the input, no limit by default.
  * @param border The [BorderStroke] that will appear around the input field.
- * @param horizontalPadding The horizontal padding inside the input field, around the label or input.
- * @param verticalPadding The vertical padding inside the input field, around the label or input.
+ * @param innerPadding The padding inside the input field, around the label or input.
  * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
  */
 @Composable
@@ -123,8 +121,7 @@ public fun InputField(
     enabled: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
-    horizontalPadding: Dp = 18.dp,
-    verticalPadding: Dp = 8.dp,
+    innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
@@ -148,7 +145,7 @@ public fun InputField(
             .border(border = border, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
             .background(ChatTheme.colors.inputBackground)
-            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+            .padding(innerPadding)
             .semantics { contentDescription = description },
         value = textFieldValue,
         onValueChange = {
