@@ -186,10 +186,10 @@ internal open class ChatSocket constructor(
     }
 
     open fun connectAnonymously() =
-        connect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+        connect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, anonUser))
 
     fun reconnectAnonymously() {
-        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, anonUser))
     }
 
     open fun connect(user: User) =
@@ -278,6 +278,13 @@ internal open class ChatSocket constructor(
     private companion object {
         private const val RETRY_LIMIT = 3
         private const val DEFAULT_DELAY = 500
+
+        /**
+         *  It doesn't matter what user id we send to the server for anonymous user
+         *  as the server will always return the user with "!anon" user id
+         */
+        private const val ANONYMOUS_USER_ID = "anon"
+        private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
     }
 
     @VisibleForTesting
