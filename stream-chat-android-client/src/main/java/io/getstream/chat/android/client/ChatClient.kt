@@ -326,7 +326,7 @@ internal constructor(
                 initializeClientWithUser(user, cacheableTokenProvider)
                 userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
+                socket.connectUser(user, false)
                 waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
@@ -466,10 +466,10 @@ internal constructor(
             if (userStateService.state is UserState.NotSet) {
                 socketStateService.onConnectionRequested()
                 userStateService.onSetAnonymous()
-                tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
+                tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider(ANONYMOUS_USER_ID)))
                 config.isAnonymous = true
                 warmUp()
-                socket.connectAnonymously()
+                socket.connectUser(anonUser, true)
                 initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
                 waitFirstConnection(timeoutMilliseconds)
             } else {
@@ -790,8 +790,8 @@ internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.reconnectUser(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user, false)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -2567,6 +2567,7 @@ internal constructor(
         public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
+        private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic
         public fun instance(): ChatClient {
