@@ -108,7 +108,7 @@ public class QuerySort<T : Any> {
                         } else {
                             append(" and nothing was found in the extra data.")
                         }
-                        
+
                         val jointMembers = this::class.memberProperties.joinToString { it.name }
                         append(" Options were: $jointMembers")
                     }.let { string -> logger.d { string } }
@@ -184,7 +184,6 @@ public class QuerySort<T : Any> {
                             "Using field by name: $fieldNameSortAttribute. " +
                             "The field searched was: ${fieldName.snakeToLowerCamelCase()}. " +
                             "The fields available were: $jointProperties"
-
                     }
                 }
     }
