@@ -127,6 +127,7 @@ internal class ChannelLogic(
 
     private val messageIdsBellowGap = mutableListOf<Long>()
     private val messageIdsAboveGap = mutableListOf<Long>()
+    private val requestsMade = mutableSetOf<Int>()
 
     /* This message divides gaps. Messages olders than this, are added bellow gap, messes newer than this are
     * added bellow gap */
@@ -175,7 +176,7 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }.onSuccess { channel ->
             mutableState.recoveryNeeded = false
-            handleMessageLimits(request, channel)
+            handleMessageLimits(request, channel, request.canCreateGap)
             updateDataFromChannel(channel)
         }.onError { error ->
             if (error.isPermanent()) {
@@ -191,11 +192,11 @@ internal class ChannelLogic(
     /**
      * NOTE: This method must be always called before messageIdsSet is called
      */
-    private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel) {
+    private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel, canCreateGap: Boolean) {
         val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
 
         if (request.isFilteringNewerMessages()) {
-            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages, messageIdsBellowGap)
+            handleNewerMessagesLimit(!noMoreMessagesAvailable, channel.messages, messageIdsBellowGap, canCreateGap)
         } else {
             handleOlderMessagesLimit(noMoreMessagesAvailable, channel.messages)
         }
@@ -210,6 +211,7 @@ internal class ChannelLogic(
         moreMessagesAvailable: Boolean,
         newMessages: List<Message>,
         gapSideMessages: List<Long>,
+        canCreateGap: Boolean,
     ) {
         mutableState._endOfNewerMessages.value = !moreMessagesAvailable
 
@@ -218,7 +220,10 @@ internal class ChannelLogic(
              * The message list is linear again. */
             mutableState.gapsInMessageList.value?.first == true
                 && (!moreMessagesAvailable || newMessages.hasMessageOverlap(gapSideMessages)) -> {
-                Log.d("ChannelLogic", "A gap has been closed!!")
+                Log.d("ChannelLogic",
+                    "A gap has been closed! new messages: $moreMessagesAvailable | overlap: ${
+                        newMessages.hasMessageOverlap(gapSideMessages)
+                    }")
 
                 gapDivisorMessage = null
 
@@ -231,7 +236,8 @@ internal class ChannelLogic(
              * messages nor has an overlap between messages, the list is  not linear anymore. */
             mutableState.gapsInMessageList.value?.first != true
                 && moreMessagesAvailable
-                && !newMessages.hasMessageOverlap(gapSideMessages) -> {
+                && !newMessages.hasMessageOverlap(gapSideMessages)
+                && canCreateGap -> {
                 Log.d("ChannelLogic", "A gap has been opened!!")
 
                 gapDivisorMessage = newMessages.first() //Todo: This should be moved out of here!!
@@ -268,8 +274,16 @@ internal class ChannelLogic(
         }
     }
 
-    private fun List<Message>.hasMessageOverlap(idsList: List<Long>): Boolean =
-        this.map { it.id.hashCode().toLong() }.any(idsList::contains)
+    private fun List<Message>.hasMessageOverlap(idsList: List<Long>): Boolean {
+        return this.map { it.id.hashCode().toLong() }.any(idsList::contains).also { hasGap ->
+            if (hasGap) {
+                val filteredText = this.filter { idsList.contains(it.id.hashCode().toLong()) }
+                val jointString = filteredText.joinToString { it.text }
+
+                Log.d("ChannelLogic", "Messages with overlaps: $jointString. Size: ${filteredText.size}")
+            }
+        }
+    }
 
     private suspend fun storeStateForChannel(channel: Channel) {
         val users = channel.users().associateBy { it.id }.toMutableMap()
@@ -318,8 +332,10 @@ internal class ChannelLogic(
      *
      * @return [Result] of [Channel] with fetched messages.
      */
-    internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
-        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+    internal suspend fun loadNewerMessages(messageId: String, limit: Int, canCreateGap: Boolean): Result<Channel> {
+        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId).apply {
+            this.canCreateGap = canCreateGap
+        })
     }
 
     /**
@@ -330,8 +346,16 @@ internal class ChannelLogic(
      *
      * @return [Result] of [Channel] with fetched messages.
      */
-    internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
-        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
+    internal suspend fun loadOlderMessages(
+        messageLimit: Int,
+        baseMessageId: String? = null,
+        canCreateGap: Boolean,
+    ): Result<Channel> {
+        return runChannelQuery(
+            olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId).apply {
+                this.canCreateGap = canCreateGap
+            }
+        )
     }
 
     // Colocar se as mensagens são mais novas ou mais velhas

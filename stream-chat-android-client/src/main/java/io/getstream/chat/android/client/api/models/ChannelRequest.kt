@@ -22,6 +22,7 @@ internal interface ChannelRequest<T : ChannelRequest<T>> {
     var state: Boolean
     var watch: Boolean
     var presence: Boolean
+    var canCreateGap: Boolean
 
     fun withWatch(): T {
         watch = true

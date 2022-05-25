@@ -225,21 +225,26 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
             logic.channel(channelType = channelType, channelId = channelId)
-                .loadOlderMessages(messageLimit = messageLimit)
+                .loadOlderMessages(messageLimit = messageLimit, canCreateGap = false)
         } else {
             cidValidationResult
         }
     }
 }
 
-public fun ChatClient.loadNewerMessages(channelCid: String, baseMessageId: String, messageLimit: Int): Call<Channel> {
+public fun ChatClient.loadNewerMessages(
+    channelCid: String,
+    baseMessageId: String,
+    messageLimit: Int,
+    canCreateGap: Boolean,
+): Call<Channel> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Channel>(channelCid)
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = channelCid.cidToTypeAndId()
             logic.channel(channelType = channelType, channelId = channelId)
-                .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+                .loadNewerMessages(messageId = baseMessageId, limit = messageLimit, canCreateGap = canCreateGap)
         } else {
             cidValidationResult
         }
@@ -295,6 +300,7 @@ public fun ChatClient.loadMessageById(
     messageId: String,
     olderMessagesOffset: Int,
     newerMessagesOffset: Int,
+    canCreateGap: Boolean = true,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult<Message>(cid)
@@ -303,13 +309,13 @@ public fun ChatClient.loadMessageById(
             val result = getMessage(messageId).await()
 
             if (result.isSuccess) {
-                val message = result.data()
+                val message = result.data() //Todo: I can use this message to mark the gap divisor
                 val (channelType, channelId) = cid.cidToTypeAndId()
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
-                    loadOlderMessages(newerMessagesOffset, messageId)
-                    loadNewerMessages(messageId, olderMessagesOffset)
+                    loadOlderMessages(newerMessagesOffset, messageId, false)
+                    loadNewerMessages(messageId, olderMessagesOffset, canCreateGap = canCreateGap)
                     upsertMessages(listOf(message))
                 }
                 result

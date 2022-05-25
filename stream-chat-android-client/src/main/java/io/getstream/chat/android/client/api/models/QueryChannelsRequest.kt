@@ -40,6 +40,7 @@ public data class QueryChannelsRequest(
     override var state: Boolean = true
     override var watch: Boolean = true
     override var presence: Boolean = false
+    override var canCreateGap: Boolean = false
 
     /**
      * List of sort specifications.

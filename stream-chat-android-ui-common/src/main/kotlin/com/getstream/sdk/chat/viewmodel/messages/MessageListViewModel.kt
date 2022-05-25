@@ -543,7 +543,8 @@ public class MessageListViewModel(
                         cid,
                         event.messageId,
                         DEFAULT_MESSAGES_LIMIT,
-                        DEFAULT_MESSAGES_LIMIT
+                        DEFAULT_MESSAGES_LIMIT,
+                        canCreateGap = true
                     ).enqueue { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()
@@ -688,7 +689,7 @@ public class MessageListViewModel(
     private fun onBottomEndRegionReached(baseMessageId: String) {
         if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
-            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
+            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT, canCreateGap = false)
                 .enqueue { result ->
                     messageListData?.loadingMoreChanged(false)
                 }
