@@ -105,8 +105,10 @@ public class QuerySort<T : Any> {
                         if (extraDataObject != null) {
                             append(", but fields were found in extraData.")
                         } else {
-                            append(" and nothing was found in the extra data")
+                            append(" and nothing was found in the extra data.")
                         }
+                        val jointMembers = this::class.memberProperties.joinToString { it.name }
+                        append(" Options were: $jointMembers")
                     }.let { string -> logger.d { string } }
                 }
         }
@@ -176,7 +178,7 @@ public class QuerySort<T : Any> {
                                 kProperty1.name
                             }
 
-                        "[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute. +" +
+                        "[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute. " +
                             "The field searched was: ${fieldName.snakeToLowerCamelCase()}. The fields available were: " +
                             "$jointProperties"
 
