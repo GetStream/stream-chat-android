@@ -18,25 +18,18 @@ package io.getstream.chat.android.uitests.snapshot.compose.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class ChannelAvatarTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class ChannelAvatarTest : ComposeScreenshotTest() {
 
     @Test
-    fun channelAvatarForChannelWithFiveMembers() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithFiveMembers() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1(),
@@ -51,8 +44,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithFourMembers() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithFourMembers() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1(),
@@ -66,8 +60,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithThreeMembers() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithThreeMembers() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1(),
@@ -80,8 +75,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithTwoMembers() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithTwoMembers() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1(),
@@ -93,8 +89,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithOneMember() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithOneMember() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1()
@@ -105,8 +102,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithFiveMembersWithoutImages() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithFiveMembersWithoutImages() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1().apply { user.image = "" },
@@ -121,8 +119,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithFourMembersWithoutImages() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithFourMembersWithoutImages() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1().apply { user.image = "" },
@@ -136,8 +135,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithThreeMembersWithoutImages() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithThreeMembersWithoutImages() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1().apply { user.image = "" },
@@ -150,8 +150,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithTwoMembersWithoutImages() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithTwoMembersWithoutImages() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1().apply { user.image = "" },
@@ -163,8 +164,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithOneMemberWithoutImage() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithOneMemberWithoutImage() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1().apply { user.image = "" },
@@ -175,8 +177,9 @@ class ChannelAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun channelAvatarForChannelWithoutCurrentUser() {
-        renderChannelAvatar(
+    fun channelAvatarForChannelWithoutCurrentUser() = runScreenshotTest {
+        ChannelAvatar(
+            modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
                     TestData.member1(),
@@ -185,21 +188,5 @@ class ChannelAvatarTest : ScreenshotTest {
             },
             currentUser = null,
         )
-    }
-
-    private fun renderChannelAvatar(
-        channel: Channel,
-        currentUser: User?,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                ChannelAvatar(
-                    modifier = Modifier.size(40.dp),
-                    channel = channel,
-                    currentUser = currentUser,
-                )
-            }
-        }
-        compareScreenshot(composeRule)
     }
 }

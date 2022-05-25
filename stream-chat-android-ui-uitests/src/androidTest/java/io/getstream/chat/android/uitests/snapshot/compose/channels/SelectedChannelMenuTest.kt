@@ -20,59 +20,33 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class SelectedChannelMenuTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class SelectedChannelMenuTest : ComposeScreenshotTest() {
 
     @Test
-    fun selectedChannelMenu() {
-        renderSelectedChannelMenu(
-            selectedChannel = TestData.channel1().apply {
-                members = listOf(
-                    TestData.member1(),
-                    TestData.member2(),
-                    TestData.member3(),
-                    TestData.member4(),
-                    TestData.member5(),
-                )
-                messages = listOf(TestData.message1())
-            },
-            isMuted = false,
-            currentUser = TestData.user1(),
-        )
-    }
-
-    private fun renderSelectedChannelMenu(
-        selectedChannel: Channel,
-        isMuted: Boolean,
-        currentUser: User,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    SelectedChannelMenu(
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                        selectedChannel = selectedChannel,
-                        isMuted = isMuted,
-                        currentUser = currentUser,
-                        onChannelOptionClick = {},
-                        onDismiss = {}
+    fun selectedChannelMenu() = runScreenshotTest {
+        Box(modifier = Modifier.fillMaxSize()) {
+            SelectedChannelMenu(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                selectedChannel = TestData.channel1().apply {
+                    members = listOf(
+                        TestData.member1(),
+                        TestData.member2(),
+                        TestData.member3(),
+                        TestData.member4(),
+                        TestData.member5(),
                     )
-                }
-            }
+                    messages = listOf(TestData.message1())
+                },
+                isMuted = false,
+                currentUser = TestData.user1(),
+                onChannelOptionClick = {},
+                onDismiss = {}
+            )
         }
-        compareScreenshot(composeRule.onRoot())
     }
 }
