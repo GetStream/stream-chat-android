@@ -43,11 +43,13 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
     }
 
     fun dispose() {
-        @OptIn(DelicateCoroutinesApi::class)
-        GlobalScope.launch(DispatcherProvider.Main) {
-            ProcessLifecycleOwner.get()
-                .lifecycle
-                .removeObserver(this@StreamLifecycleObserver)
+        if (isObserving) {
+            @OptIn(DelicateCoroutinesApi::class)
+            GlobalScope.launch(DispatcherProvider.Main) {
+                ProcessLifecycleOwner.get()
+                    .lifecycle
+                    .removeObserver(this@StreamLifecycleObserver)
+            }
         }
         isObserving = false
         recurringResumeEvent = false
