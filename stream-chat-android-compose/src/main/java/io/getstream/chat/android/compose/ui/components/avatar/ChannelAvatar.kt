@@ -71,7 +71,6 @@ public fun ChannelAvatar(
     when {
         /**
          * If the channel has an image we load that as a priority.
-         * If the channel has just one member (current user) we show our initials.
          */
         channel.image.isNotEmpty() -> {
             Avatar(
@@ -86,7 +85,7 @@ public fun ChannelAvatar(
         }
 
         /**
-         * If the channel has one member - direct message with yourself - we show your image or initials.
+         * If the channel has one member we show the member's image or initials.
          */
         memberCount == 1 -> {
             val user = members.first().user
@@ -103,9 +102,10 @@ public fun ChannelAvatar(
             )
         }
         /**
-         * If the channel has two members - direct message with another person - we show their image or initials.
+         * If the channel has two members and one of the is the current user - we show the other
+         * member's image or initials.
          */
-        memberCount == 2 -> {
+        memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
             val user = members.first { it.user.id != currentUser?.id }.user
 
             UserAvatar(
@@ -120,7 +120,7 @@ public fun ChannelAvatar(
             )
         }
         /**
-         * If the channel has more than two members - group - we load a matrix of their images or initials.
+         * If the channel has more than two members - we load a matrix of their images or initials.
          */
         else -> {
             val users = members.filter { it.user.id != currentUser?.id }.map { it.user }

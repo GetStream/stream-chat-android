@@ -57,8 +57,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the display of `ChannelAvatar` for a channel with two members and neither of them is the current user. [3598](https://github.com/GetStream/stream-chat-android/pull/3598)
 
 ### ⬆️ Improved
+- Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
 
