@@ -210,16 +210,16 @@ public interface QuotedAttachmentFactory {
 }
 ```
 
-The two methods that need to be implemented are similar to one from `AttachmentFactory`:
+The two methods that you need to implement are similar to the ones from `AttachmentFactory`:
 
 * `canHandle`: Checks whether the factory can handle the given attachments.
 * `generateQuotedAttachmentView`: Generates the view to render the attachment.
 
 Let's see how to create a `QuotedAttachmentFactory`.
 
-First we create the view that we are going to render for the attachment, call it `view_quoted_date_attachment`:
+First, create the view that you're going to render for the attachment and call it `view_quoted_date_attachment`:
 
-```XML
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -294,9 +294,9 @@ class QuotedDateAttachmentView(context: Context): FrameLayout(context) {
     }
 }
 ```
-As before we are fetching the custom data from `attachment.extraData["payload"]`. This time the year will not be shown if it is the current one and the month will be in a new line.
+As before, you fetch the custom data from `attachment.extraData["payload"]`. You format it so that you don't show the year if it's the current one, and you show the month in a new line.
 
-After we have the view we wish to render for our custom component our `QuotedAttachmentFactory` will look like this:
+Now that you've built the custom view for quoted content, for your custom attachments, the `QuotedAttachmentFactory` will look like this:
 
 ```kotlin
 class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
@@ -312,15 +312,15 @@ class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
 }
 ```
 
-To complete the quoted attachment feature and show it on UI you need to provide the `QuotedDateAttachmentFactory` via `ChatUI` alongside the `DefaultQuotedAttachmentFactory` to show the rest of the attachments:
+To complete the quoted attachment feature and show it in UI you need to provide the `QuotedDateAttachmentFactory` via `ChatUI` alongside the `DefaultQuotedAttachmentFactory` to show the rest of the attachments:
 
 ```kotlin
-        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
-            QuotedDateAttachmentFactory(),
-            DefaultQuotedAttachmentMessageFactory()
-        ))
+ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
+    QuotedDateAttachmentFactory(),
+    DefaultQuotedAttachmentMessageFactory()
+))
 ```
 
-Quoted message with date attachment should now be rendered inside the message list like on the screenshot below:
+Quoted messages with a date attachment should now be rendered inside the message list, like on the screenshot below:
 
 ![Rendering Custom Attachment](../../assets/quoted_attachment_final.png)
