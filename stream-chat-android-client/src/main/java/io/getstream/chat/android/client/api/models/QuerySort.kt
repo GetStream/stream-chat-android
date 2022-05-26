@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
 import io.getstream.chat.android.client.api.models.internal.CompositeComparator
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
+import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 import kotlin.jvm.internal.Reflection
@@ -118,7 +119,7 @@ public class QuerySort<T : Any> {
             .also { fieldSortAttribute ->
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
-            ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
+            ?: SortAttribute.FieldNameSortAttribute(fieldName)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -161,12 +162,15 @@ public class QuerySort<T : Any> {
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
             compare(
-                fieldSearcher.findComparable(o1, this),
-                fieldSearcher.findComparable(o2, this),
+                comparableFromExtraData(o1, this) ?: fieldSearcher.findComparable(o1, this),
+                comparableFromExtraData(o2, this) ?: fieldSearcher.findComparable(o2, this),
                 sortDirection
             )
         }
 
+    private fun comparableFromExtraData(any: Any, field: String): Comparable<Any>? {
+        return (any as? CustomObject)?.extraData?.get(field) as? Comparable<Any>
+    }
 
     /** Inner representation of sorting feature specification. */
     private sealed class SortAttribute<T> {
