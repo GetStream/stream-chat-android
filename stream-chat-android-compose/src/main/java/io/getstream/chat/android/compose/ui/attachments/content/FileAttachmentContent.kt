@@ -65,18 +65,27 @@ public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
 ) {
-    val (message, onLongItemClick) = attachmentState
+    val (message, onItemLongClick) = attachmentState
+    val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(
         modifier = modifier.combinedClickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
             onClick = {},
-            onLongClick = { onLongItemClick(message) }
+            onLongClick = { onItemLongClick(message) }
         )
     ) {
         for (attachment in message.attachments) {
-            FileAttachmentItem(attachment = attachment)
+            FileAttachmentItem(
+                attachment = attachment,
+                onClick = {
+                    previewHandlers
+                        .firstOrNull { it.canHandle(attachment) }
+                        ?.handleAttachmentPreview(attachment)
+                },
+                onLongClick = { onItemLongClick(message) }
+            )
         }
     }
 }
@@ -85,21 +94,29 @@ public fun FileAttachmentContent(
  * Represents each file item in the list of file attachments.
  *
  * @param attachment The file attachment to show.
+ * @param onLongClick Handler used when the item is long clicked.
+ * @param onClick Handler used when the item is clicked.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun FileAttachmentItem(attachment: Attachment) {
-    val previewHandlers = ChatTheme.attachmentPreviewHandlers
+public fun FileAttachmentItem(
+    attachment: Attachment,
+    onLongClick: () -> Unit = {},
+    onClick: () -> Unit = {},
+) {
 
     Surface(
         modifier = Modifier
             .padding(2.dp)
             .fillMaxWidth()
-            .clickable {
-                previewHandlers
-                    .firstOrNull { it.canHandle(attachment) }
-                    ?.handleAttachmentPreview(attachment)
-            },
-        color = ChatTheme.colors.appBackground, shape = ChatTheme.shapes.attachment
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        color = ChatTheme.colors.appBackground,
+        shape = ChatTheme.shapes.attachment
     ) {
         val context = LocalContext.current
 
