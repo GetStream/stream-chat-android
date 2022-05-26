@@ -97,6 +97,7 @@ public fun FileAttachmentContent(
  * @param onLongClick Handler used when the item is long clicked.
  * @param onClick Handler used when the item is clicked.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentItem(
