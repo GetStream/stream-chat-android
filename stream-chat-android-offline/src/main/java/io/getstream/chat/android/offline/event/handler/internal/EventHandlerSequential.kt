@@ -43,6 +43,8 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -78,15 +80,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.InputMismatchException
+import java.util.concurrent.atomic.AtomicReference
 
 private const val TAG = "Chat:EventHandlerS"
+private const val TAG_SOCKET = "Chat:SocketEvent"
 private const val EVENTS_BUFFER = 10
 
 internal class EventHandlerSequential(
@@ -103,6 +110,9 @@ internal class EventHandlerSequential(
     private val logger = StreamLog.getLogger(TAG)
     private val scope = scope + SupervisorJob()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
+    private val socketEventCollector = SocketEventCollector(scope) { pendingBatchEvent ->
+        handleBatchEvent(pendingBatchEvent)
+    }
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
     private var initJob: Job? = null
@@ -124,13 +134,15 @@ internal class EventHandlerSequential(
         logger.i { "[startListening] isDisposed: $isDisposed" }
         if (isDisposed) {
             scope.launch {
+                initJob?.join()
+                logger.v { "[startListening] initJob completed" }
                 socketEvents.collect { event ->
                     handleSocketEvent(event)
                 }
             }
             eventsDisposable = subscribeForEvents { event ->
                 scope.launch {
-                    initJob?.join()
+                    StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.type}" }
                     socketEvents.emit(event)
                 }
             }
@@ -167,7 +179,10 @@ internal class EventHandlerSequential(
     }
 
     private fun activeChannelsCid(): List<String> {
-        return logicRegistry.getActiveChannelsLogic().map { it.cid }
+        logger.v { "[activeChannelsCid] no args" }
+        return logicRegistry.getActiveChannelsLogic().map { it.cid }.also { cids ->
+            logger.v { "[activeChannelsCid] found: ${cids.size}" }
+        }
     }
 
     private suspend fun syncHistory(cids: List<String>): Result<List<ChatEvent>> {
@@ -185,17 +200,22 @@ internal class EventHandlerSequential(
     }
 
     @VisibleForTesting
-    override suspend fun handleEvent(event: ChatEvent) {
-        handleSocketEvent(event)
+    override suspend fun handleEvent(vararg event: ChatEvent) {
+        val batchEvent = BatchEvent(event.toList(), isFromHistorySync = false)
+        handleBatchEvent(batchEvent)
     }
 
     private suspend fun handleSocketEvent(event: ChatEvent) {
         logger.d { "[handleSocketEvent] event.type: '${event.type}', event: $event" }
+        if (socketEventCollector.add(event)) {
+            return
+        }
+        socketEventCollector.fireBatchEvent()
         val batchEvent = BatchEvent(listOf(event), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
-    private suspend fun handleBatchEvent(event: BatchEvent) {
+    private suspend fun handleBatchEvent(event: BatchEvent) = try {
         logger.d {
             "[handleBatchEvent] >>> id: ${event.hashCode()}, fromSocket: ${event.isFromSocketConnection}" +
                 ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.type }}'"
@@ -205,6 +225,8 @@ internal class EventHandlerSequential(
         updateOfflineStorage(event)
         updateChannelsState(event)
         logger.v { "[handleBatchEvent] <<< id: ${event.hashCode()}" }
+    } catch (e: Throwable) {
+        logger.e(e) { "[handleBatchEvent] failed(${event.hashCode()}): ${e.message}" }
     }
 
     private suspend fun updateSyncManager(batchEvent: BatchEvent) {
@@ -216,8 +238,8 @@ internal class EventHandlerSequential(
                         syncManager.connectionRecovered()
                     }
                     val activeChannelCids = activeChannelsCid()
+                    logger.v { "[updateSyncManager] activeChannelCids.size: ${activeChannelCids.size}" }
                     if (activeChannelCids.isNotEmpty()) {
-                        logger.i { "[updateSyncManager] trigger history sync" }
                         syncHistory(activeChannelCids)
                     }
                 }
@@ -640,18 +662,69 @@ internal class EventHandlerSequential(
         }
     }
 
-    private class BatchEvent(
-        val sortedEvents: List<ChatEvent>,
-        val isFromHistorySync: Boolean,
-    ) {
-        val size: Int get() = sortedEvents.size
-        val isFromSocketConnection get() = !isFromHistorySync
-    }
-
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {
             override val isDisposed: Boolean = true
             override fun dispose() {}
         }
+    }
+}
+
+private class BatchEvent(
+    val sortedEvents: List<ChatEvent>,
+    val isFromHistorySync: Boolean,
+) {
+    val size: Int get() = sortedEvents.size
+    val isFromSocketConnection get() = !isFromHistorySync
+}
+
+private class SocketEventCollector(
+    private val scope: CoroutineScope,
+    private val fireEvent: suspend (BatchEvent) -> Unit
+) {
+    private val mutex = Mutex()
+    private val postponed = arrayListOf<ChatEvent>()
+    private val timeoutJob = AtomicReference<Job>()
+
+    suspend fun add(event: ChatEvent): Boolean {
+        if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+            StreamLog.d(TAG) { "[add] event.type: ${event.type}" }
+            mutex.withLock {
+                return postponed.add(event).also {
+                    scheduleTimeout()
+                }
+            }
+        }
+        return false
+    }
+
+    private fun scheduleTimeout() {
+        timeoutJob.get()?.cancel()
+        timeoutJob.set(scope.launch {
+            delay(TIMEOUT)
+            StreamLog.i(TAG) { "[scheduleTimeout] timeout is triggered" }
+            fireBatchEvent()
+        })
+    }
+
+    suspend fun fireBatchEvent() {
+        StreamLog.d(TAG) { "[fireBatchEvent] no args" }
+        mutex.withLock {
+            if (postponed.isEmpty()) {
+                StreamLog.v(TAG) { "[fireBatchEvent] rejected (postponed is empty)" }
+                return
+            }
+            StreamLog.v(TAG) { "[fireBatchEvent] postponed.size: ${postponed.size}" }
+            val snapshot = postponed.toList()
+            postponed.clear()
+            fireEvent(
+                BatchEvent(snapshot, isFromHistorySync = false)
+            )
+        }
+    }
+
+    private companion object {
+        private const val TAG = "Chat:EventCollector"
+        private const val TIMEOUT = 300L
     }
 }

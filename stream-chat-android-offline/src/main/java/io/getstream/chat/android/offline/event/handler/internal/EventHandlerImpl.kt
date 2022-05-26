@@ -156,10 +156,11 @@ internal class EventHandlerImpl(
      * Handle events from the SDK. Don't use this directly as this only be called then new events arrive from the SDK.
      */
     @VisibleForTesting
-    override suspend fun handleEvent(event: ChatEvent) {
+    override suspend fun handleEvent(vararg event: ChatEvent) {
         logger.i { "[handleEvent] event: $event" }
-        handleConnectEvents(listOf(event))
-        handleEventsInternal(listOf(event), isFromSync = false)
+        val events = event.toList()
+        handleConnectEvents(events)
+        handleEventsInternal(events, isFromSync = false)
     }
 
     /**

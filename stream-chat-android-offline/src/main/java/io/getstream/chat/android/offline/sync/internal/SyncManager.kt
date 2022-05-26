@@ -69,7 +69,7 @@ internal class SyncManager(
 ) {
 
     private val entitiesRetryMutex = Mutex()
-    private var logger = ChatLogger.get("SyncManager")
+    private val logger = ChatLogger.get("SyncManager")
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
 
@@ -88,7 +88,7 @@ internal class SyncManager(
      * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
      */
     internal suspend fun connectionRecovered() {
-        logger.logD("[connectionRecovered] firstConnect $firstConnect")
+        logger.logD("[connectionRecovered] firstConnect: $firstConnect")
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
@@ -96,6 +96,7 @@ internal class SyncManager(
             // the second time (ie coming from background, or reconnecting we should recover all)
             connectionRecovered(true)
         }
+        logger.logV("[connectionRecovered] completed")
     }
 
     /**
@@ -183,7 +184,7 @@ internal class SyncManager(
      * This method needs to be refactored. It's too long.
      */
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        logger.logD("[connectionRecovered] recoverAll $recoverAll")
+        logger.logD("[connectionRecovered] recoverAll: $recoverAll")
         // 0. ensure load is complete
         val online = globalState.isOnline()
 

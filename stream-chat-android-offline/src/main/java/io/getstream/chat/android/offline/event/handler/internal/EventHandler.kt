@@ -15,5 +15,5 @@ internal interface EventHandler {
     suspend fun replayEventsForActiveChannels()
 
     @VisibleForTesting
-    suspend fun handleEvent(event: ChatEvent)
+    suspend fun handleEvent(vararg event: ChatEvent)
 }
