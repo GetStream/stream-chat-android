@@ -31,6 +31,7 @@
 - Added logs of all properties available in a class and which one was searched for then QuerySort fails to find a field. [3597](https://github.com/GetStream/stream-chat-android/pull/3597)
 
 ### ✅ Added
+- Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
 
 ### ⚠️ Changed
 
