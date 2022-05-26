@@ -37,6 +37,7 @@ public class QuerySort<T : Any> {
     private val logger = StreamLog.getLogger("QuerySort")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
+    private val fieldSearcher: FieldSearcher = FieldSearcher()
 
     @InternalStreamChatApi
     /** Composite comparator based on sort attributes. */
@@ -47,12 +48,12 @@ public class QuerySort<T : Any> {
         get() {
             return when (this.sortAttribute) {
                 is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
-                    .also { comparator ->
+                    .also {
                         logger.d { "Returning field sort with name: ${sortAttribute.field.name}" }
                     }
 
                 is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
-                    .also { comparator ->
+                    .also {
                         logger.d { "Returning field name sort comparator with name: ${sortAttribute.name}" }
                     }
             }
@@ -91,29 +92,26 @@ public class QuerySort<T : Any> {
     }
 
     private fun Any.getMemberPropertyOrExtra(name: String): Any? =
-        name.snakeToLowerCamelCase().let { fieldName ->
-            this::class.memberProperties
-                .firstOrNull { it.name == fieldName }
-                ?.also {
-                    logger.d { "Could find a member for property: $fieldName" }
-                }
-                ?.getter
-                ?.call(this)
-                ?: (this as? CustomObject)?.extraData?.get(name).also { extraDataObject ->
-                    buildString {
-                        append("Could not find a member for property named: $name")
+        fieldSearcher.findMemberProperty(name, this::class)
+            ?.also {
+                logger.d { "Could find a member for property: $name" }
+            }
+            ?.getter
+            ?.call(this)
+            ?: (this as? CustomObject)?.extraData?.get(name).also { extraDataObject ->
+                buildString {
+                    append("Could not find a member for property named: $name")
 
-                        if (extraDataObject != null) {
-                            append(", but fields were found in extraData.")
-                        } else {
-                            append(" and nothing was found in the extra data.")
-                        }
+                    if (extraDataObject != null) {
+                        append(", but fields were found in extraData.")
+                    } else {
+                        append(" and nothing was found in the extra data.")
+                    }
 
-                        val jointMembers = this::class.memberProperties.joinToString { it.name }
-                        append(" Options were: $jointMembers")
-                    }.let { string -> logger.d { string } }
-                }
-        }
+                    val jointMembers = this::class.memberProperties.joinToString { it.name }
+                    append(" Options were: $jointMembers")
+                }.let { string -> logger.d { string } }
+            }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
         sortSpecifications = sortSpecifications + sortSpecification
@@ -166,8 +164,7 @@ public class QuerySort<T : Any> {
     }
 
     private fun getSortFeature(fieldName: String, kClass: KClass<T>): SortAttribute<T> {
-        return kClass.members.filterIsInstance<KProperty1<T, Comparable<*>?>>()
-            .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }
+        return fieldSearcher.findProperty(fieldName, kClass)
             ?.let { FieldSortAttribute(it, fieldName) }
             .also { fieldSortAttribute ->
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
