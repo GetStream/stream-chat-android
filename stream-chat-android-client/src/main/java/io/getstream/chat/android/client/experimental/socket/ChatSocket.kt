@@ -75,8 +75,6 @@ internal open class ChatSocket constructor(
 
     private var connectionEventReceived = false
 
-    private var latestUnhandledLifecycleEvent: Event.Lifecycle? = null
-
     init {
         (lifecycleObservers + connectLifecyclePublisher).combine()
             .onEach {
@@ -137,9 +135,10 @@ internal open class ChatSocket constructor(
                     State.Connected(event = null, webSocket = webSocket)
                 }
                 onEvent<Event.WebSocket.Terminate> {
-                    // We do transition to Disconnected state here because the connection can be reconnected with health callback.
+                    // We do transition to Disconnected state here because the connection can be
+                    // reconnected with health callback.
                     State.Disconnected(DisconnectCause.Error(null))
-                    // TODO: Improve retry logic independent of HealthMonitor.
+                    // TODO Improve retry logic independent of HealthMonitor.
                 }
             }
 
@@ -168,9 +167,10 @@ internal open class ChatSocket constructor(
                     State.Destroyed
                 }
                 onEvent<Event.WebSocket.Terminate> {
-                    // We do transition to Disconnected state here because the connection can be reconnected with health callback.
+                    // We do transition to Disconnected state here because the connection can be
+                    // reconnected with health callback.
                     State.Disconnected(DisconnectCause.Error(null))
-                    // TODO: Improve retry logic independent of HealthMonitor.
+                    // TODO Improve retry logic independent of HealthMonitor.
                 }
             }
 
@@ -184,11 +184,6 @@ internal open class ChatSocket constructor(
                 onEnter { disposeObservers() }
             }
         }
-    }
-
-    private fun handlePendingEvent() {
-        latestUnhandledLifecycleEvent?.let { stateMachine.sendEvent(it) }
-        latestUnhandledLifecycleEvent = null
     }
 
     internal val state
@@ -301,8 +296,7 @@ internal open class ChatSocket constructor(
 
     /**
      * Attempt to send [event] to the web socket connection.
-     * This method returns true only if socket is connected and [okhttp3.WebSocket.send] returns true. In all other cases,
-     * it returns false.
+     * Returns true only if socket is connected and [okhttp3.WebSocket.send] returns true, otherwise false
      *
      * @see [okhttp3.WebSocket.send]
      */
@@ -318,6 +312,7 @@ internal open class ChatSocket constructor(
         connect(connectionConf.asReconnectionConf())
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun handleEvent(event: Event.WebSocket) {
         if (event is Event.WebSocket.OnMessageReceived) {
             val text = event.message

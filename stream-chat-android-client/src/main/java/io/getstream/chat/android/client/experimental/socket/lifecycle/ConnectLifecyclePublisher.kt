@@ -36,9 +36,11 @@ internal class ConnectLifecyclePublisher : LifecyclePublisher {
     }
 
     override fun observe() {
+        // no-op
     }
 
     override fun dispose() {
+        // no-op
     }
 
     fun onConnect() {
@@ -49,10 +51,7 @@ internal class ConnectLifecyclePublisher : LifecyclePublisher {
         _lifecycleEvents.tryEmit(
             Timed(
                 Event.Lifecycle.Stopped.WithReason(
-                    shutdownReason = ShutdownReason(
-                        1000,
-                        "Disconnected by request"
-                    ),
+                    shutdownReason = ShutdownReason.GRACEFUL.copy(reason = "Disconnected by request"),
                     cause = cause ?: DisconnectCause.ConnectionReleased
                 ),
                 System.currentTimeMillis()

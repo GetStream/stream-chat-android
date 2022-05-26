@@ -35,7 +35,7 @@ internal interface LifecyclePublisher {
 
 internal fun List<LifecyclePublisher>.combine(): Flow<Event.Lifecycle> {
     return combine(this.map { it.lifecycleEvents }) {
-        listOf(*it).combineLifecycleEvents()
+        it.toList().combineLifecycleEvents()
     }
         .distinctUntilChanged { old, new -> old == new || (old.isStopped() && new.isStopped()) }
         .onEach {

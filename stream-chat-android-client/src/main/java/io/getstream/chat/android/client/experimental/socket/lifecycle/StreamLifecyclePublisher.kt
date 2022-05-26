@@ -74,10 +74,7 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
         _lifecycleEvents.tryEmit(
             Timed(
                 Event.Lifecycle.Stopped.WithReason(
-                    shutdownReason = ShutdownReason(
-                        1000,
-                        "App is paused"
-                    ),
+                    shutdownReason = ShutdownReason.GRACEFUL.copy(reason = "App is paused"),
                     cause = DisconnectCause.ConnectionReleased
                 ),
                 System.currentTimeMillis()
