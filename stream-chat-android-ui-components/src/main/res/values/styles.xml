@@ -353,7 +353,7 @@
         <item name="streamUiMessageTextStyleThreadSeparator">normal</item>
 
         <!-- Message Reply background color -->
-        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_bars_background</item>
+        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
         <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_bars_background</item>
 
         <!-- Message Reply text style mine -->

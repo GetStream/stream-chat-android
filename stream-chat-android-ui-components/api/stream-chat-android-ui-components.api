@@ -17,6 +17,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
+	public final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
@@ -29,6 +30,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
+	public final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 }
@@ -77,6 +79,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getDefaultQuotedAttachmentViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getEditReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getFileAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -98,6 +101,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setDefaultQuotedAttachmentViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setEditReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setFileAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -1457,6 +1461,15 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
+public final class io/getstream/chat/android/ui/message/list/DefaultQuotedAttachmentViewStyle {
+	public fun <init> (IIIII)V
+	public final fun getFileAttachmentHeight ()I
+	public final fun getFileAttachmentWidth ()I
+	public final fun getImageAttachmentHeight ()I
+	public final fun getImageAttachmentWidth ()I
+	public final fun getQuotedImageRadius ()I
+}
+
 public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
 }
 
@@ -2160,6 +2173,12 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/DefaultQuotedAttachmentMessageFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
 public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
 	public fun <init> (Landroid/view/View;)V
 	public final fun getContext ()Landroid/content/Context;
@@ -2168,6 +2187,19 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/viewhold
 	public fun onUnbindViewHolder ()V
 	public fun onViewAttachedToWindow ()V
 	public fun onViewDetachedFromWindow ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public abstract fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun createAndAddQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
