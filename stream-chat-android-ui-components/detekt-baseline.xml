@@ -1,19 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
-
-    Licensed under the Stream License;
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
@@ -26,6 +11,7 @@
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
     <ID>ComplexMethod:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$ public open fun createViewHolder( parentView: ViewGroup, viewType: Int, ): BaseMessageItemViewHolder&lt;out MessageListItem></ID>
     <ID>ComplexMethod:MessageOptionsView.kt$MessageOptionsView$internal fun configure( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
+    <ID>ComplexMethod:MessageReplyView.kt$MessageReplyView$ private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?)</ID>
     <ID>EmptyFunctionBlock:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener${}</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
@@ -163,6 +149,7 @@
     <ID>MaxLineLength:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener$internal</ID>
     <ID>MaxLineLength:SuggestionListViewStyle.kt$SuggestionListViewStyle$*</ID>
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
+    <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer&lt;DefaultQuotedAttachmentViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>

@@ -102,11 +102,15 @@ public class QuerySort<T : Any> {
                 ?: (this as? CustomObject)?.extraData?.get(name).also { extraDataObject ->
                     buildString {
                         append("Could not find a member for property named: $name")
+
                         if (extraDataObject != null) {
-                            append(", but a fields was found in extraData.")
+                            append(", but fields were found in extraData.")
                         } else {
-                            append("and nothing was found in the extra data")
+                            append(" and nothing was found in the extra data.")
                         }
+
+                        val jointMembers = this::class.memberProperties.joinToString { it.name }
+                        append(" Options were: $jointMembers")
                     }.let { string -> logger.d { string } }
                 }
         }
@@ -171,7 +175,15 @@ public class QuerySort<T : Any> {
             ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
                 .also { fieldNameSortAttribute ->
                     logger.d {
-                        "[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute"
+                        val jointProperties = kClass.members.filterIsInstance<KProperty1<T, Comparable<*>?>>()
+                            .joinToString { kProperty1 ->
+                                kProperty1.name
+                            }
+
+                        "[getSortFeature] A field to sort was NOT found. " +
+                            "Using field by name: $fieldNameSortAttribute. " +
+                            "The field searched was: ${fieldName.snakeToLowerCamelCase()}. " +
+                            "The fields available were: $jointProperties"
                     }
                 }
     }

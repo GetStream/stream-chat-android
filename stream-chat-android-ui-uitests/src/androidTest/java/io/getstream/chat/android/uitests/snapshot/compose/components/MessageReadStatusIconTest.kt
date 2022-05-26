@@ -16,59 +16,36 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-@OptIn(InternalStreamChatApi::class)
-class MessageReadStatusIconTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class MessageReadStatusIconTest : ComposeScreenshotTest() {
 
     @Test
-    fun messageReadStatusIconForSeenMessage() {
-        renderMessageReadStatusIcon(
+    fun messageReadStatusIconForSeenMessage() = runScreenshotTest {
+        MessageReadStatusIcon(
             message = TestData.message1(),
             isMessageRead = true,
         )
     }
 
     @Test
-    fun messageReadStatusIconForSentMessage() {
-        renderMessageReadStatusIcon(
+    fun messageReadStatusIconForSentMessage() = runScreenshotTest {
+        MessageReadStatusIcon(
             message = TestData.message1().apply { syncStatus = SyncStatus.COMPLETED },
             isMessageRead = false,
         )
     }
 
     @Test
-    fun messageReadStatusIconForSyncNeededMessage() {
-        renderMessageReadStatusIcon(
+    fun messageReadStatusIconForSyncNeededMessage() = runScreenshotTest {
+
+        MessageReadStatusIcon(
             message = TestData.message1().apply { syncStatus = SyncStatus.SYNC_NEEDED },
             isMessageRead = false,
         )
-    }
-
-    private fun renderMessageReadStatusIcon(
-        message: Message,
-        isMessageRead: Boolean,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                MessageReadStatusIcon(
-                    message = message,
-                    isMessageRead = isMessageRead
-                )
-            }
-        }
-        compareScreenshot(composeRule)
     }
 }

@@ -16,24 +16,17 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.channels
 
-import androidx.compose.ui.test.junit4.createComposeRule
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class ChannelListHeaderTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class ChannelListHeaderTest : ComposeScreenshotTest() {
 
     @Test
-    fun channelListHeaderForConnectedState() {
-        renderChannelListHeader(
+    fun channelListHeaderForConnectedState() = runScreenshotTest {
+        ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
             connectionState = ConnectionState.CONNECTED,
@@ -41,8 +34,8 @@ class ChannelListHeaderTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListHeaderForConnectingState() {
-        renderChannelListHeader(
+    fun channelListHeaderForConnectingState() = runScreenshotTest {
+        ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
             connectionState = ConnectionState.CONNECTING,
@@ -50,8 +43,8 @@ class ChannelListHeaderTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListHeaderForOfflineState() {
-        renderChannelListHeader(
+    fun channelListHeaderForOfflineState() = runScreenshotTest {
+        ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
             connectionState = ConnectionState.OFFLINE,
@@ -59,8 +52,8 @@ class ChannelListHeaderTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListHeaderWithoutUser() {
-        renderChannelListHeader(
+    fun channelListHeaderWithoutUser() = runScreenshotTest {
+        ChannelListHeader(
             title = "Stream Chat",
             currentUser = null,
             connectionState = ConnectionState.CONNECTED,
@@ -68,28 +61,11 @@ class ChannelListHeaderTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListHeaderWithoutTitle() {
-        renderChannelListHeader(
+    fun channelListHeaderWithoutTitle() = runScreenshotTest {
+        ChannelListHeader(
             title = "",
             currentUser = TestData.user1(),
             connectionState = ConnectionState.CONNECTED,
         )
-    }
-
-    private fun renderChannelListHeader(
-        title: String,
-        currentUser: User?,
-        connectionState: ConnectionState,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                ChannelListHeader(
-                    title = title,
-                    currentUser = currentUser,
-                    connectionState = connectionState
-                )
-            }
-        }
-        compareScreenshot(composeRule)
     }
 }
