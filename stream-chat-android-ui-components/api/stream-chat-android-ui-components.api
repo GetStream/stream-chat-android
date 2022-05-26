@@ -2199,7 +2199,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public fun <init> (Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public final fun createQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
+	public final fun createAndAddQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {

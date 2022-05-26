@@ -176,7 +176,7 @@ internal class MessageReplyView : FrameLayout {
     private fun setAttachmentImage(message: Message) {
         if (ChatUI.quotedAttachmentFactoryManager.canHandle(message)) {
             binding.attachmentContainer.isVisible = true
-            ChatUI.quotedAttachmentFactoryManager.createQuotedView(message, binding.attachmentContainer)
+            ChatUI.quotedAttachmentFactoryManager.createAndAddQuotedView(message, binding.attachmentContainer)
         } else {
             binding.attachmentContainer.isVisible = false
         }

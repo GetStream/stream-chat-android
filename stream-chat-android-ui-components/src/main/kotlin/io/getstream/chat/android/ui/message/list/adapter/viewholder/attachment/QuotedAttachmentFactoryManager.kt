@@ -39,13 +39,12 @@ public class QuotedAttachmentFactoryManager(
     }
 
     /**
-     * Create a view for the quoted attachments.
+     * Create and add a view for the quoted attachments.
      *
      * @param message The message containing attachments that we are going to render.
      * @param parent The parent View where the attachment content view is supposed to be placed.
-     * @return A quoted attachment view to be placed inside the quoted message.
      */
-    public fun createQuotedView(
+    public fun createAndAddQuotedView(
         message: Message,
         parent: ViewGroup,
     ) {
@@ -57,6 +56,5 @@ public class QuotedAttachmentFactoryManager(
 
         parent.removeAllViews()
         parent.addView(view)
-        parent.invalidate()
     }
 }
