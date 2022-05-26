@@ -160,7 +160,11 @@ public fun MessageItem(
                     onThreadClick(message)
                 }
             },
-            onLongClick = { onLongItemClick(message) }
+            onLongClick = {
+                if (!message.isUploading()) {
+                    onLongItemClick(message)
+                }
+            }
         )
     }
 
@@ -226,10 +230,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .align(Alignment.Bottom)
 
     if (!messageItem.isMine && (
-        messageItem.shouldShowFooter ||
-            messageItem.groupPosition == Bottom ||
-            messageItem.groupPosition == None
-        )
+            messageItem.shouldShowFooter ||
+                messageItem.groupPosition == Bottom ||
+                messageItem.groupPosition == None
+            )
     ) {
         UserAvatar(
             modifier = modifier,
