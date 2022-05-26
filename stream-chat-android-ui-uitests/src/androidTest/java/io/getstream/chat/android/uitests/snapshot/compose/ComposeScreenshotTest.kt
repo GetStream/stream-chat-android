@@ -16,21 +16,37 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose
 
+import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
-import coil.ImageLoader
+import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uitests.util.FakeImageLoader
+import org.junit.Rule
 
 /**
- * A wrapper for [ChatTheme] that provides a fake Coil [ImageLoader].
+ * A base class used for all the Compose snapshot tests.
  */
-@Composable
-fun TestChatTheme(content: @Composable () -> Unit) {
-    val context = InstrumentationRegistry.getInstrumentation().targetContext
+abstract class ComposeScreenshotTest : ScreenshotTest {
 
-    ChatTheme(
-        imageLoaderFactory = { FakeImageLoader(context) },
-        content = content
-    )
+    private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @get:Rule
+    val composeRule = createComposeRule()
+
+    /**
+     * Renders a Composable [content] and records or verifies the screenshot.
+     *
+     * @param content The composable content that will be rendered.
+     */
+    fun runScreenshotTest(content: @Composable () -> Unit) {
+        composeRule.setContent {
+            ChatTheme(
+                imageLoaderFactory = { FakeImageLoader(context) },
+                content = content
+            )
+        }
+        compareScreenshot(composeRule)
+    }
 }
