@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.extensions.internal.getAvatarPosition
 
 /**
  * Default max number of avatars shown in the grid.
@@ -83,7 +84,8 @@ public fun GroupAvatar(
                         user = avatarUsers[imageIndex],
                         shape = RectangleShape,
                         textStyle = textStyle,
-                        showOnlineIndicator = false
+                        showOnlineIndicator = false,
+                        initialsAvatarOffset = imageIndex.getAvatarPosition(imageCount)
                     )
                 }
             }
@@ -103,7 +105,8 @@ public fun GroupAvatar(
                         user = avatarUsers[imageIndex],
                         shape = RectangleShape,
                         textStyle = textStyle,
-                        showOnlineIndicator = false
+                        showOnlineIndicator = false,
+                        initialsAvatarOffset = imageIndex.getAvatarPosition(imageCount)
                     )
                 }
             }

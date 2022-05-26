@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param contentDescription The content description of the avatar.
  * @param showOnlineIndicator If we show online indicator or not.
  * @param onlineIndicatorAlignment The alignment of online indicator.
+ * @param initialsAvatarOffset The [InitialsAvatarOffset] of the avatar inside a group to apply offset.
  * @param onlineIndicator Custom composable that allows to replace the default online indicator.
  * @param onClick The handler when the user clicks on the avatar.
  */
@@ -57,6 +58,7 @@ public fun UserAvatar(
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    initialsAvatarOffset: InitialsAvatarOffset = InitialsAvatarOffset.Center,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
         DefaultOnlineIndicator(onlineIndicatorAlignment)
     },
@@ -70,7 +72,8 @@ public fun UserAvatar(
             textStyle = textStyle,
             shape = shape,
             contentDescription = contentDescription,
-            onClick = onClick
+            onClick = onClick,
+            initialsAvatarOffset = initialsAvatarOffset
         )
 
         if (showOnlineIndicator && user.online) {

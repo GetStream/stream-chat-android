@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import io.getstream.chat.android.compose.ui.util.initialsGradient
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param textStyle The [TextStyle] that will be used for the initials.
+ * @param avatarOffset The offset for the [InitialsAvatar] depending on the avatar position.
  * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
@@ -49,6 +51,7 @@ public fun InitialsAvatar(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    avatarOffset: InitialsAvatarOffset = InitialsAvatarOffset.Center,
     onClick: (() -> Unit)? = null,
 ) {
     val clickableModifier: Modifier = if (onClick != null) {
@@ -69,7 +72,9 @@ public fun InitialsAvatar(
             .background(brush = initialsGradient)
     ) {
         Text(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(avatarOffset.initialsOffset().x, avatarOffset.initialsOffset().y),
             text = initials,
             style = textStyle,
             color = Color.White
