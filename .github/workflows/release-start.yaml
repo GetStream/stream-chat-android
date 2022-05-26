@@ -55,5 +55,6 @@ jobs:
           bodyFile: "CHANGELOG_PARSED.md"
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
+          commit: develop
 
 

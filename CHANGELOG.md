@@ -25,6 +25,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added logs of all properties available in a class and which one was searched for then QuerySort fails to find a field. [3597](https://github.com/GetStream/stream-chat-android/pull/3597)
 
 ### ✅ Added
 
@@ -56,6 +57,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the display of `ChannelAvatar` for a channel with two members and neither of them is the current user. [3598](https://github.com/GetStream/stream-chat-android/pull/3598)
 
 ### ⬆️ Improved
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
