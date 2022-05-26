@@ -37,9 +37,12 @@ import io.getstream.chat.android.offline.repository.builder.internal.RepositoryF
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
@@ -68,6 +71,12 @@ internal class EventHandlerImplTest {
     private lateinit var syncManager: SyncManager
     private lateinit var user: User
 
+    @BeforeAll
+    fun beforeAll() {
+        StreamLog.setValidator { _, _ -> true }
+        StreamLog.setLogger(KotlinStreamLogger())
+    }
+
     @BeforeEach
     fun setUp() {
         chatClient = mock()
@@ -84,7 +93,7 @@ internal class EventHandlerImplTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `when connected event arrives, user should be updated and state should be propagated`(
-        type: EventHandlerType
+        type: EventHandlerType,
     ) = runTest {
         val eventHandler = buildEventHandler(type)
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
@@ -106,7 +115,7 @@ internal class EventHandlerImplTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `when disconnected event arrives, state should be propagated`(
-        type: EventHandlerType
+        type: EventHandlerType,
     ) = runTest {
         val eventHandler = buildEventHandler(type)
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
@@ -133,7 +142,7 @@ internal class EventHandlerImplTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `when connecting event arrives, state should be propagated`(
-        type: EventHandlerType
+        type: EventHandlerType,
     ) = runTest {
         val eventHandler = buildEventHandler(type)
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
@@ -152,7 +161,7 @@ internal class EventHandlerImplTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `when a health check event happens, a request to retry failed entities should happen`(
-        type: EventHandlerType
+        type: EventHandlerType,
     ) = runTest {
         val eventHandler = buildEventHandler(type)
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
@@ -180,6 +189,7 @@ internal class EventHandlerImplTest {
                 mutableGlobalState = globalState,
                 repos = repositoryFacade,
                 syncManager = syncManager,
+                currentUserId = user.id
             )
             EventHandlerType.DEFAULT -> EventHandlerImpl(
                 scope = testCoroutines.scope,

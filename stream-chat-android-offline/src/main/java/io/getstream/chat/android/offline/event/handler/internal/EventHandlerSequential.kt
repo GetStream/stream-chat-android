@@ -127,6 +127,30 @@ internal class EventHandlerSequential(
     private val syncManager: SyncManager,
 ) : EventHandler {
 
+    @VisibleForTesting
+    constructor(
+        scope: CoroutineScope,
+        recoveryEnabled: Boolean,
+        subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
+        logicRegistry: LogicRegistry,
+        stateRegistry: StateRegistry,
+        mutableGlobalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        syncManager: SyncManager,
+        currentUserId: UserId
+    ) : this(
+        scope = scope,
+        recoveryEnabled = recoveryEnabled,
+        subscribeForEvents = subscribeForEvents,
+        logicRegistry = logicRegistry,
+        stateRegistry = stateRegistry,
+        mutableGlobalState = mutableGlobalState,
+        repos = repos,
+        syncManager = syncManager
+    ) {
+        this.currentUserId.set(currentUserId)
+    }
+
     private val logger = StreamLog.getLogger(TAG)
     private val scope = scope + SupervisorJob()
     private val currentUserId = AtomicReference<UserId>()
@@ -142,9 +166,13 @@ internal class EventHandlerSequential(
         logger.i { "[initialize] currentUser: $currentUser" }
         currentUserId.set(currentUser.id)
         initJob = scope.launch {
-            syncManager.updateAllReadStateForDate(currentUser.id, Date())
-            syncManager.loadSyncStateForUser(currentUser.id)
-            syncHistoryForCachedChannels()
+            try {
+                syncManager.updateAllReadStateForDate(currentUser.id, Date())
+                syncManager.loadSyncStateForUser(currentUser.id)
+                syncHistoryForCachedChannels()
+            } catch (e: Throwable) {
+                logger.e(e) { "[initialize] failed: $e" }
+            }
         }
     }
 
