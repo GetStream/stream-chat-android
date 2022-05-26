@@ -24,6 +24,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -97,7 +98,6 @@ public fun FileAttachmentContent(
  * @param onLongClick Handler used when the item is long clicked.
  * @param onClick Handler used when the item is clicked.
  */
-@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentItem(
@@ -119,8 +119,6 @@ public fun FileAttachmentItem(
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment
     ) {
-        val context = LocalContext.current
-
         Row(
             Modifier
                 .fillMaxWidth()
@@ -129,48 +127,69 @@ public fun FileAttachmentItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             FileAttachmentImage(attachment = attachment)
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .padding(start = 16.dp, end = 8.dp),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = attachment.title ?: attachment.name ?: "",
-                    style = ChatTheme.typography.bodyBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis
-                )
-
-                Text(
-                    text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis
-                )
-            }
-
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.Top)
-                    .padding(end = 2.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false)
-                    ) {
-                        ChatClient
-                            .instance()
-                            .downloadAttachment(context, attachment)
-                            .enqueue()
-                    },
-                painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
-                contentDescription = stringResource(id = R.string.stream_compose_download),
-                tint = ChatTheme.colors.textHighEmphasis
-            )
+            FileAttachmentDescription(attachment = attachment)
+            DownloadIcon(attachment = attachment)
         }
     }
+}
+
+/**
+ *  Displays information about the attachment such as
+ *  the attachment title and its size in bytes.
+ *
+ *  @param attachment The attachment for which the information is displayed.
+ */
+@Composable
+private fun FileAttachmentDescription(attachment: Attachment) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(0.85f)
+            .padding(start = 16.dp, end = 8.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = attachment.title ?: attachment.name ?: "",
+            style = ChatTheme.typography.bodyBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textHighEmphasis
+        )
+
+        Text(
+            text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis
+        )
+    }
+}
+
+/**
+ * Downloads the given attachment when clicked.
+ *
+ * @param attachment The attachment to download.
+ */
+@Composable
+private fun RowScope.DownloadIcon(attachment: Attachment) {
+    val context = LocalContext.current
+
+    Icon(
+        modifier = Modifier
+            .align(Alignment.Top)
+            .padding(end = 2.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(bounded = false)
+            ) {
+                ChatClient
+                    .instance()
+                    .downloadAttachment(context, attachment)
+                    .enqueue()
+            },
+        painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+        contentDescription = stringResource(id = R.string.stream_compose_download),
+        tint = ChatTheme.colors.textHighEmphasis
+    )
 }
 
 /**
