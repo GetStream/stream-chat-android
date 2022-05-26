@@ -64,6 +64,7 @@
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
+- Added `onClick` and `onLongClick` handlers to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
 
 ### ⚠️ Changed
 
