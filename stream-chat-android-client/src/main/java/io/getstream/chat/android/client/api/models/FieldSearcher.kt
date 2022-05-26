@@ -20,11 +20,10 @@ import io.getstream.chat.android.client.extensions.lowerCamelCaseToGetter
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 
 internal class FieldSearcher {
 
-    internal fun <T : Any> findProperty(
+    internal fun <T : Any> findComparableMemberProperty(
         fieldName: String,
         kClass: KClass<T>,
     ): KProperty1<T, Comparable<*>?>? {
@@ -37,13 +36,16 @@ internal class FieldSearcher {
         }
     }
 
-    internal fun <T : Any> findMemberProperty(
+    internal fun findComparable(
+        any: Any,
         fieldName: String,
-        kClass: KClass<T>,
-    ): KProperty1<T, Comparable<*>?>? {
-        val members = kClass.memberProperties.filterIsInstance<KProperty1<T, Comparable<*>?>>()
+    ): Comparable<Any>? {
+        val members = any::class.members
         val camelCaseName = fieldName.snakeToLowerCamelCase()
+        val getField = camelCaseName.lowerCamelCaseToGetter()
 
-        return members.firstOrNull { property -> property.name == camelCaseName }
+        return members.firstOrNull { property ->
+            property.name == camelCaseName || property.name == getField
+        }?.call(any) as? Comparable<Any>
     }
 }
