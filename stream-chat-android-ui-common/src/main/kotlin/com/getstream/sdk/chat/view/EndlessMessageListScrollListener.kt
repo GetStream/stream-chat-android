@@ -19,8 +19,10 @@ package com.getstream.sdk.chat.view
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Date
 
 private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 30
+private const val DEFAULT_TIGGER_DELAY = 700L
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -34,11 +36,14 @@ public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
     private inline val loadMoreAtBottomListener: () -> Unit,
+    private val triggerDelay: Long = DEFAULT_TIGGER_DELAY,
 ) : RecyclerView.OnScrollListener() {
 
     init {
         require(loadMoreThreshold >= 0) { "Load more threshold must not be negative" }
     }
+
+    private var lastRequest: Long = 0
 
     /**
      * Helper flag which marks the state if we should disable pagination.
@@ -76,13 +81,19 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 && shouldFetchBottomMessages && firstMessageBellowGapPosition != null-> {
+            dy >= 0 && shouldFetchBottomMessages && firstMessageBellowGapPosition != null -> {
                 handleScrollDown(layoutManager, recyclerView, firstMessageBellowGapPosition!!)
             }
 
             dy < 0 -> {
                 handleScrollUp(layoutManager, recyclerView)
             }
+        }
+    }
+
+    private fun canRequestNow(): Boolean {
+        return (Date().time - lastRequest  > triggerDelay).also { result ->
+            Log.d("EndlessScroll", "canRequestNow result: $result. time since last call: ${Date().time - lastRequest}")
         }
     }
 
@@ -108,7 +119,8 @@ public class EndlessMessageListScrollListener(
         ) {
             scrollStateReset = false
             recyclerView.post {
-                if (paginationEnabled) {
+                if (paginationEnabled && canRequestNow()) {
+                    lastRequest = Date().time
                     loadMoreAtBottomListener()
                 }
             }
