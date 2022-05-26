@@ -1,3 +1,118 @@
+# UNRELEASED CHANGELOG
+## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+- Added logs of all properties available in a class and which one was searched for then QuerySort fails to find a field. [3597](https://github.com/GetStream/stream-chat-android/pull/3597)
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed the display of `ChannelAvatar` for a channel with two members and neither of them is the current user. [3598](https://github.com/GetStream/stream-chat-android/pull/3598)
+
+### ⬆️ Improved
+- Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+- Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-xiaomi
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 # May 25th, 2022 - 5.3.0
 ## stream-chat-android-client
 ### 🐞 Fixed
