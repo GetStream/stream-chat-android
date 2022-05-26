@@ -64,6 +64,7 @@
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
+- Added option to customise `InitialsAvatar` offset through `InitialsAvatarOffset`, `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset`. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 
 ### ⚠️ Changed
 
