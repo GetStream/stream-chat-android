@@ -1,4 +1,6 @@
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.api.models.internal
+
+import io.getstream.chat.android.client.api.models.QuerySort
 
 internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
     override fun compare(o1: T, o2: T): Int =

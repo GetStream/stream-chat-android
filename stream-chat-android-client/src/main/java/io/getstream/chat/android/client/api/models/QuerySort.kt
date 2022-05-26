@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
+import io.getstream.chat.android.client.api.models.internal.CompositeComparator
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
@@ -144,19 +145,6 @@ public class QuerySort<T : Any> {
         val sortDirection: SortDirection,
     )
 
-    /** Inner representation of sorting feature specification. */
-    private sealed class SortAttribute<T> {
-        /** Name of attribute */
-        abstract val name: String
-
-        /** KProperty referenced attribute. */
-        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
-            SortAttribute<T>()
-
-        /** Referenced by name attribute. */
-        data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
-    }
-
     @Suppress("UNCHECKED_CAST")
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
         this.let { compareProperty ->
@@ -178,6 +166,20 @@ public class QuerySort<T : Any> {
                 sortDirection
             )
         }
+
+
+    /** Inner representation of sorting feature specification. */
+    private sealed class SortAttribute<T> {
+        /** Name of attribute */
+        abstract val name: String
+
+        /** KProperty referenced attribute. */
+        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
+            SortAttribute<T>()
+
+        /** Referenced by name attribute. */
+        data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
+    }
 
     /** Sort order which can be ascending or descending. */
     public enum class SortDirection(public val value: Int) {
