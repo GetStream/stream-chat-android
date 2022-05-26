@@ -71,5 +71,10 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
         public fun isEnabled(featureKey: String): Boolean {
             return instance?.isEnabled(featureKey) ?: false
         }
+
+        // TODO Remove this method once ChatSocket implementation is moved out of experimental.
+        internal fun isSocketExperimental(): Boolean {
+            return instance?.isEnabled(TOGGLE_KEY_SOCKET_REFACTOR) ?: false
+        }
     }
 }

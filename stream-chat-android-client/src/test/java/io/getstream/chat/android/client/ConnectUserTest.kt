@@ -39,6 +39,7 @@ internal class ConnectUserTest {
         scope = mock(),
         retryPolicy = mock(),
         appSettingsManager = mock(),
+        chatSocketExperimental = mock(),
     )
 
     @Test

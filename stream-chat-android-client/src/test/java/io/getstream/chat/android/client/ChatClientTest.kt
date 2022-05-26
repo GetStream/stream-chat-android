@@ -99,6 +99,7 @@ internal class ChatClientTest {
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }
