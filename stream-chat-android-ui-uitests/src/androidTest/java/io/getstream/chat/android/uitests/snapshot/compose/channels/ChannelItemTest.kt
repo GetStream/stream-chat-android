@@ -16,25 +16,18 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.channels
 
-import androidx.compose.ui.test.junit4.createComposeRule
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class ChannelItemTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class ChannelItemTest : ComposeScreenshotTest() {
 
     @Test
-    fun channelItemWithUnreadCount() {
-        renderChannelItem(
-            channelItemState = ChannelItemState(
+    fun channelItemWithUnreadCount() = runScreenshotTest {
+        ChannelItem(
+            channelItem = ChannelItemState(
                 channel = TestData.channel1().apply {
                     members = listOf(
                         TestData.member1(),
@@ -48,14 +41,16 @@ class ChannelItemTest : ScreenshotTest {
                     lastMessageAt = TestData.date2()
                 }
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
+            onChannelClick = {},
+            onChannelLongClick = {}
         )
     }
 
     @Test
-    fun channelItemWithoutCurrentUser() {
-        renderChannelItem(
-            channelItemState = ChannelItemState(
+    fun channelItemWithoutCurrentUser() = runScreenshotTest {
+        ChannelItem(
+            channelItem = ChannelItemState(
                 channel = TestData.channel1().apply {
                     members = listOf(
                         TestData.member1(),
@@ -68,14 +63,16 @@ class ChannelItemTest : ScreenshotTest {
                     lastMessageAt = TestData.date2()
                 }
             ),
-            currentUser = null
+            currentUser = null,
+            onChannelClick = {},
+            onChannelLongClick = {}
         )
     }
 
     @Test
-    fun channelItemForMutedChannel() {
-        renderChannelItem(
-            channelItemState = ChannelItemState(
+    fun channelItemForMutedChannel() = runScreenshotTest {
+        ChannelItem(
+            channelItem = ChannelItemState(
                 channel = TestData.channel1().apply {
                     members = listOf(
                         TestData.member1(),
@@ -89,14 +86,16 @@ class ChannelItemTest : ScreenshotTest {
                 },
                 isMuted = true
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
+            onChannelClick = {},
+            onChannelLongClick = {}
         )
     }
 
     @Test
-    fun channelItemForChannelWithoutMessages() {
-        renderChannelItem(
-            channelItemState = ChannelItemState(
+    fun channelItemForChannelWithoutMessages() = runScreenshotTest {
+        ChannelItem(
+            channelItem = ChannelItemState(
                 channel = TestData.channel1().apply {
                     members = listOf(
                         TestData.member1(),
@@ -104,24 +103,9 @@ class ChannelItemTest : ScreenshotTest {
                     )
                 },
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
+            onChannelClick = {},
+            onChannelLongClick = {}
         )
-    }
-
-    private fun renderChannelItem(
-        channelItemState: ChannelItemState,
-        currentUser: User?,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                ChannelItem(
-                    channelItem = channelItemState,
-                    currentUser = currentUser,
-                    onChannelClick = {},
-                    onChannelLongClick = {}
-                )
-            }
-        }
-        compareScreenshot(composeRule)
     }
 }

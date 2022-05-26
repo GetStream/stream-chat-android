@@ -16,34 +16,19 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
-import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
-import org.junit.Rule
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 
-class UnreadCountIndicatorTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class UnreadCountIndicatorTest : ComposeScreenshotTest() {
 
     @Test
-    fun unreadCountIndicatorForFewUnreadMessages() {
-        renderUnreadCountIndicator(unreadCount = 5)
+    fun unreadCountIndicatorForFewUnreadMessages() = runScreenshotTest {
+        UnreadCountIndicator(unreadCount = 5)
     }
 
     @Test
-    fun unreadCountIndicatorForManyUnreadMessages() {
-        renderUnreadCountIndicator(unreadCount = 200)
-    }
-
-    private fun renderUnreadCountIndicator(unreadCount: Int) {
-        composeRule.setContent {
-            TestChatTheme {
-                UnreadCountIndicator(unreadCount = unreadCount)
-            }
-        }
-        compareScreenshot(composeRule)
+    fun unreadCountIndicatorForManyUnreadMessages() = runScreenshotTest {
+        UnreadCountIndicator(unreadCount = 200)
     }
 }
