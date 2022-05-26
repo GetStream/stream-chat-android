@@ -33,9 +33,9 @@ public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): 
 public fun ChatError.stringify(): String {
     return when {
         this is ChatNetworkError -> toString()
-        message != null && cause != null -> "ChatError(message=${message}, cause=${cause})"
-        message != null -> "ChatError(message=${message})"
-        cause != null -> "ChatError(cause=${cause})"
+        message != null && cause != null -> "ChatError(message=$message, cause=$cause)"
+        message != null -> "ChatError(message=$message)"
+        cause != null -> "ChatError(cause=$cause)"
         else -> "ChatError(Empty)"
     }
 }

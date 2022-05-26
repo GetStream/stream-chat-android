@@ -3404,6 +3404,9 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 	public abstract fun onSuccess (Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/client/utils/ResultUtilsKt {
+}
+
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {
 	public static final field AWAITING_ATTACHMENTS Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static final field COMPLETED Lio/getstream/chat/android/client/utils/SyncStatus;

@@ -119,12 +119,12 @@ internal class EventHandlerImpl(
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
     private var initJob: Deferred<*>? = null
 
-    override fun initialize(user: User) {
-        logger.w { "[initialize] user: $user" }
+    override fun initialize(currentUser: User) {
+        logger.w { "[initialize] user: $currentUser" }
         initJob = scope.async {
-            syncManager.updateAllReadStateForDate(user.id, Date())
-            syncManager.loadSyncStateForUser(user.id)
-            replayEventsForAllChannels(user)
+            syncManager.updateAllReadStateForDate(currentUser.id, Date())
+            syncManager.loadSyncStateForUser(currentUser.id)
+            replayEventsForAllChannels(currentUser)
         }
     }
 
@@ -166,7 +166,7 @@ internal class EventHandlerImpl(
     /**
      * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
      */
-    override suspend fun replayEventsForActiveChannels() {
+    override suspend fun syncHistoryForActiveChannels() {
         logger.i { "[replayEventsForActiveChannels] no args" }
         replayEventsForChannels(activeChannelsCid())
     }

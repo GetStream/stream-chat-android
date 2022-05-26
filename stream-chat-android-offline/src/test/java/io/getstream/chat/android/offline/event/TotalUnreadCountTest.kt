@@ -65,45 +65,45 @@ internal class TotalUnreadCountTest {
     fun `When new message event is received for channel with read capability Should properly update total unread counts`(
         eventHandlerType: EventHandlerType
     ) = runTest {
-            val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(globalMutableState, eventHandlerType)
-                .givenMockedRepositories()
-                .givenChannel(channelWithReadCapability)
-                .get()
+        val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
+        val sut = Fixture(globalMutableState, eventHandlerType)
+            .givenMockedRepositories()
+            .givenChannel(channelWithReadCapability)
+            .get()
 
-            val newMessageEventWithUnread = data.newMessageEvent.copy(
-                cid = channelWithReadCapability.cid,
-                totalUnreadCount = 5,
-                unreadChannels = 2
-            )
+        val newMessageEventWithUnread = data.newMessageEvent.copy(
+            cid = channelWithReadCapability.cid,
+            totalUnreadCount = 5,
+            unreadChannels = 2
+        )
 
-            sut.handleEvent(newMessageEventWithUnread)
+        sut.handleEvent(newMessageEventWithUnread)
 
-            globalMutableState._totalUnreadCount.value `should be equal to` 5
-            globalMutableState._channelUnreadCount.value `should be equal to` 2
-        }
+        globalMutableState._totalUnreadCount.value `should be equal to` 5
+        globalMutableState._channelUnreadCount.value `should be equal to` 2
+    }
 
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
         eventHandlerType: EventHandlerType
     ) = runTest {
-            val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-            val sut = Fixture(globalMutableState, eventHandlerType)
-                .givenMockedRepositories()
-                .givenChannel(channelWithReadCapability)
-                .get()
+        val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
+        val sut = Fixture(globalMutableState, eventHandlerType)
+            .givenMockedRepositories()
+            .givenChannel(channelWithReadCapability)
+            .get()
 
-            val markReadEventWithUnread = data.user1ReadNotification.copy(
-                cid = channelWithReadCapability.cid,
-                totalUnreadCount = 0,
-                unreadChannels = 0
-            )
-            sut.handleEvent(markReadEventWithUnread)
+        val markReadEventWithUnread = data.user1ReadNotification.copy(
+            cid = channelWithReadCapability.cid,
+            totalUnreadCount = 0,
+            unreadChannels = 0
+        )
+        sut.handleEvent(markReadEventWithUnread)
 
-            globalMutableState._totalUnreadCount.value `should be equal to` 0
-            globalMutableState._channelUnreadCount.value `should be equal to` 0
-        }
+        globalMutableState._totalUnreadCount.value `should be equal to` 0
+        globalMutableState._channelUnreadCount.value `should be equal to` 0
+    }
 
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)

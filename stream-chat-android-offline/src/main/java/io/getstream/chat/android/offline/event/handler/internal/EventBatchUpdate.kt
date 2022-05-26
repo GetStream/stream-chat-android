@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process

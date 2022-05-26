@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.event.handler.internal
 
 import androidx.annotation.VisibleForTesting
@@ -94,8 +110,12 @@ import java.util.concurrent.atomic.AtomicReference
 
 private const val TAG = "Chat:EventHandlerS"
 private const val TAG_SOCKET = "Chat:SocketEvent"
-private const val EVENTS_BUFFER = 10
+private const val EVENTS_BUFFER = 30
 
+/**
+ * Processes events sequentially. That means a new event will not be processed
+ * until the previous event processing is not completed.
+ */
 internal class EventHandlerSequential(
     scope: CoroutineScope,
     private val recoveryEnabled: Boolean,
@@ -109,6 +129,7 @@ internal class EventHandlerSequential(
 
     private val logger = StreamLog.getLogger(TAG)
     private val scope = scope + SupervisorJob()
+    private val currentUserId = AtomicReference<UserId>()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
     private val socketEventCollector = SocketEventCollector(scope) { pendingBatchEvent ->
         handleBatchEvent(pendingBatchEvent)
@@ -117,11 +138,12 @@ internal class EventHandlerSequential(
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
     private var initJob: Job? = null
 
-    override fun initialize(user: User) {
-        logger.i { "[initialize] user: $user" }
+    override fun initialize(currentUser: User) {
+        logger.i { "[initialize] currentUser: $currentUser" }
+        currentUserId.set(currentUser.id)
         initJob = scope.launch {
-            syncManager.updateAllReadStateForDate(user.id, Date())
-            syncManager.loadSyncStateForUser(user.id)
+            syncManager.updateAllReadStateForDate(currentUser.id, Date())
+            syncManager.loadSyncStateForUser(currentUser.id)
             syncHistoryForCachedChannels()
         }
     }
@@ -161,8 +183,8 @@ internal class EventHandlerSequential(
     /**
      * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
      */
-    override suspend fun replayEventsForActiveChannels() {
-        logger.d { "[replayEventsForActiveChannels] no args" }
+    override suspend fun syncHistoryForActiveChannels() {
+        logger.d { "[syncHistoryForActiveChannels] no args" }
         val activeChannelsCid = activeChannelsCid()
         if (activeChannelsCid.isNotEmpty()) {
             syncHistory(activeChannelsCid)
@@ -256,7 +278,7 @@ internal class EventHandlerSequential(
 
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {
         logger.v { "[updateGlobalState] batchEvent.size: ${batchEvent.size}" }
-        val currentUser = mutableGlobalState.user.value
+        val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
@@ -264,7 +286,7 @@ internal class EventHandlerSequential(
                     mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
                 }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(event.me)
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
                     mutableGlobalState._initialized.value = true
@@ -273,14 +295,14 @@ internal class EventHandlerSequential(
                     mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
                 }
                 is NotificationMutesUpdatedEvent -> {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(event.me)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(event.me)
                 }
-                is UserUpdatedEvent -> if (event.user.id == currentUser?.id) {
+                is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     mutableGlobalState.updateCurrentUser(event.user)
                 }
                 is MarkAllReadEvent -> {
@@ -288,18 +310,21 @@ internal class EventHandlerSequential(
                     mutableGlobalState._channelUnreadCount.value = event.unreadChannels
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
+                    // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
                         mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
                         mutableGlobalState._channelUnreadCount.value = event.unreadChannels
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
+                    // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
                         mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
                         mutableGlobalState._channelUnreadCount.value = event.unreadChannels
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
+                    // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
                         mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
                         mutableGlobalState._channelUnreadCount.value = event.unreadChannels
@@ -366,7 +391,7 @@ internal class EventHandlerSequential(
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {
         logger.v { "[updateOfflineStorage] batchEvent.size: ${batchEvent.size}" }
-        val currentUser = mutableGlobalState._user.value
+        val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
 
         val events = batchEvent.sortedEvents
         val batchBuilder = EventBatchUpdate.Builder()
@@ -383,32 +408,32 @@ internal class EventHandlerSequential(
         batchBuilder.addToFetchMessages(messageIds)
 
         // actually fetch the data
-        val batch = batchBuilder.build(repos, currentUser?.id)
+        val batch = batchBuilder.build(repos, currentUserId)
 
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     repos.insertCurrentUser(event.me)
                 }
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
                         ?.let(batch::addChannel)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
@@ -418,7 +443,7 @@ internal class EventHandlerSequential(
                 }
                 is NotificationAddedToChannelEvent -> {
                     batch.addChannel(
-                        event.channel.addMembership(currentUser?.id, event.member)
+                        event.channel.addMembership(currentUserId, event.member)
                     )
                 }
                 is NotificationInvitedEvent -> {
@@ -450,23 +475,23 @@ internal class EventHandlerSequential(
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     repos.insertCurrentUser(event.me)
                 }
 
                 is ReactionNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessage(event.message)
                 }
                 is ReactionDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessage(event.message)
                 }
                 is ReactionUpdateEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, event.user)
+                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessage(event.message)
                 }
                 is ChannelUserBannedEvent -> {
@@ -504,14 +529,14 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.removeMember(event.user.id)
-                                .removeMembership(currentUser?.id)
+                                .removeMembership(currentUserId)
                         )
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.removeMembership(currentUser?.id).apply {
+                            channel.removeMembership(currentUserId).apply {
                                 memberCount = event.channel.memberCount
                                 members = event.channel.members
                             }
@@ -534,7 +559,7 @@ internal class EventHandlerSequential(
                     batch.addChannel(event.channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
-                    event.me mustBe currentUser
+                    event.me.id mustBe currentUserId
                     repos.insertCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
@@ -562,7 +587,7 @@ internal class EventHandlerSequential(
                 is GlobalUserUnbannedEvent -> {
                     batch.addUser(event.user.apply { banned = false })
                 }
-                is UserUpdatedEvent -> if (event.user.id == currentUser?.id) {
+                is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     repos.insertCurrentUser(event.user)
                 }
                 else -> Unit
@@ -636,12 +661,12 @@ internal class EventHandlerSequential(
         }
     }
 
-    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        ownReactions = if (user != null && mutableGlobalState._user.value?.id != user.id) {
+    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, currentUserId: UserId, eventUser: User?) {
+        ownReactions = if (eventUser != null && currentUserId != eventUser.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == mutableGlobalState._user.value?.id ?: "" },
+                latestReactions.filter { it.userId == currentUserId },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
@@ -656,9 +681,12 @@ internal class EventHandlerSequential(
         _banned.value = me.banned
     }
 
-    private infix fun User.mustBe(currentUser: User?) {
-        if (this.id != currentUser?.id) {
-            throw InputMismatchException("received connect event for user with id ${this.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
+    private infix fun UserId.mustBe(currentUserId: UserId?) {
+        if (this != currentUserId) {
+            throw InputMismatchException(
+                "received connect event for user with id $this while for user configured " +
+                    "has id $currentUserId. Looks like there's a problem in the user set"
+            )
         }
     }
 
@@ -669,6 +697,8 @@ internal class EventHandlerSequential(
         }
     }
 }
+
+private typealias UserId = String
 
 private class BatchEvent(
     val sortedEvents: List<ChatEvent>,
@@ -700,25 +730,34 @@ private class SocketEventCollector(
 
     private fun scheduleTimeout() {
         timeoutJob.get()?.cancel()
-        timeoutJob.set(scope.launch {
-            delay(TIMEOUT)
-            StreamLog.i(TAG) { "[scheduleTimeout] timeout is triggered" }
-            fireBatchEvent()
-        })
+        timeoutJob.set(
+            scope.launch {
+                delay(TIMEOUT)
+                StreamLog.i(TAG) { "[scheduleTimeout] timeout is triggered" }
+                doFire()
+                timeoutJob.set(null)
+            }
+        )
     }
 
     suspend fun fireBatchEvent() {
         StreamLog.d(TAG) { "[fireBatchEvent] no args" }
+        timeoutJob.get()?.cancel()
+        timeoutJob.set(null)
+        doFire()
+    }
+
+    private suspend fun doFire() {
         mutex.withLock {
             if (postponed.isEmpty()) {
-                StreamLog.v(TAG) { "[fireBatchEvent] rejected (postponed is empty)" }
+                StreamLog.v(TAG) { "[doFire] rejected (postponed is empty)" }
                 return
             }
-            StreamLog.v(TAG) { "[fireBatchEvent] postponed.size: ${postponed.size}" }
-            val snapshot = postponed.toList()
+            StreamLog.v(TAG) { "[doFire] postponed.size: ${postponed.size}" }
+            val sortedEvents = postponed.toList().sortedBy { it.createdAt }
             postponed.clear()
             fireEvent(
-                BatchEvent(snapshot, isFromHistorySync = false)
+                BatchEvent(sortedEvents, isFromHistorySync = false)
             )
         }
     }

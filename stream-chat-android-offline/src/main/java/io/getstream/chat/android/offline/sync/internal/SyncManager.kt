@@ -73,7 +73,6 @@ internal class SyncManager(
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
 
-
     internal suspend fun getSortedSyncHistory(cids: List<String>): Result<List<ChatEvent>> {
         val lastSyncAt = syncStateFlow.value?.lastSyncedAt ?: Date()
         return chatClient.getSyncHistory(cids, lastSyncAt).await()
