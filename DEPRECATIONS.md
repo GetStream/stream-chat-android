@@ -4,6 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+[//]: # (TODO: update InputField deprecation date and version before release)
+| `InputField` | 2022.06.07<br/>5.3.1 | 2022.07.24 ⌛ | 2022.08.14 ⌛ | Use the new implementation of `InputField`. |
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
 | `QuotedText` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use new implementation of `QuotedText`. |
