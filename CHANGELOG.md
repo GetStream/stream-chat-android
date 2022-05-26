@@ -67,6 +67,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
