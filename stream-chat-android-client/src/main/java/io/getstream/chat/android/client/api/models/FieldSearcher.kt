@@ -22,9 +22,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-public class FieldSearcher {
+internal class FieldSearcher {
 
-    public fun <T : Any> findProperty(
+    internal fun <T : Any> findProperty(
         fieldName: String,
         kClass: KClass<T>,
     ): KProperty1<T, Comparable<*>?>? {
@@ -37,7 +37,7 @@ public class FieldSearcher {
         }
     }
 
-    public fun <T : Any> findMemberProperty(
+    internal fun <T : Any> findMemberProperty(
         fieldName: String,
         kClass: KClass<T>,
     ): KProperty1<T, Comparable<*>?>? {
