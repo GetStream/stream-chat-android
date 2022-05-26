@@ -17,10 +17,10 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic

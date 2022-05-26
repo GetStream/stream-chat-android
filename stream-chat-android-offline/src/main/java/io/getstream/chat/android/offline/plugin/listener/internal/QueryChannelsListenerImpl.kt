@@ -18,9 +18,9 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
@@ -55,7 +55,7 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : Que
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        // Nothing to do
+        logic.queryChannels(request).onQueryChannelsResult(result, request)
     }
 
     private companion object {

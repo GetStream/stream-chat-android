@@ -20,9 +20,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.asCall
 import org.amshove.kluent.`should be`

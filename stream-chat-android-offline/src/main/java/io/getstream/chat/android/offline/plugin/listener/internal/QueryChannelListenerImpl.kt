@@ -17,8 +17,8 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
@@ -28,7 +28,7 @@ internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : Quer
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result(Unit)
+    ): Result<Unit> = logic.channel(channelType, channelId).onQueryChannelPrecondition(channelType, channelId, request)
 
     override suspend fun onQueryChannelRequest(
         channelType: String,

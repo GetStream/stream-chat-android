@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.offline.extensions.internal.toCid

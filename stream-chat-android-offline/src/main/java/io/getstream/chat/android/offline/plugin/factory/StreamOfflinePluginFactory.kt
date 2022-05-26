@@ -19,12 +19,12 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -66,7 +66,7 @@ import kotlinx.coroutines.launch
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
  *
- * @param config [Config] Configuration of persistance of the SDK.
+ * @param config [Config] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
 public class StreamOfflinePluginFactory(
