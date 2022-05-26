@@ -62,7 +62,6 @@ public class QuerySort<T : Any> {
         }
     }
 
-
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
         sortSpecifications = sortSpecifications + sortSpecification
         return this
