@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.view
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Date
@@ -34,7 +35,8 @@ private const val DEFAULT_TRIGGER_DELAY = 700L
 public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
-    private inline val loadMoreAtBottomListener: () -> Unit,
+    private inline val loadMoreAtGapBottomListener: () -> Unit,
+    private inline val loadMoreAtGapTopListener: () -> Unit,
     private val bottomRequestTriggerDelay: Long = DEFAULT_TRIGGER_DELAY,
 ) : RecyclerView.OnScrollListener() {
 
@@ -49,7 +51,7 @@ public class EndlessMessageListScrollListener(
      */
     private var paginationEnabled: Boolean = false
 
-    public var shouldFetchBottomMessages: Boolean = false
+    public var hasGap: Boolean = false
 
     public var firstMessageBellowGapPosition: Int? = null
 
@@ -80,7 +82,8 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         when {
-            dy >= 0 && shouldFetchBottomMessages && firstMessageBellowGapPosition != null -> {
+            dy >= 0 && hasGap && firstMessageBellowGapPosition != null -> {
+                Log.d("EndlessScroll", "handling scroll bottom!")
                 handleScrollDown(layoutManager, recyclerView, firstMessageBellowGapPosition!!)
             }
 
@@ -100,32 +103,39 @@ public class EndlessMessageListScrollListener(
         firstMessageBellowGap: Int,
     ) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+        val isBottomTriggered = isGapBottomTriggered(lastVisiblePosition, loadMoreThreshold, firstMessageBellowGap)
 
-        if (scrollStateReset && isInBottomTriggerPosition(
-                lastVisiblePosition,
-                loadMoreThreshold,
-                firstMessageBellowGap,
-            )
-        ) {
+        if (scrollStateReset && isBottomTriggered) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled && canRequestNow()) {
                     lastRequest = Date().time
-                    loadMoreAtBottomListener()
+                    loadMoreAtGapBottomListener()
                 }
             }
         }
     }
 
-    private fun isInBottomTriggerPosition(
+    private fun isGapBottomTriggered(
         lastVisible: Int,
         loadMoreThreshold: Int,
-        firstMessageAfterGap: Int,
+        firstMessageBellowGap: Int,
     ): Boolean {
-        val limitStart = firstMessageAfterGap - loadMoreThreshold
+        val limitStart = firstMessageBellowGap - loadMoreThreshold
         val limitEnd = limitStart + DEFAULT_BOTTOM_TRIGGER_LIMIT
 
         return lastVisible in limitStart until limitEnd
+    }
+
+    private fun isGapTopTriggered(
+        firstVisible: Int,
+        loadMoreThreshold: Int,
+        firstMessageBellowGap: Int,
+    ): Boolean {
+        val limitEnd = firstMessageBellowGap + loadMoreThreshold
+        val limitStart = limitEnd - DEFAULT_BOTTOM_TRIGGER_LIMIT
+
+        return firstVisible in limitStart until limitEnd
     }
 
     /**
@@ -134,6 +144,31 @@ public class EndlessMessageListScrollListener(
      */
     private fun handleScrollUp(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+
+        when {
+            scrollStateReset && firstVisiblePosition <= loadMoreThreshold -> {
+                scrollStateReset = false
+                recyclerView.post {
+                    if (paginationEnabled) {
+                        loadMoreAtTopListener()
+                    }
+                }
+            }
+
+            scrollStateReset
+                && hasGap
+                && firstMessageBellowGapPosition != null
+                && isGapTopTriggered(firstVisiblePosition, loadMoreThreshold, firstMessageBellowGapPosition!!)
+            -> {
+                scrollStateReset = false
+                recyclerView.post {
+                    if (paginationEnabled && canRequestNow()) {
+                        lastRequest = Date().time
+                        loadMoreAtGapTopListener()
+                    }
+                }
+            }
+        }
 
         if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
             scrollStateReset = false

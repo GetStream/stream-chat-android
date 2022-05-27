@@ -401,8 +401,12 @@ public class MessageListViewModel(
                 onEndRegionReached()
             }
 
-            is Event.BottomEndRegionReached -> {
+            is Event.GapBottomEndRegionReached -> {
                 onBottomEndRegionReached(event.messageId)
+            }
+
+            is Event.GapTopEndRegionReached -> {
+                onTopEndRegionReached(event.messageId)
             }
 
             is Event.LastMessageRead -> {
@@ -685,17 +689,20 @@ public class MessageListViewModel(
         }
     }
 
-    // I need to add the find the first
     private fun onBottomEndRegionReached(baseMessageId: String) {
-        if (baseMessageId != null) {
-            messageListData?.loadingMoreChanged(true)
-            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT, canCreateGap = false)
-                .enqueue { result ->
-                    messageListData?.loadingMoreChanged(false)
-                }
-        } else {
-            logger.logE("There's no base message to request more message at bottom of limit")
-        }
+        messageListData?.loadingMoreChanged(true)
+        chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT, canCreateGap = false)
+            .enqueue {
+                messageListData?.loadingMoreChanged(false)
+            }
+    }
+
+    private fun onTopEndRegionReached(baseMessageId: String) {
+        messageListData?.loadingMoreChanged(true)
+        chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT, baseMessageId)
+            .enqueue {
+                messageListData?.loadingMoreChanged(false)
+            }
     }
 
     /**
@@ -866,7 +873,9 @@ public class MessageListViewModel(
          */
         public object EndRegionReached : Event()
 
-        public data class BottomEndRegionReached(val messageId: String) : Event()
+        public data class GapBottomEndRegionReached(val messageId: String) : Event()
+
+        public data class GapTopEndRegionReached(val messageId: String) : Event()
 
         /**
          * When the newest message in the channel has been read.

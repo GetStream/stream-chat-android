@@ -20,6 +20,7 @@ import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -79,7 +80,7 @@ import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
-import io.getstream.chat.android.ui.message.list.MessageListView.BottomEndRegionReachedHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.GapEndRegionReachedByBottom
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
@@ -148,9 +149,9 @@ public class MessageListView : ConstraintLayout {
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
     private var messagesBellowGap: List<Long>? = null
-    private var messagesAboveGap: List<Long>? = null
     private var hasGap: Boolean? = null
 
+    // This is the message at the most bottom position in the gap.
     private var firstMessageBellowGapPosition: Int? = null
     private var firstMessageBellowGap: Message? = null
 
@@ -180,7 +181,11 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("endRegionReachedHandler must be set.")
     }
 
-    private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
+    private var gapEndRegionReachedByBottom = GapEndRegionReachedByBottom {
+        throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
+    }
+
+    private var gapEndRegionReachedByTop = GapEndRegionReachedByTop {
         throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
     }
 
@@ -623,14 +628,23 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
+                val loadMoreAtTopListener = { endRegionReachedHandler.onEndRegionReached() }
+                val loadMoreAtGapBottomListener: () -> Unit = {
+                    firstMessageBellowGap?.let { message ->
+                        gapEndRegionReachedByBottom.onGapEndRegionReachedByBottom(message.id)
+                    }
+                }
+                val loadMoreAtGapTopListener: () -> Unit = {
+                    firstMessageBellowGap?.let { message ->
+                        gapEndRegionReachedByTop.onGapEndRegionReachedByTop(message.id)
+                    }
+                }
+
                 loadMoreListener = EndlessMessageListScrollListener(
                     loadMoreThreshold,
-                    { endRegionReachedHandler.onEndRegionReached() },
-                    {
-                        firstMessageBellowGap?.let { message ->
-                            bottomEndRegionReachedHandler.onBottomEndRegionReached(message.id)
-                        }
-                    },
+                    loadMoreAtTopListener,
+                    loadMoreAtGapBottomListener,
+                    loadMoreAtGapTopListener,
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
                 }
@@ -648,10 +662,10 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun gapInMessage(hasGap: Boolean, gapInfo: MessagesGapInfo?) {
+        Log.d("MessageListView", "Gap in message: ${this.hasGap}")
         this.hasGap = hasGap
-        scrollListener.shouldFetchBottomMessages = this.hasGap!!
+        scrollListener.hasGap = this.hasGap!!
         this.messagesBellowGap = gapInfo?.messagesBellowGap
-        this.messagesAboveGap = gapInfo?.messagesAboveGap
     }
 
     private fun updateMessageAfterGap() {
@@ -1329,13 +1343,23 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
-     * view becomes non linear and ti will be called until it becomes linear again.
+     * Sets the handler used when the bottom end region is reached in a gap. This runs whe list of messages in this
+     * view becomes non linear and it will be called until it becomes linear again.
      *
-     * @param bottomEndRegionReachedHandler The handler to use.
+     * @param gapEndRegionReachedByBottom The handler to use.
      */
-    public fun setBottomEndRegionReachedHandler(bottomEndRegionReachedHandler: BottomEndRegionReachedHandler) {
-        this.bottomEndRegionReachedHandler = bottomEndRegionReachedHandler
+    public fun setEndRegionReachedByBottomHandler(gapEndRegionReachedByBottom: GapEndRegionReachedByBottom) {
+        this.gapEndRegionReachedByBottom = gapEndRegionReachedByBottom
+    }
+
+    /**
+     * Sets the handler used when the top end region is reached in a gap. This runs whe list of messages in this
+     * view becomes non linear and it will be called until it becomes linear again.
+     *
+     * @param gapEndRegionReachedByTop The handler to use.
+     */
+    public fun setEndRegionReachedByTopHandler(gapEndRegionReachedByTop: GapEndRegionReachedByTop) {
+        this.gapEndRegionReachedByTop = gapEndRegionReachedByTop
     }
 
     /**
@@ -1616,8 +1640,12 @@ public class MessageListView : ConstraintLayout {
         public fun onEndRegionReached()
     }
 
-    public fun interface BottomEndRegionReachedHandler {
-        public fun onBottomEndRegionReached(messageId: String)
+    public fun interface GapEndRegionReachedByBottom {
+        public fun onGapEndRegionReachedByBottom(messageId: String)
+    }
+
+    public fun interface GapEndRegionReachedByTop {
+        public fun onGapEndRegionReachedByTop(messageId: String)
     }
 
     public fun interface LastMessageReadHandler {

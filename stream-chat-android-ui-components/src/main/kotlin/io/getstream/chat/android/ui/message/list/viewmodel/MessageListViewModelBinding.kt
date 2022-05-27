@@ -23,7 +23,8 @@ package io.getstream.chat.android.ui.message.list.viewmodel
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GapBottomEndRegionReached
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GapTopEndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -77,7 +78,8 @@ public fun MessageListViewModel.bindView(
         view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
-    view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
+    view.setEndRegionReachedByBottomHandler { messageId -> onEvent(GapBottomEndRegionReached(messageId)) }
+    view.setEndRegionReachedByTopHandler { messageId -> onEvent(GapTopEndRegionReached(messageId)) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }

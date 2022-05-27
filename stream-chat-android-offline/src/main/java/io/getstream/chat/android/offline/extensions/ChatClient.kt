@@ -219,14 +219,15 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  *
  * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
-public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
+@JvmOverloads
+public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int, baseMessageId: String? = null, ): Call<Channel> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult(cid)
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
             logic.channel(channelType = channelType, channelId = channelId)
-                .loadOlderMessages(messageLimit = messageLimit, canCreateGap = false)
+                .loadOlderMessages(messageLimit = messageLimit, baseMessageId = baseMessageId, canCreateGap = false)
         } else {
             cidValidationResult.error().toResultError()
         }
