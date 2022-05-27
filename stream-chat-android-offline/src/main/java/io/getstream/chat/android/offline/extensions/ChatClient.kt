@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
@@ -229,7 +228,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
             logic.channel(channelType = channelType, channelId = channelId)
                 .loadOlderMessages(messageLimit = messageLimit, canCreateGap = false)
         } else {
-            cidValidationResult
+            cidValidationResult.error().toResultError()
         }
     }
 }
@@ -241,7 +240,7 @@ public fun ChatClient.loadNewerMessages(
     canCreateGap: Boolean,
 ): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult<Channel>(channelCid)
+        val cidValidationResult = validateCidWithResult(channelCid)
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = channelCid.cidToTypeAndId()
