@@ -20,9 +20,11 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomChannelVisibleEvent
 import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.offline.randomNotificationMessageNewEvent
 import io.getstream.chat.android.offline.randomNotificationRemovedFromChannelEvent
+import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
@@ -124,5 +126,19 @@ internal class DefaultChatEventHandlerTest {
         )
 
         result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `When received ChannelVisibleEvent Should watch and add a channel`() {
+        val cid = randomCID()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
+        val event = randomChannelVisibleEvent(cid = cid)
+
+        val result = eventHandler.handleChannelVisibleEvent(
+            event,
+            Filters.neutral(),
+        )
+
+        result `should be equal to` EventHandlingResult.WatchAndAdd(cid)
     }
 }

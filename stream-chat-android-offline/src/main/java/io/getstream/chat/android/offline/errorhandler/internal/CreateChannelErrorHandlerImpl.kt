@@ -19,9 +19,9 @@ package io.getstream.chat.android.offline.errorhandler.internal
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
+import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.experimental.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.Result

@@ -16,23 +16,24 @@
 
 package io.getstream.chat.android.offline.plugin.internal
 
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.CreateChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.DeleteReactionListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.HideChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.MarkAllReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryMembersListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendGiphyListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
@@ -54,6 +55,7 @@ import io.getstream.chat.android.client.experimental.plugin.listeners.TypingEven
  * @param queryMembersListener [QueryMembersListener]
  * @param typingEventListener [TypingEventListener]
  * @param createChannelListener [CreateChannelListener]
+ * @param activeUser User associated with [OfflinePlugin] instance.
  */
 internal class OfflinePlugin(
     private val queryChannelsListener: QueryChannelsListener,
@@ -72,6 +74,7 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
+    internal val activeUser: User,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,

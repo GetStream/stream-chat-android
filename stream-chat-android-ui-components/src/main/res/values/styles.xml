@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <resources>
 
     <style name="StreamUiBaseAvatarStyle">
@@ -213,7 +228,7 @@
         <item name="android:textColor">@color/stream_ui_literal_white</item>
         <item name="android:textDirection">locale</item>
     </style>
-    
+
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiAttachmentActivityProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
@@ -223,6 +238,7 @@
         <item name="streamUiMediaActivityHeader">@style/StreamUi.MediaActivity.Header</item>
         <item name="streamUiMediaActivityHeaderLeftActionButtonStyle">@style/StreamUi.MediaActivity.HeaderLeftActionButton</item>
         <item name="streamUiMediaActivityHeaderTitleStyle">@style/StreamUi.MediaActivity.HeaderTitle</item>
+        <item name="streamUiMediaActivityProgressBarStyle">@style/StreamUi.MediaActivity.ProgressBar</item>
         <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -337,7 +353,7 @@
         <item name="streamUiMessageTextStyleThreadSeparator">normal</item>
 
         <!-- Message Reply background color -->
-        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_bars_background</item>
+        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
         <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_bars_background</item>
 
         <!-- Message Reply text style mine -->
@@ -888,6 +904,11 @@
         <item name="android:textAppearance">@style/StreamUiTextAppearance.MediaActivityHeaderTitle</item>
     </style>
 
+    <style name="StreamUi.MediaActivity.ProgressBar" parent="StreamUi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="StreamUi.SuggestionListView"  parent="StreamUi">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
@@ -1040,4 +1061,9 @@
     <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
         <item name="streamUiShowActionButton">false</item>
     </style>
+
+    <style name="StreamUi.ViewReactions" parent="StreamUi">
+        <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
+    </style>
+
 </resources>

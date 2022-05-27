@@ -68,7 +68,7 @@ object Versions {
     internal const val ROBOLECTRIC = "4.6.1"
     internal const val ROOM = "2.4.0"
     internal const val SHIMMER = "0.5.0"
-    internal const val SHOT = "5.12.1"
+    internal const val SHOT = "5.14.0"
     internal const val SPOTLESS = "6.2.0"
     internal const val STFALCON_IMAGE_VIEWER = "d11578fe3f"
     internal const val TEST_PARAMETER_INJECTOR = "1.4"

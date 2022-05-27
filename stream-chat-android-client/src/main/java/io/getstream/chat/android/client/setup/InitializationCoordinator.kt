@@ -32,7 +32,7 @@ public class InitializationCoordinator private constructor() {
     /**
      * Adds a listener to user connection.
      */
-    public fun addUserConnectedListener(listener: (User) -> Unit) {
+    internal fun addUserConnectedListener(listener: (User) -> Unit) {
         userConnectedListeners.add(listener)
     }
 

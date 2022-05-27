@@ -76,6 +76,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.extensions.internal.addMember
 import io.getstream.chat.android.offline.extensions.internal.addMembership
@@ -173,6 +174,8 @@ internal class EventHandlerImpl(
             .onSuccessSuspend { eventList ->
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
                 handleEventsInternal(eventList, isFromSync = true)
+            }.onError {
+                logger.e { "Could not replay events for the given channels. ${it.message}" }
             }
     }
 

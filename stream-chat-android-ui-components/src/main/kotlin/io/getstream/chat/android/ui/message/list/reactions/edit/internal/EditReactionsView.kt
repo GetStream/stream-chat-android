@@ -110,11 +110,13 @@ public class EditReactionsView : RecyclerView {
         this.reactionsViewStyle = editReactionsViewStyle
         this.bubbleDrawer = EditReactionsBubbleDrawer(reactionsViewStyle)
 
-        reactionsColumns = editReactionsViewStyle.reactionsColumn
-
-        reactionsViewStyle.horizontalPadding.let {
-            setPadding(it, 0, it, 0)
-        }
+        reactionsColumns = minOf(ChatUI.supportedReactions.reactions.size, editReactionsViewStyle.reactionsColumn)
+        setPadding(
+            reactionsViewStyle.horizontalPadding,
+            reactionsViewStyle.verticalPadding,
+            reactionsViewStyle.horizontalPadding,
+            reactionsViewStyle.verticalPadding
+        )
 
         layoutManager = GridLayoutManager(context, reactionsColumns)
 

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.interceptor.internal
 
-import io.getstream.chat.android.client.experimental.interceptor.Interceptor
-import io.getstream.chat.android.client.experimental.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 
 /**
  * Implementation of [Interceptor] that brings support for intercepting API requests. This class work as a delegator of calls for one
