@@ -663,7 +663,7 @@ public class MessageListView : ConstraintLayout {
             }
 
             // Some IDs bellow the gap may not be in MessageListView. They may be filtered out.
-            val lastIdBellowGap = messagesBellowGap!!.last(allIds::contains)
+            val lastIdBellowGap = messagesBellowGap?.last(allIds::contains)
 
             firstMessageBellowGapPosition = messageList
                 .indexOfLast { messageListItem ->
