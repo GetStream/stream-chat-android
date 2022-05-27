@@ -21,6 +21,14 @@ import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.typing.viewmodel.TypingIndicatorViewModel
 
+/**
+ * A ViewModel factory for TypingIndicatorViewModel.
+ *
+ * @param cid The channel id in the format messaging:123.
+ * @param chatClient The [ChatClient] instance.
+ *
+ * @see TypingIndicatorViewModel
+ */
 public class TypingIndicatorViewModelFactory(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -33,5 +41,35 @@ public class TypingIndicatorViewModelFactory(
 
         @Suppress("UNCHECKED_CAST")
         return TypingIndicatorViewModel(cid, chatClient) as T
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    public class Builder @SinceKotlin("99999.9") constructor() {
+        private var cid: String? = null
+        private var chatClient: ChatClient? = null
+
+        /**
+         * Sets the channel id in the format messaging:123.
+         */
+        public fun cid(cid: String): Builder = apply {
+            this.cid = cid
+        }
+
+        /**
+         * Sets the [ChatClient] instance.
+         */
+        public fun chatClient(chatClient: ChatClient): Builder = apply {
+            this.chatClient = chatClient
+        }
+
+        /**
+         * Builds [TypingIndicatorViewModelFactory] instance.
+         */
+        public fun build(): ViewModelProvider.Factory {
+            return TypingIndicatorViewModelFactory(
+                cid = cid ?: error("Channel cid should not be null"),
+                chatClient = chatClient ?: ChatClient.instance(),
+            )
+        }
     }
 }
