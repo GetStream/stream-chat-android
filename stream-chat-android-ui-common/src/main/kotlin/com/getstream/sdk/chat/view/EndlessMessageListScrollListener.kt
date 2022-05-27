@@ -16,13 +16,12 @@
 
 package com.getstream.sdk.chat.view
 
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Date
 
-private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 30
-private const val DEFAULT_TIGGER_DELAY = 700L
+private const val DEFAULT_BOTTOM_TRIGGER_LIMIT = 50
+private const val DEFAULT_TRIGGER_DELAY = 700L
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -36,7 +35,7 @@ public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
     private inline val loadMoreAtTopListener: () -> Unit,
     private inline val loadMoreAtBottomListener: () -> Unit,
-    private val triggerDelay: Long = DEFAULT_TIGGER_DELAY,
+    private val bottomRequestTriggerDelay: Long = DEFAULT_TRIGGER_DELAY,
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -92,9 +91,7 @@ public class EndlessMessageListScrollListener(
     }
 
     private fun canRequestNow(): Boolean {
-        return (Date().time - lastRequest  > triggerDelay).also { result ->
-            Log.d("EndlessScroll", "canRequestNow result: $result. time since last call: ${Date().time - lastRequest}")
-        }
+        return (Date().time - lastRequest > bottomRequestTriggerDelay)
     }
 
     private fun handleScrollDown(
@@ -103,13 +100,6 @@ public class EndlessMessageListScrollListener(
         firstMessageBellowGap: Int,
     ) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-
-        Log.d("EndlessScroll", "lastVisiblePosition: $lastVisiblePosition -----")
-        Log.d("EndlessScroll", "firstMessageAfterGapPosition: $firstMessageBellowGap")
-        Log.d("EndlessScroll", "trigger begin: ${(firstMessageBellowGap) - loadMoreThreshold}")
-        Log.d("EndlessScroll",
-            "trigger end: ${(firstMessageBellowGap) - loadMoreThreshold + DEFAULT_BOTTOM_TRIGGER_LIMIT}")
-
 
         if (scrollStateReset && isInBottomTriggerPosition(
                 lastVisiblePosition,

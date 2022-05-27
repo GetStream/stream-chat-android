@@ -309,7 +309,7 @@ public fun ChatClient.loadMessageById(
             val result = getMessage(messageId).await()
 
             if (result.isSuccess) {
-                val message = result.data() //Todo: I can use this message to mark the gap divisor
+                val message = result.data()
                 val (channelType, channelId) = cid.cidToTypeAndId()
 
                 logic.channel(channelType = channelType, channelId = channelId).run {

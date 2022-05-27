@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -127,12 +126,9 @@ internal class ChannelLogic(
 
     private val messageIdsBellowGap = mutableListOf<Long>()
     private val messageIdsAboveGap = mutableListOf<Long>()
-    private val requestsMade = mutableSetOf<Int>()
 
     /* This message divides gaps. Messages olders than this, are added bellow gap, messes newer than this are
     * added bellow gap */
-    /* Todo: The request can notify that a gap will be created. Currently I'm assuming that only newer messages can
-     * Todo: create a new gap, which is not correct */
     private var gapDivisorMessage: Message? = null
 
     private val logger = ChatLogger.get("Query channel request")
@@ -189,9 +185,6 @@ internal class ChannelLogic(
         }
     }
 
-    /**
-     * NOTE: This method must be always called before messageIdsSet is called
-     */
     private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel, canCreateGap: Boolean) {
         val noMoreMessagesAvailable = request.messagesLimit() > channel.messages.size
 
@@ -218,13 +211,8 @@ internal class ChannelLogic(
         when {
             /* The messages list has gaps but the end of messages of an overlap was found.
              * The message list is linear again. */
-            mutableState.gapsInMessageList.value?.first == true
-                && (!moreMessagesAvailable || newMessages.hasMessageOverlap(gapSideMessages)) -> {
-                Log.d("ChannelLogic",
-                    "A gap has been closed! new messages: $moreMessagesAvailable | overlap: ${
-                        newMessages.hasMessageOverlap(gapSideMessages)
-                    }")
-
+            mutableState.gapsInMessageList.value?.first == true &&
+                (!moreMessagesAvailable || newMessages.hasMessageOverlap(gapSideMessages)) -> {
                 gapDivisorMessage = null
 
                 mutableState._gapsInMessageList.value = false to null
@@ -234,13 +222,11 @@ internal class ChannelLogic(
 
             /* The messages list had no gaps but newer messages were loaded. As it didn't reach the end of the
              * messages nor has an overlap between messages, the list is  not linear anymore. */
-            mutableState.gapsInMessageList.value?.first != true
-                && moreMessagesAvailable
-                && !newMessages.hasMessageOverlap(gapSideMessages)
-                && canCreateGap -> {
-                Log.d("ChannelLogic", "A gap has been opened!!")
-
-                gapDivisorMessage = newMessages.first() //Todo: This should be moved out of here!!
+            mutableState.gapsInMessageList.value?.first != true &&
+                moreMessagesAvailable &&
+                !newMessages.hasMessageOverlap(gapSideMessages) &&
+                canCreateGap -> {
+                gapDivisorMessage = newMessages.first()
 
                 addGapMessages(gapDivisorMessage, newMessages)
                 mutableState._gapsInMessageList.value =
@@ -249,15 +235,13 @@ internal class ChannelLogic(
 
             // Has gaps and loading more messages
             mutableState.gapsInMessageList.value?.first == true -> {
-                Log.d("ChannelLogic", "A gap keeps opened!!")
-
                 addGapMessages(gapDivisorMessage, newMessages)
                 mutableState._gapsInMessageList.value =
                     true to MessagesGapInfo(messageIdsAboveGap, messageIdsBellowGap)
             }
 
             else -> {
-                logger.logD("nothing done")
+                logger.logD("Unexpected state with gaps")
             }
         }
     }
@@ -275,14 +259,7 @@ internal class ChannelLogic(
     }
 
     private fun List<Message>.hasMessageOverlap(idsList: List<Long>): Boolean {
-        return this.map { it.id.hashCode().toLong() }.any(idsList::contains).also { hasGap ->
-            if (hasGap) {
-                val filteredText = this.filter { idsList.contains(it.id.hashCode().toLong()) }
-                val jointString = filteredText.joinToString { it.text }
-
-                Log.d("ChannelLogic", "Messages with overlaps: $jointString. Size: ${filteredText.size}")
-            }
-        }
+        return this.map { it.id.hashCode().toLong() }.any(idsList::contains)
     }
 
     private suspend fun storeStateForChannel(channel: Channel) {
@@ -333,9 +310,11 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int, canCreateGap: Boolean): Result<Channel> {
-        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId).apply {
-            this.canCreateGap = canCreateGap
-        })
+        return runChannelQuery(
+            newerWatchChannelRequest(limit = limit, baseMessageId = messageId).apply {
+                this.canCreateGap = canCreateGap
+            }
+        )
     }
 
     /**
@@ -381,7 +360,7 @@ internal class ChannelLogic(
         }
     }
 
-    internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+    private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
         loader.value = true
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
@@ -485,7 +464,7 @@ internal class ChannelLogic(
 
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
-    internal fun setWatcherCount(watcherCount: Int) {
+    private fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
             mutableState._watcherCount.value = watcherCount
         }
@@ -509,7 +488,7 @@ internal class ChannelLogic(
      *
      * @param message [Message].
      */
-    internal fun incrementUnreadCountIfNecessary(message: Message) {
+    private fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = globalMutableState.user.value?.id ?: return
 
         val shouldIncrementUnreadCount =
@@ -628,7 +607,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
@@ -637,7 +616,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
     /**
@@ -819,7 +798,7 @@ internal class ChannelLogic(
         }
     }
 
-    internal fun setTyping(userId: String, event: ChatEvent?) {
+    private fun setTyping(userId: String, event: ChatEvent?) {
         val copy = mutableState._typing.value.toMutableMap()
         if (event == null) {
             copy.remove(userId)

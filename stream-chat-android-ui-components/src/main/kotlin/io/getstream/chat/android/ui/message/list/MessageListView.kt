@@ -20,7 +20,6 @@ import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -80,6 +79,7 @@ import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.BottomEndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
@@ -126,8 +126,6 @@ import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-private const val NOT_FOUND = -1
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -628,9 +626,9 @@ public class MessageListView : ConstraintLayout {
                     loadMoreThreshold,
                     { endRegionReachedHandler.onEndRegionReached() },
                     {
-                        Log.d("EndlessScrollListener",
-                            "New messages are being fetched from bottom: $firstMessageBellowGapPosition")
-                        firstMessageBellowGap?.let { bottomEndRegionReachedHandler.onBottomEndRegionReached(it.id) }
+                        firstMessageBellowGap?.let { message ->
+                            bottomEndRegionReachedHandler.onBottomEndRegionReached(message.id)
+                        }
                     },
                 ).also { scrollListener ->
                     this.scrollListener = scrollListener
@@ -649,19 +647,13 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun gapInMessage(hasGap: Boolean, gapInfo: MessagesGapInfo?) {
-        if (hasGap) {
-            Log.d("MessageListView", "The message has gaps!!")
-        } else {
-            Log.d("MessageListView", "The message has NO gaps anymore!!")
-        }
-
         this.hasGap = hasGap
         scrollListener.shouldFetchBottomMessages = this.hasGap!!
         this.messagesBellowGap = gapInfo?.messagesBellowGap
+        this.messagesAboveGap = gapInfo?.messagesAboveGap
     }
 
     private fun updateMessageAfterGap() {
-        Log.d("MessageListView", "updating messages after gap")
         if (this.hasGap == true && messagesBellowGap != null) {
             val messageList = adapter.currentList
 
@@ -669,10 +661,8 @@ public class MessageListView : ConstraintLayout {
                 messageListItem.getStableId()
             }
 
-            //Some IDs bellow the gap may not be in MessageListView. They may be filtered out.
-            val lastIdBellowGap = messagesBellowGap!!.last { id ->
-                allIds.contains(id)
-            }
+            // Some IDs bellow the gap may not be in MessageListView. They may be filtered out.
+            val lastIdBellowGap = messagesBellowGap!!.last(allIds::contains)
 
             firstMessageBellowGapPosition = messageList
                 .indexOfLast { messageListItem ->
@@ -683,9 +673,6 @@ public class MessageListView : ConstraintLayout {
                 firstMessageBellowGap =
                     (messageList[firstMessageBellowGapPosition!!] as MessageListItem.MessageItem).message
             }
-
-            Log.d("MessageListView", "firstMessageBellowGapPosition: $firstMessageBellowGapPosition")
-            Log.d("MessageListView", "firstMessageBellowGap text: ${firstMessageBellowGap?.text}")
 
             scrollListener.firstMessageBellowGapPosition = firstMessageBellowGapPosition
         }
