@@ -47,6 +47,13 @@ internal class MessageListScrollHelper(
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
     private var isAtBottom = false
+        set(value) {
+            if (value) {
+                callback.onLastMessageRead()
+            }
+            field = value
+        }
+
     private var unreadCount = 0
 
     private val currentList: List<MessageListItem>
@@ -131,11 +138,11 @@ internal class MessageListScrollHelper(
                     ?.let {
                         if (message.pinned) {
                             this@MessageListScrollHelper.layoutManager
-                                ?.scrollToPositionWithOffset(it, 8.dpToPx())
+                                .scrollToPositionWithOffset(it, 8.dpToPx())
                         } else {
                             with(recyclerView) {
                                 this@MessageListScrollHelper.layoutManager
-                                    ?.scrollToPositionWithOffset(it, height / 3)
+                                    .scrollToPositionWithOffset(it, height / 3)
                                 post {
                                     findViewHolderForAdapterPosition(it)
                                         ?.safeCast<BaseMessageItemViewHolder<*>>()
