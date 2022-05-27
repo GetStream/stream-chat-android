@@ -100,8 +100,9 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState;
 	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState;
 	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/state/StateRegistry;
-	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
-	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun loadMessageById$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IIZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IZ)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
@@ -216,6 +217,19 @@ public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflin
 	public final fun setRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
 }
 
+public final class io/getstream/chat/android/offline/plugin/logic/channel/internal/MessagesGapInfo {
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/offline/plugin/logic/channel/internal/MessagesGapInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/plugin/logic/channel/internal/MessagesGapInfo;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/logic/channel/internal/MessagesGapInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessagesAboveGap ()Ljava/util/List;
+	public final fun getMessagesBellowGap ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/plugin/state/StateRegistry {
 	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/persistance/repository/MessageRepository;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/offline/plugin/state/channel/ChannelState;
@@ -233,14 +247,13 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/c
 	public abstract fun getCid ()Ljava/lang/String;
 	public abstract fun getEndOfNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getHasGapsInMessageList ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getGapsInMessageList ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getHidden ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMembers ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMembersCount ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getMessageAtGapTopLimit ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessagesState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;

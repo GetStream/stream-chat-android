@@ -492,6 +492,7 @@ public final class io/getstream/chat/android/client/api/models/PinnedMessagesPag
 public class io/getstream/chat/android/client/api/models/QueryChannelRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
 	public fun <init> ()V
 	public final fun filteringOlderMessages ()Z
+	public fun getCanCreateGap ()Z
 	public final fun getData ()Ljava/util/Map;
 	public final fun getMembers ()Ljava/util/Map;
 	public final fun getMessages ()Ljava/util/Map;
@@ -510,6 +511,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public final fun pagination ()Lkotlin/Pair;
+	public fun setCanCreateGap (Z)V
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
@@ -540,6 +542,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getCanCreateGap ()Z
 	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public final fun getLimit ()I
 	public final fun getMemberLimit ()I
@@ -558,6 +561,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun noState ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+	public fun setCanCreateGap (Z)V
 	public final fun setLimit (I)V
 	public final fun setMemberLimit (I)V
 	public final fun setMessageLimit (I)V
