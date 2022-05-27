@@ -170,19 +170,21 @@ internal class ChannelLogic(
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
-        }.onSuccess { channel ->
-            mutableState.recoveryNeeded = false
-            handleMessageLimits(request, channel, request.canCreateGap)
-            updateDataFromChannel(channel)
-        }.onError { error ->
-            if (error.isPermanent()) {
-                logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
-            } else {
-                logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
-                mutableState.recoveryNeeded = true
-            }
-            globalMutableState._errorEvent.value = Event(error)
         }
+            .onSuccess { channel ->
+                mutableState.recoveryNeeded = false
+                handleMessageLimits(request, channel, request.canCreateGap)
+                updateDataFromChannel(channel)
+            }
+            .onError { error ->
+                if (error.isPermanent()) {
+                    logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
+                } else {
+                    logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
+                    mutableState.recoveryNeeded = true
+                }
+                globalMutableState._errorEvent.value = Event(error)
+            }
     }
 
     private fun handleMessageLimits(request: QueryChannelRequest, channel: Channel, canCreateGap: Boolean) {

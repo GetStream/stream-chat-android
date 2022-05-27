@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a channel.*/
 public interface ChannelState {
-
     /** Type of this channel.*/
     public val channelType: String
 
