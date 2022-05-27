@@ -47,6 +47,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
+- The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 
 ### ⬆️ Improved
 
