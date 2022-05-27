@@ -59,8 +59,6 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -74,6 +72,8 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
+import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.offline.extensions.internal.addMember
 import io.getstream.chat.android.offline.extensions.internal.addMembership
 import io.getstream.chat.android.offline.extensions.internal.mergeReactions
@@ -96,19 +96,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.concurrent.atomic.AtomicReference
 
-private const val TAG = "Chat:EventHandlerS"
+private const val TAG = "Chat:EventHandlerSeq"
 private const val TAG_SOCKET = "Chat:SocketEvent"
 private const val EVENTS_BUFFER = 30
 
@@ -249,9 +246,12 @@ internal class EventHandlerSequential(
             }
     }
 
+    /**
+     * For testing purpose only. Simulates socket event handling.
+     */
     @VisibleForTesting
-    override suspend fun handleEvent(vararg event: ChatEvent) {
-        val batchEvent = BatchEvent(event.toList(), isFromHistorySync = false)
+    override suspend fun handleEvents(vararg events: ChatEvent) {
+        val batchEvent = BatchEvent(events.toList(), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
@@ -727,71 +727,3 @@ internal class EventHandlerSequential(
 }
 
 private typealias UserId = String
-
-private class BatchEvent(
-    val sortedEvents: List<ChatEvent>,
-    val isFromHistorySync: Boolean,
-) {
-    val size: Int get() = sortedEvents.size
-    val isFromSocketConnection get() = !isFromHistorySync
-}
-
-private class SocketEventCollector(
-    private val scope: CoroutineScope,
-    private val fireEvent: suspend (BatchEvent) -> Unit
-) {
-    private val mutex = Mutex()
-    private val postponed = arrayListOf<ChatEvent>()
-    private val timeoutJob = AtomicReference<Job>()
-
-    suspend fun add(event: ChatEvent): Boolean {
-        if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
-            StreamLog.d(TAG) { "[add] event.type: ${event.type}" }
-            mutex.withLock {
-                return postponed.add(event).also {
-                    scheduleTimeout()
-                }
-            }
-        }
-        return false
-    }
-
-    private fun scheduleTimeout() {
-        timeoutJob.get()?.cancel()
-        timeoutJob.set(
-            scope.launch {
-                delay(TIMEOUT)
-                StreamLog.i(TAG) { "[scheduleTimeout] timeout is triggered" }
-                doFire()
-                timeoutJob.set(null)
-            }
-        )
-    }
-
-    suspend fun fireBatchEvent() {
-        StreamLog.d(TAG) { "[fireBatchEvent] no args" }
-        timeoutJob.get()?.cancel()
-        timeoutJob.set(null)
-        doFire()
-    }
-
-    private suspend fun doFire() {
-        mutex.withLock {
-            if (postponed.isEmpty()) {
-                StreamLog.v(TAG) { "[doFire] rejected (postponed is empty)" }
-                return
-            }
-            StreamLog.v(TAG) { "[doFire] postponed.size: ${postponed.size}" }
-            val sortedEvents = postponed.toList().sortedBy { it.createdAt }
-            postponed.clear()
-            fireEvent(
-                BatchEvent(sortedEvents, isFromHistorySync = false)
-            )
-        }
-    }
-
-    private companion object {
-        private const val TAG = "Chat:EventCollector"
-        private const val TIMEOUT = 300L
-    }
-}

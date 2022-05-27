@@ -45,6 +45,9 @@ internal interface EventHandler {
      */
     suspend fun syncHistoryForActiveChannels()
 
+    /**
+     * For testing purpose only. Simulates socket event handling.
+     */
     @VisibleForTesting
-    suspend fun handleEvent(vararg event: ChatEvent)
+    suspend fun handleEvents(vararg events: ChatEvent)
 }

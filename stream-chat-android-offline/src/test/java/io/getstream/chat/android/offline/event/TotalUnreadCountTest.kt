@@ -87,7 +87,7 @@ internal class TotalUnreadCountTest {
             unreadChannels = 2
         )
 
-        sut.handleEvent(newMessageEventWithUnread)
+        sut.handleEvents(newMessageEventWithUnread)
 
         globalMutableState._totalUnreadCount.value `should be equal to` 5
         globalMutableState._channelUnreadCount.value `should be equal to` 2
@@ -109,7 +109,7 @@ internal class TotalUnreadCountTest {
             totalUnreadCount = 0,
             unreadChannels = 0
         )
-        sut.handleEvent(markReadEventWithUnread)
+        sut.handleEvents(markReadEventWithUnread)
 
         globalMutableState._totalUnreadCount.value `should be equal to` 0
         globalMutableState._channelUnreadCount.value `should be equal to` 0
@@ -127,7 +127,7 @@ internal class TotalUnreadCountTest {
         val userWithUnread = data.user1.copy(totalUnreadCount = 5, unreadChannels = 2)
         val connectedEvent = data.connectedEvent.copy(me = userWithUnread)
 
-        sut.handleEvent(connectedEvent)
+        sut.handleEvents(connectedEvent)
 
         // unread count are updated internally when a user is updated
         globalMutableState._user.value `should be equal to` userWithUnread

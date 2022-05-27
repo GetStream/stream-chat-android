@@ -101,7 +101,7 @@ import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-private const val TAG = "Chat:EventHandlerI"
+private const val TAG = "Chat:EventHandlerOld"
 
 internal class EventHandlerImpl(
     private val scope: CoroutineScope,
@@ -120,7 +120,7 @@ internal class EventHandlerImpl(
     private var initJob: Deferred<*>? = null
 
     override fun initialize(currentUser: User) {
-        logger.w { "[initialize] user: $currentUser" }
+        logger.i { "[initialize] user: $currentUser" }
         initJob = scope.async {
             syncManager.updateAllReadStateForDate(currentUser.id, Date())
             syncManager.loadSyncStateForUser(currentUser.id)
@@ -133,7 +133,7 @@ internal class EventHandlerImpl(
      */
     override fun startListening() {
         val isDisposed = eventSubscription.isDisposed
-        logger.w { "[startListening] isDisposed: $isDisposed" }
+        logger.i { "[startListening] isDisposed: $isDisposed" }
         if (isDisposed) {
             eventSubscription = client.subscribe {
                 scope.async {
@@ -148,19 +148,19 @@ internal class EventHandlerImpl(
      * Stop listening for events.
      */
     override fun stopListening() {
-        logger.w { "[stopListening] no args" }
+        logger.i { "[stopListening] no args" }
         eventSubscription.dispose()
     }
 
     /**
-     * Handle events from the SDK. Don't use this directly as this only be called then new events arrive from the SDK.
+     * For testing purpose only. Simulates socket event handling.
      */
     @VisibleForTesting
-    override suspend fun handleEvent(vararg event: ChatEvent) {
-        logger.i { "[handleEvent] event: $event" }
-        val events = event.toList()
-        handleConnectEvents(events)
-        handleEventsInternal(events, isFromSync = false)
+    override suspend fun handleEvents(vararg events: ChatEvent) {
+        logger.i { "[handleEvent] events: $events" }
+        val eventList = events.toList()
+        handleConnectEvents(eventList)
+        handleEventsInternal(eventList, isFromSync = false)
     }
 
     /**

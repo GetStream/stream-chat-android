@@ -106,7 +106,7 @@ internal class EventHandlerImplTest {
             connectionId = randomString()
         )
 
-        eventHandler.handleEvent(connectedEvent)
+        eventHandler.handleEvents(connectedEvent)
 
         globalState.connectionState.value `should be` ConnectionState.CONNECTED
         globalState.initialized.value `should be` true
@@ -133,8 +133,8 @@ internal class EventHandlerImplTest {
             createdAt = Date(),
         )
 
-        eventHandler.handleEvent(connectedEvent) // To make sure that we are not asserting the initial state
-        eventHandler.handleEvent(disconnectedEvent)
+        eventHandler.handleEvents(connectedEvent) // To make sure that we are not asserting the initial state
+        eventHandler.handleEvents(disconnectedEvent)
 
         globalState.connectionState.value `should be` ConnectionState.OFFLINE
     }
@@ -153,7 +153,7 @@ internal class EventHandlerImplTest {
             createdAt = Date(),
         )
 
-        eventHandler.handleEvent(connectingEvent)
+        eventHandler.handleEvents(connectingEvent)
 
         globalState.connectionState.value `should be` ConnectionState.CONNECTING
     }
@@ -173,7 +173,7 @@ internal class EventHandlerImplTest {
             connectionId = randomString()
         )
 
-        eventHandler.handleEvent(connectingEvent)
+        eventHandler.handleEvents(connectingEvent)
 
         verify(syncManager).retryFailedEntities()
     }
