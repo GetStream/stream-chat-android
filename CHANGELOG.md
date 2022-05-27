@@ -49,6 +49,7 @@
 - Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
 
 ### ⬆️ Improved
+- Adding requests for new messages are the bottom of MessageListView and there's a gap in the messages. [3615](https://github.com/GetStream/stream-chat-android/pull/3615)
 
 ### ✅ Added
 - Added way to customize quoted attachments through `QuotedAttachmentFactory` and updated custom attachments guide for the new feature. [#3592](https://github.com/GetStream/stream-chat-android/pull/3592)
