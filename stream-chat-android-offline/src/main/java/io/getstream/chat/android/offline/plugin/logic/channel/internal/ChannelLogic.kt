@@ -115,7 +115,7 @@ import kotlin.math.max
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: GlobalMutableState,
