@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3619](https://github.com/GetStream/stream-chat-android/pull/3619)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
