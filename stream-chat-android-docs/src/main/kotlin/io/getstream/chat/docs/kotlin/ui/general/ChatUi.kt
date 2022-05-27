@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.docs.R
+import io.getstream.chat.docs.kotlin.ui.utility.GrayscaleTransformation
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -82,6 +83,11 @@ private class ChatUiSnippets {
                 val imageResult = context.imageLoader.execute(
                     ImageRequest.Builder(context)
                         .data(user.image)
+                        .apply {
+                            if (!user.online) {
+                                transformations(GrayscaleTransformation())
+                            }
+                        }
                         .build()
                 )
 

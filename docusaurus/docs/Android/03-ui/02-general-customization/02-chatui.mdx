@@ -141,7 +141,7 @@ Which creates:
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
 
-Here's an example of a custom factory that extends `AvatarBitmapFactory`, which makes the avatar for offline users blurred:
+Here's an example of a custom factory that extends `AvatarBitmapFactory`, which makes the avatar for offline users to shades of gray:
 
 ```kotlin
 ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
@@ -149,6 +149,11 @@ ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
         val imageResult = context.imageLoader.execute(
             ImageRequest.Builder(context)
                 .data(user.image)
+                .apply {
+                    if (!user.online) {
+                        transformations(GrayscaleTransformation())
+                    }
+                }
                 .build()
         )
 
@@ -163,7 +168,7 @@ This example uses the [Coil](https://github.com/coil-kt/coil) library for loadin
 
 This results in avatars rendered like this:
 
-![Blurred images for offline users](../../assets/blurred_images.png)
+![Shades of gray images for offline users](../../assets/blurred_images.png)
 
 ### Adding Extra Headers to Image Requests
 
