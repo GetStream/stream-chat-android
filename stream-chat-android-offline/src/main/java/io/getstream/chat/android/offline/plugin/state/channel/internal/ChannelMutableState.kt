@@ -52,8 +52,8 @@ internal class ChannelMutableState(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
+    @Suppress("VariableNaming")
     internal val _gapsInMessageList = MutableStateFlow<Pair<Boolean, MessagesGapInfo?>?>(null)
-    internal val _messageAtGapTopLimit = MutableStateFlow<Message?>(null)
     internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     internal val _watcherCount = MutableStateFlow(0)
     internal val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
