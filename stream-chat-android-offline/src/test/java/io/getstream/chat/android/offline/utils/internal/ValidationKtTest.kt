@@ -48,7 +48,7 @@ internal class ValidationKtTest {
     @ParameterizedTest
     @MethodSource("argumentsValidCidResult")
     fun testValidateCidResult(cid: String, expectedResult: Result<String>) {
-        validateCidWithResult<Any>(cid) `should be equal to` expectedResult
+        validateCidWithResult(cid) `should be equal to` expectedResult
     }
 
     @Suppress("MaxLineLength")
