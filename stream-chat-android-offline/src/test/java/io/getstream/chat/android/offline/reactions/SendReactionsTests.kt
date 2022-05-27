@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.reactions
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.extensions.internal.addMyReaction
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerImpl

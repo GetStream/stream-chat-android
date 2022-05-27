@@ -31,6 +31,7 @@ import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
@@ -79,6 +80,12 @@ private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewForm
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
+    error(
+        "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
+            "in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -99,6 +106,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
+ * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -123,6 +131,7 @@ public fun ChatTheme(
     ),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -144,6 +153,7 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment
     ) {
         content()
     }
@@ -249,4 +259,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    /**
+     * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
+     */
+    public val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageOptionsUserReactionAlignment.current
 }

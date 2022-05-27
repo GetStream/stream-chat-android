@@ -284,7 +284,7 @@ class MessagesActivity : AppCompatActivity() {
         val defaultFactories = StreamAttachmentFactories.defaultFactories()
 
         setContent {
-            // pass in custom factories or combine them with the default ones
+            // Pass in custom factories or combine them with the default ones
             ChatTheme(attachmentFactories = customFactories + defaultFactories) {
                 CustomMessagesScreen(
                     channelId = channelId,

@@ -22,6 +22,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -31,6 +32,31 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
+/**
+ * Style for [ViewReactionsView].
+ * Use this class together with [TransformStyle.viewReactionsStyleTransformer] to change [ViewReactionsView]
+ * styles programmatically.
+ *
+ * @param bubbleBorderColorMine Reaction bubble border color for the current user.
+ * @param bubbleBorderColorTheirs Reaction bubble border color for other users.
+ * @param bubbleColorMine Reaction bubble color for the current user.
+ * @param bubbleColorTheirs Reaction bubble color for other users.
+ * @param bubbleBorderWidthMine Reaction bubble border width for the current user.
+ * @param bubbleBorderWidthTheirs Reaction bubble border width for other users.
+ * @param totalHeight The total height of the reaction bubble.
+ * @param horizontalPadding The horizontal padding to be applied to the start and end of the bubble.
+ * @param itemSize The size of the reaction item.
+ * @param bubbleHeight Height of the reactions part of the bubble.
+ * @param bubbleRadius The radius of the reactions part of the bubble.
+ * @param largeTailBubbleCy The y axis position of the large tail bubble center point.
+ * @param largeTailBubbleRadius The radius of the large tail bubble.
+ * @param largeTailBubbleOffset The x axis offset of the large tail bubble center point.
+ * @param smallTailBubbleCy The y axis position of the small tail bubble center point.
+ * @param smallTailBubbleOffset The x axis offset of the small tail bubble center point.
+ * @param verticalPadding The vertical padding to be applied to top and bottom of the view.
+ * @param messageOptionsUserReactionOrientation The orientation of the bubble.
+ * By default is [MessageOptionsUserReactionOrientation.BY_USER]
+ */
 public data class ViewReactionsViewStyle(
     @ColorInt public val bubbleBorderColorMine: Int,
     @ColorInt public val bubbleBorderColorTheirs: Int?,
@@ -49,6 +75,8 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
+    @Px public val verticalPadding: Int,
+    public val messageOptionsUserReactionOrientation: Int,
 ) {
 
     internal companion object {
@@ -61,7 +89,7 @@ public data class ViewReactionsViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ViewReactionsView,
-                0,
+                R.attr.streamUiMessageListViewReactionsStyle,
                 0,
             ).use { a ->
                 return Builder(a, context)
@@ -71,6 +99,9 @@ public data class ViewReactionsViewStyle(
                     .bubbleBorderWidthTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthTheirs)
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
+                    .messageOptionsUserReactionBubbleOrientation(
+                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation
+                    )
                     .build()
             }
         }
@@ -88,6 +119,8 @@ public data class ViewReactionsViewStyle(
             private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
             @Px
             private var bubbleBorderWidthTheirs: Float? = null
+            private var messageOptionsUserReactionOrientation: Int =
+                MessageOptionsUserReactionAlignment.BY_USER.value
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
                 bubbleColorTheirs =
@@ -116,6 +149,11 @@ public data class ViewReactionsViewStyle(
                 bubbleBorderWidthTheirs = array.getDimensionOrNull(bubbleBorderWidthAttribute)
             }
 
+            fun messageOptionsUserReactionBubbleOrientation(@StyleableRes bubbleOrientation: Int) = apply {
+                this.messageOptionsUserReactionOrientation =
+                    array.getInt(bubbleOrientation, MessageOptionsUserReactionAlignment.BY_USER.value)
+            }
+
             fun build(): ViewReactionsViewStyle {
                 val totalHeight =
                     context.getDimension(R.dimen.stream_ui_view_reactions_total_height)
@@ -139,6 +177,8 @@ public data class ViewReactionsViewStyle(
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_radius)
                 val smallTailBubbleOffset =
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
+                val verticalPadding =
+                    context.getDimension(R.dimen.stream_ui_view_reactions_vertical_padding)
 
                 return ViewReactionsViewStyle(
                     bubbleBorderColorMine = bubbleBorderColorMine,
@@ -158,6 +198,8 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
                     smallTailBubbleOffset = smallTailBubbleOffset,
+                    verticalPadding = verticalPadding,
+                    messageOptionsUserReactionOrientation = messageOptionsUserReactionOrientation,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
             }
         }

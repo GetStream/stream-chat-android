@@ -29,6 +29,8 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar
@@ -109,6 +111,16 @@ public object ChatUI {
      * Allows adding support for custom attachments in the message list.
      */
     public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
+
+    /**
+     * Allows adding support for custom attachment inside quoted messages in the message list. If none are found here
+     * will default to [attachmentFactoryManager].
+     */
+    public var quotedAttachmentFactoryManager: QuotedAttachmentFactoryManager by lazyVar {
+        QuotedAttachmentFactoryManager(
+            listOf(DefaultQuotedAttachmentMessageFactory())
+        )
+    }
 
     /**
      * Provides the currently logged in user.

@@ -16,30 +16,18 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
-import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import org.junit.Rule
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 
-class ReactionOptionsTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class ReactionOptionsTest : ComposeScreenshotTest() {
 
     @Test
-    fun reactionOptions() {
-        composeRule.setContent {
-            ChatTheme {
-                ReactionOptions(
-                    ownReactions = emptyList(),
-                    onReactionOptionSelected = {},
-                    onShowMoreReactionsSelected = {},
-                )
-            }
-        }
-        compareScreenshot(composeRule.onRoot())
+    fun reactionOptions() = runScreenshotTest {
+        ReactionOptions(
+            ownReactions = emptyList(),
+            onReactionOptionSelected = {},
+            onShowMoreReactionsSelected = {},
+        )
     }
 }

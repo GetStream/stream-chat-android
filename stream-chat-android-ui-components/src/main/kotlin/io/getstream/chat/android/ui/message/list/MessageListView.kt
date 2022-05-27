@@ -313,6 +313,7 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
+    @Suppress("DEPRECATION_ERROR")
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
 
@@ -1082,7 +1083,7 @@ public class MessageListView : ConstraintLayout {
             "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
             "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
         check(isAdapterInitialized().not()) {

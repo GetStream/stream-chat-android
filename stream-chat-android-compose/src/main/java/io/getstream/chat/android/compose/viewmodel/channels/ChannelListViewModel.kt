@@ -42,6 +42,7 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -77,6 +78,8 @@ public class ChannelListViewModel(
      * State flow that keeps the value of the current [FilterObject] for channels.
      */
     private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
+
+    private val logger = StreamLog.getLogger("ChannelListVM")
 
     /**
      * State flow that keeps the value of the current [QuerySort] for channels.
@@ -175,6 +178,8 @@ public class ChannelListViewModel(
      * Makes the initial query to request channels and starts observing state changes.
      */
     private suspend fun init() {
+        logger.d { "Initializing ChannelListViewModel" }
+
         searchQuery.combine(queryConfigFlow) { query, config -> query to config }
             .collectLatest { (query, config) ->
                 val queryChannelsRequest = QueryChannelsRequest(
@@ -185,6 +190,7 @@ public class ChannelListViewModel(
                     memberLimit = memberLimit,
                 )
 
+                logger.d { "Querying channels as state" }
                 queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
                 observeChannels(searchQuery = query)
             }
@@ -226,6 +232,7 @@ public class ChannelListViewModel(
      * @param searchQuery The search query string used to search channels.
      */
     private suspend fun observeChannels(searchQuery: String) {
+        logger.d { "ViewModel is observing channels. When state is available, it will be notified" }
         queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
             channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
                 .map { (channelMutes, state) ->
@@ -235,8 +242,11 @@ public class ChannelListViewModel(
                         -> channelsState.copy(
                             isLoading = true,
                             searchQuery = searchQuery
-                        )
+                        ).also {
+                            logger.d { "Loading state for query" }
+                        }
                         ChannelsStateData.OfflineNoResults -> {
+                            logger.d { "No offline results. Channels are empty" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = emptyList(),
@@ -244,6 +254,7 @@ public class ChannelListViewModel(
                             )
                         }
                         is ChannelsStateData.Result -> {
+                            logger.d { "Received result for state of channels" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = createChannelItems(state.channels, channelMutes),
@@ -300,6 +311,8 @@ public class ChannelListViewModel(
      * Loads more data when the user reaches the end of the channels list.
      */
     public fun loadMore() {
+        logger.d { "Loading more channels" }
+
         if (chatClient.globalState.isOffline()) return
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,

@@ -18,26 +18,19 @@ package io.getstream.chat.android.uitests.snapshot.compose.channels
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class ChannelListTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class ChannelListTest : ComposeScreenshotTest() {
 
     @Test
-    fun channelListWithContentState() {
-        renderChannelList(
+    fun channelListWithContentState() = runScreenshotTest {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = false,
                 isLoadingMore = false,
@@ -97,8 +90,9 @@ class ChannelListTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListWithEmptyState() {
-        renderChannelList(
+    fun channelListWithEmptyState() = runScreenshotTest {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = false,
                 isLoadingMore = false,
@@ -109,8 +103,9 @@ class ChannelListTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListWithLoadingMoreState() {
-        renderChannelList(
+    fun channelListWithLoadingMoreState() = runScreenshotTest {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = false,
                 isLoadingMore = true,
@@ -170,29 +165,14 @@ class ChannelListTest : ScreenshotTest {
     }
 
     @Test
-    fun channelListWithLoadingState() {
-        renderChannelList(
+    fun channelListWithLoadingState() = runScreenshotTest {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = true,
                 channelItems = emptyList()
             ),
             currentUser = TestData.user1()
         )
-    }
-
-    private fun renderChannelList(
-        channelsState: ChannelsState,
-        currentUser: User,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                ChannelList(
-                    modifier = Modifier.fillMaxSize(),
-                    channelsState = channelsState,
-                    currentUser = currentUser,
-                )
-            }
-        }
-        compareScreenshot(composeRule.onRoot())
     }
 }

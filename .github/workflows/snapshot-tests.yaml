@@ -1,8 +1,9 @@
 name: Snapshot-Test
 
 on:
+  workflow_dispatch:
   schedule:
-    - # Every midnight
+    # Every midnight
     - cron: '0 0 * * *'
 
 jobs:
@@ -12,6 +13,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          ref: develop
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
@@ -26,7 +29,8 @@ jobs:
           api-level: 26
           disable-animations: true
           profile: pixel
-          emulator-options: -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          arch : x86_64
+          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
       - name: Upload screnshot results
         if: always()
