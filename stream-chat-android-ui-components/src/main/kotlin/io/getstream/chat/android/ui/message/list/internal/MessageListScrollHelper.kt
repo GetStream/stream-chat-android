@@ -46,6 +46,13 @@ internal class MessageListScrollHelper(
 
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
+
+    /**
+     * True when the latest message is visible.
+     *
+     * Note: This does not mean the whole message is visible,
+     * it will be true even if only a part of it is.
+     */
     private var isAtBottom = false
         set(value) {
             if (value) {
