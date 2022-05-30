@@ -93,5 +93,11 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
 
         public fun <R : QueryableByMap> descByName(fieldName: String): QuerySortByMap<R> =
             QuerySortByMap<R>().desc(fieldName)
+
+        public fun <R : QueryableByMap> QuerySortByMap<R>.ascByName(fieldName: String): QuerySortByMap<R> =
+            asc(fieldName)
+
+        public fun <R : QueryableByMap> QuerySortByMap<R>.descByName(fieldName: String): QuerySortByMap<R> =
+            desc(fieldName)
     }
 }
