@@ -93,7 +93,6 @@ import io.getstream.chat.android.offline.repository.builder.internal.RepositoryF
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -157,32 +156,18 @@ internal class EventHandlerSequential(
     }
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
-    private var initJob: Job? = null
-
-    override fun initialize(currentUser: User) {
-        logger.i { "[initialize] currentUser: $currentUser" }
-        currentUserId.set(currentUser.id)
-        initJob = scope.launch {
-            try {
-                syncManager.updateAllReadStateForDate(currentUser.id, Date())
-                syncManager.loadSyncStateForUser(currentUser.id)
-                syncHistoryForCachedChannels()
-            } catch (e: Throwable) {
-                logger.e(e) { "[initialize] failed: $e" }
-            }
-        }
-    }
 
     /**
      * Start listening to chat events.
      */
-    override fun startListening() {
+    override fun startListening(currentUser: User) {
         val isDisposed = eventsDisposable.isDisposed
-        logger.i { "[startListening] isDisposed: $isDisposed" }
+        logger.i { "[startListening] isDisposed: $isDisposed, currentUser: $currentUser" }
+        currentUserId.set(currentUser.id)
         if (isDisposed) {
             scope.launch {
-                initJob?.join()
-                logger.v { "[startListening] initJob completed" }
+                initialize()
+                logger.v { "[startListening] initialization completed" }
                 socketEvents.collect { event ->
                     handleSocketEvent(event)
                 }
@@ -203,6 +188,7 @@ internal class EventHandlerSequential(
         logger.i { "[stopListening] no args" }
         eventsDisposable.dispose()
         scope.coroutineContext.job.cancelChildren()
+        currentUserId.set(null)
     }
 
     /**
@@ -213,6 +199,18 @@ internal class EventHandlerSequential(
         val activeChannelsCid = activeChannelsCid()
         if (activeChannelsCid.isNotEmpty()) {
             syncHistory(activeChannelsCid)
+        }
+    }
+
+    private suspend fun initialize() {
+        try {
+            val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
+            logger.d { "[initialize] currentUserId: $currentUserId" }
+            syncManager.updateAllReadStateForDate(currentUserId, Date())
+            syncManager.loadSyncStateForUser(currentUserId)
+            syncHistoryForCachedChannels()
+        } catch (e: Throwable) {
+            logger.e(e) { "[initialize] failed: $e" }
         }
     }
 

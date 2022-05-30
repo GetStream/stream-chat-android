@@ -26,14 +26,9 @@ import io.getstream.chat.android.client.models.User
 internal interface EventHandler {
 
     /**
-     * Initializes with the current user.
-     */
-    fun initialize(currentUser: User)
-
-    /**
      * Triggers WebSocket event subscription.
      */
-    fun startListening()
+    fun startListening(currentUser: User)
 
     /**
      * Cancels WebSocket event subscription.

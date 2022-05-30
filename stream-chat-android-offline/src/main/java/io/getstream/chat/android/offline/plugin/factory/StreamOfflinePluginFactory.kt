@@ -193,8 +193,7 @@ public class StreamOfflinePluginFactory(
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
-            eventHandler.initialize(user)
-            eventHandler.startListening()
+            eventHandler.startListening(user)
         }
 
         InitializationCoordinator.getOrCreate().run {

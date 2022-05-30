@@ -96,7 +96,6 @@ import io.getstream.chat.android.offline.repository.builder.internal.RepositoryF
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
@@ -117,27 +116,22 @@ internal class EventHandlerImpl(
     private val logger = StreamLog.getLogger(TAG)
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
-    private var initJob: Deferred<*>? = null
-
-    override fun initialize(currentUser: User) {
-        logger.i { "[initialize] user: $currentUser" }
-        initJob = scope.async {
-            syncManager.updateAllReadStateForDate(currentUser.id, Date())
-            syncManager.loadSyncStateForUser(currentUser.id)
-            replayEventsForAllChannels(currentUser)
-        }
-    }
 
     /**
      * Start listening to chat events.
      */
-    override fun startListening() {
+    override fun startListening(currentUser: User) {
         val isDisposed = eventSubscription.isDisposed
-        logger.i { "[startListening] isDisposed: $isDisposed" }
+        logger.i { "[startListening] isDisposed: $isDisposed, user: $currentUser" }
         if (isDisposed) {
+            val initJob = scope.async {
+                syncManager.updateAllReadStateForDate(currentUser.id, Date())
+                syncManager.loadSyncStateForUser(currentUser.id)
+                replayEventsForAllChannels(currentUser)
+            }
             eventSubscription = client.subscribe {
                 scope.async {
-                    initJob?.join()
+                    initJob.join()
                     handleEvents(listOf(it))
                 }
             }
