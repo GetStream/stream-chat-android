@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
 
 ### ⬆️ Improved
 

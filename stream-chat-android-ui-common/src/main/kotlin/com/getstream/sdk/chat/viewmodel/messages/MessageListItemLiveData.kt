@@ -134,11 +134,17 @@ internal class MessageListItemLiveData(
 
     private fun configReadsChange(readsLd: LiveData<List<ChannelUserRead>>, getCurrentUser: LiveData<User?>) {
         val readChange = getCurrentUser.changeOnUserLoaded(readsLd) { changedReads, currentUser ->
-            readsChanged(changedReads, currentUser!!.id)
+            if (currentUser != null) {
+                readsChanged(changedReads, currentUser.id)
+            } else {
+                null
+            }
         }
 
         addSource(readChange) { value ->
-            this.value = value
+            if (value != null) {
+                this.value = value
+            }
         }
     }
 
