@@ -213,8 +213,8 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
         public inline fun <reified T : Any> asc(fieldName: String): QuerySortByReflection<T> =
             QuerySortByReflection<T>().ascByName(fieldName)
 
-        public inline fun <reified T : Any> desc(fieldName: String): QuerySortByReflection<T> =
-            QuerySortByReflection<T>().descByName(fieldName)
+        public inline fun <reified R : Any> desc(fieldName: String): QuerySortByReflection<R> =
+            QuerySortByReflection<R>().descByName(fieldName)
 
         public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
             QuerySortByReflection<T>().asc(field)

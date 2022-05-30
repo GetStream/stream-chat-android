@@ -66,13 +66,10 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
         sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     public companion object {
-        public const val KEY_DIRECTION: String = "direction"
-        public const val KEY_FIELD_NAME: String = "field"
+        public fun <R : QueryableByMap> ascByName(fieldName: String): QuerySortByMap<R> =
+            QuerySortByMap<R>().asc(fieldName)
 
-        public fun <R : QueryableByMap> QuerySortByMap<R>.ascByName(fieldName: String): QuerySortByMap<R> =
-            asc(fieldName)
-
-        public fun <R : QueryableByMap> QuerySortByMap<R>.descByName(fieldName: String): QuerySortByMap<R> =
-            desc(fieldName)
+        public fun <R : QueryableByMap> descByName(fieldName: String): QuerySortByMap<R> =
+            QuerySortByMap<R>().desc(fieldName)
     }
 }
