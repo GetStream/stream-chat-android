@@ -32,9 +32,10 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
@@ -547,7 +548,7 @@ internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySortByReflection<Member>,
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
@@ -990,7 +991,7 @@ internal constructor(
         offset: Int? = null,
         limit: Int? = null,
         next: String? = null,
-        sort: QuerySortByReflection<Message>? = null,
+        sort: QuerySort<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
             return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
@@ -1025,7 +1026,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySortByReflection<Message>,
+        sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return api.getPinnedMessages(
@@ -1952,7 +1953,7 @@ internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySortByReflection<BannedUsersSort> = QuerySortByReflection.asc(BannedUsersSort::createdAt),
+        sort: QuerySort<BannedUsersSort> = QuerySortByMap.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -2564,7 +2565,7 @@ internal constructor(
         private var instance: ChatClient? = null
 
         @JvmField
-        public val DEFAULT_SORT: QuerySortByReflection<Member> = QuerySortByReflection.desc("last_updated")
+        public val DEFAULT_SORT: QuerySort<Member> = QuerySortByMap.descByName("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
 

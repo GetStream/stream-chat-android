@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.client.api.models.querysort.QuerySort;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -135,7 +136,7 @@ public class Moderation {
             public void queryBans() {
                 // Get the bans for channel livestream:123 in descending order
                 FilterObject filter = Filters.eq("channel_cid", "livestream:123");
-                QuerySortByReflection<BannedUsersSort> sort = new QuerySortByReflection<BannedUsersSort>().desc("created_at");
+                QuerySort<BannedUsersSort> sort = new QuerySortByReflection<BannedUsersSort>().desc("created_at");
                 client.queryBannedUsers(filter, sort).enqueue(result -> {
                     if (result.isSuccess()) {
                         List<BannedUser> bannedUsers = result.data();

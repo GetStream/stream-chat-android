@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import java.util.Date
 
 /**
@@ -75,4 +76,9 @@ public data class Member(
      * The user's channel-level role.
      */
     var channelRole: String? = null,
-) : UserEntity
+) : UserEntity, QueryableByMap {
+
+    //Todo: Complete this!
+    override fun toMap(): Map<String, Any> =
+        mapOf()
+}

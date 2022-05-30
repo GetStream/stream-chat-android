@@ -23,9 +23,10 @@ import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -339,7 +340,7 @@ public class ChannelClient internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject? = null,
-        sort: QuerySortByReflection<BannedUsersSort> = QuerySortByReflection.asc(BannedUsersSort::createdAt),
+        sort: QuerySort<BannedUsersSort> = QuerySortByMap.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -763,7 +764,7 @@ public class ChannelClient internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySortByReflection<Member>,
+        sort: QuerySort<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
@@ -812,7 +813,7 @@ public class ChannelClient internal constructor(
     @CheckResult
     public fun getPinnedMessages(
         limit: Int,
-        sort: QuerySortByReflection<Message>,
+        sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return client.getPinnedMessages(

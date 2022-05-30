@@ -105,9 +105,9 @@ public data class Channel(
             "type" to type,
             "name" to name,
         ).apply {
-            createdAt?.let { this["created_at"] = it }
-            deletedAt?.let { this["deleted_at"] = it }
-            lastUpdated?.let { this["last_updated"] = it }
+            createdAt?.let { this["createdAt"] = it }
+            deletedAt?.let { this["deletedAt"] = it }
+            lastUpdated?.let { this["lastUpdated"] = it }
         }
     }
 }

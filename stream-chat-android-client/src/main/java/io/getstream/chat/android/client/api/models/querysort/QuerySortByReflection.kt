@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
+import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_DIRECTION
+import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_FIELD_NAME
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.client.models.CustomObject
@@ -201,9 +203,6 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
     }
 
     public companion object {
-        public const val KEY_DIRECTION: String = "direction"
-        public const val KEY_FIELD_NAME: String = "field"
-
         public inline fun <reified T : Any> QuerySortByReflection<T>.ascByName(fieldName: String): QuerySortByReflection<T> =
             asc(fieldName, T::class)
 

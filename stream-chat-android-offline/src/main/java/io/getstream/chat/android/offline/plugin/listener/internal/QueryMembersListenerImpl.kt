@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.utils.Result
@@ -41,7 +41,7 @@ internal class QueryMembersListenerImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySortByReflection<Member>,
+        sort: QuerySort<Member>,
         members: List<Member>,
     ) {
         if (result.isSuccess) {

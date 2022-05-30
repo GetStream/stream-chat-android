@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import java.util.Date
 
-public data class BannedUsersSort(val createdAt: Date)
+public data class BannedUsersSort(val createdAt: Date): QueryableByMap {
+
+    override fun toMap(): Map<String, Any> = mapOf("createdAt" to createdAt)
+}

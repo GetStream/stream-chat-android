@@ -40,8 +40,8 @@ internal class QuerySortConverter {
 
     private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySort<Channel> {
         return listOfSortSpec.fold(QuerySortByReflection()) { sort, sortSpecMap ->
-            val fieldName = sortSpecMap[QuerySortByReflection.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            val direction = (sortSpecMap[QuerySortByReflection.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+            val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+            val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
             when (direction) {
                 SortDirection.ASC.value -> sort.asc(fieldName, Channel::class.java)
                 SortDirection.DESC.value -> sort.desc(fieldName, Channel::class.java)

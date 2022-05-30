@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
@@ -86,7 +88,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 @Composable
 public fun ChannelsScreen(
     filters: FilterObject? = null,
-    querySort: QuerySortByReflection<Channel> = QuerySortByReflection.desc("last_updated"),
+    querySort: QuerySort<Channel> = QuerySortByMap.descByName("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,

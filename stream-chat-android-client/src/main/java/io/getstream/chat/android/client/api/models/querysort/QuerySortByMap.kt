@@ -1,5 +1,9 @@
 package io.getstream.chat.android.client.api.models.querysort
 
+import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_DIRECTION
+import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_FIELD_NAME
+import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+
 public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
@@ -7,8 +11,8 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
     override val comparator: Comparator<in T>
         get() = CompositeComparator(sortSpecifications.map { it.comparator })
 
-    override fun toDto(): List<Map<String, Any>> {
-        TODO("Not yet implemented")
+    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
+        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
     }
 
     private val SortSpecification<T>.comparator: Comparator<T>
@@ -24,8 +28,10 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
 
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
-            val fieldOne = o1.toMap()[this] as? Comparable<Any>
-            val fieldTwo = o2.toMap()[this] as? Comparable<Any>
+            val field = this.snakeToLowerCamelCase()
+
+            val fieldOne = o1.toMap()[field] as? Comparable<Any>
+            val fieldTwo = o2.toMap()[field] as? Comparable<Any>
 
             compare(fieldOne, fieldTwo, sortDirection)
         }

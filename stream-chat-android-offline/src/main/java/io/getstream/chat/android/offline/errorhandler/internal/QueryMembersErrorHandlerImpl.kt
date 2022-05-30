@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.errorhandler.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
@@ -55,7 +55,7 @@ internal class QueryMembersErrorHandlerImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySortByReflection<Member>,
+        sort: QuerySort<Member>,
         members: List<Member>,
     ): ReturnOnErrorCall<List<Member>> {
         return originalCall.onErrorReturn(scope) { originalError ->
