@@ -51,7 +51,7 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given a message list When showing the message list Should update the messages state`() = runTest {
+    fun `Given message list When showing the message list Should update the messages state`() = runTest {
         val messageState = MessagesState.Result(
             messages = listOf(
                 Message(id = "message-id-1", createdAt = Date()),

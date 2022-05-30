@@ -49,7 +49,7 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun sampleTest() = runTest {
+    fun `Given channel list When showing the channel list Should update the channels state`() = runTest {
         val viewModel = Fixture()
             .givenCurrentUser()
             .givenChannelsQuery()
