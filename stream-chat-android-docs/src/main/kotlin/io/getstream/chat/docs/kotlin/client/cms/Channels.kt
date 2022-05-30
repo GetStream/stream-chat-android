@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.Pagination.LESS_THAN
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
@@ -90,7 +90,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 ),
                 offset = 0,
                 limit = 10,
-                querySort = QuerySort.desc("last_message_at")
+                querySort = QuerySortByReflection.desc("last_message_at")
             ).apply {
                 // Watches the channels automatically
                 watch = true
@@ -304,7 +304,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                     ),
                     offset = 0,
                     limit = 10,
-                    querySort = QuerySort.desc("last_message_at")
+                    querySort = QuerySortByReflection.desc("last_message_at")
                 ).apply {
                     watch = true
                     state = true
@@ -377,7 +377,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 
                 val offset = 0 // Use this value for pagination
                 val limit = 10
-                val sort = QuerySort<Member>()
+                val sort = QuerySortByReflection<Member>()
 
                 // Channel members can be queried with various filters
                 // 1. Create the filter, e.g query members by user name
@@ -416,7 +416,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 
                 // Results can also be orderd with the QuerySort param
                 // For example, this will order results by member creation time, descending
-                val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
+                val createdAtDescendingSort = QuerySortByReflection<Member>().desc("created_at")
             }
         }
 

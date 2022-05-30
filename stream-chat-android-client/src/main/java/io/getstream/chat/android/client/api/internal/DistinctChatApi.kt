@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
@@ -98,7 +98,7 @@ internal class DistinctChatApi(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySortByReflection<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         val uniqueKey = GetPinnedMessagesHash(channelType, channelId, limit, sort, pagination).hashCode()
@@ -121,7 +121,7 @@ internal class DistinctChatApi(
 
     override fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySortByReflection<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -162,7 +162,7 @@ internal class DistinctChatApi(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySortByReflection<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
         val uniqueKey = QueryMembersHash(channelType, channelId, offset, limit, filter, sort, members)

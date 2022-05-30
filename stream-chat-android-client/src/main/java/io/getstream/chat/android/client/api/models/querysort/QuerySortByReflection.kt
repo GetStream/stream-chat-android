@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.api.models.querysort
 
-import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.client.models.CustomObject
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
@@ -33,25 +31,24 @@ import kotlin.reflect.full.memberProperties
  * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
  */
 @Suppress("TooManyFunctions")
-public class QuerySort<T : Any> {
+public class QuerySortByReflection<T : Any> : QuerySort<T> {
     private val logger = StreamLog.getLogger("QuerySort")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
-    @InternalStreamChatApi
     /** Composite comparator based on sort attributes. */
-    public val comparator: Comparator<in T>
+    public override val comparator: Comparator<in T>
         get() = CompositeComparator(sortSpecifications.map { it.comparator })
 
     private val SortSpecification<T>.comparator: Comparator<T>
         get() {
             return when (this.sortAttribute) {
-                is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
+                is SortAttribute.FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
                     .also { comparator ->
                         logger.d { "Returning field sort with name: ${sortAttribute.field.name}" }
                     }
 
-                is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
+                is SortAttribute.FieldNameSortAttribute<T> -> this.sortAttribute.name.comparator(this.sortDirection)
                     .also { comparator ->
                         logger.d { "Returning field name sort comparator with name: ${sortAttribute.name}" }
                     }
@@ -80,16 +77,6 @@ public class QuerySort<T : Any> {
             )
         }
 
-    private fun compare(first: Comparable<Any>?, second: Comparable<Any>?, sortDirection: SortDirection): Int {
-        return when {
-            first == null && second == null -> EQUAL_ON_COMPARISON
-            first == null && second != null -> LESS_ON_COMPARISON * sortDirection.value
-            first != null && second == null -> MORE_ON_COMPARISON * sortDirection.value
-            first != null && second != null -> first.compareTo(second) * sortDirection.value
-            else -> error("Impossible case!")
-        }
-    }
-
     private fun Any.getMemberPropertyOrExtra(name: String): Any? =
         name.snakeToLowerCamelCase().let { fieldName ->
             this::class.memberProperties
@@ -115,44 +102,50 @@ public class QuerySort<T : Any> {
                 }
         }
 
-    private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
+    private fun add(sortSpecification: SortSpecification<T>): QuerySortByReflection<T> {
         sortSpecifications = sortSpecifications + sortSpecification
         return this
     }
 
-    public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
-        return add(SortSpecification(FieldSortAttribute(field, field.name.camelCaseToSnakeCase()), SortDirection.ASC))
+    public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
+        return add(SortSpecification(
+            SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
+            SortDirection.ASC)
+        )
     }
 
-    public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
-        return add(SortSpecification(FieldSortAttribute(field, field.name.camelCaseToSnakeCase()), SortDirection.DESC))
+    public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
+        return add(SortSpecification(SortAttribute.FieldSortAttribute(field,
+            field.name.camelCaseToSnakeCase()), SortDirection.DESC))
     }
 
-    public fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public fun asc(fieldName: String, javaClass: Class<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public fun desc(fieldName: String, javaClass: Class<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
-    public fun asc(fieldName: String): QuerySort<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
+    public fun asc(fieldName: String): QuerySortByReflection<T> {
+        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName),
+            SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String): QuerySort<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
+    public fun desc(fieldName: String): QuerySortByReflection<T> {
+        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName),
+            SortDirection.DESC))
     }
 
-    public fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public fun asc(fieldName: String, kClass: KClass<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public fun desc(fieldName: String, kClass: KClass<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
     }
 
-    public fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
+    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
         listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
     }
 
@@ -168,7 +161,7 @@ public class QuerySort<T : Any> {
     private fun getSortFeature(fieldName: String, kClass: KClass<T>): SortAttribute<T> {
         return kClass.members.filterIsInstance<KProperty1<T, Comparable<*>?>>()
             .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }
-            ?.let { FieldSortAttribute(it, fieldName) }
+            ?.let { SortAttribute.FieldSortAttribute(it, fieldName) }
             .also { fieldSortAttribute ->
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
@@ -192,7 +185,7 @@ public class QuerySort<T : Any> {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as QuerySort<*>
+        other as QuerySortByReflection<*>
 
         if (sortSpecifications != other.sortSpecifications) return false
 
@@ -207,59 +200,26 @@ public class QuerySort<T : Any> {
         return sortSpecifications.toString()
     }
 
-    private data class SortSpecification<T>(
-        val sortAttribute: SortAttribute<T>,
-        val sortDirection: SortDirection,
-    )
-
-    /** Inner representation of sorting feature specification. */
-    private sealed class SortAttribute<T> {
-        /** Name of attribute */
-        abstract val name: String
-
-        /** KProperty referenced attribute. */
-        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
-            SortAttribute<T>()
-
-        /** Referenced by name attribute. */
-        data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
-    }
-
-    /** Sort order which can be ascending or descending. */
-    public enum class SortDirection(public val value: Int) {
-        /** Descending sort order. */
-        DESC(-1),
-
-        /** Ascending sort order. */
-        ASC(1)
-    }
-
-    internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
-        override fun compare(o1: T, o2: T): Int =
-            comparators.fold(EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
-                when (currentComparisonValue) {
-                    EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
-                    else -> currentComparisonValue
-                }
-            }
-    }
-
     public companion object {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
-        private const val MORE_ON_COMPARISON = 1
-        private const val EQUAL_ON_COMPARISON = 0
-        private const val LESS_ON_COMPARISON = -1
 
-        public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> =
+        public inline fun <reified T : Any> QuerySortByReflection<T>.ascByName(fieldName: String): QuerySortByReflection<T> =
             asc(fieldName, T::class)
 
-        public inline fun <reified T : Any> QuerySort<T>.descByName(fieldName: String): QuerySort<T> =
+        public inline fun <reified T : Any> QuerySortByReflection<T>.descByName(fieldName: String): QuerySortByReflection<T> =
             desc(fieldName, T::class)
 
-        public inline fun <reified T : Any> asc(fieldName: String): QuerySort<T> = QuerySort<T>().ascByName(fieldName)
-        public inline fun <reified T : Any> desc(fieldName: String): QuerySort<T> = QuerySort<T>().descByName(fieldName)
-        public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> = QuerySort<T>().asc(field)
-        public fun <T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> = QuerySort<T>().desc(field)
+        public inline fun <reified T : Any> asc(fieldName: String): QuerySortByReflection<T> =
+            QuerySortByReflection<T>().ascByName(fieldName)
+
+        public inline fun <reified T : Any> desc(fieldName: String): QuerySortByReflection<T> =
+            QuerySortByReflection<T>().descByName(fieldName)
+
+        public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
+            QuerySortByReflection<T>().asc(field)
+
+        public fun <T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
+            QuerySortByReflection<T>().desc(field)
     }
 }

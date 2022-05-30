@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -55,7 +55,7 @@ class GroupChatInfoMemberOptionsViewModel(
                         Filters.eq("type", "messaging"),
                         Filters.distinct(listOf(memberId, currentUser.id)),
                     ),
-                    querySort = QuerySort.desc(Channel::lastUpdated),
+                    querySort = QuerySortByReflection.desc(Channel::lastUpdated),
                     messageLimit = 0,
                     limit = 1,
                 )

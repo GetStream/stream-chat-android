@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
@@ -401,7 +401,7 @@ public class Messages {
 
         public void paginateOverAllPinnedMessages() {
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
+            channelClient.getPinnedMessages(10, new QuerySortByReflection<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();
@@ -413,7 +413,7 @@ public class Messages {
             // You can use a pinnedAt date retrieved from the previous request to get the next page
             Date nextDate = new Date();
             // List the next page of pinned messages
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
+            channelClient.getPinnedMessages(10, new QuerySortByReflection<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();

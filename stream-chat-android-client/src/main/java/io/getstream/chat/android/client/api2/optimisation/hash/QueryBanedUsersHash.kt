@@ -17,13 +17,13 @@
 package io.getstream.chat.android.client.api2.optimisation.hash
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.BannedUsersSort
 import java.util.Date
 
 internal data class QueryBanedUsersHash(
     val filter: FilterObject,
-    val sort: QuerySort<BannedUsersSort>,
+    val sort: QuerySortByReflection<BannedUsersSort>,
     val offset: Int?,
     val limit: Int?,
     val createdAtAfter: Date?,

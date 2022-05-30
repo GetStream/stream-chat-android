@@ -5,7 +5,7 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
@@ -57,7 +57,7 @@ class Offline {
         val chatClient = ChatClient.instance()
 
         val filter = Filters.eq("type", "messaging")
-        val sort = QuerySort.desc<Channel>("last_updated")
+        val sort = QuerySortByReflection.desc<Channel>("last_updated")
         private val queryChannelsRequest = QueryChannelsRequest(filter = Filters.eq("type", "messaging"), limit = 30)
 
         fun accessStates() {

@@ -25,7 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
@@ -211,6 +211,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         repos.insertUsers(data.userMap.values.toList())
 
-        query = QueryChannelsSpec(data.filter1, QuerySort())
+        query = QueryChannelsSpec(data.filter1, QuerySortByReflection())
     }
 }

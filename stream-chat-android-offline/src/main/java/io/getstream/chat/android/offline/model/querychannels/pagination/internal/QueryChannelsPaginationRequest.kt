@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.model.querychannels.pagination.internal
 
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Channel
 
 internal data class QueryChannelsPaginationRequest(

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
@@ -82,7 +83,7 @@ public data class Channel(
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
-) : CustomObject {
+) : CustomObject, QueryableByMap {
 
     /**
      * Determines the last updated date/time.
@@ -96,4 +97,17 @@ public data class Channel(
      */
     val hasUnread: Boolean
         get() = unreadCount?.let { it > 0 } ?: false
+
+    override fun toMap(): Map<String, Any> {
+        return mutableMapOf<String, Any>(
+            "cid" to cid,
+            "id" to id,
+            "type" to type,
+            "name" to name,
+        ).apply {
+            createdAt?.let { this["created_at"] = it }
+            deletedAt?.let { this["deleted_at"] = it }
+            lastUpdated?.let { this["last_updated"] = it }
+        }
+    }
 }

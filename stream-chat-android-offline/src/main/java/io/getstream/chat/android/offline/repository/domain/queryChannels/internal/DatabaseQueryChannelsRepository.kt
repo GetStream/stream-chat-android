@@ -17,7 +17,8 @@
 package io.getstream.chat.android.offline.repository.domain.queryChannels.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -42,7 +43,7 @@ internal class DatabaseQueryChannelsRepository(
      * Selects by a filter and query sort.
      *
      * @param filter [FilterObject]
-     * @param querySort [QuerySort]
+     * @param querySort [QuerySortByReflection]
      */
     override suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec? {
         return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -82,7 +82,7 @@ internal interface ChatApi {
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySort<Message>?,
+        sort: QuerySortByReflection<Message>?,
     ): Call<SearchMessagesResult>
 
     @CheckResult
@@ -176,7 +176,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySortByReflection<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>>
 
@@ -303,7 +303,7 @@ internal interface ChatApi {
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySortByReflection<Member>,
         members: List<Member>,
     ): Call<List<Member>>
 
@@ -351,7 +351,7 @@ internal interface ChatApi {
     @CheckResult
     fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySortByReflection<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
