@@ -110,15 +110,24 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
     }
 
     public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
-        return add(SortSpecification(
-            SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
-            SortDirection.ASC)
+        return add(
+            SortSpecification(
+                SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
+                SortDirection.ASC
+            )
         )
     }
 
     public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
-        return add(SortSpecification(SortAttribute.FieldSortAttribute(field,
-            field.name.camelCaseToSnakeCase()), SortDirection.DESC))
+        return add(
+            SortSpecification(
+                SortAttribute.FieldSortAttribute(
+                    field,
+                    field.name.camelCaseToSnakeCase()
+                ),
+                SortDirection.DESC
+            )
+        )
     }
 
     public fun asc(fieldName: String, javaClass: Class<T>): QuerySortByReflection<T> {
@@ -130,13 +139,21 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
     }
 
     public fun asc(fieldName: String): QuerySortByReflection<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName),
-            SortDirection.ASC))
+        return add(
+            SortSpecification(
+                SortAttribute.FieldNameSortAttribute(fieldName),
+                SortDirection.ASC
+            )
+        )
     }
 
     public fun desc(fieldName: String): QuerySortByReflection<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName),
-            SortDirection.DESC))
+        return add(
+            SortSpecification(
+                SortAttribute.FieldNameSortAttribute(fieldName),
+                SortDirection.DESC
+            )
+        )
     }
 
     public fun asc(fieldName: String, kClass: KClass<T>): QuerySortByReflection<T> {

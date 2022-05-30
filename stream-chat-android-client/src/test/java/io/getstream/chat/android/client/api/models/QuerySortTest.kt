@@ -34,7 +34,10 @@ internal class QuerySortTest {
      */
     @ParameterizedTest
     @MethodSource("generateQuerySortInput")
-    fun `Two QuerySort with the same content should produce the same hashcode`(a: QuerySortByReflection<Any>, b: QuerySortByReflection<Any>) {
+    fun `Two QuerySort with the same content should produce the same hashcode`(
+        a: QuerySortByReflection<Any>,
+        b: QuerySortByReflection<Any>,
+    ) {
         a.hashCode() `should be equal to` b.hashCode()
     }
 
@@ -51,16 +54,28 @@ internal class QuerySortTest {
         @JvmStatic
         fun generateQuerySortInput() = listOf(
             randomString().let {
-                Arguments.of(QuerySortByReflection.Companion.asc<Channel>(it), QuerySortByReflection.Companion.asc<Channel>(it))
+                Arguments.of(
+                    QuerySortByReflection.Companion.asc<Channel>(it),
+                    QuerySortByReflection.Companion.asc<Channel>(it)
+                )
             },
             randomString().let {
-                Arguments.of(QuerySortByReflection.Companion.asc<Message>(it), QuerySortByReflection.Companion.asc<Message>(it))
+                Arguments.of(
+                    QuerySortByReflection.Companion.asc<Message>(it),
+                    QuerySortByReflection.Companion.asc<Message>(it)
+                )
             },
             randomString().let {
-                Arguments.of(QuerySortByReflection.Companion.desc<Channel>(it), QuerySortByReflection.Companion.desc<Channel>(it))
+                Arguments.of(
+                    QuerySortByReflection.Companion.desc<Channel>(it),
+                    QuerySortByReflection.Companion.desc<Channel>(it)
+                )
             },
             randomString().let {
-                Arguments.of(QuerySortByReflection.Companion.desc<Message>(it), QuerySortByReflection.Companion.desc<Message>(it))
+                Arguments.of(
+                    QuerySortByReflection.Companion.desc<Message>(it),
+                    QuerySortByReflection.Companion.desc<Message>(it)
+                )
             },
         )
     }

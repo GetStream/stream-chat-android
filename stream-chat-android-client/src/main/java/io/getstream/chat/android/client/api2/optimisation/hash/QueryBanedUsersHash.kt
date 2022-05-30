@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.optimisation.hash
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySort
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.BannedUsersSort
 import java.util.Date
 

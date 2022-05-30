@@ -78,7 +78,15 @@ public data class Member(
     var channelRole: String? = null,
 ) : UserEntity, QueryableByMap {
 
-    //Todo: Complete this!
     override fun toMap(): Map<String, Any> =
-        mapOf()
+        mapOf<String, Any>().apply {
+            createdAt?.let { "createdAt" to it }
+            updatedAt?.let { "updatedAt" to it }
+            isInvited?.let { "isInvited" to it }
+            inviteAcceptedAt?.let { "inviteAcceptedAt" to it }
+            inviteRejectedAt?.let { "inviteRejectedAt" to it }
+            shadowBanned.let { "shadowBanned" to it }
+            banned.let { "banned" to it }
+            channelRole?.let { "channelRole" to it }
+        }
 }

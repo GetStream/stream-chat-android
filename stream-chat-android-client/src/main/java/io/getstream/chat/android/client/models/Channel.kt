@@ -107,7 +107,14 @@ public data class Channel(
         ).apply {
             createdAt?.let { this["createdAt"] = it }
             deletedAt?.let { this["deletedAt"] = it }
+            memberCount.let { this["memberCount"] = it }
+            unreadCount?.let { this["unreadCount"] = it }
+            team.let { this["team"] = it }
+            hidden?.let { this["hidden"] = it }
+            cooldown.let { this["cooldown"] = it }
             lastUpdated?.let { this["lastUpdated"] = it }
+
+            putAll(extraData)
         }
     }
 }

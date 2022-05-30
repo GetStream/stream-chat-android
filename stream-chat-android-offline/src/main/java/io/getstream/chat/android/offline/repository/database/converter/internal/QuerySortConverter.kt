@@ -28,7 +28,6 @@ internal class QuerySortConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter = moshi.adapter<List<Map<String, Any>>>()
 
-    //Todo: Create a way to choose between implementations of QuerySort
     @TypeConverter
     fun stringToObject(data: String?): QuerySort<Channel> {
         if (data.isNullOrEmpty()) {

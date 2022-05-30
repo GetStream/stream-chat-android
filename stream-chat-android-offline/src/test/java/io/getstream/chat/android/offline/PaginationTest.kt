@@ -36,7 +36,7 @@ internal class PaginationTest {
     internal fun `Should return a list of channelEntityPairs properly sorted by pagination param`(
         inputList: List<Channel>,
         pagination: AnyChannelPaginationRequest,
-        expectedList: List<Channel>
+        expectedList: List<Channel>,
     ) {
         // show an easy to use diff between the two results
         inputList.applyPagination(pagination) `should be equal to` expectedList
@@ -149,7 +149,8 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySortByReflection.asc<Channel>("cid").ascByName("SomeInvalidField").descByName("type")
+                        sort =
+                            QuerySortByReflection.asc<Channel>("cid").ascByName("SomeInvalidField").descByName("type")
                     },
                     it
                 )
