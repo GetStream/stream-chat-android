@@ -84,7 +84,7 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
     }
 
-    public fun toList(): List<Pair<String, SortDirection>> =
+    internal fun toList(): List<Pair<String, SortDirection>> =
         sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     public companion object {

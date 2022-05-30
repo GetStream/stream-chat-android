@@ -168,7 +168,7 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
         listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
     }
 
-    public fun toList(): List<Pair<String, SortDirection>> =
+    internal fun toList(): List<Pair<String, SortDirection>> =
         sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     private fun getSortFeature(fieldName: String, javaClass: Class<T>): SortAttribute<T> {

@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.api.models.querysort
 import kotlin.reflect.KProperty1
 
 /** Inner representation of sorting feature specification. */
-public sealed class SortAttribute<T> {
+internal sealed class SortAttribute<T> {
     /** Name of attribute */
     public abstract val name: String
 
