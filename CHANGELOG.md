@@ -33,7 +33,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-
+- 🚨 Breaking change: QuerySort is now an interface and the user can choose between implementations that use reflection or not. [3624](https://github.com/GetStream/stream-chat-android/pull/3624)
 ### ❌ Removed
 
 ## stream-chat-android-ui-common
