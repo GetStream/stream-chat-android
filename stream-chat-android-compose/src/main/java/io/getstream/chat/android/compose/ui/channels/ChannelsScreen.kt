@@ -85,6 +85,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
+@Suppress("LongMethod")
 public fun ChannelsScreen(
     filters: FilterObject? = null,
     querySort: QuerySort<Channel> = QuerySortByMap.descByName("last_updated"),

@@ -220,11 +220,13 @@ public class QuerySortByReflection<T : Any> : QuerySort<T> {
     }
 
     public companion object {
-        public inline fun <reified T : Any> QuerySortByReflection<T>.ascByName(fieldName: String): QuerySortByReflection<T> =
-            asc(fieldName, T::class)
+        public inline fun <reified T : Any> QuerySortByReflection<T>.ascByName(
+            fieldName: String
+        ): QuerySortByReflection<T> = asc(fieldName, T::class)
 
-        public inline fun <reified T : Any> QuerySortByReflection<T>.descByName(fieldName: String): QuerySortByReflection<T> =
-            desc(fieldName, T::class)
+        public inline fun <reified T : Any> QuerySortByReflection<T>.descByName(
+            fieldName: String
+        ): QuerySortByReflection<T> = desc(fieldName, T::class)
 
         public inline fun <reified T : Any> asc(fieldName: String): QuerySortByReflection<T> =
             QuerySortByReflection<T>().ascByName(fieldName)
