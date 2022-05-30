@@ -721,7 +721,7 @@ internal class EventHandlerSequential(
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {
             override val isDisposed: Boolean = true
-            override fun dispose() {}
+            override fun dispose() = Unit
         }
     }
 }
