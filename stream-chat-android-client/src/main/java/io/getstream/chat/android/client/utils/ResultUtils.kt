@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+/**
+ * Converts [Result] into human-readable string.
+ */
 @InternalStreamChatApi
 public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
     return when {
@@ -29,6 +32,9 @@ public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): 
     }
 }
 
+/**
+ * Converts [ChatError] into human-readable string.
+ */
 @InternalStreamChatApi
 public fun ChatError.stringify(): String {
     return when {
