@@ -232,7 +232,7 @@ public final class io/getstream/chat/android/offline/plugin/state/StateRegistry 
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/offline/plugin/state/channel/ChannelState;
 	public final fun clear ()V
 	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
-	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySort;)Lio/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState;
+	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState;
 	public final fun thread (Ljava/lang/String;)Lio/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState;
 }
 
@@ -354,7 +354,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/q
 	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getNextPageRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySort;
+	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public abstract fun setChatEventHandler (Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;)V
 }
 
