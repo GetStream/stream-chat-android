@@ -22,3 +22,11 @@ Call<T>.forceNewRequest(): Call<T>
 The returned `Call` will be forced to make a new request to API. 
 
 
+## QuerySorter
+To sort your object and present then in a desired order, tt is possible to choose between 2 implementations of QuerySorter: `QuerySort` and `QuerySortByMap`. 
+
+`QuerySort` uses reflection to find the fields that should be used to compare when sorting. This avoids the need for extra implementation to make a class able to be sorted. 
+
+The drawback is that reflection is an expensive operation and this implementation will have a lower performance compared to `QuerySortByMap`.
+
+On the other hand, `QuerySortByMap` needs the class to be sorted to extend from `QueryableByMap` and provide the fields to be used in the comparation in a map. This implementation doesn't use reflection, so it will run faster. 
