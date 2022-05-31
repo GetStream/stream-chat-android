@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal
+package io.getstream.chat.android.offline.event.model
 
-/**
- * Provider of EventHandlerImpl. This should be used is services and Workers.
- */
-internal object EventHandlerProvider {
-
-    private var _eventHandler: EventHandler? = null
-
-    /**
-     * The [EventHandler]
-     */
-    internal var eventHandler: EventHandler
-        get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
-        set(value) {
-            _eventHandler = value
-        }
+internal enum class EventHandlerType {
+    SEQUENTIAL, DEFAULT
 }
