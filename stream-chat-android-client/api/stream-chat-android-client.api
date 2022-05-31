@@ -3429,10 +3429,11 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 }
 
 public final class io/getstream/chat/android/client/user/CredentialConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
 	public final fun getUserId ()Ljava/lang/String;
 	public final fun getUserName ()Ljava/lang/String;
 	public final fun getUserToken ()Ljava/lang/String;
+	public final fun isAnonymous ()Z
 }
 
 public abstract interface class io/getstream/chat/android/client/user/storage/UserCredentialStorage {
@@ -3445,6 +3446,9 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/utils/ResultUtilsKt {
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {

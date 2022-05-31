@@ -31,6 +31,7 @@
 - Added logs of all properties available in a class and which one was searched for then QuerySort fails to find a field. [3597](https://github.com/GetStream/stream-chat-android/pull/3597)
 
 ### ✅ Added
+- Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: QuerySort is now an interface and the user can choose between implementations that use reflection or not. [3624](https://github.com/GetStream/stream-chat-android/pull/3624)
@@ -50,6 +51,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
+- The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 
 ### ⬆️ Improved
 

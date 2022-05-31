@@ -44,7 +44,7 @@ internal class SyncMessagesWork(
             val (type, id) = validateCid(cid).cidToTypeAndId()
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
-            EventHandlerProvider.eventHandler.replayEventsForActiveChannels()
+            EventHandlerProvider.eventHandler.syncHistoryForActiveChannels()
 
             Result.success()
         } catch (_: IllegalArgumentException) {
