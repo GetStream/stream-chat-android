@@ -39,7 +39,7 @@ import kotlin.reflect.full.memberProperties
  * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
  */
 @Suppress("TooManyFunctions")
-public class QuerySort<T : Any> : QuerySorter<T> {
+public open class QuerySort<T : Any> : QuerySorter<T> {
     private val logger = StreamLog.getLogger("QuerySort")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
@@ -115,7 +115,7 @@ public class QuerySort<T : Any> : QuerySorter<T> {
         return this
     }
 
-    public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+    public open fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
@@ -124,7 +124,7 @@ public class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+    public open fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldSortAttribute(
@@ -136,15 +136,16 @@ public class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public open fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public open fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
-    public fun asc(fieldName: String): QuerySort<T> {
+
+    public open fun asc(fieldName: String): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
@@ -153,7 +154,7 @@ public class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public fun desc(fieldName: String): QuerySort<T> {
+    public open fun desc(fieldName: String): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
@@ -162,11 +163,11 @@ public class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public open fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public open fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
     }
 

@@ -16,11 +16,17 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_DIRECTION
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_FIELD_NAME
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 
-public class QuerySortByMap<T : QueryableByMap> : QuerySorter<T> {
+private const val DONT_USE_ASC_METHOD_MESSAGE = "Don't use this version of asc. Use asc(fieldName: String) instead."
+private const val DONT_USE_DESC_METHOD_MESSAGE = "Don't use this version of desc. Use desc(fieldName: String) instead."
+
+public class QuerySortByMap<T : QueryableByMap> : QuerySorter<T>, QuerySort<T>() {
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
@@ -76,16 +82,37 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySorter<T> {
         return this
     }
 
-    public fun asc(fieldName: String): QuerySortByMap<T> {
+    override fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_ASC_METHOD_MESSAGE)
+    }
+
+    override fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_DESC_METHOD_MESSAGE)
+    }
+
+    override fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_ASC_METHOD_MESSAGE)
+    }
+
+    override fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_DESC_METHOD_MESSAGE)
+    }
+
+    override fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_ASC_METHOD_MESSAGE)
+    }
+
+    override fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+        throw IllegalArgumentException(DONT_USE_DESC_METHOD_MESSAGE)
+    }
+
+    override fun asc(fieldName: String): QuerySortByMap<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String): QuerySortByMap<T> {
+    override fun desc(fieldName: String): QuerySortByMap<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
     }
-
-    internal fun toList(): List<Pair<String, SortDirection>> =
-        sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     public companion object {
         public fun <R : QueryableByMap> ascByName(fieldName: String): QuerySortByMap<R> =

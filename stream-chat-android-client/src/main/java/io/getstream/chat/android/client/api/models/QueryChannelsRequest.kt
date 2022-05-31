@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySort
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
 import io.getstream.chat.android.client.models.Channel
 
 /**
@@ -34,7 +32,7 @@ public data class QueryChannelsRequest(
     public val filter: FilterObject,
     public var offset: Int = 0,
     public var limit: Int,
-    public val querySort: QuerySort<Channel> = QuerySortByReflection(),
+    public val querySort: QuerySort<Channel> = QuerySort(),
     public var messageLimit: Int = 0,
     public var memberLimit: Int = 0,
 ) : ChannelRequest<QueryChannelsRequest> {
