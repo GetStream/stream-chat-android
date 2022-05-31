@@ -22,6 +22,10 @@ import okhttp3.Response
 import okio.Buffer
 import java.io.OutputStream
 
+/**
+ * Retrofit's [Interceptor] to use [ApiRequestsAnalyser] so all requests are recorded then the user can
+ * analyse then latter.
+ */
 internal class ApiRequestAnalyserInterceptor(private val requestsAnalyser: ApiRequestsAnalyser) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
