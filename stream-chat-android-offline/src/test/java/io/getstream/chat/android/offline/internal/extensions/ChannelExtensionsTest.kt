@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -65,7 +65,7 @@ internal class ChannelExtensionsTest {
             .build()
         val adapter = moshi.adapter<List<Channel>>()
         val channels = requireNotNull(adapter.fromJson(JsonReader.of(channelsFile.source().buffer())))
-        val sort = QuerySortByReflection<Channel>().desc(Channel::lastMessageAt)
+        val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,
@@ -82,7 +82,7 @@ internal class ChannelExtensionsTest {
         val firstChannel = randomChannel(lastMessageAt = Date(1000))
         val secondChannel = randomChannel(lastMessageAt = Date(3000))
         val thirdChannel = randomChannel(lastMessageAt = Date(2000))
-        val sort = QuerySortByReflection<Channel>().desc(Channel::lastMessageAt)
+        val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,
@@ -106,7 +106,7 @@ internal class ChannelExtensionsTest {
         val firstChannel = randomChannel(lastMessageAt = Date(1000))
         val secondChannel = randomChannel(lastMessageAt = Date(3000))
         val thirdChannel = randomChannel(lastMessageAt = Date(2000))
-        val sort = QuerySortByReflection<Channel>().asc(Channel::lastMessageAt)
+        val sort = QuerySort<Channel>().asc(Channel::lastMessageAt)
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,

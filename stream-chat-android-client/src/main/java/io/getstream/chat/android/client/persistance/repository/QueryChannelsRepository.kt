@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySort
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 
@@ -38,7 +38,7 @@ public interface QueryChannelsRepository {
      * Selects by a filter and query sort.
      *
      * @param filter [FilterObject]
-     * @param querySort [QuerySortByReflection]
+     * @param querySort [QuerySort]
      */
-    public suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec?
+    public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec?
 }

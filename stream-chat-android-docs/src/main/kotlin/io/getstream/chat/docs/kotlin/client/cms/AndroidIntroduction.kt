@@ -3,7 +3,7 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Channel
@@ -125,7 +125,7 @@ class AndroidIntroduction {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
         )
-        val sort = QuerySortByReflection<Channel>().desc("last_message_at")
+        val sort = QuerySort<Channel>().desc("last_message_at")
 
         val request = QueryChannelsRequest(
             filter = filter,

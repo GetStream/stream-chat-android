@@ -6,7 +6,7 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection;
+import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.api.models.WatchChannelRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
@@ -61,7 +61,7 @@ public class UserPresence {
                 Filters.eq("type", "messaging"),
                 Filters.in("members", Arrays.asList("john", "jack"))
         );
-        QuerySortByReflection<Channel> channelsSort = new QuerySortByReflection<>();
+        QuerySort<Channel> channelsSort = new QuerySort<>();
         int messageLimit = 0;
         int memberLimit = 0;
         QueryChannelsRequest channelsRequest = new QueryChannelsRequest(

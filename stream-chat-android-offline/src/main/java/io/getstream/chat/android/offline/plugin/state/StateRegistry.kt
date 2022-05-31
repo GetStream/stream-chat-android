@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -54,7 +54,7 @@ public class StateRegistry private constructor(
     internal val job: Job,
     @property:InternalStreamChatApi public val scope: CoroutineScope,
 ) {
-    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
+    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
@@ -67,7 +67,7 @@ public class StateRegistry private constructor(
      *
      * @return [QueryChannelsState] object.
      */
-    public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
+    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsMutableState(filter, sort, scope, latestUsers)
         }

@@ -4,7 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
@@ -381,7 +381,7 @@ class Messages(
                 channelFilter = channelFilter,
                 messageFilter = messageFilter,
                 limit = 10,
-                sort = QuerySortByReflection.desc("relevance")
+                sort = QuerySort.desc("relevance")
             ).execute().data()
 
             // Next 10 results with the same sort order embedded in the next value
@@ -447,7 +447,7 @@ class Messages(
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
             channelClient.getPinnedMessages(
                 limit = 10,
-                sort = QuerySortByReflection.desc(Message::pinnedAt),
+                sort = QuerySort.desc(Message::pinnedAt),
                 pagination = PinnedMessagesPagination.BeforeDate(
                     date = Date(),
                     inclusive = false,
@@ -465,7 +465,7 @@ class Messages(
             // List the next page of pinned messages
             channelClient.getPinnedMessages(
                 limit = 10,
-                sort = QuerySortByReflection.desc(Message::pinnedAt),
+                sort = QuerySort.desc(Message::pinnedAt),
                 pagination = PinnedMessagesPagination.BeforeDate(
                     date = nextDate,
                     inclusive = false,
