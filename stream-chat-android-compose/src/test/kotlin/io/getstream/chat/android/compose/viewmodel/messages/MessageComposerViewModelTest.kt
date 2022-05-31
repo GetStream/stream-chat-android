@@ -73,7 +73,7 @@ internal class MessageComposerViewModelTest {
     fun `Given message composer When typing and sending a message Should send the message and clear the input`() =
         runTest {
             val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient, channelId = "messaging:123")
+            val viewModel = Fixture(chatClient = chatClient)
                 .givenCurrentUser()
                 .givenChannelQuery()
                 .givenChannelState()
@@ -104,7 +104,7 @@ internal class MessageComposerViewModelTest {
     fun `Given message composer When selecting attachments and sending the message Should send the message with attachments and clear the input`() =
         runTest {
             val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient, channelId = "messaging:123")
+            val viewModel = Fixture(chatClient = chatClient)
                 .givenCurrentUser()
                 .givenChannelQuery()
                 .givenChannelState()
@@ -140,7 +140,7 @@ internal class MessageComposerViewModelTest {
     fun `Given message composer When selecting attachments and deselecting them Should display the correct number of selected attachments`() =
         runTest {
             val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient, channelId = "messaging:123")
+            val viewModel = Fixture(chatClient = chatClient)
                 .givenCurrentUser()
                 .givenChannelQuery()
                 .givenChannelState()
@@ -267,7 +267,7 @@ internal class MessageComposerViewModelTest {
         viewModel.setMessageInput("/")
 
         viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
-        viewModel.commandSuggestions.value `should be equal to` 1
+        viewModel.commandSuggestions.value.size `should be equal to` 1
     }
 
     @Test
@@ -315,7 +315,7 @@ internal class MessageComposerViewModelTest {
             viewModel.setMessageInput("@")
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value `should be equal to` 2
+            viewModel.mentionSuggestions.value.size `should be equal to` 2
         }
 
     @Test
