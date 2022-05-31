@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.user
+package io.getstream.chat.android.offline.event.model
 
-/**
- * Data class that contains credentials of the current user.
- */
-public class CredentialConfig(
-    /**
-     * Id of the current user.
-     */
-    public val userId: String,
-    /**
-     * Api token of the current user.
-     */
-    public val userToken: String,
-    /**
-     * Name of the current user.
-     */
-    public val userName: String,
-    /**
-     * The user is anonymous or not
-     */
-    public val isAnonymous: Boolean,
-) {
-    internal fun isValid(): Boolean = userId.isNotEmpty() && userToken.isNotEmpty() && userName.isNotEmpty()
+internal enum class EventHandlerType {
+    SEQUENTIAL, DEFAULT
 }

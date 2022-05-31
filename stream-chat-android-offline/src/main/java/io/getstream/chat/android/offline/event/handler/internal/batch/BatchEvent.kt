@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.user
+package io.getstream.chat.android.offline.event.handler.internal.batch
+
+import io.getstream.chat.android.client.events.ChatEvent
 
 /**
- * Data class that contains credentials of the current user.
+ * Events container to represent the source of the received events.
  */
-public class CredentialConfig(
-    /**
-     * Id of the current user.
-     */
-    public val userId: String,
-    /**
-     * Api token of the current user.
-     */
-    public val userToken: String,
-    /**
-     * Name of the current user.
-     */
-    public val userName: String,
-    /**
-     * The user is anonymous or not
-     */
-    public val isAnonymous: Boolean,
+internal class BatchEvent(
+    val sortedEvents: List<ChatEvent>,
+    val isFromHistorySync: Boolean,
 ) {
-    internal fun isValid(): Boolean = userId.isNotEmpty() && userToken.isNotEmpty() && userName.isNotEmpty()
+    val size: Int = sortedEvents.size
+    val isFromSocketConnection: Boolean = !isFromHistorySync
 }

@@ -185,21 +185,25 @@ internal open class ChatSocket constructor(
         }
     }
 
-    open fun connectAnonymously() =
-        connect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
-
-    fun reconnectAnonymously() {
-        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+    fun connectUser(user: User, isAnonymous: Boolean) {
+        connect(
+            when (isAnonymous) {
+                true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+            }
+        )
     }
 
-    open fun connect(user: User) =
-        connect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
-
-    fun reconnectUser(user: User) {
-        reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
+    fun reconnectUser(user: User, isAnonymous: Boolean) {
+        reconnect(
+            when (isAnonymous) {
+                true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+            }
+        )
     }
 
-    private fun connect(connectionConf: SocketFactory.ConnectionConf) {
+    protected open fun connect(connectionConf: SocketFactory.ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
         logger.logI("Connect. Network available: $isNetworkConnected")
         this.connectionConf = connectionConf

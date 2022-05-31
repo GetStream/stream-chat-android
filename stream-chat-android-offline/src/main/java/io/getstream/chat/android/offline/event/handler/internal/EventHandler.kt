@@ -16,19 +16,33 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
-/**
- * Provider of EventHandlerImpl. This should be used is services and Workers.
- */
-internal object EventHandlerProvider {
+import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.User
 
-    private var _eventHandler: EventHandler? = null
+/**
+ * Handles WebSocket and/or Synced events to update states and offline storage.
+ */
+internal interface EventHandler {
 
     /**
-     * The [EventHandler]
+     * Triggers WebSocket event subscription.
      */
-    internal var eventHandler: EventHandler
-        get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
-        set(value) {
-            _eventHandler = value
-        }
+    fun startListening(currentUser: User)
+
+    /**
+     * Cancels WebSocket event subscription.
+     */
+    fun stopListening()
+
+    /**
+     * Starts event history syncing.
+     */
+    suspend fun syncHistoryForActiveChannels()
+
+    /**
+     * For testing purpose only. Simulates socket event handling.
+     */
+    @VisibleForTesting
+    suspend fun handleEvents(vararg events: ChatEvent)
 }
