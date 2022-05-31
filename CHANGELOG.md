@@ -54,6 +54,7 @@
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 
 ### ⬆️ Improved
+- Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
 
 ### ✅ Added
 - Added way to customize quoted attachments through `QuotedAttachmentFactory` and updated custom attachments guide for the new feature. [#3592](https://github.com/GetStream/stream-chat-android/pull/3592)
