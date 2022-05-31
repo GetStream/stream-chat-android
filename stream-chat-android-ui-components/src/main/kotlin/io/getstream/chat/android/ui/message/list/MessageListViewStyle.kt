@@ -172,7 +172,8 @@ public data class MessageListViewStyle(
                         defaultValue = true
                     )
                     .scrollButtonUnreadEnabled(
-                        scrollButtonUnreadEnabledStyleableId = R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
+                        scrollButtonUnreadEnabledStyleableId =
+                        R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
                         defaultValue = true
                     )
                     .scrollButtonColor(
@@ -180,7 +181,8 @@ public data class MessageListViewStyle(
                         defaultValue = context.getColorCompat(R.color.stream_ui_white)
                     )
                     .scrollButtonRippleColor(
-                        scrollButtonRippleColorStyleableId = R.styleable.MessageListView_streamUiScrollButtonRippleColor,
+                        scrollButtonRippleColorStyleableId =
+                        R.styleable.MessageListView_streamUiScrollButtonRippleColor,
                         defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke)
                     )
                     .scrollButtonBadgeColor(
