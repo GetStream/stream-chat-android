@@ -17,7 +17,10 @@
 package io.getstream.chat.android.compose.viewmodel.channels
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.AndFilterObject
+import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -37,9 +40,11 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -64,11 +69,13 @@ internal class ChannelListViewModelTest {
     @Test
     fun `Given channel list in content state When showing the channel list Should show the list of channels`() =
         runTest {
-            val channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2))
             val viewModel = Fixture()
                 .givenCurrentUser()
                 .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = channelsStateData, loading = false)
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false
+                )
                 .givenChannelMutes()
                 .get()
 
@@ -79,13 +86,15 @@ internal class ChannelListViewModelTest {
 
     @Test
     fun `Given channel list in content state When deleting a channel Should delete the channel`() = runTest {
-        val channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2))
         val chatClient: ChatClient = mock()
         val channelClient: ChannelClient = mock()
         val viewModel = Fixture(chatClient, channelClient)
             .givenCurrentUser()
             .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = channelsStateData, loading = false)
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false
+            )
             .givenChannelMutes()
             .givenDeleteChannel()
             .get()
@@ -100,12 +109,14 @@ internal class ChannelListViewModelTest {
 
     @Test
     fun `Given channel list in content state When muting a channel Should mute the channel`() = runTest {
-        val channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2))
         val chatClient: ChatClient = mock()
         val viewModel = Fixture(chatClient)
             .givenCurrentUser()
             .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = channelsStateData, loading = false)
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false
+            )
             .givenChannelMutes()
             .givenMuteChannel()
             .get()
@@ -119,42 +130,139 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given channel list in content state with a muted channel When unmuting the channel Should unmute the channel`() = runTest {
-        val channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2))
-        val channelMute = ChannelMute(
-            user = User(id = "Jc"),
-            channel = channel1,
-            createdAt = Date(),
-            updatedAt = Date(),
-            expires = null,
-        )
-        val chatClient: ChatClient = mock()
-        val viewModel = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = channelsStateData, loading = false)
-            .givenChannelMutes(listOf(channelMute))
-            .givenUnmuteChannel()
-            .get()
+    fun `Given channel list in content state with a muted channel When unmuting the channel Should unmute the channel`() =
+        runTest {
+            val channelMute = ChannelMute(
+                user = User(id = "Jc"),
+                channel = channel1,
+                createdAt = Date(),
+                updatedAt = Date(),
+                expires = null,
+            )
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false
+                )
+                .givenChannelMutes(listOf(channelMute))
+                .givenUnmuteChannel()
+                .get()
 
-        viewModel.selectChannel(channel1)
-        viewModel.unmuteChannel(channel1)
+            viewModel.selectChannel(channel1)
+            viewModel.unmuteChannel(channel1)
 
-        viewModel.isChannelMuted("messaging:channel1") `should be equal to` true
-        viewModel.channelsState.channelItems.first().isMuted `should be equal to` true
-        viewModel.activeChannelAction `should be equal to` null
-        viewModel.selectedChannel.value `should be equal to` null
-        verify(chatClient).unmuteChannel("messaging", "channel1")
-    }
+            viewModel.isChannelMuted("messaging:channel1") `should be equal to` true
+            viewModel.channelsState.channelItems.first().isMuted `should be equal to` true
+            viewModel.activeChannelAction `should be equal to` null
+            viewModel.selectedChannel.value `should be equal to` null
+            verify(chatClient).unmuteChannel("messaging", "channel1")
+        }
+
+    @Test
+    fun `Given channel list in content state When selecting a channel and dismissing the menu Should hide the menu`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false
+                )
+                .givenChannelMutes()
+                .get()
+
+            viewModel.selectChannel(channel1)
+            viewModel.dismissChannelAction()
+
+            viewModel.activeChannelAction `should be equal to` null
+            viewModel.selectedChannel.value `should be equal to` null
+        }
+
+    @Test
+    fun `Given channel list in content state and the current user is online When loading more channels Should load more channels`() =
+        runTest {
+            val nextPageRequest = QueryChannelsRequest(
+                filter = queryFilter,
+                querySort = querySort,
+                offset = 30,
+                limit = 30,
+            )
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    nextPageRequest = nextPageRequest,
+                    loading = false
+                )
+                .givenChannelMutes()
+                .givenIsOffline(false)
+                .get()
+
+            viewModel.loadMore()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            captor.firstValue.offset `should be equal to` 0
+            captor.secondValue.offset `should be equal to` 30
+        }
+
+    @Test
+    fun `Given channel list in content state and the current user is offline When loading more channels Should do nothing`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false
+                )
+                .givenChannelMutes()
+                .givenIsOffline(true)
+                .get()
+
+            viewModel.loadMore()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(1)).queryChannels(captor.capture())
+            captor.firstValue.offset `should be equal to` 0
+        }
+
+    @Test
+    fun `Given channel list When setting search query Should query channels with the name matching the filter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false
+                )
+                .givenChannelMutes()
+                .get()
+
+            viewModel.setSearchQuery("Search query")
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            val andFilterObject = captor.secondValue.filter as AndFilterObject
+            val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
+            val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
+            autoCompleteFilterObject.fieldName `should be equal to` "name"
+            autoCompleteFilterObject.value `should be equal to` "Search query"
+        }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
-        private val initialSort: QuerySort<Channel> = QuerySort.desc("last_updated"),
-        private val initialFilters: FilterObject? = Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", "jc")
-        ),
+        private val initialSort: QuerySort<Channel> = querySort,
+        private val initialFilters: FilterObject? = queryFilter,
     ) {
         private val globalState: GlobalMutableState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -173,6 +281,10 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
             whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
+        }
+
+        fun givenIsOffline(isOffline: Boolean = false) = apply {
+            whenever(globalState.isOffline()) doReturn isOffline
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
@@ -223,6 +335,12 @@ internal class ChannelListViewModelTest {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
+
+        private val queryFilter = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", "jc")
+        )
+        private val querySort = QuerySort.desc<Channel>("last_updated")
 
         private val channel1: Channel = Channel().apply {
             type = "messaging"
