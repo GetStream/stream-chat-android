@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.viewmodel
+package io.getstream.chat.android.compose.viewmodel.imagepreview
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,13 +38,9 @@ internal class ImagePreviewViewModelTest {
 
     @Test
     fun `Given a message with image attachments When showing image gallery Should show the gallery`() = runTest {
-        val attachments = mutableListOf(
-            Attachment(type = "image", imageUrl = "http://example.com/img1.png"),
-            Attachment(type = "image", imageUrl = "http://example.com/img2.png"),
-        )
         val viewModel = Fixture()
             .givenCurrentUser()
-            .givenAttachments(attachments)
+            .givenAttachments(mutableListOf(attachment1, attachment2))
             .get()
 
         viewModel.toggleGallery(true)
@@ -59,29 +54,25 @@ internal class ImagePreviewViewModelTest {
     @Test
     fun `Given a message with image attachments When showing image gallery and removing the images Should update or delete the message`() =
         runTest {
-            val attachments = mutableListOf(
-                Attachment(type = "image", imageUrl = "http://example.com/img1.png"),
-                Attachment(type = "image", imageUrl = "http://example.com/img2.png"),
-            )
             val chatClient: ChatClient = mock()
             val viewModel = Fixture(chatClient)
                 .givenCurrentUser()
-                .givenAttachments(attachments)
+                .givenAttachments(mutableListOf(attachment1, attachment2))
                 .givenUpdateMessage()
                 .givenDeleteMessage()
                 .get()
 
             viewModel.toggleGallery(true)
-            viewModel.deleteCurrentImage(Attachment(type = "image", imageUrl = "http://example.com/img1.png"))
-            viewModel.deleteCurrentImage(Attachment(type = "image", imageUrl = "http://example.com/img2.png"))
+            viewModel.deleteCurrentImage(attachment1)
+            viewModel.deleteCurrentImage(attachment2)
 
             verify(chatClient).updateMessage(any())
-            verify(chatClient).deleteMessage("message-id", false)
+            verify(chatClient).deleteMessage(MESSAGE_ID, false)
         }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
-        private val messageId: String = "message-id",
+        private val messageId: String = MESSAGE_ID,
     ) {
 
         private val globalState: GlobalMutableState = mock()
@@ -113,5 +104,11 @@ internal class ImagePreviewViewModelTest {
                 messageId = messageId,
             )
         }
+    }
+
+    companion object {
+        private const val MESSAGE_ID = "message-id"
+        private val attachment1 = Attachment(type = "image", imageUrl = "http://example.com/img1.png")
+        private val attachment2 = Attachment(type = "image", imageUrl = "http://example.com/img2.png")
     }
 }
