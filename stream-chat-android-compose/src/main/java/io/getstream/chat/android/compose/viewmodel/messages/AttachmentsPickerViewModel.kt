@@ -100,8 +100,9 @@ public class AttachmentsPickerViewModel(
     public fun changeAttachmentState(showAttachments: Boolean) {
         isShowingAttachments = showAttachments
 
-        if (!showAttachments)
+        if (!showAttachments) {
             dismissAttachments()
+        }
     }
 
     /**
