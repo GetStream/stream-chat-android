@@ -68,7 +68,11 @@ internal data class PinnedMessagesRequest(
          *
          * @return Request data class for the pinned messages.
          */
-        fun create(limit: Int, sort: QuerySorter<Message>, pagination: PinnedMessagesPagination): PinnedMessagesRequest {
+        fun create(
+            limit: Int,
+            sort: QuerySorter<Message>,
+            pagination: PinnedMessagesPagination,
+        ): PinnedMessagesRequest {
             return when (pagination) {
                 is PinnedMessagesPagination.AroundDate -> PinnedMessagesRequest(
                     limit = limit,

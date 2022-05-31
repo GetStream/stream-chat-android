@@ -18,8 +18,8 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.models.Channel
 
@@ -39,8 +39,10 @@ internal class QuerySortConverter {
 
     private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySorter<Channel> {
         return listOfSortSpec.fold(QuerySortByMap()) { sort, sortSpecMap ->
-            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String
+                ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt()
+                ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
             when (direction) {
                 SortDirection.ASC.value -> sort.asc(fieldName)
                 SortDirection.DESC.value -> sort.desc(fieldName)

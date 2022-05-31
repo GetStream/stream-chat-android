@@ -144,7 +144,6 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
-
     public open fun asc(fieldName: String): QuerySort<T> {
         return add(
             SortSpecification(
