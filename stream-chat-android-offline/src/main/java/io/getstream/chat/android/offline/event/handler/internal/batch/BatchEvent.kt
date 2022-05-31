@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal
+package io.getstream.chat.android.offline.event.handler.internal.batch
+
+import io.getstream.chat.android.client.events.ChatEvent
 
 /**
- * Provider of EventHandlerImpl. This should be used is services and Workers.
+ * Events container to represent the source of the received events.
  */
-internal object EventHandlerProvider {
-
-    private var _eventHandler: EventHandler? = null
-
-    /**
-     * The [EventHandler]
-     */
-    internal var eventHandler: EventHandler
-        get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
-        set(value) {
-            _eventHandler = value
-        }
+internal class BatchEvent(
+    val sortedEvents: List<ChatEvent>,
+    val isFromHistorySync: Boolean,
+) {
+    val size: Int = sortedEvents.size
+    val isFromSocketConnection: Boolean = !isFromHistorySync
 }
