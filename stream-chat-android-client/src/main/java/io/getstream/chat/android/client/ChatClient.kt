@@ -301,7 +301,6 @@ internal constructor(
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
-     * @param isAnonymous If user is connecting anonymously.
      * @param timeoutMilliseconds A timeout in milliseconds when the process will be aborted.
      *
      * @return [Result] of [ConnectionData] with the info of the established connection or a detailed error.
@@ -309,9 +308,9 @@ internal constructor(
     private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
-        isAnonymous: Boolean,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
+        val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
         return when {
@@ -401,7 +400,7 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectUser] userId: '${user.id}', username: '${user.name}'")
-            setUser(user, tokenProvider, false, timeoutMilliseconds).also { result ->
+            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -476,7 +475,6 @@ internal constructor(
             setUser(
                 anonUser,
                 ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
-                true,
                 timeoutMilliseconds,
             ).also { result ->
                 logger.logV(
@@ -504,7 +502,7 @@ internal constructor(
         return CoroutineCall(scope) {
             logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
             getGuestToken(userId, username).await()
-                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), false, timeoutMilliseconds) }
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
                 .data()
                 .also { result ->
                     logger.logV(

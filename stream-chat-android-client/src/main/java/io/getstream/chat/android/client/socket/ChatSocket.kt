@@ -203,7 +203,7 @@ internal open class ChatSocket constructor(
         )
     }
 
-    private fun connect(connectionConf: SocketFactory.ConnectionConf) {
+    protected open fun connect(connectionConf: SocketFactory.ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
         logger.logI("Connect. Network available: $isNetworkConnected")
         this.connectionConf = connectionConf
