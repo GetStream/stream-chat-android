@@ -20,7 +20,9 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerController
@@ -51,12 +53,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class MessageComposerViewModelTest {
-
-    companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
-    }
 
     @Test
     fun `Given message composer When typing a message Should display the message test`() = runTest {
@@ -141,6 +137,29 @@ internal class MessageComposerViewModelTest {
         }
 
     @Test
+    fun `Given message composer When selecting attachments and deselecting them Should display the correct number of selected attachments`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient = chatClient, channelId = "messaging:123")
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+
+            viewModel.addSelectedAttachments(
+                listOf(
+                    Attachment(imageUrl = "url1"),
+                    Attachment(imageUrl = "url2")
+                )
+            )
+            viewModel.removeSelectedAttachment(
+                Attachment(imageUrl = "url1")
+            )
+
+            viewModel.selectedAttachments.value.size `should be equal to` 1
+        }
+
+    @Test
     fun `Given message composer When checking the also send to channel checkbox Should update the checkbox state`() =
         runTest {
             val viewModel = Fixture()
@@ -170,6 +189,22 @@ internal class MessageComposerViewModelTest {
         val messageComposerState = viewModel.messageComposerState.value
         messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
         viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
+    }
+
+    @Test
+    fun `Given message composer When starting a thread and leaving it Should display the list in normal mode`() {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .get()
+
+        viewModel.performMessageAction(ThreadReply(Message()))
+        viewModel.leaveThread()
+
+        val messageComposerState = viewModel.messageComposerState.value
+        messageComposerState.messageMode `should be instance of` MessageMode.Normal::class
+        viewModel.messageMode.value `should be instance of` MessageMode.Normal::class
     }
 
     @Test
@@ -221,6 +256,85 @@ internal class MessageComposerViewModelTest {
         ownCapabilities.size `should be equal to` 3
     }
 
+    @Test
+    fun `Given message composer When typing slash Should show giphy command suggestion`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(config = Config(commands = listOf(giphyCommand)))
+            .get()
+
+        viewModel.setMessageInput("/")
+
+        viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 1
+        viewModel.commandSuggestions.value `should be equal to` 1
+    }
+
+    @Test
+    fun `Given message composer When typing slash and removing it Should not show command suggestions`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(config = Config(commands = listOf(giphyCommand)))
+            .get()
+
+        viewModel.setMessageInput("/")
+        viewModel.setMessageInput("")
+
+        viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
+        viewModel.commandSuggestions.value.size `should be equal to` 0
+    }
+
+    @Test
+    fun `Given message composer When toggling commands and selecting giphy command Should populate the input with the command`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(config = Config(commands = listOf(giphyCommand)))
+                .get()
+
+            viewModel.toggleCommandsVisibility()
+            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+
+            viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
+            viewModel.commandSuggestions.value.size `should be equal to` 0
+            viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
+            viewModel.input.value `should be equal to` "/giphy "
+        }
+
+    @Test
+    fun `Given message composer When typing member autocomplete suggestion symbol Should show a list of available members`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+                .get()
+
+            viewModel.setMessageInput("@")
+
+            viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
+            viewModel.mentionSuggestions.value `should be equal to` 2
+        }
+
+    @Test
+    fun `Given message composer When selecting a mention suggestion Should populate the input with the user`() =
+        runTest {
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+                .get()
+
+            viewModel.setMessageInput("@")
+            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+
+            viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
+            viewModel.mentionSuggestions.value.size `should be equal to` 0
+            viewModel.input.value `should be equal to` "@Jc Miñarro "
+        }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
@@ -235,7 +349,7 @@ internal class MessageComposerViewModelTest {
             GlobalMutableState.instance = globalState
         }
 
-        fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
+        fun givenCurrentUser(currentUser: User = user1) = apply {
             whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
@@ -248,11 +362,13 @@ internal class MessageComposerViewModelTest {
                 type = "messaging",
                 channelId = "123",
             ),
+            config: Config = Config(),
+            members: List<Member> = emptyList(),
         ) = apply {
             val channelState: ChannelState = mock {
                 whenever(it.channelData) doReturn MutableStateFlow(channelData)
-                whenever(it.channelConfig) doReturn MutableStateFlow(Config())
-                whenever(it.members) doReturn MutableStateFlow(listOf())
+                whenever(it.channelConfig) doReturn MutableStateFlow(config)
+                whenever(it.members) doReturn MutableStateFlow(members)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
@@ -271,5 +387,26 @@ internal class MessageComposerViewModelTest {
                 )
             )
         }
+    }
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
+        val user1 = User(
+            id = "Jc",
+            name = "Jc Miñarro"
+        )
+        val user2 = User(
+            id = "amit",
+            name = "Amit Kumar"
+        )
+        val giphyCommand = Command(
+            name = "giphy",
+            description = "Post a random gif to the channel",
+            args = "[text]",
+            set = "fun_set"
+        )
     }
 }
