@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
@@ -146,7 +149,15 @@ internal class FailedIndicatorDecorator(
         val isBanned = isFailed && isCurrentUserBanned()
         when {
             isBanned -> deliveryFailedIcon.setImageDrawable(listViewStyle.iconBannedMessage)
-            isFailed -> deliveryFailedIcon.setImageDrawable(listViewStyle.iconFailedMessage)
+            isFailed -> {
+                val tint = when (data.message.syncDescription?.type) {
+                    MessageSyncType.FAILED_MODERATION -> ColorStateList.valueOf(Color.MAGENTA)
+                    else -> null
+                }
+                deliveryFailedIcon.setImageDrawable(listViewStyle.iconFailedMessage.apply {
+                    setTintList(tint)
+                })
+            }
         }
         deliveryFailedIcon.isVisible = isFailed || isBanned
     }

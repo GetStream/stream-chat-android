@@ -17,16 +17,25 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.cause.MessageModerationFailedException
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageModerationFailed
+import io.getstream.chat.android.client.models.MessageSyncDescription
+import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.logging.StreamLog
 import java.util.Date
+
+private const val TAG = "Chat:SendMessageHandler"
 
 internal class SendMessageListenerImpl(
     private val logic: LogicRegistry,
@@ -60,7 +69,10 @@ internal class SendMessageListenerImpl(
             return
         }
         processedMessage.enrichWithCid(channel.cid)
-            .copy(syncStatus = SyncStatus.COMPLETED)
+            .copy(
+                syncStatus = SyncStatus.COMPLETED,
+                syncDescription = null
+            )
             .also {
                 repos.insertMessage(it)
                 channel.upsertMessage(it)
@@ -81,17 +93,42 @@ internal class SendMessageListenerImpl(
         if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
             return
         }
+        val isPermanentError = error.isPermanent()
+        val isMessageModerationFailed = error is ChatNetworkError
+            && error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
+        StreamLog.w(TAG) {
+            "[handleSendMessageFail] isPermanentError: $isPermanentError" +
+                ", isMessageModerationFailed: $isMessageModerationFailed"
+        }
         message.copy(
-            syncStatus = if (error.isPermanent()) {
+            syncStatus = if (isPermanentError) {
                 SyncStatus.FAILED_PERMANENTLY
             } else {
                 SyncStatus.SYNC_NEEDED
             },
+            syncDescription = error.toSyncDescription(),
             updatedLocallyAt = Date(),
         )
             .also {
                 repos.insertMessage(it)
                 channel.upsertMessage(it)
             }
+    }
+
+    private fun ChatError.toSyncDescription(): MessageSyncDescription? {
+        return when (this is ChatNetworkError) {
+            true -> when (val cause = cause) {
+                is MessageModerationFailedException -> MessageSyncDescription(
+                    type = MessageSyncType.FAILED_MODERATION,
+                    content = MessageModerationFailed(
+                        violations = cause.details.map { detail ->
+                            MessageModerationFailed.Violation(detail.code, detail.messages)
+                        }
+                    )
+                )
+                else -> null
+            }
+            else -> null
+        }
     }
 }

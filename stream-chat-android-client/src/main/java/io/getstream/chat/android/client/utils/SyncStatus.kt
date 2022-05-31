@@ -46,6 +46,9 @@ public enum class SyncStatus(public val status: Int) {
      */
     IN_PROGRESS(IN_PROGRESS_STATUS_CODE),
 
+    // SyncStatus is not a Message related only to store Attachment status here.
+    // SyncStatus is also a property of Channel and Reaction
+    // Should be replace with MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS
     /**
      * When message waits its' attachments to be sent.
      */

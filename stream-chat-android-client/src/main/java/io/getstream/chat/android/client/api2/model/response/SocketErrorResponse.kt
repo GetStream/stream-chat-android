@@ -34,6 +34,16 @@ internal data class SocketErrorResponse(
         val StatusCode: Int = -1,
         val duration: String = "",
         val exception_fields: Map<String, String> = mapOf(),
-        val more_info: String = ""
-    )
+        val more_info: String = "",
+        val details: List<ErrorDetail>
+    ) {
+
+        @JsonClass(generateAdapter = true)
+        data class ErrorDetail(
+            val code: Int = -1,
+            val messages: List<String> = emptyList()
+        )
+
+
+    }
 }

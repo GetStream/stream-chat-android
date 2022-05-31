@@ -73,6 +73,8 @@ dependencies {
 
     // Serialization
     implementation Dependencies.moshi
+    implementation Dependencies.moshiKotlin
+    implementation Dependencies.moshiAdapters
     ksp Dependencies.moshiCodegen
 
     // Tests

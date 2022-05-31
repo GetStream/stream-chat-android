@@ -17,10 +17,19 @@
 package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.addAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageAwaitingAttachmentsEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageModerationFailedEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncContentEntity
 
 @OptIn(ExperimentalStdlibApi::class)
 internal val moshi: Moshi = Moshi.Builder()
+    .add(PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, "type")
+        .withSubtype(MessageAwaitingAttachmentsEntity::class.java, "message.sync.in_progress.await_attachments")
+        .withSubtype(MessageModerationFailedEntity::class.java, "message.sync.failed.moderation"))
     .addAdapter(DateAdapter())
+    .add(KotlinJsonAdapterFactory())
     .build()

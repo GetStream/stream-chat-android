@@ -78,6 +78,7 @@ import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
+import io.getstream.chat.android.compose.ui.util.isModerationFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 
 /**
@@ -463,7 +464,10 @@ internal fun EmojiMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                tint = when (messageItem.isModerationFailed()) {
+                    true -> Color(android.graphics.Color.MAGENTA)
+                    else -> ChatTheme.colors.errorAccent
+                }
             )
         }
     }
@@ -543,7 +547,10 @@ internal fun RegularMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                tint = when (messageItem.isModerationFailed()) {
+                    true -> Color(android.graphics.Color.MAGENTA)
+                    else -> ChatTheme.colors.errorAccent
+                },
             )
         }
     }
