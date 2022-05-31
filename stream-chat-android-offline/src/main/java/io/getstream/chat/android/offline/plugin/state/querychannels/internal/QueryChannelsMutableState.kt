@@ -27,6 +27,7 @@ import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHand
 import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,17 +43,33 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
+    private val logger = StreamLog.getLogger("QueryChannelsState")
+
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-    internal val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
+    internal val _channels = MutableStateFlow<Map<String, Channel>?>(null)
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)
-    private val _sortedChannels =
+    private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
-            channelMap.values.updateUsers(userMap)
-        }
-            .map { it.sortedWith(sort.comparator) }
-            .stateIn(scope, SharingStarted.Eagerly, emptyList())
+            channelMap?.values?.updateUsers(userMap)
+        }.map { channels ->
+            if (channels?.isNotEmpty() == true) {
+                logger.d {
+                    val ids = channels.joinToString { channel -> channel.id }
+                    "Sorting channels: $ids"
+                }
+            }
+
+            channels?.sortedWith(sort.comparator).also { sortedChannels ->
+                if (sortedChannels?.isNotEmpty() == true) {
+                    logger.d {
+                        val ids = sortedChannels.joinToString { channel -> channel.id }
+                        "Sorting result: $ids"
+                    }
+                }
+            }
+        }.stateIn(scope, SharingStarted.Eagerly, null)
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -73,11 +90,11 @@ internal class QueryChannelsMutableState(
     override val loading: StateFlow<Boolean> = _loading
     override val loadingMore: StateFlow<Boolean> = _loadingMore
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels
-    override val channels: StateFlow<List<Channel>> = _sortedChannels
+    override val channels: StateFlow<List<Channel>?> = _sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
-        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
+        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel>? ->
             when {
-                loading -> ChannelsStateData.Loading
+                loading || channels == null -> ChannelsStateData.Loading
                 channels.isEmpty() -> ChannelsStateData.OfflineNoResults
                 else -> ChannelsStateData.Result(channels)
             }

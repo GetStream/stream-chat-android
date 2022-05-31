@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
@@ -63,6 +64,7 @@ public fun MessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -80,7 +82,8 @@ public fun MessageContainer(
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
 ) {
@@ -185,6 +188,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user receives an image preview result.
  */
 @Composable
@@ -194,6 +198,7 @@ internal fun DefaultMessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
 ) {
     MessageItem(
@@ -202,6 +207,7 @@ internal fun DefaultMessageItem(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult
+        onQuotedMessageClick = onQuotedMessageClick,
+        onImagePreviewResult = onImagePreviewResult,
     )
 }

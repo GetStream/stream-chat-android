@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,6 +45,8 @@ internal class ChatSocketTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
+    private val endpoint: String = randomString()
+    private val apiKey: String = randomString()
     private lateinit var tokenManager: TokenManager
     private lateinit var socketFactory: SocketFactory
     private lateinit var chatParser: ChatParser
@@ -59,8 +62,8 @@ internal class ChatSocketTest {
         networkStateProvider = mock()
         socketListener = mock()
         chatSocket = ChatSocket(
-            randomString(),
-            randomString(),
+            apiKey,
+            endpoint,
             tokenManager,
             socketFactory,
             networkStateProvider,
@@ -74,7 +77,7 @@ internal class ChatSocketTest {
     fun `Should start connecting to socket when connecting and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -86,7 +89,7 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -95,7 +98,7 @@ internal class ChatSocketTest {
     fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
@@ -104,7 +107,7 @@ internal class ChatSocketTest {
     fun `Should start connecting to socket when connecting with anymous user and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -116,7 +119,7 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -125,13 +128,14 @@ internal class ChatSocketTest {
     fun `Should not start connecting to socket when connecting with anymous user  and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
     fun `Should retry to connect`() {
+        val user = randomUser()
         whenever(networkStateProvider.isConnected()) doReturn true
 
         val networkError = ChatNetworkError.create(
@@ -140,13 +144,18 @@ internal class ChatSocketTest {
             statusCode = 500,
         )
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(user, isAnonymous = true)
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false
         chatSocket.onSocketError(networkError)
 
         // Socket was recreated
-        verify(socketFactory, times(2)).createAnonymousSocket(any(), any(), any())
+        verify(socketFactory, times(2)).createSocket(
+            any(),
+            org.mockito.kotlin.check {
+                it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, user)
+            }
+        )
     }
 }

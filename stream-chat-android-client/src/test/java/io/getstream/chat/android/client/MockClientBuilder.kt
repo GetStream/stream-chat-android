@@ -77,6 +77,7 @@ internal class MockClientBuilder(
             "socket.url",
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
+            false,
             false
         )
 

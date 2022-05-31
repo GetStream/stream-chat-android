@@ -31,6 +31,7 @@ import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
@@ -61,6 +62,9 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
+    error("No quoted attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -76,6 +80,12 @@ private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewForm
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
+    error(
+        "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
+            "in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -89,12 +99,14 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param rippleTheme Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
+ * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
+ * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -108,6 +120,7 @@ public fun ChatTheme(
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -118,6 +131,7 @@ public fun ChatTheme(
     ),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -132,12 +146,14 @@ public fun ChatTheme(
         LocalRippleTheme provides rippleTheme,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
+        LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment
     ) {
         content()
     }
@@ -197,6 +213,14 @@ public object ChatTheme {
         get() = LocalAttachmentPreviewHandlers.current
 
     /**
+     * Retrieves the current list of quoted [AttachmentFactory] at the call site's position in the hierarchy.
+     */
+    public val quotedAttachmentFactories: List<AttachmentFactory>
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalQuotedAttachmentFactories.current
+
+    /**
      * Retrieves the current reaction icon factory at the call site's position in the hierarchy.
      */
     public val reactionIconFactory: ReactionIconFactory
@@ -235,4 +259,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    /**
+     * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
+     */
+    public val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageOptionsUserReactionAlignment.current
 }

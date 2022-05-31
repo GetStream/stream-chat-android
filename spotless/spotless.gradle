@@ -4,6 +4,7 @@ spotless {
     encoding 'UTF-8'
     kotlin {
         target "**/*.kt"
+        targetExclude "**/build/**/*.kt"
         ktlint()
         trimTrailingWhitespace()
         endWithNewline()
@@ -18,9 +19,14 @@ spotless {
         licenseHeaderFile "$rootDir/spotless/spotless.license.kt"
     }
     kotlinGradle {
-        target '*.gradle.kts'
+        target "*.gradle.kts"
         ktlint()
         trimTrailingWhitespace()
         endWithNewline()
+    }
+    format "xml", {
+        target "**/*.xml"
+        targetExclude "**/build/**/*.xml", "**/detekt-baseline.xml"
+        licenseHeaderFile "$rootDir/spotless/spotless.license.xml", "(<[^!?])"
     }
 }

@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.composer
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -73,13 +74,15 @@ public fun MessageInput(
         maxLines = maxLines,
         onValueChange = onValueChange,
         enabled = canSendMessage,
+        innerPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
                     QuotedMessage(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         message = activeAction.message,
-                        onLongItemClick = {}
+                        onLongItemClick = {},
+                        onQuotedMessageClick = {}
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))

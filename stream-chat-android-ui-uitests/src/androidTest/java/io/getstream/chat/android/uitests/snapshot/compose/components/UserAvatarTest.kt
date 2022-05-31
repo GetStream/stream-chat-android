@@ -18,25 +18,19 @@ package io.getstream.chat.android.uitests.snapshot.compose.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
-import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
-import io.getstream.chat.android.uitests.snapshot.compose.TestChatTheme
+import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
-import org.junit.Rule
 import org.junit.Test
 
-class UserAvatarTest : ScreenshotTest {
-
-    @get:Rule
-    val composeRule = createComposeRule()
+class UserAvatarTest : ComposeScreenshotTest() {
 
     @Test
-    fun uerAvatarForUserWithoutImage() {
-        renderUserAvatar(
+    fun uerAvatarForUserWithoutImage() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1().copy(image = ""),
             showOnlineIndicator = false,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
@@ -44,8 +38,9 @@ class UserAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun uerAvatarForUserWithImage() {
-        renderUserAvatar(
+    fun uerAvatarForUserWithImage() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = false,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
@@ -53,8 +48,9 @@ class UserAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopEndIndicator() {
-        renderUserAvatar(
+    fun uerAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
@@ -62,8 +58,9 @@ class UserAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomEndIndicator() {
-        renderUserAvatar(
+    fun uerAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd
@@ -71,8 +68,9 @@ class UserAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopStartIndicator() {
-        renderUserAvatar(
+    fun uerAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart
@@ -80,29 +78,12 @@ class UserAvatarTest : ScreenshotTest {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomStartIndicator() {
-        renderUserAvatar(
+    fun uerAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
+        UserAvatar(
+            modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
             onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart
         )
-    }
-
-    private fun renderUserAvatar(
-        user: User,
-        showOnlineIndicator: Boolean,
-        onlineIndicatorAlignment: OnlineIndicatorAlignment,
-    ) {
-        composeRule.setContent {
-            TestChatTheme {
-                UserAvatar(
-                    modifier = Modifier.size(40.dp),
-                    user = user,
-                    showOnlineIndicator = showOnlineIndicator,
-                    onlineIndicatorAlignment = onlineIndicatorAlignment,
-                )
-            }
-        }
-        compareScreenshot(composeRule)
     }
 }

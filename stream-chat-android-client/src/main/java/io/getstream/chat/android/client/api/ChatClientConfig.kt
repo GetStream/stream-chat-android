@@ -16,16 +16,30 @@
 
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.logger.ChatLogger
 
-@Suppress("LongParameterList")
-public class ChatClientConfig(
+/**
+ * A config to setup the [ChatClient] behavior.
+ *
+ * @param apiKey The API key of your Stream Chat app obtained from the
+ * [Stream Dashboard](https://dashboard.getstream.io/).
+ * @param httpUrl The base URL to be used by the client.
+ * @param cdnHttpUrl The base CDN URL to be used by the client.
+ * @param wssUrl The base WebSocket URL to be used by the client.
+ * @param warmUp Controls the connection warm-up behavior.
+ * @param loggerConfig A logging config to be used by the client.
+ * @param distinctApiCalls Controls whether [DistinctChatApi] is enabled or not.
+ */
+public class ChatClientConfig @JvmOverloads constructor(
     public val apiKey: String,
     public var httpUrl: String,
     public var cdnHttpUrl: String,
     public var wssUrl: String,
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
+    public var distinctApiCalls: Boolean = true,
     public val debugRequests: Boolean
 ) {
     public var isAnonymous: Boolean = false

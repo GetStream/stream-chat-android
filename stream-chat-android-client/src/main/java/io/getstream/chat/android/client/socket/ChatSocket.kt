@@ -50,7 +50,7 @@ internal open class ChatSocket constructor(
     private val coroutineScope: CoroutineScope,
 ) {
     private val logger = ChatLogger.get("ChatSocket")
-    private var connectionConf: ConnectionConf = ConnectionConf.None
+    private var connectionConf: SocketFactory.ConnectionConf? = null
     private var socket: Socket? = null
     private var eventsParser: EventsParser? = null
     private var socketConnectionJob: Job? = null
@@ -122,7 +122,7 @@ internal open class ChatSocket constructor(
                 }
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
-                    connectionConf = ConnectionConf.None
+                    connectionConf = null
                     networkStateProvider.unsubscribe(networkStateListener)
                     healthMonitor.stop()
                     callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
@@ -185,13 +185,25 @@ internal open class ChatSocket constructor(
         }
     }
 
-    open fun connectAnonymously() =
-        connect(ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
+    fun connectUser(user: User, isAnonymous: Boolean) {
+        connect(
+            when (isAnonymous) {
+                true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+            }
+        )
+    }
 
-    open fun connect(user: User) =
-        connect(ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
+    fun reconnectUser(user: User, isAnonymous: Boolean) {
+        reconnect(
+            when (isAnonymous) {
+                true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+            }
+        )
+    }
 
-    private fun connect(connectionConf: ConnectionConf) {
+    protected open fun connect(connectionConf: SocketFactory.ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
         logger.logI("Connect. Network available: $isNetworkConnected")
         this.connectionConf = connectionConf
@@ -225,31 +237,24 @@ internal open class ChatSocket constructor(
         socket?.send(event)
     }
 
-    private fun reconnect(connectionConf: ConnectionConf) {
+    private fun reconnect(connectionConf: SocketFactory.ConnectionConf?) {
         shutdownSocketConnection()
-        setupSocket(connectionConf)
+        setupSocket(connectionConf?.asReconnectionConf())
     }
 
-    private fun setupSocket(connectionConf: ConnectionConf) {
+    private fun setupSocket(connectionConf: SocketFactory.ConnectionConf?) {
         logger.logI("setupSocket")
-        with(connectionConf) {
-            when (this) {
-                is ConnectionConf.None -> {
-                    state = State.DisconnectedPermanently(null)
-                }
-                is ConnectionConf.AnonymousConnectionConf -> {
-                    state = State.Connecting
-                    socket = socketFactory.createAnonymousSocket(createNewEventsParser(), endpoint, apiKey)
-                }
-                is ConnectionConf.UserConnectionConf -> {
-                    state = State.Connecting
-                    socketConnectionJob = coroutineScope.launch {
-                        tokenManager.ensureTokenLoaded()
-                        withContext(DispatcherProvider.Main) {
-                            socket = socketFactory.createNormalSocket(createNewEventsParser(), endpoint, apiKey, user)
-                        }
+        state = when (connectionConf) {
+            null -> State.DisconnectedPermanently(null)
+            is SocketFactory.ConnectionConf.AnonymousConnectionConf,
+            is SocketFactory.ConnectionConf.UserConnectionConf -> {
+                socketConnectionJob = coroutineScope.launch {
+                    tokenManager.ensureTokenLoaded()
+                    withContext(DispatcherProvider.Main) {
+                        socket = socketFactory.createSocket(createNewEventsParser(), connectionConf)
                     }
                 }
+                State.Connecting
             }
         }
     }
@@ -277,12 +282,6 @@ internal open class ChatSocket constructor(
     private companion object {
         private const val RETRY_LIMIT = 3
         private const val DEFAULT_DELAY = 500
-    }
-
-    internal sealed class ConnectionConf {
-        object None : ConnectionConf()
-        data class AnonymousConnectionConf(val endpoint: String, val apiKey: String) : ConnectionConf()
-        data class UserConnectionConf(val endpoint: String, val apiKey: String, val user: User) : ConnectionConf()
     }
 
     @VisibleForTesting

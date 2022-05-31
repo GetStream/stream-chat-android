@@ -359,6 +359,14 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
+	public fun <init> (ILkotlin/jvm/functions/Function0;)V
+	public final fun disablePagination ()V
+	public final fun enablePagination ()V
+	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
+	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
+}
+
 public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
 	public fun <init> (ILkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
@@ -771,6 +779,20 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getMessageListItem ()Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/MessageOptionsUserReactionAlignment : java/lang/Enum {
+	public static final field BY_USER Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field BY_USER_INVERTED Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field END Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static final field START Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+	public static fun values ()[Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
+}
+
+public final class io/getstream/chat/android/common/MessageOptionsUserReactionAlignmentKt {
+	public static final fun getUserReactionAlignment (I)Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
 }
 
 public final class io/getstream/chat/android/common/composer/MessageComposerState {

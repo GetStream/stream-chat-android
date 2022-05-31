@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.extensions.internal.logic
-import io.getstream.chat.android.offline.utils.internal.validateCidBoolean
+import io.getstream.chat.android.offline.utils.internal.validateCid
 
 internal class SyncMessagesWork(
     appContext: Context,
@@ -40,14 +40,14 @@ internal class SyncMessagesWork(
         val cid = inputData.getString(DATA_CID)!!
         val client = ChatClient.instance()
 
-        return if (validateCidBoolean(cid)) {
-            val (type, id) = cid.cidToTypeAndId()
+        return try {
+            val (type, id) = validateCid(cid).cidToTypeAndId()
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
-            EventHandlerProvider.eventHandler.replayEventsForActiveChannels()
+            EventHandlerProvider.eventHandler.syncHistoryForActiveChannels()
 
             Result.success()
-        } else {
+        } catch (_: IllegalArgumentException) {
             Result.failure()
         }
     }

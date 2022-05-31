@@ -76,6 +76,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.extensions.internal.addMember
 import io.getstream.chat.android.offline.extensions.internal.addMembership
@@ -95,14 +96,14 @@ import io.getstream.chat.android.offline.repository.builder.internal.RepositoryF
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
 
-private const val TAG = "Chat:EventHandler"
+private const val TAG = "Chat:EventHandlerOld"
 
 internal class EventHandlerImpl(
+    private val scope: CoroutineScope,
     private val recoveryEnabled: Boolean,
     private val client: ChatClient,
     private val logic: LogicRegistry,
@@ -110,29 +111,27 @@ internal class EventHandlerImpl(
     private val mutableGlobalState: GlobalMutableState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
-) {
+) : EventHandler {
 
     private val logger = StreamLog.getLogger(TAG)
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
-    private var initJob: Deferred<*>? = null
-
-    internal fun initialize(user: User, scope: CoroutineScope) {
-        initJob = scope.async {
-            syncManager.updateAllReadStateForDate(user.id, Date())
-            syncManager.loadSyncStateForUser(user.id)
-            replayEventsForAllChannels(user)
-        }
-    }
 
     /**
      * Start listening to chat events.
      */
-    internal fun startListening(scope: CoroutineScope) {
-        if (eventSubscription.isDisposed) {
+    override fun startListening(currentUser: User) {
+        val isDisposed = eventSubscription.isDisposed
+        logger.i { "[startListening] isDisposed: $isDisposed, user: $currentUser" }
+        if (isDisposed) {
+            val initJob = scope.async {
+                syncManager.updateAllReadStateForDate(currentUser.id, Date())
+                syncManager.loadSyncStateForUser(currentUser.id)
+                replayEventsForAllChannels(currentUser)
+            }
             eventSubscription = client.subscribe {
                 scope.async {
-                    initJob?.join()
+                    initJob.join()
                     handleEvents(listOf(it))
                 }
             }
@@ -142,24 +141,27 @@ internal class EventHandlerImpl(
     /**
      * Stop listening for events.
      */
-    internal fun stopListening() {
+    override fun stopListening() {
+        logger.i { "[stopListening] no args" }
         eventSubscription.dispose()
     }
 
     /**
-     * Handle events from the SDK. Don't use this directly as this only be called then new events arrive from the SDK.
+     * For testing purpose only. Simulates socket event handling.
      */
     @VisibleForTesting
-    internal suspend fun handleEvent(event: ChatEvent) {
-        logger.i { "[handleEvent] event: $event" }
-        handleConnectEvents(listOf(event))
-        handleEventsInternal(listOf(event), isFromSync = false)
+    override suspend fun handleEvents(vararg events: ChatEvent) {
+        logger.i { "[handleEvent] events: $events" }
+        val eventList = events.toList()
+        handleConnectEvents(eventList)
+        handleEventsInternal(eventList, isFromSync = false)
     }
 
     /**
      * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
      */
-    internal suspend fun replayEventsForActiveChannels() {
+    override suspend fun syncHistoryForActiveChannels() {
+        logger.i { "[replayEventsForActiveChannels] no args" }
         replayEventsForChannels(activeChannelsCid())
     }
 
@@ -171,8 +173,11 @@ internal class EventHandlerImpl(
         logger.i { "[replayEventsForChannels] cids: $cids" }
         return queryEvents(cids)
             .onSuccessSuspend { eventList ->
+                logger.d { "[replayEventsForChannels] eventList.size: ${eventList.size}" }
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
                 handleEventsInternal(eventList, isFromSync = true)
+            }.onError {
+                logger.e { "Could not replay events for the given channels. ${it.message}" }
             }
     }
 
@@ -236,6 +241,7 @@ internal class EventHandlerImpl(
         client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
+        val currentUserId = client.getCurrentUser()?.id
         val batchBuilder = EventBatchUpdate.Builder()
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
@@ -302,9 +308,7 @@ internal class EventHandlerImpl(
             }
         }
         // actually fetch the data
-        val batch = batchBuilder.build(repos, mutableGlobalState._user)
-
-        val currentUserId = client.getCurrentUser()?.id
+        val batch = batchBuilder.build(repos, currentUserId)
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
@@ -563,7 +567,7 @@ internal class EventHandlerImpl(
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>, isFromSync: Boolean) {
         events.forEach { chatEvent ->
-            logger.d { "[handleEventsInternal] chatEvent: $chatEvent" }
+            logger.v { "[handleEventsInternal] chatEvent: $chatEvent" }
         }
 
         val sortedEvents = events.sortedBy { it.createdAt }

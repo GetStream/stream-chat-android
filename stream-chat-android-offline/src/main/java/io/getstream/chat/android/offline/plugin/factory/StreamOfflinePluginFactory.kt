@@ -19,16 +19,20 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
+import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.configuration.Config
@@ -52,6 +56,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventLis
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
@@ -60,13 +65,12 @@ import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFireb
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
  *
- * @param config [Config] Configuration of persistance of the SDK.
+ * @param config [Config] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
 public class StreamOfflinePluginFactory(
@@ -74,12 +78,16 @@ public class StreamOfflinePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
+    private var cachedOfflinePluginInstance: OfflinePlugin? = null
+
+    private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+
     /**
      * Creates a [Plugin]
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin = createOfflinePlugin(user)
+    override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
 
     private var repositoryFactory: RepositoryFactory? = null
 
@@ -91,9 +99,21 @@ public class StreamOfflinePluginFactory(
     }
 
     /**
-     * Creates the [OfflinePlugin] and initialized its dependencies. This method must be called after the user is set in the SDK.
+     * Tries to get cached [OfflinePlugin] instance for the user if it exists or
+     * creates the new [OfflinePlugin] and initialized its dependencies.
+     *
+     * This method must be called after the user is set in the SDK.
      */
-    private fun createOfflinePlugin(user: User): OfflinePlugin {
+    private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin {
+        val cachedPlugin = cachedOfflinePluginInstance
+
+        if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
+            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            return cachedPlugin
+        } else {
+            clearCachedInstance()
+        }
+
         val chatClient = ChatClient.instance()
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
@@ -120,8 +140,7 @@ public class StreamOfflinePluginFactory(
             repositoryFactory(repositoryFactory)
         }.build()
 
-        val userStateFlow = MutableStateFlow(ChatClient.instance().getCurrentUser())
-        val stateRegistry = StateRegistry.create(job, scope, userStateFlow, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.create(job, scope, globalState._user, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
@@ -164,18 +183,17 @@ public class StreamOfflinePluginFactory(
             syncManager.clearState()
         }
 
-        val eventHandler = EventHandlerImpl(
-            recoveryEnabled = true,
+        val eventHandler: EventHandler = createEventHandler(
+            scope = scope,
             client = chatClient,
-            logic = logic,
-            state = stateRegistry,
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
             repos = repos,
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
-            eventHandler.initialize(user, scope)
-            eventHandler.startListening(scope)
+            eventHandler.startListening(user)
         }
 
         InitializationCoordinator.getOrCreate().run {
@@ -187,6 +205,7 @@ public class StreamOfflinePluginFactory(
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
+                clearCachedInstance()
             }
         }
 
@@ -217,7 +236,45 @@ public class StreamOfflinePluginFactory(
             queryMembersListener = QueryMembersListenerImpl(repos),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
-        )
+            activeUser = user
+        ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
+    }
+
+    private fun createEventHandler(
+        scope: CoroutineScope,
+        client: ChatClient,
+        logicRegistry: LogicRegistry,
+        stateRegistry: StateRegistry,
+        mutableGlobalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        syncManager: SyncManager
+    ): EventHandler {
+        return when (BuildConfig.DEBUG) {
+            true -> EventHandlerSequential(
+                scope = scope,
+                recoveryEnabled = true,
+                subscribeForEvents = { listener -> client.subscribe(listener) },
+                logicRegistry = logicRegistry,
+                stateRegistry = stateRegistry,
+                mutableGlobalState = mutableGlobalState,
+                repos = repos,
+                syncManager = syncManager,
+            )
+            else -> EventHandlerImpl(
+                scope = scope,
+                recoveryEnabled = true,
+                client = client,
+                logic = logicRegistry,
+                state = stateRegistry,
+                mutableGlobalState = mutableGlobalState,
+                repos = repos,
+                syncManager = syncManager,
+            )
+        }
+    }
+
+    private fun clearCachedInstance() {
+        cachedOfflinePluginInstance = null
     }
 
     private fun createRepositoryFactory(
