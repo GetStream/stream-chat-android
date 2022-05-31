@@ -27,6 +27,24 @@ object PredefinedUserCredentials {
 
     val availableUsers: List<UserCredentials> = listOf(
         UserCredentials(
+            apiKey = "twy69pcpwvfa",
+            user = User().apply {
+                id = "kanat"
+                name = "Kanat"
+                image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-72"
+            },
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.EFMiDmGeBSK4Vxp0mc7o3tKqULt40do2MJANNjHuZj0"
+        ),
+        UserCredentials(
+            apiKey = "twy69pcpwvfa",
+            user = User().apply {
+                id = "harambe"
+                name = "harambe"
+                image = "https://getstream.io/random_png/?id=harambe&name=harambe"
+            },
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaGFyYW1iZSJ9.eXjeF1X8suuo5p_hxT_HyAXMEASJg9kk7ZkCThOat-g"
+        ),
+        UserCredentials(
             apiKey = API_KEY,
             user = User().apply {
                 id = "jc"

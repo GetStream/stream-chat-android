@@ -19,12 +19,27 @@ package io.getstream.chat.ui.sample.application
 import io.getstream.chat.ui.sample.data.user.SampleUser
 
 object AppConfig {
-    const val apiKey: String = "qx5us2v6xvmh"
+    //const val apiKey: String = "qx5us2v6xvmh"
+    const val apiKey: String = "twy69pcpwvfa"
     const val apiUrl: String = "chat-us-east-staging.stream-io-api.com"
     const val apiTimeout: Int = 6000
     const val cndTimeout: Int = 30000
 
     val availableUsers: List<SampleUser> = listOf(
+        SampleUser(
+            apiKey = "twy69pcpwvfa",
+            id = "kanat",
+            name = "Kanat",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-72",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.EFMiDmGeBSK4Vxp0mc7o3tKqULt40do2MJANNjHuZj0"
+        ),
+        SampleUser(
+            apiKey = "twy69pcpwvfa",
+            id = "harambe",
+            name = "harambe",
+            image = "https://getstream.io/random_png/?id=harambe&name=harambe",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaGFyYW1iZSJ9.eXjeF1X8suuo5p_hxT_HyAXMEASJg9kk7ZkCThOat-g"
+        ),
         SampleUser(
             apiKey = apiKey,
             id = "jc",

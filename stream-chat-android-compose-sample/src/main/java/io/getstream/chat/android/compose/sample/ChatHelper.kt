@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.sample
 
 import android.content.Context
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -37,10 +38,13 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
 @OptIn(InternalStreamChatApi::class)
 object ChatHelper {
 
+    private const val TAG = "ChatHelper"
+
     /**
      * Initializes the SDK with the given API key.
      */
     fun initializeSdk(context: Context, apiKey: String) {
+        Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
         )
