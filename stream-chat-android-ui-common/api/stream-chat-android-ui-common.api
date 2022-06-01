@@ -359,6 +359,11 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public abstract fun clearTypingUpdates ()V
+	public abstract fun keystroke ()V
+}
+
 public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
 	public fun <init> (ILkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
