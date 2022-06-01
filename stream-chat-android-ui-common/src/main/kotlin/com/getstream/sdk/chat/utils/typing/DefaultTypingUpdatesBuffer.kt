@@ -37,10 +37,10 @@ import kotlinx.coroutines.launch
  * @param onStopTypingEventFired Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
-private class DefaultTypingUpdatesBuffer(
-    val delayIntervalMillis: Long = DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL,
-    val onStartTypingEventFired: () -> Unit,
-    val onStopTypingEventFired: () -> Unit,
+public class DefaultTypingUpdatesBuffer(
+    public val delayIntervalMillis: Long = DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL,
+    private val onStartTypingEventFired: () -> Unit,
+    private val onStopTypingEventFired: () -> Unit,
 ) : TypingUpdatesBuffer {
 
     /**
@@ -51,7 +51,7 @@ private class DefaultTypingUpdatesBuffer(
     /**
      * Holds the currently running job.
      */
-    var job: Job? = null
+    private var job: Job? = null
 
     /**
      * If the user is currently typing or not.
@@ -110,7 +110,7 @@ private class DefaultTypingUpdatesBuffer(
         }
     }
 
-    companion object {
-        const val DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL = 3000L
+    public companion object {
+        public const val DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL: Long = 3000L
     }
 }
