@@ -60,6 +60,7 @@ internal class MessageListViewModelTest {
             .givenNotifications()
             .get()
 
+        // Avoid counting date separators
         val messageItemCount = viewModel.currentMessagesState
             .messageItems
             .count { it is MessageItemState }
@@ -96,6 +97,7 @@ internal class MessageListViewModelTest {
             .givenSendReaction()
             .get()
 
+        // Avoid counting date separators
         val messageItemCount = viewModel.currentMessagesState
             .messageItems
             .count { it is MessageItemState }
