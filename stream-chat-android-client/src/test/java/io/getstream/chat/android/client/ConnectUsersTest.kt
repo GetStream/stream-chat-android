@@ -19,6 +19,7 @@ package io.getstream.chat.android.client
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
@@ -33,6 +34,7 @@ import io.getstream.chat.android.test.runTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import org.amshove.kluent.`should be equal to`
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,22 +52,31 @@ internal class ConnectUsersTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
-    private val socket: FakeSocket = FakeSocket()
-    private val chatApi: ChatApi = mock()
+    private lateinit var socket: FakeSocket
+    private lateinit var chatApi: ChatApi
+    private lateinit var userStateService: UserStateService
+    private lateinit var client: ChatClient
 
-    val client = ChatClient(
-        config = mock(),
-        api = chatApi,
-        socket = socket,
-        notifications = mock(),
-        tokenManager = mock(),
-        socketStateService = mock(),
-        queryChannelsPostponeHelper = mock(),
-        userCredentialStorage = mock(),
-        scope = testCoroutines.scope,
-        retryPolicy = mock(),
-        appSettingsManager = mock(),
-    )
+    @Before
+    fun setup() {
+        socket = FakeSocket()
+        chatApi = mock()
+        userStateService = UserStateService()
+        client = ChatClient(
+            config = mock(),
+            api = chatApi,
+            socket = socket,
+            notifications = mock(),
+            tokenManager = mock(),
+            socketStateService = mock(),
+            queryChannelsPostponeHelper = mock(),
+            userCredentialStorage = mock(),
+            userStateService = userStateService,
+            scope = testCoroutines.scope,
+            retryPolicy = mock(),
+            appSettingsManager = mock(),
+        )
+    }
 
     @Test
     fun connectUserSuccess() = testCoroutines.runTest {
@@ -81,6 +92,7 @@ internal class ConnectUsersTest {
         val result = deferred.await()
 
         /* Then */
+        socket.verifyUserToConnect(user)
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
     }
@@ -117,6 +129,7 @@ internal class ConnectUsersTest {
         val result = deferred.await()
 
         /* Then */
+        socket.verifyUserToConnect(user)
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
     }
@@ -142,7 +155,7 @@ internal class ConnectUsersTest {
     @Test
     fun connectAnonymousUserSuccess() = testCoroutines.runTest {
         /* Given */
-        val user = User(id = "anonymous")
+        val user = User(id = "!anon")
         val connectionId = "123"
         val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
 
@@ -152,8 +165,10 @@ internal class ConnectUsersTest {
         val result = deferred.await()
 
         /* Then */
+        socket.verifyUserToConnect(user)
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
+        userStateService.state.userOrError() `should be equal to` user
     }
 
     @Test

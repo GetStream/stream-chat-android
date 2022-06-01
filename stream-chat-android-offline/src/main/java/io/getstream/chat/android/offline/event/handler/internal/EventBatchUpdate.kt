@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -49,7 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
  * batch.execute()
  */
 internal class EventBatchUpdate private constructor(
-    private val currentUser: StateFlow<User?>,
+    private val currentUserId: String?,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
@@ -112,7 +111,7 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        currentUser.value?.id?.let { userMap -= it }
+        currentUserId?.let { userMap -= it }
 
         enrichChannelsWithCapabilities()
 
@@ -163,7 +162,7 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
-        suspend fun build(repos: RepositoryFacade, currentUser: StateFlow<User?>): EventBatchUpdate {
+        suspend fun build(repos: RepositoryFacade, currentUserId: String?): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =
@@ -171,7 +170,7 @@ internal class EventBatchUpdate private constructor(
             val channelMap: Map<String, Channel> =
                 repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
             return EventBatchUpdate(
-                currentUser,
+                currentUserId,
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),
