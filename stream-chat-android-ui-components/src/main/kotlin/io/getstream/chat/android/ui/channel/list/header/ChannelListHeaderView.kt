@@ -207,18 +207,24 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.onlineTextView.isVisible = true
     }
 
-    public fun setTextClickListener(func: () -> Unit) {
-        binding.offlineTextView.setOnClickListener { func.invoke() }
-        binding.onlineTextView.setOnClickListener { func.invoke() }
+    /**
+     * Sets a click listener for the title in the header.
+     */
+    public fun setOnTitleClickListener(listener: () -> Unit) {
+        binding.offlineTextView.setOnClickListener { listener() }
+        binding.onlineTextView.setOnClickListener { listener() }
     }
 
-    public fun setTextLongClickListener(func: () -> Unit) {
+    /**
+     * Sets a long click listener for the title in the header.
+     */
+    public fun setOnTitleLongClickListener(listener: () -> Unit) {
         binding.offlineTextView.setOnLongClickListener {
-            func.invoke()
+            listener()
             true
         }
         binding.onlineTextView.setOnLongClickListener {
-            func.invoke()
+            listener()
             true
         }
     }

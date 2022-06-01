@@ -90,13 +90,13 @@ class HomeFragment : Fragment() {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
             if (BuildConfig.DEBUG) {
-                setTextClickListener {
+                setOnTitleClickListener {
                     if (ApiRequestsAnalyser.isInitialized()) {
                         Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
                     }
                 }
 
-                setTextLongClickListener {
+                setOnTitleLongClickListener {
                     if (ApiRequestsAnalyser.isInitialized()) {
                         ApiRequestsAnalyser.get().clearAll()
                         Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
