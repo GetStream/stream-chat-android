@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models.querysort
+package io.getstream.chat.android.client.api.models.querysort.internal
 
-import kotlin.reflect.KProperty1
+import io.getstream.chat.android.client.api.models.querysort.SortDirection
 
-/** Inner representation of sorting feature specification. */
-internal sealed class SortAttribute<T> {
-    /** Name of attribute */
-    abstract val name: String
-
-    /** KProperty referenced attribute. */
-    data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
-        SortAttribute<T>()
-
-    /** Referenced by name attribute. */
-    data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
-}
+internal data class SortSpecification<T>(
+    val sortAttribute: SortAttribute<T>,
+    val sortDirection: SortDirection,
+)

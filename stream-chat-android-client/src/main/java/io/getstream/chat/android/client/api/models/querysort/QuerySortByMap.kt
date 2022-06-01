@@ -16,8 +16,11 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
+import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
+import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_DIRECTION
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_FIELD_NAME
+import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 
 public class QuerySortByMap<T : QueryableByMap> : QuerySorter<T> {
