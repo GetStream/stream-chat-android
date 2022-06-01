@@ -359,6 +359,19 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public static final field Companion Lcom/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer$Companion;
+	public static final field DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL J
+	public fun <init> (JLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (JLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun clearTypingUpdates ()V
+	public final fun getDelayIntervalMillis ()J
+	public fun keystroke ()V
+}
+
+public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer$Companion {
+}
+
 public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
 	public abstract fun clearTypingUpdates ()V
 	public abstract fun keystroke ()V
