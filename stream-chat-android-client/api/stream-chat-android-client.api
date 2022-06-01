@@ -19,9 +19,17 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun connectAnonymousUser ()Lio/getstream/chat/android/client/call/Call;
+	public final fun connectAnonymousUser (Ljava/lang/Long;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun connectAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun connectGuestUser (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun connectGuestUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun connectGuestUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;)Lio/getstream/chat/android/client/call/Call;
+	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;)Lio/getstream/chat/android/client/call/Call;
 	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun connectUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun connectUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun connectUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun createChannel (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
@@ -3378,10 +3386,11 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 }
 
 public final class io/getstream/chat/android/client/user/CredentialConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
 	public final fun getUserId ()Ljava/lang/String;
 	public final fun getUserName ()Ljava/lang/String;
 	public final fun getUserToken ()Ljava/lang/String;
+	public final fun isAnonymous ()Z
 }
 
 public abstract interface class io/getstream/chat/android/client/user/storage/UserCredentialStorage {
@@ -3394,6 +3403,9 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/utils/ResultUtilsKt {
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {
