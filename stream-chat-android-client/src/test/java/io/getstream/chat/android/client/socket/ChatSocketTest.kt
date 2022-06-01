@@ -77,7 +77,7 @@ internal class ChatSocketTest {
     fun `Should start connecting to socket when connecting and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -89,7 +89,7 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -98,7 +98,7 @@ internal class ChatSocketTest {
     fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        chatSocket.connect(randomUser())
+        chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
@@ -107,7 +107,7 @@ internal class ChatSocketTest {
     fun `Should start connecting to socket when connecting with anymous user and network connectivity exists`() {
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -119,7 +119,7 @@ internal class ChatSocketTest {
             it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
         }
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
     }
@@ -128,13 +128,14 @@ internal class ChatSocketTest {
     fun `Should not start connecting to socket when connecting with anymous user  and there is no network connectivity`() {
         whenever(networkStateProvider.isConnected()) doReturn false
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
     fun `Should retry to connect`() {
+        val user = randomUser()
         whenever(networkStateProvider.isConnected()) doReturn true
 
         val networkError = ChatNetworkError.create(
@@ -143,7 +144,7 @@ internal class ChatSocketTest {
             statusCode = 500,
         )
 
-        chatSocket.connectAnonymously()
+        chatSocket.connectUser(user, isAnonymous = true)
         chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
 
         whenever(networkStateProvider.isConnected()) doReturn false
@@ -153,7 +154,7 @@ internal class ChatSocketTest {
         verify(socketFactory, times(2)).createSocket(
             any(),
             org.mockito.kotlin.check {
-                it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey)
+                it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, user)
             }
         )
     }

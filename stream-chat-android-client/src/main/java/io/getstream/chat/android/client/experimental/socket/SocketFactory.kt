@@ -79,14 +79,6 @@ internal class SocketFactory(
         return parser.toJson(data)
     }
 
-    companion object {
-        /**
-         *  It doesn't matter what user id we send to the server for anonymous user
-         *  as the server will always return the user with "!anon" user id
-         */
-        private const val ANONYMOUS_USER_ID = "anon"
-    }
-
     /**
      * Converts the [User] object to a map of properties updated while connecting the user.
      * [User.name] and [User.image] will only be included if they are not blank.
@@ -116,9 +108,8 @@ internal class SocketFactory(
         data class AnonymousConnectionConf(
             override val endpoint: String,
             override val apiKey: String,
-        ) : ConnectionConf() {
-            override val user: User = User(ANONYMOUS_USER_ID)
-        }
+            override val user: User,
+        ) : ConnectionConf()
 
         data class UserConnectionConf(
             override val endpoint: String,

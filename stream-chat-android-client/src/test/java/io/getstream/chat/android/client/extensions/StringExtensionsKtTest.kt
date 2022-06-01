@@ -14,28 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.user
+package io.getstream.chat.android.client.extensions
 
-/**
- * Data class that contains credentials of the current user.
- */
-public class CredentialConfig(
-    /**
-     * Id of the current user.
-     */
-    public val userId: String,
-    /**
-     * Api token of the current user.
-     */
-    public val userToken: String,
-    /**
-     * Name of the current user.
-     */
-    public val userName: String,
-    /**
-     * The user is anonymous or not
-     */
-    public val isAnonymous: Boolean,
-) {
-    internal fun isValid(): Boolean = userId.isNotEmpty() && userToken.isNotEmpty() && userName.isNotEmpty()
+import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Test
+
+internal class StringExtensionsKtTest {
+
+    @Test
+    fun `given a String is lower cammel case, it should be parsed to getter`() {
+        val text = "cammelCase"
+        val expected = "getCammelCase"
+
+        text.lowerCamelCaseToGetter() `should be equal to` expected
+    }
 }

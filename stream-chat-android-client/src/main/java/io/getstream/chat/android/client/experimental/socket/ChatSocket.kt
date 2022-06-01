@@ -66,7 +66,7 @@ internal open class ChatSocket constructor(
         reconnectCallback = {
             val state = stateMachine.state
             if (state is State.Disconnected && state.disconnectCause is DisconnectCause.Error) {
-                connectionConf?.let { connect(it.asReconnectionConf()) }
+                connectionConf?.let { connectUser(it.asReconnectionConf()) }
             }
         }
     )
@@ -189,13 +189,14 @@ internal open class ChatSocket constructor(
     internal val state
         get() = stateMachine.state
 
-    fun connect(user: User?) {
-        connectionConf = user?.let { SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user) }
-            ?: SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey)
+    fun connectUser(user: User, isAnonymous: Boolean) {
+        connectionConf = if (isAnonymous) {
+            SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+        } else SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
         connectLifecyclePublisher.onConnect()
     }
 
-    private fun connect(connectionConf: SocketFactory.ConnectionConf) {
+    private fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
         this.connectionConf = connectionConf
         connectLifecyclePublisher.onConnect()
     }
@@ -281,14 +282,6 @@ internal open class ChatSocket constructor(
         }
     }
 
-    fun reconnectAnonymously() {
-        reconnect(SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey))
-    }
-
-    fun reconnectUser(user: User) {
-        reconnect(SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user))
-    }
-
     open fun onEvent(event: ChatEvent) {
         healthMonitor.ack()
         callListeners { listener -> listener.onEvent(event) }
@@ -307,9 +300,18 @@ internal open class ChatSocket constructor(
         }
     }
 
+    fun reconnectUser(user: User, isAnonymous: Boolean) {
+        reconnect(
+            when (isAnonymous) {
+                true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
+                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+            }
+        )
+    }
+
     private fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
         disconnect(DisconnectCause.Error(ChatNetworkError.create(ChatErrorCode.PARSER_ERROR)))
-        connect(connectionConf.asReconnectionConf())
+        connectUser(connectionConf.asReconnectionConf())
     }
 
     @Suppress("TooGenericExceptionCaught")
