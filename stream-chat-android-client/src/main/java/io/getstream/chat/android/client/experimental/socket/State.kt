@@ -22,6 +22,33 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 
 /**
+ * @startuml
+ * state SocketState {
+ *  state Connecting
+ *  state Connected
+ *  state Disconnecting
+ *  state Disconnected
+ *  state Destroyed
+ * }
+ *
+ * [*] --> Disconnected
+ * Disconnected --> Connecting : Lifecycle.Started
+ * Disconnected --> Destroyed : Lifecycle.Terminate
+ *
+ * Connecting --> Connected : WebSocket.OnConnectionOpened
+ * Connecting --> Disconnected: WebSocket.Terminate
+ *
+ * Connected --> Disconnecting: Lifecycle.Stopped
+ * Connected --> Connected : OnConnectedEventReceived
+ * Connected --> Destroyed : Lifecycle.Terminate
+ * Connected --> Disconnected: WebSocket.Terminate
+ *
+ * Disconnecting --> Disconnected: WebSocket.Terminate
+ *
+ * Destroyed --> [*]
+ * @enduml
+ */
+/**
  * State of the socket connection.
  */
 @VisibleForTesting
