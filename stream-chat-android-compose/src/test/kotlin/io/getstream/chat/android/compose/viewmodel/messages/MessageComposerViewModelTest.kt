@@ -236,7 +236,7 @@ internal class MessageComposerViewModelTest {
     }
 
     @Test
-    fun `Given channel state with own capabilities When observing the sate Should return the state with own capabilities`() {
+    fun `Given channel state with own capabilities When observing the state Should return the state with own capabilities`() {
         val channelData = ChannelData(
             type = "messaging",
             channelId = "123",
