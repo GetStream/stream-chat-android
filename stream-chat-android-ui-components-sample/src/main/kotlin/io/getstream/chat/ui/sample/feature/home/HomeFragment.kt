@@ -93,6 +93,11 @@ class HomeFragment : Fragment() {
                 setOnTitleClickListener {
                     if (ApiRequestsAnalyser.isInitialized()) {
                         Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
+                        Toast.makeText(
+                            requireContext(),
+                            "ApiRequestsAnalyser dumped all requests",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
