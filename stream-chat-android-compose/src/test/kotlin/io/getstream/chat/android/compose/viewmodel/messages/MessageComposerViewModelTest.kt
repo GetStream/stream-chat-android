@@ -55,7 +55,7 @@ import org.mockito.kotlin.whenever
 internal class MessageComposerViewModelTest {
 
     @Test
-    fun `Given message composer When typing a message Should display the message test`() = runTest {
+    fun `Given message composer When typing a message Should display the message`() = runTest {
         val viewModel = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
