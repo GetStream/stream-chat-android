@@ -31,7 +31,9 @@ import io.getstream.chat.android.client.logger.ChatLogger
  * @param warmUp Controls the connection warm-up behavior.
  * @param loggerConfig A logging config to be used by the client.
  * @param distinctApiCalls Controls whether [DistinctChatApi] is enabled or not.
+ * @param debugRequests Controls whether requests can be recorded or not.
  */
+@Suppress("LongParameterList")
 public class ChatClientConfig @JvmOverloads constructor(
     public val apiKey: String,
     public var httpUrl: String,
@@ -40,6 +42,7 @@ public class ChatClientConfig @JvmOverloads constructor(
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
     public var distinctApiCalls: Boolean = true,
+    public val debugRequests: Boolean
 ) {
     public var isAnonymous: Boolean = false
 }

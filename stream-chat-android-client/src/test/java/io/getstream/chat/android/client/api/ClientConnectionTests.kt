@@ -70,7 +70,7 @@ internal class ClientConnectionTests {
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
         false,
-
+        false
     )
 
     private val connectedEvent = ConnectedEvent(
