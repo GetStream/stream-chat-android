@@ -168,6 +168,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun debugRequests (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableDistinctApiCalls ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -208,11 +209,12 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;Z)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
+	public final fun getDebugRequests ()Z
 	public final fun getDistinctApiCalls ()Z
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
@@ -3250,6 +3252,22 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onTypingEventRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 	public abstract fun onTypingEventResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+}
+
+public abstract interface class io/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser {
+	public static final field Companion Lio/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser$Companion;
+	public abstract fun clearAll ()V
+	public abstract fun clearRequestContaining (Ljava/lang/String;)V
+	public abstract fun countAllRequests ()I
+	public abstract fun countRequestContaining (Ljava/lang/String;)I
+	public abstract fun dumpAll ()Ljava/lang/String;
+	public abstract fun dumpRequestByName (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun registerRequest (Ljava/lang/String;Ljava/util/Map;)V
+}
+
+public final class io/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser$Companion {
+	public final fun get ()Lio/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser;
+	public final fun isInitialized ()Z
 }
 
 public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
