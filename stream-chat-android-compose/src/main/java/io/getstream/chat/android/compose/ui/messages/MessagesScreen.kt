@@ -99,7 +99,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
-@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 public fun MessagesScreen(
     channelId: String,
