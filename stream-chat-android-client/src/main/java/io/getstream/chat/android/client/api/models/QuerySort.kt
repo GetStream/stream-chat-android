@@ -17,15 +17,14 @@
 package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
+import io.getstream.chat.android.client.api.models.internal.CompositeComparator
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
-import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 
 /**
  * Sort specification for api queries. You can specify QuerySort by referencing kotlin class property or passing field
@@ -37,6 +36,7 @@ public class QuerySort<T : Any> {
     private val logger = StreamLog.getLogger("QuerySort")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
+    private val fieldSearcher: FieldSearcher = FieldSearcher()
 
     @InternalStreamChatApi
     /** Composite comparator based on sort attributes. */
@@ -47,37 +47,9 @@ public class QuerySort<T : Any> {
         get() {
             return when (this.sortAttribute) {
                 is FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
-                    .also { comparator ->
-                        logger.d { "Returning field sort with name: ${sortAttribute.field.name}" }
-                    }
 
                 is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
-                    .also { comparator ->
-                        logger.d { "Returning field name sort comparator with name: ${sortAttribute.name}" }
-                    }
             }
-        }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
-        this.let { compareProperty ->
-            Comparator { c0, c1 ->
-                compare(
-                    (compareProperty.getter.call(c0) as? Comparable<Any>),
-                    (compareProperty.getter.call(c1) as? Comparable<Any>),
-                    sortDirection
-                )
-            }
-        }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
-        Comparator { o1, o2 ->
-            compare(
-                (o1.getMemberPropertyOrExtra(this) as? Comparable<Any>),
-                (o2.getMemberPropertyOrExtra(this) as? Comparable<Any>),
-                sortDirection
-            )
         }
 
     private fun compare(first: Comparable<Any>?, second: Comparable<Any>?, sortDirection: SortDirection): Int {
@@ -89,27 +61,6 @@ public class QuerySort<T : Any> {
             else -> error("Impossible case!")
         }
     }
-
-    private fun Any.getMemberPropertyOrExtra(name: String): Any? =
-        name.snakeToLowerCamelCase().let { fieldName ->
-            this::class.memberProperties
-                .firstOrNull { it.name == fieldName }
-                ?.also {
-                    logger.d { "Could find a member for property: $fieldName" }
-                }
-                ?.getter
-                ?.call(this)
-                ?: (this as? CustomObject)?.extraData?.get(name).also { extraDataObject ->
-                    buildString {
-                        append("Could not find a member for property named: $name")
-                        if (extraDataObject != null) {
-                            append(", but a fields was found in extraData.")
-                        } else {
-                            append("and nothing was found in the extra data")
-                        }
-                    }.let { string -> logger.d { string } }
-                }
-        }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
         sortSpecifications = sortSpecifications + sortSpecification
@@ -162,18 +113,12 @@ public class QuerySort<T : Any> {
     }
 
     private fun getSortFeature(fieldName: String, kClass: KClass<T>): SortAttribute<T> {
-        return kClass.members.filterIsInstance<KProperty1<T, Comparable<*>?>>()
-            .firstOrNull { it.name == fieldName.snakeToLowerCamelCase() }
+        return fieldSearcher.findComparableMemberProperty(fieldName, kClass)
             ?.let { FieldSortAttribute(it, fieldName) }
             .also { fieldSortAttribute ->
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
-            ?: SortAttribute.FieldNameSortAttribute<T>(fieldName)
-                .also { fieldNameSortAttribute ->
-                    logger.d {
-                        "[getSortFeature] A field to sort was NOT found. Using field by name: $fieldNameSortAttribute"
-                    }
-                }
+            ?: SortAttribute.FieldNameSortAttribute(fieldName)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -200,6 +145,32 @@ public class QuerySort<T : Any> {
         val sortDirection: SortDirection,
     )
 
+    @Suppress("UNCHECKED_CAST")
+    private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
+        this.let { compareProperty ->
+            Comparator { c0, c1 ->
+                compare(
+                    (compareProperty.getter.call(c0) as? Comparable<Any>),
+                    (compareProperty.getter.call(c1) as? Comparable<Any>),
+                    sortDirection
+                )
+            }
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
+        Comparator { o1, o2 ->
+            compare(
+                comparableFromExtraData(o1, this) ?: fieldSearcher.findComparable(o1, this),
+                comparableFromExtraData(o2, this) ?: fieldSearcher.findComparable(o2, this),
+                sortDirection
+            )
+        }
+
+    private fun comparableFromExtraData(any: Any, field: String): Comparable<Any>? {
+        return (any as? CustomObject)?.extraData?.get(field) as? Comparable<Any>
+    }
+
     /** Inner representation of sorting feature specification. */
     private sealed class SortAttribute<T> {
         /** Name of attribute */
@@ -222,21 +193,11 @@ public class QuerySort<T : Any> {
         ASC(1)
     }
 
-    internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
-        override fun compare(o1: T, o2: T): Int =
-            comparators.fold(EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
-                when (currentComparisonValue) {
-                    EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
-                    else -> currentComparisonValue
-                }
-            }
-    }
-
     public companion object {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
         private const val MORE_ON_COMPARISON = 1
-        private const val EQUAL_ON_COMPARISON = 0
+        internal const val EQUAL_ON_COMPARISON = 0
         private const val LESS_ON_COMPARISON = -1
 
         public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> =
