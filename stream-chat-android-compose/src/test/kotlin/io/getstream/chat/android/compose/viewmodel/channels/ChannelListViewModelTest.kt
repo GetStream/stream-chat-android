@@ -156,7 +156,6 @@ internal class ChannelListViewModelTest {
             viewModel.selectChannel(channel1)
             viewModel.unmuteChannel(channel1)
 
-            viewModel.isChannelMuted("messaging:channel1") `should be equal to` true
             viewModel.channelsState.channelItems.first().isMuted `should be equal to` true
             viewModel.activeChannelAction `should be equal to` null
             viewModel.selectedChannel.value `should be equal to` null
