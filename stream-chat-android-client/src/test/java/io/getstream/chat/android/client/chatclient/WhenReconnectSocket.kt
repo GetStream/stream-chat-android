@@ -121,7 +121,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
         }
 
         fun givenAnonymousUserSetState(user: User) = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(user)
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(user)
         }
 
         fun givenAnonymousPendingState() = apply {
