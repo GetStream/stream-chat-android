@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -102,6 +103,7 @@ internal class ChannelListViewModelTest {
             .get()
 
         viewModel.selectChannel(channel1)
+        viewModel.performChannelAction(DeleteConversation(channel1))
         viewModel.deleteConversation(channel1)
 
         viewModel.activeChannelAction `should be equal to` null
