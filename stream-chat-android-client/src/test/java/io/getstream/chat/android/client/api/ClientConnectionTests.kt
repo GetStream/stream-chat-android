@@ -130,7 +130,7 @@ internal class ClientConnectionTests {
     fun successConnection() {
         client.connectUser(user, token).enqueue()
 
-        verify(socket, times(1)).connect(user)
+        verify(socket, times(1)).connectUser(user, false)
     }
 
     @Test
