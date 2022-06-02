@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.models.querysort.internal.CompositeC
 import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 
-public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
+public abstract class BaseQuerySort<T : Any> : QuerySort<T> {
 
     internal var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
@@ -34,8 +34,8 @@ public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
 
     override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
         listOf(
-            QuerySorter.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
-            QuerySorter.KEY_DIRECTION to sortSpec.sortDirection.value
+            QuerySort.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
+            QuerySort.KEY_DIRECTION to sortSpec.sortDirection.value
         ).toMap()
     }
 
@@ -47,7 +47,7 @@ public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as QuerySortByMap<*>
+        other as BaseQuerySort<*>
 
         if (sortSpecifications != other.sortSpecifications) return false
 
