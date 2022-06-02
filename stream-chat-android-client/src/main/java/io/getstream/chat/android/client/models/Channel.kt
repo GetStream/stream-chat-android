@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
-import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
@@ -84,7 +83,7 @@ public data class Channel(
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
-) : CustomObject, QueryableByMap, ComparableFieldProvider {
+) : CustomObject, ComparableFieldProvider {
 
     /**
      * Determines the last updated date/time.
@@ -98,31 +97,6 @@ public data class Channel(
      */
     val hasUnread: Boolean
         get() = unreadCount?.let { it > 0 } ?: false
-
-    override fun toMap(): Map<String, Any> {
-        return mutableMapOf<String, Any>(
-            "cid" to cid,
-            "id" to id,
-            "type" to type,
-            "name" to name,
-            "image" to image,
-            "watcherCount" to watcherCount,
-            "frozen" to frozen,
-        ).apply {
-            lastMessageAt?.let { this["lastMessageAt"] = it }
-            createdAt?.let { this["createdAt"] = it }
-            deletedAt?.let { this["deletedAt"] = it }
-            updatedAt?.let { this["updatedAt"] = it }
-            memberCount.let { this["memberCount"] = it }
-            unreadCount?.let { this["unreadCount"] = it }
-            team.let { this["team"] = it }
-            hidden?.let { this["hidden"] = it }
-            cooldown.let { this["cooldown"] = it }
-            lastUpdated?.let { this["lastUpdated"] = it }
-
-            putAll(extraData)
-        }
-    }
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
