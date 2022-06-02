@@ -418,5 +418,20 @@ public class ChannelListViewModel(
          *  The initial state.
          */
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
+
+        /**
+         * Default value of number of channels to return when querying channels.
+         */
+        internal const val DEFAULT_CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of the number of messages to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of the number of members to include in each channel when querying channels.
+         */
+        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }

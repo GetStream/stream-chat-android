@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.state
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -131,8 +132,10 @@ public class StateRegistry private constructor(
         instance = null
     }
 
-    internal companion object {
-        private var instance: StateRegistry? = null
+    public companion object {
+        @InternalStreamChatApi
+        @VisibleForTesting
+        public var instance: StateRegistry? = null
 
         private val logger = ChatLogger.get("StateRegistry")
 
