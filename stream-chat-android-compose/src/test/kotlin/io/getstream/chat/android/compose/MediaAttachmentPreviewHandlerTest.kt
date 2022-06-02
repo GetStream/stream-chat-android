@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.attachments.preview.handler
+package io.getstream.chat.android.compose
+
 import android.content.Context
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.MediaAttachmentPreviewHandler
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
