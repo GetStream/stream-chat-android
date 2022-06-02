@@ -250,12 +250,14 @@ private class FileAttachmentViewHolder(
                 item.uploadState is Attachment.UploadState.InProgress ||
                 (item.uploadState is Attachment.UploadState.Success && item.fileSize == 0)
             ) {
-                actionButton.setImageDrawable(null)
+                actionButton.visibility = View.GONE
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
+                actionButton.visibility = View.VISIBLE
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else {
+                actionButton.visibility = View.VISIBLE
                 actionButton.setImageDrawable(style.actionButtonIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
             }

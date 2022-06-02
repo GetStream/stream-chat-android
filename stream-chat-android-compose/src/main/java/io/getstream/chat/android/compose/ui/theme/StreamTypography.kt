@@ -54,7 +54,7 @@ public data class StreamTypography(
     public val captionBold: TextStyle,
     public val tabBar: TextStyle,
     public val singleEmoji: TextStyle,
-    public val emojiOnly: TextStyle
+    public val emojiOnly: TextStyle,
 ) {
 
     public companion object {

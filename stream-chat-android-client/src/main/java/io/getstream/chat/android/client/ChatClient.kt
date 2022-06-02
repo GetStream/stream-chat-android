@@ -246,7 +246,11 @@ internal constructor(
             }
             currentUser?.let { updatedCurrentUser ->
                 userStateService.onUserUpdated(updatedCurrentUser)
-                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
+                storePushNotificationsConfig(
+                    updatedCurrentUser.id,
+                    updatedCurrentUser.name,
+                    userStateService.state !is UserState.UserSet,
+                )
             }
         }
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
@@ -295,19 +299,18 @@ internal constructor(
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
      *
-     * This method performs required operations before connecting with the Stream API.
-     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
-     *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
-     * @param listener Socket connection listener.
+     * @param timeoutMilliseconds A timeout in milliseconds when the process will be aborted.
+     *
+     * @return [Result] of [ConnectionData] with the info of the established connection or a detailed error.
      */
     private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
+        val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
         return when {
@@ -323,10 +326,10 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
-                initializeClientWithUser(user, cacheableTokenProvider)
+                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
+                socket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
@@ -350,10 +353,11 @@ internal constructor(
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
+        isAnonymous: Boolean,
     ) {
         initializationCoordinator.userConnected(user)
         // fire a handler here that the chatDomain and chatUI can use
-        config.isAnonymous = false
+        config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
@@ -442,6 +446,7 @@ internal constructor(
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
+                isAnonymous = config.isAnonymous,
             )
         }
     }
@@ -451,39 +456,27 @@ internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun storePushNotificationsConfig(userId: String, userName: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String, isAnonymous: Boolean) {
         userCredentialStorage.put(
             CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
                 userName = userName,
+                isAnonymous = isAnonymous,
             ),
         )
     }
-
-    private suspend fun setAnonymousUser(timeoutMilliseconds: Long?): Result<ConnectionData> =
-        (
-            if (userStateService.state is UserState.NotSet) {
-                socketStateService.onConnectionRequested()
-                userStateService.onSetAnonymous()
-                tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
-                config.isAnonymous = true
-                warmUp()
-                socket.connectAnonymously()
-                initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
-                waitFirstConnection(timeoutMilliseconds)
-            } else {
-                logger.logE("Failed to connect user. Please check you don't have connected user already")
-                Result.error(ChatError("User cannot be set until previous one is disconnected."))
-            }
-            ).onError { disconnect() }
 
     @CheckResult
     @JvmOverloads
     public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectAnonymousUser] no args")
-            setAnonymousUser(timeoutMilliseconds).also { result ->
+            setUser(
+                anonUser,
+                ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
+                timeoutMilliseconds,
+            ).also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -790,8 +783,8 @@ internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.reconnectUser(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user, false)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -2273,6 +2266,7 @@ internal constructor(
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
+        private var debugRequests: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -2419,6 +2413,14 @@ internal constructor(
         }
 
         /**
+         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
+         * release builds as it uses a memory cache.
+         */
+        public fun debugRequests(shouldDebug: Boolean): Builder = apply {
+            this.debugRequests = shouldDebug
+        }
+
+        /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
          * @see [NoRetryPolicy]
@@ -2477,7 +2479,8 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
-                distinctApiCalls = distinctApiCalls
+                distinctApiCalls = distinctApiCalls,
+                debugRequests
             )
 
             if (ToggleService.isInitialized().not()) {
@@ -2567,6 +2570,7 @@ internal constructor(
         public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
+        private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic
         public fun instance(): ChatClient {

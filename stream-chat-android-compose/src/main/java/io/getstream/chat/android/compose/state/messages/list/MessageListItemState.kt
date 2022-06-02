@@ -71,5 +71,5 @@ public data class MessageItemState(
     val currentUser: User? = null,
     val isMessageRead: Boolean = false,
     val shouldShowFooter: Boolean = false,
-    val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
+    val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
 ) : MessageListItemState()

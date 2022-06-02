@@ -66,16 +66,17 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
         sut.reconnectSocket()
 
-        verify(socket).reconnectUser(user)
+        verify(socket).reconnectUser(user, isAnonymous = false)
     }
 
     @Test
     fun `Given disconnected connection state And Anonymous user set state Should connect to socket anonymously`() {
-        val sut = Fixture().givenDisconnectedConnectionState().givenAnonymousUserSetState().get()
+        val user = Mother.randomUser()
+        val sut = Fixture().givenDisconnectedConnectionState().givenAnonymousUserSetState(user).get()
 
         sut.reconnectSocket()
 
-        verify(socket).reconnectAnonymously()
+        verify(socket).reconnectUser(user, isAnonymous = true)
     }
 
     @Test
@@ -115,6 +116,10 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
         fun givenAnonymousUserSetState() = apply {
             whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
+        }
+
+        fun givenAnonymousUserSetState(user: User) = apply {
+            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(user)
         }
 
         fun givenAnonymousPendingState() = apply {

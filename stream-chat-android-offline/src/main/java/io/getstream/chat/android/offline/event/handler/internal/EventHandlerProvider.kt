@@ -21,13 +21,13 @@ package io.getstream.chat.android.offline.event.handler.internal
  */
 internal object EventHandlerProvider {
 
-    private var _eventHandler: EventHandlerImpl? = null
+    private var _eventHandler: EventHandler? = null
 
     /**
-     * The [EventHandlerImpl]
+     * The [EventHandler]
      */
-    internal var eventHandler: EventHandlerImpl
-        get() = _eventHandler ?: throw IllegalStateException("EventHandlerImpl was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
+    internal var eventHandler: EventHandler
+        get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
         set(value) {
             _eventHandler = value
         }

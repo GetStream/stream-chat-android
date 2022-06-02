@@ -208,6 +208,28 @@ public class ChannelListHeaderView : ConstraintLayout {
     }
 
     /**
+     * Sets a click listener for the title in the header.
+     */
+    public fun setOnTitleClickListener(listener: () -> Unit) {
+        binding.offlineTextView.setOnClickListener { listener() }
+        binding.onlineTextView.setOnClickListener { listener() }
+    }
+
+    /**
+     * Sets a long click listener for the title in the header.
+     */
+    public fun setOnTitleLongClickListener(listener: () -> Unit) {
+        binding.offlineTextView.setOnLongClickListener {
+            listener()
+            true
+        }
+        binding.onlineTextView.setOnLongClickListener {
+            listener()
+            true
+        }
+    }
+
+    /**
      * Shows the title that indicates the network state is offline.
      */
     public fun showOfflineTitle() {

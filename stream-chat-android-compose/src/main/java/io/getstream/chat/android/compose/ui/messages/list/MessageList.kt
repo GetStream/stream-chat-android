@@ -213,7 +213,6 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param focusedMessageOffset Scroll to focused item offset.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based

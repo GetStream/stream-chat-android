@@ -77,7 +77,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "differentUserId" }, "token").enqueue()
 
-        verify(socket, never()).connect(any())
+        verify(socket, never()).connectUser(any(), any())
         verify(userStateService, never()).onUserUpdated(any())
         verify(tokenManager, never()).setTokenProvider(any())
     }
@@ -119,7 +119,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(user, "token").enqueue()
 
-        verify(socket).connect(user)
+        verify(socket).connectUser(user, isAnonymous = false)
     }
 
     @Test
