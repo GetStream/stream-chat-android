@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_DIRECTION
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_FIELD_NAME
-import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
-import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.compare
+import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
+import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
+import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.logging.StreamLog
