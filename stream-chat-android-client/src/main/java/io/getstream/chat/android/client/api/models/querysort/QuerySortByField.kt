@@ -16,27 +16,28 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_DIRECTION
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_FIELD_NAME
-import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
 import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.logging.StreamLog
 
-public class QuerySortByField<T : ComparableFieldProvider> : QuerySort<T> {
+public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>(){
 
     private val logger = StreamLog.getLogger("Chat:QuerySortByField")
 
-    private var sortSpecifications: List<SortSpecification<T>> = emptyList()
-
-    override val comparator: Comparator<in T>
-        get() = CompositeComparator(sortSpecifications.map { it.comparator })
-
-    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
-        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
+    override fun comparatorFromFieldSort(
+        firstSort: SortAttribute.FieldSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> {
+        throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
     }
+
+    override fun comparatorFromNameAttribute(
+        name: SortAttribute.FieldNameSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> =
+        name.name.comparator(sortDirection)
 
     private val SortSpecification<T>.comparator: Comparator<T>
         get() {
@@ -60,25 +61,6 @@ public class QuerySortByField<T : ComparableFieldProvider> : QuerySort<T> {
 
             compare(fieldOne, fieldTwo, sortDirection)
         }
-
-    override fun hashCode(): Int {
-        return sortSpecifications.hashCode()
-    }
-
-    override fun toString(): String {
-        return sortSpecifications.toString()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as QuerySortByField<*>
-
-        if (sortSpecifications != other.sortSpecifications) return false
-
-        return true
-    }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySortByField<T> {
         sortSpecifications = sortSpecifications + sortSpecification

@@ -26,7 +26,7 @@ import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
-    initialSort: QuerySort<Channel>,
+    initialSort: QuerySorter<Channel>,
     initialFilters: FilterObject?,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
@@ -82,9 +82,9 @@ public class ChannelListViewModel(
     private val logger = StreamLog.getLogger("ChannelListVM")
 
     /**
-     * State flow that keeps the value of the current [QuerySort] for channels.
+     * State flow that keeps the value of the current [QuerySorter] for channels.
      */
-    private val querySortFlow: MutableStateFlow<QuerySort<Channel>> = MutableStateFlow(initialSort)
+    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
@@ -303,7 +303,7 @@ public class ChannelListViewModel(
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
      */
-    public fun setQuerySort(querySort: QuerySort<Channel>) {
+    public fun setQuerySort(querySort: QuerySorter<Channel>) {
         this.querySortFlow.tryEmit(value = querySort)
     }
 

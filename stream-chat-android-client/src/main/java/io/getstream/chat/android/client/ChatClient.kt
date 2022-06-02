@@ -34,7 +34,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -541,7 +541,7 @@ internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
@@ -984,7 +984,7 @@ internal constructor(
         offset: Int? = null,
         limit: Int? = null,
         next: String? = null,
-        sort: QuerySort<Message>? = null,
+        sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
             return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
@@ -1019,7 +1019,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return api.getPinnedMessages(
@@ -1946,7 +1946,7 @@ internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort> = QuerySortByField.ascByName("created_at"),
+        sort: QuerySorter<BannedUsersSort> = QuerySortByField.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -2568,7 +2568,7 @@ internal constructor(
         private var instance: ChatClient? = null
 
         @JvmField
-        public val DEFAULT_SORT: QuerySort<Member> = QuerySortByField.descByName("last_updated")
+        public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }

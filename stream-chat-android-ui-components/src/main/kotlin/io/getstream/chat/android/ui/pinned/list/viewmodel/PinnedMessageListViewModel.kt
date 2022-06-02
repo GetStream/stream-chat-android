@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
@@ -31,7 +32,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.Date
-import io.getstream.chat.android.client.api.models.QuerySort as DeprecatedQuerySort
 
 /**
  * ViewModel responsible for providing pinned messages in the channel.
@@ -147,7 +147,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
         val result = channelClient.getPinnedMessages(
             limit = QUERY_LIMIT,
-            sort = DeprecatedQuerySort.desc(Message::pinnedAt),
+            sort = QuerySortByField.descByName("pinned_at"),
             pagination = PinnedMessagesPagination.BeforeDate(
                 date = currentState.nextDate,
                 inclusive = false,

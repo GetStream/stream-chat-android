@@ -3,6 +3,7 @@ package io.getstream.chat.docs.kotlin.client.cms
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -133,7 +134,7 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
                 // Get the bans for channel livestream:123 in descending order
                 client.queryBannedUsers(
                     filter = Filters.eq("channel_cid", "livestream:123"),
-                    sort = QuerySort.desc(BannedUsersSort::createdAt),
+                    sort = QuerySortByField.desc("created_at"),
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val bannedUsers: List<BannedUser> = result.data()
@@ -145,7 +146,7 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
                 // Get the page of bans which where created before or equal date for the same channel
                 client.queryBannedUsers(
                     filter = Filters.eq("channel_cid", "livestream:123"),
-                    sort = QuerySort.desc(BannedUsersSort::createdAt),
+                    sort = QuerySortByField.descByName("created_at"),
                     createdAtBeforeOrEqual = Date(),
                 ).enqueue { result ->
                     if (result.isSuccess) {

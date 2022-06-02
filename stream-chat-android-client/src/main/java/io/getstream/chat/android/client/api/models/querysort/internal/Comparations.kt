@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.api.models.querysort.internal
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.EQUAL_ON_COMPARISON
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.LESS_ON_COMPARISON
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.MORE_ON_COMPARISON
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.EQUAL_ON_COMPARISON
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.LESS_ON_COMPARISON
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.MORE_ON_COMPARISON
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 
 internal fun compare(

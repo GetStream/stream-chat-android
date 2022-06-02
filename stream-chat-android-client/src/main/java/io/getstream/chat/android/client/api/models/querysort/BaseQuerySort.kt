@@ -32,7 +32,7 @@ public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
         sortDirection: SortDirection,
     ): Comparator<T>
 
-    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
+    public override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
         listOf(
             QuerySorter.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
             QuerySorter.KEY_DIRECTION to sortSpec.sortDirection.value
@@ -47,7 +47,7 @@ public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as QuerySortByMap<*>
+        other as BaseQuerySort<*>
 
         if (sortSpecifications != other.sortSpecifications) return false
 

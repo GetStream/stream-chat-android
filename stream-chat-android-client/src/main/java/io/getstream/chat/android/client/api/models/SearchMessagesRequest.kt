@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Message
 
 public data class SearchMessagesRequest @JvmOverloads constructor(
@@ -47,7 +48,7 @@ public data class SearchMessagesRequest @JvmOverloads constructor(
     /**
      * Sort parameters. Cannot be used with non-zero offset
      */
-    val querySort: QuerySort<Message>? = null,
+    val querySort: QuerySorter<Message>? = null,
 ) {
     val sort: List<Map<String, Any>>? = querySort?.toDto()
 }

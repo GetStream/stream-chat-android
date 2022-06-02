@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.api.models.querysort
 
 import io.getstream.chat.android.client.api.models.FieldSearcher
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_DIRECTION
-import io.getstream.chat.android.client.api.models.querysort.QuerySort.Companion.KEY_FIELD_NAME
-import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
 import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.internal.compare
@@ -36,24 +33,23 @@ import kotlin.reflect.KProperty1
  * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
  */
 @Suppress("TooManyFunctions")
-public open class QuerySortByReflection<T : Any> : QuerySort<T> {
+public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
     private val logger = StreamLog.getLogger("QuerySort")
 
-    internal var sortSpecifications: List<SortSpecification<T>> = emptyList()
-    internal val fieldSearcher: FieldSearcher = FieldSearcher()
+    private val fieldSearcher: FieldSearcher = FieldSearcher()
 
-    /** Composite comparator based on sort attributes. */
-    public override val comparator: Comparator<in T>
-        get() = CompositeComparator(sortSpecifications.map { it.comparator })
+    override fun comparatorFromFieldSort(
+        firstSort: SortAttribute.FieldSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> {
+        throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
+    }
 
-    private val SortSpecification<T>.comparator: Comparator<T>
-        get() {
-            return when (this.sortAttribute) {
-                is SortAttribute.FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
-
-                is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
-            }
-        }
+    override fun comparatorFromNameAttribute(
+        name: SortAttribute.FieldNameSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> =
+        name.name.comparator(sortDirection)
 
     @Suppress("UNCHECKED_CAST")
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
@@ -141,10 +137,6 @@ public open class QuerySortByReflection<T : Any> : QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
     }
 
-    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
-        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
-    }
-
     internal fun toList(): List<Pair<String, SortDirection>> =
         sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
@@ -161,25 +153,6 @@ public open class QuerySortByReflection<T : Any> : QuerySort<T> {
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
             ?: SortAttribute.FieldNameSortAttribute(fieldName)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as QuerySortByReflection<*>
-
-        if (sortSpecifications != other.sortSpecifications) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return sortSpecifications.hashCode()
-    }
-
-    override fun toString(): String {
-        return sortSpecifications.toString()
     }
 
     public companion object {

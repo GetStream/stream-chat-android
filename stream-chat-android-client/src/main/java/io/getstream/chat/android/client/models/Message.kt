@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
@@ -196,9 +197,13 @@ public data class Message(
      * The list of users who participate in thread
      */
     var threadParticipants: List<User> = emptyList(),
-) : CustomObject {
+) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
         public const val TYPE_EPHEMERAL: String = "ephemeral"
+    }
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        TODO("Not yet implemented")
     }
 }
