@@ -23,7 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * After you call [keystroke] the class will call [onTypingStarted],
+ * After you call [onKeystroke] the class will call [onTypingStarted],
  * start buffering for [delayIntervalMillis] and call [onTypingStopped].
  *
  * Every subsequent keystroke will cancel the previous work
@@ -71,7 +71,7 @@ public class DefaultTypingUpdatesBuffer(
      */
     private suspend fun startTypingTimer() {
         delay(delayIntervalMillis)
-        onCleared()
+        clear()
     }
 
     /**
@@ -80,7 +80,7 @@ public class DefaultTypingUpdatesBuffer(
      *
      * It also resets the job to stop typing events after delay, debouncing keystrokes.
      */
-    override fun keystroke() {
+    override fun onKeystroke() {
         if (!isTyping) {
             isTyping = true
         }
@@ -93,7 +93,7 @@ public class DefaultTypingUpdatesBuffer(
      *
      * Useful for clearing the state manually on lifecycle events.
      */
-    override fun onCleared() {
+    override fun clear() {
         isTyping = false
     }
 

@@ -349,7 +349,7 @@ public class MessageComposerController(
         this.input.value = value
 
         if (canSendTypingUpdates.value) {
-            typingUpdatesBuffer.keystroke()
+            typingUpdatesBuffer.onKeystroke()
         }
         handleMentionSuggestions()
         handleCommandSuggestions()
@@ -560,7 +560,7 @@ public class MessageComposerController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
-        typingUpdatesBuffer.onCleared()
+        typingUpdatesBuffer.clear()
         scope.cancel()
     }
 

@@ -895,7 +895,7 @@ public class MessageInputView : ConstraintLayout {
         if (canSendTypingUpdates) {
             if (binding.messageInputFieldView.messageText.isNotEmpty()) {
                 typingListener?.onKeystroke()
-                typingUpdatesBuffer?.keystroke()
+                typingUpdatesBuffer?.onKeystroke()
             } else {
                 typingListener?.onStopTyping()
             }

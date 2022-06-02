@@ -381,7 +381,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     override fun onCleared() {
         super.onCleared()
-        typingUpdatesBuffer.onCleared()
+        typingUpdatesBuffer.clear()
     }
 
     private companion object {
