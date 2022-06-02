@@ -78,6 +78,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -98,7 +99,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
-@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 public fun MessagesScreen(
     channelId: String,
@@ -397,6 +402,7 @@ public fun MessagesScreen(
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  */
+@ExperimentalCoroutinesApi
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,

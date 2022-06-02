@@ -24,13 +24,15 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class GlobalMutableState private constructor() : GlobalState {
+@InternalStreamChatApi
+public class GlobalMutableState private constructor() : GlobalState {
 
     internal val _initialized = MutableStateFlow(false)
     internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
@@ -75,8 +77,10 @@ internal class GlobalMutableState private constructor() : GlobalState {
         return _initialized.value
     }
 
-    internal companion object {
-        private var instance: GlobalMutableState? = null
+    public companion object {
+        @InternalStreamChatApi
+        @VisibleForTesting
+        public var instance: GlobalMutableState? = null
 
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
