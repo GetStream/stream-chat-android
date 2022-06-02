@@ -16,12 +16,9 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_DIRECTION
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter.Companion.KEY_FIELD_NAME
+import io.getstream.chat.android.client.api.models.querysort.BaseQuerySort
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.api.models.querysort.compare
-import io.getstream.chat.android.client.api.models.querysort.internal.CompositeComparator
 import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
@@ -37,24 +34,22 @@ import kotlin.reflect.KProperty1
  * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
  */
 @Suppress("TooManyFunctions")
-public open class QuerySort<T : Any> : QuerySorter<T> {
+public class QuerySort<T : Any> : BaseQuerySort<T>() {
     private val logger = StreamLog.getLogger("QuerySort")
 
-    private var sortSpecifications: List<SortSpecification<T>> = emptyList()
     private val fieldSearcher: FieldSearcher = FieldSearcher()
 
-    /** Composite comparator based on sort attributes. */
-    public override val comparator: Comparator<in T>
-        get() = CompositeComparator(sortSpecifications.map { it.comparator })
+    override fun comparatorFromFieldSort(
+        firstSort: SortAttribute.FieldSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> =
+        firstSort.field.comparator(sortDirection)
 
-    private val SortSpecification<T>.comparator: Comparator<T>
-        get() {
-            return when (this.sortAttribute) {
-                is SortAttribute.FieldSortAttribute<T> -> this.sortAttribute.field.comparator(this.sortDirection)
-
-                is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
-            }
-        }
+    override fun comparatorFromNameAttribute(
+        name: SortAttribute.FieldNameSortAttribute<T>,
+        sortDirection: SortDirection,
+    ): Comparator<T> =
+        name.name.comparator(sortDirection)
 
     @Suppress("UNCHECKED_CAST")
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T> =
@@ -87,7 +82,7 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         return this
     }
 
-    public open fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+    public fun asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
@@ -96,7 +91,7 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public open fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
+    public fun desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldSortAttribute(
@@ -108,15 +103,15 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public open fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public fun asc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.ASC))
     }
 
-    public open fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
+    public fun desc(fieldName: String, javaClass: Class<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
-    public open fun asc(fieldName: String): QuerySort<T> {
+    public fun asc(fieldName: String): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
@@ -125,7 +120,7 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public open fun desc(fieldName: String): QuerySort<T> {
+    public fun desc(fieldName: String): QuerySort<T> {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
@@ -134,16 +129,12 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
         )
     }
 
-    public open fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.ASC))
     }
 
-    public open fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
+    public fun desc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
-    }
-
-    override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
-        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
     }
 
     internal fun toList(): List<Pair<String, SortDirection>> =
@@ -162,25 +153,6 @@ public open class QuerySort<T : Any> : QuerySorter<T> {
                 logger.d { "[getSortFeature] A field to sort was found. Using field: $fieldSortAttribute" }
             }
             ?: SortAttribute.FieldNameSortAttribute(fieldName)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as QuerySort<*>
-
-        if (sortSpecifications != other.sortSpecifications) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return sortSpecifications.hashCode()
-    }
-
-    override fun toString(): String {
-        return sortSpecifications.toString()
     }
 
     public companion object {

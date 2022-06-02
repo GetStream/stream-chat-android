@@ -19,14 +19,14 @@ package io.getstream.chat.android.client.api.models.querysort.internal
 import kotlin.reflect.KProperty1
 
 /** Inner representation of sorting feature specification. */
-internal sealed class SortAttribute<T> {
+public sealed class SortAttribute<T> {
     /** Name of attribute */
-    abstract val name: String
+    public abstract val name: String
 
     /** KProperty referenced attribute. */
-    data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
+    public data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
         SortAttribute<T>()
 
     /** Referenced by name attribute. */
-    data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
+    public data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
 }
