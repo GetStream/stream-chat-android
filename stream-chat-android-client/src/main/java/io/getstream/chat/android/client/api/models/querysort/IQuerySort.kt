@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
-public interface QuerySorter<T : Any> {
+public interface IQuerySort<T : Any> {
 
     public val comparator: Comparator<in T>
 

@@ -693,7 +693,7 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public final fun limit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
 	public final fun memberLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
 	public final fun messageLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
-	public final fun sort (Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun sort (Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/ChannelNameFormatter {

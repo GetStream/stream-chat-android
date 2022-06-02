@@ -16,7 +16,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
+import io.getstream.chat.android.client.api.models.querysort.IQuerySort;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent;
 import io.getstream.chat.android.client.events.UserStartWatchingEvent;
@@ -102,7 +102,7 @@ public class Channels {
             );
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new io.getstream.chat.android.client.api.models.QuerySort<Channel>().desc("last_message_at");
+            IQuerySort<Channel> sort = new io.getstream.chat.android.client.api.models.QuerySort<Channel>().desc("last_message_at");
             int messageLimit = 0;
             int memberLimit = 0;
 
@@ -322,7 +322,7 @@ public class Channels {
             );
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new io.getstream.chat.android.client.api.models.QuerySort<Channel>().desc("last_message_at");
+            IQuerySort<Channel> sort = new io.getstream.chat.android.client.api.models.QuerySort<Channel>().desc("last_message_at");
             int messageLimit = 0;
             int memberLimit = 0;
 
@@ -363,7 +363,7 @@ public class Channels {
             FilterObject filter = Filters.in("members", "thierry");
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new QuerySortByField<>();
+            IQuerySort<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -398,7 +398,7 @@ public class Channels {
 
             int offset = 0; // Use this value for pagination
             int limit = 10;
-            QuerySorter<Member> sort = new QuerySortByField<>();
+            IQuerySort<Member> sort = new QuerySortByField<>();
 
             // Channel members can be queried with various filters
             // 1. Create the filter, e.g query members by user name
@@ -437,7 +437,7 @@ public class Channels {
 
             // We can order the results too with QuerySort param
             // Here example to order results by member created at descending
-            QuerySorter<Member> createdAtDescendingSort = new io.getstream.chat.android.client.api.models.QuerySort<Member>().desc("created_at");
+            IQuerySort<Member> createdAtDescendingSort = new io.getstream.chat.android.client.api.models.QuerySort<Member>().desc("created_at");
         }
     }
 
@@ -530,7 +530,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "accepted");
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new QuerySortByField<>();
+            IQuerySort<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -551,7 +551,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "rejected");
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new QuerySortByField<>();
+            IQuerySort<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -572,7 +572,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "pending");
             int offset = 0;
             int limit = 10;
-            QuerySorter<Channel> sort = new QuerySortByField<>();
+            IQuerySort<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -655,7 +655,7 @@ public class Channels {
                 // Executing a channels query with either of the filters
                 int offset = 0;
                 int limit = 10;
-                QuerySorter<Channel> sort = new QuerySortByField<>();
+                IQuerySort<Channel> sort = new QuerySortByField<>();
                 int messageLimit = 0;
                 int memberLimit = 0;
                 client.queryChannels(new QueryChannelsRequest(

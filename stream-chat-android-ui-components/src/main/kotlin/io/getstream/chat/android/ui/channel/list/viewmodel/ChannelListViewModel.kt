@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.IQuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -72,7 +72,7 @@ import kotlinx.coroutines.launch
  */
 public class ChannelListViewModel(
     private val filter: FilterObject? = null,
-    private val sort: QuerySorter<Channel> = DEFAULT_SORT,
+    private val sort: IQuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val memberLimit: Int = 30,
@@ -412,7 +412,7 @@ public class ChannelListViewModel(
          * The default sorting option for queries.
          */
         @JvmField
-        public val DEFAULT_SORT: QuerySorter<Channel> = QuerySortByField.descByName("last_updated")
+        public val DEFAULT_SORT: IQuerySort<Channel> = QuerySortByField.descByName("last_updated")
 
         /**
          *  The initial state.
