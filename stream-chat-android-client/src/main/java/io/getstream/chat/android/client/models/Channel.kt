@@ -105,9 +105,14 @@ public data class Channel(
             "id" to id,
             "type" to type,
             "name" to name,
+            "image" to image,
+            "watcherCount" to watcherCount,
+            "frozen" to frozen,
         ).apply {
+            lastMessageAt?.let { this["lastMessageAt"] = it }
             createdAt?.let { this["createdAt"] = it }
             deletedAt?.let { this["deletedAt"] = it }
+            updatedAt?.let { this["updatedAt"] = it }
             memberCount.let { this["memberCount"] = it }
             unreadCount?.let { this["unreadCount"] = it }
             team.let { this["team"] = it }
@@ -125,6 +130,10 @@ public data class Channel(
             "id" -> id
             "type" -> type
             "name" -> name
+            "image" -> image
+            "watcherCount" -> watcherCount
+            "frozen" -> frozen
+            "lastMessageAt" -> lastMessageAt
             "createdAt" -> createdAt
             "deletedAt" -> deletedAt
             "memberCount" -> memberCount

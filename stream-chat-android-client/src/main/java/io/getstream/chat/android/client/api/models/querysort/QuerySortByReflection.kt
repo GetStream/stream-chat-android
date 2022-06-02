@@ -41,9 +41,8 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
     override fun comparatorFromFieldSort(
         firstSort: SortAttribute.FieldSortAttribute<T>,
         sortDirection: SortDirection,
-    ): Comparator<T> {
-        throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
-    }
+    ): Comparator<T> =
+        firstSort.field.comparator(sortDirection)
 
     override fun comparatorFromNameAttribute(
         name: SortAttribute.FieldNameSortAttribute<T>,
