@@ -42,9 +42,9 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
-    private val limit: Int = 30,
-    private val messageLimit: Int = 1,
-    private val memberLimit: Int = 30,
+    private val limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
+    private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
 ) : ViewModelProvider.Factory {
 
@@ -65,5 +65,72 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
             memberLimit = memberLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
         ) as T
+    }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    public class Builder @SinceKotlin("99999.9") constructor() {
+
+        private var filter: FilterObject? = null
+        private var sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT
+        private var limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT
+        private var messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT
+        private var memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT
+        private var chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory()
+
+        /**
+         * Sets the way to filter the channels.
+         */
+        public fun filter(filter: FilterObject): Builder = apply {
+            this.filter = filter
+        }
+
+        /**
+         * Sets the way to sort the channels, defaults to last_updated.
+         */
+        public fun sort(sort: QuerySort<Channel>): Builder = apply {
+            this.sort = sort
+        }
+
+        /**
+         * Sets the number of channels to return.
+         */
+        public fun limit(limit: Int): Builder = apply {
+            this.limit = limit
+        }
+
+        /**
+         * Sets the number of messages to fetch for each channel.
+         */
+        public fun messageLimit(messageLimit: Int): Builder = apply {
+            this.messageLimit = messageLimit
+        }
+
+        /**
+         * Sets the number of members per channel.
+         */
+        public fun memberLimit(memberLimit: Int): Builder = apply {
+            this.memberLimit = memberLimit
+        }
+
+        /**
+         * The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
+         */
+        public fun chatEventHandlerFactory(chatEventHandlerFactory: ChatEventHandlerFactory): Builder = apply {
+            this.chatEventHandlerFactory = chatEventHandlerFactory
+        }
+
+        /**
+         * Builds [ChannelListViewModelFactory] instance.
+         */
+        public fun build(): ViewModelProvider.Factory {
+            return ChannelListViewModelFactory(
+                filter = filter,
+                sort = sort,
+                limit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+                chatEventHandlerFactory
+            )
+        }
     }
 }
