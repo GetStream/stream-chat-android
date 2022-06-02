@@ -24,7 +24,9 @@
         <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
         <attr name="streamUiScrollButtonIcon" format="reference" />
         <attr name="streamUiScrollButtonElevation" format="dimension|reference" />
+        <!-- Sets the bottom margin of the scroll button inside MessageListView -->
         <attr name="streamUiScrollButtonBottomMargin" format="dimension|reference"/>
+        <!-- Sets the end margin of the scroll button inside MessageListView -->
         <attr name="streamUiScrollButtonEndMargin" format="dimension|reference"/>
         <!-- Controls the internal margins of the scroll button with respect to its parent.
 
@@ -39,7 +41,9 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- Sets the background drawable of the unread count badge -->
         <attr name="streamUiScrollButtonBadgeIcon" format="reference" />
+        <!-- Sets the elevation of the unread count badge -->
         <attr name="streamUiScrollButtonBadgeElevation" format="dimension|reference" />
         <!-- Adjusts the gravity of the scroll button badge.
 
