@@ -197,7 +197,7 @@ public data class MessageListViewStyle(
                         defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                     ).scrollButtonBadgeGravity(
                         scrollButtonBadgeGravity = R.styleable.MessageListView_streamUiScrollButtonBadgeGravity,
-                        defaultGravity = Gravity.CENTER_HORIZONTAL and Gravity.TOP
+                        defaultGravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
                     ).scrollButtonBadgeIcon(
                         scrollButtonBadgeIcon = R.styleable.MessageListView_streamUiScrollButtonBadgeIcon,
                         defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_shape_scroll_button_badge)
