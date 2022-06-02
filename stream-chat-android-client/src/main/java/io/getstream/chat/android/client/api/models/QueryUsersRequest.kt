@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.IQuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.User
 
 public data class QueryUsersRequest @JvmOverloads constructor(

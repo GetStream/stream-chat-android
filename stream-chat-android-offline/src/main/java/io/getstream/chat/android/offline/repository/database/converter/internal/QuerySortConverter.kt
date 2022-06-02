@@ -18,8 +18,8 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.IQuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.models.Channel
 

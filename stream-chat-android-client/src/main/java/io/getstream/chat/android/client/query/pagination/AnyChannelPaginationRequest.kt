@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.query.pagination
 
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.IQuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
 
 private const val MESSAGE_LIMIT = 30
