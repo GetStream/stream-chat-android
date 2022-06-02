@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
@@ -84,7 +84,7 @@ class ChatInfoViewModel(
                         offset = 0,
                         limit = 1,
                         filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
-                        sort = QuerySortByMap()
+                        sort = QuerySortByField()
                     ).await()
 
                 if (result.isSuccess) {

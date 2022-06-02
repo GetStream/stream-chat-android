@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -445,7 +445,7 @@ constructor(
 
     override fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySorter<BannedUsersSort>,
+        sort: QuerySort<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -513,7 +513,7 @@ constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySorter<Message>,
+        sort: QuerySort<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return channelApi.getPinnedMessages(
@@ -771,7 +771,7 @@ constructor(
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySorter<Message>?,
+        sort: QuerySort<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
             filter_conditions = channelFilter.toMap(),
@@ -868,7 +868,7 @@ constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySorter<Member>,
+        sort: QuerySort<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(

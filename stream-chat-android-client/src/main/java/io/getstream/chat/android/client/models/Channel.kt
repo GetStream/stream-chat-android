@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
@@ -83,7 +84,7 @@ public data class Channel(
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
-) : CustomObject, QueryableByMap {
+) : CustomObject, QueryableByMap, ComparableFieldProvider {
 
     /**
      * Determines the last updated date/time.
@@ -115,6 +116,24 @@ public data class Channel(
             lastUpdated?.let { this["lastUpdated"] = it }
 
             putAll(extraData)
+        }
+    }
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "cid" -> cid
+            "id" -> id
+            "type" -> type
+            "name" -> name
+            "createdAt" -> createdAt
+            "deletedAt" -> deletedAt
+            "memberCount" -> memberCount
+            "unreadCount" -> unreadCount
+            "team" -> team
+            "hidden" -> hidden
+            "cooldown" -> cooldown
+            "lastUpdated" -> lastUpdated
+            else -> extraData[fieldName] as? Comparable<*>
         }
     }
 }

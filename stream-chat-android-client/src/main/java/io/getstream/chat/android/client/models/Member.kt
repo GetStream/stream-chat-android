@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import java.util.Date
 
@@ -76,7 +77,7 @@ public data class Member(
      * The user's channel-level role.
      */
     var channelRole: String? = null,
-) : UserEntity, QueryableByMap {
+) : UserEntity, QueryableByMap, ComparableFieldProvider {
 
     override fun toMap(): Map<String, Any> =
         mapOf<String, Any>().apply {
@@ -89,4 +90,18 @@ public data class Member(
             banned.let { "banned" to it }
             channelRole?.let { "channelRole" to it }
         }
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
+            "isInvited" -> isInvited
+            "inviteAcceptedAt" -> inviteAcceptedAt
+            "inviteRejectedAt" -> inviteRejectedAt
+            "shadowBanned" -> shadowBanned
+            "banned" -> banned
+            "channelRole" -> channelRole
+            else -> null
+        }
+    }
 }

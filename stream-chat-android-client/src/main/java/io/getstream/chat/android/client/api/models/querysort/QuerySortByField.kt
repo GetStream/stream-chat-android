@@ -25,9 +25,9 @@ import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.logging.StreamLog
 
-public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
+public class QuerySortByField<T : ComparableFieldProvider> : QuerySort<T> {
 
-    private val logger = StreamLog.getLogger("Chat:QuerySortByMap")
+    private val logger = StreamLog.getLogger("Chat:QuerySortByField")
 
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
@@ -42,7 +42,7 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
         get() {
             return when (this.sortAttribute) {
                 is SortAttribute.FieldSortAttribute<T> -> throw IllegalArgumentException(
-                    "FieldSortAttribute can't be used with QuerySortByMap"
+                    "FieldSortAttribute can't be used with QuerySortByField"
                 )
 
                 is SortAttribute.FieldNameSortAttribute<T> -> this.sortAttribute.name.comparator(this.sortDirection)
@@ -55,8 +55,8 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
         Comparator { o1, o2 ->
             val fieldName = this.snakeToLowerCamelCase()
             logger.v { "[compare] fieldName: $fieldName" }
-            val fieldOne = o1.toMap()[fieldName] as? Comparable<Any>
-            val fieldTwo = o2.toMap()[fieldName] as? Comparable<Any>
+            val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
+            val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
 
             compare(fieldOne, fieldTwo, sortDirection)
         }
@@ -73,37 +73,41 @@ public class QuerySortByMap<T : QueryableByMap> : QuerySort<T> {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as QuerySortByMap<*>
+        other as QuerySortByField<*>
 
         if (sortSpecifications != other.sortSpecifications) return false
 
         return true
     }
 
-    private fun add(sortSpecification: SortSpecification<T>): QuerySortByMap<T> {
+    private fun add(sortSpecification: SortSpecification<T>): QuerySortByField<T> {
         sortSpecifications = sortSpecifications + sortSpecification
         return this
     }
 
-    public fun asc(fieldName: String): QuerySortByMap<T> {
+    public fun asc(fieldName: String): QuerySortByField<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
     }
 
-    public fun desc(fieldName: String): QuerySortByMap<T> {
+    public fun desc(fieldName: String): QuerySortByField<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
     }
 
     public companion object {
-        public fun <R : QueryableByMap> ascByName(fieldName: String): QuerySortByMap<R> =
-            QuerySortByMap<R>().asc(fieldName)
+        public fun <R : ComparableFieldProvider> ascByName(
+            fieldName: String
+        ): QuerySortByField<R> = QuerySortByField<R>().asc(fieldName)
 
-        public fun <R : QueryableByMap> descByName(fieldName: String): QuerySortByMap<R> =
-            QuerySortByMap<R>().desc(fieldName)
+        public fun <R : ComparableFieldProvider> descByName(
+            fieldName: String
+        ): QuerySortByField<R> = QuerySortByField<R>().desc(fieldName)
 
-        public fun <R : QueryableByMap> QuerySortByMap<R>.ascByName(fieldName: String): QuerySortByMap<R> =
-            asc(fieldName)
+        public fun <R : ComparableFieldProvider> QuerySortByField<R>.ascByName(
+            fieldName: String
+        ): QuerySortByField<R> = asc(fieldName)
 
-        public fun <R : QueryableByMap> QuerySortByMap<R>.descByName(fieldName: String): QuerySortByMap<R> =
-            desc(fieldName)
+        public fun <R : ComparableFieldProvider> QuerySortByField<R>.descByName(
+            fieldName: String
+        ): QuerySortByField<R> = desc(fieldName)
     }
 }

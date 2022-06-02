@@ -16,8 +16,9 @@
 
 package io.getstream.chat.android.offline.repository.database.converter
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap.Companion.ascByName
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.repository.database.converter.internal.QuerySortConverter
 import org.amshove.kluent.shouldBeEqualTo
@@ -28,7 +29,7 @@ internal class QuerySortConverterTests {
 
     @ParameterizedTest
     @MethodSource("arguments")
-    fun `Should store and extract the same object`(sort: QuerySortByMap<Channel>) {
+    fun `Should store and extract the same object`(sort: QuerySort<Channel>) {
         val sut = QuerySortConverter()
         val string = sut.objectToString(sort)
         val output = sut.stringToObject(string)
@@ -38,11 +39,11 @@ internal class QuerySortConverterTests {
 
     companion object {
         @JvmStatic
-        fun arguments() = listOf(
-            QuerySortByMap.ascByName("member_count"),
-            QuerySortByMap.descByName("member_count"),
-            QuerySortByMap.descByName<Channel>("last_message_at").ascByName("created_at"),
-            QuerySortByMap()
+        fun arguments(): List<QuerySort<Channel>> = listOf(
+            QuerySortByField.ascByName("member_count"),
+            QuerySortByField.descByName("member_count"),
+            QuerySortByField.descByName<Channel>("last_message_at").ascByName("created_at"),
+            QuerySortByField(),
         )
     }
 }

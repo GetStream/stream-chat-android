@@ -30,7 +30,7 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
@@ -235,7 +235,7 @@ public open class ChannelListFragment : Fragment() {
     /**
      * Default query sort for channels. Override the method to provide custom sort.
      */
-    protected open fun getSort(): QuerySorter<Channel> {
+    protected open fun getSort(): QuerySort<Channel> {
         return ChannelListViewModel.DEFAULT_SORT
     }
 

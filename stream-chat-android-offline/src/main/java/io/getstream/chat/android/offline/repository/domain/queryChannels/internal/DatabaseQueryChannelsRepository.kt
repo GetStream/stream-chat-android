@@ -17,8 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.queryChannels.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -45,12 +44,12 @@ internal class DatabaseQueryChannelsRepository(
      * @param filter [FilterObject]
      * @param querySort [QuerySort]
      */
-    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? {
+    override suspend fun selectBy(filter: FilterObject, querySort: QuerySort<Channel>): QueryChannelsSpec? {
         return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)
     }
 
     private companion object {
-        private fun generateId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
+        private fun generateId(filter: FilterObject, querySort: QuerySort<Channel>): String {
             return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
         }
 
