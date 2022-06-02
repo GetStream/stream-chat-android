@@ -16,10 +16,18 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import io.getstream.chat.android.client.api.models.querysort.QueryableByMap
 import java.util.Date
 
-public data class BannedUsersSort(val createdAt: Date) : QueryableByMap {
+public data class BannedUsersSort(val createdAt: Date) : QueryableByMap, ComparableFieldProvider {
 
     override fun toMap(): Map<String, Any> = mapOf("createdAt" to createdAt)
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "createdAt" -> createdAt
+            else -> null
+        }
+    }
 }
