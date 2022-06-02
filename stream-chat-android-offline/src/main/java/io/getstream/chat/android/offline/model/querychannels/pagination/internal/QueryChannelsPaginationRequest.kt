@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.model.querychannels.pagination.internal
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Channel
 
 internal data class QueryChannelsPaginationRequest(
-    val sort: QuerySorter<Channel>,
+    val sort: QuerySort<Channel>,
     val channelOffset: Int = 0,
     val channelLimit: Int = 30,
     val messageLimit: Int = 10,

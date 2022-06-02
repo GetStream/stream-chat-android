@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.state.querychannels
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +32,7 @@ public interface QueryChannelsState {
     /** The filter is associated with this query channels state. */
     public val filter: FilterObject
     /** The sort object which requested for this query channels state. */
-    public val sort: QuerySorter<Channel>
+    public val sort: QuerySort<Channel>
 
     /** The request for the current page. */
     public val currentRequest: StateFlow<QueryChannelsRequest?>

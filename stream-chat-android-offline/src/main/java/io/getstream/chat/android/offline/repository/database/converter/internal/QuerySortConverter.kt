@@ -18,8 +18,8 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByMap
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api.models.querysort.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.models.Channel
 
@@ -29,19 +29,19 @@ internal class QuerySortConverter {
     private val adapter = moshi.adapter<List<Map<String, Any>>>()
 
     @TypeConverter
-    fun stringToObject(data: String?): QuerySorter<Channel> {
+    fun stringToObject(data: String?): QuerySort<Channel> {
         if (data.isNullOrEmpty()) {
-            return QuerySortByMap()
+            return QuerySortByField()
         }
         val listOfSortSpec = adapter.fromJson(data)
-        return listOfSortSpec?.let(::parseQuerySort) ?: QuerySortByMap()
+        return listOfSortSpec?.let(::parseQuerySort) ?: QuerySortByField()
     }
 
-    private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySorter<Channel> {
-        return listOfSortSpec.fold(QuerySortByMap()) { sort, sortSpecMap ->
-            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String
+    private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySort<Channel> {
+        return listOfSortSpec.fold(QuerySortByField()) { sort, sortSpecMap ->
+            val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String
                 ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt()
+            val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt()
                 ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
             when (direction) {
                 SortDirection.ASC.value -> sort.asc(fieldName)
@@ -65,7 +65,7 @@ internal class QuerySortConverter {
      *     // ... binding stringifiedObject to table's column
      */
     @TypeConverter
-    fun objectToString(querySort: QuerySorter<Channel>): String? {
+    fun objectToString(querySort: QuerySort<Channel>): String? {
         return adapter.toJson(querySort.toDto())
     }
 }
