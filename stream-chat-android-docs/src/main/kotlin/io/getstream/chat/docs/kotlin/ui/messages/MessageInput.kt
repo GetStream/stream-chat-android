@@ -126,81 +126,80 @@ private class MessageInputViewSnippets() : Fragment() {
             }
         )
     }
-}
 
-/**
- * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#customization)
- */
-fun customization() {
-    TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
-        viewStyle.copy(
-            messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
-                color = ContextCompat.getColor(
-                    requireContext(),
-                    R.color.stream_ui_white,
-                ),
+    /**
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#customization)
+     */
+    fun customization() {
+        TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
+            viewStyle.copy(
+                messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+                    color = ContextCompat.getColor(
+                        requireContext(),
+                        R.color.stream_ui_white,
+                    ),
+                )
             )
-        )
-    }
-}
-
-fun customSuggestionListviewHolderFactory() {
-    val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
-    messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
-}
-
-fun transliterationSupport(users: List<User>) {
-    val defaultUserLookupHandler = MessageInputView.DefaultUserLookupHandler(
-        users,
-        DefaultStreamTransliterator("Cyrl-Latn")
-    )
-    messageInputView.setUserLookupHandler(defaultUserLookupHandler)
-}
-
-fun customAttachments() {
-    val attachments = listOf(Attachment(title = "A"), Attachment(title = "B"))
-    messageInputView.submitCustomAttachments(attachments, MyCustomAttachmentFactory())
-}
-
-class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
-
-    override fun createCommandViewHolder(
-        parentView: ViewGroup,
-    ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
-        // Create custom command view holder here
-        return super.createCommandViewHolder(parentView)
-    }
-
-    override fun createMentionViewHolder(
-        parentView: ViewGroup,
-    ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
-        // Create custom mention view holder here
-        return super.createMentionViewHolder(parentView)
-    }
-}
-
-class MyCustomViewHolder(
-    parentView: ViewGroup,
-    private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(
-        LayoutInflater.from(parentView.context),
-        parentView,
-        false
-    ),
-) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
-    override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
-        binding.textView.text = attachment.title
-        binding.deleteButton.setOnClickListener {
-            onAttachmentCancelled(attachment)
         }
     }
-}
 
-class MyCustomAttachmentFactory : SelectedCustomAttachmentViewHolderFactory {
-    override fun createAttachmentViewHolder(
-        attachments: List<Attachment>,
-        parent: ViewGroup,
-    ): MyCustomViewHolder {
-        return MyCustomViewHolder(parent)
+    fun customSuggestionListviewHolderFactory() {
+        val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
+        messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
     }
-}
+
+    fun transliterationSupport(users: List<User>) {
+        val defaultUserLookupHandler = MessageInputView.DefaultUserLookupHandler(
+            users,
+            DefaultStreamTransliterator("Cyrl-Latn")
+        )
+        messageInputView.setUserLookupHandler(defaultUserLookupHandler)
+    }
+
+    fun customAttachments() {
+        val attachments = listOf(Attachment(title = "A"), Attachment(title = "B"))
+        messageInputView.submitCustomAttachments(attachments, MyCustomAttachmentFactory())
+    }
+
+    class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
+
+        override fun createCommandViewHolder(
+            parentView: ViewGroup,
+        ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+            // Create custom command view holder here
+            return super.createCommandViewHolder(parentView)
+        }
+
+        override fun createMentionViewHolder(
+            parentView: ViewGroup,
+        ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
+            // Create custom mention view holder here
+            return super.createMentionViewHolder(parentView)
+        }
+    }
+
+    class MyCustomViewHolder(
+        parentView: ViewGroup,
+        private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(
+            LayoutInflater.from(parentView.context),
+            parentView,
+            false
+        ),
+    ) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
+        override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
+            binding.textView.text = attachment.title
+            binding.deleteButton.setOnClickListener {
+                onAttachmentCancelled(attachment)
+            }
+        }
+    }
+
+    class MyCustomAttachmentFactory : SelectedCustomAttachmentViewHolderFactory {
+        override fun createAttachmentViewHolder(
+            attachments: List<Attachment>,
+            parent: ViewGroup,
+        ): MyCustomViewHolder {
+            return MyCustomViewHolder(parent)
+        }
+    }
 }
