@@ -23,24 +23,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * After you call [keystroke] the class will call [onStartTypingEventFired],
- * start buffering for [delayIntervalMillis] and call [onStopTypingEventFired].
+ * After you call [keystroke] the class will call [onTypingStarted],
+ * start buffering for [delayIntervalMillis] and call [onTypingStopped].
  *
  * Every subsequent keystroke will cancel the previous work
  * and reset the time before sending a stop typing event so that only
  * distinct events trigger calls.
  *
- * @param delayIntervalMillis The interval between calling [onStartTypingEventFired]
- * and [onStopTypingEventFired] whenever a keystroke has been received and buffered.
- * @param onStartTypingEventFired Signals that a typing event should be sent.
+ * @param delayIntervalMillis The interval between calling [onTypingStarted]
+ * and [onTypingStopped] whenever a keystroke has been received and buffered.
+ * @param onTypingStarted Signals that a typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.keystroke]
- * @param onStopTypingEventFired Signals that a stop typing event should be sent.
+ * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
 public class DefaultTypingUpdatesBuffer(
     public val delayIntervalMillis: Long = DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL,
-    private val onStartTypingEventFired: () -> Unit,
-    private val onStopTypingEventFired: () -> Unit,
+    private val onTypingStarted: () -> Unit,
+    private val onTypingStopped: () -> Unit,
 ) : TypingUpdatesBuffer {
 
     /**
@@ -71,7 +71,7 @@ public class DefaultTypingUpdatesBuffer(
      */
     private suspend fun startTypingTimer() {
         delay(delayIntervalMillis)
-        clearTypingUpdates()
+        onCleared()
     }
 
     /**
@@ -93,20 +93,20 @@ public class DefaultTypingUpdatesBuffer(
      *
      * Useful for clearing the state manually on lifecycle events.
      */
-    override fun clearTypingUpdates() {
+    override fun onCleared() {
         isTyping = false
     }
 
     /**
-     * Calls [onStartTypingEventFired] or [onStopTypingEventFired] event depending on the value of [isTyping].
+     * Calls [onTypingStarted] or [onTypingStopped] event depending on the value of [isTyping].
      *
      * @param isTyping If the user is currently typing.
      */
     private fun handleTypingEvent(isTyping: Boolean) {
         if (isTyping) {
-            onStartTypingEventFired()
+            onTypingStarted()
         } else {
-            onStopTypingEventFired()
+            onTypingStopped()
         }
     }
 

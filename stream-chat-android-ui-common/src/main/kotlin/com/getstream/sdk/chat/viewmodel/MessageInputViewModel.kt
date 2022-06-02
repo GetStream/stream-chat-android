@@ -123,8 +123,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * @see [DefaultTypingUpdatesBuffer]
      */
     public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
-        onStartTypingEventFired = ::keystroke,
-        onStopTypingEventFired = ::stopTyping
+        onTypingStarted = ::keystroke,
+        onTypingStopped = ::stopTyping
     )
 
     /**
@@ -381,7 +381,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     override fun onCleared() {
         super.onCleared()
-        typingUpdatesBuffer.clearTypingUpdates()
+        typingUpdatesBuffer.onCleared()
     }
 
     private companion object {

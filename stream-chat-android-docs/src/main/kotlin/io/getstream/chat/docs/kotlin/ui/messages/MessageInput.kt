@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -51,16 +52,18 @@ private class MessageInputViewSnippets() : Fragment() {
         messageInputView.setOnSendButtonClickListener {
             // Handle send button click
         }
-        messageInputView.setTypingListener(
-            object : MessageInputView.TypingListener {
-                override fun onKeystroke() {
-                    // Handle keystroke case
+        messageInputView.setTypingUpdatesBuffer(
+            DefaultTypingUpdatesBuffer(
+                // The period after the last keystroke before
+                // a stop typing API call is made
+                delayIntervalMillis = 5000L,
+                onTypingStarted = {
+                    // Make a keystroke API call
+                },
+                onTypingStopped = {
+                    // Make a typing stopped API call
                 }
-
-                override fun onStopTyping() {
-                    // Handle stop typing case
-                }
-            }
+            )
         )
         messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
             if (maxMessageLengthExceeded) {
@@ -123,80 +126,81 @@ private class MessageInputViewSnippets() : Fragment() {
             }
         )
     }
+}
 
-    /**
-     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#customization)
-     */
-    fun customization() {
-        TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
-            viewStyle.copy(
-                messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
-                    color = ContextCompat.getColor(
-                        requireContext(),
-                        R.color.stream_ui_white,
-                    ),
-                )
+/**
+ * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/#customization)
+ */
+fun customization() {
+    TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
+        viewStyle.copy(
+            messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+                color = ContextCompat.getColor(
+                    requireContext(),
+                    R.color.stream_ui_white,
+                ),
             )
-        }
-    }
-
-    fun customSuggestionListviewHolderFactory() {
-        val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
-        messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
-    }
-
-    fun transliterationSupport(users: List<User>) {
-        val defaultUserLookupHandler = MessageInputView.DefaultUserLookupHandler(
-            users,
-            DefaultStreamTransliterator("Cyrl-Latn")
         )
-        messageInputView.setUserLookupHandler(defaultUserLookupHandler)
     }
+}
 
-    fun customAttachments() {
-        val attachments = listOf(Attachment(title = "A"), Attachment(title = "B"))
-        messageInputView.submitCustomAttachments(attachments, MyCustomAttachmentFactory())
-    }
+fun customSuggestionListviewHolderFactory() {
+    val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
+    messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
+}
 
-    class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
+fun transliterationSupport(users: List<User>) {
+    val defaultUserLookupHandler = MessageInputView.DefaultUserLookupHandler(
+        users,
+        DefaultStreamTransliterator("Cyrl-Latn")
+    )
+    messageInputView.setUserLookupHandler(defaultUserLookupHandler)
+}
 
-        override fun createCommandViewHolder(
-            parentView: ViewGroup,
-        ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
-            // Create custom command view holder here
-            return super.createCommandViewHolder(parentView)
-        }
+fun customAttachments() {
+    val attachments = listOf(Attachment(title = "A"), Attachment(title = "B"))
+    messageInputView.submitCustomAttachments(attachments, MyCustomAttachmentFactory())
+}
 
-        override fun createMentionViewHolder(
-            parentView: ViewGroup,
-        ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
-            // Create custom mention view holder here
-            return super.createMentionViewHolder(parentView)
-        }
-    }
+class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
 
-    class MyCustomViewHolder(
+    override fun createCommandViewHolder(
         parentView: ViewGroup,
-        private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(
-            LayoutInflater.from(parentView.context),
-            parentView,
-            false
-        ),
-    ) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
-        override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
-            binding.textView.text = attachment.title
-            binding.deleteButton.setOnClickListener {
-                onAttachmentCancelled(attachment)
-            }
-        }
+    ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+        // Create custom command view holder here
+        return super.createCommandViewHolder(parentView)
     }
 
-    class MyCustomAttachmentFactory : SelectedCustomAttachmentViewHolderFactory {
-        override fun createAttachmentViewHolder(
-            attachments: List<Attachment>,
-            parent: ViewGroup,
-        ): MyCustomViewHolder {
-            return MyCustomViewHolder(parent)
+    override fun createMentionViewHolder(
+        parentView: ViewGroup,
+    ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
+        // Create custom mention view holder here
+        return super.createMentionViewHolder(parentView)
+    }
+}
+
+class MyCustomViewHolder(
+    parentView: ViewGroup,
+    private val binding: CustomAttachmentItemBinding = CustomAttachmentItemBinding.inflate(
+        LayoutInflater.from(parentView.context),
+        parentView,
+        false
+    ),
+) : BaseSelectedCustomAttachmentViewHolder(binding.root) {
+    override fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit) {
+        binding.textView.text = attachment.title
+        binding.deleteButton.setOnClickListener {
+            onAttachmentCancelled(attachment)
         }
     }
+}
+
+class MyCustomAttachmentFactory : SelectedCustomAttachmentViewHolderFactory {
+    override fun createAttachmentViewHolder(
+        attachments: List<Attachment>,
+        parent: ViewGroup,
+    ): MyCustomViewHolder {
+        return MyCustomViewHolder(parent)
+    }
+}
 }

@@ -33,8 +33,9 @@ public interface TypingUpdatesBuffer {
     public fun keystroke()
 
     /**
-     * Should clear typing updates.
+     * Should send a stop typing event manually.
+     *
      * Useful for runtime hygiene such as responding to lifecycle events.
      */
-    public fun clearTypingUpdates()
+    public fun onCleared()
 }

@@ -96,8 +96,8 @@ public class MessageComposerController(
      * @see [DefaultTypingUpdatesBuffer]
      */
     public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
-        onStartTypingEventFired = ::sendKeystrokeEvent,
-        onStopTypingEventFired = ::sendStopTypingEvent
+        onTypingStarted = ::sendKeystrokeEvent,
+        onTypingStopped = ::sendStopTypingEvent
     )
 
     /**
@@ -560,7 +560,7 @@ public class MessageComposerController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
-        typingUpdatesBuffer.clearTypingUpdates()
+        typingUpdatesBuffer.onCleared()
         scope.cancel()
     }
 
