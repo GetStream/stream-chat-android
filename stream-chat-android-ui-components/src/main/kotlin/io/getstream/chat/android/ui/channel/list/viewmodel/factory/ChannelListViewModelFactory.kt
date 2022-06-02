@@ -71,7 +71,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     public class Builder @SinceKotlin("99999.9") constructor() {
 
         private var filter: FilterObject? = null
-        private var sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT
+        private var sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT
         private var limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT
         private var messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT
         private var memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT
@@ -87,7 +87,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         /**
          * Sets the way to sort the channels, defaults to last_updated.
          */
-        public fun sort(sort: QuerySort<Channel>): Builder = apply {
+        public fun sort(sort: QuerySorter<Channel>): Builder = apply {
             this.sort = sort
         }
 
