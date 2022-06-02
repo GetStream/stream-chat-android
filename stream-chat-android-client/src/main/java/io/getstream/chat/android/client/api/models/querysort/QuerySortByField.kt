@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.logging.StreamLog
 
-public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>(){
+public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() {
 
     private val logger = StreamLog.getLogger("Chat:QuerySortByField")
 
