@@ -222,7 +222,7 @@ public class MessageComposerViewModel(
      * Sets the typing updates buffer.
      */
     public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
-        messageComposerController.typingUpdateBuffer = buffer
+        messageComposerController.typingUpdatesBuffer = buffer
     }
 
     /**

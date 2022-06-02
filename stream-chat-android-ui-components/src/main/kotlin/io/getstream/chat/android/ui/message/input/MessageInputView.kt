@@ -39,6 +39,7 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -111,6 +112,11 @@ public class MessageInputView : ConstraintLayout {
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
+
+    /**
+     * Used to buffer typing updates in order to conserve API calls.
+     */
+    private var typingUpdatesBuffer: TypingUpdatesBuffer? = null
     private var isKeyboardListenerRegistered: Boolean = false
 
     private var maxMessageLength: Int = Integer.MAX_VALUE
@@ -273,8 +279,26 @@ public class MessageInputView : ConstraintLayout {
         this.onSendButtonClickListener = listener
     }
 
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "Use TypingUpdatesBuffer which internally manages buffering " +
+            "start typing events and sending stop typing events.\n\n" +
+            "For the default implementation see DefaultTypingUpdatesBuffer.",
+        replaceWith = ReplaceWith(
+            "setTypingUpdatesBuffer(DefaultTypingUpdatesBuffer())",
+            "io.getstream.chat.android.ui.message.input.MessageInputView",
+            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
+        )
+    )
     public fun setTypingListener(listener: TypingListener?) {
         this.typingListener = listener
+    }
+
+    /**
+     * Sets the typing updates buffer.
+     */
+    public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
+        typingUpdatesBuffer = buffer
     }
 
     /**
@@ -782,7 +806,7 @@ public class MessageInputView : ConstraintLayout {
                     handleKeyStroke()
 
                     /** Debouncing when clearing the input will cause the suggestion list
-                     popup to appear briefly after clearing the input in certain cases. */
+                    popup to appear briefly after clearing the input in certain cases. */
                     if (messageText.isEmpty()) {
                         messageInputDebouncer?.cancelLastDebounce()
                         suggestionListController?.onNewMessageText(messageText)
@@ -871,6 +895,7 @@ public class MessageInputView : ConstraintLayout {
         if (canSendTypingUpdates) {
             if (binding.messageInputFieldView.messageText.isNotEmpty()) {
                 typingListener?.onKeystroke()
+                typingUpdatesBuffer?.keystroke()
             } else {
                 typingListener?.onStopTyping()
             }
@@ -1250,6 +1275,17 @@ public class MessageInputView : ConstraintLayout {
         )
     }
 
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "Use TypingUpdatesBuffer which internally manages buffering " +
+            "start typing events and sending stop typing events.\n\n" +
+            "For the default implementation see DefaultTypingUpdatesBuffer.",
+        replaceWith = ReplaceWith(
+            "TypingUpdatesBuffer",
+            "com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer",
+            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
+        )
+    )
     public interface TypingListener {
         public fun onKeystroke()
         public fun onStopTyping()

@@ -434,6 +434,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
+	public final fun getTypingUpdatesBuffer ()Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
@@ -446,6 +447,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessageWithCustomAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun stopTyping ()V
 }
 
