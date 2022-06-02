@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 /**
  * After you call [keystroke] the class will call [onStartTypingEventFired],
- * and after buffering for [delayIntervalMillis] it will call [onStopTypingEventFired].
+ * start buffering for [delayIntervalMillis] and call [onStopTypingEventFired].
  *
  * Every subsequent keystroke will cancel the previous work
  * and reset the time before sending a stop typing event so that only
@@ -44,7 +44,7 @@ public class DefaultTypingUpdatesBuffer(
 ) : TypingUpdatesBuffer {
 
     /**
-     * The coroutine scope used for running the times.
+     * The coroutine scope used for running the timer.
      */
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 

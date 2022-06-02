@@ -17,7 +17,7 @@
 package com.getstream.sdk.chat.utils.typing
 
 /**
- * Design to buffer typing inputs.
+ * Designed to buffer typing inputs.
  *
  * Its implementation should receive keystroke events by calling [TypingUpdatesBuffer.keystroke]
  * which it will internally buffer and send start and stop typing API calls accordingly.
@@ -28,7 +28,7 @@ package com.getstream.sdk.chat.utils.typing
 public interface TypingUpdatesBuffer {
 
     /**
-     * Should be called on every keystroke.
+     * Should be called on every input change.
      */
     public fun keystroke()
 
