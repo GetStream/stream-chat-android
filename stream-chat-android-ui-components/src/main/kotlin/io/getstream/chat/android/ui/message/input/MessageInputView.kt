@@ -281,7 +281,8 @@ public class MessageInputView : ConstraintLayout {
 
     @Deprecated(
         level = DeprecationLevel.WARNING,
-        message = "Use TypingUpdatesBuffer which internally manages buffering " +
+        message = "Use MessageInputView.setTypingListener(TypingUpdatesBuffer) instead to set a buffer " +
+            "which internally manages buffering " +
             "start typing events and sending stop typing events.\n\n" +
             "For the default implementation see DefaultTypingUpdatesBuffer.",
         replaceWith = ReplaceWith(
