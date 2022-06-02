@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.models
 import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import java.util.Date
 
-public data class BannedUsersSort(val createdAt: Date): ComparableFieldProvider {
+public data class BannedUsersSort(val createdAt: Date) : ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {

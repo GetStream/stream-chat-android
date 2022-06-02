@@ -98,6 +98,7 @@ public data class Channel(
     val hasUnread: Boolean
         get() = unreadCount?.let { it > 0 } ?: false
 
+    @Suppress("ComplexMethod")
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
             "cid" -> cid
