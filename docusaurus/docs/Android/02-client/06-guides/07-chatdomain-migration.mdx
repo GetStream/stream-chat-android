@@ -89,6 +89,11 @@ val threadState = chatClient.state.thread(messageId = "parentMessageId")
 val globalState = chatClient.globalState
 ```
 
+:::warning
+Methods mentioned above return a state object associated with the API call but don't perform the API call itself.
+Make sure to request the data using `ChatClient` object.
+:::
+
 In addition to that, the offline library provides a bunch of extension methods that can be used to obtain the state after performing a particular API call:
 
 ```kotlin
