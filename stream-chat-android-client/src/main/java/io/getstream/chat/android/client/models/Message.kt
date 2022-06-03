@@ -203,8 +203,9 @@ public data class Message(
         public const val TYPE_EPHEMERAL: String = "ephemeral"
     }
 
+    @Suppress("ComplexMethod")
     override fun getComparableField(fieldName: String): Comparable<*>? =
-        when(fieldName) {
+        when (fieldName) {
             "id" -> id
             "cid" -> cid
             "text" -> text
