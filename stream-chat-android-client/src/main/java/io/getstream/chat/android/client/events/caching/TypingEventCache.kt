@@ -82,7 +82,8 @@ internal class TypingEventCache(
 
         currentlyTypingUsers[keyValue] = EphemeralStartTypingEvent(
             coroutineScope = coroutineScope,
-            typingStartEvent = typingStartEvent
+            typingStartEvent = typingStartEvent,
+            delayTimeMs = cleanStaleEventMs
         ) { typingStopEvent -> processTypingStopEvent(typingStopEvent) }
 
         // Signal that the event has been processed
