@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.asCall
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeFalse
 import org.junit.Test
@@ -43,7 +43,7 @@ internal class ExtraDataValidatorTests {
         val extraData = mapOf("id" to "another-id")
         val updateMessage = null
 
-        whenever(chatApi.updateChannel(channelType, channelId, extraData, updateMessage)) doReturn channel.toTestCall()
+        whenever(chatApi.updateChannel(channelType, channelId, extraData, updateMessage)) doReturn channel.asCall()
 
         /* When */
         val result: Result<Channel> = validator.updateChannel(
@@ -68,7 +68,7 @@ internal class ExtraDataValidatorTests {
         val set = mapOf("type" to "another-type")
         val unset = emptyList<String>()
 
-        whenever(chatApi.updateChannelPartial(channelType, channelId, set, unset)) doReturn channel.toTestCall()
+        whenever(chatApi.updateChannelPartial(channelType, channelId, set, unset)) doReturn channel.asCall()
 
         /* When */
         val result: Result<Channel> = validator.updateChannelPartial(
@@ -91,7 +91,7 @@ internal class ExtraDataValidatorTests {
         val extraData: MutableMap<String, Any> = mutableMapOf("cid" to "another-cid")
 
         whenever(message.extraData) doReturn extraData
-        whenever(chatApi.updateMessage(message)) doReturn message.toTestCall()
+        whenever(chatApi.updateMessage(message)) doReturn message.asCall()
 
         /* When */
         val result: Result<Message> = validator.updateMessage(message).execute()
@@ -110,7 +110,7 @@ internal class ExtraDataValidatorTests {
         val set: MutableMap<String, Any> = mutableMapOf("created_at" to "another-date")
         val unset = emptyList<String>()
 
-        whenever(chatApi.partialUpdateMessage(messageId, set, unset)) doReturn message.toTestCall()
+        whenever(chatApi.partialUpdateMessage(messageId, set, unset)) doReturn message.asCall()
 
         /* When */
         val result: Result<Message> = validator.partialUpdateMessage(messageId, set, unset).execute()
@@ -131,7 +131,7 @@ internal class ExtraDataValidatorTests {
             "updated_at" to "another-date"
         )
         whenever(user.extraData) doReturn extraData
-        whenever(chatApi.updateUsers(users)) doReturn users.toTestCall()
+        whenever(chatApi.updateUsers(users)) doReturn users.asCall()
 
         /* When */
         val result: Result<List<User>> = validator.updateUsers(users).execute()
@@ -153,7 +153,7 @@ internal class ExtraDataValidatorTests {
             "created_at" to "another-date"
         )
         val unset = emptyList<String>()
-        whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.toTestCall()
+        whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.asCall()
 
         /* When */
         val result: Result<User> = validator.partialUpdateUser(userId, set, unset).execute()
@@ -164,9 +164,5 @@ internal class ExtraDataValidatorTests {
         result.error().message?.contains("updated_at") `should be equal to` true
         result.error().message?.contains("created_at") `should be equal to` true
         println(result.error().message)
-    }
-
-    private fun <T : Any> T.toTestCall(): TestCall<T> {
-        return TestCall(Result.success(this))
     }
 }

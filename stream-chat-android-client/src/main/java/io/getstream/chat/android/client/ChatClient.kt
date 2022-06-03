@@ -2305,6 +2305,7 @@ internal constructor(
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
+        private var debugRequests: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -2451,6 +2452,14 @@ internal constructor(
         }
 
         /**
+         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
+         * release builds as it uses a memory cache.
+         */
+        public fun debugRequests(shouldDebug: Boolean): Builder = apply {
+            this.debugRequests = shouldDebug
+        }
+
+        /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
          * @see [NoRetryPolicy]
@@ -2509,7 +2518,8 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
-                distinctApiCalls = distinctApiCalls
+                distinctApiCalls = distinctApiCalls,
+                debugRequests
             )
 
             if (ToggleService.isInitialized().not()) {

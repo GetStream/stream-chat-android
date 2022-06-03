@@ -78,6 +78,7 @@ internal class MockClientBuilder(
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
             false,
+            false
         )
 
         val tokenUtil: TokenUtils = mock()

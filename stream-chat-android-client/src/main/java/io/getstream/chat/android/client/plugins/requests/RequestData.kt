@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.client.plugins.requests
 
 import java.util.Date
 
-/**
- * Represents a channel mute.
- *
- * @param user The owner of the channel mute.
- * @param channel The muted channel.
- * @param createdAt Date/time of creation.
- * @param updatedAt Date/time of the last update.
- * @param expires Date/time of mute expiration.
- */
-public data class ChannelMute(
-    val user: User,
-    val channel: Channel,
-    val createdAt: Date,
-    var updatedAt: Date,
-    val expires: Date?,
+internal data class RequestData(
+    val name: String,
+    val time: Date,
+    val extraData: Map<String, String>
 )

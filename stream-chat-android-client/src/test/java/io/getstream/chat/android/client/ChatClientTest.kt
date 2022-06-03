@@ -79,6 +79,7 @@ internal class ChatClientTest {
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
             false,
+            false
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = FakeSocket()

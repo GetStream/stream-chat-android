@@ -546,6 +546,8 @@ public final class io/getstream/chat/android/ui/channel/list/header/ChannelListH
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;II)V
 	public final fun setOnActionButtonClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$ActionButtonClickListener;)V
+	public final fun setOnTitleClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setOnTitleLongClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setOnUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener;)V
 	public final fun setOnlineTitle (Ljava/lang/String;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
@@ -681,6 +683,17 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun chatEventHandlerFactory (Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun filter (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun limit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun memberLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun messageLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun sort (Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/ChannelNameFormatter {
@@ -2469,6 +2482,13 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/M
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
+public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
+	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
+}
+
 public final class io/getstream/chat/android/ui/message/preview/MessagePreviewStyle {
 	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2549,6 +2569,12 @@ public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMess
 public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory$Builder;
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
@@ -2854,6 +2880,13 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
 	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun chatClient (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 }
 
 public final class io/getstream/chat/android/ui/utils/GiphyInfo {

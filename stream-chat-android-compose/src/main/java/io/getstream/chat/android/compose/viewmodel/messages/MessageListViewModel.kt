@@ -323,7 +323,10 @@ public class MessageListViewModel(
 
                         lastLoadedMessage = newLastMessage
                         channelState.toChannel().let { channel ->
-                            ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
+                            chatClient.notifications.dismissChannelNotifications(
+                                channelType = channel.type,
+                                channelId = channel.id
+                            )
                             setCurrentChannel(channel)
                         }
                     }
@@ -822,6 +825,7 @@ public class MessageListViewModel(
      * @param message Message to delete.
      */
     @JvmOverloads
+    @Suppress("ConvertArgumentToSet")
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
@@ -835,6 +839,7 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
+    @Suppress("ConvertArgumentToSet")
     public fun flagMessage(message: Message) {
         messageActions = messageActions - messageActions.filterIsInstance<Flag>()
         removeOverlay()

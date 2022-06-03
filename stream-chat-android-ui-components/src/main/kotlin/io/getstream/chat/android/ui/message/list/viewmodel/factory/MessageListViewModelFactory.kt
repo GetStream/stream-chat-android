@@ -50,4 +50,34 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
     }
+
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    public class Builder @SinceKotlin("99999.9") constructor() {
+        private var cid: String? = null
+        private var messageId: String? = null
+
+        /**
+         * Sets the channel id in the format messaging:123.
+         */
+        public fun cid(cid: String): Builder = apply {
+            this.cid = cid
+        }
+
+        /**
+         * Sets the id of the target message to displayed.
+         */
+        public fun messageId(messageId: String): Builder = apply {
+            this.messageId = messageId
+        }
+
+        /**
+         * Builds [MessageListViewModelFactory] instance.
+         */
+        public fun build(): ViewModelProvider.Factory {
+            return MessageListViewModelFactory(
+                cid = cid ?: error("Channel cid should not be null"),
+                messageId = messageId
+            )
+        }
+    }
 }
