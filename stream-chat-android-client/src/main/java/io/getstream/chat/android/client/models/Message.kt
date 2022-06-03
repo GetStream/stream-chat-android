@@ -203,7 +203,26 @@ public data class Message(
         public const val TYPE_EPHEMERAL: String = "ephemeral"
     }
 
-    override fun getComparableField(fieldName: String): Comparable<*>? {
-        TODO("Not yet implemented")
-    }
+    override fun getComparableField(fieldName: String): Comparable<*>? =
+        when(fieldName) {
+            "id" -> id
+            "cid" -> cid
+            "text" -> text
+            "html" -> html
+            "parentId" -> parentId
+            "command" -> command
+            "replyCount" -> replyCount
+            "type" -> type
+            "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
+            "deletedAt" -> deletedAt
+            "updatedLocallyAt" -> updatedLocallyAt
+            "createdLocallyAt" -> createdLocallyAt
+            "silent" -> silent
+            "shadowed" -> shadowed
+            "pinned" -> pinned
+            "pinnedAt" -> pinnedAt
+            "pinExpires" -> pinExpires
+            else -> extraData[fieldName] as? Comparable<*>
+        }
 }
