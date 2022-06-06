@@ -74,47 +74,43 @@ internal open class MockWebServerTest {
         mockWebServer.dispatcher = object : Dispatcher() {
             @Throws(InterruptedException::class)
             override fun dispatch(request: RecordedRequest): MockResponse {
-                if (request.requestLine.contains("connect?json")) {
-                    return MockResponse().withWebSocketUpgrade(
+                val path = requireNotNull(request.path)
+
+                println("ABC " + path)
+
+                return if (path.startsWith("/connect?json")) {
+                    MockResponse().withWebSocketUpgrade(
                         object : WebSocketListener() {
                             override fun onOpen(webSocket: WebSocket, response: Response) {
                                 super.onOpen(webSocket, response)
                                 this@MockWebServerTest.webSocket = webSocket
-                                webSocket.send(readFileContents(WS_HEALTH))
+                                webSocket.send(readFileContents(WS_HEALTH_CHECK))
                             }
                         }
                     )
+                } else if (path.startsWith("/channels?")) {
+                    MockResponse().setResponseCode(200)
+                        .setBody(readFileContents(HTTP_CHANNELS))
+                } else if (path.startsWith("/channels/messaging/general/query")) {
+                    MockResponse().setResponseCode(200)
+                        .setBody(readFileContents(HTTP_CHANNEL))
+                } else if (path.startsWith("/channels/messaging/general/message")) {
+                    webSocket.send(readFileContents(WS_MESSAGE_NEW))
+                    MockResponse().setResponseCode(200)
+                        .setBody(readFileContents(HTTP_MESSAGE))
+                } else {
+                    MockResponse().setResponseCode(404)
                 }
-
-                if (request.path!!.startsWith("/channels?")) {
-                    return MockResponse().setResponseCode(200).setBody(readFileContents(HTTP_CHANNELS))
-                }
-
-                if (request.path!!.startsWith("/channels/messaging/general/query")) {
-                    val contents = readFileContents(HTTP_CHANNEL)
-                    return MockResponse().setResponseCode(200).setBody(contents)
-                }
-
-                if (request.path!!.startsWith("/channels/messaging/general/message")) {
-                    sendEvent(readFileContents(WS_MESSAGE_NEW))
-                    return MockResponse().setResponseCode(200).setBody(readFileContents(HTTP_MESSAGE))
-                }
-
-                return MockResponse().setResponseCode(404)
             }
         }
     }
 
-    fun sendEvent(text: String) {
-        webSocket.send(text)
-    }
-
     companion object {
+        private const val WS_HEALTH_CHECK: String = "ws_health_check.json"
+        private const val WS_MESSAGE_NEW: String = "ws_message_new.json"
+
         private const val HTTP_CHANNELS: String = "http_channels.json"
         private const val HTTP_CHANNEL: String = "http_channel.json"
         private const val HTTP_MESSAGE: String = "http_message.json"
-
-        private const val WS_HEALTH: String = "ws_health_check.json"
-        private const val WS_MESSAGE_NEW: String = "ws_message_new.json"
     }
 }
