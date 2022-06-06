@@ -76,8 +76,6 @@ internal open class MockWebServerTest {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 val path = requireNotNull(request.path)
 
-                println("ABC " + path)
-
                 return if (path.startsWith("/connect?json")) {
                     MockResponse().withWebSocketUpgrade(
                         object : WebSocketListener() {
