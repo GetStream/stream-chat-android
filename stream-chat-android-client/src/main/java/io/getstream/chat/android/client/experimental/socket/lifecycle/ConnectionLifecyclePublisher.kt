@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.experimental.socket.lifecycle
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
+import io.getstream.chat.android.client.experimental.socket.SocketFactory
 import io.getstream.chat.android.client.experimental.socket.Timed
 import io.getstream.chat.android.client.logger.ChatLogger
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,11 +27,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
 
-internal class ConnectLifecyclePublisher : LifecyclePublisher {
+internal class ConnectionLifecyclePublisher : LifecyclePublisher {
 
     private val logger = ChatLogger.get("ConnectionLifecycle")
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
+    var connectionConf: SocketFactory.ConnectionConf? = null
+        private set
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
         logger.logD("$it")
     }
@@ -43,11 +46,15 @@ internal class ConnectLifecyclePublisher : LifecyclePublisher {
         // no-op
     }
 
-    fun onConnect() {
+    fun onConnect(connectionConf: SocketFactory.ConnectionConf) {
+        this.connectionConf = connectionConf
         _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
     }
 
     fun onDisconnect(cause: DisconnectCause?) {
+        if (cause is DisconnectCause.UnrecoverableError) {
+            this.connectionConf = null
+        }
         _lifecycleEvents.tryEmit(
             Timed(
                 Event.Lifecycle.Stopped.WithReason(
