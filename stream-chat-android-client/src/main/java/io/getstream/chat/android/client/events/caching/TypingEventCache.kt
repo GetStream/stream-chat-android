@@ -70,8 +70,10 @@ internal class TypingEventCache(
                 processTypingStopEvent(event)
             }
             else -> {
-                throw IllegalArgumentException("This class should be only used to cache typing events. " +
-                    "All other events will remain unprocessed.")
+                throw IllegalArgumentException(
+                    "This class should be only used to cache typing events. " +
+                        "All other events will remain unprocessed."
+                )
             }
         }
     }
