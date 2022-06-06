@@ -64,7 +64,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Date
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
@@ -265,10 +264,6 @@ public class MessageListViewModel(
      */
     private var initialJob: Job? = null
 
-    private val _lastSearchAt = MediatorLiveData<Date>()
-
-    public val lastSearchAt: LiveData<Date> = _lastSearchAt
-
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
@@ -320,7 +315,6 @@ public class MessageListViewModel(
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
-        _lastSearchAt.addSource(channelState.lastSearch.filterNotNull().asLiveData()) { _lastSearchAt.value = it }
 
         stateMerger.apply {
             val messagesStateLiveData = channelState.messagesState.asLiveData()
@@ -540,6 +534,7 @@ public class MessageListViewModel(
                         DEFAULT_MESSAGES_LIMIT
                     ).enqueue { result ->
                         if (result.isSuccess) {
+                            //There's no guarantee that this message already is in the MessageListView!
                             _targetMessage.value = result.data()
                         } else {
                             val error = result.error()

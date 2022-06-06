@@ -165,15 +165,22 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
+                val noMoreMessages = channel.messages.size > request.messagesLimit()
+
+                if (request.filteringOlderMessages() || request.isFilteringNewerMessages()) {
+                    logger.logD("filtering messages. Limit: ${request.messagesLimit()}. received: ${channel.messages.size}")
+                }
+
                 mutableState.recoveryNeeded = false
-                if (request.messagesLimit() > channel.messages.size) {
+                if (noMoreMessages) {
                     if (request.isFilteringNewerMessages()) {
                         mutableState._endOfNewerMessages.value = true
                     } else {
                         mutableState._endOfOlderMessages.value = true
                     }
                 }
-                updateDataFromChannel(channel)
+
+                updateDataFromChannel(channel, request.filteringOlderMessages())
                 loadingStateByRequest(request).value = false
             }
             .onError { error ->
@@ -329,7 +336,7 @@ internal class ChannelLogic(
         mutableState._oldMessages.value = parseMessages(messages)
     }
 
-    internal fun updateDataFromChannel(c: Channel) {
+    internal fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean = false) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -343,13 +350,13 @@ internal class ChannelLogic(
         // this means that if the offline sync went out of sync things go wrong
         setMembers(c.members)
         setWatchers(c.watchers)
-        upsertMessages(c.messages)
+        upsertMessages(c.messages, shouldRefreshMessages)
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
     }
 
-    internal fun upsertMessages(messages: List<Message>) {
-        val newMessages = parseMessages(messages)
+    internal fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
+        val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
     }
@@ -477,7 +484,9 @@ internal class ChannelLogic(
      *
      * @param messages The list of messages to update.
      */
-    private fun parseMessages(messages: List<Message>): Map<String, Message> {
+    private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
+        if (shouldRefresh) return emptyMap()
+
         val currentMessages = mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
