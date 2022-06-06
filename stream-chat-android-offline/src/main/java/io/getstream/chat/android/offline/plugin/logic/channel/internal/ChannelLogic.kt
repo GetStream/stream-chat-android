@@ -415,8 +415,8 @@ internal class ChannelLogic(
 
             logger.logD(
                 "It is necessary to increment the unread count for channel: " +
-                    "${mutableState._channelData.value?.channelId}. The last seen message was at: $lastSeen. New unread " +
-                    "count: $newUnreadCount"
+                    "${mutableState._channelData.value?.channelId}. The last seen message was at: $lastSeen. " +
+                    "New unread count: $newUnreadCount"
             )
 
             mutableState._unreadCount.value = newUnreadCount
