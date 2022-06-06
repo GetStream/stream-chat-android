@@ -398,6 +398,11 @@ public class MessageListViewModel(
             is Event.EndRegionReached -> {
                 onEndRegionReached()
             }
+
+            is Event.BottomEndRegionReached -> {
+                onBottomEndRegionReached(event.messageId)
+            }
+
             is Event.LastMessageRead -> {
                 cid.cidToTypeAndId().let { (channelType, channelId) ->
                     chatClient.markRead(channelType, channelId).enqueue(
@@ -678,6 +683,18 @@ public class MessageListViewModel(
         }
     }
 
+    private fun onBottomEndRegionReached(baseMessageId: String) {
+        if (baseMessageId != null) {
+            messageListData?.loadingMoreChanged(true)
+            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT, canCreateGap = false)
+                .enqueue { result ->
+                    messageListData?.loadingMoreChanged(false)
+                }
+        } else {
+            logger.logE("There's no base message to request more message at bottom of limit")
+        }
+    }
+
     /**
      * Load older messages for the specified thread [Mode.Thread.parentMessage].
      *
@@ -845,6 +862,8 @@ public class MessageListViewModel(
          * When the oldest loaded message in the list has been reached.
          */
         public object EndRegionReached : Event()
+
+        public data class BottomEndRegionReached(val messageId: String) : Event()
 
         /**
          * When the newest message in the channel has been read.

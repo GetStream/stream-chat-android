@@ -152,8 +152,6 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
 
-    private var shouldRequestAtBottom : Boolean= false
-
     /**
      * Used to enable or disable parts of the UI depending
      * on which abilities the user has in the given channel.
@@ -170,6 +168,9 @@ public class MessageListView : ConstraintLayout {
 
     private var endRegionReachedHandler = EndRegionReachedHandler {
         throw IllegalStateException("endRegionReachedHandler must be set.")
+    }
+    private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
+        throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
     }
     private var lastMessageReadHandler = LastMessageReadHandler {
         throw IllegalStateException("lastMessageReadHandler must be set.")
@@ -610,9 +611,22 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
+                val loadMoreAtTop = {
                     endRegionReachedHandler.onEndRegionReached()
                 }
+                val loadMoreAtBottom = {
+                    //Todo: Performance improvement?
+                    val lastId = adapter.currentList
+                        .asSequence()
+                        .filterIsInstance<MessageListItem.MessageItem>()
+                        .last()
+                        .message
+                        .id
+
+                    bottomEndRegionReachedHandler.onBottomEndRegionReached(lastId)
+                }
+
+                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold, loadMoreAtTop, loadMoreAtBottom)
             }
 
             val style = requireStyle()
@@ -796,7 +810,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
-        this.shouldRequestAtBottom = shouldRequest
+        loadMoreListener.fetchAtBottom(shouldRequest)
     }
 
     /**
@@ -1279,6 +1293,20 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setEndRegionReachedHandler(endRegionReachedHandler: EndRegionReachedHandler) {
         this.endRegionReachedHandler = endRegionReachedHandler
+    }
+
+    /**
+     * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
+     * view becomes non linear and ti will be called until it becomes linear again.
+     *
+     * @param bottomEndRegionReachedHandler The handler to use.
+     */
+    public fun setBottomEndRegionReachedHandler(bottomEndRegionReachedHandler: BottomEndRegionReachedHandler) {
+        this.bottomEndRegionReachedHandler = bottomEndRegionReachedHandler
+    }
+
+    public fun interface BottomEndRegionReachedHandler {
+        public fun onBottomEndRegionReached(messageId: String)
     }
 
     /**

@@ -76,6 +76,7 @@ public fun MessageListViewModel.bindView(
         view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
+    view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
