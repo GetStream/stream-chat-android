@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.compose
+package io.getstream.chat.android.uitests.ui.compose.robot
 
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.performClick
@@ -43,6 +45,17 @@ internal class ComposeChannelsRobot(
      * Clicks on any channel in the list.
      */
     fun clickAnyChannel() {
+        waitForChannelItem().performClick()
+    }
+
+    /**
+     * Assert that any channel is displayed on the screen.
+     */
+    fun assertChannelIsDisplayed() {
+        waitForChannelItem().assertIsDisplayed()
+    }
+
+    private fun waitForChannelItem(): SemanticsNodeInteraction {
         val contentDescription = "Channel item"
 
         composeTestRule.waitUntil(DEFAULT_WAIT_TIMEOUT) {
@@ -51,9 +64,7 @@ internal class ComposeChannelsRobot(
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
-        composeTestRule
-            .onAllNodesWithContentDescription(contentDescription)[0]
-            .performClick()
+        return composeTestRule.onAllNodesWithContentDescription(contentDescription)[0]
     }
 
     companion object {

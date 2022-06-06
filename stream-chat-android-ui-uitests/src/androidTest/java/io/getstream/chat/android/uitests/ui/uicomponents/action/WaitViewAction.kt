@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.action
+package io.getstream.chat.android.uitests.ui.uicomponents.action
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView
@@ -49,6 +49,9 @@ class WaitViewAction private constructor(
 
     override fun perform(uiController: UiController, view: View?) {
         uiController.loopMainThreadUntilIdle()
+
+        uiController.loopMainThreadForAtLeast(2000)
+
         val startTimeMillis = System.currentTimeMillis()
         val endTimeMillis = startTimeMillis + timeoutMillis
         val viewMatcher = withId(resId)

@@ -98,4 +98,5 @@ dependencies {
     androidTestImplementation Dependencies.navigationTest
     androidTestImplementation Dependencies.composeUiTest
     androidTestImplementation Dependencies.composeUiTestManifest
+    androidTestImplementation Dependencies.okhttpMockWebserver
 }

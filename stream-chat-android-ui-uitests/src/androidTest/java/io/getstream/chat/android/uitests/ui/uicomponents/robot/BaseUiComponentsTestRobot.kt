@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.uicomponents
+package io.getstream.chat.android.uitests.ui.uicomponents.robot
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import io.getstream.chat.android.uitests.ui.action.WaitViewAction
+import io.getstream.chat.android.uitests.ui.uicomponents.action.WaitViewAction
 
 /**
  * A base class for all user robots.
@@ -42,6 +44,24 @@ internal open class BaseUiComponentsTestRobot {
      * @param resId The layout ID of a view to click.
      */
     fun clickElementByIdWithDelay(resId: Int) {
-        WaitViewAction.waitForViewWithId(resId).perform(ViewActions.click())
+        waitForViewWithId(resId).perform(ViewActions.click())
+    }
+
+    /**
+     * Assert that an element is displayed on the screen.
+     *
+     * @param resId The layout ID of a view to check.
+     */
+    fun assertElementWithIdIsDisplayed(resId: Int) {
+        waitForViewWithId(resId).check(matches(isDisplayed()))
+    }
+
+    /**
+     * Wait for the View to appear on the screen.
+     *
+     * @param resId The layout ID of a view to check.
+     */
+    fun waitForViewWithId(resId: Int): ViewInteraction {
+        return WaitViewAction.waitForViewWithId(resId)
     }
 }

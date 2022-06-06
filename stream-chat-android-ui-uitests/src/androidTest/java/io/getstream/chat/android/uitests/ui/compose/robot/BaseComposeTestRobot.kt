@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.suite
+package io.getstream.chat.android.uitests.ui.compose.robot
 
-import io.getstream.chat.android.uitests.ui.test.MessagesTests
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import org.junit.rules.TestRule
 
-@Suite.SuiteClasses(MessagesTests::class)
-@RunWith(Suite::class)
-internal class MessagesSuite
+/**
+ * A base class for all user robots.
+ *
+ * @param composeTestRule A [TestRule] that provides the main entry point into testing.
+ */
+internal open class BaseComposeTestRobot(
+    protected val composeTestRule: ComposeTestRule,
+)

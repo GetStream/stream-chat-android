@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.compose
-
-import androidx.compose.ui.test.junit4.ComposeTestRule
-import org.junit.rules.TestRule
+package io.getstream.chat.android.uitests.util
 
 /**
- * A base class for all user robots.
+ * Reads the file under "/resources" directory into string.
  *
- * @param composeTestRule A [TestRule] that provides the main entry point into testing.
+ * @param name The name of the file to read.
  */
-internal open class BaseComposeTestRobot(
-    protected val composeTestRule: ComposeTestRule,
-)
+fun readFileContents(name: String): String {
+    return Resources.javaClass.classLoader
+        .getResourceAsStream(name)
+        .bufferedReader()
+        .readText()
+}
+
+private object Resources

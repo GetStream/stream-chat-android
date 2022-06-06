@@ -1,0 +1,278 @@
+{
+  "message" : {
+    "id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
+    "reaction_counts" : {
+      "love" : 1
+    },
+    "silent" : true,
+    "shadowed": true,
+    "created_at" : "2020-07-16T15:39:03.010717Z",
+    "deleted_at" : "2020-07-16T15:55:03.010717Z",
+    "reaction_scores" : {
+      "love" : 1
+    },
+    "type" : "regular",
+    "i18n" : {
+      "it_text" : "si sono qui",
+      "nl_text" : "ja ik ben hier",
+      "language" : "it"
+    },
+    "latest_reactions" : [
+      {
+        "score" : 1,
+        "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
+        "created_at" : "2020-08-17T13:15:39.892884Z",
+        "user_id" : "broken-waterfall-5",
+        "type" : "love",
+        "updated_at" : "2020-08-17T13:15:39.892884Z",
+        "user" : {
+          "id" : "broken-waterfall-5",
+          "banned" : false,
+          "unread_channels" : 0,
+          "totalUnreadCount" : 0,
+          "extraData" : {
+            "name" : "Tester"
+          },
+          "last_active" : "2020-08-17T13:00:51.509134Z",
+          "created_at" : "2019-12-12T15:33:46.488935Z",
+          "invisible" : false,
+          "unreadChannels" : 0,
+          "unread_count" : 0,
+          "image" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
+          "updated_at" : "2020-08-17T13:15:27.5564Z",
+          "role" : "user",
+          "total_unread_count" : 0,
+          "online" : true,
+          "name" : "John Doe"
+        }
+      }
+    ],
+    "text" : "No, I am your father!",
+    "show_in_channel": true,
+    "parent_id": "3294-4c0c-9a62-c9d0928bf733",
+    "channel" : {
+      "id" : "channel-ex7-63",
+      "created_at" : "2019-12-17T17:11:26.131888Z",
+      "created_by" : null,
+      "type" : "messaging",
+      "cid" : "messaging:channel-ex7-63",
+      "frozen" : false,
+      "member_count" : 5,
+      "updated_at" : "2019-12-17T17:11:26.131888Z",
+      "config" : {
+        "typing_events" : true,
+        "connect_events" : true,
+        "reactions" : true,
+        "replies" : true,
+        "quotes" : true,
+        "uploads" : true,
+        "commands" : [
+          {
+            "set" : "fun_set",
+            "args" : "[text]",
+            "name" : "giphy",
+            "description" : "Post a random gif to the channel"
+          },
+          {
+            "set" : "moderation_set",
+            "args" : "[@username] [text]",
+            "name" : "ban",
+            "description" : "Ban a user"
+          },
+          {
+            "set" : "moderation_set",
+            "args" : "[@username]",
+            "name" : "mute",
+            "description" : "Mute a user"
+          },
+          {
+            "set" : "moderation_set",
+            "args" : "[@username]",
+            "name" : "unmute",
+            "description" : "Unmute a user"
+          }
+        ],
+        "updated_at" : "2020-12-15T21:28:45.83429Z",
+        "automod_behavior" : "flag",
+        "url_enrichment" : true,
+        "mutes" : true,
+        "custom_events" : false,
+        "message_retention" : "infinite",
+        "name" : "messaging",
+        "automod" : "disabled",
+        "automod_thresholds" : {
+
+        },
+        "created_at" : "2020-03-16T19:59:52.3886Z",
+        "max_message_length" : 5000,
+        "blocklist_behavior" : "flag",
+        "read_events" : true,
+        "search" : true
+      },
+      "image" : "https:\/\/picsum.photos\/seed\/63\/100\/100",
+      "example" : 7,
+      "name" : "Giant Disk",
+      "last_message_at" : "2020-12-23T08:26:45.307447Z"
+    },
+    "secret_note": "Anakin is Vader!",
+    "attachments" : [
+      {
+        "type" : "image",
+        "fallback" : "IMG_0007.JPG",
+        "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb"
+      }
+    ],
+    "own_reactions" : [
+      {
+        "score" : 1,
+        "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
+        "created_at" : "2020-08-17T13:15:39.892884Z",
+        "user_id" : "broken-waterfall-5",
+        "type" : "love",
+        "updated_at" : "2020-08-17T13:15:39.892884Z",
+        "user" : {
+          "id" : "broken-waterfall-5",
+          "banned" : false,
+          "unread_channels" : 0,
+          "totalUnreadCount" : 0,
+          "extraData" : {
+            "name" : "Tester"
+          },
+          "last_active" : "2020-08-17T13:00:51.509134Z",
+          "created_at" : "2019-12-12T15:33:46.488935Z",
+          "invisible" : false,
+          "unreadChannels" : 0,
+          "unread_count" : 0,
+          "image" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
+          "updated_at" : "2020-08-17T13:15:27.5564Z",
+          "role" : "user",
+          "total_unread_count" : 0,
+          "online" : true,
+          "name" : "John Doe"
+        }
+      }
+    ],
+    "updated_at" : "2020-08-17T13:15:39.895109Z",
+    "reply_count" : 0,
+    "user" : {
+      "id" : "broken-waterfall-5",
+      "banned" : false,
+      "extraData" : {
+        "name" : "Tester"
+      },
+      "totalUnreadCount" : 0,
+      "unread_channels" : 0,
+      "last_active" : "2020-08-17T13:00:51.509134Z",
+      "created_at" : "2019-12-12T15:33:46.488935Z",
+      "invisible" : false,
+      "unreadChannels" : 0,
+      "unread_count" : 0,
+      "image" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
+      "updated_at" : "2020-08-17T13:15:27.5564Z",
+      "role" : "user",
+      "total_unread_count" : 0,
+      "online" : true,
+      "name" : "John Doe"
+    },
+    "mentioned_users" : [
+
+    ],
+    "quoted_message" : {
+      "secret_note": "",
+      "updated_at" : "2021-01-02T07:23:41.411638Z",
+      "reply_count" : 0,
+      "html" : "<p>@thierry @1ae405d6-c279-3a8e-a27f-b91ec604de07 Hey!<\/p>\n",
+      "type" : "regular",
+      "own_reactions" : [
+
+      ],
+      "pinned_at" : null,
+      "id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
+      "user" : {
+        "banned" : false,
+        "online" : true,
+        "id" : "cilvia",
+        "role" : "user",
+        "created_at" : "2019-10-24T08:34:11.155375Z",
+        "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
+        "value" : "cilvia",
+        "updated_at" : "2021-01-12T16:43:25.726221Z",
+        "last_active" : "2021-01-12T16:38:26.444716Z",
+        "name" : "Neil Hannah"
+      },
+      "shadowed" : false,
+      "pin_expires" : null,
+      "attachments" : [
+
+      ],
+      "reaction_counts" : {
+
+      },
+      "reaction_scores" : {
+
+      },
+      "silent" : false,
+      "text" : "@thierry @1ae405d6-c279-3a8e-a27f-b91ec604de07 Hey!",
+      "pinned_by" : null,
+      "created_at" : "2021-01-02T07:23:41.411638Z",
+      "mentioned_users" : [
+
+      ],
+      "pinned" : false,
+      "latest_reactions" : [
+
+      ]
+    },
+    "quoted_message_id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
+    "thread_participants" : [
+      {
+        "id" : "josh",
+        "role" : "user",
+        "created_at" : "2020-04-15T06:43:08.776911Z",
+        "updated_at" : "2020-12-08T16:23:50.80847Z",
+        "last_active" : "2020-12-08T10:23:12.28392Z",
+        "banned" : false,
+        "online" : false,
+        "name" : "Joshua",
+        "value" : "josh",
+        "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
+      },
+      {
+        "id" : "vader",
+        "role" : "user",
+        "created_at" : "2020-04-15T06:43:08.776911Z",
+        "updated_at" : "2020-12-08T16:23:50.80847Z",
+        "last_active" : "2020-12-08T10:23:12.28392Z",
+        "banned" : false,
+        "online" : false,
+        "name" : "Vader",
+        "value" : "vader",
+        "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
+      }
+    ],
+    "html" : "<p>Hi<\/p>\n",
+    "pinned": true,
+    "pinned_at": "2021-04-15T06:43:08.776911Z",
+    "pin_expires": "2021-05-15T06:43:08.776911Z",
+    "pinned_by": {
+      "id" : "broken-waterfall-5",
+      "banned" : false,
+      "extraData" : {
+        "name" : "Tester"
+      },
+      "totalUnreadCount" : 0,
+      "unread_channels" : 0,
+      "last_active" : "2020-08-17T13:00:51.509134Z",
+      "created_at" : "2019-12-12T15:33:46.488935Z",
+      "invisible" : false,
+      "unreadChannels" : 0,
+      "unread_count" : 0,
+      "image" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
+      "updated_at" : "2020-08-17T13:15:27.5564Z",
+      "role" : "user",
+      "total_unread_count" : 0,
+      "online" : true,
+      "name" : "John Doe"
+    }
+  }
+}
