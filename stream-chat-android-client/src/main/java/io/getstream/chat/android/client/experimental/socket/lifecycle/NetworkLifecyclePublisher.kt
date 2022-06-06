@@ -33,11 +33,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkLifecyclePublisher(private val connectivityManager: ConnectivityManager) : LifecyclePublisher {
 
-    private val logger = ChatLogger.get("NetworkStateProvider")
+    private val logger = ChatLogger.get("NetworkLifecycle")
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        logger.logD("Lifecycle - Network: $it")
+        logger.logD("$it")
     }
 
     private val callback = object : ConnectivityManager.NetworkCallback() {

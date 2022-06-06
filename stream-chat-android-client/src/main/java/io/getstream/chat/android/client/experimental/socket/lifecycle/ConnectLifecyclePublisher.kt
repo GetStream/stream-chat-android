@@ -28,11 +28,11 @@ import kotlinx.coroutines.flow.onEach
 
 internal class ConnectLifecyclePublisher : LifecyclePublisher {
 
-    private val logger = ChatLogger.get("NetworkStateProvider")
+    private val logger = ChatLogger.get("ConnectionLifecycle")
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        logger.logD("Lifecycle - Connect: $it")
+        logger.logD("$it")
     }
 
     override fun observe() {

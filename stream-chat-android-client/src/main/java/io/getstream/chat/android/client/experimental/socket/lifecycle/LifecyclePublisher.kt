@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.experimental.socket.isStoppedAndAborted
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
 
 internal interface LifecyclePublisher {
     val lifecycleEvents: Flow<Timed<Event.Lifecycle>>
@@ -38,9 +37,6 @@ internal fun List<LifecyclePublisher>.combine(): Flow<Event.Lifecycle> {
         it.toList().combineLifecycleEvents()
     }
         .distinctUntilChanged { old, new -> old == new || (old.isStopped() && new.isStopped()) }
-        .onEach {
-            println("Filtered lifecycle event $it")
-        }
 }
 
 private fun List<Timed<Event.Lifecycle>>.combineLifecycleEvents() =

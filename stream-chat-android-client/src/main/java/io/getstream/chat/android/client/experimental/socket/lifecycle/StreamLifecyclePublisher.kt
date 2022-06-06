@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
 import io.getstream.chat.android.client.experimental.socket.Timed
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -33,14 +34,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePublisher {
-    private var recurringResumeEvent = false
+    private val logger = ChatLogger.get("StreamLifecycle")
 
     @Volatile
     private var isObserving = false
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        println("Lifecycle - Stream: $it")
+        logger.logD("$it")
     }
 
     override fun observe() {
@@ -63,7 +64,6 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
                 .removeObserver(this@StreamLifecyclePublisher)
         }
         isObserving = false
-        recurringResumeEvent = false
     }
 
     override fun onResume(owner: LifecycleOwner) {
