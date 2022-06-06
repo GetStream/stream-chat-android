@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 /**
  * Global state of [OfflinePlugin].
