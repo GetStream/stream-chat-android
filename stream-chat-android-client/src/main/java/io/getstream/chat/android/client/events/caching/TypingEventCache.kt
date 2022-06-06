@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.client.events.caching
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.caching.TypingEventKeyValue.Companion.toStartTypingEventKeyValue
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,7 +56,9 @@ internal class TypingEventCache(
      *  [TypingStopEvent] are not stored, but their processing removes their
      *  [SelfStoppingTypingEvent] counterpart.
      */
-    private val currentlyTypingUsers = mutableMapOf<TypingEventKeyValue, SelfStoppingTypingEvent>()
+    private val _currentlyTypingUsers = mutableMapOf<TypingEventKeyValue, SelfStoppingTypingEvent>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val currentlyTypingUsers: Map<TypingEventKeyValue, SelfStoppingTypingEvent> = _currentlyTypingUsers
 
     /**
      * Processes the incoming chat event accordingly.
@@ -89,9 +93,9 @@ internal class TypingEventCache(
         val keyValue = typingStartEvent.toStartTypingEventKeyValue()
 
         // Cancel the previous timed death
-        currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
+        _currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
 
-        currentlyTypingUsers[keyValue] = SelfStoppingTypingEvent(
+        _currentlyTypingUsers[keyValue] = SelfStoppingTypingEvent(
             coroutineScope = coroutineScope,
             typingStartEvent = typingStartEvent,
             delayTimeMs = cleanStaleEventMs
@@ -111,9 +115,9 @@ internal class TypingEventCache(
         val keyValue = typingStopEvent.toStartTypingEventKeyValue()
 
         // Cancel the previous timed death
-        currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
+        _currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
 
-        currentlyTypingUsers.remove(keyValue)
+        _currentlyTypingUsers.remove(keyValue)
 
         // Signal that the event has been processed
         onEventFired(typingStopEvent)
@@ -136,7 +140,8 @@ internal class TypingEventCache(
  * @param user The user currently the typing event is tied to.
  * @param cid The channel the the typing event is tied to.
  */
-private data class TypingEventKeyValue(
+@InternalStreamChatApi
+internal data class TypingEventKeyValue(
     val user: User,
     val cid: String,
 ) {
@@ -173,7 +178,8 @@ private data class TypingEventKeyValue(
  * @param delayTimeMs The period of time it takes before the event is "cleaned".
  * @param onTypingStopEvent The lambda called when the stale typing event is "cleaned".
  */
-private data class SelfStoppingTypingEvent(
+@InternalStreamChatApi
+internal data class SelfStoppingTypingEvent(
     private val coroutineScope: CoroutineScope,
     private val typingStartEvent: TypingStartEvent,
     private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
