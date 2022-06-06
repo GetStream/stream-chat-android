@@ -33,7 +33,6 @@ object DebugMetricsHelper {
             .detectLeakedSqlLiteObjects()
             .detectLeakedClosableObjects()
             .penaltyLog()
-            .penaltyDeath()
             .build()
             .apply {
                 StrictMode.setVmPolicy(this)
