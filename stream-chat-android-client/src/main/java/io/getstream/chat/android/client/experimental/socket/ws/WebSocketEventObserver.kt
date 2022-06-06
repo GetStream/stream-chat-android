@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.experimental.socket.ws
 
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
 import io.getstream.chat.android.client.logger.ChatLogger
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -29,9 +29,9 @@ import io.getstream.chat.android.client.experimental.socket.Event.WebSocket as W
 internal class WebSocketEventObserver : WebSocketListener() {
     private val logger = ChatLogger.get("WebSocketListener")
 
-    private val _eventsFlow = MutableSharedFlow<WebSocketEvent>(extraBufferCapacity = 1)
+    private val _eventsFlow = MutableStateFlow<WebSocketEvent?>(null)
 
-    val eventsFlow = _eventsFlow.asSharedFlow()
+    val eventsFlow = _eventsFlow.filterNotNull()
 
     fun terminate() = _eventsFlow.tryEmit(WebSocketEvent.Terminate)
 

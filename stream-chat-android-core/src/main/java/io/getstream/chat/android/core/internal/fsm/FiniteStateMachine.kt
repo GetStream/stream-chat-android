@@ -80,7 +80,7 @@ public class FiniteStateMachine<S : Any, E : Any>(
     }
 
     private fun Map<KClass<out E>, (S, E) -> S>.getHandler(event: E): (S, E) -> S {
-        var handler = this[event::class]
+        val handler = this[event::class]
         if (handler != null) {
             return handler
         }

@@ -96,7 +96,6 @@ internal open class ChatSocket constructor(
 
             state<State.Disconnected> {
                 onEnter {
-                    logger.logD("Entered into state $this from $it")
                     when (disconnectCause) {
                         is DisconnectCause.NetworkNotAvailable, is DisconnectCause.ConnectionReleased -> {
                             healthMonitor.stop()
@@ -132,7 +131,8 @@ internal open class ChatSocket constructor(
                     callListeners { listener -> listener.onConnecting() }
                 }
                 onEvent<Event.WebSocket.OnConnectionOpened<*>> {
-                    State.Connected(event = null, webSocket = webSocket)
+                    connectionEventReceived = false
+                    State.Connected(event = null, webSocket = this.webSocket)
                 }
                 onEvent<Event.WebSocket.Terminate> {
                     // We do transition to Disconnected state here because the connection can be
@@ -144,9 +144,7 @@ internal open class ChatSocket constructor(
 
             state<State.Connected> {
                 onEnter {
-                    logger.logD("Entered into state $this from $it")
                     if (it is Event.WebSocket.OnConnectedEventReceived) {
-                        connectionEventReceived = true
                         healthMonitor.start()
                         callListeners { listener -> listener.onConnected(it.connectedEvent) }
                     }
@@ -160,7 +158,7 @@ internal open class ChatSocket constructor(
                     State.Disconnecting(event.disconnectCause)
                 }
                 onEvent<Event.WebSocket.OnConnectedEventReceived> {
-                    State.Connected(event = it.connectedEvent, webSocket = webSocket)
+                    State.Connected(event = it.connectedEvent, webSocket = this.webSocket)
                 }
                 onEvent<Event.Lifecycle.Terminate> {
                     webSocket.cancel()
@@ -332,8 +330,9 @@ internal open class ChatSocket constructor(
                 logger.logE("onMessage", t)
                 onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
             }
+        } else {
+            stateMachine.sendEvent(event)
         }
-        stateMachine.sendEvent(event)
     }
 
     private fun handleChatEvent(text: String) {
@@ -342,6 +341,7 @@ internal open class ChatSocket constructor(
             val event = eventResult.data()
             if (!connectionEventReceived) {
                 if (event is ConnectedEvent) {
+                    connectionEventReceived = true
                     stateMachine.sendEvent(Event.WebSocket.OnConnectedEventReceived(event))
                 } else {
                     onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))

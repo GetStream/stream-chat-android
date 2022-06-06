@@ -41,7 +41,7 @@ internal class ChatEventsObservable(
     private val socket: ChatSocket,
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
     private val scope: CoroutineScope,
-    private val chatSocketExperimental: ChatSocketExperimental? = null
+    private val chatSocketExperimental: ChatSocketExperimental
 ) {
 
     private val logger = ChatLogger.get("EventsObservable")
@@ -77,7 +77,7 @@ internal class ChatEventsObservable(
     private fun checkIfEmpty() {
         if (subscriptions.isEmpty()) {
             if (ToggleService.isSocketExperimental()) {
-                chatSocketExperimental!!.removeListener(eventsMapper)
+                chatSocketExperimental.removeListener(eventsMapper)
             } else {
                 socket.removeListener(eventsMapper)
             }
@@ -106,7 +106,7 @@ internal class ChatEventsObservable(
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
             if (ToggleService.isSocketExperimental()) {
-                chatSocketExperimental!!.addListener(eventsMapper)
+                chatSocketExperimental.addListener(eventsMapper)
             } else {
                 socket.addListener(eventsMapper)
             }

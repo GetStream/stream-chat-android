@@ -26,7 +26,11 @@ internal sealed class Event {
 
     sealed class Lifecycle : Event() {
 
-        object Started : Lifecycle()
+        object Started : Lifecycle() {
+            override fun toString(): String {
+                return "Event.Lifecycle.Started"
+            }
+        }
 
         sealed class Stopped(val disconnectCause: DisconnectCause) : Lifecycle() {
             /**
@@ -35,32 +39,64 @@ internal sealed class Event {
             data class WithReason(
                 val cause: DisconnectCause,
                 val shutdownReason: ShutdownReason = ShutdownReason.GRACEFUL,
-            ) : Stopped(disconnectCause = cause)
+            ) : Stopped(disconnectCause = cause) {
+                override fun toString(): String {
+                    return "Event.Lifecycle.Stopped.WithReason"
+                }
+            }
 
             /**
              * Stop and discard all pending messages.
              */
-            data class AndAborted(val cause: DisconnectCause) : Stopped(disconnectCause = cause)
+            data class AndAborted(val cause: DisconnectCause) : Stopped(disconnectCause = cause) {
+                override fun toString(): String {
+                    return "Event.Lifecycle.Stopped.Aborted"
+                }
+            }
         }
 
-        object Terminate : Lifecycle()
+        object Terminate : Lifecycle() {
+            override fun toString(): String {
+                return "Event.Lifecycle.Terminate"
+            }
+        }
     }
 
     sealed class WebSocket : Event() {
-        object Terminate : WebSocket()
+        object Terminate : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.Terminate"
+            }
+        }
 
-        data class OnConnectionOpened<out WEB_SOCKET : Any>(val webSocket: WEB_SOCKET) : WebSocket()
+        data class OnConnectionOpened<out WEB_SOCKET : Any>(val webSocket: WEB_SOCKET) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnConnectionOpened"
+            }
+        }
 
-        data class OnConnectedEventReceived(val connectedEvent: ConnectedEvent) : WebSocket()
+        data class OnConnectedEventReceived(val connectedEvent: ConnectedEvent) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnConnectedEventReceived"
+            }
+        }
 
-        data class OnMessageReceived(val message: String) : WebSocket()
+        data class OnMessageReceived(val message: String) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnMessageReceived"
+            }
+        }
 
         /**
          * Invoked when the peer has indicated that no more incoming messages will be transmitted.
          *
          * @property shutdownReason Reason to shutdown from the peer.
          */
-        data class OnConnectionClosing(val shutdownReason: ShutdownReason) : WebSocket()
+        data class OnConnectionClosing(val shutdownReason: ShutdownReason) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnConnectionClosing"
+            }
+        }
 
         /**
          * Invoked when both peers have indicated that no more messages will be transmitted and the connection has been
@@ -68,7 +104,11 @@ internal sealed class Event {
          *
          * @property shutdownReason Reason to shutdown from the peer.
          */
-        data class OnConnectionClosed(val shutdownReason: ShutdownReason) : WebSocket()
+        data class OnConnectionClosed(val shutdownReason: ShutdownReason) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnConnectionClosed"
+            }
+        }
 
         /**
          * Invoked when a web socket has been closed due to an error reading from or writing to the network.
@@ -76,7 +116,11 @@ internal sealed class Event {
          *
          * @property throwable The error causing the failure.
          */
-        data class OnConnectionFailed(val throwable: Throwable) : WebSocket()
+        data class OnConnectionFailed(val throwable: Throwable) : WebSocket() {
+            override fun toString(): String {
+                return "Event.WebSocket.OnConnectionFailed"
+            }
+        }
     }
 }
 

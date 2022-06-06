@@ -25,7 +25,7 @@ internal sealed class UserState {
 
     internal fun userOrError(): UserModel = when (this) {
         is UserSet -> user
-        is AnonymousUserSet -> anonymousUser ?: error("This state doesn't contain user!")
+        is AnonymousUserSet -> anonymousUser ?: error("'AnonymousUserSet' state doesn't contain user!")
         else -> error("This state doesn't contain user!")
     }
 }
