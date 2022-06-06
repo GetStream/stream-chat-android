@@ -32,11 +32,4 @@ internal interface ChatEventCache {
      * needs to be fired after a timer.
      */
     fun processEvent(event: ChatEvent)
-
-    /**
-     * Registers a lambda that should be
-     * invoked when an event has been processed
-     * and needs to be fired.
-     */
-    fun setOnEventFired(onEvent: (event: ChatEvent) -> Unit)
 }

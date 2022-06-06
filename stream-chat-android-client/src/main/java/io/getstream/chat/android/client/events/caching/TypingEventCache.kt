@@ -24,8 +24,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 /**
  * Caches [TypingStartEvent]s and automatically "cleans" stale ones
@@ -41,18 +43,18 @@ import kotlinx.coroutines.launch
  */
 internal class TypingEventCache(
     private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
-    private val cleanStaleEventMs: Long = EphemeralStartTypingEvent.DEFAULT_DELAY_TIME_MS,
-    private var onEventFired: (event: ChatEvent) -> Unit,
+    private val cleanStaleEventMs: Long = SelfStoppingTypingEvent.DEFAULT_DELAY_TIME_MS,
+    private val onEventFired: (event: ChatEvent) -> Unit,
 ) : ChatEventCache {
 
     /**
-     *  A list of currently typing users. Only [EphemeralStartTypingEvent]s
+     *  A list of currently typing users. Only [SelfStoppingTypingEvent]s
      *  are stored here, which are by design self "cleaning" [TypingStartEvent]s.
      *
      *  [TypingStopEvent] are not stored, but their processing removes their
-     *  [EphemeralStartTypingEvent] counterpart.
+     *  [SelfStoppingTypingEvent] counterpart.
      */
-    private val currentlyTypingUsers = mutableMapOf<TypingEventKeyValue, EphemeralStartTypingEvent>()
+    private val currentlyTypingUsers = mutableMapOf<TypingEventKeyValue, SelfStoppingTypingEvent>()
 
     /**
      * Processes the incoming chat event accordingly.
@@ -60,10 +62,17 @@ internal class TypingEventCache(
      * @param event The chat event to be processed.
      */
     override fun processEvent(event: ChatEvent) {
-        if (event is TypingStartEvent) {
-            processTypingStartEvent(event)
-        } else if (event is TypingStopEvent) {
-            processTypingStopEvent(event)
+        when (event) {
+            is TypingStartEvent -> {
+                processTypingStartEvent(event)
+            }
+            is TypingStopEvent -> {
+                processTypingStopEvent(event)
+            }
+            else -> {
+                throw IllegalArgumentException("This class should be only used to cache typing events. " +
+                    "All other events will remain unprocessed.")
+            }
         }
     }
 
@@ -78,9 +87,9 @@ internal class TypingEventCache(
         val keyValue = typingStartEvent.toStartTypingEventKeyValue()
 
         // Cancel the previous timed death
-        currentlyTypingUsers.getOrDefault(keyValue, null)?.job?.cancel()
+        currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
 
-        currentlyTypingUsers[keyValue] = EphemeralStartTypingEvent(
+        currentlyTypingUsers[keyValue] = SelfStoppingTypingEvent(
             coroutineScope = coroutineScope,
             typingStartEvent = typingStartEvent,
             delayTimeMs = cleanStaleEventMs
@@ -100,7 +109,7 @@ internal class TypingEventCache(
         val keyValue = typingStopEvent.toStartTypingEventKeyValue()
 
         // Cancel the previous timed death
-        currentlyTypingUsers.getOrDefault(keyValue, null)?.job?.cancel()
+        currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
 
         currentlyTypingUsers.remove(keyValue)
 
@@ -109,12 +118,10 @@ internal class TypingEventCache(
     }
 
     /**
-     * Sets on event fired.
-     *
-     * @param onEvent The new lambda designed to listen to events being fired.
+     * Cancels [coroutineScope].
      */
-    override fun setOnEventFired(onEvent: (event: ChatEvent) -> Unit) {
-        onEventFired = onEvent
+    fun cancel() {
+        coroutineScope.cancel()
     }
 }
 
@@ -126,12 +133,10 @@ internal class TypingEventCache(
  *
  * @param user The user currently the typing event is tied to.
  * @param cid The channel the the typing event is tied to.
- * @param channelType The channel type the typing event is tied to.
  */
 private data class TypingEventKeyValue(
     val user: User,
     val cid: String,
-    val channelType: String,
 ) {
     companion object {
 
@@ -141,7 +146,6 @@ private data class TypingEventKeyValue(
         fun TypingStartEvent.toStartTypingEventKeyValue() = TypingEventKeyValue(
             user = this.user,
             cid = this.cid,
-            channelType = this.channelType
         )
 
         /**
@@ -150,16 +154,14 @@ private data class TypingEventKeyValue(
         fun TypingStopEvent.toStartTypingEventKeyValue() = TypingEventKeyValue(
             user = this.user,
             cid = this.cid,
-            channelType = this.channelType
         )
     }
 }
 
 /**
- * Essentially a [TypingStartEvent] wrapper that automatically
- * initiates event death after a certain period of time by firing
+ * A [TypingStartEvent] wrapper that automatically fires
  * off a [TypingStopEvent] counterpart of the original event
- * using [onDeath].
+ * using [onTypingStopEvent] after [delayTimeMs] has elapsed.
  *
  * @param coroutineScope The coroutine scope used for timed cleaning
  * of stale jobs. Does not use a default value by design because the job
@@ -167,20 +169,20 @@ private data class TypingEventKeyValue(
  * @param typingStartEvent The event that needs to be wrapped and "cleaned"
  * after a period of time.
  * @param delayTimeMs The period of time it takes before the event is "cleaned".
- * @param onDeath The lambda called when the stale typing event is "cleaned".
+ * @param onTypingStopEvent The lambda called when the stale typing event is "cleaned".
  */
-private data class EphemeralStartTypingEvent(
+private data class SelfStoppingTypingEvent(
     private val coroutineScope: CoroutineScope,
     private val typingStartEvent: TypingStartEvent,
     private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
-    private val onDeath: (TypingStopEvent) -> Unit,
+    private val onTypingStopEvent: (TypingStopEvent) -> Unit,
 ) {
 
     /**
      * The current job.
      * Cancel it before removing an instance.
      */
-    var job: Job? = null
+    private var job: Job? = null
 
     /**
      * Starts the "cleaning" job.
@@ -188,8 +190,15 @@ private data class EphemeralStartTypingEvent(
     init {
         job = coroutineScope.launch {
             delay(delayTimeMs)
-            onDeath(typingStartEvent.toTypingStopEvent())
+            onTypingStopEvent(typingStartEvent.toTypingStopEvent())
         }
+    }
+
+    /**
+     * Cancels the currently running job.
+     */
+    fun cancelJob() {
+        job?.cancel()
     }
 
     companion object {
