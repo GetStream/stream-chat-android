@@ -120,6 +120,7 @@ public fun MessageListViewModel.bindView(
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
+    insideSearch.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))

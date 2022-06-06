@@ -264,6 +264,10 @@ public class MessageListViewModel(
      */
     private var initialJob: Job? = null
 
+    private val _insideSearch = MediatorLiveData<Boolean>()
+
+    public val insideSearch: LiveData<Boolean> = _insideSearch
+
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
@@ -315,6 +319,7 @@ public class MessageListViewModel(
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
+        _insideSearch.addSource(channelState.insideSearch.asLiveData()) { _insideSearch.value = it }
 
         stateMerger.apply {
             val messagesStateLiveData = channelState.messagesState.asLiveData()

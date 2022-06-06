@@ -71,6 +71,8 @@ internal class ChannelMutableState(
     internal val _repliedMessage = MutableStateFlow<Message?>(null)
     internal val _unreadCount = MutableStateFlow(0)
     internal val _membersCount = MutableStateFlow(0)
+    internal val _insideSearch = MutableStateFlow<Boolean>(false)
+
     /** Channel config data. */
     internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
@@ -178,6 +180,8 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
     override var recoveryNeeded: Boolean = false
+
+    override val insideSearch: StateFlow<Boolean> = _insideSearch
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.

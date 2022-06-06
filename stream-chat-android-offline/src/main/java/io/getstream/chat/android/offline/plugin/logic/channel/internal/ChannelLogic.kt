@@ -122,6 +122,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val searchLogic: SearchLogic = SearchLogic(mutableState)
 ) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
@@ -167,11 +168,9 @@ internal class ChannelLogic(
             .onSuccess { channel ->
                 val noMoreMessages = channel.messages.size > request.messagesLimit()
 
-                if (request.filteringOlderMessages() || request.isFilteringNewerMessages()) {
-                    logger.logD("filtering messages. Limit: ${request.messagesLimit()}. received: ${channel.messages.size}")
-                }
-
+                searchLogic.handleMessageBounds(request, !noMoreMessages)
                 mutableState.recoveryNeeded = false
+
                 if (noMoreMessages) {
                     if (request.isFilteringNewerMessages()) {
                         mutableState._endOfNewerMessages.value = true

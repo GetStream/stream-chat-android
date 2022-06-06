@@ -152,6 +152,8 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
 
+    private var shouldRequestAtBottom : Boolean= false
+
     /**
      * Used to enable or disable parts of the UI depending
      * on which abilities the user has in the given channel.
@@ -791,6 +793,10 @@ public class MessageListView : ConstraintLayout {
      */
     public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
+    }
+
+    public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
+        this.shouldRequestAtBottom = shouldRequest
     }
 
     /**
