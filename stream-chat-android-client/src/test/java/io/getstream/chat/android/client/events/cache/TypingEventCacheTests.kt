@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.events.cache
 
 import io.getstream.chat.android.client.Mother
@@ -17,7 +33,7 @@ import java.util.Date
 internal class TypingEventCacheTests {
 
     @Test
-    fun `When TypingStartEvent is processed Should emit TypingStopEvent `() = runTest {
+    fun `When TypingStartEvent is processed Should emit TypingStopEvent`() = runTest {
         val typingStartEvent = createTypingStartEvent()
 
         // First processed event will be TypingStartEvent
@@ -29,9 +45,9 @@ internal class TypingEventCacheTests {
             if (typingStopEvent is TypingStopEvent) {
                 assert(
                     // Check that they contain the same essential values
-                    typingStartEvent.cid == typingStopEvent.cid
-                        && typingStartEvent.type == typingStopEvent.type
-                        && typingStartEvent.user == typingStopEvent.user
+                    typingStartEvent.cid == typingStopEvent.cid &&
+                        typingStartEvent.type == typingStopEvent.type &&
+                        typingStartEvent.user == typingStopEvent.user
                 )
             }
         }
@@ -89,13 +105,15 @@ internal class TypingEventCacheTests {
         channelId: String = "123",
         channelType: String = "messaging",
         parentId: String? = null,
-    ) = TypingStartEvent(type = type,
+    ) = TypingStartEvent(
+        type = type,
         createdAt = createdAt,
         user = user,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        parentId = parentId)
+        parentId = parentId
+    )
 
     private fun createTypingStopEvent(
         type: String = "mockType",
@@ -105,13 +123,13 @@ internal class TypingEventCacheTests {
         channelId: String = "123",
         channelType: String = "messaging",
         parentId: String? = null,
-    ) = TypingStopEvent(type = type,
+    ) = TypingStopEvent(
+        type = type,
         createdAt = createdAt,
         user = user,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        parentId = parentId)
+        parentId = parentId
+    )
 }
-
-
