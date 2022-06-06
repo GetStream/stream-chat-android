@@ -59,6 +59,7 @@ import io.getstream.chat.android.offline.extensions.downloadAttachment
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
+ * @param modifier Modifier for styling.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -79,13 +80,20 @@ public fun FileAttachmentContent(
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(
-                attachment = attachment,
-                onClick = {
-                    previewHandlers
-                        .firstOrNull { it.canHandle(attachment) }
-                        ?.handleAttachmentPreview(attachment)
-                },
-                onLongClick = { onItemLongClick(message) }
+                modifier = Modifier
+                    .padding(2.dp)
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            previewHandlers
+                                .firstOrNull { it.canHandle(attachment) }
+                                ?.handleAttachmentPreview(attachment)
+                        },
+                        onLongClick = { onItemLongClick(message) },
+                    ),
+                attachment = attachment
             )
         }
     }
@@ -95,27 +103,16 @@ public fun FileAttachmentContent(
  * Represents each file item in the list of file attachments.
  *
  * @param attachment The file attachment to show.
- * @param onLongClick Handler used when the item is long clicked.
- * @param onClick Handler used when the item is clicked.
+ * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentItem(
     attachment: Attachment,
-    onLongClick: () -> Unit = {},
-    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
 
     Surface(
-        modifier = Modifier
-            .padding(2.dp)
-            .fillMaxWidth()
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
+        modifier = modifier,
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment
     ) {
@@ -128,7 +125,7 @@ public fun FileAttachmentItem(
         ) {
             FileAttachmentImage(attachment = attachment)
             FileAttachmentDescription(attachment = attachment)
-            DownloadIcon(attachment = attachment)
+            FileAttachmentDownloadIcon(attachment = attachment)
         }
     }
 }
@@ -170,7 +167,7 @@ private fun FileAttachmentDescription(attachment: Attachment) {
  * @param attachment The attachment to download.
  */
 @Composable
-private fun RowScope.DownloadIcon(attachment: Attachment) {
+private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
     val context = LocalContext.current
 
     Icon(

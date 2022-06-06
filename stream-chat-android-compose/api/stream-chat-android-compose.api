@@ -468,7 +468,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/StreamAttach
 public final class io/getstream/chat/android/compose/ui/attachments/content/FileAttachmentContentKt {
 	public static final fun FileAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun FileAttachmentImage (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/runtime/Composer;I)V
-	public static final fun FileAttachmentItem (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun FileAttachmentItem (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/FileAttachmentPreviewContentKt {
@@ -481,7 +481,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/File
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/FileUploadContentKt {
 	public static final fun FileUploadContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun FileUploadItem (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun FileUploadItem (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentContentKt {

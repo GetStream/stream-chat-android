@@ -50,7 +50,9 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * Represents the content when files are being uploaded.
  *
  * @param attachmentState The state of this attachment.
+ * @param modifier Modifier for styling.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileUploadContent(
     attachmentState: AttachmentState,
@@ -62,15 +64,22 @@ public fun FileUploadContent(
     Column(modifier = modifier) {
         for (attachment in message.attachments) {
             FileUploadItem(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            if (!attachment.isUploading()) {
+                                previewHandlers
+                                    .firstOrNull { it.canHandle(attachment) }
+                                    ?.handleAttachmentPreview(attachment)
+                            }
+                        },
+                        onLongClick = { }
+                    ),
                 attachment = attachment,
-                onClick = {
-                    if (!attachment.isUploading()) {
-                        previewHandlers
-                            .firstOrNull { it.canHandle(attachment) }
-                            ?.handleAttachmentPreview(attachment)
-                    }
-                },
-                onLongClick = { }
             )
         }
     }
@@ -80,24 +89,15 @@ public fun FileUploadContent(
  * Represents each uploading item, with its upload progress.
  *
  * @param attachment The attachment that's being uploaded.
+ * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileUploadItem(
     attachment: Attachment,
-    onLongClick: () -> Unit = {},
-    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = Modifier
-            .padding(2.dp)
-            .fillMaxWidth()
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
+        modifier = modifier,
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment
     ) {
