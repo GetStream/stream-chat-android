@@ -2,8 +2,11 @@
 
 package io.getstream.chat.docs.kotlin.ui.guides
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.models.Attachment
@@ -15,11 +18,18 @@ import io.getstream.chat.android.ui.message.input.attachment.selected.internal.S
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 import io.getstream.chat.docs.databinding.ItemDateAttachmentBinding
 import io.getstream.chat.docs.databinding.ItemDateAttachmentPreviewBinding
+import io.getstream.chat.docs.databinding.ViewQuotedDateAttachmentBinding
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/)
@@ -127,5 +137,47 @@ class AddingCustomAttachmentsSnippet : Fragment() {
                     .toString()
             }
         }
+    }
+
+    class QuotedDateAttachmentView(context: Context): FrameLayout(context) {
+
+        private val binding = ViewQuotedDateAttachmentBinding.inflate(LayoutInflater.from(context), this)
+
+        fun showDate(attachment: Attachment) {
+            binding.dateTextView.text = parseDate(attachment)
+        }
+
+        private fun parseDate(attachment: Attachment): String {
+            val date = attachment.extraData["payload"].toString()
+            return StringBuilder().apply {
+                val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
+                val year = Calendar.getInstance().apply {
+                    timeInMillis = dateTime.time
+                }.get(Calendar.YEAR)
+                if (Calendar.getInstance().get(Calendar.YEAR) != year) {
+                    append(year).append("\n")
+                }
+                append(date.replace(", $year", ""))
+            }.toString()
+        }
+    }
+
+    class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
+        override fun canHandle(message: Message): Boolean {
+            return message.attachments.any { it.type == "date" }
+        }
+
+        override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View {
+            return QuotedDateAttachmentView(parent.context).apply {
+                showDate(message.attachments.first())
+            }
+        }
+    }
+
+    fun renderingQuotedDateAttachments() {
+        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
+            QuotedDateAttachmentFactory(),
+            DefaultQuotedAttachmentMessageFactory()
+        ))
     }
 }

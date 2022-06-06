@@ -26,7 +26,7 @@ spotless {
     }
     format "xml", {
         target "**/*.xml"
-        targetExclude "**/build/**/*.xml"
+        targetExclude "**/build/**/*.xml", "**/detekt-baseline.xml"
         licenseHeaderFile "$rootDir/spotless/spotless.license.xml", "(<[^!?])"
     }
 }

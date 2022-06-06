@@ -630,23 +630,23 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
     if (validationErrors.isNotEmpty()) {
         val firstValidationError = validationErrors.first()
 
-        val errorMessage = when (val validationError = firstValidationError) {
+        val errorMessage = when (firstValidationError) {
             is ValidationError.MessageLengthExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_message_length,
-                    validationError.maxMessageLength
+                    firstValidationError.maxMessageLength
                 )
             }
             is ValidationError.AttachmentCountExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_attachment_count,
-                    validationError.maxAttachmentCount
+                    firstValidationError.maxAttachmentCount
                 )
             }
             is ValidationError.AttachmentSizeExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_file_size,
-                    MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
+                    MediaStringUtil.convertFileSizeByteCount(firstValidationError.maxAttachmentSize)
                 )
             }
             is ValidationError.ContainsLinksWhenNotAllowed -> {

@@ -19,9 +19,12 @@
 package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -35,6 +38,7 @@ public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Afte
     private var beforeAllCalled: Boolean = false
 
     override fun beforeAll(context: ExtensionContext) {
+        Dispatchers.setMain(dispatcher)
         DispatcherProvider.set(
             mainDispatcher = dispatcher,
             ioDispatcher = dispatcher
@@ -47,6 +51,7 @@ public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Afte
     }
 
     override fun afterAll(context: ExtensionContext) {
+        Dispatchers.resetMain()
         DispatcherProvider.reset()
     }
 }
