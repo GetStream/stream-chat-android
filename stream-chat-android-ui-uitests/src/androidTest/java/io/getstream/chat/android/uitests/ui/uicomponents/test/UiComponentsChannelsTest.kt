@@ -17,7 +17,6 @@
 package io.getstream.chat.android.uitests.ui.uicomponents.test
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
 import io.getstream.chat.android.uitests.ui.MockWebServerTest
 import io.getstream.chat.android.uitests.ui.compose.robot.composeLoginRobot
 import io.getstream.chat.android.uitests.ui.uicomponents.robot.channelsRobot
@@ -25,7 +24,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-@LargeTest
 internal class UiComponentsChannelsTest : MockWebServerTest() {
 
     @Test

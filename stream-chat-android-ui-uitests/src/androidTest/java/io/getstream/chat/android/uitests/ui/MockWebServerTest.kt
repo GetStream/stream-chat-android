@@ -66,7 +66,7 @@ internal open class MockWebServerTest {
         ChatClient.Builder("hrwwzsgrzapv", context)
             .baseUrl(mockWebServer.url("/").toString())
             .withPlugin(offlinePluginFactory)
-            .logLevel(ChatLogLevel.NOTHING)
+            .logLevel(ChatLogLevel.ALL)
             .build()
     }
 
