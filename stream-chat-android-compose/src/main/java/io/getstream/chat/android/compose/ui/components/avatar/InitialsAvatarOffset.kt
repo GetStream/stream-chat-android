@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Class that determines offset for the initials of the [InitialsAvatar] based on their position inside the group.
+ * Determines the offset for the initials of the [InitialsAvatar] based on their position inside the group.
  *
  * @param initialsOffset The offset to be applied to the initials.
  */
