@@ -36,8 +36,6 @@ internal class UiComponentsMessagesTest : MockWebServerTest() {
 
         channelsRobot {
             clickAnyChannel()
-            assertChannelIsDisplayed()
-            clickAnyChannel()
         }
 
         messagesRobot {

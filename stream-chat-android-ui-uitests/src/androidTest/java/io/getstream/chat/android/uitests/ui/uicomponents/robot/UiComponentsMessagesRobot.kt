@@ -16,9 +16,10 @@
 
 package io.getstream.chat.android.uitests.ui.uicomponents.robot
 
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import io.getstream.chat.android.uitests.R
 
 /**
@@ -38,7 +39,7 @@ internal class MessagesRobotUiComponents : BaseUiComponentsTestRobot() {
      */
     fun typeMessageText(text: String) {
         waitForViewWithId(R.id.messageEditText)
-            .perform(typeText(text), closeSoftKeyboard())
+        onView(withId(R.id.messageEditText)).perform(typeText(text), closeSoftKeyboard())
     }
 
     /**
@@ -46,7 +47,7 @@ internal class MessagesRobotUiComponents : BaseUiComponentsTestRobot() {
      */
     fun clickSendButton() {
         waitForViewWithId(R.id.sendButtonContainer)
-            .perform(ViewActions.click())
+        clickElementById(R.id.sendButtonContainer)
     }
 
     /**

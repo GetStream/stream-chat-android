@@ -35,7 +35,7 @@ internal open class BaseUiComponentsTestRobot {
      * @param resId The layout ID of a view to click.
      */
     fun clickElementById(resId: Int): ViewInteraction {
-        return onView((withId(resId))).perform(ViewActions.click())
+        return onView(withId(resId)).perform(ViewActions.click())
     }
 
     /**
@@ -43,8 +43,9 @@ internal open class BaseUiComponentsTestRobot {
      *
      * @param resId The layout ID of a view to click.
      */
-    fun clickElementByIdWithDelay(resId: Int) {
-        waitForViewWithId(resId).perform(ViewActions.click())
+    fun clickElementByIdWithDelay(resId: Int): ViewInteraction {
+        waitForViewWithId(resId)
+        return clickElementById(resId)
     }
 
     /**
@@ -52,8 +53,9 @@ internal open class BaseUiComponentsTestRobot {
      *
      * @param resId The layout ID of a view to check.
      */
-    fun assertElementWithIdIsDisplayed(resId: Int) {
-        waitForViewWithId(resId).check(matches(isDisplayed()))
+    fun assertElementWithIdIsDisplayed(resId: Int): ViewInteraction {
+        waitForViewWithId(resId)
+        return onView(withId(resId)).check(matches(isDisplayed()))
     }
 
     /**
@@ -61,7 +63,7 @@ internal open class BaseUiComponentsTestRobot {
      *
      * @param resId The layout ID of a view to check.
      */
-    fun waitForViewWithId(resId: Int): ViewInteraction {
-        return WaitViewAction.waitForViewWithId(resId)
+    fun waitForViewWithId(resId: Int) {
+        WaitViewAction.waitForViewWithId(resId)
     }
 }
