@@ -57,11 +57,13 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
     }
 
     override fun dispose() {
-        @OptIn(DelicateCoroutinesApi::class)
-        GlobalScope.launch(DispatcherProvider.Main) {
-            ProcessLifecycleOwner.get()
-                .lifecycle
-                .removeObserver(this@StreamLifecyclePublisher)
+        if (isObserving) {
+            @OptIn(DelicateCoroutinesApi::class)
+            GlobalScope.launch(DispatcherProvider.Main) {
+                ProcessLifecycleOwner.get()
+                    .lifecycle
+                    .removeObserver(this@StreamLifecyclePublisher)
+            }
         }
         isObserving = false
     }

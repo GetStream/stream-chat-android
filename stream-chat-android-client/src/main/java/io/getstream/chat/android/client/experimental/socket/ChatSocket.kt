@@ -204,6 +204,9 @@ internal open class ChatSocket constructor(
     }
 
     fun disconnect(cause: DisconnectCause? = null) {
+        if (cause is DisconnectCause.UnrecoverableError) {
+            reconnectionAttempts = 0
+        }
         connectLifecyclePublisher.onDisconnect(cause)
     }
 
