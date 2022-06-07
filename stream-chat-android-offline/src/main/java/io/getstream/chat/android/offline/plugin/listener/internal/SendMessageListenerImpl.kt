@@ -94,8 +94,8 @@ internal class SendMessageListenerImpl(
             return
         }
         val isPermanentError = error.isPermanent()
-        val isMessageModerationFailed = error is ChatNetworkError
-            && error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
+        val isMessageModerationFailed = error is ChatNetworkError &&
+            error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
         StreamLog.w(TAG) {
             "[handleSendMessageFail] isPermanentError: $isPermanentError" +
                 ", isMessageModerationFailed: $isMessageModerationFailed"

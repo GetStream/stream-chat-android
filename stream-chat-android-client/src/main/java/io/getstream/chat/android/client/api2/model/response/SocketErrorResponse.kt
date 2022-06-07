@@ -43,7 +43,5 @@ internal data class SocketErrorResponse(
             val code: Int = -1,
             val messages: List<String> = emptyList()
         )
-
-
     }
 }

@@ -18,6 +18,8 @@ package com.getstream.sdk.chat.utils.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageSyncType
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
@@ -47,3 +49,10 @@ public fun Message.getCreatedAtOrThrow(): Date {
 public fun Message.getCreatedAtOrNull(): Date? {
     return createdAt ?: createdLocallyAt
 }
+
+/**
+ * @return if the message failed at moderation or not
+ */
+public fun Message.isModerationFailed(): Boolean = isMine() &&
+    syncStatus == SyncStatus.FAILED_PERMANENTLY &&
+    syncDescription?.type == MessageSyncType.FAILED_MODERATION

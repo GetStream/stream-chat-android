@@ -84,7 +84,6 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")</ID>
-    <ID>MaxLineLength:EventHandlerProvider.kt$EventHandlerProvider$get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
@@ -99,7 +98,6 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
-    <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
     <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>

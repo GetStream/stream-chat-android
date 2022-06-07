@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.EditModeratedMessage
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
@@ -60,11 +61,13 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
@@ -330,6 +333,20 @@ public fun MessagesScreen(
                     listViewModel.performMessageAction(action)
                 },
                 onDismiss = { listViewModel.removeOverlay() }
+            )
+        }
+
+        AnimatedVisibility(
+            visible = selectedMessageState is SelectedMessageFailedModerationState,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
+            ModeratedMessageDialog(
+                message = selectedMessage,
+                onDismissRequest = { listViewModel.removeOverlay() },
+                onSendAnyway = { composerViewModel.sendModeratedMessage(it) },
+                onEditMessage = { composerViewModel.performMessageAction(EditModeratedMessage(it)) },
+                onDeleteMessage = { listViewModel.deleteMessage(message = it, true) }
             )
         }
 

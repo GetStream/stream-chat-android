@@ -18,6 +18,7 @@ package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.extensions.containsLinks
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.EditModeratedMessage
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
@@ -228,22 +230,25 @@ public class MessageComposerController(
     public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
-     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply]
+     * or [EditModeratedMessage] action.
      */
     public val lastActiveAction: Flow<MessageAction?>
-        get() = messageActions.map { actions -> actions.lastOrNull { it is Edit || it is Reply } }
+        get() = messageActions.map { actions ->
+            actions.lastOrNull { it is Edit || it is Reply || it is EditModeratedMessage }
+        }
 
     /**
-     * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
+     * Gets the active [Edit], [Reply] or [EditModeratedMessage] action, whichever is last, to show on the UI.
      */
     private val activeAction: MessageAction?
-        get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
+        get() = messageActions.value.lastOrNull { it is Edit || it is Reply || it is EditModeratedMessage }
 
     /**
      * Gives us information if the active action is Edit, for business logic purposes.
      */
     private val isInEditMode: Boolean
-        get() = activeAction is Edit
+        get() = activeAction is Edit || activeAction is EditModeratedMessage
 
     /**
      * Gets the parent message id if we are in thread mode, or null otherwise.
@@ -391,6 +396,11 @@ public class MessageComposerController(
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
+            is EditModeratedMessage -> {
+                input.value = messageAction.message.text
+                selectedAttachments.value = messageAction.message.attachments
+                messageActions.value = messageActions.value + messageAction
+            }
             else -> {
                 // no op, custom user action
             }
@@ -455,13 +465,19 @@ public class MessageComposerController(
 
     /**
      * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using [ChatClient].
+     * message, or we send a new message, using [ChatClient]. If the message was a moderated message the logic for
+     * sending will be delegated to [sendModeratedMessage].
      *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
+        if (activeAction is EditModeratedMessage || message.isModerationFailed()) {
+            sendModeratedMessage(message)
+            return
+        }
+
         val sendMessageCall = if (isInEditMode) {
             getEditMessageCall(message)
         } else {
@@ -473,6 +489,33 @@ public class MessageComposerController(
         dismissMessageActions()
         clearData()
         handleCooldownTimer()
+
+        sendMessageCall.enqueue()
+    }
+
+    /**
+     * Sends a given message using our Stream API in the case the message has been moderated. If the user was editing
+     * a moderated message it will be deleted and the edit will be sent and if the user resent the message, the old one
+     * is deleted and the new one is sent. In case of editing it will also dismiss the current action.
+     *
+     * @param message The message to send.
+     */
+    public fun sendModeratedMessage(message: Message) {
+        (activeAction?.message?.id ?: message.id).let { chatClient.deleteMessage(it, true).enqueue() }
+
+        val newMessage = buildNewMessage(
+            message = message.text,
+            attachments = message.attachments
+        )
+
+        val (channelType, channelId) = newMessage.cid.cidToTypeAndId()
+        val sendMessageCall = chatClient.sendMessage(channelType, channelId, newMessage)
+
+        if (activeAction is EditModeratedMessage) {
+            dismissMessageActions()
+            clearData()
+            handleCooldownTimer()
+        }
 
         sendMessageCall.enqueue()
     }
@@ -499,7 +542,7 @@ public class MessageComposerController(
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode) {
+        return if (isInEditMode && activeAction !is EditModeratedMessage) {
             actionMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),

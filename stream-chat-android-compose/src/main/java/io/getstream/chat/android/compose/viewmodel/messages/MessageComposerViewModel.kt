@@ -173,6 +173,15 @@ public class MessageComposerViewModel(
     public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message)
 
     /**
+     * Sends a given message using our Stream API in the case the message has been moderated. If the user was editing
+     * a moderated message it will be deleted and the edit will be sent and if the user resent the message, the old one
+     * is deleted and the new one is sent. In case of editing it will also dismiss the current action.
+     *
+     * @param message The message to send.
+     */
+    public fun sendModeratedMessage(message: Message): Unit = messageComposerController.sendModeratedMessage(message)
+
+    /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and
      * apply the given changes.
      *

@@ -27,9 +27,11 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Mess
 
 @OptIn(ExperimentalStdlibApi::class)
 internal val moshi: Moshi = Moshi.Builder()
-    .add(PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, "type")
-        .withSubtype(MessageAwaitingAttachmentsEntity::class.java, "message.sync.in_progress.await_attachments")
-        .withSubtype(MessageModerationFailedEntity::class.java, "message.sync.failed.moderation"))
+    .add(
+        PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, "type")
+            .withSubtype(MessageAwaitingAttachmentsEntity::class.java, "message.sync.in_progress.await_attachments")
+            .withSubtype(MessageModerationFailedEntity::class.java, "message.sync.failed.moderation")
+    )
     .addAdapter(DateAdapter())
     .add(KotlinJsonAdapterFactory())
     .build()

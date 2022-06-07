@@ -62,6 +62,11 @@ public class Copy(message: Message) : MessageAction(message)
 public class Edit(message: Message) : MessageAction(message)
 
 /**
+ * Start editing moderated message
+ */
+public class EditModeratedMessage(message: Message) : MessageAction(message)
+
+/**
  * Pins or unpins the message from the channel.
  */
 public class Pin(message: Message) : MessageAction(message)

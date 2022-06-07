@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -550,6 +551,17 @@ public class MessageListViewModel(
                     message = message,
                     ownCapabilities = ownCapabilities.value
                 )
+            )
+        }
+    }
+
+    /**
+     * Triggered when user clicks or long taps and selects a moderated message.
+     */
+    public fun selectModeratedMessage(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(
+                SelectedMessageFailedModerationState(message, ownCapabilities.value)
             )
         }
     }
