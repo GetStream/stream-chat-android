@@ -20,9 +20,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class StreamLifecycleObserver(
     private val lifecycle: Lifecycle,
@@ -33,20 +31,18 @@ internal class StreamLifecycleObserver(
     @Volatile
     private var isObserving = false
 
-    fun observe() {
+    suspend fun observe() {
         if (isObserving.not()) {
             isObserving = true
-            @OptIn(DelicateCoroutinesApi::class)
-            GlobalScope.launch(DispatcherProvider.Main) {
+            withContext(DispatcherProvider.Main) {
                 lifecycle.addObserver(this@StreamLifecycleObserver)
             }
         }
     }
 
-    fun dispose() {
+    suspend fun dispose() {
         if (isObserving) {
-            @OptIn(DelicateCoroutinesApi::class)
-            GlobalScope.launch(DispatcherProvider.Main) {
+            withContext(DispatcherProvider.Main) {
                 lifecycle.addObserver(this@StreamLifecycleObserver)
             }
         }
