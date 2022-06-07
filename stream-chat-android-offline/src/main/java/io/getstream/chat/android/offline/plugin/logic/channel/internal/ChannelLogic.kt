@@ -154,7 +154,11 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
-        runChannelQueryOffline(request)
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (!request.isFilteringNewerMessages()) {
+            runChannelQueryOffline(request)
+        }
     }
 
     override suspend fun onQueryChannelResult(
@@ -271,7 +275,12 @@ internal class ChannelLogic(
             return Result.error(preconditionResult.error())
         }
 
-        val offlineChannel = runChannelQueryOffline(request)
+        //Newer messages don't use database to avoid pagination problems
+        val offlineChannel = if (!request.isFilteringNewerMessages()) {
+            runChannelQueryOffline(request)
+        } else {
+            null
+        }
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
@@ -372,6 +381,8 @@ internal class ChannelLogic(
         if (shouldRefreshMessages) {
             lastRefresh = Date()
         }
+
+        logger.logD("Messages updated!!")
 
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
@@ -599,7 +610,7 @@ internal class ChannelLogic(
             -> messages.last().id
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
-            Pagination.AROUND_ID
+            Pagination.AROUND_ID,
             -> messages.first().id
         }
     }
