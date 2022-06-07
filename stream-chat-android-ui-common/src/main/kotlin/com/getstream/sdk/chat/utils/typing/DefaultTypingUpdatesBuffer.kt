@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils.typing
 
+import android.util.Log
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,10 +119,10 @@ public class DefaultTypingUpdatesBuffer(
 
         sendUpdatesJob = coroutineScope.launch {
 
-            do {
+            while (isTyping) {
                 onTypingStarted()
                 delay(DEFAULT_SEND_TYPING_UPDATES_INTERVAL)
-            } while (isTyping)
+            }
 
             onTypingStopped()
         }

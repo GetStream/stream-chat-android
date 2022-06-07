@@ -54,14 +54,13 @@ private class MessageInputViewSnippets() : Fragment() {
         }
         messageInputView.setTypingUpdatesBuffer(
             DefaultTypingUpdatesBuffer(
-                // The period after the last keystroke before
-                // a stop typing API call is made
-                delayIntervalMillis = 5000L,
                 onTypingStarted = {
                     // Make a keystroke API call
+                    // Implement your custom action
                 },
                 onTypingStopped = {
                     // Make a typing stopped API call
+                    // Implement your custom action
                 }
             )
         )
