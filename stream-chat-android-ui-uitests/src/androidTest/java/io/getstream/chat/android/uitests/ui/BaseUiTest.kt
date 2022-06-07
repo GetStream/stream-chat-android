@@ -33,10 +33,11 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import org.json.JSONObject
 import org.junit.Before
 import org.junit.Rule
 
-internal open class MockWebServerTest {
+internal abstract class BaseUiTest {
 
     private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -53,13 +54,17 @@ internal open class MockWebServerTest {
 
     @Before
     fun setup() {
-        setupSdk()
-        setupServer()
+        setupStreamSdk()
+        setupMockWebServer()
     }
 
-    private fun setupSdk() {
+    private fun setupStreamSdk() {
         val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(),
+            config = Config(
+                backgroundSyncEnabled = false,
+                userPresence = false,
+                persistenceEnabled = false,
+            ),
             appContext = context
         )
 
@@ -70,7 +75,7 @@ internal open class MockWebServerTest {
             .build()
     }
 
-    private fun setupServer() {
+    private fun setupMockWebServer() {
         mockWebServer.dispatcher = object : Dispatcher() {
             @Throws(InterruptedException::class)
             override fun dispatch(request: RecordedRequest): MockResponse {
@@ -81,26 +86,30 @@ internal open class MockWebServerTest {
                         object : WebSocketListener() {
                             override fun onOpen(webSocket: WebSocket, response: Response) {
                                 super.onOpen(webSocket, response)
-                                this@MockWebServerTest.webSocket = webSocket
+                                this@BaseUiTest.webSocket = webSocket
                                 webSocket.send(readFileContents(WS_HEALTH_CHECK))
                             }
                         }
                     )
                 } else if (path.startsWith("/channels?")) {
-                    MockResponse().setResponseCode(200)
-                        .setBody(readFileContents(HTTP_CHANNELS))
+                    okResponse(readFileContents(HTTP_CHANNELS))
                 } else if (path.startsWith("/channels/messaging/general/query")) {
-                    MockResponse().setResponseCode(200)
-                        .setBody(readFileContents(HTTP_CHANNEL))
+                    okResponse(readFileContents(HTTP_CHANNEL))
                 } else if (path.startsWith("/channels/messaging/general/message")) {
-                    webSocket.send(readFileContents(WS_MESSAGE_NEW))
-                    MockResponse().setResponseCode(200)
-                        .setBody(readFileContents(HTTP_MESSAGE))
+                    val messageId = JSONObject(request.body.readUtf8()).getString("id")
+                    webSocket.send(readFileContents(WS_MESSAGE_NEW).replace(":messageId", messageId))
+                    okResponse(readFileContents(HTTP_MESSAGE).replace(":messageId", messageId))
                 } else {
                     MockResponse().setResponseCode(404)
                 }
             }
         }
+    }
+
+    private fun okResponse(body: String): MockResponse {
+        return MockResponse()
+            .setResponseCode(200)
+            .setBody(body)
     }
 
     companion object {

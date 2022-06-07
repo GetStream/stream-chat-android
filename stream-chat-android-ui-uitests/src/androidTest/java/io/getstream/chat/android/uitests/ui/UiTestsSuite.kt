@@ -27,7 +27,7 @@ import org.junit.runners.Suite
     ComposeChannelsTest::class,
     ComposeMessagesTest::class,
     UiComponentsChannelsTest::class,
-    UiComponentsMessagesTest::class
+    UiComponentsMessagesTest::class,
 )
 @RunWith(Suite::class)
-internal class MessagesSuite
+internal class UiTestsSuite

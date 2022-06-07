@@ -42,9 +42,9 @@ internal class ComposeChannelsRobot(
 ) : BaseComposeTestRobot(composeTestRule) {
 
     /**
-     * Clicks on any channel in the list.
+     * Clicks the first channel item in the list.
      */
-    fun clickAnyChannel() {
+    fun clickChannelItem() {
         waitForChannelItem().performClick()
     }
 
@@ -57,7 +57,6 @@ internal class ComposeChannelsRobot(
 
     private fun waitForChannelItem(): SemanticsNodeInteraction {
         val contentDescription = "Channel item"
-
         composeTestRule.waitUntil(DEFAULT_WAIT_TIMEOUT) {
             composeTestRule
                 .onAllNodesWithContentDescription(contentDescription)

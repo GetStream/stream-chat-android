@@ -183,6 +183,7 @@ public fun MessageItem(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()

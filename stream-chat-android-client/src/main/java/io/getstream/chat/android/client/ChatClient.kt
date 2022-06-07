@@ -2471,9 +2471,11 @@ internal constructor(
                 )
             }
 
+            // Use clear text traffic for instrumented tests
             val isLocalHost = baseUrl.contains("localhost")
             val httpProtocol = if (isLocalHost) "http" else "https"
             val wsProtocol = if (isLocalHost) "ws" else "wss"
+
             val config = ChatClientConfig(
                 apiKey = apiKey,
                 httpUrl = "$httpProtocol://$baseUrl/",
