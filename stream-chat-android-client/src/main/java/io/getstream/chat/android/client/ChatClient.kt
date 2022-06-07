@@ -237,7 +237,7 @@ internal constructor(
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe()
+                        runBlocking(context = scope.coroutineContext) { lifecycleObserver.observe() }
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
