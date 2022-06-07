@@ -615,7 +615,6 @@ public class MessageListView : ConstraintLayout {
                     endRegionReachedHandler.onEndRegionReached()
                 }
                 val loadMoreAtBottom = {
-                    //Todo: Performance improvement?
                     val lastId = adapter.currentList
                         .asSequence()
                         .filterIsInstance<MessageListItem.MessageItem>()

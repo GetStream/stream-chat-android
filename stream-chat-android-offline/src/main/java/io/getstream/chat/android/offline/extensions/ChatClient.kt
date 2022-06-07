@@ -332,3 +332,48 @@ public fun ChatClient.loadMessageById(
         }
     }
 }
+
+/**
+ * Loads message for a given message id and channel id.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageId The id of the message.
+ *
+ * @return Executable async [Call] responsible for loading a message.
+ */
+@CheckResult
+public fun ChatClient.loadMessageById(
+    cid: String,
+    messageId: String,
+): Call<Message> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult(cid)
+
+        if (cidValidationResult.isSuccess) {
+            val result = getMessage(messageId).await()
+
+            if (result.isSuccess) {
+                val message = result.data()
+                val (channelType, channelId) = cid.cidToTypeAndId()
+
+                logic.channel(channelType = channelType, channelId = channelId).run {
+                    storeMessageLocally(listOf(message))
+                    loadMessagesAroundId(messageId)
+                    upsertMessages(listOf(message))
+                }
+                result
+            } else {
+                try {
+                    val repositoryProvider = RepositoryProvider.get()
+
+                    repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
+                        ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+                } catch (exception: Exception) {
+                    Result.error(exception)
+                }
+            }
+        } else {
+            cidValidationResult.error().toResultError()
+        }
+    }
+}

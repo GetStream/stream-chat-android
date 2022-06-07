@@ -128,8 +128,6 @@ internal class ChannelLogic(
 
     private val logger = ChatLogger.get("Query channel request")
 
-    private var lastRefresh: Date? = null
-
     val cid: String
         get() = mutableState.cid
 
@@ -173,8 +171,11 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
-                Log.d("ChannelLogic", "Is around: ${request.isFilteringAroundIdMessages()}. " +
-                    "messages size: ${channel.messages.size}. Is newer: ${request.isFilteringNewerMessages()}")
+                Log.d(
+                    "ChannelLogic",
+                    "Is around: ${request.isFilteringAroundIdMessages()}. " +
+                        "messages size: ${channel.messages.size}. Is newer: ${request.isFilteringNewerMessages()}"
+                )
                 val noMoreMessages = request.messagesLimit() > channel.messages.size
 
                 searchLogic.handleMessageBounds(request, noMoreMessages)
@@ -222,9 +223,7 @@ internal class ChannelLogic(
      *
      * @return [ChannelState]
      */
-    internal fun state(): ChannelState {
-        return mutableState
-    }
+    internal fun state(): ChannelState = mutableState
 
     /**
      * Starts to watch this channel.
@@ -276,11 +275,7 @@ internal class ChannelLogic(
         }
 
         // Newer messages don't use database to avoid pagination problems
-        val offlineChannel = if (!request.isFilteringNewerMessages()) {
-            runChannelQueryOffline(request)
-        } else {
-            null
-        }
+        val offlineChannel = if (!request.isFilteringNewerMessages()) runChannelQueryOffline(request) else null
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
@@ -373,15 +368,6 @@ internal class ChannelLogic(
     }
 
     internal fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
-        if (lastRefresh != null && (Date().time - 400) < lastRefresh!!.time) {
-            logger.logD("Skipping upsert message because I refresh just happened")
-            return
-        }
-
-        if (shouldRefreshMessages) {
-            lastRefresh = Date()
-        }
-
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages

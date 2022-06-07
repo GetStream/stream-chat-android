@@ -113,6 +113,7 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState;
 	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/state/StateRegistry;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
+	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
@@ -251,6 +252,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/c
 	public abstract fun getEndOfNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getHidden ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInsideSearch ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;

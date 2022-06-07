@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
+@Suppress("VariableNaming")
 internal class ChannelMutableState(
     override val channelType: String,
     override val channelId: String,
