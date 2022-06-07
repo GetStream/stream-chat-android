@@ -168,7 +168,7 @@ public fun MessageItem(
             onLongClick = {
                 if (message.isModerationFailed()) {
                     onModeratedItemInteraction(message)
-                } else if (!message.isUploading()) { {
+                } else if (!message.isUploading()) {
                     onLongItemClick(message)
                 }
             }

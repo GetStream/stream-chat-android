@@ -154,9 +154,11 @@ internal class FailedIndicatorDecorator(
                     MessageSyncType.FAILED_MODERATION -> ColorStateList.valueOf(Color.MAGENTA)
                     else -> null
                 }
-                deliveryFailedIcon.setImageDrawable(listViewStyle.iconFailedMessage.apply {
-                    setTintList(tint)
-                })
+                deliveryFailedIcon.setImageDrawable(
+                    listViewStyle.iconFailedMessage.apply {
+                        setTintList(tint)
+                    }
+                )
             }
         }
         deliveryFailedIcon.isVisible = isFailed || isBanned
