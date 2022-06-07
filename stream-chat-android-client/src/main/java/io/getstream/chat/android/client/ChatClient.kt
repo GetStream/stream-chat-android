@@ -333,16 +333,35 @@ internal constructor(
                 socket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
-            userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE(
+            userState is UserState.UserSet -> {
+                logger.logW(
                     "[setUser] Trying to set user without disconnecting the previous one - " +
                         "make sure that previously set user is disconnected."
                 )
-                Result.error<ConnectionData>(
-                    ChatError(
-                        "User cannot be set until the previous one is disconnected."
-                    )
-                )
+                when {
+                    userState.user.id != user.id -> {
+                        logger.logE("[setUser] Trying to set different user without disconnect previous one")
+                        Result.error(
+                            ChatError(
+                                "User cannot be set until the previous one is disconnected."
+                            )
+                        )
+                    }
+                    else -> {
+                        getConnectionId()?.let { Result.success(ConnectionData(userState.user, it)) }
+                            ?: run {
+                                logger.logE(
+                                    "[setUser] Trying to connect the same user twice without a previous completed " +
+                                        "connection"
+                                )
+                                Result.error(
+                                    ChatError(
+                                        "Failed to connect user. Please check you don't have connected user already."
+                                    )
+                                )
+                            }
+                    }
+                }
             }
             else -> {
                 logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
