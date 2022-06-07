@@ -294,8 +294,8 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  *
  * @return Executable async [Call] responsible for loading a message.
  */
-@CheckResult
-public fun ChatClient.loadMessageById(
+@Deprecated("Use the version without offsets, as it uses less requests to backend")
+    public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
     olderMessagesOffset: Int,
@@ -313,7 +313,8 @@ public fun ChatClient.loadMessageById(
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
-                    loadMessagesAroundId(messageId)
+                    loadOlderMessages(newerMessagesOffset, messageId)
+                    loadNewerMessages(messageId, olderMessagesOffset)
                     upsertMessages(listOf(message))
                 }
                 result
