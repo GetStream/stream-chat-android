@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.experimental.socket.State
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.DELAY_DURATION
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
 import io.getstream.chat.android.client.models.Channel
@@ -77,9 +76,9 @@ internal class QueryChannelsPostponeHelper(
         }
 
         return if (ToggleService.isSocketExperimental()) {
-            when (chatSocketExperimental!!.state) {
-                is State.Connected -> job()
-                else -> {
+            when (chatSocketExperimental!!.isConnected()) {
+                true -> job()
+                false -> {
                     delay(delayDuration)
                     doJob(attemptCount - 1, job)
                 }

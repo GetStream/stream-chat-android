@@ -68,7 +68,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
-import io.getstream.chat.android.client.experimental.socket.State
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -2017,7 +2016,7 @@ internal constructor(
             if (ToggleService.isSocketExperimental().not()) {
                 socketStateService.state.connectionIdOrError()
             } else {
-                chatSocketExperimental.state.connectionIdOrError()
+                chatSocketExperimental.connectionIdOrError()
             }
         }.getOrNull()
     }
@@ -2046,7 +2045,7 @@ internal constructor(
 
     public fun isSocketConnected(): Boolean {
         return if (ToggleService.isSocketExperimental().not()) socketStateService.state is SocketState.Connected
-        else chatSocketExperimental.state is State.Connected
+        else chatSocketExperimental.isConnected()
     }
 
     /**

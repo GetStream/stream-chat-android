@@ -184,7 +184,7 @@ internal open class ChatSocket constructor(
         }
     }
 
-    internal val state
+    private val state
         get() = stateMachine.state
 
     fun connectUser(user: User, isAnonymous: Boolean) {
@@ -303,6 +303,16 @@ internal open class ChatSocket constructor(
             is State.Connected -> state.webSocket.send(event)
             else -> false
         }
+    }
+
+    internal fun isConnected(): Boolean = state is State.Connected
+
+    /**
+     * Get connection id of this connection.
+     */
+    internal fun connectionIdOrError(): String = when (val state = state) {
+        is State.Connected -> state.event?.connectionId ?: error("This state doesn't contain connectionId")
+        else -> error("This state doesn't contain connectionId")
     }
 
     fun reconnectUser(user: User, isAnonymous: Boolean) {
