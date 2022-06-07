@@ -811,6 +811,7 @@ public class MessageListView : ConstraintLayout {
 
     public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
         loadMoreListener.fetchAtBottom(shouldRequest)
+        scrollHelper.unreadCountEnabled = !shouldRequest
     }
 
     /**

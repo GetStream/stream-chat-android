@@ -170,10 +170,10 @@ internal class ChannelLogic(
         }
             .onSuccess { channel ->
                 Log.d("ChannelLogic", "Is around: ${request.isFilteringAroundIdMessages()}. " +
-                    "messages size: ${channel.messages.size}")
-                val noMoreMessages = channel.messages.size > request.messagesLimit()
+                    "messages size: ${channel.messages.size}. Is newer: ${request.isFilteringNewerMessages()}")
+                val noMoreMessages = request.messagesLimit() > channel.messages.size
 
-                searchLogic.handleMessageBounds(request, !noMoreMessages)
+                searchLogic.handleMessageBounds(request, noMoreMessages)
                 mutableState.recoveryNeeded = false
 
                 if (noMoreMessages) {

@@ -8,13 +8,13 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
 
     private var isInsideSearch = false
 
-    fun handleMessageBounds(request: QueryChannelRequest, hasMoreMessages: Boolean) {
+    fun handleMessageBounds(request: QueryChannelRequest, noMoreMessages: Boolean) {
         when {
             !isInsideSearch && request.isFilteringAroundIdMessages() -> {
                 updateSearchState(true)
             }
 
-            isInsideSearch && request.isFilteringNewerMessages() && !hasMoreMessages -> {
+            isInsideSearch && request.isFilteringNewerMessages() && noMoreMessages -> {
                 updateSearchState(false)
             }
         }
