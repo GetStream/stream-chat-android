@@ -128,6 +128,8 @@ internal class ChannelLogic(
 
     private val logger = ChatLogger.get("Query channel request")
 
+    private var lastRefresh: Date? = null
+
     val cid: String
         get() = mutableState.cid
 
@@ -362,6 +364,15 @@ internal class ChannelLogic(
     }
 
     internal fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
+        if (lastRefresh != null && (Date().time - 400) < lastRefresh!!.time) {
+            logger.logD("Skipping upsert message because I refresh just happened")
+            return
+        }
+
+        if (shouldRefreshMessages) {
+            lastRefresh = Date()
+        }
+
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
@@ -491,9 +502,7 @@ internal class ChannelLogic(
      * @param messages The list of messages to update.
      */
     private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
-        if (shouldRefresh) return emptyMap()
-
-        val currentMessages = mutableState._messages.value
+        val currentMessages = if (shouldRefresh) emptyMap() else mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
