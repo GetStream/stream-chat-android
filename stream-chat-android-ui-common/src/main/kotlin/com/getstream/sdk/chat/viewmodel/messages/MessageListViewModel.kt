@@ -540,9 +540,7 @@ public class MessageListViewModel(
                 } else {
                     chatClient.loadMessageById(
                         cid,
-                        event.messageId,
-                        DEFAULT_MESSAGES_LIMIT,
-                        DEFAULT_MESSAGES_LIMIT
+                        event.messageId
                     ).enqueue { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()

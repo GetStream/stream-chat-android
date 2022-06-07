@@ -360,7 +360,6 @@ public fun ChatClient.loadMessageById(
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
                     loadMessagesAroundId(messageId)
-                    upsertMessages(listOf(message))
                 }
                 result
             } else {

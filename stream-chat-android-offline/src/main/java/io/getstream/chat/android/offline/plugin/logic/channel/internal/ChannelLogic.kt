@@ -189,7 +189,11 @@ internal class ChannelLogic(
                     }
                 }
 
-                updateDataFromChannel(channel, request.isFilteringAroundIdMessages())
+                updateDataFromChannel(
+                    channel,
+                    shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+                    scrollUpdate = true
+                )
                 loadingStateByRequest(request).value = false
             }
             .onError { error ->
@@ -307,7 +311,7 @@ internal class ChannelLogic(
     private fun updateDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel)
+        updateDataFromChannel(localChannel, scrollUpdate = true)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -348,7 +352,11 @@ internal class ChannelLogic(
         mutableState._oldMessages.value = parseMessages(messages)
     }
 
-    internal fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean = false) {
+    internal fun updateDataFromChannel(
+        c: Channel,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+    ) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -362,7 +370,10 @@ internal class ChannelLogic(
         // this means that if the offline sync went out of sync things go wrong
         setMembers(c.members)
         setWatchers(c.watchers)
-        upsertMessages(c.messages, shouldRefreshMessages)
+
+        if (!mutableState.insideSearch.value || scrollUpdate) {
+            upsertMessages(c.messages, shouldRefreshMessages)
+        }
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
     }
