@@ -16,8 +16,15 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
-public interface IQuerySort<T : Any> {
+/**
+ * Interface for the sorter of the SDK. Its implementations must provide a comparator to be used for
+ * sorting collections of data in the SDK.
+ */
+public interface QuerySorter<T : Any> {
 
+    /**
+     * Comparator class.
+     */
     public val comparator: Comparator<in T>
 
     public fun toDto(): List<Map<String, Any>>

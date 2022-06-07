@@ -28,9 +28,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 /**
- * Sort specification for api queries. You can specify QuerySort by referencing kotlin class property or passing field
- * name as string instance.
- * QuerySort.asc(Channel::memberCount) and QuerySort.asc<Channel>("member_count") mean the same.
+ * Sort specification for api queries. You can specify QuerySortByReflection by referencing kotlin class property
+ * or passing field name as string instance.
+ * QuerySortByReflection.asc(Channel::memberCount) and QuerySortByReflection.asc<Channel>("member_count") mean the same.
  */
 @Suppress("TooManyFunctions")
 public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {

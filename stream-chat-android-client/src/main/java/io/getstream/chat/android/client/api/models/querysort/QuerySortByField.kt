@@ -22,6 +22,10 @@ import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
 import io.getstream.logging.StreamLog
 
+/**
+ * Implementation of QuerySorter for fields that implements `ComparableFieldProvider`. This QuerySorter doesn't
+ * use reflection and it will, be more performatic than `QuerySortByReflection`.
+ */
 public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() {
 
     private val logger = StreamLog.getLogger("Chat:QuerySortByField")
@@ -38,19 +42,6 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
         sortDirection: SortDirection,
     ): Comparator<T> =
         name.name.comparator(sortDirection)
-
-    private val SortSpecification<T>.comparator: Comparator<T>
-        get() {
-            return when (this.sortAttribute) {
-                is SortAttribute.FieldSortAttribute<T> -> throw IllegalArgumentException(
-                    "FieldSortAttribute can't be used with QuerySortByField"
-                )
-
-                is SortAttribute.FieldNameSortAttribute<T> -> this.sortAttribute.name.comparator(this.sortDirection)
-            }.also {
-                logger.d { "[getComparator] comparator: $it" }
-            }
-        }
 
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->

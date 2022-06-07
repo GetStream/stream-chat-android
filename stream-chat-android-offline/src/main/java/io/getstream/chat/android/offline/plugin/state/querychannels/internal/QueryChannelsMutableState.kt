@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.IQuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.stateIn
 
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
-    override val sort: IQuerySort<Channel>,
+    override val sort: QuerySorter<Channel>,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {

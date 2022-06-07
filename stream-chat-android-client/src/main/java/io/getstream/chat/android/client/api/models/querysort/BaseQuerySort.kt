@@ -20,10 +20,17 @@ import io.getstream.chat.android.client.api.models.querysort.internal.CompositeC
 import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 
-public abstract class BaseQuerySort<T : Any> : IQuerySort<T> {
+/**
+ * Base class for implementing [QuerySorter]. This class holds common code for [QuerySortByField] and
+ * [QuerySortByReflection].
+ */
+public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
 
     internal var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
+    /**
+     * Comparator class that will be generator by the sort specifications.
+     */
     override val comparator: Comparator<in T>
         get() = CompositeComparator(sortSpecifications.map { it.comparator })
 
@@ -37,11 +44,17 @@ public abstract class BaseQuerySort<T : Any> : IQuerySort<T> {
             }
         }
 
+    /**
+     * Comparator from [SortAttribute.FieldSortAttribute]
+     */
     public abstract fun comparatorFromFieldSort(
         firstSort: SortAttribute.FieldSortAttribute<T>,
         sortDirection: SortDirection,
     ): Comparator<T>
 
+    /**
+     * Comparator from [SortAttribute.FieldNameSortAttribute]
+     */
     public abstract fun comparatorFromNameAttribute(
         name: SortAttribute.FieldNameSortAttribute<T>,
         sortDirection: SortDirection,
@@ -49,8 +62,8 @@ public abstract class BaseQuerySort<T : Any> : IQuerySort<T> {
 
     public override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
         listOf(
-            IQuerySort.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
-            IQuerySort.KEY_DIRECTION to sortSpec.sortDirection.value
+            QuerySorter.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
+            QuerySorter.KEY_DIRECTION to sortSpec.sortDirection.value
         ).toMap()
     }
 

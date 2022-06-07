@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.query.pagination
 
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.api.models.querysort.IQuerySort
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 
 private const val MESSAGE_LIMIT = 30
@@ -29,7 +29,7 @@ private const val WATCHER_LIMIT = 30
 public class AnyChannelPaginationRequest(public var messageLimit: Int = MESSAGE_LIMIT) {
     public var messageFilterDirection: Pagination? = null
     public var messageFilterValue: String = ""
-    public var sort: IQuerySort<Channel> = QuerySortByField()
+    public var sort: QuerySorter<Channel> = QuerySortByField()
 
     public var channelLimit: Int = CHANNEL_LIMIT
     public var channelOffset: Int = 0
