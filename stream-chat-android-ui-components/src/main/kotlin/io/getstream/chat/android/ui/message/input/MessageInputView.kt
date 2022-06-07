@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.input
 
 import android.animation.AnimatorSet
@@ -16,13 +32,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
+import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -36,6 +56,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
+import io.getstream.chat.android.ui.message.input.MessageInputView.MessageInputMentionListener
 import io.getstream.chat.android.ui.message.input.MessageInputView.MessageInputViewModeListener
 import io.getstream.chat.android.ui.message.input.MessageInputView.SelectedAttachmentsCountListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
@@ -46,17 +67,18 @@ import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.message.input.mention.searchUsers
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.transliteration.StreamTransliterator
+import io.getstream.chat.android.ui.suggestion.list.DefaultSuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListControllerListener
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
@@ -95,6 +117,43 @@ public class MessageInputView : ConstraintLayout {
 
     private var cooldownInterval: Int = 0
     private var cooldownTimerJob: Job? = null
+
+    private var currentlyActiveSnackBar: Snackbar? = null
+
+    /**
+     * Used to enable or disable parts of the UI depending
+     * on which abilities the user has in the given channel.
+     */
+    private var ownCapabilities: Set<String> = setOf()
+
+    // used to regulate UI according to ownCapabilities
+    private var canSendAttachments = false
+    private var canUseCommands = false
+    private var canSendLinks = false
+    private var canSendTypingUpdates = false
+
+    /**
+     * Changes value only when the new value
+     * is not the same as the current one.
+     *
+     * Disables or enables the send button and
+     * displays a snackbar when necessary.
+     *
+     * Note: This value is updated only if
+     * the user is not allowed to send links.
+     */
+    private var inputContainsLinks = false
+        set(value) {
+            if (value != inputContainsLinks) {
+                field = value
+                if (field) {
+                    disableSendButton()
+                    alertInputContainsLinkWhenNotAllowed()
+                } else {
+                    enableSendButton()
+                }
+            }
+        }
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -137,8 +196,15 @@ public class MessageInputView : ConstraintLayout {
 
     private var scope: CoroutineScope? = null
     private var bigFileSelectionListener: BigFileSelectionListener? = null
+
+    /**
+     * Listener used for reacting to changes in the number of selected attachments
+     */
     private var selectedAttachmentsCountListener: SelectedAttachmentsCountListener =
         SelectedAttachmentsCountListener { attachmentsCount, maxAttachmentsCount ->
+
+            suggestionListController?.commandsEnabled = commandsEnabled && attachmentsCount == 0
+
             if (attachmentsCount > maxAttachmentsCount) {
                 alertMaxAttachmentsCountExceeded()
             }
@@ -146,11 +212,16 @@ public class MessageInputView : ConstraintLayout {
 
     private var messageInputViewModeListener: MessageInputViewModeListener = MessageInputViewModeListener { }
 
-    public constructor(context: Context) : this(context, null)
+    /**
+     * Listener that handles selected mentions.
+     */
+    private var messageInputMentionListener: MessageInputMentionListener = MessageInputMentionListener { }
 
-    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor (context: Context) : this(context, null)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor (context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    public constructor (context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
@@ -269,6 +340,7 @@ public class MessageInputView : ConstraintLayout {
             object : SuggestionListView.OnSuggestionClickListener {
                 override fun onMentionClick(user: User) {
                     binding.messageInputFieldView.autoCompleteUser(user)
+                    messageInputMentionListener.onMentionSelected(user)
                 }
 
                 override fun onCommandClick(command: Command) {
@@ -278,14 +350,20 @@ public class MessageInputView : ConstraintLayout {
         )
 
         val dismissListener = PopupWindow.OnDismissListener {
-            binding.commandsButton.postDelayed(CLICK_DELAY) { binding.commandsButton.isSelected = false }
+            binding.commandsButton.postDelayed(CLICK_DELAY) {
+                binding.commandsButton.isSelected = false
+                hideSuggestionList()
+            }
         }
         val suggestionListUi = if (popupWindow) {
             SuggestionListPopupWindow(suggestionListView, this, dismissListener)
         } else {
             suggestionListView
         }
-        suggestionListController = SuggestionListController(suggestionListUi).also {
+        suggestionListController = SuggestionListController(
+            suggestionListUi = suggestionListUi,
+            suggestionListControllerListener = createSuggestionsListControllerListener()
+        ).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
             it.userLookupHandler = userLookupHandler
@@ -341,6 +419,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
+        currentlyActiveSnackBar?.dismiss()
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
         cooldownTimerJob?.cancel()
@@ -448,7 +527,10 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
             .show()
     }
 
@@ -461,7 +543,30 @@ public class MessageInputView : ConstraintLayout {
             ),
             Snackbar.LENGTH_LONG,
         )
-            .apply { anchorView = binding.sendButtonContainer }
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+            }
+            .show()
+    }
+
+    /**
+     * Displays a snackbar informing the user that
+     * sending links is not allowed in the given channel
+     */
+    private fun alertInputContainsLinkWhenNotAllowed() {
+        Snackbar.make(
+            this,
+            resources.getString(
+                R.string.stream_ui_message_input_error_sending_links_not_allowed,
+            ),
+            Snackbar.LENGTH_INDEFINITE,
+        )
+            .apply {
+                currentlyActiveSnackBar = this
+                anchorView = this@MessageInputView
+                setAction(R.string.stream_ui_ok) { dismiss() }
+            }
             .show()
     }
 
@@ -471,7 +576,7 @@ public class MessageInputView : ConstraintLayout {
     private fun startCooldownTimerIfNecessary() {
         if (cooldownInterval > 0) {
             cooldownTimerJob?.cancel()
-            cooldownTimerJob = GlobalScope.launch(DispatcherProvider.Main) {
+            cooldownTimerJob = findViewTreeLifecycleOwner()?.lifecycleScope?.launch(DispatcherProvider.Main) {
                 with(binding) {
                     val previousInputHint = binding.messageInputFieldView.messageHint
 
@@ -518,6 +623,8 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configAttachmentButton() {
         binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
+        binding.attachmentsButton.setBorderlessRipple(messageInputViewStyle.attachmentButtonRippleColor)
+
         setAttachmentButtonClickListener {
             context.getFragmentManager()?.let {
                 AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
@@ -528,19 +635,38 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
-     * Sets a click listener for the attachment button. If you want to implement custom attachment flow do not forget
+     * Creates an instance of [SuggestionListControllerListener].
+     *
+     * Used to disable integration buttons, based on if commands or attachments are added to the message.
+     */
+    private fun createSuggestionsListControllerListener(): DefaultSuggestionListControllerListener =
+        DefaultSuggestionListControllerListener { shouldEnableAttachments ->
+            binding.attachmentsButton.isEnabled = shouldEnableAttachments
+        }
+
+    /**
+     * Sets a click listener for the attachment button. If you want to implement a custom attachment flow do not forget
      * to set selected attachments via the [submitAttachments] method.
      *
-     * @param listener Listener that being invoked when user clicks on the attachment button in [MessageInputView].
+     * @param listener Listener that is invoked when the user clicks on the attachment button in [MessageInputView].
      */
     public fun setAttachmentButtonClickListener(listener: AttachmentButtonClickListener) {
         binding.attachmentsButton.setOnClickListener { listener.onAttachmentButtonClicked() }
     }
 
     /**
-     * Sets a listener for message input view mode changes
+     * Sets a click listener for the commands button.
      *
-     * @param listener The listener to be set
+     * @param listener Listener that is invoked when the user clicks on the commands button in [MessageInputView].
+     */
+    public fun setCommandsButtonClickListener(listener: CommandsButtonClickListener) {
+        binding.commandsButton.setOnClickListener { listener.onCommandsButtonClicked() }
+    }
+
+    /**
+     * Sets a listener for message input view mode changes.
+     *
+     * @param listener The listener to be set.
      * @see [InputMode]
      */
     public fun setMessageInputModeListener(listener: MessageInputViewModeListener) {
@@ -548,13 +674,22 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
+     * Sets a listener for the mention selection.
+     *
+     * @param listener The listener to be set.
+     */
+    public fun setMessageInputMentionListener(listener: MessageInputMentionListener) {
+        this.messageInputMentionListener = listener
+    }
+
+    /**
      * Sets a send message button enabled drawable.
      * Keep in mind that [MessageInputView] displays two different send message buttons:
-     * - sendMessageButtonEnabled - when the user is able to send a message
-     * - sendMessageButtonDisabled - when the user is not able to send a message (send button is disabled)
+     * - sendMessageButtonEnabled - when the user is able to send a message.
+     * - sendMessageButtonDisabled - when the user is not able to send a message (send button is disabled).
      *
-     * Drawable will override the one provided either by attributes or TransformStyle.messageInputStyleTransformer
-     * @param drawable The drawable to be set
+     * Drawable will override the one provided either by attributes or TransformStyle.messageInputStyleTransformer.
+     * @param drawable The drawable to be set.
      */
     public fun setSendMessageButtonEnabledDrawable(drawable: Drawable) {
         binding.sendMessageButtonEnabled.setImageDrawable(drawable)
@@ -563,7 +698,7 @@ public class MessageInputView : ConstraintLayout {
     /**
      * Sets a send message button disabled drawable.
 
-     * @param drawable The drawable to be set
+     * @param drawable The drawable to be set.
      * @see [setSendMessageButtonEnabledDrawable]
      */
     public fun setSendMessageButtonDisabledDrawable(drawable: Drawable) {
@@ -571,8 +706,10 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configLightningButton() {
+        binding.commandsButton.setImageDrawable(messageInputViewStyle.commandsButtonIcon)
+        binding.commandsButton.setBorderlessRipple(messageInputViewStyle.commandButtonRippleColor)
+
         binding.commandsButton.run {
-            messageInputViewStyle.commandsButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
                     if (isSelected || it.isSuggestionListVisible()) {
@@ -609,6 +746,19 @@ public class MessageInputView : ConstraintLayout {
         binding.sendMessageButtonEnabled.isEnabled = isSendButtonEnabled
     }
 
+    /**
+     * Switches the input to command mode using the provided command.
+     *
+     * You can use this method to provide a shortcut to a certain command instead of
+     * activating it by selecting it from the list of suggestions.
+     *
+     * @param command The command used to switch the mode.
+     * Different commands transform the message input in different ways.
+     */
+    public fun switchToCommandMode(command: Command) {
+        binding.messageInputFieldView.mode = MessageInputFieldView.Mode.CommandMode(command)
+    }
+
     private fun configTextInput() {
         binding.messageInputFieldView.setContentChangeListener(
             object : MessageInputFieldView.ContentChangeListener {
@@ -620,9 +770,27 @@ public class MessageInputView : ConstraintLayout {
                         maxMessageLengthExceeded = isMessageTooLong()
                     )
 
+                    /**
+                     * Check for links only if the user is not allowed
+                     * to send them, otherwise it is unnecessary overhead.
+                     */
+                    if (!canSendLinks) {
+                        inputContainsLinks = messageText.containsLinks()
+                    }
+
                     refreshControlsState()
                     handleKeyStroke()
-                    messageInputDebouncer?.submitSuspendable { suggestionListController?.onNewMessageText(messageText) }
+
+                    /** Debouncing when clearing the input will cause the suggestion list
+                     popup to appear briefly after clearing the input in certain cases. */
+                    if (messageText.isEmpty()) {
+                        messageInputDebouncer?.cancelLastDebounce()
+                        suggestionListController?.onNewMessageText(messageText)
+                    } else {
+                        messageInputDebouncer?.submitSuspendable {
+                            suggestionListController?.onNewMessageText(messageText)
+                        }
+                    }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
@@ -700,10 +868,12 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun handleKeyStroke() {
-        if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-            typingListener?.onKeystroke()
-        } else {
-            typingListener?.onStopTyping()
+        if (canSendTypingUpdates) {
+            if (binding.messageInputFieldView.messageText.isNotEmpty()) {
+                typingListener?.onKeystroke()
+            } else {
+                typingListener?.onStopTyping()
+            }
         }
     }
 
@@ -730,11 +900,74 @@ public class MessageInputView : ConstraintLayout {
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
-            attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode
+            attachmentsButton.isVisible =
+                messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
+    }
+
+    /**
+     * Setter method for own capabilities which dictate which
+     * parts of the UI are enabled or disabled for the current user
+     * in the given channel.
+     *
+     * @param ownCapabilities A set of capabilities given to the user
+     * in the current channel.
+     */
+    public fun setOwnCapabilities(ownCapabilities: Set<String>) {
+        this.ownCapabilities = ownCapabilities
+
+        val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendAttachment = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+
+        // precedence and boolean logic matter here
+        // otherwise you can undo a previous capability
+        setCanSendMessages(canSendMessage)
+        setCanSendAttachments(canSendAttachment && canSendMessage)
+        this.canSendLinks = ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
+        this.canSendTypingUpdates = ownCapabilities.contains(ChannelCapabilities.SEND_TYPING_EVENTS)
+    }
+
+    /**
+     * Disables or enables entering and sending a message
+     * into the [MessageInputView] depending on if the given user
+     * can send messages in the given channel.
+     *
+     * @param canSend If the user is given the ability to send messages.
+     */
+    private fun setCanSendMessages(canSend: Boolean) {
+        binding.commandsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = canSend
+
+        canSendAttachments = canSend
+        canUseCommands = canSend
+
+        if (canSend) {
+            enableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_input_hint)
+        } else {
+            disableSendButton()
+            binding.messageInputFieldView.binding.messageEditText.setHint(
+                R.string.stream_ui_message_cannot_send_messages_hint
+            )
+        }
+        binding.messageInputFieldView.binding.messageEditText.isEnabled = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusable = canSend
+        binding.messageInputFieldView.binding.messageEditText.isFocusableInTouchMode = canSend
+    }
+
+    /**
+     * Disables or enables the integration for sending attachments
+     * depending on if the given user can send attachments
+     * in the given channel.
+     *
+     * @param canSend If the user is given the ability to send attachments.
+     */
+    private fun setCanSendAttachments(canSend: Boolean) {
+        binding.attachmentsButton.isVisible = canSend
+        canSendAttachments = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {
@@ -745,28 +978,37 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
 
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendMessageWithAttachments(
                     messageText,
                     attachments,
                     messageReplyTo
                 )
             },
-            { sendMessageHandler.sendMessage(messageText, messageReplyTo) },
-            { customAttachments ->
-                sendMessageHandler.sendMessageWithCustomAttachments(messageText, customAttachments, messageReplyTo)
+            simpleSender = {
+                sendMessageHandler.sendMessage(
+                    messageText,
+                    messageReplyTo
+                )
+            },
+            customAttachmentsSender = { customAttachments ->
+                sendMessageHandler.sendMessageWithCustomAttachments(
+                    messageText,
+                    customAttachments,
+                    messageReplyTo
+                )
             }
         )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        val messageText = binding.messageInputFieldView.messageText
+        val messageText = getTrimmedMessageText()
         doSend(
-            { attachments ->
+            attachmentSender = { attachments ->
                 sendMessageHandler.sendToThreadWithAttachments(
                     parentMessage,
                     messageText,
@@ -774,14 +1016,14 @@ public class MessageInputView : ConstraintLayout {
                     attachments
                 )
             },
-            {
+            simpleSender = {
                 sendMessageHandler.sendToThread(
                     parentMessage,
                     messageText,
                     sendAlsoToChannel
                 )
             },
-            { customAttachments ->
+            customAttachmentsSender = { customAttachments ->
                 sendMessageHandler.sendToThreadWithCustomAttachments(
                     parentMessage,
                     messageText,
@@ -814,7 +1056,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun editMessage(oldMessage: Message) {
-        sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
+        sendMessageHandler.editMessage(oldMessage, getTrimmedMessageText())
         inputMode = InputMode.Normal
     }
 
@@ -839,6 +1081,15 @@ public class MessageInputView : ConstraintLayout {
         viewHolderFactory: SelectedCustomAttachmentViewHolderFactory,
     ) {
         customAttachmentsSelectionListener(attachments, viewHolderFactory)
+    }
+
+    /**
+     * Returns trimmed text from the message input.
+     *
+     * @return Trimmed text from the message input.
+     */
+    private fun getTrimmedMessageText(): String {
+        return binding.messageInputFieldView.messageText.trim()
     }
 
     private companion object {
@@ -1053,7 +1304,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
-     * Functional interface for a listener on the attachment button clicks.
+     * Functional interface for a listener set on the attachment button.
      */
     public fun interface AttachmentButtonClickListener {
         /**
@@ -1063,15 +1314,38 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
+     * Functional interface for a listener set on the commands button.
+     */
+    public fun interface CommandsButtonClickListener {
+        /**
+         * Function to be invoked when a click on the commands button happens.
+         */
+        public fun onCommandsButtonClicked()
+    }
+
+    /**
      * Listener invoked when input mode changes.
-     * Can be used for changing view's appearance based on the current mode - for example, send message buttons' drawables
+     * Can be used for changing view's appearance based on the current mode - for example, send message buttons' drawables.
      */
     public fun interface MessageInputViewModeListener {
         /**
-         * Called when input mode changes
+         * Called when input mode changes.
          *
-         * @param inputMode Current input mode
+         * @param inputMode Current input mode.
          */
         public fun inputModeChanged(inputMode: InputMode)
+    }
+
+    /**
+     * Listener invoked whenever a user selects a mention from the suggestion popup list.
+     *
+     * Used to store the mention before sending the message.
+     */
+    public fun interface MessageInputMentionListener {
+
+        /**
+         * Called when the user is selected in the mention suggestion list.
+         */
+        public fun onMentionSelected(user: User)
     }
 }

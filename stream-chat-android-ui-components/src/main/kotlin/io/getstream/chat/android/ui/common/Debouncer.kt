@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.common
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -18,6 +34,10 @@ public class Debouncer(private val debounceMs: Long) {
     private val scope = CoroutineScope(DispatcherProvider.Main)
     private var job: Job? = null
 
+    /**
+     * Cancels the previous work and launches a new coroutine
+     * containing the new work.
+     */
     public fun submit(work: () -> Unit) {
         job?.cancel()
         job = scope.launch {
@@ -26,12 +46,23 @@ public class Debouncer(private val debounceMs: Long) {
         }
     }
 
+    /**
+     * Cancels the previous work and launches a new coroutine
+     * containing the new suspendable work.
+     */
     public fun submitSuspendable(work: suspend () -> Unit) {
         job?.cancel()
         job = scope.launch {
             delay(debounceMs)
             work()
         }
+    }
+
+    /**
+     * Cancels the current work without shutting down the Coroutine scope.
+     */
+    public fun cancelLastDebounce() {
+        job?.cancel()
     }
 
     /**

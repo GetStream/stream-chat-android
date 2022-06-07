@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +45,7 @@
         >
 
         <FrameLayout
-            android:id="@+id/logoContainer"
+            android:id="@+id/attachmentContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
@@ -38,39 +53,22 @@
             app:layout_constraintEnd_toStartOf="@+id/replyText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            >
-
-            <ImageView
-                android:id="@+id/thumbImageView"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:visibility="gone"
-                tools:visibility="visible"
-                />
-
-            <ImageView
-                android:id="@+id/fileTypeImageView"
-                android:layout_width="34dp"
-                android:layout_height="40dp"
-                android:visibility="gone"
-                />
-
-        </FrameLayout>
+            />
 
         <TextView
             android:id="@+id/replyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineHeight="14sp"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_accent_blue"
-            android:textSize="12sp"
             android:textDirection="locale"
+            android:textSize="12sp"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/logoContainer"
+            app:layout_constraintStart_toEndOf="@+id/attachmentContainer"
             app:layout_constraintTop_toTopOf="parent"
+            app:lineHeight="14sp"
             tools:text="@tools:sample/lorem/random"
             />
 

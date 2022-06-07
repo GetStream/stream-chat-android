@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal
 
 import android.content.res.ColorStateList
@@ -5,21 +21,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -28,11 +46,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
-import io.getstream.chat.android.ui.utils.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import kotlin.math.absoluteValue
 
 internal class ChannelViewHolder @JvmOverloads constructor(
@@ -49,9 +66,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         parent,
         false
     ),
+    private val globalState: GlobalState = ChatClient.instance().globalState,
 ) : SwipeViewHolder(binding.root) {
-    private val dateFormatter = DateFormatter.from(context)
-    private val currentUser = ChatDomain.instance().user
+    private val currentUser = globalState.user
 
     private var optionsCount = 1
 
@@ -175,7 +192,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             }
         }
         binding.itemBackgroundView.deleteImageView.apply {
-            val canDeleteChannel = channel.members.isCurrentUserOwnerOrAdmin()
+            val canDeleteChannel = channel.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
             if (canDeleteChannel && style.deleteEnabled) {
                 isVisible = true
                 optionsCount++
@@ -203,7 +220,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureLastMessageLabelAndTimestamp(lastMessage)
                 }
 
-                if (readStateChanged) {
+                if (readStateChanged || lastMessageChanged) {
                     configureCurrentUserLastMessageStatus(lastMessage)
                 }
 
@@ -217,7 +234,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
-        channelNameLabel.text = channel.getDisplayName(context, R.string.stream_ui_channel_list_untitled_channel)
+        channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
+            channel = channel,
+            currentUser = ChatClient.instance().getCurrentUser()
+        )
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
@@ -233,7 +253,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessage ?: return
 
         lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
-        lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
+        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
@@ -256,43 +276,35 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun StreamUiChannelListItemForegroundViewBinding.configureCurrentUserLastMessageStatus(
         lastMessage: Message?,
     ) {
-        messageStatusImageView.isVisible = lastMessage != null
+        messageStatusImageView.isVisible = lastMessage != null && style.showChannelDeliveryStatusIndicator
 
-        lastMessage ?: return
+        if (lastMessage == null || !style.showChannelDeliveryStatusIndicator) return
 
         // read - if the last message doesn't belong to current user, or if channel reads indicates it
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
-        val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
-        when {
-            !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorReadIcon)
-            }
-
-            currentUserSentLastMessage && !lastMessageByCurrentUserWasRead -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
-
-            else -> determineLastMessageSyncStatus(lastMessage)
+        val currentUserSentLastMessage = lastMessage.user.id == globalState.user.value?.id
+        if (!currentUserSentLastMessage) {
+            messageStatusImageView.setImageDrawable(null)
+            return
         }
-    }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message) {
-        when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> {
-                messageStatusImageView.setImageDrawable(style.indicatorPendingSyncIcon)
-            }
+        val messageRequiresSync = lastMessage.syncStatus in setOf(
+            SyncStatus.IN_PROGRESS,
+            SyncStatus.SYNC_NEEDED,
+            SyncStatus.AWAITING_ATTACHMENTS
+        )
 
-            SyncStatus.COMPLETED -> {
-                messageStatusImageView.setImageDrawable(style.indicatorSentIcon)
-            }
+        val messageStatusIndicatorIcon = if (messageRequiresSync) {
+            style.indicatorPendingSyncIcon
+        } else {
+            val lastMessageWasRead = channel.isMessageRead(lastMessage)
 
-            SyncStatus.FAILED_PERMANENTLY -> {
-                // no direction on this yet
-            }
+            if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
         }
+
+        messageStatusImageView.setImageDrawable(messageStatusIndicatorIcon)
     }
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {

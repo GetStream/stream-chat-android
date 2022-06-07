@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
@@ -14,10 +30,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : Call<T> {
 
-    protected var canceled = AtomicBoolean(false)
+    private var canceled = AtomicBoolean(false)
 
     override fun cancel() {
         canceled.set(true)
@@ -76,6 +92,7 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun getResult(retroCall: retrofit2.Call<T>): Result<T> {
         return try {
             val retrofitResponse = retroCall.execute()
@@ -85,6 +102,7 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
         return if (retrofitResponse.isSuccessful) {
             try {
@@ -93,7 +111,13 @@ internal class RetrofitCall<T : Any>(
                 Result(failedError(t))
             }
         } else {
-            Result(parser.toError(retrofitResponse.raw()))
+            val errorBody = retrofitResponse.errorBody()
+
+            if (errorBody != null) {
+                Result(parser.toError(errorBody))
+            } else {
+                Result(parser.toError(retrofitResponse.raw()))
+            }
         }
     }
 }

@@ -14,6 +14,9 @@ fun Document.print(printer: Printer) {
 fun List<Section>.printline(printer: Printer) {
     forEach { section ->
         section.forEach(printer::printline)
-        printer.printline("")
+
+        if (section.size > 1) {
+            printer.printline("")
+        }
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.pushprovider.xiaomi
 
 import com.squareup.moshi.JsonAdapter
@@ -16,6 +32,8 @@ import kotlin.jvm.Throws
  * Helper class for delegating Xiaomi push messages to the Stream Chat SDK.
  */
 public object XiaomiMessagingDelegate {
+
+    internal var fallbackProviderName: String? = null
 
     private val mapAdapter: JsonAdapter<MutableMap<String, String>> by lazy {
         Moshi.Builder()
@@ -48,12 +66,16 @@ public object XiaomiMessagingDelegate {
      * Register new Xiaomi Token.
      *
      * @param miPushCommandMessage provided by Xiaomi.
+     * @param providerName Optional name for the provider name.
      *
      * @throws IllegalStateException if called before initializing ChatClient.
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun registerXiaomiToken(miPushCommandMessage: MiPushCommandMessage) {
+    public fun registerXiaomiToken(
+        miPushCommandMessage: MiPushCommandMessage,
+        providerName: String? = fallbackProviderName,
+    ) {
         miPushCommandMessage
             .takeIf { it.command == MiPushClient.COMMAND_REGISTER }
             ?.commandArguments
@@ -63,6 +85,7 @@ public object XiaomiMessagingDelegate {
                     Device(
                         token = this,
                         pushProvider = PushProvider.XIAOMI,
+                        providerName = providerName,
                     )
                 )
             }

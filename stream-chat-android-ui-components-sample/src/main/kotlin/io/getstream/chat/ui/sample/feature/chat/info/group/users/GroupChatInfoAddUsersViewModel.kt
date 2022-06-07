@@ -1,26 +1,52 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.chat.info.group.users
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class GroupChatInfoAddUsersViewModel(
     cid: String,
-    chatDomain: ChatDomain = ChatDomain.instance(),
     chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    private val channelState: Flow<ChannelState> =
+        chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope).filterNotNull()
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
@@ -31,25 +57,20 @@ class GroupChatInfoAddUsersViewModel(
     val state: LiveData<State> = _state
     val userAddedState: LiveData<Boolean> = _userAddedState
     val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
-    private var channelController: ChannelController? = null
+
+    private val membersLiveData: LiveData<List<Member>> = channelState.flatMapLatest { it.members }.asLiveData()
 
     private val observer = Observer<List<Member>> { members = it }
 
     init {
+        membersLiveData.observeForever(observer)
         viewModelScope.launch {
-            val result = chatDomain.getChannelController(cid).await()
-            if (result.isSuccess) {
-                channelController = result.data()
-                channelController?.members?.observeForever(observer)
-                viewModelScope.launch {
-                    fetchUsers()
-                }
-            }
+            fetchUsers()
         }
     }
 
     override fun onCleared() {
-        channelController?.members?.removeObserver(observer)
+        membersLiveData.removeObserver(observer)
         super.onCleared()
     }
 
@@ -63,7 +84,8 @@ class GroupChatInfoAddUsersViewModel(
 
     private fun addMember(user: User) {
         viewModelScope.launch {
-            val response = channelClient.addMembers(user.id).await()
+            val message = Message(text = "${user.name} was added to this channel")
+            val response = channelClient.addMembers(listOf(user.id), message).await()
             if (response.isSuccess) {
                 _userAddedState.value = true
             } else {
@@ -153,6 +175,7 @@ class GroupChatInfoAddUsersViewModel(
 
     companion object {
         private const val QUERY_LIMIT = 20
+        private const val MESSAGE_LIMIT = 30
         private val INITIAL_STATE = State(query = "", canLoadMore = true, results = emptyList(), isLoading = true)
     }
 }

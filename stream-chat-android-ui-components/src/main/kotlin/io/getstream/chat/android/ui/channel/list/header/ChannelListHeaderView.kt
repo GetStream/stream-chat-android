@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.channel.list.header
 
 import android.content.Context
@@ -64,6 +80,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
             configActionButton(typedArray)
+            configureSeparator(typedArray)
         }
     }
 
@@ -107,6 +124,20 @@ public class ChannelListHeaderView : ConstraintLayout {
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
                     ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+        }
+    }
+
+    /**
+     * Uses the [typedArray] to customize the separator View's background drawable.
+     *
+     * @param typedArray The attribute array the user passed to the XML component.
+     */
+    private fun configureSeparator(typedArray: TypedArray) {
+        binding.separator.apply {
+            val drawable =
+                typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiChannelListSeparatorBackgroundDrawable)
+            visibility = if (drawable != null) VISIBLE else GONE
+            background = drawable
         }
     }
 
@@ -174,6 +205,28 @@ public class ChannelListHeaderView : ConstraintLayout {
     public fun showOnlineTitle() {
         binding.offlineTitleContainer.isVisible = false
         binding.onlineTextView.isVisible = true
+    }
+
+    /**
+     * Sets a click listener for the title in the header.
+     */
+    public fun setOnTitleClickListener(listener: () -> Unit) {
+        binding.offlineTextView.setOnClickListener { listener() }
+        binding.onlineTextView.setOnClickListener { listener() }
+    }
+
+    /**
+     * Sets a long click listener for the title in the header.
+     */
+    public fun setOnTitleLongClickListener(listener: () -> Unit) {
+        binding.offlineTextView.setOnLongClickListener {
+            listener()
+            true
+        }
+        binding.onlineTextView.setOnLongClickListener {
+            listener()
+            true
+        }
     }
 
     /**

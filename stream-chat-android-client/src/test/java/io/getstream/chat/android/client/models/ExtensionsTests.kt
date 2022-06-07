@@ -1,67 +1,25 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.models
 
-import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeNull
 import org.junit.Test
 
 internal class ExtensionsTests {
-
-    val nameValue = "bob"
-    val nameField = "name"
-    val imageValue = "http://image"
-    val imageField = "image"
-    val nonStringValue = 13
-
-    @Test
-    fun userPropertyFields() {
-        val user = User()
-        user.name.shouldBeEmpty()
-        user.extraData[nameField].shouldBeNull()
-
-        user.image.shouldBeEmpty()
-        user.extraData[imageField].shouldBeNull()
-
-        user.name = nameValue
-        user.image = imageValue
-
-        user.name shouldBeEqualTo nameValue
-        user.extraData[nameField] shouldBeEqualTo nameValue
-
-        user.image shouldBeEqualTo imageValue
-        user.extraData[imageField] shouldBeEqualTo imageValue
-    }
-
-    @Test
-    fun channelPropertyFields() {
-        val channel = Channel()
-        channel.name.shouldBeEmpty()
-        channel.extraData[nameField].shouldBeNull()
-
-        channel.image.shouldBeEmpty()
-        channel.extraData[imageField].shouldBeNull()
-
-        channel.name = nameValue
-        channel.image = imageValue
-
-        channel.name shouldBeEqualTo nameValue
-        channel.extraData[nameField] shouldBeEqualTo nameValue
-
-        channel.image shouldBeEqualTo imageValue
-        channel.extraData[imageField] shouldBeEqualTo imageValue
-    }
-
-    @Test
-    fun getExternalFieldTest() {
-        val user = User()
-        getExternalField(user, nameField).shouldBeEmpty()
-
-        user.name = nameValue
-        getExternalField(user, nameField) shouldBeEqualTo nameValue
-
-        user.extraData[nameField] = nonStringValue
-        getExternalField(user, nameField).shouldBeEmpty()
-    }
 
     @Test
     fun noUnread() {

@@ -1,6 +1,21 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.parser
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
@@ -10,7 +25,7 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
 import io.getstream.chat.android.client.socket.EventsParser
-import io.getstream.chat.android.client.utils.observable.FakeSocketService
+import io.getstream.chat.android.client.utils.observable.FakeSocket
 import okhttp3.Response
 import okhttp3.WebSocket
 import org.amshove.kluent.shouldBeEqualTo
@@ -18,12 +33,13 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 internal class EventsParserTests {
 
     private val socket = Mockito.mock(WebSocket::class.java)
     private lateinit var eventsCollector: MutableList<ChatEvent>
-    private lateinit var service: FakeSocketService
+    private lateinit var fakeSocket: FakeSocket
     private lateinit var parser: EventsParser
     private val userId = "hello-user"
     private val eventType = EventType.HEALTH_CHECK
@@ -77,8 +93,8 @@ internal class EventsParserTests {
     @Before
     fun before() {
         eventsCollector = mutableListOf()
-        service = FakeSocketService(eventsCollector)
-        parser = EventsParser(MoshiChatParser(), service)
+        fakeSocket = FakeSocket(eventsCollector)
+        parser = EventsParser(MoshiChatParser(), fakeSocket)
     }
 
     @Test
@@ -86,14 +102,14 @@ internal class EventsParserTests {
         parser.onOpen(socket, response)
         parser.onMessage(socket, connectedEvent)
 
-        service.verifyConnectionUserId(userId)
+        fakeSocket.verifyConnectionUserId(userId)
     }
 
     @Test
     fun firstInvalidEvent() {
         parser.onMessage(socket, """{ "type": "$eventType" }""")
 
-        service.verifyNoConnectionUserId()
+        fakeSocket.verifyNoConnectionUserId()
     }
 
     @Test

@@ -5,19 +5,17 @@ import io.getstream.chat.android.Versions
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
+apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    if (snapshot) {
-        PUBLISH_VERSION = Configuration.snapshotVersionName
-    } else {
-        PUBLISH_VERSION = Configuration.versionName + "-beta"
-    }
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
+apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
     defaultConfig {
@@ -76,4 +74,16 @@ dependencies {
     // Coil
     implementation Dependencies.composeCoil
     implementation Dependencies.coilGif
+    implementation Dependencies.coilVideo
+
+    // Tests
+    testImplementation project(':stream-chat-android-test')
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.gallery
 
 import android.content.Context
@@ -14,12 +30,12 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -39,7 +55,6 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private val initialIndex: Int by lazy { intent.getIntExtra(EXTRA_KEY_INITIAL_INDEX, 0) }
     private val viewModel: AttachmentGalleryViewModel by viewModels()
-    private val dateFormatter: DateFormatter by lazy { DateFormatter.from(this) }
     private lateinit var adapter: AttachmentGalleryPagerAdapter
     private val permissionChecker = PermissionChecker()
 
@@ -189,7 +204,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         return getString(
             R.string.stream_ui_attachment_gallery_date,
             relativeDay,
-            dateFormatter.formatTime(createdAt)
+            ChatUI.dateFormatter.formatTime(createdAt)
         )
     }
 

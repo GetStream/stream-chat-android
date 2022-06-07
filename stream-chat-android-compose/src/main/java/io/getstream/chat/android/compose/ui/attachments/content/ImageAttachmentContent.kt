@@ -1,10 +1,28 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +30,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -30,7 +47,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
@@ -49,6 +66,7 @@ public fun ImageAttachmentContent(
     modifier: Modifier = Modifier,
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
+    val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
 
     Row(
         modifier
@@ -58,7 +76,8 @@ public fun ImageAttachmentContent(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {},
                 onLongClick = { onLongItemClick(message) }
-            )
+            ),
+        horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         val attachments =
             message.attachments.filter { !it.hasLink() && it.isMedia() }
@@ -79,7 +98,8 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 0..3 step 2) {
                     if (imageIndex < imageCount) {
@@ -98,7 +118,8 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 1..4 step 2) {
                     if (imageIndex < imageCount) {
@@ -205,10 +226,10 @@ internal fun ImageAttachmentViewMoreOverlay(
 ) {
     val remainingImagesCount = imageCount - (imageIndex + 1)
 
-    Surface(
+    Box(
         modifier = Modifier
-            .fillMaxSize(),
-        color = ChatTheme.colors.overlay
+            .fillMaxSize()
+            .background(color = ChatTheme.colors.overlay),
     ) {
         Text(
             modifier = modifier

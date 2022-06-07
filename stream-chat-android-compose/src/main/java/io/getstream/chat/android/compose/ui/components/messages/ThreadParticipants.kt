@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.BorderStroke
@@ -31,7 +47,7 @@ public fun ThreadParticipants(
     alignment: MessageAlignment,
     modifier: Modifier = Modifier,
     borderStroke: BorderStroke = BorderStroke(width = 1.dp, color = ChatTheme.colors.appBackground),
-    participantsLimit: Int = DEFAULT_PARTICIPANTS_LIMIT,
+    participantsLimit: Int = DefaultParticipantsLimit,
 ) {
     Box(modifier) {
         /**
@@ -51,8 +67,8 @@ public fun ThreadParticipants(
             val itemPadding = Modifier.padding(start = (index * (itemSize.value / 2)).dp)
 
             /**
-             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of the screen,
-             * the first item should be the upper most.
+             * Calculates the visual position of the item to define its zIndex. If we're aligned to the start of the
+             * screen, the first item should be the upper most.
              *
              * If we're aligned to the end, then the last item should be the upper most.
              */
@@ -75,4 +91,7 @@ public fun ThreadParticipants(
     }
 }
 
-private const val DEFAULT_PARTICIPANTS_LIMIT = 4
+/**
+ * The max limit of how many users are shown as participants in a thread.
+ */
+private const val DefaultParticipantsLimit = 4

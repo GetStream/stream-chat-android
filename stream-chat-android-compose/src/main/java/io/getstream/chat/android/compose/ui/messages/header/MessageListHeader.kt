@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.header
 
 import androidx.compose.foundation.clickable
@@ -41,7 +57,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
-import io.getstream.chat.android.offline.model.ConnectionState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -130,10 +146,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
     val layoutDirection = LocalLayoutDirection.current
 
     BackButton(
-        modifier = Modifier
-            .padding(8.dp)
-            .size(16.dp)
-            .mirrorRtl(layoutDirection = layoutDirection),
+        modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )
@@ -192,48 +205,78 @@ public fun DefaultMessageListHeaderCenterContent(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        val subtitleTextColor = ChatTheme.colors.textLowEmphasis
-        val subtitleTextStyle = ChatTheme.typography.footnote
-
-        if (connectionState == ConnectionState.CONNECTED) {
-            if (typingUsers.isEmpty()) {
+        when (connectionState) {
+            ConnectionState.CONNECTED -> {
+                DefaultMessageListHeaderSubtitle(
+                    subtitle = subtitle,
+                    typingUsers = typingUsers
+                )
+            }
+            ConnectionState.CONNECTING -> {
+                NetworkLoadingIndicator(
+                    modifier = Modifier.wrapContentHeight(),
+                    spinnerSize = 12.dp,
+                    textColor = ChatTheme.colors.textLowEmphasis,
+                    textStyle = ChatTheme.typography.footnote
+                )
+            }
+            ConnectionState.OFFLINE -> {
                 Text(
-                    text = subtitle,
-                    color = subtitleTextColor,
-                    style = subtitleTextStyle,
+                    text = stringResource(id = R.string.stream_compose_disconnected),
+                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.footnote,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            } else {
-                Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val typingUsersText = LocalContext.current.resources.getQuantityString(
-                        R.plurals.stream_compose_message_list_header_typing_users,
-                        typingUsers.size,
-                        typingUsers.first().name,
-                        typingUsers.size - 1
-                    )
-
-                    TypingIndicator()
-
-                    Text(
-                        text = typingUsersText,
-                        color = subtitleTextColor,
-                        style = subtitleTextStyle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
             }
-        } else {
-            NetworkLoadingIndicator(
-                modifier = Modifier.wrapContentHeight(),
-                spinnerSize = 12.dp,
-                textColor = subtitleTextColor,
-                textStyle = subtitleTextStyle
+        }
+    }
+}
+
+/**
+ * Represents the default message list header subtitle, which shows either the number of people online
+ * and total member count or the currently typing users.
+ *
+ * @param subtitle The subtitle to show.
+ * @param typingUsers Currently typing users.
+ */
+@Composable
+internal fun DefaultMessageListHeaderSubtitle(
+    subtitle: String,
+    typingUsers: List<User>,
+) {
+    val textColor = ChatTheme.colors.textLowEmphasis
+    val textStyle = ChatTheme.typography.footnote
+
+    if (typingUsers.isEmpty()) {
+        Text(
+            text = subtitle,
+            color = textColor,
+            style = textStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    } else {
+        Row(
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val typingUsersText = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_header_typing_users,
+                typingUsers.size,
+                typingUsers.first().name,
+                typingUsers.size - 1
+            )
+
+            TypingIndicator()
+
+            Text(
+                text = typingUsersText,
+                color = textColor,
+                style = textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -244,7 +287,7 @@ public fun DefaultMessageListHeaderCenterContent(
  *
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
- * */
+ */
 @Composable
 internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
     ChannelAvatar(

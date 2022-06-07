@@ -1,17 +1,39 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.images
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.widget.ImageView
+import coil.drawable.MovieDrawable
+import coil.drawable.ScaleDrawable
 import coil.fetch.VideoFrameUriFetcher
 import coil.loadAny
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
+import com.getstream.sdk.chat.disposable.CoilDisposable
+import com.getstream.sdk.chat.disposable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
@@ -45,9 +67,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.loadAny(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -58,6 +80,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
     }
 
     override fun load(
@@ -67,9 +91,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.loadAny(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderDrawable?.let(::placeholder)
             listener(
@@ -80,6 +104,59 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
+    }
+
+    /**
+     * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale
+     * types and the given configuration.
+     *
+     * @param target The target to load the image into.
+     * @param data The data to load.
+     * @param placeholderDrawable Drawable that's shown while the image is loading.
+     * @param transformation The transformation for the image before applying to the target.
+     * @param onStart The callback when the load has started.
+     * @param onComplete The callback when the load has finished.
+     */
+    override suspend fun loadAndResize(
+        target: ImageView,
+        data: Any?,
+        placeholderDrawable: Drawable?,
+        transformation: StreamImageLoader.ImageTransformation,
+        onStart: () -> Unit,
+        onComplete: () -> Unit,
+    ) {
+        val context = target.context
+
+        val drawable = withContext(DispatcherProvider.IO) {
+            val result = context.streamImageLoader.execute(
+                ImageRequest.Builder(context)
+                    .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+                    .placeholder(placeholderDrawable)
+                    .data(data)
+                    .listener(
+                        onStart = { onStart() },
+                        onCancel = { onComplete() },
+                        onError = { _, _ -> onComplete() },
+                        onSuccess = { _, _ -> onComplete() },
+                    )
+                    .applyTransformation(transformation)
+                    .build()
+            )
+
+            result.drawable
+        } ?: return
+
+        if (drawable is ScaleDrawable &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable
+        ) {
+            (drawable.child as AnimatedImageDrawable).start()
+        } else if (drawable is MovieDrawable) {
+            drawable.start()
+        }
+
+        target.setImageDrawable(drawable)
     }
 
     override fun loadVideoThumbnail(
@@ -89,9 +166,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Disposable {
         val context = target.context
-        target.loadAny(uri, context.streamImageLoader) {
+        val disposable = target.loadAny(uri, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -103,6 +180,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             fetcher(VideoFrameUriFetcher(context))
             applyTransformation(transformation)
         }
+
+        return CoilDisposable(disposable)
     }
 
     private fun ImageRequest.Builder.applyTransformation(

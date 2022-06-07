@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -21,6 +37,8 @@ import androidx.compose.ui.unit.sp
  * @param footnoteBold Used for footnote information in certain important items, like the thread reply text,
  * or user info components.
  * @param captionBold Used for unread count indicator.
+ * @param singleEmoji Used for messages whose content consists only of a single emoji.
+ * @param emojiOnly Used for messages whose content consists only if emojis.
  */
 @Immutable
 public data class StreamTypography(
@@ -35,6 +53,8 @@ public data class StreamTypography(
     public val footnoteBold: TextStyle,
     public val captionBold: TextStyle,
     public val tabBar: TextStyle,
+    public val singleEmoji: TextStyle,
+    public val emojiOnly: TextStyle,
 ) {
 
     public companion object {
@@ -107,6 +127,14 @@ public data class StreamTypography(
             tabBar = TextStyle(
                 fontSize = 10.sp,
                 fontWeight = FontWeight.W400,
+                fontFamily = fontFamily
+            ),
+            singleEmoji = TextStyle(
+                fontSize = 36.sp,
+                fontFamily = fontFamily
+            ),
+            emojiOnly = TextStyle(
+                fontSize = 28.sp,
                 fontFamily = fontFamily
             )
         )

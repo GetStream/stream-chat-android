@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:JvmName("MessageInputViewModelBinding")
 
 package io.getstream.chat.android.ui.message.input.viewmodel
@@ -18,13 +34,22 @@ import java.io.File
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
+ *
+ * @param view The View to bind to.
+ * @param lifecycleOwner The lifecycle owner to bind the data observing to.
  */
 @JvmName("bind")
-public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
+public fun MessageInputViewModel.bindView(
+    view: MessageInputView,
+    lifecycleOwner: LifecycleOwner,
+) {
     val handler = MessageInputView.DefaultUserLookupHandler(emptyList())
     view.setUserLookupHandler(handler)
     members.observe(lifecycleOwner) { members ->
         handler.users = members.map(Member::user)
+    }
+    view.setMessageInputMentionListener { selectedUser ->
+        selectMention(selectedUser)
     }
     commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
@@ -43,6 +68,10 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
     }
     isDirectMessage.observe(lifecycleOwner) { isDirectMessage ->
         view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
+    }
+
+    ownCapabilities.observe(lifecycleOwner) {
+        view.setOwnCapabilities(it)
     }
 
     view.setSendMessageHandler(
@@ -110,6 +139,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             }
         }
     )
+
     view.setTypingListener(
         object : MessageInputView.TypingListener {
             override fun onKeystroke() = keystroke()

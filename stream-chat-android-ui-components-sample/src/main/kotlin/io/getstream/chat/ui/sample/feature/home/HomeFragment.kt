@@ -1,10 +1,28 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -13,6 +31,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -63,6 +82,7 @@ class HomeFragment : Fragment() {
         )
         binding.channelListHeaderView.apply {
             channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
+
             setOnActionButtonClickListener {
                 navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
             }
@@ -70,6 +90,24 @@ class HomeFragment : Fragment() {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
             if (BuildConfig.DEBUG) {
+                setOnTitleClickListener {
+                    if (ApiRequestsAnalyser.isInitialized()) {
+                        Log.d("ApiRequestsAnalyser", ApiRequestsAnalyser.get().dumpAll())
+                        Toast.makeText(
+                            requireContext(),
+                            "ApiRequestsAnalyser dumped all requests",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                setOnTitleLongClickListener {
+                    if (ApiRequestsAnalyser.isInitialized()) {
+                        ApiRequestsAnalyser.get().clearAll()
+                        Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
                 setOnUserAvatarLongClickListener {
                     ToggleDialogFragment().apply {
                         togglesChangesCommittedListener = { changedToggles ->

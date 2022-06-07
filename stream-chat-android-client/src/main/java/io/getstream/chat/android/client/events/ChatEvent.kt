@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -185,7 +201,8 @@ public data class MemberRemovedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
-) : CidEvent(), UserEvent
+    override val member: Member,
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when a channel member is updated (promoted to moderator/accepted/.rejected the invite)
@@ -265,9 +282,10 @@ public data class NotificationAddedToChannelEvent(
     override val channelType: String,
     override val channelId: String,
     override val channel: Channel,
+    override val member: Member,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
-) : CidEvent(), HasChannel, HasUnreadCounts
+) : CidEvent(), HasChannel, HasMember, HasUnreadCounts
 
 /**
  * Triggered when a channel is deleted

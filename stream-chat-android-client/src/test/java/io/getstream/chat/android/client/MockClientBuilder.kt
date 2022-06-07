@@ -1,7 +1,21 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -16,17 +30,22 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeChatSocket
-import kotlinx.coroutines.test.TestCoroutineScope
+import io.getstream.chat.android.client.utils.observable.FakeSocket
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import org.mockito.Mockito
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import java.util.Date
 
 /**
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
+@ExperimentalCoroutinesApi
 internal class MockClientBuilder(
-    private val testCoroutineScope: TestCoroutineScope,
+    private val testCoroutineScope: TestScope,
 ) {
     val userId = "jc"
     val connectionId = "connection-id"
@@ -43,7 +62,7 @@ internal class MockClientBuilder(
         connectionId
     )
 
-    private lateinit var socket: FakeChatSocket
+    private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
     lateinit var api: MoshiChatApi
@@ -57,12 +76,14 @@ internal class MockClientBuilder(
             "cdn.http",
             "socket.url",
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null)
+            ChatLogger.Config(ChatLogLevel.NOTHING, null),
+            false,
+            false
         )
 
         val tokenUtil: TokenUtils = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        socket = FakeChatSocket()
+        socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
 
@@ -70,7 +91,7 @@ internal class MockClientBuilder(
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, socketStateService, testCoroutineScope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutineScope)
         client = ChatClient(
             config,
             api,
@@ -79,17 +100,20 @@ internal class MockClientBuilder(
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-            userStateService = userStateService,
             userCredentialStorage = mock(),
+            userStateService = userStateService,
             tokenUtils = tokenUtil,
-            appContext = mock(),
             scope = testCoroutineScope,
+            retryPolicy = NoRetryPolicy(),
+            appSettingsManager = mock(),
         )
 
         client.connectUser(user, token).enqueue()
 
         socket.sendEvent(connectedEvent)
 
-        return client
+        return client.apply {
+            plugins = mutableListOf()
+        }
     }
 }

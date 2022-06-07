@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.preview.internal
 
 import android.content.Context
@@ -5,9 +21,9 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -20,22 +36,6 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 internal class MessagePreviewView : FrameLayout {
 
     private val binding = StreamUiMessagePreviewItemBinding.inflate(streamThemeInflater, this, true)
-    private var _dateFormatter: DateFormatter? = null
-
-    /**
-     * The formatter used to display the time/date for the message.
-     * If not set explicitly, a default implementation will be used.
-     */
-    var dateFormatter: DateFormatter
-        set(value) {
-            _dateFormatter = value
-        }
-        get() {
-            if (_dateFormatter == null) {
-                _dateFormatter = DateFormatter.from(context)
-            }
-            return _dateFormatter!!
-        }
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
@@ -73,7 +73,7 @@ internal class MessagePreviewView : FrameLayout {
         binding.avatarView.setUserData(message.user)
         binding.senderNameLabel.text = formatChannelName(message)
         binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
-        binding.messageTimeLabel.text = dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
+        binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
     }
 
     private fun formatChannelName(message: Message): CharSequence {

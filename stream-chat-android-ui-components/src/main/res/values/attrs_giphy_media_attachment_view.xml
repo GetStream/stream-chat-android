@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <!-- Giphy Media Attachment View -->
+    <declare-styleable name="GiphyMediaAttachmentView">
+        <!-- Drawable of the media attachment progressbar -->
+        <attr name="streamUiGiphyMediaAttachmentProgressIcon" format="reference" />
+        <!-- Giphy icon drawable -->
+        <attr name="streamUiGiphyMediaAttachmentGiphyIcon" format="reference" />
+        <!-- Media attachment placeholder icon -->
+        <attr name="streamUiGiphyMediaAttachmentPlaceHolderIcon" format="reference" />
+        <!-- Media attachment background color -->
+        <attr name="streamUiGiphyMediaAttachmentImageBackgroundColor" format="color|reference" />
+        <!-- Sets the Giphy type -->
+        <attr name="streamUiGiphyMediaAttachmentGiphyType" format="enum">
+            <enum name="original" value="0" />
+            <enum name="fixedHeight" value="1" />
+            <enum name="fixedHeightDownsampled" value="2" />
+        </attr>
+        <!-- Sets the scaleType -->
+        <attr name="streamUiGiphyMediaAttachmentScaleType" format="enum">
+            <!-- Scale using the image matrix when drawing. See
+                 {@link android.widget.ImageView#setImageMatrix(Matrix)}. -->
+            <enum name="matrix" value="0" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#FILL}. -->
+            <enum name="fitXY" value="1" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#START}. -->
+            <enum name="fitStart" value="2" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#CENTER}. -->
+            <enum name="fitCenter" value="3" />
+            <!-- Scale the image using {@link android.graphics.Matrix.ScaleToFit#END}. -->
+            <enum name="fitEnd" value="4" />
+            <!-- Center the image in the view, but perform no scaling. -->
+            <enum name="center" value="5" />
+            <!-- Scale the image uniformly (maintain the image's aspect ratio) so both dimensions
+                 (width and height) of the image will be equal to or larger than the corresponding
+                 dimension of the view (minus padding). The image is then centered in the view. -->
+            <enum name="centerCrop" value="6" />
+            <!-- Scale the image uniformly (maintain the image's aspect ratio) so that both
+                 dimensions (width and height) of the image will be equal to or less than the
+                 corresponding dimension of the view (minus padding). The image is then centered in
+                 the view. -->
+            <enum name="centerInside" value="7" />
+        </attr>
+    </declare-styleable>
+
+</resources>

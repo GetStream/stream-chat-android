@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,8 +42,8 @@
         android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
         android:paddingTop="@dimen/stream_ui_spacing_tiny"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:visibility="gone"
         android:textDirection="locale"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
@@ -81,7 +96,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hyphenationFrequency="normal"
-            android:lineHeight="16sp"
             android:paddingLeft="@dimen/stream_ui_spacing_medium"
             android:paddingTop="@dimen/stream_ui_spacing_small"
             android:paddingRight="@dimen/stream_ui_spacing_medium"
@@ -89,6 +103,7 @@
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_accent_blue"
             android:textDirection="locale"
+            app:lineHeight="16sp"
             tools:text="@tools:sample/lorem"
             />
 
@@ -128,11 +143,11 @@
         android:id="@+id/deliveryFailedIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/footnote"
         app:layout_constraintEnd_toStartOf="@id/avatarMineView"
         tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_warning"
         tools:visibility="visible"
         />
 

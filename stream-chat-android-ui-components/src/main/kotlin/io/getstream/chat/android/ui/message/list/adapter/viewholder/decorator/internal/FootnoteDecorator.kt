@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import android.view.View
@@ -24,10 +42,14 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
@@ -36,8 +58,14 @@ internal class FootnoteDecorator(
     private val deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
 ) : BaseDecorator() {
 
-    override fun decorateTextAndAttachmentsMessage(
-        viewHolder: TextAndAttachmentsViewHolder,
+    /**
+     * Decorates the footnote of the message containing custom attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupFootnote(
         viewHolder.binding.footnote,
@@ -47,6 +75,67 @@ internal class FootnoteDecorator(
         data,
     )
 
+    /**
+     * Decorates the footnote of the Giphy attachment.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateGiphyAttachmentMessage(
+        viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupFootnote(
+            viewHolder.binding.footnote,
+            viewHolder.binding.root,
+            viewHolder.binding.threadGuideline,
+            viewHolder.binding.messageContainer,
+            data,
+        )
+    }
+
+    /**
+     * Decorates the footnote of the message containing file attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupFootnote(
+            viewHolder.binding.footnote,
+            viewHolder.binding.root,
+            viewHolder.binding.threadGuideline,
+            viewHolder.binding.messageContainer,
+            data,
+        )
+    }
+
+    /**
+     * Decorates the footnote of the message containing image attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateImageAttachmentsMessage(
+        viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
+
+    /**
+     * Decorates the footnote of the plain text message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
@@ -58,6 +147,12 @@ internal class FootnoteDecorator(
         data,
     )
 
+    /**
+     * Decorates the footnote of the ephemeral Giphy message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
@@ -74,6 +169,29 @@ internal class FootnoteDecorator(
         }
     }
 
+    /**
+     * Decorates the footnote of the link attachment message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
+
+    /**
+     * Decorates the footnote of the deleted message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
@@ -111,7 +229,12 @@ internal class FootnoteDecorator(
     }
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
-        footnoteView.showSimpleFootnote()
+        if (data.showMessageFooter) {
+            footnoteView.showSimpleFootnote()
+        } else {
+            footnoteView.hideSimpleFootnote()
+            return
+        }
         setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
@@ -186,7 +309,7 @@ internal class FootnoteDecorator(
         val updatedAt = data.message.getUpdatedAtOrNull()
 
         when {
-            data.isNotBottomPosition() || createdAt == null -> footnoteView.hideTimeLabel()
+            createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
                 dateFormatter.formatTime(
                     updatedAt
@@ -200,6 +323,7 @@ internal class FootnoteDecorator(
     private fun setupDeliveryStateIndicator(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val status = data.message.syncStatus
         when {
+            !listViewStyle.itemStyle.showMessageDeliveryStatusIndicator -> Unit
             data.isNotBottomPosition() -> footnoteView.hideStatusIndicator()
             data.isTheirs -> footnoteView.hideStatusIndicator()
             data.message.isEphemeral() -> footnoteView.hideStatusIndicator()

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.foundation.layout.BoxScope
@@ -55,9 +71,8 @@ public fun ChannelAvatar(
     when {
         /**
          * If the channel has an image we load that as a priority.
-         * If the channel has just one member (current user) we show our initials.
          */
-        channel.image.isNotEmpty() || memberCount == 1 -> {
+        channel.image.isNotEmpty() -> {
             Avatar(
                 modifier = modifier,
                 imageUrl = channel.image,
@@ -68,10 +83,29 @@ public fun ChannelAvatar(
                 onClick = onClick
             )
         }
+
         /**
-         * If the channel has two members - direct message with another person - we show their image or initials.
+         * If the channel has one member we show the member's image or initials.
          */
-        memberCount == 2 -> {
+        memberCount == 1 -> {
+            val user = members.first().user
+
+            UserAvatar(
+                modifier = modifier,
+                user = user,
+                shape = shape,
+                contentDescription = user.name,
+                showOnlineIndicator = showOnlineIndicator,
+                onlineIndicatorAlignment = onlineIndicatorAlignment,
+                onlineIndicator = onlineIndicator,
+                onClick = onClick
+            )
+        }
+        /**
+         * If the channel has two members and one of the is the current user - we show the other
+         * member's image or initials.
+         */
+        memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
             val user = members.first { it.user.id != currentUser?.id }.user
 
             UserAvatar(
@@ -86,7 +120,7 @@ public fun ChannelAvatar(
             )
         }
         /**
-         * If the channel has more than two members - group - we load a matrix of their images or initials.
+         * If the channel has more than two members - we load a matrix of their images or initials.
          */
         else -> {
             val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
@@ -122,6 +156,17 @@ private fun ChannelWithImageAvatarPreview() {
 @Composable
 private fun ChannelAvatarForDirectChannelWithOnlineUserPreview() {
     ChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
+}
+
+/**
+ * Preview of [ChannelAvatar] for a direct conversation with only one user.
+ *
+ * Should show a user avatar with an online indicator.
+ */
+@Preview(showBackground = true, name = "ChannelAvatar Preview (Only one user)")
+@Composable
+private fun ChannelAvatarForDirectChannelWithOneUserPreview() {
+    ChannelAvatarPreview(PreviewChannelData.channelWithOneUser)
 }
 
 /**

@@ -3,7 +3,7 @@ import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
@@ -58,12 +58,13 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(':stream-chat-android-core')
+    debugApi project(":libraries:logging:stream-logger-android")
 
     implementation Dependencies.kotlinReflect
 
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleProcess
     implementation Dependencies.workRuntimeKtx
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
@@ -71,7 +72,7 @@ dependencies {
     implementation Dependencies.retrofit
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
-    kapt Dependencies.moshiCodegen
+    ksp Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
     debugImplementation Dependencies.flipper

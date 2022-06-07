@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -14,6 +30,7 @@ import androidx.compose.ui.unit.dp
  * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel menu.
  * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
  * @param attachmentsContentImageWidth The width of image attachments in the message list.
+ * @param attachmentsContentImageGridSpacing The spacing between image tiles in the message list.
  * @param attachmentsContentImageHeight The height of image attachments in the message list.
  * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
  * @param attachmentsContentGiphyHeight The height of Giphy attachments in the message list.
@@ -37,7 +54,16 @@ import androidx.compose.ui.unit.dp
  * @param userReactionItemWidth The width of user reaction item.
  * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
  * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
+ * @param reactionOptionItemIconSize The size of a reaction option icon in the reaction options menu.
  * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
+ * @param messageItemMaxWidth The max width of message items inside message list.
+ * @param quotedMessageTextVerticalPadding The vertical padding of text inside quoted message.
+ * @param quotedMessageTextHorizontalPadding The horizontal padding of text inside quoted message.
+ * @param quotedMessageAttachmentPreviewSize The size of the quoted message attachment preview.
+ * @param quotedMessageAttachmentTopPadding The top padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentBottomPadding The bottom padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
  */
 @Immutable
 public data class StreamDimens(
@@ -48,6 +74,7 @@ public data class StreamDimens(
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,
     public val attachmentsContentImageWidth: Dp,
+    public val attachmentsContentImageGridSpacing: Dp,
     public val attachmentsContentImageHeight: Dp,
     public val attachmentsContentGiphyWidth: Dp,
     public val attachmentsContentGiphyHeight: Dp,
@@ -71,7 +98,16 @@ public data class StreamDimens(
     public val userReactionItemWidth: Dp,
     public val userReactionItemAvatarSize: Dp,
     public val userReactionItemIconSize: Dp,
+    public val reactionOptionItemIconSize: Dp,
     public val headerElevation: Dp,
+    public val messageItemMaxWidth: Dp,
+    public val quotedMessageTextVerticalPadding: Dp,
+    public val quotedMessageTextHorizontalPadding: Dp,
+    public val quotedMessageAttachmentPreviewSize: Dp,
+    public val quotedMessageAttachmentTopPadding: Dp,
+    public val quotedMessageAttachmentBottomPadding: Dp,
+    public val quotedMessageAttachmentStartPadding: Dp,
+    public val quotedMessageAttachmentEndPadding: Dp,
 ) {
     public companion object {
         /**
@@ -87,6 +123,7 @@ public data class StreamDimens(
             selectedChannelMenuUserItemHorizontalPadding = 8.dp,
             selectedChannelMenuUserItemAvatarSize = 64.dp,
             attachmentsContentImageWidth = 250.dp,
+            attachmentsContentImageGridSpacing = 2.dp,
             attachmentsContentImageHeight = 200.dp,
             attachmentsContentGiphyWidth = 250.dp,
             attachmentsContentGiphyHeight = 200.dp,
@@ -110,7 +147,16 @@ public data class StreamDimens(
             userReactionItemWidth = 80.dp,
             userReactionItemIconSize = 24.dp,
             userReactionItemAvatarSize = 64.dp,
+            reactionOptionItemIconSize = 24.dp,
             headerElevation = 4.dp,
+            messageItemMaxWidth = 250.dp,
+            quotedMessageTextHorizontalPadding = 8.dp,
+            quotedMessageTextVerticalPadding = 6.dp,
+            quotedMessageAttachmentPreviewSize = 36.dp,
+            quotedMessageAttachmentBottomPadding = 6.dp,
+            quotedMessageAttachmentTopPadding = 6.dp,
+            quotedMessageAttachmentStartPadding = 8.dp,
+            quotedMessageAttachmentEndPadding = 0.dp,
         )
     }
 }

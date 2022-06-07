@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.di
 
 import android.content.Context
@@ -10,10 +26,14 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
+import io.getstream.chat.android.client.api.interceptor.ApiRequestAnalyserInterceptor
 import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
 import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
+import io.getstream.chat.android.client.api.internal.DistinctChatApi
+import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
+import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.ConfigApi
 import io.getstream.chat.android.client.api2.DeviceApi
@@ -36,8 +56,9 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -49,6 +70,7 @@ import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
+@Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,
@@ -66,7 +88,7 @@ internal open class BaseChatModule(
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
-    private val defaultApi by lazy { buildApi() }
+    private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
     }
@@ -79,7 +101,6 @@ internal open class BaseChatModule(
     val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
-            api(),
             socketStateService,
             networkScope,
         )
@@ -156,6 +177,11 @@ internal open class BaseChatModule(
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .apply {
+                if (config.debugRequests) {
+                    addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
+                }
+            }
             .let(httpClientConfig)
             .addInterceptor(
                 TokenAuthInterceptor(
@@ -188,18 +214,19 @@ internal open class BaseChatModule(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
     ): ChatSocket {
-        return ChatSocketImpl(
+        return ChatSocket(
             chatConfig.apiKey,
             chatConfig.wssUrl,
             tokenManager,
-            parser,
+            SocketFactory(parser, tokenManager),
             NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+            parser,
             networkScope,
         )
     }
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(): ChatApi {
+    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return MoshiChatApi(
             fileUploader ?: defaultFileUploader,
             buildRetrofitApi<UserApi>(),
@@ -211,7 +238,13 @@ internal open class BaseChatModule(
             buildRetrofitApi<GeneralApi>(),
             buildRetrofitApi<ConfigApi>(),
             networkScope,
-        )
+        ).let { originalApi ->
+            DistinctChatApiEnabler(DistinctChatApi(originalApi)) {
+                chatConfig.distinctApiCalls
+            }
+        }.let { originalApi ->
+            ExtraDataValidator(originalApi)
+        }
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {
@@ -231,7 +264,9 @@ internal open class BaseChatModule(
             val auth = this.annotations.any { it is AuthenticatedApi }
 
             if (anon && auth) {
-                throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")
+                throw IllegalStateException(
+                    "Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both"
+                )
             }
 
             if (anon) return true

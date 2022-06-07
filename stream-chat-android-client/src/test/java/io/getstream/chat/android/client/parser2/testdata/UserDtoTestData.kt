@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -14,6 +30,8 @@ internal object UserDtoTestData {
         """{
             "id": "",
             "role": "",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "banned": false,
             "devices": [],
@@ -33,6 +51,52 @@ internal object UserDtoTestData {
         DownstreamUserDto(
             banned = false,
             id = "",
+            name = "username",
+            image = "image",
+            invisible = false,
+            role = "",
+            devices = emptyList(),
+            online = false,
+            updated_at = null,
+            created_at = null,
+            last_active = null,
+            total_unread_count = 0,
+            unread_channels = 0,
+            unread_count = 0,
+            mutes = emptyList(),
+            teams = emptyList(),
+            channel_mutes = emptyList(),
+            extraData = emptyMap(),
+        )
+
+    @Language("JSON")
+    val downstreamJsonWithoutImageAndName =
+        """{
+            "id": "",
+            "role": "",
+            "name": null,
+            "image": null,
+            "invisible": false,
+            "banned": false,
+            "devices": [],
+            "online": false,
+            "created_at": null,
+            "updated_at": null,
+            "last_active": null,
+            "total_unread_count": 0,
+            "unread_channels": 0,
+            "unread_count": 0,
+            "mutes": [],
+            "teams": [],
+            "channel_mutes": []
+         }"""
+
+    val downstreamUserWithoutImageAndName =
+        DownstreamUserDto(
+            banned = false,
+            id = "",
+            name = null,
+            image = null,
             invisible = false,
             role = "",
             devices = emptyList(),
@@ -59,7 +123,8 @@ internal object UserDtoTestData {
             "devices": [
              {
               "id": "deviceId",
-              "push_provider": "provider"
+              "push_provider": "provider",
+              "provider_name": "provider_name"
              }
             ],
             "online": true,
@@ -79,15 +144,18 @@ internal object UserDtoTestData {
             ],
             "teams": [ "team1", "team2" ],
             "channel_mutes": [],
-            "name": "username"
+            "name": "username",
+            "image": "image"
          }"""
     val downstreamUser =
         DownstreamUserDto(
             banned = false,
             id = "userId",
+            name = "username",
+            image = "image",
             invisible = false,
             role = "owner",
-            devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
+            devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
             online = true,
             updated_at = Date(1591787071588),
             created_at = Date(1591787071000),
@@ -106,7 +174,7 @@ internal object UserDtoTestData {
             ),
             teams = listOf("team1", "team2"),
             channel_mutes = emptyList(),
-            extraData = mapOf("name" to "username"),
+            extraData = emptyMap(),
         )
 
     @Language("JSON")
@@ -114,6 +182,8 @@ internal object UserDtoTestData {
         """{
             "banned": true,
             "id": "userId",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "role": "owner",
             "devices": [],
@@ -123,6 +193,8 @@ internal object UserDtoTestData {
     val upstreamUserWithoutExtraData = UpstreamUserDto(
         id = "userId",
         role = "owner",
+        name = "username",
+        image = "image",
         invisible = false,
         banned = true,
         devices = emptyList(),
@@ -135,16 +207,18 @@ internal object UserDtoTestData {
         """{
             "banned": false,
             "id": "userId",
+            "name": "username",
+            "image": "image",
             "invisible": false,
             "role": "owner",
             "devices": [
              {
               "id": "deviceId",
-              "push_provider": "provider"
+              "push_provider": "provider",
+              "provider_name": "provider_name"
              }
             ],
-            "teams": [ "team1", "team2"],
-            "name": "username"
+            "teams": [ "team1", "team2"]
          }""".withoutWhitespace()
 
     val upstreamUser = UpstreamUserDto(
@@ -152,8 +226,10 @@ internal object UserDtoTestData {
         role = "owner",
         invisible = false,
         banned = false,
-        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider")),
+        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
         teams = listOf("team1", "team2"),
-        extraData = mapOf("name" to "username"),
+        name = "username",
+        image = "image",
+        extraData = emptyMap(),
     )
 }

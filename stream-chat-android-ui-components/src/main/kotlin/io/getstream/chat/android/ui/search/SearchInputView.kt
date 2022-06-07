@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
@@ -6,6 +22,7 @@ import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
@@ -59,6 +76,9 @@ public class SearchInputView : FrameLayout {
         style = SearchInputViewStyle(context, attrs)
 
         binding.root.setOnClickListener { binding.inputField.focusAndShowKeyboard() }
+        binding.root.updateLayoutParams {
+            this.height = style.searchInputHeight
+        }
 
         binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
         binding.searchIcon.setImageDrawable(style.searchIconDrawable)
@@ -105,6 +125,9 @@ public class SearchInputView : FrameLayout {
         binding.clearInputButton.isVisible = isClearButtonVisible
     }
 
+    /**
+     * Used to reach to detach from window events. Cancels any current input values that are debounced.
+     */
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         inputDebouncer.shutdown()
@@ -173,11 +196,28 @@ public class SearchInputView : FrameLayout {
         this.searchStartedListener = searchStartedListener
     }
 
+    /**
+     * Listener that exposes a handle when the input changes.
+     */
     public fun interface InputChangedListener {
+        /**
+         * Handle when the input changes.
+         *
+         * @param query The current query value.
+         */
         public fun onInputChanged(query: String)
     }
 
+    /**
+     * Listener that exposes a handle when the search starts.
+     */
     public fun interface SearchStartedListener {
+
+        /**
+         * Handle when the search starts.
+         *
+         * @param query The current value of the query with which the search started.
+         */
         public fun onSearchStarted(query: String)
     }
 }

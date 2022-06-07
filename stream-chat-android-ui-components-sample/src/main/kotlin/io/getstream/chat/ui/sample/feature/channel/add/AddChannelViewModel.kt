@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.channel.add
 
 import androidx.lifecycle.LiveData
@@ -5,12 +21,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.extensions.searchUsersByName
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,7 +36,6 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 
-    private val chatDomain = ChatDomain.instance()
     private val chatClient = ChatClient.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
@@ -50,13 +67,44 @@ class AddChannelViewModel : ViewModel() {
             _state.value = State.Loading
         }
         latestSearchCall?.cancel()
-        latestSearchCall = chatClient.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall = chatClient.queryUsers(createSearchQuery(searchQuery, offset, USERS_LIMIT, true))
         latestSearchCall?.enqueue { result ->
             if (result.isSuccess) {
                 val users = result.data()
                 _state.postValue(if (isRequestingMore) State.ResultMoreUsers(users) else State.Result(users))
                 updatePaginationData(users)
             }
+        }
+    }
+
+    private fun createSearchQuery(querySearch: String, offset: Int, usersLimit: Int, userPresence: Boolean): QueryUsersRequest {
+        val filter = if (querySearch.isEmpty()) {
+            val currentUserId = chatClient.getCurrentUser()?.id
+            if (currentUserId != null) {
+                Filters.ne(FIELD_ID, currentUserId)
+            } else {
+                Filters.neutral()
+            }
+        } else {
+            createFilter(
+                Filters.autocomplete(FIELD_NAME, querySearch),
+                chatClient.getCurrentUser()?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+            )
+        }
+        return QueryUsersRequest(
+            filter = filter,
+            offset = offset,
+            limit = usersLimit,
+            querySort = USERS_QUERY_SORT,
+            presence = userPresence
+        )
+    }
+
+    private fun createFilter(defaultFilter: FilterObject, optionalFilter: FilterObject?): FilterObject {
+        return if (optionalFilter != null) {
+            Filters.and(defaultFilter, optionalFilter)
+        } else {
+            defaultFilter
         }
     }
 
@@ -78,10 +126,11 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUserId = chatDomain.user.value?.id ?: error("User must be set before create new channel!")
+            val currentUserId = chatClient.getCurrentUser()?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
-                members = members.map(User::id) + currentUserId,
+                channelId = "",
+                memberIds = members.map(User::id) + currentUserId,
                 extraData = mapOf(CHANNEL_ARG_DRAFT to true)
             ).await()
             if (result.isSuccess) {
@@ -111,6 +160,11 @@ class AddChannelViewModel : ViewModel() {
     companion object {
         private const val USERS_LIMIT = 30
         private const val CHANNEL_MESSAGING_TYPE = "messaging"
+
+        private val USERS_QUERY_SORT = QuerySort.asc(User::name)
+
+        private const val FIELD_NAME = "name"
+        private const val FIELD_ID = "id"
     }
 
     sealed class State {

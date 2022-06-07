@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list.internal
 
 import androidx.core.view.isVisible
@@ -30,7 +46,21 @@ internal class MessageListScrollHelper(
 
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
+
+    /**
+     * True when the latest message is visible.
+     *
+     * Note: This does not mean the whole message is visible,
+     * it will be true even if only a part of it is.
+     */
     private var isAtBottom = false
+        set(value) {
+            if (value) {
+                callback.onLastMessageRead()
+            }
+            field = value
+        }
+
     private var unreadCount = 0
 
     private val currentList: List<MessageListItem>
@@ -58,7 +88,9 @@ internal class MessageListScrollHelper(
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (!scrollToBottomButtonEnabled || currentList.isEmpty()) return
+                    if (!scrollToBottomButtonEnabled || currentList.isEmpty()) {
+                        return
+                    }
 
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                     val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
@@ -113,11 +145,11 @@ internal class MessageListScrollHelper(
                     ?.let {
                         if (message.pinned) {
                             this@MessageListScrollHelper.layoutManager
-                                ?.scrollToPositionWithOffset(it, 8.dpToPx())
+                                .scrollToPositionWithOffset(it, 8.dpToPx())
                         } else {
                             with(recyclerView) {
                                 this@MessageListScrollHelper.layoutManager
-                                    ?.scrollToPositionWithOffset(it, height / 3)
+                                    .scrollToPositionWithOffset(it, height / 3)
                                 post {
                                     findViewHolderForAdapterPosition(it)
                                         ?.safeCast<BaseMessageItemViewHolder<*>>()
@@ -132,7 +164,7 @@ internal class MessageListScrollHelper(
     }
 
     internal fun onMessageListChanged(isThreadStart: Boolean, hasNewMessages: Boolean, isInitialList: Boolean) {
-        if (!hasNewMessages || adapter.currentList.isEmpty()) {
+        if (!scrollToBottomButtonEnabled || (!hasNewMessages || adapter.currentList.isEmpty())) {
             return
         }
 

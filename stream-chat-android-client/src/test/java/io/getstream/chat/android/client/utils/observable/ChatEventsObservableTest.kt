@@ -1,6 +1,21 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.utils.observable
 
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -9,21 +24,27 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.test.TestCoroutineRule
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.mock
 import java.util.Date
 
 internal class ChatEventsObservableTest {
 
-    private lateinit var socket: FakeChatSocket
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+
+    private lateinit var socket: FakeSocket
     private lateinit var observable: ChatEventsObservable
     private lateinit var result: MutableList<ChatEvent>
 
     @Before
     fun before() {
-        socket = FakeChatSocket()
-        observable = ChatEventsObservable(socket, mock())
+        socket = FakeSocket()
+        observable = ChatEventsObservable(socket, mock(), testCoroutines.scope)
         result = mutableListOf()
     }
 

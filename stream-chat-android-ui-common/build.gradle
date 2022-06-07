@@ -71,8 +71,6 @@ dependencies {
 
     implementation Dependencies.dexter
 
-    api Dependencies.exoMedia
-
     testImplementation project(":stream-chat-android-test")
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

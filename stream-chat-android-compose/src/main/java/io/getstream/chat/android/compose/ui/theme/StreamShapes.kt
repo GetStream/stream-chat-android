@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
@@ -20,6 +36,7 @@ import androidx.compose.ui.unit.dp
  * @param suggestionList The shape of suggestion list popup.
  * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
  * @param header The shape of the headers, such as the ones appearing on the Channel or Message screens.
+ * @param quotedAttachment The shape of quoted attachments.
  */
 @Immutable
 public data class StreamShapes(
@@ -32,7 +49,8 @@ public data class StreamShapes(
     public val bottomSheet: Shape,
     public val suggestionList: Shape,
     public val attachmentSiteLabel: Shape,
-    public val header: Shape
+    public val header: Shape,
+    public val quotedAttachment: Shape,
 ) {
     public companion object {
         /**
@@ -50,7 +68,8 @@ public data class StreamShapes(
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             suggestionList = RoundedCornerShape(16.dp),
             attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
-            header = RectangleShape
+            header = RectangleShape,
+            quotedAttachment = RoundedCornerShape(4.dp)
         )
     }
 }

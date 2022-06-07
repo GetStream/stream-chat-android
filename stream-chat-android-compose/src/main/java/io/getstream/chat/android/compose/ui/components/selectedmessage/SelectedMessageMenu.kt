@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.annotation.DrawableRes
@@ -10,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -22,12 +39,16 @@ import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOpt
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * Represents the options user can take after selecting a message.
  *
  * @param message The selected message.
  * @param messageOptions The available message options within the menu.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  * @param onMessageAction Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
@@ -37,28 +58,34 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
- * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog. By Default [MessageOptions].
+ * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog.
+ * By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
     message: Message,
     messageOptions: List<MessageOptionItemState>,
+    ownCapabilities: Set<String>,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedMessageReactionOptions(
-            message = message,
-            reactionTypes = reactionTypes,
-            showMoreReactionsDrawableRes = showMoreReactionsIcon,
-            onMessageAction = onMessageAction,
-            showMoreReactionsIcon = onShowMoreReactionsSelected
-        )
+        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+
+        if (canLeaveReaction) {
+            DefaultSelectedMessageReactionOptions(
+                message = message,
+                reactionTypes = reactionTypes,
+                showMoreReactionsDrawableRes = showMoreReactionsIcon,
+                onMessageAction = onMessageAction,
+                showMoreReactionsIcon = onShowMoreReactionsSelected
+            )
+        }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedMessageOptions(
@@ -89,7 +116,7 @@ public fun SelectedMessageMenu(
 @Composable
 internal fun DefaultSelectedMessageReactionOptions(
     message: Message,
-    reactionTypes: Map<String, Int>,
+    reactionTypes: Map<String, ReactionIcon>,
     @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     showMoreReactionsIcon: () -> Unit,
@@ -142,14 +169,16 @@ private fun SelectedMessageMenuPreview() {
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = Message(),
             currentUser = User(),
-            isInThread = false
+            isInThread = false,
+            ownCapabilities = ChannelCapabilities.toSet()
         )
 
         SelectedMessageMenu(
             message = Message(),
             messageOptions = messageOptionsStateList,
             onMessageAction = {},
-            onShowMoreReactionsSelected = {}
+            onShowMoreReactionsSelected = {},
+            ownCapabilities = ChannelCapabilities.toSet()
         )
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.annotation.UiThread
@@ -5,11 +21,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.combineWith
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import java.util.Date
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 
 /**
  * It's common for messaging UIs to interleave and group messages
@@ -36,8 +56,10 @@ import java.util.Date
  * @param messages A livedata object with the messages.
  * @param readsLd A livedata object with the read state per user.
  * @param typingLd A livedata object with the users who are currently typing.
- * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the item list.
- * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a date separator.
+ * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the
+ * item list.
+ * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a
+ * date separator.
  *
  * Here's an example:
  *
@@ -49,7 +71,12 @@ import java.util.Date
  *   }
  * }
  *
+ * @param deletedMessageVisibility Controls when deleted messages are shown.
+ * @param messageFooterVisibility Controls when the message footer is shown.
+ *
  */
+
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class MessageListItemLiveData(
     private val currentUser: LiveData<User?>,
     messages: LiveData<List<Message>>,
@@ -57,6 +84,8 @@ internal class MessageListItemLiveData(
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
+    private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
+    private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -74,23 +103,48 @@ internal class MessageListItemLiveData(
         typingLd?.let { typing -> configTypingChange(typing, currentUser) }
     }
 
+    /**
+     * Emits a value from this [MediatorLiveData] class when either
+     * the user gets updated, the deleted message visibility or
+     * message footer visibility gets changed.
+     */
     private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
-        val messagesChange = getCurrentUser.changeOnUserLoaded(messages) { changedMessages, currentUser ->
-            messagesChanged(changedMessages, currentUser!!.id)
-        }
+        val messagesChange = getCurrentUser
+            .combineWith(deletedMessageVisibility) { user, _ ->
+                user
+            }
+            .combineWith(messageFooterVisibility) { user, _ ->
+                user
+            }
+            .changeOnUserLoaded(messages) { changedMessages, currentUser ->
+                if (currentUser != null) {
+                    messagesChanged(
+                        changedMessages,
+                        currentUser.id
+                    )
+                } else null
+            }
 
         addSource(messagesChange) { value ->
-            this.value = value
+            if (value != null) {
+                this.value = value
+            }
         }
     }
 
     private fun configReadsChange(readsLd: LiveData<List<ChannelUserRead>>, getCurrentUser: LiveData<User?>) {
         val readChange = getCurrentUser.changeOnUserLoaded(readsLd) { changedReads, currentUser ->
-            readsChanged(changedReads, currentUser!!.id)
+            if (currentUser != null) {
+                readsChanged(changedReads, currentUser.id)
+            } else {
+                null
+            }
         }
 
         addSource(readChange) { value ->
-            this.value = value
+            if (value != null) {
+                this.value = value
+            }
         }
     }
 
@@ -162,14 +216,31 @@ internal class MessageListItemLiveData(
     }
 
     /**
+     * Filters out or leaves in deleted messages based on their visibility
+     * set by the user.
+     */
+    private fun filterDeletedMessages(messages: List<Message>?): List<Message>? {
+        return when (deletedMessageVisibility.value) {
+            DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER ->
+                messages?.filter { it.deletedAt == null || it.user.id == currentUser.value?.id }
+            DeletedMessageVisibility.ALWAYS_HIDDEN -> messages?.filter { it.deletedAt == null }
+            else -> messages
+        }
+    }
+
+    /**
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
      * It's fast enough though.
      */
+    @Suppress("ComplexMethod")
     private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
-        hasNewMessages = false
-        if (messages == null || messages.isEmpty()) return emptyList()
 
-        val newLastMessageId: String = messages[messages.size - 1].id
+        val filteredMessages = filterDeletedMessages(messages)
+
+        hasNewMessages = false
+        if (filteredMessages == null || filteredMessages.isEmpty()) return emptyList()
+
+        val newLastMessageId: String = filteredMessages[filteredMessages.size - 1].id
         if (newLastMessageId != lastMessageID) {
             hasNewMessages = true
         }
@@ -177,12 +248,12 @@ internal class MessageListItemLiveData(
 
         val items = mutableListOf<MessageListItem>()
         var previousMessage: Message? = null
-        val topIndex = 0.coerceAtLeast(messages.size - 1)
+        val topIndex = 0.coerceAtLeast(filteredMessages.size - 1)
 
-        for ((i, message) in messages.withIndex()) {
+        for ((i, message) in filteredMessages.withIndex()) {
             var nextMessage: Message? = null
             if (i + 1 <= topIndex) {
-                nextMessage = messages[i + 1]
+                nextMessage = filteredMessages[i + 1]
             }
 
             // thread separator
@@ -190,7 +261,7 @@ internal class MessageListItemLiveData(
                 items.add(
                     MessageListItem.ThreadSeparatorItem(
                         date = message.getCreatedAtOrThrow(),
-                        messageCount = messages.size - 1,
+                        messageCount = filteredMessages.size - 1,
                     )
                 )
             }
@@ -216,12 +287,20 @@ internal class MessageListItemLiveData(
                 }
             }
 
+            // determine if footer is shown or not
+            val shouldShowMessageFooter = messageFooterVisibility.value?.shouldShowMessageFooter(
+                message,
+                positions.contains(MessageListItem.Position.BOTTOM),
+                nextMessage
+            ) ?: false
+
             items.add(
                 MessageListItem.MessageItem(
                     message,
                     positions,
                     isMine = message.user.id == currentUserId,
                     isThreadMode = isThread,
+                    showMessageFooter = shouldShowMessageFooter
                 )
             )
             previousMessage = message
@@ -240,6 +319,7 @@ internal class MessageListItemLiveData(
      * Since the most common scenario is that someone read to the end, we start by matching the end of the list.
      * We also sort the read state for easier merging of the lists.
      */
+    @Suppress("ReturnCount", "NestedBlockDepth")
     private fun addReads(
         messages: List<MessageListItem>,
         reads: List<ChannelUserRead>?,
@@ -247,7 +327,10 @@ internal class MessageListItemLiveData(
     ): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter { it.user.id != currentUserId }.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads
+            .filter { it.user.id != currentUserId }
+            .sortedBy { it.lastRead }
+            .toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()
@@ -342,9 +425,4 @@ internal class MessageListItemLiveData(
             }
         }
     }
-}
-
-public fun Message.getCreatedAtOrThrow(): Date {
-    val created = createdAt ?: createdLocallyAt
-    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }

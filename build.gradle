@@ -1,6 +1,11 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.changelog.plugin.ChangelogReleaseSectionPlugin
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
+import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
+import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
+import io.getstream.chat.android.command.version.plugin.VersionPrintPlugin
+import io.getstream.chat.android.command.changelog.plugin.ChangelogAddModelSectionPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
@@ -9,6 +14,12 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
+apply plugin: ChangelogReleaseSectionPlugin
+apply plugin: VersionBumpPlugin
+apply plugin: MinorBumpPlugin
+apply plugin: VersionPrintPlugin
+apply plugin: ChangelogAddModelSectionPlugin
+
 
 buildscript {
     repositories {
@@ -38,11 +49,17 @@ buildscript {
         classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
+        classpath Dependencies.ksp
+        classpath Dependencies.detektPlugin
     }
 }
 
 subprojects {
-    apply from: "${rootDir}/scripts/spotless.gradle"
+    if (it.name != 'stream-chat-android-docs'
+            && it.buildFile.exists()) {
+        apply from: "${rootDir}/spotless/spotless.gradle"
+    }
+    apply plugin: "io.gitlab.arturbosch.detekt"
 }
 
 allprojects {
@@ -53,10 +70,6 @@ allprojects {
             url "https://jitpack.io"
             content {
                 includeModule("com.github.chrisbanes", "PhotoView")
-                includeModule("com.github.duanhong169", "drawabletoolbox")
-
-                // https://github.com/brianwernick/ExoMedia/issues/723
-                includeModule("com.github.brianwernick", "ExoMedia")
 
                 // https://github.com/stfalcon-studio/StfalconImageViewer/issues/69
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
@@ -65,12 +78,25 @@ allprojects {
     }
 }
 
+versionPrint {
+    printFilePath = "temp-version"
+}
+
 unitTestDebugScript {
     outputPath = "unit-tests-command.sh"
 }
 
 releaseScript {
     changelogPath = "CHANGELOG.md"
+}
+
+changelogReleaseSection {
+    changelogPath = "CHANGELOG.md"
+}
+
+changelogAddModelSection {
+    changelogPath = "CHANGELOG.md"
+    changelogModel = "CHANGELOG_MODEL.md"
 }
 
 task clean(type: Delete) {
@@ -94,6 +120,11 @@ apiValidation {
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-test',
             'stream-chat-android-compose-sample',
+            'libraries',
+            'logging',
+            'stream-logger',
+            'stream-logger-file',
+            'stream-logger-android',
     ]
 
     nonPublicMarkers += [

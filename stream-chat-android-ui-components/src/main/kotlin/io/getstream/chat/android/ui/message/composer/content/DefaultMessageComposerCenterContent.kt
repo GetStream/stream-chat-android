@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
@@ -12,15 +28,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
@@ -75,9 +91,11 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr) {
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -107,7 +125,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
             val newValue = state.inputValue
             if (newValue != currentValue) {
                 setText(state.inputValue)
-                //placing cursor at the end of the text
+                // placing cursor at the end of the text
                 setSelection(length())
             }
         }
@@ -119,7 +137,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
             val message = action.message
             binding.messageReplyView.setMessage(
                 message,
-                ChatDomain.instance().user.value?.id == message.user.id,
+                ChatUI.currentUserProvider.getCurrentUser()?.id == message.user.id,
                 null,
             )
             binding.messageReplyView.isVisible = true
@@ -155,6 +173,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
                     R.string.stream_ui_message_composer_error_file_size,
                     MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
                 )
+            }
+            is ValidationError.ContainsLinksWhenNotAllowed -> {
+                context.getString(R.string.stream_ui_message_composer_sending_links_not_allowed)
             }
         }
         Toast.makeText(context, errorMessage, LENGTH_SHORT).show()
@@ -269,7 +290,9 @@ public open class MessageComposerImageAttachmentPreviewFactory : MessageComposer
     /**
      * @return true if given attachment is of image or giphy type, false otherwise.
      */
-    public override fun canHandle(attachment: Attachment): Boolean = attachment.isMedia()
+    public override fun canHandle(attachment: Attachment): Boolean {
+        return attachment.type in listOf(ModelType.attach_image, ModelType.attach_giphy)
+    }
 
     /**
      * @return Image attachment view.

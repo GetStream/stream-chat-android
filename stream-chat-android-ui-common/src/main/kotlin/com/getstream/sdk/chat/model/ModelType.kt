@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.getstream.sdk.chat.model
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -36,13 +52,15 @@ public object ModelType {
     public const val attach_mime_7z: String = "application/x-7z-compressed"
     public const val attach_mime_csv: String = "text/comma-separated-values"
     public const val attach_mime_doc: String = "application/msword"
-    public const val attach_mime_docx: String = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    public const val attach_mime_docx: String =
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     public const val attach_mime_html: String = "text/html"
     public const val attach_mime_md: String = "text/markdown"
     public const val attach_mime_odt: String = "application/vnd.oasis.opendocument.text"
     public const val attach_mime_pdf: String = "application/pdf"
     public const val attach_mime_ppt: String = "application/vnd.ms-powerpoint"
-    public const val attach_mime_pptx: String = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    public const val attach_mime_pptx: String =
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     public const val attach_mime_rar: String = "application/vnd.rar"
     public const val attach_mime_rtf: String = "application/rtf"
     public const val attach_mime_tar: String = "application/tar"

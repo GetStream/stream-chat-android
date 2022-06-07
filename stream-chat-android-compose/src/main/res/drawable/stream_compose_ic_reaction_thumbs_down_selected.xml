@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    >
+    <path
+        android:fillColor="@color/stream_compose_primary_accent"
+        android:fillType="evenOdd"
+        android:pathData="M5,7.681C5,8.923 5.087,10.713 5.394,11.211C5.7,11.708 8.37,14.172 9.234,16.179C10.097,18.186 10.246,21 11.664,21C13.083,21 13.547,19.927 13.397,17.723C13.247,15.519 12.193,14.158 12.934,13.622C13.437,13.257 14.325,13.853 16.48,13.853C17.418,13.853 19,13.853 19,12.595C19,11.337 18.723,11.481 18.596,10.627C18.47,9.773 18.851,9.359 18.43,8.396C18.01,7.432 17.492,7.314 17.25,6.624C17.01,5.934 17.095,5.192 15.968,4.181C14.842,3.17 13.045,3 11.665,3C10.285,3 6.183,3.462 5.619,4.768C5.054,6.074 5,6.55 5,7.681Z"
+        />
+</vector>

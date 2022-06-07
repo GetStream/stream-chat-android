@@ -1,8 +1,25 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,11 +38,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -43,10 +62,9 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPos
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
-import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
+import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
@@ -57,6 +75,8 @@ import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
 import io.getstream.chat.android.compose.ui.util.isDeleted
+import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
 
@@ -77,6 +97,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
@@ -99,6 +120,7 @@ public fun MessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
@@ -114,7 +136,8 @@ public fun MessageItem(
             messageItem = it,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
+            onQuotedMessageClick = onQuotedMessageClick
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -151,7 +174,7 @@ public fun MessageItem(
             durationMillis = if (focusState is MessageFocused) {
                 AnimationConstants.DefaultDurationMillis
             } else {
-                HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+                HighlightFadeOutDurationMillis
             }
         )
     ).value else backgroundColor
@@ -202,8 +225,12 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    val position = messageItem.groupPosition
-    if (!messageItem.isMine && (position == Bottom || position == None)) {
+    if (!messageItem.isMine && (
+        messageItem.shouldShowFooter ||
+            messageItem.groupPosition == Bottom ||
+            messageItem.groupPosition == None
+        )
+    ) {
         UserAvatar(
             modifier = modifier,
             user = messageItem.message.user,
@@ -263,17 +290,17 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val supportedReactions = ChatTheme.reactionTypes
-
         val reactionCounts = message.reactionCounts.ifEmpty { return }
+        val iconFactory = ChatTheme.reactionIconFactory
         reactionCounts
-            .filter { supportedReactions.containsKey(it.key) }
+            .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
             ?.map { it.key }
             ?.map { type ->
+                val isSelected = ownReactions.any { it.type == type }
+                val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
-                    painter = painterResource(requireNotNull(supportedReactions[type])),
-                    isSelected = ownReactions.any { it.type == type },
+                    painter = reactionIcon.getPainter(isSelected),
                     type = type
                 )
             }
@@ -315,10 +342,11 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message
             )
         }
-        message.isDeleted() && messageItem.isMine -> {
+        message.isDeleted() &&
+            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             OwnedMessageVisibilityContent(message = message)
         }
-        !message.isDeleted() -> {
+        else -> {
             MessageFooter(messageItem = messageItem)
         }
     }
@@ -348,11 +376,12 @@ internal fun DefaultMessageItemTrailingContent(
 /**
  * Represents the default content shown at the center of the message list item.
  *
- * By default, we show a message bubble with attachments.
+ * By default, we show a message bubble with attachments or emoji stickers if message is emoji only.
  *
  * @param messageItem The message item to show the content for.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @Composable
@@ -360,6 +389,99 @@ internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    if (messageItem.message.isEmojiOnly()) {
+        EmojiMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
+        )
+    } else {
+        RegularMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
+        )
+    }
+}
+
+/**
+ * Message content when the message consists only of emoji.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ */
+@Composable
+internal fun EmojiMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val message = messageItem.message
+
+    if (!messageItem.isFailed()) {
+        MessageContent(
+            message = message,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onImagePreviewResult = onImagePreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick
+        )
+    } else {
+        Box(modifier = modifier) {
+            MessageContent(
+                message = message,
+                onLongItemClick = onLongItemClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onImagePreviewResult = onImagePreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
+            )
+        }
+    }
+}
+
+/**
+ * Message content for messages which consist of more than just emojis.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ */
+@Composable
+internal fun RegularMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
@@ -378,73 +500,83 @@ internal fun DefaultMessageItemCenterContent(
         else -> ChatTheme.colors.otherMessagesBackground
     }
 
-    val modifier = Modifier.widthIn(max = 250.dp)
-
-    MessageBubble(
-        modifier = modifier,
-        shape = messageBubbleShape,
-        color = messageBubbleColor,
-        content = {
-            when {
-                message.isGiphyEphemeral() -> {
-                    GiphyMessageContent(
-                        message = messageItem.message,
-                        onGiphyActionClick = onGiphyActionClick
-                    )
-                }
-                message.isDeleted() -> {
-                    Text(
-                        modifier = modifier
-                            .padding(
-                                start = 12.dp,
-                                end = 12.dp,
-                                top = 8.dp,
-                                bottom = 8.dp
-                            ),
-                        text = stringResource(id = R.string.stream_compose_message_deleted),
-                        color = ChatTheme.colors.textLowEmphasis,
-                        style = ChatTheme.typography.footnoteItalic
-                    )
-                }
-                else -> {
-                    Column {
-                        MessageAttachmentsContent(
-                            message = messageItem.message,
-                            onLongItemClick = onLongItemClick,
-                            onImagePreviewResult = onImagePreviewResult,
-                        )
-
-                        if (message.text.isNotEmpty()) {
-                            DefaultMessageContent(message = message)
-                        }
-                    }
-                }
+    if (!messageItem.isFailed()) {
+        MessageBubble(
+            modifier = modifier,
+            shape = messageBubbleShape,
+            color = messageBubbleColor,
+            border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            content = {
+                MessageContent(
+                    message = message,
+                    onLongItemClick = onLongItemClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onImagePreviewResult = onImagePreviewResult,
+                    onQuotedMessageClick = onQuotedMessageClick
+                )
             }
+        )
+    } else {
+        Box(modifier = modifier) {
+            MessageBubble(
+                modifier = Modifier.padding(end = 12.dp),
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                content = {
+                    MessageContent(
+                        message = message,
+                        onLongItemClick = onLongItemClick,
+                        onGiphyActionClick = onGiphyActionClick,
+                        onImagePreviewResult = onImagePreviewResult,
+                        onQuotedMessageClick = onQuotedMessageClick
+                    )
+                }
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                painter = painterResource(id = R.drawable.stream_compose_ic_error),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
+            )
         }
-    )
+    }
 }
 
 /**
  * The default text message content. It holds the quoted message in case there is one.
  *
  * @param message The message to show.
+ * @param onLongItemClick Handler when the item is long clicked.
+ * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @Composable
-internal fun DefaultMessageContent(message: Message) {
+internal fun DefaultMessageTextContent(
+    message: Message,
+    onLongItemClick: (Message) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit,
+) {
     val quotedMessage = message.replyTo
 
     Column {
         if (quotedMessage != null) {
             QuotedMessage(
-                modifier = Modifier.padding(8.dp),
-                message = quotedMessage
+                modifier = Modifier.padding(2.dp),
+                message = quotedMessage,
+                onLongItemClick = { onLongItemClick(message) },
+                onQuotedMessageClick = onQuotedMessageClick
             )
         }
-        MessageText(message = message)
+        MessageText(
+            message = message,
+            onLongItemClick = onLongItemClick
+        )
     }
 }
 
 /**
  * Represents the time the highlight fade out transition will take.
  */
-public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+public const val HighlightFadeOutDurationMillis: Int = 1000

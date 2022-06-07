@@ -1,10 +1,9 @@
 package io.getstream.chat.android.command.release.task
 
-import io.getstream.chat.android.command.release.markdown.clean
-import io.getstream.chat.android.command.release.markdown.parser.parseChangelogFile
 import io.getstream.chat.android.command.release.output.FilePrinter
 import io.getstream.chat.android.command.release.output.print
 import io.getstream.chat.android.command.release.plugin.ReleaseCommandExtension
+import io.getstream.chat.android.command.utils.parseChangelogFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -20,11 +19,8 @@ open class ReleaseTask : DefaultTask() {
         val changeLogFile = File(config.changelogPath)
         println("changelogPath: $changeLogFile")
 
-        val document = parseChangelogFile(changeLogFile).clean()
-
-        FilePrinter("CHANGELOG_PARSED.md").use { printer ->
-            document.print(printer)
-        }
+        val releaseDocument = parseChangelogFile(changeLogFile)
+        FilePrinter.fromFileName("CHANGELOG_PARSED.md").use { printer -> releaseDocument.print(printer) }
 
         println("CHANGELOG_PARSED.md generated")
     }

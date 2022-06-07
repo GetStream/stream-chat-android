@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list
 
 import android.animation.LayoutTransition
@@ -11,6 +27,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -23,9 +40,11 @@ import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
-import com.getstream.sdk.chat.view.EndlessScrollListener
+import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -34,16 +53,19 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
+import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isDeleted
+import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
@@ -91,13 +113,14 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -128,6 +151,12 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
+
+    /**
+     * Used to enable or disable parts of the UI depending
+     * on which abilities the user has in the given channel.
+     */
+    private var ownCapabilities: Set<String> = setOf()
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -238,7 +267,7 @@ public class MessageListView : ConstraintLayout {
 
     private var _attachmentDownloadOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentDownloadOptionHandler { attachmentData ->
-            DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER.onAttachmentDownloadClick(attachmentData.toAttachment())
+            defaultAttachmentDownloadClickListener.onAttachmentDownloadClick(attachmentData.toAttachment())
         }
     ) { realListener ->
         AttachmentGalleryActivity.AttachmentDownloadOptionHandler { realListener().onClick(it) }
@@ -262,7 +291,6 @@ public class MessageListView : ConstraintLayout {
             is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
-            is MessageListViewModel.ErrorEvent.DeleteMessageError -> R.string.stream_ui_message_list_error_delete_message
         }.let(::showToast)
     }
 
@@ -270,9 +298,14 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
+    @Suppress("DEPRECATION_ERROR")
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
-    private lateinit var loadMoreListener: EndlessScrollListener
+
+    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
+        MutableLiveData(null)
+
+    private lateinit var loadMoreListener: EndlessMessageListScrollListener
 
     private lateinit var channel: Channel
 
@@ -281,7 +314,7 @@ public class MessageListView : ConstraintLayout {
      */
     private var lockScrollUp = true
 
-    private val DEFAULT_MESSAGE_CLICK_LISTENER =
+    private val defaultMessageClickListener =
         MessageClickListener { message ->
             when {
                 message.replyCount > 0 -> {
@@ -293,21 +326,35 @@ public class MessageListView : ConstraintLayout {
                 }
             }
         }
-    private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
+
+    /**
+     * Provides a default long click handler for all messages. Based on the configuration options we have and the message
+     * type, we show different kind of options.
+     *
+     * We also disable editing of certain messages, like Giphy messages.
+     */
+    private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
+                val style = requireStyle()
+                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = requireStyle(),
+                            viewStyle = viewStyle,
                             channelConfig = channel.config,
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
+                            ownCapabilities = ownCapabilities
                         ),
-                        requireStyle(),
+                        viewStyle,
                         messageListItemViewHolderFactory,
-                        messageBackgroundFactory
+                        messageBackgroundFactory,
+                        attachmentFactoryManager,
+                        showAvatarPredicate
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -341,11 +388,11 @@ public class MessageListView : ConstraintLayout {
                     .show(fragmentManager, MessageOptionsDialogFragment.TAG)
             }
         }
-    private val DEFAULT_MESSAGE_RETRY_LISTENER =
+    private val defaultMessageRetryListener =
         MessageRetryListener { message ->
             messageRetryHandler.onMessageRetry(message)
         }
-    private val DEFAULT_THREAD_CLICK_LISTENER =
+    private val defaultThreadClickListener =
         ThreadClickListener { message ->
             if (message.replyCount > 0) {
                 threadStartHandler.onStartThread(message)
@@ -369,47 +416,58 @@ public class MessageListView : ConstraintLayout {
      * In case the attachments are being uploaded, they cannot be opened for preview until all of the attachments within
      * a message are uploaded.
      */
-    private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
+    private val defaultAttachmentClickListener =
         AttachmentClickListener { message, attachment ->
             val hasInvalidAttachments = message.attachments.any { it.uploadState != null }
             if (hasInvalidAttachments) {
                 return@AttachmentClickListener
             }
 
-            val destination = when {
-                message.attachments.all(Attachment::isMedia) -> {
-                    val filteredAttachments = message.attachments
-                        .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
-                    val attachmentGalleryItems = filteredAttachments.map {
-                        AttachmentGalleryItem(
-                            attachment = it,
-                            user = message.user,
-                            createdAt = message.getCreatedAtOrThrow(),
-                            messageId = message.id,
-                            cid = message.cid,
-                            isMine = message.user.isCurrentUser()
-                        )
-                    }
-                    val attachmentIndex = filteredAttachments.indexOf(attachment)
+            if (attachment.isGiphy()) {
+                val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
 
-                    attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
-                    attachmentGalleryDestination
+                if (url != null) {
+                    ChatUI.navigator.navigate(WebLinkDestination(context, url))
                 }
-                else -> AttachmentDestination(message, attachment, context)
+            } else {
+                val destination = when {
+                    message.attachments.all(Attachment::isImage) -> {
+                        val filteredAttachments = message.attachments
+                            .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                        val attachmentGalleryItems = filteredAttachments.map {
+                            AttachmentGalleryItem(
+                                attachment = it,
+                                user = message.user,
+                                createdAt = message.getCreatedAtOrThrow(),
+                                messageId = message.id,
+                                cid = message.cid,
+                                isMine = message.user.isCurrentUser()
+                            )
+                        }
+                        val attachmentIndex = filteredAttachments.indexOf(attachment)
+
+                        attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
+                        attachmentGalleryDestination
+                    }
+                    else -> AttachmentDestination(message, attachment, context)
+                }
+
+                ChatUI.navigator.navigate(destination)
             }
-            ChatUI.navigator.navigate(destination)
         }
 
-    private val DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER =
+    private val defaultAttachmentDownloadClickListener =
         AttachmentDownloadClickListener { attachment ->
-            attachmentDownloadHandler.onAttachmentDownload(attachment)
-            Toast.makeText(
-                context,
-                context.getString(R.string.stream_ui_message_list_download_started),
-                Toast.LENGTH_SHORT
-            ).show()
+            attachmentDownloadHandler.onAttachmentDownload {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.stream_ui_message_list_download_started),
+                    Toast.LENGTH_SHORT
+                ).show()
+                ChatClient.instance().downloadAttachment(context, attachment)
+            }
         }
-    private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
+    private val defaultReactionViewClickListener =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
@@ -419,10 +477,13 @@ public class MessageListView : ConstraintLayout {
                         channelConfig = channel.config,
                         hasTextToCopy = false, // No effect when displaying reactions
                         suppressThreads = false, // No effect when displaying reactions
+                        ownCapabilities = ownCapabilities
                     ),
                     requireStyle(),
                     messageListItemViewHolderFactory,
-                    messageBackgroundFactory
+                    messageBackgroundFactory,
+                    attachmentFactoryManager,
+                    showAvatarPredicate
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -434,39 +495,39 @@ public class MessageListView : ConstraintLayout {
                     .show(it, MessageOptionsDialogFragment.TAG)
             }
         }
-    private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
-    private val DEFAULT_GIPHY_SEND_LISTENER =
+    private val defaultUserClickListener = UserClickListener { /* Empty */ }
+    private val defaultGiphySendListener =
         GiphySendListener { message, action ->
             giphySendHandler.onSendGiphy(message, action)
         }
-    private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
+    private val defaultLinkClickListener = LinkClickListener { url ->
         ChatUI.navigator.navigate(WebLinkDestination(context, url))
     }
-    private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
+    private val defaultEnterThreadListener = EnterThreadListener {
         // Empty
     }
-    private val DEFAULT_USER_REACTION_CLICK_LISTENER = UserReactionClickListener { _, _, _ ->
+    private val defaultUserReactionClickListener = UserReactionClickListener { _, _, _ ->
         // Empty
     }
 
     private val listenerContainer = MessageListListenerContainerImpl(
-        messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER,
-        messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
-        messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER,
-        threadClickListener = DEFAULT_THREAD_CLICK_LISTENER,
-        attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER,
-        attachmentDownloadClickListener = DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER,
-        reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER,
-        userClickListener = DEFAULT_USER_CLICK_LISTENER,
-        giphySendListener = DEFAULT_GIPHY_SEND_LISTENER,
-        linkClickListener = DEFAULT_LINK_CLICK_LISTENER,
+        messageClickListener = defaultMessageClickListener,
+        messageLongClickListener = defaultMessageLongClickListener,
+        messageRetryListener = defaultMessageRetryListener,
+        threadClickListener = defaultThreadClickListener,
+        attachmentClickListener = defaultAttachmentClickListener,
+        attachmentDownloadClickListener = defaultAttachmentDownloadClickListener,
+        reactionViewClickListener = defaultReactionViewClickListener,
+        userClickListener = defaultUserClickListener,
+        giphySendListener = defaultGiphySendListener,
+        linkClickListener = defaultLinkClickListener,
     )
-    private var enterThreadListener = DEFAULT_ENTER_THREAD_LISTENER
-    private var userReactionClickListener = DEFAULT_USER_REACTION_CLICK_LISTENER
+    private var enterThreadListener = defaultEnterThreadListener
+    private var userReactionClickListener = defaultUserReactionClickListener
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
-    private lateinit var attachmentViewFactory: AttachmentViewFactory
+    private lateinit var attachmentFactoryManager: AttachmentFactoryManager
     private lateinit var messageBackgroundFactory: MessageBackgroundFactory
 
     public constructor(context: Context) : this(context, null, 0)
@@ -505,7 +566,7 @@ public class MessageListView : ConstraintLayout {
 
         loadingViewContainer.removeView(binding.defaultLoadingView)
         messageListViewStyle?.loadingView?.let { loadingView ->
-            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+            this.loadingView = streamThemeInflater.inflate(loadingView, loadingViewContainer, false).apply {
                 isVisible = true
                 loadingViewContainer.addView(this)
             }
@@ -547,7 +608,7 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
                     endRegionReachedHandler.onEndRegionReached()
                 }
             }
@@ -563,6 +624,15 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
+    /**
+     * Setter method for own capabilities which dictate which
+     * parts of the UI are enabled or disabled for the current user
+     * in the given channel.
+     */
+    public fun setOwnCapabilities(ownCapabilities: Set<String>) {
+        this.ownCapabilities = ownCapabilities
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         activity?.activityResultRegistry?.let { registry ->
@@ -571,7 +641,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
-        if (this::adapter.isInitialized) {
+        if (isAdapterInitialized()) {
             adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         }
         attachmentGalleryDestination.unregister()
@@ -644,11 +714,11 @@ public class MessageListView : ConstraintLayout {
     private fun initAdapter() {
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
-            messageDateFormatter = DateFormatter.from(context)
+            messageDateFormatter = ChatUI.dateFormatter
         }
 
-        if (::attachmentViewFactory.isInitialized.not()) {
-            attachmentViewFactory = AttachmentViewFactory()
+        if (::attachmentFactoryManager.isInitialized.not()) {
+            attachmentFactoryManager = ChatUI.attachmentFactoryManager
         }
 
         // Create default ViewHolderFactory if needed
@@ -666,13 +736,15 @@ public class MessageListView : ConstraintLayout {
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory,
-            deletedMessageListItemPredicate
+            deletedMessageListItemPredicate,
+            isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
-        messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
+        messageListItemViewHolderFactory.setAttachmentFactoryManager(this.attachmentFactoryManager)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
+        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -870,7 +942,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageListItemViewHolderFactory The custom factory to be used when generating item ViewHolders.
      */
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageViewHolderFactory first"
         }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
@@ -883,7 +955,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageBackgroundFactory The custom factory that provides drawables to be used in the messages background
      */
     public fun setMessageBackgroundFactory(messageBackgroundFactory: MessageBackgroundFactory) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageBackgroundFactory first"
         }
         this.messageBackgroundFactory = messageBackgroundFactory
@@ -895,7 +967,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageDateFormatter The formatter that is used to format the message date.
      */
     public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
+        check(isAdapterInitialized().not()) { "Adapter was already initialized; please set DateFormatter first" }
         this.messageDateFormatter = messageDateFormatter
     }
 
@@ -905,7 +977,7 @@ public class MessageListView : ConstraintLayout {
      * @param showAvatarPredicate The predicate that checks if the avatar should be shown.
      */
     public fun setShowAvatarPredicate(showAvatarPredicate: ShowAvatarPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized; please set ShowAvatarPredicate first"
         }
         this.showAvatarPredicate = showAvatarPredicate
@@ -927,7 +999,7 @@ public class MessageListView : ConstraintLayout {
      * @param messageListItemPredicate The predicate used to filter the list of [MessageListItem].
      */
     public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.messageListItemPredicate = messageListItemPredicate
@@ -950,24 +1022,34 @@ public class MessageListView : ConstraintLayout {
      * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
      */
+    @Deprecated(
+        message = "Filtering deleted messages should be performed in the ViewModel.",
+        replaceWith = ReplaceWith(
+            "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
+            "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
+        ),
+        level = DeprecationLevel.ERROR,
+    )
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) {
+        check(isAdapterInitialized().not()) {
             "Adapter was already initialized, please set MessageListItemPredicate first"
         }
         this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
+        this.deletedMessageListItemPredicateLiveData.value = this.deletedMessageListItemPredicate
     }
 
     /**
-     * Allows clients to set a custom implementation of [AttachmentViewFactory]. Use this
-     * method to create a custom content view for the message attachments.
-     *§
-     * @param attachmentViewFactory The custom view factory for attachments.
+     * Allows clients to set an instance of [AttachmentFactoryManager] that holds
+     * a list of custom attachment factories. Use this method to create a custom
+     * content view for the message attachments.
+     *
+     * @param attachmentFactoryManager Hold the list of factories for custom attachments.
      */
-    public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
-        check(::adapter.isInitialized.not()) {
-            "Adapter was already initialized, please set AttachmentViewFactory first"
+    public fun setAttachmentFactoryManager(attachmentFactoryManager: AttachmentFactoryManager) {
+        check(isAdapterInitialized().not()) {
+            "Adapter was already initialized, please set attachment factories first"
         }
-        this.attachmentViewFactory = attachmentViewFactory
+        this.attachmentFactoryManager = attachmentFactoryManager
     }
 
     public fun handleFlagMessageResult(result: Result<Flag>) {
@@ -1055,6 +1137,13 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
+    /**
+     * @return if the adapter has been initialized or not.
+     */
+    public fun isAdapterInitialized(): Boolean {
+        return ::adapter.isInitialized
+    }
+
     //region Listener setters
     /**
      * Sets the message click listener to be used by MessageListView.
@@ -1063,7 +1152,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
         listenerContainer.messageClickListener =
-            messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
+            messageClickListener ?: defaultMessageClickListener
     }
 
     /**
@@ -1073,7 +1162,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
         listenerContainer.messageLongClickListener =
-            messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
+            messageLongClickListener ?: defaultMessageLongClickListener
     }
 
     /**
@@ -1083,7 +1172,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setMessageRetryListener(messageRetryListener: MessageRetryListener?) {
         listenerContainer.messageRetryListener =
-            messageRetryListener ?: DEFAULT_MESSAGE_RETRY_LISTENER
+            messageRetryListener ?: defaultMessageRetryListener
     }
 
     /**
@@ -1093,7 +1182,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setThreadClickListener(threadClickListener: ThreadClickListener?) {
         listenerContainer.threadClickListener =
-            threadClickListener ?: DEFAULT_THREAD_CLICK_LISTENER
+            threadClickListener ?: defaultThreadClickListener
     }
 
     /**
@@ -1103,7 +1192,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setAttachmentClickListener(attachmentClickListener: AttachmentClickListener?) {
         listenerContainer.attachmentClickListener =
-            attachmentClickListener ?: DEFAULT_ATTACHMENT_CLICK_LISTENER
+            attachmentClickListener ?: defaultAttachmentClickListener
     }
 
     /**
@@ -1113,7 +1202,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setAttachmentDownloadClickListener(attachmentDownloadClickListener: AttachmentDownloadClickListener?) {
         listenerContainer.attachmentDownloadClickListener =
-            attachmentDownloadClickListener ?: DEFAULT_ATTACHMENT_DOWNLOAD_CLICK_LISTENER
+            attachmentDownloadClickListener ?: defaultAttachmentDownloadClickListener
     }
 
     /**
@@ -1123,7 +1212,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setReactionViewClickListener(reactionViewClickListener: ReactionViewClickListener?) {
         listenerContainer.reactionViewClickListener =
-            reactionViewClickListener ?: DEFAULT_REACTION_VIEW_CLICK_LISTENER
+            reactionViewClickListener ?: defaultReactionViewClickListener
     }
 
     /**
@@ -1132,7 +1221,7 @@ public class MessageListView : ConstraintLayout {
      * @param userClickListener The listener to use. If null, the default will be used instead.
      */
     public fun setUserClickListener(userClickListener: UserClickListener?) {
-        listenerContainer.userClickListener = userClickListener ?: DEFAULT_USER_CLICK_LISTENER
+        listenerContainer.userClickListener = userClickListener ?: defaultUserClickListener
     }
 
     /**
@@ -1141,7 +1230,7 @@ public class MessageListView : ConstraintLayout {
      * @param linkClickListener The listener to use. If null, the default will be used instead.
      */
     public fun setLinkClickListener(linkClickListener: LinkClickListener?) {
-        listenerContainer.linkClickListener = linkClickListener ?: DEFAULT_LINK_CLICK_LISTENER
+        listenerContainer.linkClickListener = linkClickListener ?: defaultLinkClickListener
     }
 
     /**
@@ -1150,7 +1239,7 @@ public class MessageListView : ConstraintLayout {
      * @param enterThreadListener The listener to use. If null, the default will be used instead.
      */
     public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
-        this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
+        this.enterThreadListener = enterThreadListener ?: defaultEnterThreadListener
     }
 
     /**
@@ -1159,7 +1248,7 @@ public class MessageListView : ConstraintLayout {
      * @param userReactionClickListener The listener to use. If null, the default will be used instead.
      */
     public fun setUserReactionClickListener(userReactionClickListener: UserReactionClickListener?) {
-        this.userReactionClickListener = userReactionClickListener ?: DEFAULT_USER_REACTION_CLICK_LISTENER
+        this.userReactionClickListener = userReactionClickListener ?: defaultUserReactionClickListener
     }
 
     /* Set the click listener to be used when a message that is a reply is clicked
@@ -1532,7 +1621,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface AttachmentDownloadHandler {
-        public fun onAttachmentDownload(attachment: Attachment)
+        public fun onAttachmentDownload(attachmentDownloadCall: () -> Call<Unit>)
     }
 
     public fun interface ErrorEventHandler {

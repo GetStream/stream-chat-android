@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
@@ -70,8 +86,8 @@ public class MessageComposerViewModel(
     public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
-     * reply or a regular message.
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
+     * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = messageComposerController.messageMode
 
@@ -79,6 +95,15 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -190,6 +215,11 @@ public class MessageComposerViewModel(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
+
+    /**
+     * Clears the input and the current state of the composer.
+     */
+    public fun clearData(): Unit = messageComposerController.clearData()
 
     /**
      * Disposes the inner [MessageComposerController].

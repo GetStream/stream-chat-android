@@ -1,24 +1,34 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.channel.controller.attachment
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.same
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldBeTrue
@@ -27,9 +37,17 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.same
+import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import java.io.File
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class AttachmentUploaderTests {
     private val channelType: String = randomString()
@@ -43,7 +61,7 @@ internal class AttachmentUploaderTests {
 
     @Test
     @Ignore("Current logic doesn't work so. Need to rewrite test")
-    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runBlockingTest {
+    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runTest {
         val error = ChatError("")
         val attachment = randomAttachments(size = 1).first()
 
@@ -66,7 +84,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Should return attachment with properly filled data when successfully sent file`() = runBlockingTest {
+    fun `Should return attachment with properly filled data when successfully sent file`() = runTest {
         val attachment = randomAttachments(size = 1).first()
         val url = "url"
 
@@ -87,7 +105,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Upload attachment should have the right format`() = runBlockingTest {
+    fun `Upload attachment should have the right format`() = runTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 
@@ -113,7 +131,7 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Upload attachment should be configurable`() = runBlockingTest {
+    fun `Upload attachment should be configurable`() = runTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }
 

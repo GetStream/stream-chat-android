@@ -1,23 +1,48 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.event
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.event.handler.internal.EventHandler
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.offline.event.model.EventHandlerType
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.CoroutineScope
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Test
+import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class TotalUnreadCountTest {
@@ -28,84 +53,130 @@ internal class TotalUnreadCountTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val data = TestDataHelper()
+    private lateinit var data: TestDataHelper
+    private lateinit var globalMutableState: GlobalMutableState
 
-    @Test
-    fun `when new message event is received, unread counts in the domain instance should be updated`() =
-        testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1)
-                .givenMockedRepositories()
-                .get()
+    @BeforeAll
+    fun beforeAll() {
+        StreamLog.setValidator { _, _ -> true }
+        StreamLog.setLogger(KotlinStreamLogger())
+    }
 
-            val newMessageEventWithUnread = data.newMessageEvent.copy(
-                totalUnreadCount = 5,
-                unreadChannels = 2
-            )
-            sut.handleEvent(newMessageEventWithUnread)
-
-            verify(chatDomain).setTotalUnreadCount(5)
-            verify(chatDomain).setChannelUnreadCount(2)
+    @BeforeEach
+    fun setUp() {
+        data = TestDataHelper()
+        globalMutableState = GlobalMutableState.create().apply {
+            _user.value = data.user1
         }
+    }
 
-    @Test
-    fun `when mark read event is received, unread counts in the domain instance should be updated`() =
-        testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1)
-                .givenMockedRepositories()
-                .get()
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `When new message event is received for channel with read capability Should properly update total unread counts`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
+        val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
+        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+            .givenMockedRepositories()
+            .givenChannel(channelWithReadCapability)
+            .get()
 
-            val markReadEventWithUnread = data.user1ReadNotification.copy(
-                totalUnreadCount = 0,
-                unreadChannels = 0
-            )
-            sut.handleEvent(markReadEventWithUnread)
+        val newMessageEventWithUnread = data.newMessageEvent.copy(
+            cid = channelWithReadCapability.cid,
+            totalUnreadCount = 5,
+            unreadChannels = 2
+        )
 
-            verify(chatDomain).setTotalUnreadCount(0)
-            verify(chatDomain).setChannelUnreadCount(0)
-        }
+        sut.handleEvents(newMessageEventWithUnread)
 
-    @Test
-    fun `when connected event is received, current user in the domain instance should be updated`() =
-        testCoroutines.scope.runBlockingTest {
-            val chatDomain: ChatDomainImpl = mock()
-            val sut = Fixture(chatDomain, testCoroutines.scope, data.user1)
-                .givenMockedRepositories()
-                .get()
+        globalMutableState._totalUnreadCount.value `should be equal to` 5
+        globalMutableState._channelUnreadCount.value `should be equal to` 2
+    }
 
-            val userWithUnread = data.user1.copy(totalUnreadCount = 5, unreadChannels = 2)
-            val connectedEvent = data.connectedEvent.copy(me = userWithUnread)
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
+        val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
+        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+            .givenMockedRepositories()
+            .givenChannel(channelWithReadCapability)
+            .get()
 
-            sut.handleEvent(connectedEvent)
+        val markReadEventWithUnread = data.user1ReadNotification.copy(
+            cid = channelWithReadCapability.cid,
+            totalUnreadCount = 0,
+            unreadChannels = 0
+        )
+        sut.handleEvents(markReadEventWithUnread)
 
-            // unread count are updated internally when a user is updated
-            verify(chatDomain).updateCurrentUser(userWithUnread)
-        }
+        globalMutableState._totalUnreadCount.value `should be equal to` 0
+        globalMutableState._channelUnreadCount.value `should be equal to` 0
+    }
+
+    @ParameterizedTest
+    @EnumSource(EventHandlerType::class)
+    fun `when connected event is received, current user should be updated`(
+        eventHandlerType: EventHandlerType
+    ) = runTest {
+        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+            .givenMockedRepositories()
+            .get()
+
+        val userWithUnread = data.user1.copy(totalUnreadCount = 5, unreadChannels = 2)
+        val connectedEvent = data.connectedEvent.copy(me = userWithUnread)
+
+        sut.handleEvents(connectedEvent)
+
+        // unread count are updated internally when a user is updated
+        globalMutableState._user.value `should be equal to` userWithUnread
+    }
 
     private class Fixture(
-        chatDomainImpl: ChatDomainImpl,
-        scope: CoroutineScope,
-        currentUser: User = mock(),
+        globalMutableState: GlobalMutableState,
+        eventHandlerType: EventHandlerType,
+        currentUser: User
     ) {
         private val repos: RepositoryFacade = mock()
-        private val eventHandlerImpl = EventHandlerImpl(chatDomainImpl, mock())
-
-        init {
-            whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
-            whenever(chatDomainImpl.job) doReturn Job()
-            whenever(chatDomainImpl.scope) doReturn scope
-            whenever(chatDomainImpl.repos) doReturn repos
+        private val eventHandler = when (eventHandlerType) {
+            EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
+                scope = testCoroutines.scope,
+                recoveryEnabled = true,
+                subscribeForEvents = { _ -> mock() },
+                logicRegistry = mock(),
+                stateRegistry = mock(),
+                mutableGlobalState = globalMutableState,
+                repos = repos,
+                syncManager = mock(),
+                currentUserId = currentUser.id
+            )
+            EventHandlerType.DEFAULT -> EventHandlerImpl(
+                scope = testCoroutines.scope,
+                recoveryEnabled = true,
+                client = mock(),
+                logic = mock(),
+                state = mock(),
+                mutableGlobalState = globalMutableState,
+                repos = repos,
+                syncManager = mock(),
+            )
         }
 
         fun givenMockedRepositories(): Fixture {
             runBlocking {
                 whenever(repos.selectMessages(any(), any())) doReturn emptyList()
-                whenever(repos.selectChannels(any<List<String>>(), any<Boolean>())) doReturn emptyList()
+                whenever(repos.selectChannels(any(), any<Boolean>())) doReturn emptyList()
             }
             return this
         }
 
-        fun get(): EventHandlerImpl = eventHandlerImpl
+        fun givenChannel(channel: Channel) = apply {
+            runTest {
+                whenever(repos.selectChannels(eq(listOf(channel.cid)), any<Boolean>())) doReturn listOf(channel)
+            }
+        }
+
+        fun get(): EventHandler = eventHandler
     }
 }

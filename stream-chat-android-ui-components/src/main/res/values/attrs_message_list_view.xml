@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <resources>
     <declare-styleable name="MessageListView">
         <!-- Scroll button-->
@@ -203,10 +218,13 @@
         <attr name="streamUiEditReactionsColumns" format="integer" />
 
         <!-- Indicator icons -->
+        <attr name="streamUiShowMessageDeliveryStatusIndicator" format="boolean" />
         <attr name="streamUiIconIndicatorSent" format="reference" />
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />
         <attr name="streamUiIconOnlyVisibleToYou" format="reference" />
+        <attr name="streamUiIconFailedIndicator" format="reference" />
+        <attr name="streamUiIconBannedIndicator" format="reference" />
 
         <!-- Message deleted style -->
         <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
@@ -251,6 +269,7 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiRetryMessageEnabled" format="boolean" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
@@ -290,6 +309,13 @@
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageOptionsUserReactionAlignment" format="enum">
+            <enum name="start" value="0" />
+            <enum name="end" value="1" />
+            <enum name="by_user" value="2" />
+            <enum name="by_user_inverted" value="3" />
         </attr>
 
         <!-- User reactions card -->

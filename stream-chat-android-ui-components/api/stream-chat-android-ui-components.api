@@ -7,24 +7,36 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
+	public final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
+	public final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
+	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
-	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
 	public final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
+	public final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
+	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
+	public final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/ChannelNameFormatter;)V
+	public final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/CurrentUserProvider;)V
+	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
-	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
 	public final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
+	public final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
+}
+
+public final class io/getstream/chat/android/ui/CurrentUserProvider$Companion {
+	public final fun defaultCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
@@ -67,10 +79,11 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getDefaultQuotedAttachmentViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getEditReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getFileAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
-	public final fun getMediaAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getImageAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMentionListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListHeaderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -81,16 +94,18 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchResultListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getSingleReactionViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setDefaultQuotedAttachmentViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setEditReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setFileAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
-	public final fun setMediaAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setImageAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMentionListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListHeaderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -101,6 +116,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchResultListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setSingleReactionViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSuggestionListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setTypingIndicatorViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -294,6 +310,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun hasChannels ()Z
 	public final fun hideLoadingMore ()V
 	public final fun hideLoadingView ()V
+	public final fun isAdapterInitialized ()Z
 	public final fun setChannelDeleteClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelInfoClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
@@ -381,7 +398,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Use
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;Z)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()Landroid/graphics/drawable/Drawable;
@@ -397,6 +414,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyl
 	public final fun component20 ()I
 	public final fun component21 ()I
 	public final fun component22 ()Ljava/lang/Integer;
+	public final fun component23 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
@@ -404,8 +422,8 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyl
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component9 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;Z)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZZIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IIILjava/lang/Integer;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor ()I
 	public final fun getBackgroundLayoutColor ()I
@@ -426,6 +444,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListViewStyl
 	public final fun getMutedChannelIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getOptionsEnabled ()Z
 	public final fun getOptionsIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getShowChannelDeliveryStatusIndicator ()Z
 	public final fun getSwipeEnabled ()Z
 	public final fun getUnreadMessageCounterBackgroundColor ()I
 	public final fun getUnreadMessageCounterText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -527,6 +546,8 @@ public final class io/getstream/chat/android/ui/channel/list/header/ChannelListH
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;II)V
 	public final fun setOnActionButtonClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$ActionButtonClickListener;)V
+	public final fun setOnTitleClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setOnTitleLongClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setOnUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener;)V
 	public final fun setOnlineTitle (Ljava/lang/String;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
@@ -545,8 +566,8 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/header
 
 public final class io/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getConnectionState ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Landroidx/lifecycle/LiveData;
 }
@@ -559,8 +580,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;
@@ -659,9 +680,32 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;III)V
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/querychannels/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun chatEventHandlerFactory (Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun filter (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun limit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun memberLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun messageLimit (I)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+	public final fun sort (Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory$Builder;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/ChannelNameFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/common/ChannelNameFormatter$Companion;
+	public abstract fun formatChannelName (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/ChannelNameFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public final fun defaultFormatter (Landroid/content/Context;I)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public final fun defaultFormatter (Landroid/content/Context;II)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
+	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/common/ChannelNameFormatter$Companion;Landroid/content/Context;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
 }
 
 public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
@@ -673,15 +717,13 @@ public final class io/getstream/chat/android/ui/common/ChatUIInitializer : andro
 
 public final class io/getstream/chat/android/ui/common/Debouncer {
 	public fun <init> (J)V
+	public final fun cancelLastDebounce ()V
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;)Ljava/lang/String;
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;I)Ljava/lang/String;
-	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;IILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 }
 
@@ -714,10 +756,6 @@ public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
 
 public final class io/getstream/chat/android/ui/common/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/markdown/ChatMarkdown {
-	public abstract fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator {
@@ -920,14 +958,12 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
-	public static final field FILE_TYPE_KEY Ljava/lang/String;
-	public static final field HEADER_TITLE_KEY Ljava/lang/String;
-	public static final field TYPE_KEY Ljava/lang/String;
-	public static final field URL_KEY Ljava/lang/String;
 	public fun <init> ()V
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
+	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {
@@ -1251,6 +1287,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setAttachmentButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener;)V
 	public final fun setChatMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;)V
 	public final fun setCommands (Ljava/util/List;)V
+	public final fun setCommandsButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$CommandsButtonClickListener;)V
 	public final fun setCommandsEnabled (Z)V
 	public final fun setCooldownInterval (I)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
@@ -1258,8 +1295,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setMaxMessageLength (I)V
 	public final fun setMaxMessageLengthHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler;)V
 	public final fun setMentionsEnabled (Z)V
+	public final fun setMessageInputMentionListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageInputMentionListener;)V
 	public final fun setMessageInputModeListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageInputViewModeListener;)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener;)V
+	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setSelectedAttachmentsCountListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$SelectedAttachmentsCountListener;)V
 	public final fun setSendMessageButtonDisabledDrawable (Landroid/graphics/drawable/Drawable;)V
 	public final fun setSendMessageButtonEnabledDrawable (Landroid/graphics/drawable/Drawable;)V
@@ -1269,6 +1308,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
 	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V
+	public final fun switchToCommandMode (Lio/getstream/chat/android/client/models/Command;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener {
@@ -1284,6 +1324,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$C
 	public static final field GROUP_CHAT Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$CommandsButtonClickListener {
+	public abstract fun onCommandsButtonClicked ()V
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
@@ -1338,6 +1382,10 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 	public abstract fun onMessageLengthChanged (Ljava/lang/String;IIZ)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageInputMentionListener {
+	public abstract fun onMentionSelected (Lio/getstream/chat/android/client/models/User;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageInputViewModeListener {
 	public abstract fun inputModeChanged (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
 }
@@ -1378,7 +1426,7 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle$Companion;
-	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;Ljava/lang/Integer;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Landroid/graphics/drawable/Drawable;
 	public final fun component11 ()Z
@@ -1416,19 +1464,23 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun component40 ()I
 	public final fun component41 ()Landroid/graphics/drawable/Drawable;
 	public final fun component42 ()Landroid/graphics/drawable/Drawable;
+	public final fun component43 ()Ljava/lang/Integer;
+	public final fun component44 ()Ljava/lang/Integer;
 	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component6 ()Z
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Landroid/graphics/drawable/Drawable;
-	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
+	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;Ljava/lang/Integer;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachButtonEnabled ()Z
 	public final fun getAttachButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getAttachmentButtonRippleColor ()Ljava/lang/Integer;
 	public final fun getAttachmentMaxFileSize ()I
 	public final fun getAttachmentSelectionDialogStyle ()Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
 	public final fun getBackgroundColor ()I
+	public final fun getCommandButtonRippleColor ()Ljava/lang/Integer;
 	public final fun getCommandInputBadgeBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getCommandInputBadgeIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getCommandInputBadgeTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1494,7 +1546,7 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 
 public final class io/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle$Companion;
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1507,6 +1559,7 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun component18 ()I
 	public final fun component19 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component20 ()Landroid/content/res/ColorStateList;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
@@ -1514,8 +1567,8 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun component7 ()Landroid/graphics/drawable/Drawable;
 	public final fun component8 ()Landroid/graphics/drawable/Drawable;
 	public final fun component9 ()Landroid/graphics/drawable/Drawable;
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowAccessToCameraIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getAllowAccessToCameraText ()Ljava/lang/String;
@@ -1532,6 +1585,7 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun getPictureAttachmentIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getRecentFilesText ()Ljava/lang/String;
 	public final fun getRecentFilesTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getToggleButtonColorStateList ()Landroid/content/res/ColorStateList;
 	public final fun getVideoDurationTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getVideoIconDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getVideoIconVisible ()Z
@@ -1582,6 +1636,15 @@ public abstract interface class io/getstream/chat/android/ui/message/input/trans
 
 public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageInputViewModelBinding {
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/message/list/DefaultQuotedAttachmentViewStyle {
+	public fun <init> (IIIII)V
+	public final fun getFileAttachmentHeight ()I
+	public final fun getFileAttachmentWidth ()I
+	public final fun getImageAttachmentHeight ()I
+	public final fun getImageAttachmentWidth ()I
+	public final fun getQuotedImageRadius ()I
 }
 
 public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
@@ -1657,7 +1720,7 @@ public final class io/getstream/chat/android/ui/message/list/GiphyViewHolderStyl
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListItemStyle {
-	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFF)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFFZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()Ljava/lang/Integer;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1692,16 +1755,21 @@ public final class io/getstream/chat/android/ui/message/list/MessageListItemStyl
 	public final fun component38 ()F
 	public final fun component39 ()F
 	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component40 ()Z
+	public final fun component41 ()Landroid/graphics/drawable/Drawable;
+	public final fun component42 ()Landroid/graphics/drawable/Drawable;
 	public final fun component5 ()I
 	public final fun component6 ()I
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component9 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFF)Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFFIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFFZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;IIIFFZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDateSeparatorBackgroundColor ()I
 	public final fun getEditReactionsViewStyle ()Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public final fun getIconBannedMessage ()Landroid/graphics/drawable/Drawable;
+	public final fun getIconFailedMessage ()Landroid/graphics/drawable/Drawable;
 	public final fun getIconIndicatorPendingSync ()Landroid/graphics/drawable/Drawable;
 	public final fun getIconIndicatorRead ()Landroid/graphics/drawable/Drawable;
 	public final fun getIconIndicatorSent ()Landroid/graphics/drawable/Drawable;
@@ -1726,6 +1794,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListItemStyl
 	public final fun getPinnedMessageIndicatorIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getPinnedMessageIndicatorTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getReactionsViewStyle ()Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public final fun getShowMessageDeliveryStatusIndicator ()Z
 	public final fun getStyleLinkTextColor (Z)Ljava/lang/Integer;
 	public final fun getStyleTextColor (Z)Ljava/lang/Integer;
 	public final fun getTextStyleDateSeparator ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1755,15 +1824,16 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun isAdapterInitialized ()Z
 	public final fun requireStyle ()Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
 	public final fun setAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadClickListener;)V
 	public final fun setAttachmentDownloadHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler;)V
+	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
-	public final fun setAttachmentViewFactory (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;)V
 	public final fun setBlockUserEnabled (Z)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
@@ -1807,6 +1877,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
+	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
 	public final fun setRepliesEnabled (Z)V
@@ -1835,7 +1906,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler {
-	public abstract fun onAttachmentDownload (Lio/getstream/chat/android/client/models/Attachment;)V
+	public abstract fun onAttachmentDownload (Lkotlin/jvm/functions/Function0;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler {
@@ -1985,7 +2056,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle {
-	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;III)V
+	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIII)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
 	public final fun component10 ()I
 	public final fun component11 ()Z
@@ -2010,24 +2081,26 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun component29 ()Z
 	public final fun component3 ()Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;
 	public final fun component30 ()Z
-	public final fun component31 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component31 ()Z
 	public final fun component32 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component33 ()I
+	public final fun component33 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component34 ()I
-	public final fun component35 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component36 ()I
-	public final fun component37 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component38 ()I
+	public final fun component35 ()I
+	public final fun component36 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component37 ()I
+	public final fun component38 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component39 ()I
 	public final fun component4 ()Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;
 	public final fun component40 ()I
+	public final fun component41 ()I
+	public final fun component42 ()I
 	public final fun component5 ()Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
 	public final fun component6 ()Z
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()Z
-	public final fun copy (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;III)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIII)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor ()I
 	public final fun getBlockEnabled ()Z
@@ -2048,6 +2121,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getLoadingView ()I
 	public final fun getMessageOptionsBackgroundColor ()I
 	public final fun getMessageOptionsText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getMessageOptionsUserReactionAlignment ()I
 	public final fun getMessagesStart ()I
 	public final fun getMuteEnabled ()Z
 	public final fun getMuteIcon ()I
@@ -2059,6 +2133,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getReplyIcon ()I
 	public final fun getReplyMessageStyle ()Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
 	public final fun getRetryIcon ()I
+	public final fun getRetryMessageEnabled ()Z
 	public final fun getScrollButtonBehaviour ()Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;
 	public final fun getScrollButtonViewStyle ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
 	public final fun getThreadMessagesStart ()I
@@ -2142,9 +2217,10 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/BaseMess
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff {
-	public fun <init> (ZZZZZZZZZZ)V
+	public fun <init> (ZZZZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
+	public final fun component11 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2153,11 +2229,12 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZZZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public final fun copy (ZZZZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
+	public final fun getFooter ()Z
 	public final fun getMentions ()Z
 	public final fun getPinned ()Z
 	public final fun getPositions ()Z
@@ -2173,30 +2250,37 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 
 public class io/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory {
 	public fun <init> ()V
+	protected final fun createCustomAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createErrorMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createGiphyAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createImageAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
+	protected final fun createLinkAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createSystemMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createTextAndAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/message/list/adapter/BaseMessageItemViewHolder;
-	protected final fun getAttachmentViewFactory ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory;
+	protected final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public fun getItemViewType (Lcom/getstream/sdk/chat/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType {
+	public static final field CUSTOM_ATTACHMENTS I
 	public static final field DATE_DIVIDER I
 	public static final field ERROR_MESSAGE I
+	public static final field FILE_ATTACHMENTS I
 	public static final field GIPHY I
+	public static final field GIPHY_ATTACHMENT I
+	public static final field IMAGE_ATTACHMENT I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewType;
+	public static final field LINK_ATTACHMENTS I
 	public static final field LOADING_INDICATOR I
 	public static final field MESSAGE_DELETED I
 	public static final field PLAIN_TEXT I
 	public static final field SYSTEM_MESSAGE I
-	public static final field TEXT_AND_ATTACHMENTS I
 	public static final field THREAD_PLACEHOLDER I
 	public static final field THREAD_SEPARATOR I
 	public static final field TYPING_INDICATOR I
@@ -2215,20 +2299,26 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
 }
 
-public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;I)V
+public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle {
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
+	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getGiphyType ()Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getImageBackgroundColor ()I
+	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getScaleType ()Landroid/widget/ImageView$ScaleType;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/view/ImageAttachmentViewStyle {
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
-	public final fun component3 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()I
 	public final fun component4 ()I
-	public final fun component5 ()I
-	public final fun component6 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component7 ()I
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;I)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/adapter/view/ImageAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/ImageAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/ImageAttachmentViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getGiphyHeight ()I
-	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getImageBackgroundColor ()I
 	public final fun getMoreCountOverlayColor ()I
 	public final fun getMoreCountTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2238,17 +2328,63 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaA
 	public fun toString ()Ljava/lang/String;
 }
 
-public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
+public final class io/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setImageShapeByCorners (FFFF)V
+	public final fun showGiphy (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)V
+	public static synthetic fun showGiphy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public abstract fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager {
 	public fun <init> ()V
-	public fun createAttachmentView (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/ViewGroup;)Landroid/view/View;
-	protected final fun createAttachmentsContent (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Ljava/util/List;Landroid/view/View;)Landroid/view/View;
-	protected final fun createLinkAndAttachmentsContent (Ljava/util/List;Lio/getstream/chat/android/client/models/Attachment;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
-	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/DefaultQuotedAttachmentMessageFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
+public abstract class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public final fun getContext ()Landroid/content/Context;
+	public final fun getItemView ()Landroid/view/View;
+	public fun onBindViewHolder (Lio/getstream/chat/android/client/models/Message;)V
+	public fun onUnbindViewHolder ()V
+	public fun onViewAttachedToWindow ()V
+	public fun onViewDetachedFromWindow ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public abstract fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun createAndAddQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
 	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun fileAttachmentsMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
+	public abstract fun imageAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun linkAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
@@ -2257,7 +2393,10 @@ public class io/getstream/chat/android/ui/message/list/background/MessageBackgro
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl$Companion;
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;)V
 	public fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun fileAttachmentsMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
+	public fun imageAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun linkAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
@@ -2297,11 +2436,12 @@ public abstract interface class io/getstream/chat/android/ui/message/list/header
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle {
-	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)V
+	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()Z
 	public final fun component12 ()Landroid/content/res/ColorStateList;
+	public final fun component13 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2310,8 +2450,8 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 	public final fun component7 ()Landroid/graphics/drawable/Drawable;
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackButtonBadgeBackgroundColor ()I
 	public final fun getBackButtonIcon ()Landroid/graphics/drawable/Drawable;
@@ -2320,6 +2460,7 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 	public final fun getOnlineTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getSearchingForNetworkProgressBarTint ()Landroid/content/res/ColorStateList;
 	public final fun getSearchingForNetworkTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getSeparatorBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getShowBackButton ()Z
 	public final fun getShowBackButtonBadge ()Z
 	public final fun getShowSearchingForNetworkProgressBar ()Z
@@ -2329,9 +2470,17 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel : com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderViewModel {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
+	public final fun getChannel ()Landroidx/lifecycle/LiveData;
+	public final fun getMembers ()Landroidx/lifecycle/LiveData;
+	public final fun getMembersCount ()Landroidx/lifecycle/LiveData;
+	public final fun getOnline ()Landroidx/lifecycle/LiveData;
+	public final fun getTypingUsers ()Landroidx/lifecycle/LiveData;
+	public final fun resetThread ()V
+	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModelBinding {
@@ -2344,12 +2493,13 @@ public abstract interface class io/getstream/chat/android/ui/message/list/reacti
 
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion;
-	public fun <init> (IIIIIIIIIIIII)V
+	public fun <init> (IIIIIIIIIIIIII)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()I
 	public final fun component12 ()I
 	public final fun component13 ()I
+	public final fun component14 ()I
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()I
@@ -2358,8 +2508,8 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (IIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;IIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public final fun copy (IIIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;IIIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBubbleColorMine ()I
 	public final fun getBubbleColorTheirs ()I
@@ -2374,6 +2524,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 	public final fun getSmallTailBubbleCyOffset ()I
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I
+	public final fun getVerticalPadding ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2381,8 +2532,63 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
 }
 
+public final class io/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle {
+	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIII)V
+	public final fun component1 ()I
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()I
+	public final fun component13 ()I
+	public final fun component14 ()I
+	public final fun component15 ()I
+	public final fun component16 ()I
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()F
+	public final fun component6 ()Ljava/lang/Float;
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/user/SingleReactionViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBubbleBorderColorMine ()I
+	public final fun getBubbleBorderColorTheirs ()Ljava/lang/Integer;
+	public final fun getBubbleBorderWidthMine ()F
+	public final fun getBubbleBorderWidthTheirs ()Ljava/lang/Float;
+	public final fun getBubbleColorMine ()I
+	public final fun getBubbleColorTheirs ()I
+	public final fun getBubbleHeight ()I
+	public final fun getBubbleRadius ()I
+	public final fun getLargeTailBubbleCy ()I
+	public final fun getLargeTailBubbleOffset ()I
+	public final fun getLargeTailBubbleRadius ()I
+	public final fun getReactionOrientation ()I
+	public final fun getSmallTailBubbleCy ()I
+	public final fun getSmallTailBubbleOffset ()I
+	public final fun getSmallTailBubbleRadius ()I
+	public final fun getTotalHeight ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation : java/lang/Enum {
+	public static final field BY_USER Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field BY_USER_INVERTED Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field END Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static final field START Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static fun values ()[Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+}
+
+public final class io/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientationKt {
+	public static final fun getUserReactionOrientation (I)Lio/getstream/chat/android/ui/message/list/reactions/view/MessageOptionsUserReactionOrientation;
+}
+
 public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
-	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIII)V
+	public fun <init> (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIII)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()I
@@ -2392,6 +2598,8 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun component15 ()I
 	public final fun component16 ()I
 	public final fun component17 ()I
+	public final fun component18 ()I
+	public final fun component19 ()I
 	public final fun component2 ()Ljava/lang/Integer;
 	public final fun component3 ()I
 	public final fun component4 ()I
@@ -2400,8 +2608,8 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public final fun copy (ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIII)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBubbleBorderColorMine ()I
 	public final fun getBubbleBorderColorTheirs ()Ljava/lang/Integer;
@@ -2416,16 +2624,19 @@ public final class io/getstream/chat/android/ui/message/list/reactions/view/View
 	public final fun getLargeTailBubbleCy ()I
 	public final fun getLargeTailBubbleOffset ()I
 	public final fun getLargeTailBubbleRadius ()I
+	public final fun getMessageOptionsUserReactionOrientation ()I
 	public final fun getSmallTailBubbleCy ()I
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I
 	public final fun getTotalHeight ()I
+	public final fun getVerticalPadding ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/message/list/viewmodel/MessageListViewModelBinding {
-	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/lifecycle/LifecycleOwner;)V
+	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/lifecycle/LifecycleOwner;Z)V
+	public static synthetic fun bind$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/lifecycle/LifecycleOwner;ZILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
@@ -2433,6 +2644,13 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/M
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
+	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 }
 
 public final class io/getstream/chat/android/ui/message/preview/MessagePreviewStyle {
@@ -2517,6 +2735,12 @@ public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMess
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory$Builder;
+}
+
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -2537,7 +2761,7 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchInputV
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
-	public fun <init> (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;I)V
+	public fun <init> (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;II)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
@@ -2546,8 +2770,9 @@ public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
 	public final fun component6 ()I
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()I
-	public final fun copy (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;I)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public final fun component9 ()I
+	public final fun copy (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;II)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILjava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getClearInputDrawable ()Landroid/graphics/drawable/Drawable;
@@ -2555,6 +2780,7 @@ public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
 	public final fun getHintColor ()I
 	public final fun getHintText ()Ljava/lang/String;
 	public final fun getSearchIconDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSearchInputHeight ()I
 	public final fun getTextColor ()I
 	public final fun getTextSize ()I
 	public fun hashCode ()I
@@ -2668,7 +2894,8 @@ public final class io/getstream/chat/android/ui/suggestion/Suggestions$MentionSu
 }
 
 public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListController {
-	public fun <init> (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListUi;)V
+	public fun <init> (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListUi;Lio/getstream/chat/android/ui/suggestion/list/SuggestionListControllerListener;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListUi;Lio/getstream/chat/android/ui/suggestion/list/SuggestionListControllerListener;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCommands ()Ljava/util/List;
 	public final fun getCommandsEnabled ()Z
 	public final fun getMentionsEnabled ()Z
@@ -2681,6 +2908,12 @@ public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListCo
 	public final fun setMentionsEnabled (Z)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun showAvailableCommands ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListControllerListener {
+	public abstract fun containsCommands (Z)V
+	public abstract fun containsMentions (Z)V
+	public abstract fun onSuggestionListUiVisibilityChanged (Z)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListUi {
@@ -2798,8 +3031,8 @@ public final class io/getstream/chat/android/ui/typing/TypingIndicatorViewStyle 
 }
 
 public final class io/getstream/chat/android/ui/typing/viewmodel/TypingIndicatorViewModel : androidx/lifecycle/ViewModel {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getTypingUsers ()Landroidx/lifecycle/LiveData;
 }
 
@@ -2808,8 +3041,43 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/TypingIndicator
 }
 
 public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
-	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder {
+	public fun <init> ()V
+	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public final fun chatClient (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
+	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfo {
+	public fun <init> (Ljava/lang/String;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/String;II)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/utils/GiphyInfo;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()I
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/Enum {
+	public static final field FIXED_HEIGHT Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field FIXED_HEIGHT_DOWNSAMPLED Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field ORIGINAL Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
+	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
 }
 

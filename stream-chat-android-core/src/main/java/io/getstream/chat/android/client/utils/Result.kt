@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
@@ -287,3 +303,10 @@ public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T)
  * @return A [Result] the contains an instance of [T] as a data payload.
  */
 public fun <T : Any> T.toResult(): Result<T> = Result.success(this)
+
+/**
+ * Returns a [Result] of type [T] that contains an they same error as payload.
+ *
+ * @return A [Result] of type [T] that contains an they same error as payload.
+ */
+public fun <T : Any> ChatError.toResultError(): Result<T> = Result.error(this)

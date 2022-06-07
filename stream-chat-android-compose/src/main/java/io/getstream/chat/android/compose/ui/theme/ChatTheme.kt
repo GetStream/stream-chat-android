@@ -1,24 +1,45 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import coil.ImageLoader
 import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.filepreview.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
-import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
+import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
+import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 
 /**
  * Local providers for various properties we connect to our components, for styling.
@@ -41,8 +62,11 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
-    error("No reactions provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
+    error("No quoted attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
+    error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -56,6 +80,12 @@ private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewForm
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
+    error(
+        "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
+            "in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -66,13 +96,17 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param rippleTheme Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
- * @param reactionTypes The reaction types supported in the Messaging screen.
+ * @param quotedAttachmentFactories Quoted attachment factories that we provide.
+ * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
+ * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
+ * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -82,9 +116,12 @@ public fun ChatTheme(
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
+    rippleTheme: RippleTheme = StreamRippleTheme,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    attachmentPreviewHandlers: List<AttachmentPreviewHandler> = AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
-    reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
+    attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
+        AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
+    quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
+    reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
@@ -92,7 +129,9 @@ public fun ChatTheme(
         typography = typography,
         attachmentFactories = attachmentFactories
     ),
+    imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -104,14 +143,17 @@ public fun ChatTheme(
         LocalDimens provides dimens,
         LocalTypography provides typography,
         LocalShapes provides shapes,
+        LocalRippleTheme provides rippleTheme,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
-        LocalReactionTypes provides reactionTypes,
+        LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
+        LocalReactionIconFactory provides reactionIconFactory,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
-        LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current),
-        LocalMessageAlignmentProvider provides messageAlignmentProvider
+        LocalImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
+        LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment
     ) {
         content()
     }
@@ -171,12 +213,20 @@ public object ChatTheme {
         get() = LocalAttachmentPreviewHandlers.current
 
     /**
-     * Retrieves the current reactions at the call site's position in the hierarchy.
+     * Retrieves the current list of quoted [AttachmentFactory] at the call site's position in the hierarchy.
      */
-    public val reactionTypes: Map<String, Int>
+    public val quotedAttachmentFactories: List<AttachmentFactory>
         @Composable
         @ReadOnlyComposable
-        get() = LocalReactionTypes.current
+        get() = LocalQuotedAttachmentFactories.current
+
+    /**
+     * Retrieves the current reaction icon factory at the call site's position in the hierarchy.
+     */
+    public val reactionIconFactory: ReactionIconFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalReactionIconFactory.current
 
     /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.
@@ -209,4 +259,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    /**
+     * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
+     */
+    public val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageOptionsUserReactionAlignment.current
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@file:Suppress("TooManyFunctions")
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
@@ -103,6 +120,7 @@ internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     )
 }
 
+@Suppress("ComplexMethod")
 internal fun ChatEventDto.toDomain(): ChatEvent {
     return when (this) {
         is NewMessageEventDto -> toDomain()
@@ -254,6 +272,7 @@ private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        member = member.toDomain(),
     )
 }
 
@@ -329,6 +348,7 @@ private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToCh
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
+        member = member.toDomain(),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
     )
@@ -626,21 +646,21 @@ private fun ConnectedEventDto.toDomain(): ConnectedEvent {
 private fun ConnectingEventDto.toDomain(): ConnectingEvent {
     return ConnectingEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
     return DisconnectedEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
     )
 }
 
 private fun ErrorEventDto.toDomain(): ErrorEvent {
     return ErrorEvent(
         type = type,
-        createdAt = createdAt,
+        createdAt = created_at,
         error = error,
     )
 }

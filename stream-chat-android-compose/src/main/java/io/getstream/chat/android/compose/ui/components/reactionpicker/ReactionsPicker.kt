@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.reactionpicker
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,6 +34,12 @@ import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
+
+/**
+ * The default maximum number of reactions shown in the picker.
+ */
+private const val DefaultNumberOfReactions = 5
 
 /**
  * Displays all of the available reactions the user can set on a message.
@@ -42,9 +64,9 @@ public fun ReactionsPicker(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    cells: GridCells = GridCells.Fixed(5),
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultReactionsPickerCenterContent(
@@ -78,8 +100,8 @@ public fun ReactionsPicker(
 internal fun DefaultReactionsPickerCenterContent(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
-    cells: GridCells = GridCells.Fixed(5),
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
 ) {
     ExtendedReactionsOptions(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),

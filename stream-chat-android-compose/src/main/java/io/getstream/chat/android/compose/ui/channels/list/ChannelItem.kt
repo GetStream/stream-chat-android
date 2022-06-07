@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,6 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +48,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channel.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
@@ -81,11 +100,13 @@ public fun ChannelItem(
     },
 ) {
     val channel = channelItem.channel
+    val description = stringResource(id = R.string.stream_compose_cd_channel_item)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .semantics { contentDescription = description }
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
@@ -234,15 +255,19 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 )
             }
 
+            val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MessageReadStatusIcon(
-                    channel = channel,
-                    lastMessage = lastMessage,
-                    currentUser = currentUser,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(16.dp)
-                )
+                if (isLastMessageFromCurrentUser) {
+                    MessageReadStatusIcon(
+                        channel = channel,
+                        message = lastMessage,
+                        currentUser = currentUser,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(16.dp)
+                    )
+                }
 
                 Timestamp(date = channel.lastUpdated)
             }

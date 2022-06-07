@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.utils.internal.toggle.dialog
 
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
@@ -12,7 +28,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         initialState(ToggleState.Initial)
 
         state<ToggleState.Initial> {
-            onEvent<ToggleEvent.AttachView> { _, event ->
+            onEvent<ToggleEvent.AttachView> { event ->
                 viewRef = WeakReference(event.view)
                 val toggles = toggleService.getToggles()
                 ToggleState.StateData(toggles, emptyMap()).also {
@@ -22,18 +38,18 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         }
 
         state<ToggleState.StateData> {
-            onEvent<ToggleEvent.Dismiss> { _, _ ->
+            onEvent<ToggleEvent.Dismiss> {
                 viewRef.get()?.dismiss()
                 ToggleState.Final
             }
-            onEvent<ToggleEvent.CommitChanges> { state, event ->
-                state.changes.entries.forEach { (toggle, value) -> toggleService.setToggle(toggle, value) }
-                state.changes.toList().let(event.togglesChangesCommittedListener::invoke)
+            onEvent<ToggleEvent.CommitChanges> { event ->
+                changes.entries.forEach { (toggle, value) -> toggleService.setToggle(toggle, value) }
+                changes.toList().let(event.togglesChangesCommittedListener::invoke)
                 viewRef.get()?.dismiss()
                 ToggleState.Final
             }
-            onEvent<ToggleEvent.ToggleChanged> { stateData, event ->
-                handleToggleChanged(stateData, event)
+            onEvent<ToggleEvent.ToggleChanged> { event ->
+                handleToggleChanged(this, event)
             }
         }
     }
@@ -84,7 +100,8 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         class AttachView(val view: ToggleDialogFragment) : ToggleEvent()
         class ToggleChanged(val toggleName: String, val value: Boolean) : ToggleEvent()
         object Dismiss : ToggleEvent()
-        class CommitChanges(val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit) :
-            ToggleEvent()
+        class CommitChanges(
+            val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit,
+        ) : ToggleEvent()
     }
 }

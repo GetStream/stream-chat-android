@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list.background
 
 import android.content.Context
@@ -20,7 +36,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle) : MessageBackgroundFactory {
 
     /**
-     * Draws the background of plain text messages
+     * Draws the background of plain text messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -30,7 +46,17 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the background of deleted messages,
+     * Draws the background of messages containing image attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
+     * Draws the background of deleted messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -44,7 +70,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the background of text and attachment messages,
+     * Draws the background of text and attachment messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
@@ -54,7 +80,27 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
-     * Draws the default background of messages,
+     * Draws the background of messages containing file attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun fileAttachmentsMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
+     * Draws the background of messages containing links and no other types of attachments.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun linkAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
+     * Draws the default background of messages.
      *
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].

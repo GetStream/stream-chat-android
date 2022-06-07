@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <resources>
 
     <style name="StreamUiBaseAvatarStyle">
@@ -120,8 +135,8 @@
     <style name="StreamUiTextAppearance" parent="TextAppearance.AppCompat.Body2" />
 
     <style name="StreamUiTextAppearance.CaptionBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">10sp</item>
@@ -130,8 +145,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Footnote">
-        <item name="fontFamily">@font/roboto_regular</item>
-        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="fontFamily">@font/stream_roboto_regular</item>
+        <item name="android:fontFamily">@font/stream_roboto_regular</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -140,8 +155,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.FootnoteBold">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -150,8 +165,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Caption1Bold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">12sp</item>
@@ -160,8 +175,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Body">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
@@ -170,8 +185,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.BodyBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
@@ -180,8 +195,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Headline">
-        <item name="fontFamily">@font/roboto_medium</item>
-        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/stream_roboto_medium</item>
+        <item name="android:fontFamily">@font/stream_roboto_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
@@ -190,8 +205,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.HeadlineBold">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
@@ -200,8 +215,8 @@
     </style>
 
     <style name="StreamUiTextAppearance.Title">
-        <item name="fontFamily">@font/roboto_bold</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/stream_roboto_bold</item>
+        <item name="android:fontFamily">@font/stream_roboto_bold</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">22sp</item>
@@ -213,7 +228,7 @@
         <item name="android:textColor">@color/stream_ui_literal_white</item>
         <item name="android:textDirection">locale</item>
     </style>
-    
+
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiAttachmentActivityProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
@@ -223,6 +238,7 @@
         <item name="streamUiMediaActivityHeader">@style/StreamUi.MediaActivity.Header</item>
         <item name="streamUiMediaActivityHeaderLeftActionButtonStyle">@style/StreamUi.MediaActivity.HeaderLeftActionButton</item>
         <item name="streamUiMediaActivityHeaderTitleStyle">@style/StreamUi.MediaActivity.HeaderTitle</item>
+        <item name="streamUiMediaActivityProgressBarStyle">@style/StreamUi.MediaActivity.ProgressBar</item>
         <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -337,7 +353,7 @@
         <item name="streamUiMessageTextStyleThreadSeparator">normal</item>
 
         <!-- Message Reply background color -->
-        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_bars_background</item>
+        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
         <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_bars_background</item>
 
         <!-- Message Reply text style mine -->
@@ -380,6 +396,7 @@
         <item name="streamUiEditReactionsColumns">5</item>
 
         <!-- Indicator icons -->
+        <item name="streamUiShowMessageDeliveryStatusIndicator">true</item>
         <item name="streamUiIconIndicatorSent">@drawable/stream_ui_ic_check_single</item>
         <item name="streamUiIconIndicatorRead">@drawable/stream_ui_ic_check_double</item>
         <item name="streamUiIconIndicatorPendingSync">@drawable/stream_ui_ic_clock</item>
@@ -410,6 +427,7 @@
         <item name="streamUiReplyOptionIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
         <item name="streamUiReplyEnabled">true</item>
         <item name="streamUiCopyMessageActionEnabled">true</item>
+        <item name="streamUiRetryMessageEnabled">true</item>
         <item name="streamUiCopyOptionIcon">@drawable/stream_ui_ic_copy</item>
         <item name="streamUiEditOptionIcon">@drawable/stream_ui_ic_edit</item>
         <item name="streamUiEditMessageEnabled">true</item>
@@ -496,18 +514,24 @@
         <item name="streamUiMessageMaxWidthFactorTheirs">75%</item>
     </style>
 
-    <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
-        <item name="streamUiMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
-        <item name="streamUiMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
-        <item name="streamUiMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
-        <item name="streamUiMediaAttachmentImageBackgroundColor">@color/stream_ui_grey</item>
-        <item name="streamUiMediaAttachmentMoreCountOverlayColor">@color/stream_ui_overlay</item>
+    <style name="StreamUi.MessageList.ImageAttachment" parent="StreamUi">
+        <item name="streamUiImageAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+        <item name="streamUiImageAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiImageAttachmentImageBackgroundColor">@color/stream_ui_grey</item>
+        <item name="streamUiImageAttachmentMoreCountOverlayColor">@color/stream_ui_overlay</item>
 
-        <item name="streamUiMediaAttachmentMoreCountTextSize">@dimen/stream_ui_message_media_attachment_more_count_text_size</item>
-        <item name="streamUiMediaAttachmentMoreCountTextColor">@color/stream_ui_literal_white</item>
-        <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
+        <item name="streamUiImageAttachmentMoreCountTextSize">@dimen/stream_ui_message_image_attachment_more_count_text_size</item>
+        <item name="streamUiImageAttachmentMoreCountTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiImageAttachmentMoreCountTextStyle">normal</item>
+    </style>
 
-        <item name="streamUiMediaAttachmentGiphyHeight">200dp</item>
+    <style name="StreamUi.MessageList.GiphyMediaAttachment" parent="StreamUi">
+        <item name="streamUiGiphyMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
+        <item name="streamUiGiphyMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiGiphyMediaAttachmentImageBackgroundColor">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiGiphyMediaAttachmentGiphyType">fixedHeight</item>
+        <item name="streamUiGiphyMediaAttachmentScaleType">fitCenter</item>
     </style>
 
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">
@@ -560,6 +584,7 @@
         <item name="streamUiShowActionButton">true</item>
         <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
         <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
+        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">@drawable/stream_ui_divider</item>
     </style>
 
     <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
@@ -605,6 +630,7 @@
         <item name="streamUiLastMessageDateTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiLastMessageDateTextStyle">normal</item>
 
+        <item name="streamUiShowChannelDeliveryStatusIndicator">true</item>
         <item name="streamUiIndicatorSentIcon">@drawable/stream_ui_ic_check_single</item>
         <item name="streamUiIndicatorReadIcon">@drawable/stream_ui_ic_check_double</item>
         <item name="streamUiIndicatorPendingSyncIcon">@drawable/stream_ui_ic_clock</item>
@@ -749,6 +775,8 @@
         <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">@color/stream_ui_accent_red</item>
         <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
         <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">@color/stream_ui_accent_blue</item>
+
+        <item name="streamUiMessageListHeaderSeparatorBackgroundDrawable">@drawable/stream_ui_divider</item>
     </style>
 
     <style name="StreamUi.SearchInputView" parent="StreamUi">
@@ -759,6 +787,7 @@
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSearchInputViewHeight">@dimen/stream_ui_search_input_height</item>
     </style>
 
     <style name="StreamUi.SearchResultListView" parent="StreamUi">
@@ -875,6 +904,11 @@
         <item name="android:textAppearance">@style/StreamUiTextAppearance.MediaActivityHeaderTitle</item>
     </style>
 
+    <style name="StreamUi.MediaActivity.ProgressBar" parent="StreamUi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="StreamUi.SuggestionListView"  parent="StreamUi">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
@@ -988,6 +1022,7 @@
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiAttachmentTabButtonColorStateList">@color/stream_ui_attachment_tab_button</item>
         <item name="streamUiCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiCooldownTimerTextStyle">bold</item>
@@ -995,6 +1030,8 @@
         <item name="streamUiMaxAttachmentsCount">10</item>
         <item name="streamUiEditInputModeIcon">@drawable/stream_ui_ic_edit</item>
         <item name="streamUiReplyInputModeIcon">@drawable/stream_ui_ic_arrow_curve_left</item>
+        <item name="streamUiCommandButtonRippleColor">?attr/colorControlHighlight</item>
+        <item name="streamUiAttachButtonRippleColor">?attr/colorControlHighlight</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">
@@ -1024,4 +1061,9 @@
     <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
         <item name="streamUiShowActionButton">false</item>
     </style>
+
+    <style name="StreamUi.ViewReactions" parent="StreamUi">
+        <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
+    </style>
+
 </resources>

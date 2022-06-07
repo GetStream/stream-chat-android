@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.user.storage
 
 import android.content.Context
@@ -13,8 +29,14 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
         val userId = getString(KEY_USER_ID, "") ?: ""
         val userToken = getString(KEY_USER_TOKEN, "") ?: ""
         val userName = getString(KEY_USER_NAME, "") ?: ""
+        val isAnonymous = getBoolean(KEY_IS_ANONYMOUS, false)
 
-        val config = CredentialConfig(userId = userId, userToken = userToken, userName = userName)
+        val config = CredentialConfig(
+            userId = userId,
+            userToken = userToken,
+            userName = userName,
+            isAnonymous = isAnonymous,
+        )
 
         return config.takeIf(CredentialConfig::isValid)
     }
@@ -26,6 +48,7 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
             putString(KEY_USER_ID, credentialConfig.userId)
             putString(KEY_USER_TOKEN, credentialConfig.userToken)
             putString(KEY_USER_NAME, credentialConfig.userName)
+            putBoolean(KEY_IS_ANONYMOUS, credentialConfig.isAnonymous)
         }.apply()
     }
 
@@ -34,5 +57,6 @@ internal class SharedPreferencesCredentialStorage(context: Context) : UserCreden
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_TOKEN = "user_token"
         private const val KEY_USER_NAME = "user_name"
+        private const val KEY_IS_ANONYMOUS = "is_anonymous"
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.api.models.AndFilterObject
@@ -30,8 +46,10 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
  *     Filters.`in`("members", listOf(user.id))
  * )
  *
- * See <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">Query Channels Documentation</a>
+ * See<a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">
+ *     Query Channels Documentation</a>
  */
+@Suppress("TooManyFunctions")
 public object Filters {
 
     @JvmStatic
@@ -65,13 +83,15 @@ public object Filters {
     public fun greaterThan(fieldName: String, value: Any): FilterObject = GreaterThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject = GreaterThanOrEqualsFilterObject(fieldName, value)
+    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject =
+        GreaterThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun lessThan(fieldName: String, value: Any): FilterObject = LessThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun lessThanEquals(fieldName: String, value: Any): FilterObject = LessThanOrEqualsFilterObject(fieldName, value)
+    public fun lessThanEquals(fieldName: String, value: Any): FilterObject =
+        LessThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
@@ -83,13 +103,15 @@ public object Filters {
     public fun `in`(fieldName: String, vararg values: Number): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, vararg values: String): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: String): FilterObject =
+        NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun nin(fieldName: String, values: List<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, vararg values: Number): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: Number): FilterObject =
+        NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun autocomplete(fieldName: String, value: String): FilterObject = AutocompleteFilterObject(fieldName, value)

@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
@@ -23,6 +40,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,12 +52,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Flag
+import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -51,10 +73,12 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -67,19 +91,29 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * @param messageLimit The limit of messages per query.
  * @param showHeader If we're showing the header or not.
  * @param enforceUniqueReactions If we need to enforce unique reactions or not.
+ * @param showDateSeparators If we should show date separators or not.
+ * @param showSystemMessages If we should show system messages or not.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
-@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 public fun MessagesScreen(
     channelId: String,
-    messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGE_LIMIT,
+    messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
     showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
+    deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -89,7 +123,9 @@ public fun MessagesScreen(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators
+        showDateSeparators = showDateSeparators,
+        deletedMessageVisibility = deletedMessageVisibility,
+        messageFooterVisibility = messageFooterVisibility
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -122,7 +158,7 @@ public fun MessagesScreen(
         }
     }
 
-    SystemBackPressedHandler(isEnabled = true, onBackPressed = backAction)
+    BackHandler(enabled = true, onBack = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -164,6 +200,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)
@@ -188,6 +225,20 @@ public fun MessagesScreen(
         }
 
         val selectedMessage = selectedMessageState?.message ?: Message()
+        val ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
+
+        val newMessageOptions = defaultMessageOptionsState(
+            selectedMessage = selectedMessage,
+            currentUser = user,
+            isInThread = listViewModel.isInThread,
+            ownCapabilities = ownCapabilities
+        )
+
+        var messageOptions by remember { mutableStateOf<List<MessageOptionItemState>>(emptyList()) }
+
+        if (newMessageOptions.isNotEmpty()) {
+            messageOptions = newMessageOptions
+        }
 
         AnimatedVisibility(
             visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
@@ -207,12 +258,9 @@ public fun MessagesScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                messageOptions = defaultMessageOptionsState(
-                    selectedMessage = selectedMessage,
-                    currentUser = user,
-                    isInThread = listViewModel.isInThread
-                ),
+                messageOptions = messageOptions,
                 message = selectedMessage,
+                ownCapabilities = ownCapabilities,
                 onMessageAction = { action ->
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)
@@ -251,7 +299,8 @@ public fun MessagesScreen(
                 onShowMoreReactionsSelected = {
                     listViewModel.selectExtendedReactions(selectedMessage)
                 },
-                onDismiss = { listViewModel.removeOverlay() }
+                onDismiss = { listViewModel.removeOverlay() },
+                ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
             )
         }
 
@@ -348,7 +397,12 @@ public fun MessagesScreen(
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
+ * @param showDateSeparators If we should show date separators or not.
+ * @param showSystemMessages If we should show system messages or not. * @param deletedMessageVisibility The behavior of deleted messages in the list.
+ * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  */
+@ExperimentalCoroutinesApi
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,
@@ -356,6 +410,8 @@ private fun buildViewModelFactory(
     messageLimit: Int,
     showDateSeparators: Boolean,
     showSystemMessages: Boolean,
+    deletedMessageVisibility: DeletedMessageVisibility,
+    messageFooterVisibility: MessageFooterVisibility,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -363,6 +419,8 @@ private fun buildViewModelFactory(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showDateSeparators = showDateSeparators,
-        showSystemMessages = showSystemMessages
+        showSystemMessages = showSystemMessages,
+        deletedMessageVisibility = deletedMessageVisibility,
+        messageFooterVisibility = messageFooterVisibility
     )
 }

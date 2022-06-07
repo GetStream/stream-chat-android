@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable fun UserList( onUserCredentialsClick: (UserCredentials) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun LoginScreen()</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun SdkTypeList( sdkType: SdkType, onSdkTypeClick: (SdkType) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
+    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
+    <ID>MagicNumber:DataProvider.kt$100000L</ID>
+    <ID>MagicNumber:DataProvider.kt$99</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.nYq8v8uFvdMwo3GlhQj_prXZArhi1dol-nkhPJsPXjI"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.aGImcXURXHTJZuXpBflcu2U4bWZ84dRJfLkAR5NuTas"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9.Mc0yYuNd-Kk_udd2tqiaOFbCnMRk8Lpq4JDDWi4X6CY"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.ZKNNAq-i-oKINbgJVpb750F984gmINRk5eslKK5avA0"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.9DFWiJmdfOsUiYvURCYN5bpUOiMrDvZN62X7HLweVPo"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.SoSQ1zkdpD-xzrdTnNioFOZQ5pKKcLJj4Jw8wAzOhno"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.WtWn2rgZyJNOpg48xUgYoMnG3BvMD5524RND7e7Mmhk"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.HGQfqwt1Jj2W25QQLO8hbnNeOrUl04q4a_AjHy0sFWM"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFyaW4ifQ.jSLjDAcGcz7hHrDyIU8OaSgRDg63aw2cW4C1nqIsB5c"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.T-LLXoVmdX1Huxg-gjUnBJ7TEnlyGSfa9zFw-N50zLY"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.EVNBLb7-yR823jv2jtDcjYBQCxBAQnhLDNhpMjcJ1uI"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.Fx_BMBwlwbfZzSonziklhGt0KWTKVnLRtXRI5RIuJKU"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9taXNsYXYifQ.-n5L1OmG4KpL0O16h8SeqKJID0DzUmy_nilqTgi8EZQ"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.1H7yz3CZ_wtSxj0B36tOkfdFtKzULSPwRyesufrTGpM"</ID>
+    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.pfG5thPeT7ytMSExrg3yoXQ02AqrLj2gIxuBZkTlr_c"</ID>
+    <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>

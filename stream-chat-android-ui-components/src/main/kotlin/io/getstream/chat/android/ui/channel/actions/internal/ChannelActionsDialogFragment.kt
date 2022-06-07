@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.channel.actions.internal
 
 import android.graphics.drawable.Drawable
@@ -63,6 +79,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 bindMemberNames(members)
                 bindMembersInfo(members)
                 bindDeleteConversationButton(canDeleteChannel)
+                bindLeaveGroupButton(canLeaveChannel)
             }
         }
     }
@@ -91,7 +108,6 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun configureLeaveGroupButton() {
         binding.leaveGroupButton.apply {
             if (style.leaveGroupEnabled) {
-                isVisible = isGroup
                 configureActionItem(style.itemTextStyle, style.leaveGroupIcon)
                 setOnClickListener {
                     channelActionListener?.onLeaveChannelClicked(cid)
@@ -130,8 +146,20 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * Used to change the visibility of the delete conversation button
+     * once the [ChannelActionsViewModel.state] updates.
+     */
     private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
         binding.deleteButton.isVisible = canDeleteChannel && style.deleteConversationEnabled
+    }
+
+    /**
+     * Used to change the visibility of the leave group button
+     * once the [ChannelActionsViewModel.state] updates.
+     */
+    private fun bindLeaveGroupButton(canLeaveChannel: Boolean) {
+        binding.leaveGroupButton.isVisible = canLeaveChannel && style.leaveGroupEnabled
     }
 
     private fun bindMemberNames(members: List<Member>) {

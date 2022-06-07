@@ -1,6 +1,22 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
-import androidx.compose.material.Icon
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,11 +35,10 @@ public fun ReactionOptionItem(
     option: ReactionOptionItemState,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    Image(
         modifier = modifier,
         painter = option.painter,
         contentDescription = option.type,
-        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
     )
 }
 
@@ -34,7 +49,7 @@ public fun ReactionOptionItem(
 @Composable
 private fun ReactionOptionItemNotSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1().copy(isSelected = false))
+        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1())
     }
 }
 
@@ -45,6 +60,6 @@ private fun ReactionOptionItemNotSelectedPreview() {
 @Composable
 private fun ReactionOptionItemSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1().copy(isSelected = true))
+        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption2())
     }
 }

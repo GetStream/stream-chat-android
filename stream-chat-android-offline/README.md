@@ -1,6 +1,6 @@
 # Stream Chat Android Offline
 
-This module adds offline support and provides Flow/LiveData APIs for Stream Chat. Check out the [Working with Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/working-with-offline/) guide for more info.
+This module adds offline support and provides Flow APIs for Stream Chat. Check out the [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/) guide for more info.
 
 ## Setup
 
@@ -16,4 +16,4 @@ It also implements a retry strategy to resend messages, reactions and channels.
 
 Stream's Chat API exposes dozens of events that all update the chat state. Messages can be created, updated and removed. Channels can be updated, muted, deleted, members can be added to them.
 
-The end result is that you need a lot of boilerplate code to keep your local chat state up to date. This library handles all this logic for you and simply exposes Flow and LiveData objects to observe the current state.
+The end result is that you need a lot of boilerplate code to keep your local chat state up to date. This library handles all this logic for you and simply exposes Flow objects to observe the current state.

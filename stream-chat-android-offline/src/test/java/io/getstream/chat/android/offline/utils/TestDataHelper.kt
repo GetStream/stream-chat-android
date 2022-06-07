@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.utils
 
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -38,9 +54,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateEntity
+import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateEntity
 import io.github.cdimascio.dotenv.dotenv
 import java.time.Instant
 import java.util.Calendar
@@ -84,6 +100,7 @@ internal class TestDataHelper {
     val watcher1 = user1
     val member1 = Member(user = user1, role = "user", isInvited = false)
     val member2 = Member(user = user2, role = "user", isInvited = false)
+    val member3 = Member(user = user3, role = "user", isInvited = false)
 
     val parentMessageId = "parentMessageId"
 
@@ -427,7 +444,7 @@ internal class TestDataHelper {
 
     // member removed doesn't have a cid
     val memberRemovedFromChannel =
-        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id)
+        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)
 
     val notificationRemovedFromChannel =
         NotificationRemovedFromChannelEvent(
@@ -449,6 +466,7 @@ internal class TestDataHelper {
         channel1.type,
         channel1.id,
         channel1,
+        member1,
         0,
         0
     )
@@ -459,6 +477,7 @@ internal class TestDataHelper {
         channel2.type,
         channel2.id,
         channel2,
+        member2,
         0,
         0
     )
@@ -471,6 +490,7 @@ internal class TestDataHelper {
         channel3.type,
         channel3.id,
         channel3,
+        member3,
         0,
         0
     )

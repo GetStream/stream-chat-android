@@ -21,10 +21,8 @@ First, you'll have to create a `User` object:
 ```kotlin
 val user = User(
     id = "bender",
-    extraData = mutableMapOf(
-        "name" to "Bender",
-        "image" to "https://bit.ly/321RmWb",
-    ),
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
 )
 ```
 
@@ -73,10 +71,8 @@ Never disable Auth Checks in a production application. Auth checks are an import
 ```kotlin
 val user = User( 
     id = "bender", 
-    extraData = mutableMapOf( 
-        "name" to "Bender", 
-        "image" to "https://bit.ly/321RmWb", 
-    ), 
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
 ) 
 val token = ChatClient.devToken(user.id) 
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.message.list.header
 
 import android.content.Context
@@ -30,6 +46,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property backButtonBadgeBackgroundColor Unread badge color. Default value is [R.color.stream_ui_accent_red].
  * @property showSearchingForNetworkProgressBar Shows/hides searching for network progress bar. Shown by default.
  * @property searchingForNetworkProgressBarTint Progress bar tint color. Default value is [R.color.stream_ui_accent_blue].
+ * @property separatorBackgroundDrawable Background drawable of the separator at the bottom of [MessageListHeaderView].
  */
 public data class MessageListHeaderViewStyle(
     @ColorInt public val background: Int,
@@ -44,6 +61,7 @@ public data class MessageListHeaderViewStyle(
     @ColorInt public val backButtonBadgeBackgroundColor: Int,
     public val showSearchingForNetworkProgressBar: Boolean,
     public val searchingForNetworkProgressBarTint: ColorStateList,
+    public val separatorBackgroundDrawable: Drawable?,
 ) {
 
     internal companion object {
@@ -161,6 +179,11 @@ public data class MessageListHeaderViewStyle(
                     )
                     .build()
 
+                val separatorBackgroundDrawable =
+                    a.getDrawable(
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable
+                    )
+
                 return MessageListHeaderViewStyle(
                     background = background,
                     titleTextStyle = titleTextStyle,
@@ -174,6 +197,7 @@ public data class MessageListHeaderViewStyle(
                     backButtonBadgeBackgroundColor = backButtonBadgeBackgroundColor,
                     showSearchingForNetworkProgressBar = showSearchingForNetworkProgressBar,
                     searchingForNetworkProgressBarTint = searchingForNetworkProgressBarTint,
+                    separatorBackgroundDrawable = separatorBackgroundDrawable
                 ).let(TransformStyle.messageListHeaderStyleTransformer::transform)
             }
         }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline
 
 import androidx.room.Room
@@ -28,6 +44,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -40,17 +57,16 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.message.attachment.generateUploadId
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
-import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
-import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
-import io.getstream.chat.android.offline.repository.domain.user.UserEntity
+import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
+import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -268,6 +284,7 @@ internal fun randomNotificationAddedToChannelEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
+    member: Member = randomMember(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
 ): NotificationAddedToChannelEvent {
@@ -278,6 +295,7 @@ internal fun randomNotificationAddedToChannelEvent(
         channelType = channelType,
         channelId = channelId,
         channel = channel,
+        member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
     )
@@ -336,6 +354,8 @@ internal fun randomAttachmentsWithFile(
 
 internal fun randomUser(
     id: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
     banned: Boolean = randomBoolean(),
@@ -353,6 +373,8 @@ internal fun randomUser(
 ): User = User(
     id,
     role,
+    name,
+    image,
     invisible,
     banned,
     devices,
@@ -372,6 +394,7 @@ internal fun randomUserEntity(
     id: String = randomString(),
     originalId: String = randomString(),
     name: String = randomString(),
+    image: String = randomString(),
     role: String = randomString(),
     createdAt: Date? = null,
     updatedAt: Date? = null,
@@ -381,7 +404,7 @@ internal fun randomUserEntity(
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
 ): UserEntity =
-    UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 internal fun randomMessage(
     id: String = randomString(),
@@ -770,7 +793,8 @@ internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
 
 internal fun randomNotificationAddedToChannelEvent(
     cid: String = randomString(),
-    channel: Channel = randomChannel()
+    channel: Channel = randomChannel(),
+    member: Member = randomMember()
 ): NotificationAddedToChannelEvent {
     return NotificationAddedToChannelEvent(
         type = randomString(),
@@ -779,6 +803,7 @@ internal fun randomNotificationAddedToChannelEvent(
         channelType = randomString(),
         channelId = randomString(),
         channel = channel,
+        member = member,
         totalUnreadCount = randomInt(),
         unreadChannels = randomInt(),
     )
@@ -837,5 +862,6 @@ internal fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemov
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
+        member = randomMember()
     )
 }

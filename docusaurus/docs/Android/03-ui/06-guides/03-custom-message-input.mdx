@@ -1,6 +1,6 @@
 # Creating a Custom Message Input View
 
-If the built-in [Message Input View](../05-components/07-message-input.mdx) and its available customization options don't fit your app's needs, you can create an Input View of your own.
+If the built-in [Message Input View](../04-message-components/04-message-input.mdx) and its available customization options don't fit your app's needs, you can create an Input View of your own.
 
 Note that the UI Components Input View supports many advanced features that you'll otherwise have to implement yourself if you want to use them in your app:
 
@@ -90,7 +90,7 @@ Running the app now shows the new message input view, which you can freely style
 
 Time to add basic functionality to the layout.
 
-This requires two new properties in the View. First, it needs the `cid` of the channel that the message has to be sent to. Secondly, it needs a reference to `ChatDomain` to perform calls via the Stream SDK.
+This requires two new properties in the View. First, it needs the `cid` of the channel that the message has to be sent to. Secondly, it needs a reference to `ChatClient` to perform calls via the Stream SDK.
 
 The `cid` can't be passed in as a constructor parameter, so you'll use a `lateinit var` for it. Be careful to always set this before attempting to set a message.
 
@@ -98,10 +98,10 @@ The `cid` can't be passed in as a constructor parameter, so you'll use a `latein
 lateinit var cid: String
 ```
 
-The `ChatDomain` can always be obtained via the `instance()` method after it's been initialized in your app:
+The `ChatClient` can always be obtained via the `instance()` method after it's been initialized in your app:
 
 ```kotlin
-val chatDomain = ChatDomain.instance()
+val chatClient = ChatClient.instance()
 ```
 
 Finally, you need to set a listener on the _Send_ button to read the current input and send a message. Here's all the new code together:
@@ -111,7 +111,7 @@ class CustomMessageInput : ConstraintLayout {
     /* Constructors, binding ... */
 
     lateinit var cid: String
-    val chatDomain = ChatDomain.instance()
+    val chatClient = ChatClient.instance()
 
     init {
         binding.sendButton.setOnClickListener {
@@ -120,7 +120,7 @@ class CustomMessageInput : ConstraintLayout {
             // 2
             val message = Message(cid = cid, text = text)
             // 3
-            chatDomain.sendMessage(message).enqueue { result ->
+            chatClient.channel(cid).sendMessage(message).enqueue { result ->
                 if (result.isSuccess) {
                     // Yay!
                 } else {
@@ -138,7 +138,7 @@ Here's what you're doing here, step-by-step:
 
 1. Reading the current value from the `inputField`.
 2. Creating the `Message` object to send, passing in the `cid` of the current channel and the `text` that it should contain.
-3. Using `ChatDomain` to send a message, with some basic error handling added.
+3. Using `ChatClient` to send a message, with some basic error handling added. Note that `ChatClient::channel` returns a `ChannelClient` that simplifies performing operation in a particular channel.
 4. Clearing the input for the next message.
 
 Finally, don't forget to set the `cid` after the view is created, like so:
@@ -155,7 +155,7 @@ First, create a `Runnable` object within the View that will send a the "typing s
 
 ```kotlin
 val stopTyping: Runnable = Runnable {
-    chatDomain.stopTyping(cid = cid, parentId = null).enqueue()
+    chatClient.channel(cid).stopTyping(parentId = null).enqueue()
 }
 ```
 
@@ -179,7 +179,7 @@ binding.inputField.addTextChangedListener(object : TextWatcher {
         }
 
         // 2
-        chatDomain.keystroke(cid = cid, parentId = null).enqueue()
+        chatClient.channel(cid).keystroke(parentId = null).enqueue()
         
         // 3
         removeCallbacks(stopTyping)
@@ -198,7 +198,7 @@ You can use more advanced logic for sending these events in your own application
 
 ### Editing Messages
 
-Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../05-components/05-message-list.mdx), by long tapping a message to access various actions.
+Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../04-message-components/02-message-list.mdx), by long tapping a message to access various actions.
 
 To support this, you'll need to store the message being edited and add a new method that lets users set this property:
 
@@ -227,7 +227,7 @@ binding.sendButton.setOnClickListener {
     if (toEdit != null) {
         // 1
         val message = toEdit.copy(text = text)
-        chatDomain.editMessage(message).enqueue { result ->
+        chatClient.channel(cid).updateMessage(message).enqueue { result ->
             if (result.isError) {
                 Toast.makeText(context, "Failed to edit message", Toast.LENGTH_SHORT).show()
             }
@@ -235,7 +235,7 @@ binding.sendButton.setOnClickListener {
     } else {
         // 2
         val message = Message(cid = cid, text = text)
-        chatDomain.sendMessage(message).enqueue { /* ... */ }
+        chatClient.channel(cid).sendMessage(message).enqueue { /* ... */ }
     }
 
     // 3
@@ -244,7 +244,7 @@ binding.sendButton.setOnClickListener {
 }
 ```
 
-1. Editing a message is done by copying the original message and updating its text, then using the `editMessage` method on `ChatDomain`.
+1. Editing a message is done by copying the original message and updating its text, then using the `updateMessage` method on `ChatClient`.
 2. Sending a new message is the same as before.
 3. As a last step, you clear the message under edit.
 
@@ -291,7 +291,7 @@ val message = Message(cid = cid, text = text)
 parentMessage?.let { parent ->
     message.parentId = parent.id
 }
-chatDomain.sendMessage(message).enqueue { /* ... */ }
+chatClient.channel(cid).sendMessage(message).enqueue { /* ... */ }
 ```
 
 This sets the `parentId` value on the newly created message if there is a parent message available.
@@ -320,8 +320,8 @@ messageListViewModel.mode.observe(this) { mode ->
 Finally, if you've added typing event support, make sure to update both the `keystroke` and `stopTyping` calls to include the parent ID now that threading is supported:
 
 ```kotlin
-chatDomain.keystroke(cid = cid, parentId = parentMessage?.id).enqueue()
-chatDomain.stopTyping(cid = cid, parentId = parentMessage?.id).enqueue()
+chatClient.channel(cid).keystroke(parentId = parentMessage?.id).enqueue()
+chatClient.channel(cid).stopTyping(parentId = parentMessage?.id).enqueue()
 ```
 
 ### Full Source Code
@@ -337,10 +337,10 @@ class CustomMessageInput : ConstraintLayout {
 
     val binding = CustomMessageInputBinding.inflate(LayoutInflater.from(context), this)
     lateinit var cid: String
-    val chatDomain = ChatDomain.instance()
+    val chatClient = ChatClient.instance()
     
     val stopTyping: Runnable = Runnable {
-        chatDomain.stopTyping(cid = cid, parentId = parentMessage?.id).enqueue()
+        chatClient.channel(cid).stopTyping(cid = cid, parentId = parentMessage?.id).enqueue()
     }
 
     var messageToEdit: Message? = null
@@ -353,7 +353,7 @@ class CustomMessageInput : ConstraintLayout {
             val toEdit = messageToEdit
             if (toEdit != null) {
                 val message = toEdit.copy(text = text)
-                chatDomain.editMessage(message).enqueue { result ->
+                chatClient.channel(cid).updateMessage(message).enqueue { result ->
                     if (result.isError) {
                         Toast.makeText(context, "Failed to edit message", Toast.LENGTH_SHORT).show()
                     }
@@ -364,7 +364,7 @@ class CustomMessageInput : ConstraintLayout {
                     message.parentId = parent.id
                     message.showInChannel
                 }
-                chatDomain.sendMessage(message).enqueue { result ->
+                chatClient.channel(cid).sendMessage(message).enqueue { result ->
                     if (result.isSuccess) {
                         // Yay!
                     } else {
@@ -386,7 +386,7 @@ class CustomMessageInput : ConstraintLayout {
                     return
                 }
 
-                chatDomain.keystroke(cid = cid, parentId = parentMessage?.id).enqueue()
+                chatClient.channel(cid).keystroke(parentId = parentMessage?.id).enqueue()
 
                 removeCallbacks(stopTyping)
                 postDelayed(stopTyping, 5000L)

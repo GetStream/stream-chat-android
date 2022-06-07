@@ -1,14 +1,30 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client
 
 import android.content.Context
+import android.os.Build
 import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -20,6 +36,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
@@ -33,6 +50,15 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
+import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
+import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
+import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
+import io.getstream.chat.android.client.errorhandler.onCreateChannelError
+import io.getstream.chat.android.client.errorhandler.onMessageError
+import io.getstream.chat.android.client.errorhandler.onQueryMembersError
+import io.getstream.chat.android.client.errorhandler.onReactionError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -42,18 +68,15 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
-import io.getstream.chat.android.client.experimental.plugin.Plugin
-import io.getstream.chat.android.client.experimental.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.EditMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.SendMessageListener
-import io.getstream.chat.android.client.experimental.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -64,6 +87,7 @@ import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
@@ -80,8 +104,26 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
@@ -96,13 +138,20 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.client.utils.onError
+import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.client.utils.retry.RetryPolicy
+import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -113,9 +162,10 @@ import java.util.concurrent.Executor
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-@OptIn(ExperimentalStreamChatApi::class)
-public class ChatClient internal constructor(
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "TooManyFunctions", "LargeClass")
+public class ChatClient
+@Suppress("LongParameterList")
+internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
@@ -127,14 +177,13 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     internal val scope: CoroutineScope,
-    private val appContext: Context,
-    @property:InternalStreamChatApi
-    @property:ExperimentalStreamChatApi
-    public val plugins: Collection<Plugin> = emptyList(),
+    internal val retryPolicy: RetryPolicy,
+    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
+    private val appSettingsManager: AppSettingManager,
 ) {
-    private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
-    private val eventsObservable = ChatEventsObservable(socket, this)
+    private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
+    private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope)
     private val lifecycleObserver = StreamLifecycleObserver(
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
@@ -144,11 +193,22 @@ public class ChatClient internal constructor(
         }
     )
 
-    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
-    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
-
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
+
+    /**
+     * The list of plugins added once user is connected.
+     *
+     * @see [Plugin]
+     */
+    internal var plugins: List<Plugin> = emptyList()
+
+    private var interceptors: MutableList<Interceptor> = mutableListOf()
+
+    /**
+     * Error handlers for API calls.
+     */
+    private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
         eventsObservable.subscribe { event ->
@@ -186,130 +246,120 @@ public class ChatClient internal constructor(
             }
             currentUser?.let { updatedCurrentUser ->
                 userStateService.onUserUpdated(updatedCurrentUser)
-                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
+                storePushNotificationsConfig(
+                    updatedCurrentUser.id,
+                    updatedCurrentUser.name,
+                    userStateService.state !is UserState.UserSet,
+                )
             }
         }
-        logger.logI("Initialised: " + getVersion())
+        logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
+    }
 
-        plugins.forEach { it.init(appContext, this) }
+    internal fun addPlugins(plugins: List<Plugin>) {
+        this.plugins = plugins
+    }
+
+    @InternalStreamChatApi
+    public fun addInterceptor(interceptor: Interceptor) {
+        this.interceptors.add(interceptor)
+    }
+
+    @InternalStreamChatApi
+    public fun removeAllInterceptors() {
+        this.interceptors.clear()
+    }
+
+    /**
+     * Adds a list of error handlers.
+     * @see [ErrorHandler]
+     *
+     * @param errorHandlers A list of handlers to add.
+     */
+    @InternalStreamChatApi
+    public fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
+        this.errorHandlers = errorHandlers.sorted()
+    }
+
+    private fun logPlugins(plugins: List<Any>) {
+        if (plugins.isNotEmpty()) {
+            val jointString = plugins.joinToString { plugin ->
+                plugin::class.qualifiedName ?: "plugin without qualified name"
+            }
+            logger.logD("Plugins found: $jointString")
+        } else {
+            logger.logD("No plugins found for this request.")
+        }
     }
 
     //region Set user
-
-    /**
-     * Creates a [Call] implementation that wraps a call that would otherwise be
-     * asynchronous and provide results to an [InitConnectionListener].
-     *
-     * @param performCall This should perform the call, passing in the
-     *                    [initListener] to it.
-     */
-    private fun createInitListenerCall(
-        performCall: (initListener: InitConnectionListener) -> Unit,
-    ): Call<ConnectionData> {
-        return object : Call<ConnectionData> {
-            override fun execute(): Result<ConnectionData> {
-                // Uses coroutines to turn the async call into blocking
-                return runBlocking { await() }
-            }
-
-            override fun enqueue(callback: Call.Callback<ConnectionData>) {
-                // Converts InitConnectionListener to Call.Callback
-                performCall(
-                    object : InitConnectionListener() {
-                        override fun onSuccess(data: ConnectionData) {
-                            val connectionData =
-                                io.getstream.chat.android.client.models.ConnectionData(data.user, data.connectionId)
-                            callback.onResult(Result(connectionData))
-                        }
-
-                        override fun onError(error: ChatError) {
-                            callback.onResult(Result(error))
-                        }
-                    }
-                )
-            }
-
-            override fun cancel() {}
-        }
-    }
-
-    /**
-     * Initializes [ChatClient] for a specific user using the given user [token].
-     *
-     * @param user Instance of [User] type.
-     * @param token Instance of JWT token. It must be unique for each user.
-     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
-     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
-     * You can generate the JWT token on using one of the available libraries or use our manual
-     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
-     *
-     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases.
-     */
-    @CheckResult
-    public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token))
-    }
 
     /**
      * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
      *
-     * This method performs required operations before connecting with the Stream API.
-     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
-     *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
-     * @param listener Socket connection listener.
+     * @param timeoutMilliseconds A timeout in milliseconds when the process will be aborted.
+     *
+     * @return [Result] of [ConnectionData] with the info of the established connection or a detailed error.
      */
-    private fun setUser(
+    private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
-        listener: InitConnectionListener? = null,
-    ) {
+        timeoutMilliseconds: Long?,
+    ): Result<ConnectionData> {
+        val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
-        if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
-            logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
-            return
-        }
         val userState = userStateService.state
-        when {
-            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
-                userStateService.onUserUpdated(user)
-                tokenManager.setTokenProvider(cacheableTokenProvider)
-                connectionListener = listener
-                socketStateService.onConnectionRequested()
-                socket.connect(user)
-                notifySetUser(user)
+        return when {
+            tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
+                logger.logE(
+                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                )
+                Result.error(
+                    ChatError(
+                        "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                    )
+                )
             }
             userState is UserState.NotSet -> {
-                initializeClientWithUser(user, cacheableTokenProvider)
-                connectionListener = listener
+                logger.logV("[setUser] user is NotSet")
+                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
+                socket.connectUser(user, isAnonymous)
+                waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
-                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+                logger.logE(
+                    "[setUser] Trying to set user without disconnecting the previous one - " +
+                        "make sure that previously set user is disconnected."
+                )
+                Result.error<ConnectionData>(
+                    ChatError(
+                        "User cannot be set until the previous one is disconnected."
+                    )
+                )
             }
             else -> {
-                logger.logE("Failed to connect user. Please check you don't have connected user already")
-                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+                logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
+                Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
-        }
+        }.onError { disconnect() }
     }
 
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
+        isAnonymous: Boolean,
     ) {
-        userStateService.onSetUser(user)
+        initializationCoordinator.userConnected(user)
         // fire a handler here that the chatDomain and chatUI can use
-        notifySetUser(user)
-        config.isAnonymous = false
+        config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
+        appSettingsManager.loadAppSettings()
         warmUp()
     }
 
@@ -321,20 +371,62 @@ public class ChatClient internal constructor(
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
-     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
-     * for the initial token, and it's also invoked whenever the user's token has expired, to
-     * fetch a new token.
+     * Initializes [ChatClient] for a specific user.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
      *
      * This method performs required operations before connecting with the Stream API.
      * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
+     *
+     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
+     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
+     * You can generate the JWT token on using one of the available libraries or use our manual
+     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
+     *
+     * @see TokenProvider
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
-    public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            logger.logD("[connectUser] userId: '${user.id}', username: '${user.name}'")
+            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
+                logger.logV(
+                    "[connectUser] completed: ${
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    }"
+                )
+            }
+        }
+    }
+
+    /**
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     * Check [ChatClient.connectUser] with [TokenProvider] parameter for advanced use cases.
+     *
+     * @param user Instance of [User] type.
+     * @param token Instance of JWT token.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
     }
 
     /**
@@ -354,6 +446,7 @@ public class ChatClient internal constructor(
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
+                isAnonymous = config.isAnonymous,
             )
         }
     }
@@ -363,61 +456,62 @@ public class ChatClient internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun notifySetUser(user: User) {
-        preSetUserListeners.forEach { it(user) }
-    }
-
-    private fun storePushNotificationsConfig(userId: String, userName: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String, isAnonymous: Boolean) {
         userCredentialStorage.put(
             CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
                 userName = userName,
+                isAnonymous = isAnonymous,
             ),
         )
     }
 
-    private fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        if (userStateService.state is UserState.NotSet) {
-            socketStateService.onConnectionRequested()
-            userStateService.onSetAnonymous()
-            connectionListener = object : InitConnectionListener() {
-                override fun onSuccess(data: ConnectionData) {
-                    notifySetUser(data.user)
-                    listener?.onSuccess(data)
-                }
-
-                override fun onError(error: ChatError) {
-                    listener?.onError(error)
-                }
-            }
-            config.isAnonymous = true
-            warmUp()
-            socket.connectAnonymously()
-        } else {
-            logger.logE("Failed to connect user. Please check you don't have connected user already")
-            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
-        }
-    }
-
     @CheckResult
-    public fun connectAnonymousUser(): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setAnonymousUser(initListener) }
-    }
-
-    private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
-        getGuestToken(userId, username).enqueue {
-            if (it.isSuccess) {
-                setUser(it.data().user, ConstantTokenProvider(it.data().token), listener)
-            } else {
-                listener?.onError(it.error())
+    @JvmOverloads
+    public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            logger.logD("[connectAnonymousUser] no args")
+            setUser(
+                anonUser,
+                ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
+                timeoutMilliseconds,
+            ).also { result ->
+                logger.logV(
+                    "[connectAnonymousUser] completed: ${
+                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                    }"
+                )
             }
         }
     }
 
+    private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
+        timeoutMilliseconds?.let {
+            withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
+                ?: Result.error(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+        } ?: waitConnection.first()
+
     @CheckResult
-    public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
-        return createInitListenerCall { initListener -> setGuestUser(userId, username, initListener) }
+    @JvmOverloads
+    public fun connectGuestUser(
+        userId: String,
+        username: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
+            getGuestToken(userId, username).await()
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
+                .data()
+                .also { result ->
+                    logger.logV(
+                        "[connectAnonymousUser] completed: ${
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        }"
+                    )
+                }
+        }
     }
 
     @CheckResult
@@ -425,6 +519,20 @@ public class ChatClient internal constructor(
         return api.getGuestUser(userId, userName)
     }
 
+    /**
+     * Query members and apply side effects if there are any.
+     *
+     * @param channelType The type of channel.
+     * @param channelId The id of the channel.
+     * @param offset Offset limit.
+     * @param limit Number of members to fetch.
+     * @param filter [FilterObject] to filter members of certain type.
+     * @param sort Sort the list of members.
+     * @param members List of members to search in distinct channels.
+     *
+     * @return [Call] with a list of members or an error.
+     */
+    @Suppress("LongParameterList")
     @CheckResult
     public fun queryMembers(
         channelType: String,
@@ -433,9 +541,27 @@ public class ChatClient internal constructor(
         limit: Int,
         filter: FilterObject,
         sort: QuerySort<Member>,
-        members: List<Member>,
+        members: List<Member> = emptyList(),
     ): Call<List<Member>> {
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
+        val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryMembersResult")
+                    plugin.onQueryMembersResult(
+                        result,
+                        channelType,
+                        channelId,
+                        offset,
+                        limit,
+                        filter,
+                        sort,
+                        members
+                    )
+                }
+            }
+            .onQueryMembersError(errorHandlers, channelType, channelId, offset, limit, filter, sort, members)
     }
 
     /**
@@ -540,25 +666,111 @@ public class ChatClient internal constructor(
         return api.getReactions(messageId, offset, limit)
     }
 
+    /**
+     * Deletes the reaction associated with the message with the given message id.
+     * [cid] parameter is being used in side effect functions executed by plugins.
+     * You can skip it if plugins are not being used.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param messageId The id of the message to which reaction belongs.
+     * @param reactionType The type of reaction.
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     *
+     * @return Executable async [Call] responsible for deleting the reaction.
+     */
     @CheckResult
-    @JvmOverloads
-    public fun sendReaction(
-        messageId: String,
-        reactionType: String,
-        enforceUnique: Boolean = false,
-    ): Call<Reaction> {
-        return api.sendReaction(messageId, reactionType, enforceUnique)
+    public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>().also(::logPlugins)
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
+
+        val currentUser = getCurrentUser()
+
+        return api.deleteReaction(messageId = messageId, reactionType = reactionType)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onDeleteReactionRequest")
+                    plugin.onDeleteReactionRequest(
+                        cid = cid,
+                        messageId = messageId,
+                        reactionType = reactionType,
+                        currentUser = currentUser!!,
+                    )
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onDeleteReactionResult")
+                    plugin.onDeleteReactionResult(
+                        cid = cid,
+                        messageId = messageId,
+                        reactionType = reactionType,
+                        currentUser = currentUser!!,
+                        result = result,
+                    )
+                }
+            }
+            .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
+            .onMessageError(relevantErrorHandlers, cid, messageId)
     }
 
-    @CheckResult
-    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return api.deleteReaction(messageId, reactionType)
-    }
-
+    /**
+     * Sends the reaction.
+     * Use [enforceUnique] parameter to specify whether the reaction should replace other reactions added by the
+     * current user.
+     * [cid] parameter is being used in side effect functions executed by plugins.
+     * You can skip it if plugins are not being used.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     *
+     * @return Executable async [Call] responsible for sending the reaction.
+     */
     @CheckResult
     @JvmOverloads
-    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
+    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
+        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>().also(::logPlugins)
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
+        val currentUser = getCurrentUser()
+
         return api.sendReaction(reaction, enforceUnique)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnStart(scope) {
+                relevantPlugins
+                    .forEach { plugin ->
+                        logger.logD("Applying ${plugin::class.qualifiedName}.onSendReactionRequest")
+                        plugin.onSendReactionRequest(
+                            cid = cid,
+                            reaction = reaction,
+                            enforceUnique = enforceUnique,
+                            currentUser = currentUser!!,
+                        )
+                    }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onSendReactionResult")
+                    plugin.onSendReactionResult(
+                        cid = cid,
+                        reaction = reaction,
+                        enforceUnique = enforceUnique,
+                        currentUser = currentUser!!,
+                        result = result,
+                    )
+                }
+            }
+            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
+            .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
     }
     //endregion
 
@@ -571,8 +783,8 @@ public class ChatClient internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.connect(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user, false)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -628,9 +840,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -672,9 +883,8 @@ public class ChatClient internal constructor(
         )
 
         lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
             }
@@ -713,19 +923,16 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+        logger.logI("[disconnect] no args")
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
-        runCatching {
-            userStateService.state.userOrError().let { user ->
-                disconnectListeners.forEach { listener -> listener(user) }
-            }
-        }
-        connectionListener = null
+        getCurrentUser().let(initializationCoordinator::userDisconnected)
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
         userCredentialStorage.clear()
         lifecycleObserver.dispose()
+        appSettingsManager.clear()
     }
 
     //region: api calls
@@ -882,29 +1089,21 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    @InternalStreamChatApi
-    @ExperimentalStreamChatApi
-    public fun getRepliesInternal(messageId: String, limit: Int): Call<List<Message>> = api.getReplies(messageId, limit)
-
-    @CheckResult
-    @InternalStreamChatApi
-    @ExperimentalStreamChatApi
-    public fun getRepliesMoreInternal(
-        messageId: String,
-        firstId: String,
-        limit: Int,
-    ): Call<List<Message>> = api.getRepliesMore(messageId, firstId, limit)
-
-    @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getReplies(messageId, limit)
             .doOnStart(scope) {
-                relevantPlugins.forEach { plugin -> plugin.onGetRepliesRequest(messageId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesRequest")
+                    plugin.onGetRepliesRequest(messageId, limit)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin -> plugin.onGetRepliesResult(result, messageId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesResult")
+                    plugin.onGetRepliesResult(result, messageId, limit)
+                }
             }
             .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
     }
@@ -915,12 +1114,20 @@ public class ChatClient internal constructor(
         firstId: String,
         limit: Int,
     ): Call<List<Message>> {
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getRepliesMore(messageId, firstId, limit)
-            .doOnStart(scope) { relevantPlugins.forEach { it.onGetRepliesMoreRequest(messageId, firstId, limit) } }
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesMoreRequest")
+                    plugin.onGetRepliesMoreRequest(messageId, firstId, limit)
+                }
+            }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onGetRepliesMoreResult(result, messageId, firstId, limit) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onGetRepliesMoreResults")
+                    plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
+                }
             }
             .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
     }
@@ -930,10 +1137,75 @@ public class ChatClient internal constructor(
         return api.sendAction(request)
     }
 
+    /**
+     * Sends selected giphy message to the channel specified by [Message.cid].
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for sending the Giphy.
+     */
+    public fun sendGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>().also(::logPlugins)
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onGiphySendResult")
+                    listener.onGiphySendResult(cid = message.cid, result = result)
+                }
+            }
+    }
+
+    /**
+     * Performs Giphy shuffle operation in the channel specified by [Message.cid].
+     * Returns new "ephemeral" message with new giphy url.
+     * The call will be retried accordingly to [retryPolicy].
+     * @see [RetryPolicy]
+     *
+     * @param message The message to send.
+     *
+     * @return Executable async [Call] responsible for shuffling the Giphy.
+     */
+    public fun shuffleGiphy(message: Message): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>().also(::logPlugins)
+        val request = message.run {
+            SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
+        }
+
+        return sendAction(request)
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onShuffleGiphyResult")
+                    listener.onShuffleGiphyResult(cid = message.cid, result = result)
+                }
+            }
+    }
+
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
+        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>().also(::logPlugins)
+
         return api.deleteMessage(messageId, hard)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onMessageDeleteRequest")
+                    listener.onMessageDeleteRequest(messageId)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { listener ->
+                    logger.logD("Applying ${listener::class.qualifiedName}.onMessageDeleteResult")
+                    listener.onMessageDeleteResult(messageId, result)
+                }
+            }
     }
 
     @CheckResult
@@ -942,48 +1214,73 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Sends the message to the given channel.
+     * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param message Message object
+     * @param isRetrying True if this message is being retried.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
+    @JvmOverloads
     public fun sendMessage(
         channelType: String,
         channelId: String,
         message: Message,
+        isRetrying: Boolean = false,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
+        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
+        return CoroutineCall(scope) {
 
-        return api.sendMessage(channelType, channelId, message)
-            .doOnStart(scope) { relevantPlugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach {
-                    it.onMessageSendResult(result, channelType, channelId, message)
-                }
+            // Message is first prepared i.e. all its attachments are uploaded and message is updated with
+            // these attachments.
+            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+                if (message.isSuccess) {
+                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+                } else message
+            }.flatMapSuspend { newMessage ->
+                api.sendMessage(channelType, channelId, newMessage)
+                    .retry(scope, retryPolicy)
+                    .doOnResult(scope) { result ->
+                        relevantPlugins.forEach { listener ->
+                            logger.logD("Applying ${listener::class.qualifiedName}.onMessageSendResult")
+                            listener.onMessageSendResult(
+                                result,
+                                channelType,
+                                channelId,
+                                newMessage
+                            )
+                        }
+                    }.await()
             }
+        }
     }
 
     /**
-     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here to
-     * store the updated message locally.
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here
+     * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
      */
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>()
+        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(message)
             .doOnStart(scope) {
-                relevantPlugins
-                    .forEach { plugin -> plugin.onMessageEditRequest(message) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMessageEditRequest")
+                    plugin.onMessageEditRequest(message)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin -> plugin.onMessageEditResult(message, result) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMessageEditResult")
+                    plugin.onMessageEditResult(message, result)
+                }
             }
     }
 
@@ -1065,10 +1362,17 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Gets the channels without running any side effects.
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.queryChannels(request)
+        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1076,7 +1380,10 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+    ): Call<Channel> {
+        logger.logD("Querying channel")
+        return api.queryChannel(channelType, channelId, request)
+    }
 
     @CheckResult
     public fun queryChannel(
@@ -1084,30 +1391,58 @@ public class ChatClient internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
+        logger.logD("Querying single channel")
+
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
         return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
-                relevantPlugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelRequest")
+                    plugin.onQueryChannelRequest(channelType, channelId, request)
+                }
             }
             .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelResult")
+                    plugin.onQueryChannelResult(result, channelType, channelId, request)
+                }
             }
             .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
     }
 
+    /**
+     * Gets the channels from the server based on parameters from [QueryChannelsRequest].
+     * The call requires active socket connection and will be automatically postponed and retried until
+     * the connection is established or the maximum number of attempts is reached.
+     * @see [QueryChannelsPostponeHelper]
+     *
+     * @param request The request's parameters combined into [QueryChannelsRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelsListener>()
+        logger.logD("Querying channels")
 
-        return queryChannelsPostponeHelper.queryChannels(request)
-            .doOnStart(scope) {
-                relevantPlugins.forEach { it.onQueryChannelsRequest(request) }
+        val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
+        logPlugins(relevantPluginsLazy())
+
+        return queryChannelsPostponeHelper.postponeQueryChannels {
+            api.queryChannels(request)
+        }.doOnStart(scope) {
+            relevantPluginsLazy().forEach { listener ->
+                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsRequest")
+                listener.onQueryChannelsRequest(request)
             }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { it.onQueryChannelsResult(result, request) }
+        }.doOnResult(scope) { result ->
+            relevantPluginsLazy().forEach { listener ->
+                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsResult")
+                listener.onQueryChannelsResult(result, request)
             }
-            .precondition(relevantPlugins) { onQueryChannelsPrecondition(request) }
+        }.precondition(relevantPluginsLazy()) {
+            onQueryChannelsPrecondition(request)
+        }
     }
 
     @CheckResult
@@ -1129,13 +1464,38 @@ public class ChatClient internal constructor(
         return api.showChannel(channelType, channelId)
     }
 
+    /**
+     * Hides the specified channel with side effects.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return Executable async [Call] responsible for hiding a channel.
+     *
+     * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
+     */
     @CheckResult
     public fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false,
     ): Call<Unit> {
+        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>().also(::logPlugins)
         return api.hideChannel(channelType, channelId, clearHistory)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onHideChannelRequest")
+                    plugin.onHideChannelRequest(channelType, channelId, clearHistory)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onHideChannelResult")
+                    plugin.onHideChannelResult(result, channelType, channelId, clearHistory)
+                }
+            }
+            .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
     }
 
     /**
@@ -1219,7 +1579,7 @@ public class ChatClient internal constructor(
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
-     * between 1-120.
+     * between 1-[MAX_COOLDOWN_TIME_SECONDS].
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -1233,10 +1593,14 @@ public class ChatClient internal constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return if (cooldownTimeInSeconds in 1..120) {
+        return if (cooldownTimeInSeconds in 1..MAX_COOLDOWN_TIME_SECONDS) {
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
-            ErrorCall(ChatError("You can't specify a value outside the range 1-120 for cooldown duration."))
+            ErrorCall(
+                ChatError(
+                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
+                )
+            )
         }
     }
 
@@ -1277,11 +1641,7 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
-    ): Call<ChatEvent> {
-        return api.sendEvent(eventType, channelType, channelId, extraData)
-    }
-
-    public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+    ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
 
     @CheckResult
     public fun acceptInvite(
@@ -1292,9 +1652,21 @@ public class ChatClient internal constructor(
         return api.acceptInvite(channelType, channelId, message)
     }
 
+    /**
+     * Marks all the channel as read.
+     *
+     * @return [Result] Empty unit result.
+     */
     @CheckResult
     public fun markAllRead(): Call<Unit> {
+        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>().also(::logPlugins)
         return api.markAllRead()
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onMarkAllReadRequest")
+                    plugin.onMarkAllReadRequest()
+                }
+            }
     }
 
     /**
@@ -1305,22 +1677,10 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>()
+        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>().also(::logPlugins)
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
-    }
-
-    /**
-     * Marks the specified channel as read without running a precondition.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId Id of the channel.
-     */
-    @InternalStreamChatApi
-    @CheckResult
-    public fun markReadInternal(channelType: String, channelId: String): Call<Unit> {
-        return api.markRead(channelType, channelId)
     }
 
     @CheckResult
@@ -1349,8 +1709,10 @@ public class ChatClient internal constructor(
         unset: List<String> = emptyList(),
     ): Call<User> {
         if (id != getCurrentUser()?.id) {
-            logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")
-            return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))
+            val errorMessage = "The client-side partial update allows you to update only the current user. " +
+                "Make sure the user is set before updating it."
+            logger.logE(errorMessage)
+            return ErrorCall(ChatError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -1360,40 +1722,62 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Query users matching [query] request.
+     *
+     * @param query [QueryUsersRequest] with query parameters like filters, sort to get matching users.
+     *
+     * @return [Call] with a list of [User].
+     */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
+    /**
+     * Adds members to a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of the member ids to be added.
+     * @param systemMessage The system message that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
     @CheckResult
     public fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
+        systemMessage: Message? = null,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
             channelId,
-            members
+            memberIds,
+            systemMessage,
         )
     }
 
     /**
-     * Method to remove members of a given channel.
+     * Removes members from a given channel.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param members The list of the members to be removed.
+     * @param memberIds The list of the member ids to be removed.
+     * @param systemMessage The system message that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for removing the members.
      */
     @CheckResult
     public fun removeMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        memberIds: List<String>,
+        systemMessage: Message? = null,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
-        members
+        memberIds,
+        systemMessage
     )
 
     /**
@@ -1583,6 +1967,15 @@ public class ChatClient internal constructor(
 
     //endregion
 
+    /**
+     * Return the [User] stored on the credential storage
+     *
+     * @return The stored user or null if it was logged out
+     */
+    internal fun getStoredUser(): User? = userCredentialStorage.get()?.let {
+        User(id = it.userId, name = it.userName)
+    }
+
     @InternalStreamChatApi
     public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
         this.pushNotificationReceivedListener = pushNotificationReceivedListener
@@ -1603,6 +1996,15 @@ public class ChatClient internal constructor(
                 else -> null
             }
         }.getOrNull()
+    }
+
+    /**
+     * Returns application settings from the server or the default ones as a fallback.
+     *
+     * @return The application settings.
+     */
+    public fun getAppSettings(): AppSettings {
+        return appSettingsManager.getAppSettings()
     }
 
     public fun isSocketConnected(): Boolean {
@@ -1629,46 +2031,81 @@ public class ChatClient internal constructor(
         return channel(type, id)
     }
 
+    /**
+     * Creates the channel.
+     * You can either create an id-based channel by passing not blank [channelId] or
+     * member-based (distinct) channel by leaving [channelId] empty.
+     * Use [memberIds] list to create a channel together with members. Make sure the list is not empty in case of
+     * creating member-based channel!
+     * Extra channel's information, for example name, can be passed in the [extraData] map.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of members' ids.
+     * @param extraData Map of key-value pairs that let you store extra data.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
     @CheckResult
     public fun createChannel(
         channelType: String,
         channelId: String,
+        memberIds: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, emptyList(), extraData)
+    ): Call<Channel> {
+        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>().also(::logPlugins)
+        val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
+        val currentUser = getCurrentUser()
 
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-    ): Call<Channel> =
-        createChannel(channelType, channelId, members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(channelType: String, members: List<String>): Call<Channel> =
-        createChannel(channelType, "", members, emptyMap())
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        createChannel(channelType, "", members, extraData)
-
-    @CheckResult
-    public fun createChannel(
-        channelType: String,
-        channelId: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> =
-        queryChannel(
-            channelType,
-            channelId,
-            QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
+        return queryChannelInternal(
+            channelType = channelType,
+            channelId = channelId,
+            request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds)),
         )
+            .retry(scope = scope, retryPolicy = retryPolicy)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onCreateChannelRequest")
+                    plugin.onCreateChannelRequest(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        extraData = extraData,
+                        currentUser = currentUser!!,
+                    )
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onCreateChannelResult")
+                    plugin.onCreateChannelResult(
+                        channelType = channelType,
+                        channelId = channelId,
+                        memberIds = memberIds,
+                        result = result,
+                    )
+                }
+            }
+            .onCreateChannelError(
+                errorHandlers = relevantErrorHandlers,
+                channelType = channelType,
+                channelId = channelId,
+                memberIds = memberIds,
+                extraData = extraData,
+            )
+            .precondition(relevantPlugins) {
+                onCreateChannelPrecondition(
+                    currentUser = currentUser,
+                    channelId = channelId,
+                    memberIds = memberIds,
+                )
+            }
+    }
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
@@ -1687,15 +2124,86 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
-    internal fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
-        if (connectedEvent != null) {
-            val user = connectedEvent.me
-            val connectionId = connectedEvent.connectionId
-            connectionListener?.onSuccess(InitConnectionListener.ConnectionData(user, connectionId))
-        } else if (error != null) {
-            connectionListener?.onError(error)
-        }
-        connectionListener = null
+    /**
+     * Sends a [EventType.TYPING_START] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
+     */
+    @CheckResult
+    public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
+        val eventTime = Date()
+        val eventType = EventType.TYPING_START
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventRequest")
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventResult")
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
+    }
+
+    /**
+     * Sends a [EventType.TYPING_STOP] event to the backend.
+     *
+     * @param channelType The type of this channel i.e. messaging etc.
+     * @param channelId The id of this channel.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
+     *
+     * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
+     * [ChatError] if fails.
+     */
+    @CheckResult
+    public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val extraData: Map<Any, Any> = parentId?.let {
+            mapOf(ARG_TYPING_PARENT_ID to parentId)
+        } ?: emptyMap()
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
+        val eventTime = Date()
+        val eventType = EventType.TYPING_STOP
+        return api.sendEvent(
+            eventType = eventType,
+            channelType = channelType,
+            channelId = channelId,
+            extraData = extraData,
+        )
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventRequest")
+                    plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.logD("Applying ${plugin::class.qualifiedName}.onTypingEventResult")
+                    plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
+                }
+            }
+            .precondition(relevantPlugins) {
+                this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
+            }
     }
 
     private fun warmUp() {
@@ -1715,7 +2223,6 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    @ExperimentalStreamChatApi
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
@@ -1738,9 +2245,11 @@ public class ChatClient internal constructor(
     /**
      * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
      *
-     * @param apiKey The API key of your Stream Chat app obtained from the [Stream Dashboard](https://dashboard.getstream.io/).
+     * @param apiKey The API key of your Stream Chat app obtained from the
+     * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
+    @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat.stream-io-api.com"
@@ -1753,9 +2262,11 @@ public class ChatClient internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private var plugins: List<Plugin> = emptyList()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
+        private var retryPolicy: RetryPolicy = NoRetryPolicy()
+        private var distinctApiCalls: Boolean = true
+        private var debugRequests: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -1791,7 +2302,8 @@ public class ChatClient internal constructor(
          * around push notifications. Create your own subclass and override methods to customize
          * notification appearance and behavior.
          *
-         * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
+         * See the
+         * [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
          * documentation for more information.
          *
          *
@@ -1801,7 +2313,8 @@ public class ChatClient internal constructor(
         @JvmOverloads
         public fun notifications(
             notificationConfig: NotificationConfig,
-            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+            notificationsHandler: NotificationHandler =
+                NotificationHandlerFactory.createNotificationHandler(context = appContext),
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
@@ -1814,7 +2327,8 @@ public class ChatClient internal constructor(
          * The default implementation uses Stream's own CDN to store these files,
          * which has a 20 MB upload size limit.
          *
-         * For more info, see [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
+         * For more info, see
+         * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
          *
          * @param fileUploader Your custom implementation of [FileUploader].
          */
@@ -1850,7 +2364,8 @@ public class ChatClient internal constructor(
         /**
          * Sets the base URL to be used by the client.
          *
-         * By default, this is the URL of Stream's [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
+         * By default, this is the URL of Stream's
+         * [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
          * which provides low latency regardless of which region your Stream
          * app is hosted in.
          *
@@ -1880,10 +2395,14 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        @InternalStreamChatApi
-        @ExperimentalStreamChatApi
-        public fun withPlugin(plugin: Plugin): Builder = apply {
-            plugins += plugin
+        /**
+         * Adds a plugin factory to be used by the client.
+         * @see [PluginFactory]
+         *
+         * @param pluginFactory The factory to be added.
+         */
+        public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
+            pluginFactories.add(pluginFactory)
         }
 
         /**
@@ -1891,6 +2410,47 @@ public class ChatClient internal constructor(
          */
         public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
             userCredentialStorage = credentialStorage
+        }
+
+        /**
+         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
+         * release builds as it uses a memory cache.
+         */
+        public fun debugRequests(shouldDebug: Boolean): Builder = apply {
+            this.debugRequests = shouldDebug
+        }
+
+        /**
+         * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
+         * By default, no calls are retried.
+         * @see [NoRetryPolicy]
+         *
+         * @param retryPolicy Custom [RetryPolicy] implementation.
+         */
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
+            this.retryPolicy = retryPolicy
+        }
+
+        /**
+         * Allows simultaneous network calls of the same request, avoiding combining them into one.
+         * By default [distinctApiCalls] is enabled.
+         */
+        public fun disableDistinctApiCalls(): Builder = apply {
+            this.distinctApiCalls = false
+        }
+
+        private fun configureInitializer(chatClient: ChatClient) {
+            chatClient.initializationCoordinator.addUserConnectedListener { user ->
+                chatClient.addPlugins(
+                    pluginFactories.map { pluginFactory ->
+                        pluginFactory.get(user)
+                    }
+                )
+            }
+        }
+
+        public override fun build(): ChatClient {
+            return super.build()
         }
 
         @InternalStreamChatApi
@@ -1919,6 +2479,8 @@ public class ChatClient internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                distinctApiCalls = distinctApiCalls,
+                debugRequests
             )
 
             if (ToggleService.isInitialized().not()) {
@@ -1937,6 +2499,8 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
+            val appSettingsManager = AppSettingManager(module.api())
+
             return ChatClient(
                 config,
                 module.api(),
@@ -1948,39 +2512,72 @@ public class ChatClient internal constructor(
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
-                appContext = appContext,
-                plugins = plugins,
-            )
+                retryPolicy = retryPolicy,
+                appSettingsManager = appSettingsManager,
+            ).also {
+                configureInitializer(it)
+            }
         }
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
         /**
+         * Factories of plugins that will be added to the SDK.
+         *
+         * @see [Plugin]
+         * @see [PluginFactory]
+         */
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+
+        /**
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = internalBuild().also {
-            instance = it
-        }
+        public open fun build(): ChatClient = internalBuild()
+            .also {
+                instance = it
+            }
 
         @InternalStreamChatApi
         public abstract fun internalBuild(): ChatClient
     }
 
     public companion object {
+        /**
+         * Header used to track which SDK is being used.
+         */
         @InternalStreamChatApi
         @JvmStatic
         public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
+        /**
+         * Flag used to track whether offline support is enabled.
+         */
+        @InternalStreamChatApi
+        @JvmStatic
+        public var OFFLINE_SUPPORT_ENABLED: Boolean = false
+
+        private const val MAX_COOLDOWN_TIME_SECONDS = 120
+        private const val KEY_MESSAGE_ACTION = "image_action"
+        private const val MESSAGE_ACTION_SEND = "send"
+        private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+
+        private const val ARG_TYPING_PARENT_ID = "parent_id"
 
         private var instance: ChatClient? = null
 
         @JvmField
         public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
 
+        private const val ANONYMOUS_USER_ID = "!anon"
+        private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
+
         @JvmStatic
         public fun instance(): ChatClient {
             return instance
-                ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+                ?: throw IllegalStateException(
+                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance"
+                )
         }
 
         public val isInitialized: Boolean
@@ -1988,7 +2585,8 @@ public class ChatClient internal constructor(
 
         /**
          * Handles push message.
-         * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
+         * If user is not connected - automatically restores last user credentials and sets user without
+         * connecting to the socket.
          * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *
@@ -2045,6 +2643,27 @@ public class ChatClient internal constructor(
         private fun ensureClientInitialized(): ChatClient {
             check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
+        }
+
+        /**
+         * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
+         * vendor and more.
+         *
+         * @return String formatted header that contains all the information.
+         */
+        internal fun buildSdkTrackingHeaders(): String {
+            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+            val buildModel = Build.MODEL
+            val deviceManufacturer = Build.MANUFACTURER
+            val apiLevel = Build.VERSION.SDK_INT
+            val osName = "Android ${Build.VERSION.RELEASE}"
+
+            return clientInformation +
+                "|os=$osName" +
+                "|api_version=$apiLevel" +
+                "|device_vendor=$deviceManufacturer" +
+                "|device_model=$buildModel" +
+                "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
         }
     }
 }

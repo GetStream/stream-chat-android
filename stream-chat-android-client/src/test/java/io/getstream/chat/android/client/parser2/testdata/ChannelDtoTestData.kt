@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.CommandDto
@@ -83,6 +99,8 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
+          "name": "channelName",
+          "image": "channelImage",
           "watcher_count": 1,
           "frozen": false,
           "last_message_at": "2020-06-10T11:04:31.588Z",
@@ -118,13 +136,26 @@ internal object ChannelDtoTestData {
           "cooldown": 1,
           "pinned_messages": [${MessageDtoTestData.downstreamJson}],
           "draft": true,
-          "own_capabilities": ["connect-events", "pin-message"]
+          "own_capabilities": ["connect-events", "pin-message"],
+          "membership": {
+            "user": ${UserDtoTestData.downstreamJson},
+            "role": "owner",
+            "created_at": "2020-06-10T11:04:31.0Z",
+            "updated_at": "2020-06-10T11:04:31.588Z",
+            "invited": true,
+            "invite_accepted_at": "2020-06-10T11:04:31.588Z",
+            "shadow_banned": false,
+            "banned": false,
+            "channel_role": "member"
+           }
         }
         """.withoutWhitespace()
     val downstreamChannel = DownstreamChannelDto(
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
+        name = "channelName",
+        image = "channelImage",
         watcher_count = 1,
         frozen = false,
         last_message_at = Date(1591787071588),
@@ -161,6 +192,18 @@ internal object ChannelDtoTestData {
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
         own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
+        membership = DownstreamMemberDto(
+            user = UserDtoTestData.downstreamUser,
+            role = "owner",
+            created_at = Date(1591787071000),
+            updated_at = Date(1591787071588),
+            invited = true,
+            invite_accepted_at = Date(1591787071588),
+            invite_rejected_at = null,
+            shadow_banned = false,
+            banned = false,
+            channel_role = "member",
+        ),
         extraData = mapOf("draft" to true),
     )
 
@@ -170,6 +213,8 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
+          "name": "channelName",
+          "image": "channelImage",
           "frozen": false,
           "config": $configJson
         }
@@ -178,6 +223,8 @@ internal object ChannelDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
+        name = "channelName",
+        image = "channelImage",
         watcher_count = 0,
         frozen = false,
         last_message_at = null,
@@ -194,6 +241,45 @@ internal object ChannelDtoTestData {
         team = "",
         cooldown = 0,
         pinned_messages = emptyList(),
+        membership = null,
+        extraData = emptyMap(),
+    )
+
+    @Language("JSON")
+    val downstreamJsonWithoutNameAndImage =
+        """{
+          "cid": "channelType:channelId",
+          "id": "channelId",
+          "type": "channelType",
+          "name": null,
+          "image": null,
+          "frozen": false,
+          "config": $configJson
+        }
+        """.withoutWhitespace()
+    val downstreamChannelWithoutNameAndImage = DownstreamChannelDto(
+        cid = "channelType:channelId",
+        id = "channelId",
+        type = "channelType",
+        name = null,
+        image = null,
+        watcher_count = 0,
+        frozen = false,
+        last_message_at = null,
+        created_at = null,
+        deleted_at = null,
+        updated_at = null,
+        member_count = 0,
+        messages = emptyList(),
+        members = emptyList(),
+        watchers = emptyList(),
+        read = emptyList(),
+        config = configDto,
+        created_by = null,
+        team = "",
+        cooldown = 0,
+        pinned_messages = emptyList(),
+        membership = null,
         extraData = emptyMap(),
     )
 
@@ -203,7 +289,9 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
-          "watcherCount": 1,
+          "name": "channelName",
+          "image": "channelImage",
+          "watcher_count": 1,
           "frozen": false,
           "last_message_at": "2020-06-10T11:04:31.588Z",
           "created_at": "2020-06-10T11:04:31.000Z",
@@ -244,7 +332,9 @@ internal object ChannelDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        watcherCount = 1,
+        name = "channelName",
+        image = "channelImage",
+        watcher_count = 1,
         frozen = false,
         last_message_at = Date(1591787071588),
         created_at = Date(1591787071000),
@@ -288,7 +378,9 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
-          "watcherCount": 0,
+          "name": "channelName",
+          "image": "channelImage",
+          "watcher_count": 0,
           "frozen": false,
           "member_count": 0,
           "messages": [],
@@ -306,7 +398,9 @@ internal object ChannelDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        watcherCount = 0,
+        name = "channelName",
+        image = "channelImage",
+        watcher_count = 0,
         frozen = false,
         last_message_at = null,
         created_at = null,

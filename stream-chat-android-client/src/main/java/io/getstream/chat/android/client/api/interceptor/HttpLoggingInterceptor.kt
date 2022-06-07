@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.api.interceptor
 
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -19,6 +35,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     private val logger = ChatLogger.get("Http")
 
     @Throws(IOException::class)
+    @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val level = logger.getLevel()
 
@@ -78,7 +95,8 @@ internal class HttpLoggingInterceptor : Interceptor {
         val contentLength = responseBody.contentLength()
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
         logger.logI(
-            "<-- ${response.code}${if (response.message.isEmpty()) "" else ' ' + response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"
+            "<-- ${response.code}${if (response.message.isEmpty()) "" else ' ' +
+                response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"
         )
 
         if (!response.promisesBody()) {
@@ -121,6 +139,7 @@ internal class HttpLoggingInterceptor : Interceptor {
             !contentEncoding.equals("gzip", ignoreCase = true)
     }
 
+    @Suppress("UnusedPrivateMember", "ReturnCount", "MagicNumber")
     private fun Buffer.isProbablyUtf8(): Boolean {
         try {
             val prefix = Buffer()

@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -37,8 +52,8 @@
             style="@style/StreamUiBadgeStyle"
             android:layout_marginStart="22dp"
             android:layout_marginBottom="20dp"
-            android:visibility="gone"
             android:textDirection="locale"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/backButton"
             app:layout_constraintStart_toStartOf="@+id/backButton"
             tools:text="2"
@@ -137,8 +152,8 @@
                 android:focusable="true"
                 android:text="@string/stream_ui_message_list_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
-                android:visibility="gone"
                 android:textDirection="locale"
+                android:visibility="gone"
                 />
         </LinearLayout>
 
@@ -157,8 +172,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-            tools:text="Online for 10 mins"
             android:textDirection="locale"
+            tools:text="Online for 10 mins"
             />
 
     </FrameLayout>
@@ -176,10 +191,10 @@
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_ui_divider_height"
-        android:background="@color/stream_ui_border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:background="@color/stream_ui_border"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

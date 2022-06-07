@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.annotation.DrawableRes
@@ -9,9 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -25,12 +41,16 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * Represents the list of user reactions.
  *
  * @param message The selected message.
  * @param currentUser The currently logged in user.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  * @param onMessageAction Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
@@ -39,29 +59,35 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param reactionTypes The available reactions within the menu.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog. By default [ReactionOptions].
+ * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog.
+ * By default [ReactionOptions].
  * @param centerContent The content shown in the [SelectedReactionsMenu] dialog. By Default [UserReactions].
  */
 @Composable
 public fun SelectedReactionsMenu(
     message: Message,
     currentUser: User?,
+    ownCapabilities: Set<String>,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsHeaderContent(
-            message = message,
-            reactionTypes = reactionTypes,
-            showMoreReactionsIcon = showMoreReactionsIcon,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected
-        )
+        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+
+        if (canLeaveReaction) {
+            DefaultSelectedReactionsHeaderContent(
+                message = message,
+                reactionTypes = reactionTypes,
+                showMoreReactionsIcon = showMoreReactionsIcon,
+                onMessageAction = onMessageAction,
+                onShowMoreReactionsSelected = onShowMoreReactionsSelected
+            )
+        }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedReactionsCenterContent(
@@ -92,7 +118,7 @@ public fun SelectedReactionsMenu(
 @Composable
 internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
-    reactionTypes: Map<String, Int>,
+    reactionTypes: Map<String, ReactionIcon>,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
@@ -144,25 +170,24 @@ internal fun DefaultSelectedReactionsCenterContent(
  *
  * @param message The message the reactions were left for.
  * @param currentUser The currently logged in user.
- * @param reactionTypes The available reactions within the menu.
  */
 @Composable
 private fun buildUserReactionItems(
     message: Message,
     currentUser: User?,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
 ): List<UserReactionItemState> {
+    val iconFactory = ChatTheme.reactionIconFactory
     return message.latestReactions
-        .filter { it.user != null && reactionTypes.contains(it.type) }
+        .filter { it.user != null && iconFactory.isReactionSupported(it.type) }
         .map {
             val user = requireNotNull(it.user)
             val type = it.type
-            val resId = requireNotNull(reactionTypes[type])
+            val isMine = currentUser?.id == user.id
+            val painter = iconFactory.createReactionIcon(type).getPainter(isMine)
 
             UserReactionItemState(
                 user = user,
-                painter = painterResource(resId),
-                isMine = currentUser?.id == user.id,
+                painter = painter,
                 type = type
             )
         }
@@ -181,7 +206,8 @@ private fun OneSelectedReactionMenuPreview() {
             message = message,
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
-            onShowMoreReactionsSelected = {}
+            onShowMoreReactionsSelected = {},
+            ownCapabilities = ChannelCapabilities.toSet()
         )
     }
 }
@@ -199,7 +225,8 @@ private fun ManySelectedReactionsMenuPreview() {
             message = message,
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
-            onShowMoreReactionsSelected = {}
+            onShowMoreReactionsSelected = {},
+            ownCapabilities = ChannelCapabilities.toSet()
         )
     }
 }

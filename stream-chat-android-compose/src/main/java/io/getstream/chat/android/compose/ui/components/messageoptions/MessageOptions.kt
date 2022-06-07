@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.messageoptions
 
 import androidx.compose.foundation.clickable
@@ -8,12 +24,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
@@ -21,10 +41,16 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasLink
+import io.getstream.chat.android.compose.ui.util.isGiphy
+import io.getstream.chat.android.compose.util.extensions.toSet
 
 /**
  * Displays all available [MessageOptionItem]s.
@@ -49,7 +75,9 @@ public fun MessageOptions(
 ) {
     Column(modifier = modifier) {
         options.forEach { option ->
-            itemContent(option)
+            key(option.action) {
+                itemContent(option)
+            }
         }
     }
 }
@@ -79,33 +107,63 @@ internal fun DefaultMessageOptionItem(
 }
 
 /**
- * Builds the default message options we show to our users.
+ * Builds the default message options we show to our users. A different set of options
+ * is shown for pending and sent messages.
  *
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
  * @param isInThread If the message is in a thread or not, to block off some options.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
  */
 @Composable
 public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
     isInThread: Boolean,
+    ownCapabilities: Set<String>,
 ): List<MessageOptionItemState> {
+    if (selectedMessage.id.isEmpty()) {
+        return emptyList()
+    }
+
     val selectedMessageUserId = selectedMessage.user.id
 
     val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
+    val hasLinks = selectedMessage.attachments.any { it.hasLink() && it.type != ModelType.attach_giphy }
     val isOwnMessage = selectedMessageUserId == currentUser?.id
     val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
+    val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
+    val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
+
+    // user capabilities
+    val canReplyToMessage = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+    val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
+    val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
+    val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
+    val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
+    val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
 
     return listOfNotNull(
-        MessageOptionItemState(
-            title = R.string.stream_compose_reply,
-            iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
-            action = Reply(selectedMessage),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            iconColor = ChatTheme.colors.textLowEmphasis,
-        ),
-        if (!isInThread) {
+        if (isOwnMessage && isMessageFailed) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_resend_message,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
+                action = Resend(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (isMessageSynced && canReplyToMessage) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_reply,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
+                action = Reply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else null,
+        if (!isInThread && isMessageSynced && canReplyToMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -114,7 +172,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isTextOnlyMessage) {
+        if (isTextOnlyMessage || hasLinks) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
@@ -123,7 +181,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isOwnMessage) {
+        if (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
@@ -141,14 +199,16 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        MessageOptionItemState(
-            title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
-            action = Pin(selectedMessage),
-            iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            titleColor = ChatTheme.colors.textHighEmphasis
-        ),
-        if (isOwnMessage) {
+        if (isMessageSynced && canPinMessage) {
+            MessageOptionItemState(
+                title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
+                action = Pin(selectedMessage),
+                iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                titleColor = ChatTheme.colors.textHighEmphasis
+            )
+        } else null,
+        if (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
@@ -170,16 +230,68 @@ public fun defaultMessageOptionsState(
 }
 
 /**
- * Preview of [MessageOptions].
- * */
-@Preview(showBackground = true, name = "MessageOptions Preview")
+ * Preview of [MessageOptions] for a delivered message of the current user.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Own Message)")
 @Composable
-private fun MessageOptionsPreview() {
+private fun MessageOptionsForOwnMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user1,
+        syncStatus = SyncStatus.COMPLETED,
+    )
+}
+
+/**
+ * Preview of [MessageOptions] for theirs message.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Theirs Message)")
+@Composable
+private fun MessageOptionsForTheirsMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user2,
+        syncStatus = SyncStatus.COMPLETED,
+    )
+}
+
+/**
+ * Preview of [MessageOptions] for a failed message.
+ */
+@Preview(showBackground = true, name = "MessageOptions Preview (Failed Message)")
+@Composable
+private fun MessageOptionsForFailedMessagePreview() {
+    MessageOptionsPreview(
+        messageUser = PreviewUserData.user1,
+        currentUser = PreviewUserData.user1,
+        syncStatus = SyncStatus.FAILED_PERMANENTLY,
+    )
+}
+
+/**
+ * Shows [MessageOptions] preview for the provided parameters.
+ *
+ * @param messageUser The user who sent the message.
+ * @param currentUser The currently logged in user.
+ * @param syncStatus The message sync status.
+ */
+@Composable
+private fun MessageOptionsPreview(
+    messageUser: User,
+    currentUser: User,
+    syncStatus: SyncStatus,
+) {
     ChatTheme {
+        val selectedMMessage = PreviewMessageData.message1.copy(
+            user = messageUser,
+            syncStatus = syncStatus
+        )
+
         val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
-            isInThread = false
+            selectedMessage = selectedMMessage,
+            currentUser = currentUser,
+            isInThread = false,
+            ownCapabilities = ChannelCapabilities.toSet()
         )
 
         MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})
