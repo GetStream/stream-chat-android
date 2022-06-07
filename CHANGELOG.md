@@ -32,7 +32,7 @@
 
 ### ✅ Added
 - Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
-
+- Logging when unread count is updated. [3642](https://github.com/GetStream/stream-chat-android/pull/3642)
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -78,6 +78,7 @@
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
+- Added `Modifier` as an argument to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageComposerViewModel.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 
@@ -129,6 +130,12 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# Jun 1st, 2022 - 5.3.1
+## stream-chat-android-client
+### 🐞 Fixed
+- Added getters to members search in `QuerySort` as some compilers may generate getters and setter instead of public properties,
+ making our current search for property to fail. [#3608](https://github.com/GetStream/stream-chat-android/pull/3608)
 
 # May 25th, 2022 - 5.3.0
 ## stream-chat-android-client
