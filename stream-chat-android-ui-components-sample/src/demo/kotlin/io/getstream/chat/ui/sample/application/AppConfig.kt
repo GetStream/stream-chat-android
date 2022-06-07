@@ -19,7 +19,7 @@ package io.getstream.chat.ui.sample.application
 import io.getstream.chat.ui.sample.data.user.SampleUser
 
 object AppConfig {
-    //const val apiKey: String = "qx5us2v6xvmh"
+    // const val apiKey: String = "qx5us2v6xvmh"
     const val apiKey: String = "twy69pcpwvfa"
     const val apiUrl: String = "chat-us-east-staging.stream-io-api.com"
     const val apiTimeout: Int = 6000

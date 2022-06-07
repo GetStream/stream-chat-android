@@ -315,6 +315,7 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/StringKt {
@@ -826,6 +827,26 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getText ()I
+}
+
+public final class io/getstream/chat/android/common/model/ModeratedMessageOption$DeleteMessage : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/ModeratedMessageOption$DeleteMessage;
+}
+
+public final class io/getstream/chat/android/common/model/ModeratedMessageOption$EditMessage : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/ModeratedMessageOption$EditMessage;
+}
+
+public final class io/getstream/chat/android/common/model/ModeratedMessageOption$SendAnyway : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/ModeratedMessageOption$SendAnyway;
+}
+
+public final class io/getstream/chat/android/common/model/ModeratedMessageOptionKt {
+}
+
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
@@ -849,6 +870,10 @@ public final class io/getstream/chat/android/common/state/DeletedMessageVisibili
 }
 
 public final class io/getstream/chat/android/common/state/Edit : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/EditModeratedMessage : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
 
