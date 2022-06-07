@@ -411,6 +411,14 @@ internal class ChannelLogic(
 
         if (shouldIncrementUnreadCount) {
             val newUnreadCount = mutableState._unreadCount.value + 1
+            val lastSeen = mutableState._read.value?.lastMessageSeenDate
+
+            logger.logD(
+                "It is necessary to increment the unread count for channel: " +
+                    "${mutableState._channelData.value?.channelId}. The last seen message was at: $lastSeen. " +
+                    "New unread count: $newUnreadCount"
+            )
+
             mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read
                 .value

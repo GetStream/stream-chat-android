@@ -148,7 +148,7 @@ internal fun DefaultSelectedChannelMenuCenterContent(
     selectedChannel: Channel,
     isMuted: Boolean,
     onChannelOptionClick: (ChannelAction) -> Unit,
-    ownCapabilities: Set<String>
+    ownCapabilities: Set<String>,
 ) {
     val channelOptions = buildDefaultChannelOptionsState(
         selectedChannel = selectedChannel,

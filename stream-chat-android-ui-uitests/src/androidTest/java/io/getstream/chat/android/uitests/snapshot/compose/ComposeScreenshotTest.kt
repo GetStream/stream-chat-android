@@ -20,20 +20,31 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import org.junit.Rule
+import org.junit.rules.TestName
+import org.junit.runner.RunWith
 
 /**
  * A base class used for all the Compose snapshot tests.
  */
+@RunWith(TestParameterInjector::class)
 abstract class ComposeScreenshotTest : ScreenshotTest {
 
     private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @get:Rule
     val composeRule = createComposeRule()
+
+    @TestParameter
+    private var isDarkMode: Boolean = false
+
+    @get:Rule
+    val testNameRule = TestName()
 
     /**
      * Renders a Composable [content] and records or verifies the screenshot.
@@ -43,10 +54,20 @@ abstract class ComposeScreenshotTest : ScreenshotTest {
     fun runScreenshotTest(content: @Composable () -> Unit) {
         composeRule.setContent {
             ChatTheme(
+                isInDarkMode = isDarkMode,
                 imageLoaderFactory = { FakeImageLoader(context) },
                 content = content
             )
         }
-        compareScreenshot(composeRule)
+        compareScreenshot(rule = composeRule, name = generateName())
+    }
+
+    /**
+     * Generates a name for the screenshot.
+     */
+    private fun generateName(): String {
+        return testNameRule.methodName
+            .substringBefore('[')
+            .let { if (isDarkMode) "${it}_dark" else it }
     }
 }
