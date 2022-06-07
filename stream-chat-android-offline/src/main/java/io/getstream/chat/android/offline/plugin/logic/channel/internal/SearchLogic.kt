@@ -9,11 +9,8 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
     private var isInsideSearch = false
 
     fun handleMessageBounds(request: QueryChannelRequest, hasMoreMessages: Boolean) {
-        Log.d("SearchLogic", "Handling search logic. is filtering: ${request.isFilteringMessages()} " +
-            "more messages: $hasMoreMessages")
-
         when {
-            !isInsideSearch && request.isFilteringNewerMessages() && hasMoreMessages  -> {
+            !isInsideSearch && request.isFilteringAroundIdMessages() -> {
                 updateSearchState(true)
             }
 
@@ -27,8 +24,4 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
         this.isInsideSearch = isInsideSearch
         mutableState._insideSearch.value = isInsideSearch
     }
-}
-
-private fun QueryChannelRequest.isFilteringMessages(): Boolean {
-    return this.isFilteringNewerMessages() || this.filteringOlderMessages()
 }

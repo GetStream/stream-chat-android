@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.isEphemeral
@@ -234,6 +233,24 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
     }
 }
 
+public fun ChatClient.loadNewerMessages(
+    channelCid: String,
+    baseMessageId: String,
+    messageLimit: Int,
+): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult(channelCid)
+
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = channelCid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+        } else {
+            cidValidationResult.error().toResultError()
+        }
+    }
+}
+
 /**
  * Cancels the message of "ephemeral" type.
  * Removes the message from local storage and state.
@@ -296,8 +313,7 @@ public fun ChatClient.loadMessageById(
 
                 logic.channel(channelType = channelType, channelId = channelId).run {
                     storeMessageLocally(listOf(message))
-                    loadOlderMessages(newerMessagesOffset, messageId)
-                    loadNewerMessages(messageId, olderMessagesOffset)
+                    loadMessagesAroundId(messageId)
                     upsertMessages(listOf(message))
                 }
                 result

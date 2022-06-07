@@ -619,9 +619,9 @@ public class MessageListView : ConstraintLayout {
                     val lastId = adapter.currentList
                         .asSequence()
                         .filterIsInstance<MessageListItem.MessageItem>()
-                        .last()
-                        .message
-                        .id
+                        .lastOrNull()
+                        ?.message
+                        ?.id
 
                     bottomEndRegionReachedHandler.onBottomEndRegionReached(lastId)
                 }
@@ -1306,7 +1306,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface BottomEndRegionReachedHandler {
-        public fun onBottomEndRegionReached(messageId: String)
+        public fun onBottomEndRegionReached(messageId: String?)
     }
 
     /**

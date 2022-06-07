@@ -49,6 +49,7 @@ import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -683,10 +684,10 @@ public class MessageListViewModel(
         }
     }
 
-    private fun onBottomEndRegionReached(baseMessageId: String) {
+    private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
-            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT, canCreateGap = false)
+            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
                 .enqueue { result ->
                     messageListData?.loadingMoreChanged(false)
                 }
@@ -863,7 +864,7 @@ public class MessageListViewModel(
          */
         public object EndRegionReached : Event()
 
-        public data class BottomEndRegionReached(val messageId: String) : Event()
+        public data class BottomEndRegionReached(val messageId: String?) : Event()
 
         /**
          * When the newest message in the channel has been read.

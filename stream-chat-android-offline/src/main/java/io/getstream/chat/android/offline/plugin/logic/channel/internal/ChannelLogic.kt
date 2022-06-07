@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -122,7 +123,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    private val searchLogic: SearchLogic = SearchLogic(mutableState)
+    private val searchLogic: SearchLogic = SearchLogic(mutableState),
 ) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
@@ -166,6 +167,8 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
+                Log.d("ChannelLogic", "Is around: ${request.isFilteringAroundIdMessages()}. " +
+                    "messages size: ${channel.messages.size}")
                 val noMoreMessages = channel.messages.size > request.messagesLimit()
 
                 searchLogic.handleMessageBounds(request, !noMoreMessages)
@@ -179,7 +182,7 @@ internal class ChannelLogic(
                     }
                 }
 
-                updateDataFromChannel(channel, request.filteringOlderMessages())
+                updateDataFromChannel(channel, request.isFilteringAroundIdMessages())
                 loadingStateByRequest(request).value = false
             }
             .onError { error ->
@@ -254,6 +257,10 @@ internal class ChannelLogic(
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
+    }
+
+    internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
+        return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
@@ -534,7 +541,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
@@ -543,8 +550,15 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
+
+    private fun aroundIdWatchChannelRequest(aroundMessageId: String): WatchChannelRequest {
+        return QueryChannelPaginationRequest().apply {
+            messageFilterDirection = Pagination.AROUND_ID
+            messageFilterValue = aroundMessageId
+        }.toWatchChannelRequest(userPresence)
+    }
 
     /**
      * Creates instance of [WatchChannelRequest] according to [Pagination].
@@ -576,6 +590,7 @@ internal class ChannelLogic(
             -> messages.last().id
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
+            Pagination.AROUND_ID
             -> messages.first().id
         }
     }
