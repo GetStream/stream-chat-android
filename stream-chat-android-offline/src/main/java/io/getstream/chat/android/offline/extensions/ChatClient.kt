@@ -295,7 +295,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  * @return Executable async [Call] responsible for loading a message.
  */
 @Deprecated("Use the version without offsets, as it uses less requests to backend")
-    public fun ChatClient.loadMessageById(
+public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
     olderMessagesOffset: Int,
