@@ -73,18 +73,38 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
     }
 
     public companion object {
+        /**
+         * Adds a field to [QuerySortByField] using the name of field in the direction ASC.
+         *
+         * @param fieldName Field name.
+         */
         public fun <R : ComparableFieldProvider> ascByName(
             fieldName: String
         ): QuerySortByField<R> = QuerySortByField<R>().asc(fieldName)
 
+        /**
+         * Adds a field to [QuerySortByField] using the name of field in the direction DESC.
+         *
+         * @param fieldName Field name.
+         */
         public fun <R : ComparableFieldProvider> descByName(
             fieldName: String
         ): QuerySortByField<R> = QuerySortByField<R>().desc(fieldName)
 
+        /**
+         * Creates a [QuerySortByField] using the name of field in the direction ASC.
+         *
+         * @param fieldName Field name.
+         */
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.ascByName(
             fieldName: String
         ): QuerySortByField<R> = asc(fieldName)
 
+        /**
+         * Creates a [QuerySortByField] using the name of field in the direction DESC.
+         *
+         * @param fieldName Field name.
+         */
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.descByName(
             fieldName: String
         ): QuerySortByField<R> = desc(fieldName)

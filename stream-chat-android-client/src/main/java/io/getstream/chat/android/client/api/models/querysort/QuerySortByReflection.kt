@@ -87,6 +87,9 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         return this
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with ASC as [SortDirection]
+     */
     public open fun asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
         return add(
             SortSpecification(
@@ -96,6 +99,9 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         )
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with DESC as [SortDirection]
+     */
     public open fun desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> {
         return add(
             SortSpecification(
@@ -108,14 +114,23 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         )
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with ASC as [SortDirection]
+     */
     public open fun asc(fieldName: String, javaClass: Class<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.ASC))
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with DESC as [SortDirection]
+     */
     public open fun desc(fieldName: String, javaClass: Class<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with ASC as [SortDirection]
+     */
     public open fun asc(fieldName: String): QuerySortByReflection<T> {
         return add(
             SortSpecification(
@@ -125,6 +140,9 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         )
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with DESC as [SortDirection]
+     */
     public open fun desc(fieldName: String): QuerySortByReflection<T> {
         return add(
             SortSpecification(
@@ -134,10 +152,16 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         )
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with ASC as [SortDirection]
+     */
     public open fun asc(fieldName: String, kClass: KClass<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.ASC))
     }
 
+    /**
+     * Creates a [QuerySortByReflection] with DESC as [SortDirection]
+     */
     public open fun desc(fieldName: String, kClass: KClass<T>): QuerySortByReflection<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
     }
@@ -161,23 +185,53 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
     }
 
     public companion object {
+        /**
+         * Adds a field to [QuerySortByReflection] using the name of field in the direction ASC.
+         *
+         * @param fieldName Field name.
+         */
         public inline fun <reified T : Any> QuerySortByReflection<T>.ascByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByReflection<T> = asc(fieldName, T::class)
 
+        /**
+         * Adds a field to [QuerySortByReflection] using the name of field in the direction DESC.
+         *
+         * @param fieldName Field name.
+         */
         public inline fun <reified T : Any> QuerySortByReflection<T>.descByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByReflection<T> = desc(fieldName, T::class)
 
+        /**
+         * Creates a [QuerySortByReflection] using the name of field in the direction ASC.
+         *
+         * @param fieldName Field name.
+         */
         public inline fun <reified T : Any> asc(fieldName: String): QuerySortByReflection<T> =
             QuerySortByReflection<T>().ascByName(fieldName)
 
+        /**
+         * Creates a [QuerySortByReflection] using the name of field in the direction DESC.
+         *
+         * @param fieldName Field name.
+         */
         public inline fun <reified R : Any> desc(fieldName: String): QuerySortByReflection<R> =
             QuerySortByReflection<R>().descByName(fieldName)
 
+        /**
+         * Creates a [QuerySortByReflection] using the property of field in the direction ASC.
+         *
+         * @param field [KProperty1] from the class.
+         */
         public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
             QuerySortByReflection<T>().asc(field)
 
+        /**
+         * Creates a [QuerySortByReflection] using the property of field in the direction DESC.
+         *
+         * @param field [KProperty1] from the class.
+         */
         public fun <T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySortByReflection<T> =
             QuerySortByReflection<T>().desc(field)
     }
