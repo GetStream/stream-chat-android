@@ -32,7 +32,7 @@
 
 ### ✅ Added
 - Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
-
+- Logging when unread count is updated. [3642](https://github.com/GetStream/stream-chat-android/pull/3642)
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -75,6 +75,7 @@
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
+- Added `Modifier` as an argument to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
 
 ### ⚠️ Changed
 
