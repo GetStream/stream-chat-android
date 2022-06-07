@@ -34,6 +34,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 
@@ -56,6 +57,11 @@ internal abstract class BaseUiTest {
     fun setup() {
         setupStreamSdk()
         setupMockWebServer()
+    }
+
+    @After
+    fun tearDown() {
+        ChatClient.instance().disconnect()
     }
 
     private fun setupStreamSdk() {
