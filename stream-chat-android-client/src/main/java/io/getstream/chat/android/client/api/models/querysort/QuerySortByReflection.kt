@@ -38,12 +38,18 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
 
     private val fieldSearcher: FieldSearcher = FieldSearcher()
 
+    /**
+     * Comparator from [SortAttribute.FieldSortAttribute]
+     */
     override fun comparatorFromFieldSort(
         firstSort: SortAttribute.FieldSortAttribute<T>,
         sortDirection: SortDirection,
     ): Comparator<T> =
         firstSort.field.comparator(sortDirection)
 
+    /**
+     * Comparator from [SortAttribute.FieldNameSortAttribute]
+     */
     override fun comparatorFromNameAttribute(
         name: SortAttribute.FieldNameSortAttribute<T>,
         sortDirection: SortDirection,

@@ -30,6 +30,9 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
 
     private val logger = StreamLog.getLogger("Chat:QuerySortByField")
 
+    /**
+     * Comparator from [SortAttribute.FieldSortAttribute]
+     */
     override fun comparatorFromFieldSort(
         firstSort: SortAttribute.FieldSortAttribute<T>,
         sortDirection: SortDirection,
@@ -37,6 +40,9 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
         throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
     }
 
+    /**
+     * Comparator from [SortAttribute.FieldNameSortAttribute]
+     */
     override fun comparatorFromNameAttribute(
         name: SortAttribute.FieldNameSortAttribute<T>,
         sortDirection: SortDirection,
