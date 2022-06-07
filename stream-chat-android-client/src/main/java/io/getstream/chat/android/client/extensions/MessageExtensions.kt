@@ -17,8 +17,29 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.util.Date
 
 public fun Message.enrichWithCid(cid: String): Message = apply {
     replyTo?.enrichWithCid(cid)
     this.cid = cid
+}
+
+/**
+ * Checks if the message mentions the [user].
+ */
+internal fun Message.containsUserMention(user: User): Boolean {
+    return mentionedUsersIds.contains(user.id) || mentionedUsers.any { mentionedUser -> mentionedUser.id == user.id }
+}
+
+@InternalStreamChatApi
+public val NEVER: Date = Date(0)
+
+/**
+ * Check if the message was created after the given [date].
+ */
+@InternalStreamChatApi
+public fun Message.wasCreatedAfter(date: Date?): Boolean {
+    return createdAt ?: createdLocallyAt ?: NEVER > date
 }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.extensions.internal
 
+import io.getstream.chat.android.client.extensions.NEVER
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -71,14 +72,8 @@ internal fun Message.populateMentions(channel: Channel) {
     mentionedUsersIds = mentions.toMutableList()
 }
 
-internal val NEVER = Date(0)
-
 internal fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
     return createdAt ?: createdLocallyAt ?: NEVER >= date
-}
-
-internal fun Message.wasCreatedAfter(date: Date?): Boolean {
-    return createdAt ?: createdLocallyAt ?: NEVER > date
 }
 
 internal fun Message.wasCreatedBefore(date: Date?): Boolean {
