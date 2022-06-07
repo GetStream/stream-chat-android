@@ -45,7 +45,6 @@ public data class MessagesState(
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
-
 ) {
 
     /**

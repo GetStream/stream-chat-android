@@ -78,7 +78,7 @@ public class ChannelListViewModel(
     private val memberLimit: Int = 30,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -170,7 +170,8 @@ public class ChannelListViewModel(
         queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
         viewModelScope.launch {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-                queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
+                queryChannelsState.chatEventHandler =
+                    chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
                 stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
                     stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
                 }
@@ -183,8 +184,6 @@ public class ChannelListViewModel(
                         stateMerger.value = state?.copy()
                     }
                 }
-
-
 
                 paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
                     setPaginationState { copy(loadingMore = loadingMore) }

@@ -275,7 +275,7 @@ internal class ChannelLogic(
             return Result.error(preconditionResult.error())
         }
 
-        //Newer messages don't use database to avoid pagination problems
+        // Newer messages don't use database to avoid pagination problems
         val offlineChannel = if (!request.isFilteringNewerMessages()) {
             runChannelQueryOffline(request)
         } else {
@@ -381,8 +381,6 @@ internal class ChannelLogic(
         if (shouldRefreshMessages) {
             lastRefresh = Date()
         }
-
-        logger.logD("Messages updated!!")
 
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)

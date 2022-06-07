@@ -545,7 +545,6 @@ public class MessageListViewModel(
                         DEFAULT_MESSAGES_LIMIT
                     ).enqueue { result ->
                         if (result.isSuccess) {
-                            //There's no guarantee that this message already is in the MessageListView!
                             _targetMessage.value = result.data()
                         } else {
                             val error = result.error()
