@@ -19,6 +19,7 @@
 -. `ChatClient::connectUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectAnonymousUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectGuestUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
+- Added a caching mechanism for typing updates that prunes the updates and sends a `TypingStopEvent` for every `TypingStartEvent` that has timed out. It is meant to safeguard against instances of the typing update sender not being able to send a typing stop signal due to sudden unforeseen circumstances (losing network connection, etc.). [#3637](https://github.com/GetStream/stream-chat-android/pull/3637)
 
 ### ⚠️ Changed
 
