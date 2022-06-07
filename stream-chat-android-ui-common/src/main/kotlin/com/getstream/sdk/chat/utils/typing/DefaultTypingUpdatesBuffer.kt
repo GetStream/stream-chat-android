@@ -16,101 +16,128 @@
 
 package com.getstream.sdk.chat.utils.typing
 
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * After you call [onKeystroke] the class will call [onTypingStarted],
- * start buffering for [delayIntervalMillis] and call [onTypingStopped].
+ * After you call [onKeystroke] the class will call automatically
+ * handle buffering typing events and call [onTypingStarted] and
+ * [onTypingStopped] accordingly in a timed manner.
  *
- * Every subsequent keystroke will cancel the previous work
- * and reset the time before sending a stop typing event so that only
- * distinct events trigger calls.
+ * The maximum frequency of sending out typing started events
+ * is dictated by [DEFAULT_SEND_TYPING_UPDATES_INTERVAL].
  *
- * @param delayIntervalMillis The interval between calling [onTypingStarted]
- * and [onTypingStopped] whenever a keystroke has been received and buffered.
+ * You should call [clear] before an instance of this class is removed.
+ *
  * @param onTypingStarted Signals that a typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.keystroke]
  * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
 public class DefaultTypingUpdatesBuffer(
-    public val delayIntervalMillis: Long = DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL,
     private val onTypingStarted: () -> Unit,
     private val onTypingStopped: () -> Unit,
 ) : TypingUpdatesBuffer {
 
     /**
-     * The coroutine scope used for running the timer.
+     * The coroutine scope used for running the timer and
+     * sending updates.
      */
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     /**
      * Holds the currently running job.
      */
-    private var job: Job? = null
+    private var isTypingTimerJob: Job? = null
+
+    /**
+     * Used to intelligently call [onTypingStopped] and [onTypingStopped].
+     */
+    private var sendUpdatesJob: Job? = null
 
     /**
      * If the user is currently typing or not.
      *
-     * Sends out a typing related event on every value
-     * change.
+     * Setting this value automatically triggers handling
+     * typing events.
      */
     private var isTyping: Boolean = false
         set(value) {
             field = value
-            handleTypingEvent(isTyping)
+            if (isTyping) {
+                handleTypingEvent()
+            }
         }
 
     /**
-     * Used to send a stop typing event after a
-     * set amount of time dictated by [delayIntervalMillis].
+     * Flips [isTyping] to false after a set amount of time
+     * dictated by [DEFAULT_BUFFER_TYPING_UPDATES_INTERVAL].
      */
     private suspend fun startTypingTimer() {
-        delay(delayIntervalMillis)
-        clear()
+        delay(DEFAULT_BUFFER_TYPING_UPDATES_INTERVAL)
+        isTyping = false
     }
 
     /**
      * Sets the value of [isTyping] only if there is
      * a change in state in order to not create unnecessary events.
      *
-     * It also resets the job to stop typing events after delay, debouncing keystrokes.
+     * Also resets the job used to time periods of typing activity.
      */
     override fun onKeystroke() {
         if (!isTyping) {
             isTyping = true
         }
-        job?.cancel()
-        job = coroutineScope.launch { startTypingTimer() }
+        isTypingTimerJob?.cancel()
+        isTypingTimerJob = coroutineScope.launch { startTypingTimer() }
     }
 
     /**
-     * Sets [isTyping] to false.
+     * Sets [isTyping] to false and cancels [coroutineScope].
      *
-     * Useful for clearing the state manually on lifecycle events.
+     * Should be called before an instance of this class is removed.
      */
     override fun clear() {
-        isTyping = false
+        if (isTyping) {
+            isTyping = false
+        }
+        coroutineScope.cancel()
     }
 
     /**
-     * Calls [onTypingStarted] or [onTypingStopped] event depending on the value of [isTyping].
-     *
-     * @param isTyping If the user is currently typing.
+     * Calls [onTypingStarted] every [DEFAULT_SEND_TYPING_UPDATES_INTERVAL] while
+     * the user is still typing and calls [onTypingStopped] afterwards.
      */
-    private fun handleTypingEvent(isTyping: Boolean) {
-        if (isTyping) {
-            onTypingStarted()
-        } else {
+    private fun handleTypingEvent() {
+        sendUpdatesJob?.cancel()
+
+        sendUpdatesJob = coroutineScope.launch {
+
+            do {
+                onTypingStarted()
+                delay(DEFAULT_SEND_TYPING_UPDATES_INTERVAL)
+            } while (isTyping)
+
             onTypingStopped()
         }
     }
 
-    public companion object {
-        public const val DEFAULT_TYPING_UPDATES_BUFFER_INTERVAL: Long = 3000L
+    private companion object {
+        /**
+         * Dictates the frequency start typing updates are sent
+         * at while the user is typing.
+         */
+        private const val DEFAULT_SEND_TYPING_UPDATES_INTERVAL: Long = 3000L
+
+        /**
+         * Dictates how long the user has to stop typing for
+         * before he is considered to be inactive (stopped typing).
+         */
+        private const val DEFAULT_BUFFER_TYPING_UPDATES_INTERVAL: Long = 1000L
     }
 }
