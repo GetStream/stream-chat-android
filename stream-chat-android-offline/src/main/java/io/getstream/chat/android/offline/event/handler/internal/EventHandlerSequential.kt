@@ -106,7 +106,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private const val TAG = "Chat:EventHandlerSeq"
 private const val TAG_SOCKET = "Chat:SocketEvent"
-private const val EVENTS_BUFFER = 30
+private const val EVENTS_BUFFER = 100
 
 /**
  * Processes events sequentially. That means a new event will not be processed
@@ -165,17 +165,21 @@ internal class EventHandlerSequential(
         logger.i { "[startListening] isDisposed: $isDisposed, currentUser: $currentUser" }
         currentUserId.set(currentUser.id)
         if (isDisposed) {
-            scope.launch {
+            val initJob = scope.launch {
                 initialize()
                 logger.v { "[startListening] initialization completed" }
+            }
+            scope.launch {
                 socketEvents.collect { event ->
+                    initJob.join()
                     handleSocketEvent(event)
                 }
             }
             eventsDisposable = subscribeForEvents { event ->
-                scope.launch {
+                if (socketEvents.tryEmit(event)) {
                     StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.type}" }
-                    socketEvents.emit(event)
+                } else {
+                    StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
                 }
             }
         }

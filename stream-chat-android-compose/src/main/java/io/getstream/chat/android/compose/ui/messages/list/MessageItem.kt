@@ -160,7 +160,11 @@ public fun MessageItem(
                     onThreadClick(message)
                 }
             },
-            onLongClick = { onLongItemClick(message) }
+            onLongClick = {
+                if (!message.isUploading()) {
+                    onLongItemClick(message)
+                }
+            }
         )
     }
 

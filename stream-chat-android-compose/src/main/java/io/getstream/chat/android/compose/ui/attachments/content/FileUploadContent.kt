@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,22 +44,43 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isUploading
 
 /**
  * Represents the content when files are being uploaded.
  *
  * @param attachmentState The state of this attachment.
+ * @param modifier Modifier for styling.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileUploadContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
 ) {
     val message = attachmentState.message
+    val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(modifier = modifier) {
         for (attachment in message.attachments) {
-            FileUploadItem(attachment = attachment)
+            FileUploadItem(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            if (!attachment.isUploading()) {
+                                previewHandlers
+                                    .firstOrNull { it.canHandle(attachment) }
+                                    ?.handleAttachmentPreview(attachment)
+                            }
+                        },
+                        onLongClick = { }
+                    ),
+                attachment = attachment,
+            )
         }
     }
 }
@@ -64,13 +89,15 @@ public fun FileUploadContent(
  * Represents each uploading item, with its upload progress.
  *
  * @param attachment The attachment that's being uploaded.
+ * @param modifier Modifier for styling.
  */
 @Composable
-public fun FileUploadItem(attachment: Attachment) {
+public fun FileUploadItem(
+    attachment: Attachment,
+    modifier: Modifier = Modifier,
+) {
     Surface(
-        modifier = Modifier
-            .padding(2.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment
     ) {
