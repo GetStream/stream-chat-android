@@ -107,8 +107,6 @@
     <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
-    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
-    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>

@@ -21,6 +21,7 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.core.view.setMargins
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
@@ -43,12 +44,43 @@ internal class ScrollButtonView : FrameLayout {
         defStyleAttr
     )
 
+    /**
+     * Sets [scrollButtonViewStyle] and calls the functions that apply the style.
+     *
+     * @param scrollButtonViewStyle The style to set.
+     */
     fun setScrollButtonViewStyle(scrollButtonViewStyle: ScrollButtonViewStyle) {
         this.scrollButtonViewStyle = scrollButtonViewStyle
+        setActionButtonStyle()
+        setBadgeStyle()
+    }
+
+    /**
+     * Applies style to the action button using [scrollButtonViewStyle].
+     */
+    private fun setActionButtonStyle() {
+        (binding.scrollActionButton.layoutParams as? LayoutParams)?.let { layoutParams ->
+            layoutParams.setMargins(scrollButtonViewStyle.scrollButtonInternalMargin)
+        }
         binding.scrollActionButton.rippleColor = scrollButtonViewStyle.scrollButtonRippleColor
         binding.scrollActionButton.setImageDrawable(scrollButtonViewStyle.scrollButtonIcon)
         binding.scrollActionButton.backgroundTintList = ColorStateList.valueOf(scrollButtonViewStyle.scrollButtonColor)
         binding.scrollActionButton.compatElevation = scrollButtonViewStyle.scrollButtonElevation
+    }
+
+    /**
+     * Applies style to the unread count badge using [scrollButtonViewStyle].
+     */
+    private fun setBadgeStyle() {
+        (binding.unreadCountTextView.layoutParams as? LayoutParams).let { layoutParams ->
+            layoutParams?.gravity = scrollButtonViewStyle.scrollButtonBadgeGravity
+        }
+        binding.unreadCountTextView.elevation = scrollButtonViewStyle.scrollButtonBadgeElevation
+        binding.unreadCountTextView.background = scrollButtonViewStyle.scrollButtonBadgeIcon
+        scrollButtonViewStyle.scrollButtonBadgeColor?.let { color ->
+            binding.unreadCountTextView.backgroundTintList =
+                ColorStateList.valueOf(color)
+        }
         scrollButtonViewStyle.scrollButtonBadgeTextStyle.apply(binding.unreadCountTextView)
     }
 
