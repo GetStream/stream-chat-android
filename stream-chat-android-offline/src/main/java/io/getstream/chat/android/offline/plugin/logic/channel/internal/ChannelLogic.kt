@@ -654,6 +654,7 @@ internal class ChannelLogic(
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
         }
+
         upsertMessages(listOf(message))
     }
 
@@ -784,7 +785,11 @@ internal class ChannelLogic(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                upsertEventMessage(event.message)
+                /* If we are inside a search, ignore new messages, because the last message is not available in the
+                 * screen */
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
@@ -804,7 +809,11 @@ internal class ChannelLogic(
                 setHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                upsertEventMessage(event.message)
+                /* If we are inside a search, ignore new messages, because the last message is not available in the
+                 * screen */
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
