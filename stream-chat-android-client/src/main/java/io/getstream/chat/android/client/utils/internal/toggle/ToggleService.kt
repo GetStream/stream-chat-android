@@ -39,6 +39,7 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
 
     public companion object {
         private const val PREFS_NAME = "toggle_storage"
+        public const val TOGGLE_KEY_MESSAGE_COMPOSER: String = "Message composer"
 
         private var instance: ToggleService? = null
 

@@ -23,22 +23,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.bindView
+import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
@@ -58,6 +63,7 @@ class ChatFragment : Fragment() {
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
+    private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
 
@@ -78,13 +84,19 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 
+    @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
         initChatViewModel()
         initMessagesViewModel()
-        initMessageInputViewModel()
         configureBackButtonHandling()
+
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER)) {
+            initMessageComposerViewModel()
+        } else {
+            initMessageInputViewModel()
+        }
     }
 
     override fun onResume() {
@@ -138,6 +150,27 @@ class ChatFragment : Fragment() {
     }
 
     private fun initMessageInputViewModel() {
+        binding.messageInputView.isVisible = true
+        messageInputViewModel.apply {
+            bindView(binding.messageInputView, viewLifecycleOwner)
+            messageListViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        headerViewModel.setActiveThread(it.parentMessage)
+                        messageInputViewModel.setActiveThread(it.parentMessage)
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        headerViewModel.resetThread()
+                        messageInputViewModel.resetThread()
+                    }
+                }
+            }
+            binding.messageListView.setMessageEditHandler(::postMessageToEdit)
+        }
+    }
+
+    private fun initMessageComposerViewModel() {
+        binding.messageComposerView.isVisible = true
         messageComposerViewModel.apply {
             bindView(binding.messageComposerView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {

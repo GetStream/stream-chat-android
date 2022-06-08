@@ -62,7 +62,7 @@ class App : Application() {
 
     @OptIn(InternalStreamChatApi::class)
     private fun initializeToggleService() {
-        ToggleService.init(applicationContext, emptyMap())
+        ToggleService.init(applicationContext, mapOf(ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER to true))
     }
 
     companion object {
