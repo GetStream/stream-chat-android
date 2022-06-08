@@ -51,9 +51,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * @param message The moderated [Message] upon which the user can take action.
  * @param onDismissRequest Handler for dialog dismissal.
- * @param onSendAnyway Handler for sending the message without editing.
- * @param onEditMessage Handler for editing the message before sending again.
- * @param onDeleteMessage Handler for deleting the message.
+ * @param onDialogInteraction Handler for detecting the action take upon the dialog.
  * @param titleText Text to be shown for the title of the dialog.
  * Defaults to [R.string.stream_ui_moderation_dialog_title].
  * @param descriptionText Text to be shown as the description of the dialog.
@@ -63,9 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun ModeratedMessageDialog(
     message: Message,
     onDismissRequest: () -> Unit,
-    onSendAnyway: (Message) -> Unit,
-    onEditMessage: (Message) -> Unit,
-    onDeleteMessage: (Message) -> Unit,
+    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
     titleText: String = stringResource(id = R.string.stream_ui_moderation_dialog_title),
     descriptionText: String = stringResource(id = R.string.stream_ui_moderation_dialog_description),
 ) {
@@ -118,11 +114,7 @@ public fun ModeratedMessageDialog(
                             .fillMaxWidth()
                             .height(50.dp)
                             .clickable {
-                                when (option) {
-                                    ModeratedMessageOption.DeleteMessage -> onDeleteMessage(message)
-                                    ModeratedMessageOption.EditMessage -> onEditMessage(message)
-                                    ModeratedMessageOption.SendAnyway -> onSendAnyway(message)
-                                }
+                                onDialogInteraction(message, option)
                                 onDismissRequest()
                             },
                         contentAlignment = Alignment.Center

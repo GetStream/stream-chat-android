@@ -1086,7 +1086,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Uplo
 }
 
 public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ModeratedMessageDialogKt {
-	public static final fun ModeratedMessageDialog (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ModeratedMessageDialog (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ExtendedReactionsOptionsKt {

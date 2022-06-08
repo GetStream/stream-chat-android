@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.EditModeratedMessage
@@ -344,9 +345,19 @@ public fun MessagesScreen(
             ModeratedMessageDialog(
                 message = selectedMessage,
                 onDismissRequest = { listViewModel.removeOverlay() },
-                onSendAnyway = { composerViewModel.sendModeratedMessage(it) },
-                onEditMessage = { composerViewModel.performMessageAction(EditModeratedMessage(it)) },
-                onDeleteMessage = { listViewModel.deleteMessage(message = it, true) }
+                onDialogInteraction = { message, action ->
+                    when (action) {
+                        ModeratedMessageOption.DeleteMessage ->
+                            listViewModel
+                                .deleteMessage(message = message, true)
+                        ModeratedMessageOption.EditMessage ->
+                            composerViewModel
+                                .performMessageAction(EditModeratedMessage(message))
+                        ModeratedMessageOption.SendAnyway ->
+                            composerViewModel
+                                .sendModeratedMessage(message)
+                    }
+                }
             )
         }
 
