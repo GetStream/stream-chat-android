@@ -159,7 +159,7 @@ internal class ConnectUserTest {
 
         /* Then */
         result.isError `should be equal to` true
-        result.error().message `should be equal to` "Failed to connect user. Please check you don't have connected user already."
+        result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
     }
 
     @Test
@@ -188,7 +188,7 @@ internal class ConnectUserTest {
 
         /* Then */
         result.isError `should be equal to` true
-        result.error().message `should be equal to` "Failed to connect user. Please check you don't have connected user already."
+        result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
     }
 
     @Test

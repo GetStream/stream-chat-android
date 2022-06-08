@@ -64,7 +64,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(listener)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
+        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test

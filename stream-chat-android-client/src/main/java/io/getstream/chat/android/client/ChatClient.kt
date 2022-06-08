@@ -340,7 +340,7 @@ internal constructor(
                 )
                 when {
                     userState.user.id != user.id -> {
-                        logger.logE("[setUser] Trying to set different user without disconnect previous one")
+                        logger.logE("[setUser] Trying to set different user without disconnect previous one.")
                         Result.error(
                             ChatError(
                                 "User cannot be set until the previous one is disconnected."
@@ -351,12 +351,12 @@ internal constructor(
                         getConnectionId()?.let { Result.success(ConnectionData(userState.user, it)) }
                             ?: run {
                                 logger.logE(
-                                    "[setUser] Trying to connect the same user twice without a previous completed " +
-                                        "connection"
+                                    "[setUser] Trying to connect the same user twice without a previously completed " +
+                                        "connection."
                                 )
                                 Result.error(
                                     ChatError(
-                                        "Failed to connect user. Please check you don't have connected user already."
+                                        "Failed to connect user. Please check you haven't connected a user already."
                                     )
                                 )
                             }
