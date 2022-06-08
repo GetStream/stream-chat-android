@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models.internal
+package io.getstream.chat.android.client.api.models.querysort
 
-import io.getstream.chat.android.client.api.models.QuerySort
+/** Sort order which can be ascending or descending. */
+public enum class SortDirection(public val value: Int) {
+    /** Descending sort order. */
+    DESC(-1),
 
-internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
-    override fun compare(o1: T, o2: T): Int =
-        comparators.fold(QuerySort.EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
-            when (currentComparisonValue) {
-                QuerySort.EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
-                else -> currentComparisonValue
-            }
-        }
+    /** Ascending sort order. */
+    ASC(1)
 }

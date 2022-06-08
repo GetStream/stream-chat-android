@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.channel.ChannelListActivity
@@ -133,7 +133,7 @@ class Screens {
                 return null
             }
 
-            override fun getSort(): QuerySort<Channel> {
+            override fun getSort(): QuerySorter<Channel> {
                 // Provide custom sort
                 return ChannelListViewModel.DEFAULT_SORT
             }
