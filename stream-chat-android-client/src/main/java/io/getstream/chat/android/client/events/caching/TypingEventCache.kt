@@ -134,6 +134,9 @@ internal class TypingEventCache(
 /**
  * A small utility function that transforms [TypingStartEvent] and [TypingStopEvent]
  * into a unique templated string to be used as a key value.
+ *
+ * @param user The user whose id will be used to form a string.
+ * @param cid The channel id used to form a string.
  */
 internal fun typingEventToKey(user: User, cid: String) = "${user.id}:$cid"
 
