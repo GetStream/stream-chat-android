@@ -41,8 +41,6 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  *
  * @property scrollButtonViewStyle Style for [ScrollButtonView].
  * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
- * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
- * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
  * @property replyMessageStyle Styles messages that are replies.
@@ -83,12 +81,12 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
+ * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
+ * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
-    public val scrollButtonBottomMargin: Int,
-    public val scrollButtonEndMargin: Int,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val replyMessageStyle: MessageReplyStyle,
@@ -129,6 +127,8 @@ public data class MessageListViewStyle(
     public val messagesStart: Int,
     public val threadMessagesStart: Int,
     public val messageOptionsUserReactionAlignment: Int,
+    public val scrollButtonBottomMargin: Int,
+    public val scrollButtonEndMargin: Int,
 ) {
 
     internal companion object {
