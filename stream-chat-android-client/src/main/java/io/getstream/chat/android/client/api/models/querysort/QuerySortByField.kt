@@ -24,7 +24,7 @@ import io.getstream.logging.StreamLog
 
 /**
  * Implementation of QuerySorter for fields that implements `ComparableFieldProvider`. This QuerySorter doesn't
- * use reflection and it will, be more performatic than `QuerySortByReflection`.
+ * use reflection and it's more performant than `QuerySortByReflection`.
  */
 public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() {
 
