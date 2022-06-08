@@ -55,7 +55,7 @@ val globalState = chatClient.globalState
 You should make sure that the user is connected before using the state. Acessing `chatClient.state` before connecting the user will result in a crash!
 :::
 
-Methods mentioned above will only return a state object associated with the API call but they won't perform the API call itself.
+Methods mentioned above return a state object associated with the API call but don't perform the API call itself.
 If you don't want to bother yourself about doing API calls when using state objects, you can use one of the provided extension functions:
 
 ```kotlin
