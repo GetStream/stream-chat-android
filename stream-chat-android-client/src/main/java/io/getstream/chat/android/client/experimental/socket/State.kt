@@ -62,7 +62,7 @@ internal sealed class State {
     /**
      * State of socket when the connection is established.
      */
-    data class Connected internal constructor(val event: ConnectedEvent?, internal val webSocket: OkHttpWebSocket) :
+    data class Connected internal constructor(val event: ConnectedEvent, internal val webSocket: OkHttpWebSocket) :
         State()
 
     /**

@@ -61,7 +61,7 @@ internal open class ChatSocket constructor(
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         checkCallback = {
-            (stateMachine.state as? State.Connected)?.let { state -> state.event?.let { sendEvent(it) } }
+            (stateMachine.state as? State.Connected)?.let { state -> sendEvent(state.event) }
         },
         reconnectCallback = {
             val state = stateMachine.state
@@ -132,7 +132,10 @@ internal open class ChatSocket constructor(
                 }
                 onEvent<Event.WebSocket.OnConnectionOpened<*>> {
                     connectionEventReceived = false
-                    State.Connected(event = null, webSocket = this.webSocket)
+                    this
+                }
+                onEvent<Event.WebSocket.OnConnectedEventReceived> {
+                    State.Connected(event = it.connectedEvent, webSocket = this.webSocket)
                 }
                 onEvent<Event.WebSocket.Terminate> {
                     // We do transition to Disconnected state here because the connection can be
@@ -156,9 +159,6 @@ internal open class ChatSocket constructor(
                 onEvent<Event.Lifecycle.Stopped> { event ->
                     initiateShutdown(event)
                     State.Disconnecting(event.disconnectCause)
-                }
-                onEvent<Event.WebSocket.OnConnectedEventReceived> {
-                    State.Connected(event = it.connectedEvent, webSocket = this.webSocket)
                 }
                 onEvent<Event.Lifecycle.Terminate> {
                     webSocket.cancel()
@@ -311,7 +311,7 @@ internal open class ChatSocket constructor(
      * Get connection id of this connection.
      */
     internal fun connectionIdOrError(): String = when (val state = state) {
-        is State.Connected -> state.event?.connectionId ?: error("This state doesn't contain connectionId")
+        is State.Connected -> state.event.connectionId
         else -> error("This state doesn't contain connectionId")
     }
 
