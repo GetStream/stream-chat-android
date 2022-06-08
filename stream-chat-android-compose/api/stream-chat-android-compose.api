@@ -837,7 +837,7 @@ public final class io/getstream/chat/android/compose/ui/components/attachments/i
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarKt {
-	public static final fun Avatar (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Avatar-h3Hjrnc (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
@@ -853,41 +853,11 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/ImageA
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarKt {
-	public static final fun InitialsAvatar (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-}
-
-public abstract class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$BottomEnd : io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$BottomEnd;
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$BottomStart : io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$BottomStart;
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$Center : io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$Center;
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$TopEnd : io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$TopEnd;
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$TopStart : io/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset$TopStart;
+	public static final fun InitialsAvatar--jUOA0U (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/UserAvatarKt {
-	public static final fun UserAvatar (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lio/getstream/chat/android/compose/ui/components/avatar/InitialsAvatarOffset;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun UserAvatar-fzeukOM (Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;JLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelMembersKt {
