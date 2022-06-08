@@ -435,7 +435,6 @@ internal class ChannelLogic(
                 mutableState._unreadCount.value = unreadCount + 1
             }
         }
-
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {
