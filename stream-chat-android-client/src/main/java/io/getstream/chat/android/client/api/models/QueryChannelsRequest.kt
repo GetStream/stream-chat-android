@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.models.Channel
  * @property filter [FilterObject] conditions used by backend to filter queries response.
  * @property offset Pagination offset.
  * @property limit Number of channels to be returned by this query channels request.
- * @property querySort [QuerySortByReflection] Sort specification for api queries.
+ * @property querySort [QuerySorter] Sort specification for api queries.
  * @property messageLimit Number of messages in the response.
  * @property memberLimit Number of members in the response.
  */

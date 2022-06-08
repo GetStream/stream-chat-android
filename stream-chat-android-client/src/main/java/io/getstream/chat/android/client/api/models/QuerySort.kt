@@ -28,7 +28,7 @@ import kotlin.reflect.KProperty1
  */
 @Suppress("TooManyFunctions")
 @Deprecated(
-    message = "User QuerySortByReflection.",
+    message = "Use QuerySortByReflection.",
     replaceWith = ReplaceWith("QuerySortByReflection"),
     level = DeprecationLevel.WARNING
 )
