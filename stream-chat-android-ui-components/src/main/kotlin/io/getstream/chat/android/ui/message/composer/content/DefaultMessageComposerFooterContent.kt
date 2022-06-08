@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultFooterContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default content shown at the bottom of [MessageComposerView].
@@ -62,6 +63,10 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
         binding.alsoSendToChannel.setOnCheckedChangeListener { _, _ ->
             alsoSendToChannelSelectionListener(binding.alsoSendToChannel.isChecked)
         }
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**

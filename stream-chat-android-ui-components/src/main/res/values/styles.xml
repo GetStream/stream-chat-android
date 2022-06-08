@@ -1066,4 +1066,24 @@
         <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
     </style>
 
+    <style name="StreamUi.MessageComposerView" parent="StreamUi">
+        <!-- Command suggestions content -->
+
+        <!-- Mention suggestions content -->
+
+        <!-- Center content -->
+
+        <!-- Leading content -->
+
+        <!-- Footer content -->
+
+        <!-- Header content -->
+
+        <!-- Trailing content -->
+        <item name="streamUiMessageComposerSendButtonEnabled">true</item>
+        <item name="streamUiMessageComposerSendButtonIcon">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
+    </style>
 </resources>

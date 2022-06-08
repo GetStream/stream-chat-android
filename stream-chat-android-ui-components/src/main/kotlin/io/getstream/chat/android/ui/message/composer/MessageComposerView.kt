@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
@@ -56,6 +57,11 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerBinding
+
+    /**
+     * Style for the message composer.
+     */
+    private lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the send message button.
@@ -172,18 +178,23 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
-        init()
+        init(attrs)
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**
      * Initializing the view with default contents.
      */
-    private fun init() {
+    private fun init(attr: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
+        style = MessageComposerViewStyle(context, attr)
         binding.leadingContent.apply {
             val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {
                 it.attachmentsButtonClickListener = {
@@ -215,6 +226,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             }
             removeAllViews()
             addView(defaultLeadingContent)
+            defaultLeadingContent.setupView(style)
         }
         binding.centerContent.apply {
             val defaultCenterContent = DefaultMessageComposerCenterContent(context).also {
@@ -224,6 +236,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             }
             removeAllViews()
             addView(defaultCenterContent)
+            defaultCenterContent.setupView(style)
         }
         binding.trailingContent.apply {
             val defaultTrailingContent = DefaultMessageComposerTrailingContent(context).also {
@@ -231,6 +244,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             }
             removeAllViews()
             addView(defaultTrailingContent)
+            defaultTrailingContent.setupView(style)
         }
         binding.footerContent.apply {
             val defaultFooterContent = DefaultMessageComposerFooterContent(context).also {
@@ -238,6 +252,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             }
             removeAllViews()
             addView(defaultFooterContent)
+            defaultFooterContent.setupView(style)
         }
         binding.headerContent.apply {
             val defaultHeaderContent = DefaultMessageComposerHeaderContent(context).also {
@@ -245,6 +260,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             }
             removeAllViews()
             addView(defaultHeaderContent)
+            defaultHeaderContent.setupView(style)
         }
     }
 
@@ -348,6 +364,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     ) where V : View, V : MessageComposerComponent {
         binding.leadingContent.removeAllViews()
         binding.leadingContent.addView(view, layoutParams)
+        view.setupView(style)
     }
 
     /**
@@ -362,6 +379,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     ) where V : View, V : MessageComposerComponent {
         binding.centerContent.removeAllViews()
         binding.centerContent.addView(view, layoutParams)
+        view.setupView(style)
     }
 
     /**
@@ -376,6 +394,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     ) where V : View, V : MessageComposerComponent {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(view, layoutParams)
+        view.setupView(style)
     }
 
     /**
@@ -390,6 +409,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     ) where V : View, V : MessageComposerComponent {
         binding.footerContent.removeAllViews()
         binding.footerContent.addView(view, layoutParams)
+        view.setupView(style)
     }
 
     /**
@@ -404,6 +424,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     ) where V : View, V : MessageComposerComponent {
         binding.headerContent.removeAllViews()
         binding.headerContent.addView(view, layoutParams)
+        view.setupView(style)
     }
 
     /**

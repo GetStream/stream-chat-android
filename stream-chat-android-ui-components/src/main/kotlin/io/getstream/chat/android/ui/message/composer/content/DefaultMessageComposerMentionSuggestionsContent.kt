@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default mention suggestion list popup shown above [MessageComposerView].
@@ -73,6 +74,10 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
         binding.suggestionsCardView.isVisible = true
         binding.commandsTitleTextView.isVisible = false
         binding.suggestionsRecyclerView.adapter = adapter
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**

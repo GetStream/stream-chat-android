@@ -22,9 +22,11 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default content shown at the end of [MessageComposerView].
@@ -35,6 +37,11 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    private lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the send message button.
@@ -62,6 +69,17 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     }
 
     /**
+     * empty
+     */
+    override fun setupView(style: MessageComposerViewStyle) {
+        this.style = style
+
+        binding.sendMessageButton.setImageDrawable(style.sendButtonIcon)
+        binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
+        binding.cooldownBadgeTextView.background = style.cooldownTimerBackgroundDrawable
+    }
+
+    /**
      * Invoked when the state has changed and the UI needs to be updated accordingly.
      *
      * @param state The state that will be used to render the updated UI.
@@ -70,19 +88,20 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val isInputValid = state.validationErrors.isEmpty()
-        val coolDownTime = state.coolDownTime
 
-        val isSendMessageButtonEnabled = (hasTextInput || hasAttachments) && isInputValid
+        val coolDownTime = state.coolDownTime
+        val hasValidContent = (hasTextInput || hasAttachments) && isInputValid
+        val isButtonEnabled = hasValidContent && style.sendButtonEnabled
 
         binding.apply {
             if (coolDownTime > 0) {
-                coolDownBadge.isVisible = true
-                coolDownBadge.text = coolDownTime.toString()
+                cooldownBadgeTextView.isVisible = true
+                cooldownBadgeTextView.text = coolDownTime.toString()
                 sendMessageButton.isVisible = false
             } else {
-                coolDownBadge.isVisible = false
+                cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = true
-                sendMessageButton.isEnabled = isSendMessageButtonEnabled
+                sendMessageButton.isEnabled = isButtonEnabled
             }
         }
     }

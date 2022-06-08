@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default content shown at the top of [MessageComposerView].
@@ -62,6 +63,10 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     private fun init() {
         binding = StreamUiMessageComposerDefaultHeaderContentBinding.inflate(streamThemeInflater, this)
         binding.dismissButton.setOnClickListener { dismissActionClickListener() }
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**

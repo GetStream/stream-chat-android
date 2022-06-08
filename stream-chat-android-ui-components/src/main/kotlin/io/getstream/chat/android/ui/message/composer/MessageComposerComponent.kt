@@ -24,6 +24,13 @@ import io.getstream.chat.android.common.composer.MessageComposerState
  */
 public interface MessageComposerComponent {
     /**
+     * Invoked when the component is initialized.
+     *
+     * @param style The style that will be applied to the component.
+     */
+    public fun setupView(style: MessageComposerViewStyle)
+
+    /**
      * Invoked when the state has changed and the UI needs to be updated accordingly.
      *
      * @param state The state that will be used to render the updated UI.

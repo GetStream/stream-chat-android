@@ -15,7 +15,6 @@
     limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
 
@@ -23,7 +22,7 @@
         android:id="@+id/sendButtonContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:paddingHorizontal="@dimen/stream_ui_message_composer_trailing_content_horizontal_padding"
         android:paddingVertical="@dimen/stream_ui_message_composer_trailing_content_vertical_padding"
         >
 
@@ -35,11 +34,10 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_send_message"
-            app:tint="@color/stream_ui_enabled_send_button_color_selector"
             />
 
         <TextView
-            android:id="@+id/coolDownBadge"
+            android:id="@+id/cooldownBadgeTextView"
             style="@style/StreamUiCooldownBadgeStyle"
             android:layout_gravity="bottom"
             android:layout_margin="@dimen/stream_ui_spacing_tiny"

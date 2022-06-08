@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmen
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default content shown at the center of [MessageComposerView].
@@ -112,6 +113,10 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         }
         attachmentsAdapter.viewFactories = this.attachmentPreviewFactories
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**

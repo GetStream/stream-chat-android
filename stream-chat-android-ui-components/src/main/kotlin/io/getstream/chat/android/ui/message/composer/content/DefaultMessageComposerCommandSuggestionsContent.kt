@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
 /**
  * Represents the default command suggestion list popup shown above [MessageComposerView].
@@ -71,6 +72,10 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
         binding.suggestionsRecyclerView.adapter = adapter
+    }
+
+    override fun setupView(style: MessageComposerViewStyle) {
+        // empty
     }
 
     /**

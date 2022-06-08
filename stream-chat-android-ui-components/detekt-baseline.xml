@@ -7,7 +7,7 @@
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
     <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
-    <ID>ComplexMethod:MessageComposerView.kt$MessageComposerView$ private fun init()</ID>
+    <ID>ComplexMethod:MessageComposerView.kt$MessageComposerView$ private fun init(attr: AttributeSet? = null)</ID>
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
     <ID>ComplexMethod:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$ public open fun createViewHolder( parentView: ViewGroup, viewType: Int, ): BaseMessageItemViewHolder&lt;out MessageListItem></ID>
@@ -24,7 +24,7 @@
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
     <ID>LongMethod:MentionListViewStyle.kt$MentionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MentionListViewStyle</ID>
-    <ID>LongMethod:MessageComposerView.kt$MessageComposerView$ private fun init()</ID>
+    <ID>LongMethod:MessageComposerView.kt$MessageComposerView$ private fun init(attr: AttributeSet? = null)</ID>
     <ID>LongMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
