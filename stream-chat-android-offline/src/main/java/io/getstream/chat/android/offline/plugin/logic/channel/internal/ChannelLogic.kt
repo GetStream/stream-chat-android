@@ -399,34 +399,34 @@ internal class ChannelLogic(
      *
      * @param message [Message].
      */
-    internal fun incrementUnreadCountIfNecessary(message: Message) {
+    private fun incrementUnreadCountIfNecessary(message: Message) {
         val currentUserId = globalMutableState.user.value?.id ?: return
+        val unreadCount: Int = mutableState._unreadCount.value
+        val lastMessageSeenDate = mutableState._read.value?.lastMessageSeenDate
 
         val shouldIncrementUnreadCount =
             message.shouldIncrementUnreadCount(
                 currentUserId = currentUserId,
-                lastMessageAtDate = mutableState._read.value?.lastMessageSeenDate,
+                lastMessageAtDate = lastMessageSeenDate,
                 isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid)
             )
 
         if (shouldIncrementUnreadCount) {
-            val newUnreadCount = mutableState._unreadCount.value + 1
-            val lastSeen = mutableState._read.value?.lastMessageSeenDate
-
             logger.logD(
                 "It is necessary to increment the unread count for channel: " +
-                    "${mutableState._channelData.value?.channelId}. The last seen message was at: $lastSeen. " +
-                    "New unread count: $newUnreadCount"
+                    "${mutableState._channelData.value?.channelId}. The last seen message was " +
+                    "at: $lastMessageSeenDate. " +
+                    "New unread count: ${unreadCount + 1}"
             )
 
-            mutableState._unreadCount.value = newUnreadCount
             mutableState._read.value = mutableState._read
                 .value
-                ?.copy(unreadMessages = newUnreadCount, lastMessageSeenDate = message.createdAt)
+                ?.copy(unreadMessages = unreadCount + 1, lastMessageSeenDate = message.createdAt)
             mutableState._reads.value = mutableState._reads.value.apply {
-                this[currentUserId]?.unreadMessages = newUnreadCount
+                this[currentUserId]?.unreadMessages = unreadCount + 1
                 this[currentUserId]?.lastMessageSeenDate = message.createdAt
             }
+            mutableState._unreadCount.value = unreadCount + 1
         }
     }
 
