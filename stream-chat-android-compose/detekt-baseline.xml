@@ -1,19 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
-
-    Licensed under the Stream License;
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
@@ -31,6 +16,7 @@
     <ID>LongMethod:ChannelsScreen.kt$ @OptIn(ExperimentalAnimationApi::class) @Composable public fun ChannelsScreen( filters: FilterObject? = null, querySort: QuerySort&lt;Channel> = QuerySort.desc("last_updated"), title: String = "Stream Chat", isShowingHeader: Boolean = true, isShowingSearch: Boolean = false, channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT, memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT, messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT, onHeaderActionClick: () -> Unit = {}, onHeaderAvatarClick: () -> Unit = {}, onItemClick: (Channel) -> Unit = {}, onViewChannelInfoAction: (Channel) -> Unit = {}, onBackPressed: () -> Unit = {}, )</ID>
     <ID>LongMethod:FileAttachmentContent.kt$ @Composable public fun FileAttachmentItem(attachment: Attachment)</ID>
     <ID>LongMethod:GiphyMessageContent.kt$ @Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
+    <ID>LongMethod:GroupAvatar.kt$ @Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:ImageAttachmentContent.kt$ @OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:ImagePreviewActivity.kt$ImagePreviewActivity$ @OptIn(ExperimentalCoilApi::class) @Composable private fun ImagePreviewContent( pagerState: PagerState, attachments: List&lt;Attachment>, )</ID>
     <ID>LongMethod:MessageComposer.kt$ @Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>

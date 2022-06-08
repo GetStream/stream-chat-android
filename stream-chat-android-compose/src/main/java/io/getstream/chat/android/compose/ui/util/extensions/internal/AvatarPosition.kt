@@ -16,20 +16,45 @@
 
 package io.getstream.chat.android.compose.ui.util.extensions.internal
 
-import io.getstream.chat.android.compose.ui.components.avatar.InitialsAvatarOffset
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.StreamDimens
 
 /**
- * @return The [InitialsAvatarOffset] depending on the item index inside the list.
+ * @return The x and y offset of the avatar inside [DpOffset] depending on the item position inside the list.
  */
-internal fun Int.getAvatarPosition(listSize: Int): InitialsAvatarOffset {
-    if (listSize <= 2) return InitialsAvatarOffset.Center
+internal fun getAvatarPositionOffset(
+    dimens: StreamDimens,
+    userPosition: Int,
+    memberCount: Int,
+): DpOffset {
+    val center = DpOffset(0.dp, 0.dp)
+    if (memberCount <= 2) return center
 
-    return when (this) {
-        0 -> InitialsAvatarOffset.TopStart
-        1 -> if (listSize == MaxSizeWithFullHeightAvatar) InitialsAvatarOffset.Center else InitialsAvatarOffset.TopEnd
-        2 -> InitialsAvatarOffset.BottomStart
-        LastIndexInAvatarGroup -> InitialsAvatarOffset.BottomEnd
-        else -> InitialsAvatarOffset.Center
+    return when (userPosition) {
+        0 -> DpOffset(
+            dimens.groupAvatarInitialsXOffset,
+            dimens.groupAvatarInitialsYOffset
+        )
+        1 -> {
+            if (memberCount == MaxSizeWithFullHeightAvatar) {
+                center
+            } else {
+                DpOffset(
+                    -dimens.groupAvatarInitialsXOffset,
+                    dimens.groupAvatarInitialsYOffset
+                )
+            }
+        }
+        2 -> DpOffset(
+            dimens.groupAvatarInitialsXOffset,
+            -dimens.groupAvatarInitialsYOffset
+        )
+        LastIndexInAvatarGroup -> DpOffset(
+            -dimens.groupAvatarInitialsXOffset,
+            -dimens.groupAvatarInitialsYOffset
+        )
+        else -> center
     }
 }
 
