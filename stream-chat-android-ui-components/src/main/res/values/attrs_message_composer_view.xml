@@ -16,6 +16,8 @@
 -->
 <resources>
     <declare-styleable name="MessageComposerView">
+        <!-- Root content -->
+        <attr name="streamUiMessageComposerDividerBackgroundDrawable" format="reference" />
         <!-- Command suggestions content -->
 
         <!-- Mention suggestions content -->
@@ -23,24 +25,19 @@
         <!-- Center content -->
 
         <!-- Leading content -->
-
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsButtonRippleColor" format="color|reference" />
-
         <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerCommandsButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerCommandsButtonRippleColor" format="color|reference" />
-
         <!-- Footer content -->
 
         <!-- Header content -->
 
         <!-- Trailing content -->
-
-        <attr name="streamUiMessageComposerSendButtonEnabled" format="boolean" />
-        <attr name="streamUiMessageComposerSendButtonIcon" format="reference" />
-
+        <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerCooldownTimerTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCooldownTimerTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerCooldownTimerFontAssets" format="string" />
@@ -50,7 +47,6 @@
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
         </attr>
-
         <attr name="streamUiMessageComposerCooldownTimerBackgroundDrawable" format="reference" />
     </declare-styleable>
 </resources>

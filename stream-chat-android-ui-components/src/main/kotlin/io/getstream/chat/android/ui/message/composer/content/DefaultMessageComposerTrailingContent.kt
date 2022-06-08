@@ -76,7 +76,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
 
-        binding.sendMessageButton.setImageDrawable(style.sendButtonIcon)
+        binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
         binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
         binding.cooldownBadgeTextView.background = style.cooldownTimerBackgroundDrawable
     }
@@ -102,7 +102,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             } else {
                 cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = true
-                sendMessageButton.isEnabled = style.sendButtonEnabled && hasValidContent
+                sendMessageButton.isEnabled = style.sendMessageButtonEnabled && hasValidContent
             }
         }
     }

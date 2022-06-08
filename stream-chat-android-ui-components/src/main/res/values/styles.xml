@@ -1067,6 +1067,8 @@
     </style>
 
     <style name="StreamUi.MessageComposerView" parent="StreamUi">
+        <!-- Root content -->
+        <item name="streamUiMessageComposerDividerBackgroundDrawable">@drawable/stream_ui_divider</item>
         <!-- Command suggestions content -->
 
         <!-- Mention suggestions content -->
@@ -1074,14 +1076,19 @@
         <!-- Center content -->
 
         <!-- Leading content -->
-
+        <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
+        <item name="streamUiMessageComposerAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_attach</item>
+        <item name="streamUiMessageComposerAttachmentsButtonRippleColor">@null</item>
+        <item name="streamUiMessageComposerCommandsButtonVisible">true</item>
+        <item name="streamUiMessageComposerCommandsButtonIconDrawable">@drawable/stream_ui_ic_command</item>
+        <item name="streamUiMessageComposerCommandsButtonRippleColor">@null</item>
         <!-- Footer content -->
 
         <!-- Header content -->
 
         <!-- Trailing content -->
-        <item name="streamUiMessageComposerSendButtonEnabled">true</item>
-        <item name="streamUiMessageComposerSendButtonIcon">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>
+        <item name="streamUiMessageComposerSendMessageButtonIconDrawable">@drawable/stream_ui_ic_send_message</item>
         <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>

@@ -194,6 +194,9 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private fun init(attr: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
         style = MessageComposerViewStyle(context, attr)
+
+        binding.separator.background = style.dividerBackgroundDrawable
+
         binding.leadingContent.apply {
             val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {
                 it.attachmentsButtonClickListener = {
