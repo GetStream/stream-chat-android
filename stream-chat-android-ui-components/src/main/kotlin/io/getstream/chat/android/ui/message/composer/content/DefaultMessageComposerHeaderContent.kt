@@ -67,7 +67,7 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultHeaderContentBinding.inflate(streamThemeInflater, this)
-        binding.dismissButton.setOnClickListener { dismissActionClickListener() }
+        binding.dismissInputModeButton.setOnClickListener { dismissActionClickListener() }
     }
 
     /**
@@ -77,6 +77,8 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
      */
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        binding.dismissInputModeButton.setImageDrawable(style.dismissModeIconDrawable)
     }
 
     /**
@@ -87,15 +89,17 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     override fun renderState(state: MessageComposerState) {
         when (state.action) {
             is Reply -> {
-                binding.inputModeHeader.isVisible = true
-                binding.actionTitle.text = context.getString(R.string.stream_ui_message_input_reply)
+                binding.inputModeHeaderContainer.isVisible = true
+                binding.inputModeTitleTextView.text = context.getString(R.string.stream_ui_message_input_reply)
+                binding.inputModeIcon.setImageDrawable(style.replyModeIconDrawable)
             }
             is Edit -> {
-                binding.inputModeHeader.isVisible = true
-                binding.actionTitle.text = context.getString(R.string.stream_ui_message_list_edit_message)
+                binding.inputModeHeaderContainer.isVisible = true
+                binding.inputModeTitleTextView.text = context.getString(R.string.stream_ui_message_list_edit_message)
+                binding.inputModeIcon.setImageDrawable(style.editModeIconDrawable)
             }
             else -> {
-                binding.inputModeHeader.isVisible = false
+                binding.inputModeHeaderContainer.isVisible = false
             }
         }
     }

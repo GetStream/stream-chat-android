@@ -1091,6 +1091,9 @@
         <item name="streamUiMessageComposerAlsoSendToChannelCheckboxTextColor">@color/stream_ui_text_color_secondary</item>
 
         <!-- Header content -->
+        <item name="streamUiMessageComposerEditModeIconDrawable">@drawable/stream_ui_ic_edit</item>
+        <item name="streamUiMessageComposerReplyModeIconDrawable">@drawable/stream_ui_ic_arrow_curve_left</item>
+        <item name="streamUiMessageComposerDismissModeIconDrawable">@drawable/stream_ui_ic_clear</item>
 
         <!-- Trailing content -->
         <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>

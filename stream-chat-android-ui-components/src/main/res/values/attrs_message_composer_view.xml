@@ -48,6 +48,9 @@
         </attr>
 
         <!-- Header content -->
+        <attr name="streamUiMessageComposerEditModeIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerReplyModeIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerDismissModeIconDrawable" format="reference" />
 
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />

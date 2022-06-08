@@ -112,12 +112,12 @@ public data class MessageInputViewStyle(
     public val mediaAttachmentEmptyStateTextStyle: TextStyle,
     public val fileAttachmentEmptyStateText: String,
     public val mediaAttachmentEmptyStateText: String,
-    public val dismissIconDrawable: Drawable,
+    public val dismissIconDrawable: Drawable, //
     public val cooldownTimerTextStyle: TextStyle, //
     public val cooldownTimerBackgroundDrawable: Drawable, //
     public val maxAttachmentsCount: Int,
-    public val editInputModeIcon: Drawable,
-    public val replyInputModeIcon: Drawable,
+    public val editInputModeIcon: Drawable, //
+    public val replyInputModeIcon: Drawable, //
     @ColorInt public val commandButtonRippleColor: Int?, //
     @ColorInt public val attachmentButtonRippleColor: Int?, //
 ) {

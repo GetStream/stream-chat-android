@@ -47,6 +47,10 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param alsoSendToChannelCheckboxText The text that will be displayed next to the checkbox.
  * @param alsoSendToChannelCheckboxTextStyle The text style that will be used for the checkbox text.
  *
+ * @param editModeIconDrawable The icon displayed in top left corner when the user edits a message.
+ * @param replyModeIconDrawable The icon displayed in top left corner when the user replies to a message.
+ * @param dismissModeIconDrawable The icon for the button that dismisses edit or reply mode.
+ *
  * @param sendMessageButtonEnabled If the button to send message is enabled.
  * @param sendMessageButtonIconDrawable The icon for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
@@ -74,7 +78,9 @@ public data class MessageComposerViewStyle(
     public val alsoSendToChannelCheckboxText: CharSequence?,
     public val alsoSendToChannelCheckboxTextStyle: TextStyle,
     // Header content
-
+    public val editModeIconDrawable: Drawable,
+    public val replyModeIconDrawable: Drawable,
+    public val dismissModeIconDrawable: Drawable,
     // Trailing content
     public val sendMessageButtonEnabled: Boolean,
     public val sendMessageButtonIconDrawable: Drawable,
@@ -177,6 +183,18 @@ public data class MessageComposerViewStyle(
                  * Header content
                  */
 
+                val editModeIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_edit)!!
+
+                val replyModeIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left)!!
+
+                val dismissModeIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
+
                 /**
                  * Trailing content
                  */
@@ -235,7 +253,9 @@ public data class MessageComposerViewStyle(
                     alsoSendToChannelCheckboxText = alsoSendToChannelCheckboxText,
                     alsoSendToChannelCheckboxTextStyle = alsoSendToChannelCheckboxTextStyle,
                     // Header content
-
+                    editModeIconDrawable = editModeIconDrawable,
+                    replyModeIconDrawable = replyModeIconDrawable,
+                    dismissModeIconDrawable = dismissModeIconDrawable,
                     // Trailing content
                     sendMessageButtonEnabled = sendMessageButtonEnabled,
                     sendMessageButtonIconDrawable = sendMessageButtonIconDrawable,

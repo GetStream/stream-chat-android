@@ -15,12 +15,11 @@
     limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
 
     <FrameLayout
-        android:id="@+id/inputModeHeader"
+        android:id="@+id/inputModeHeaderContainer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_ui_message_composer_header_content_height"
         android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
@@ -28,25 +27,30 @@
         tools:visibility="visible"
         >
 
-        <TextView
-            android:id="@+id/actionTitle"
+        <ImageView
+            android:id="@+id/inputModeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stream_ui_message_input_reply"
+            android:layout_gravity="start|center_vertical"
+            android:src="@drawable/stream_ui_ic_arrow_curve_left"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/inputModeTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textAppearance="@style/StreamUiTextAppearance.Headline"
+            android:text="@string/stream_ui_message_input_reply"
+            android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             />
 
         <ImageView
-            android:id="@+id/dismissButton"
+            android:id="@+id/dismissInputModeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/stream_ui_ic_dismiss"
             android:layout_gravity="end|center_vertical"
-            app:tint ="@color/stream_ui_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/stream_ui_ic_clear"
             tools:ignore="ContentDescription"
             />
 
