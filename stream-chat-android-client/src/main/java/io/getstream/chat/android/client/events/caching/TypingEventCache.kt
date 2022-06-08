@@ -20,7 +20,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.caching.TypingEventKeyValue.Companion.toStartTypingEventKeyValue
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -56,9 +55,10 @@ internal class TypingEventCache(
      *  [TypingStopEvent] are not stored, but their processing removes their
      *  [SelfStoppingTypingEvent] counterpart.
      */
-    private val _currentlyTypingUsers = mutableMapOf<TypingEventKeyValue, SelfStoppingTypingEvent>()
+    private val _currentlyTypingUsers = mutableMapOf<String, SelfStoppingTypingEvent>()
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val currentlyTypingUsers: Map<TypingEventKeyValue, SelfStoppingTypingEvent> = _currentlyTypingUsers
+    val currentlyTypingUsers: Map<String, SelfStoppingTypingEvent> = _currentlyTypingUsers
 
     /**
      * Processes the incoming chat event accordingly.
@@ -90,7 +90,7 @@ internal class TypingEventCache(
      * @param typingStartEvent The typing start event to be processed.
      */
     private fun processTypingStartEvent(typingStartEvent: TypingStartEvent) {
-        val keyValue = typingStartEvent.toStartTypingEventKeyValue()
+        val keyValue = typingEventToKey(typingStartEvent.user, typingStartEvent.cid)
 
         // Cancel the previous timed death
         _currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
@@ -112,7 +112,7 @@ internal class TypingEventCache(
      * @param typingStopEvent The typing stop event to be processed.
      */
     private fun processTypingStopEvent(typingStopEvent: TypingStopEvent) {
-        val keyValue = typingStopEvent.toStartTypingEventKeyValue()
+        val keyValue = typingEventToKey(typingStopEvent.user, typingStopEvent.cid)
 
         // Cancel the previous timed death
         _currentlyTypingUsers.getOrDefault(keyValue, null)?.cancelJob()
@@ -132,38 +132,10 @@ internal class TypingEventCache(
 }
 
 /**
- * Used to provide key value equality for distinct typing events.
- * A single value such as a [User] is not a good qualifier
- * because a single user could type in multiple channels across
- * the time span of a few seconds.
- *
- * @param user The user currently the typing event is tied to.
- * @param cid The channel the the typing event is tied to.
+ * A small utility function that transforms [TypingStartEvent] and [TypingStopEvent]
+ * into a unique templated string to be used as a key value.
  */
-@InternalStreamChatApi
-internal data class TypingEventKeyValue(
-    val user: User,
-    val cid: String,
-) {
-    companion object {
-
-        /**
-         * Converts [TypingStartEvent] to [TypingEventKeyValue].
-         */
-        fun TypingStartEvent.toStartTypingEventKeyValue() = TypingEventKeyValue(
-            user = this.user,
-            cid = this.cid,
-        )
-
-        /**
-         * Converts [TypingStopEvent] to [TypingEventKeyValue].
-         */
-        fun TypingStopEvent.toStartTypingEventKeyValue() = TypingEventKeyValue(
-            user = this.user,
-            cid = this.cid,
-        )
-    }
-}
+internal fun typingEventToKey(user: User, cid: String) = "${user.id}:$cid"
 
 /**
  * A [TypingStartEvent] wrapper that automatically fires
