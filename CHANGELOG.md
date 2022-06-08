@@ -32,9 +32,9 @@
 
 ### ✅ Added
 - Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
-
+- Logging when unread count is updated. [3642](https://github.com/GetStream/stream-chat-android/pull/3642)
 ### ⚠️ Changed
-
+-  Added interface `QuerySorter` and new implementation of query sort `QuerySortByField` so users can choose between implementations that use reflection or not. [3624](https://github.com/GetStream/stream-chat-android/pull/3624)
 ### ❌ Removed
 
 ## stream-chat-android-ui-common
@@ -78,6 +78,7 @@
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
 
 ### ✅ Added
+- Added `Modifier` as an argument to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
 
 ### ⚠️ Changed
 
@@ -127,6 +128,12 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# Jun 1st, 2022 - 5.3.1
+## stream-chat-android-client
+### 🐞 Fixed
+- Added getters to members search in `QuerySort` as some compilers may generate getters and setter instead of public properties,
+ making our current search for property to fail. [#3608](https://github.com/GetStream/stream-chat-android/pull/3608)
 
 # May 25th, 2022 - 5.3.0
 ## stream-chat-android-client
