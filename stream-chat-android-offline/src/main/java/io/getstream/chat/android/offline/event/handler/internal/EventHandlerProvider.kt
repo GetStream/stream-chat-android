@@ -31,11 +31,17 @@ internal object EventHandlerProvider {
      */
     internal var eventHandler: EventHandler
         get() = _eventHandler
-            ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")
+            ?: throw IllegalStateException(
+                "EventHandler was not set in the EventHandlerProvider. " +
+                    "Looks like there's a initialisation problem"
+            )
         set(value) {
             if (_eventHandler != null) {
-                logger.logE("EventHandlerProvider was initialized twice. We shouldn't happen, you may be initializing " +
-                    "the SDK twice. Stop listening the old EventHandler...")
+                logger.logE(
+                    "EventHandlerProvider was initialized twice. " +
+                        "We shouldn't happen, you may be initializing " +
+                        "the SDK twice. Stop listening the old EventHandler..."
+                )
                 _eventHandler?.stopListening()
             }
 
