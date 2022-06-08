@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.batch
+@file:JvmName("DateUtils")
 
-import io.getstream.chat.android.client.events.ChatEvent
-import kotlin.math.absoluteValue
-import kotlin.random.Random
+package io.getstream.chat.android.core.utils.date
+
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.util.Date
 
 /**
- * Events container to represent the source of the received events.
+ * Tests if [this] date is after [that] date.
  */
-internal class BatchEvent(
-    val id: Int = Random.nextInt().absoluteValue,
-    val sortedEvents: List<ChatEvent>,
-    val isFromHistorySync: Boolean,
-) {
-    val size: Int = sortedEvents.size
-    val isFromSocketConnection: Boolean = !isFromHistorySync
+@InternalStreamChatApi
+public infix fun Date?.after(that: Date?): Boolean {
+    return when {
+        this == null -> false
+        that == null -> true
+        else -> this.after(that)
+    }
+}
+
+/**
+ * Returns the greater of two dates.
+ */
+@InternalStreamChatApi
+public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
+    true -> dateA
+    else -> dateB
 }

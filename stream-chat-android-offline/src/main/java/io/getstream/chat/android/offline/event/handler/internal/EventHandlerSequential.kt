@@ -241,7 +241,7 @@ internal class EventHandlerSequential(
                 logger.d {
                     "[syncHistory] succeed(${sortedEvents.size}): ${sortedEvents.joinToString(separator = ", \n")}"
                 }
-                val batchEvent = BatchEvent(sortedEvents, isFromHistorySync = true)
+                val batchEvent = BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = true)
                 handleBatchEvent(batchEvent)
             }.onError {
                 logger.e { "[syncHistory] failed: ${it.stringify()}" }
@@ -253,7 +253,7 @@ internal class EventHandlerSequential(
      */
     @VisibleForTesting
     override suspend fun handleEvents(vararg events: ChatEvent) {
-        val batchEvent = BatchEvent(events.toList(), isFromHistorySync = false)
+        val batchEvent = BatchEvent(sortedEvents = events.toList(), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
@@ -263,22 +263,22 @@ internal class EventHandlerSequential(
             return
         }
         socketEventCollector.fireBatchEvent()
-        val batchEvent = BatchEvent(listOf(event), isFromHistorySync = false)
+        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
     private suspend fun handleBatchEvent(event: BatchEvent) = try {
         logger.d {
-            "[handleBatchEvent] >>> id: ${event.hashCode()}, fromSocket: ${event.isFromSocketConnection}" +
+            "[handleBatchEvent] >>> id: ${event.id}, fromSocket: ${event.isFromSocketConnection}" +
                 ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.type }}'"
         }
         updateGlobalState(event)
         updateSyncManager(event)
         updateOfflineStorage(event)
         updateChannelsState(event)
-        logger.v { "[handleBatchEvent] <<< id: ${event.hashCode()}" }
+        logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
     } catch (e: Throwable) {
-        logger.e(e) { "[handleBatchEvent] failed(${event.hashCode()}): ${e.message}" }
+        logger.e(e) { "[handleBatchEvent] failed(${event.id}): ${e.message}" }
     }
 
     private suspend fun updateSyncManager(batchEvent: BatchEvent) {
@@ -420,11 +420,10 @@ internal class EventHandlerSequential(
     }
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {
-        logger.v { "[updateOfflineStorage] batchEvent.size: ${batchEvent.size}" }
+        logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
         val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
-
         val events = batchEvent.sortedEvents
-        val batchBuilder = EventBatchUpdate.Builder()
+        val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
@@ -453,8 +452,13 @@ internal class EventHandlerSequential(
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
-                    repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
-                        ?.let(batch::addChannel)
+                    repos.selectChannelWithoutMessages(event.cid)?.let { channel ->
+                        val updatedChannel = channel.copy(
+                            hidden = false,
+                            messages = listOf(event.message)
+                        )
+                        batch.addChannel(updatedChannel)
+                    }
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)

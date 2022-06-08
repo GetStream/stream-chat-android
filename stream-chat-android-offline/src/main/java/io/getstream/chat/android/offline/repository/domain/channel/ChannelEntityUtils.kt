@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.batch
+package io.getstream.chat.android.offline.repository.domain.channel
 
-import io.getstream.chat.android.client.events.ChatEvent
-import kotlin.math.absoluteValue
-import kotlin.random.Random
+import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity
 
 /**
- * Events container to represent the source of the received events.
+ * Composes a short version of [ChannelEntity.toString] with the last message information only.
  */
-internal class BatchEvent(
-    val id: Int = Random.nextInt().absoluteValue,
-    val sortedEvents: List<ChatEvent>,
-    val isFromHistorySync: Boolean,
-) {
-    val size: Int = sortedEvents.size
-    val isFromSocketConnection: Boolean = !isFromHistorySync
+internal fun ChannelEntity.lastMessageInfo(): String {
+    return "ChannelEntity(lastMessageId: $lastMessageId, lastMessageAt: $lastMessageAt, cid: $cid)"
 }

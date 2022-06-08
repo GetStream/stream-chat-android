@@ -99,6 +99,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 private const val TAG = "Chat:EventHandlerOld"
 
@@ -242,7 +244,8 @@ internal class EventHandlerImpl(
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         val currentUserId = client.getCurrentUser()?.id
-        val batchBuilder = EventBatchUpdate.Builder()
+        val batchId = Random.nextInt().absoluteValue
+        val batchBuilder = EventBatchUpdate.Builder(batchId)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
@@ -326,8 +329,10 @@ internal class EventHandlerImpl(
                         cid = event.cid,
                     )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
-                    repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
-                        ?.let(batch::addChannel)
+                    repos.selectChannelWithoutMessages(event.cid)?.copy(
+                        hidden = false,
+                        messages = listOf(event.message)
+                    )?.let(batch::addChannel)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
