@@ -106,6 +106,7 @@
     <ID>MaxLineLength:MessageInputFieldView.kt$MessageInputFieldView$if</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView$binding.messageInputFieldView.selectedAttachmentsCount.value > messageInputViewStyle.maxAttachmentsCount</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView$consumeSelectedAttachmentsCount(attachmentsCount = binding.messageInputFieldView.selectedAttachmentsCount.value)</ID>
+    <ID>MaxLineLength:MessageInputView.kt$MessageInputView.Companion.&lt;no name provided>$throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to edit moderated messages")</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView.Companion.&lt;no name provided>$throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView.Companion.&lt;no name provided>$throw IllegalStateException("MessageInputView#sendMessageWithCustomAttachments needs to be configured to send messages")</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView.Companion.&lt;no name provided>$throw IllegalStateException("MessageInputView#sendToThreadWithCustomAttachments needs to be configured to send messages")</ID>

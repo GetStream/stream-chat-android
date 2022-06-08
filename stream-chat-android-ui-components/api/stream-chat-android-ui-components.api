@@ -1188,6 +1188,17 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$I
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOldMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal;
 }
@@ -1229,6 +1240,7 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler {
 	public abstract fun dismissReply ()V
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
+	public abstract fun editModeratedMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 	public abstract fun sendMessage (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
@@ -1711,6 +1723,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;)V
 	public final fun setMessageUnpinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageUnpinHandler;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
+	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageHandler;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
@@ -1842,6 +1855,10 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$Mes
 	public static final field TOP Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageHandler {
+	public abstract fun onModeratedMessageOptionSelected (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/common/model/ModeratedMessageOption;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour : java/lang/Enum {

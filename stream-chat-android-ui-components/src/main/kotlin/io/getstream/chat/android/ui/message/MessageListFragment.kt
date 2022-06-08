@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -165,6 +166,16 @@ public open class MessageListFragment : Fragment() {
                         backPressListener?.onBackPress()
                     }
                 }
+            }
+        }
+
+        binding.messageListView.setModeratedMessageHandler { message, action ->
+            when (action) {
+                ModeratedMessageOption.DeleteMessage -> messageListViewModel.onEvent(
+                    MessageListViewModel.Event.DeleteMessage(message)
+                )
+                ModeratedMessageOption.EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                ModeratedMessageOption.SendAnyway -> messageInputViewModel.resendModeratedMessage(message)
             }
         }
     }

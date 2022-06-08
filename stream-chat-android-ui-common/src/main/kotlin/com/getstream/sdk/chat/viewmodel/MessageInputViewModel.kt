@@ -211,6 +211,29 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
+     * Resends the message that failed moderation. If nothing is passed for [newMessageText] that means that the
+     * message wasn't edited and the original will be resent.
+     *
+     * @param oldMessage The [Message] which failed moderation.
+     * @param newMessageText Optional new text for the message. If null old message is resent.
+     */
+    public fun resendModeratedMessage(
+        oldMessage: Message,
+        newMessageText: String? = null
+    ) {
+        chatClient.deleteMessage(oldMessage.id, true).enqueue()
+        if (oldMessage.attachments.isEmpty()) {
+            sendMessage(newMessageText ?: oldMessage.text) {
+                parentId = oldMessage.parentId
+            }
+        } else {
+            sendMessageWithCustomAttachments(newMessageText ?: oldMessage.text, oldMessage.attachments) {
+                parentId = oldMessage.parentId
+            }
+        }
+    }
+
+    /**
      * Sends a message with non-custom attachments.
      *
      * @param messageText The current message text.

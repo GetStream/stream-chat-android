@@ -19,6 +19,7 @@
 package io.getstream.chat.android.ui.message.input.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
@@ -63,7 +64,12 @@ public fun MessageInputViewModel.bindView(
     }
     messageToEdit.observe(lifecycleOwner) { message ->
         message?.let {
-            view.inputMode = MessageInputView.InputMode.Edit(it)
+            view.inputMode =
+                if (it.isModerationFailed()) {
+                    MessageInputView.InputMode.EditModeratedMessage(it)
+                } else {
+                    MessageInputView.InputMode.Edit(it)
+                }
         }
     }
     isDirectMessage.observe(lifecycleOwner) { isDirectMessage ->
@@ -132,6 +138,10 @@ public fun MessageInputViewModel.bindView(
 
             override fun editMessage(oldMessage: Message, newMessageText: String) {
                 viewModel.editMessage(oldMessage.copy(text = newMessageText))
+            }
+
+            override fun editModeratedMessage(oldMessage: Message, newMessageText: String) {
+                viewModel.resendModeratedMessage(oldMessage, newMessageText)
             }
 
             override fun dismissReply() {

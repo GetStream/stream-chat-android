@@ -27,6 +27,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +40,7 @@ import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -52,6 +54,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
@@ -75,6 +78,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.toAttachment
+import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialog
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
@@ -294,6 +298,10 @@ public class MessageListView : ConstraintLayout {
         }.let(::showToast)
     }
 
+    private var moderatedMessageHandler = ModeratedMessageHandler { action, message ->
+        throw IllegalStateException("onModeratedMessageOptionSelected must be set")
+    }
+
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
@@ -317,6 +325,10 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageClickListener =
         MessageClickListener { message ->
             when {
+                message.isModerationFailed() -> {
+                    context.getFragmentManager()?.let { showModeratedMessageDialog(message, it) }
+                }
+
                 message.replyCount > 0 -> {
                     threadStartHandler.onStartThread(message)
                 }
@@ -331,61 +343,68 @@ public class MessageListView : ConstraintLayout {
      * Provides a default long click handler for all messages. Based on the configuration options we have and the message
      * type, we show different kind of options.
      *
+     * In case the message has failed moderation the user will be prompted to either send the message anyway, edit it or
+     * delete the message.
+     *
      * We also disable editing of certain messages, like Giphy messages.
      */
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                val style = requireStyle()
-                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
-                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+                if (message.isModerationFailed()) {
+                    showModeratedMessageDialog(message, fragmentManager)
+                } else {
+                    val style = requireStyle()
+                    val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                    val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
 
-                MessageOptionsDialogFragment
-                    .newMessageOptionsInstance(
-                        message,
-                        MessageOptionsView.Configuration(
-                            viewStyle = viewStyle,
-                            channelConfig = channel.config,
-                            hasTextToCopy = message.text.isNotBlank(),
-                            suppressThreads = adapter.isThread || message.isInThread(),
-                            ownCapabilities = ownCapabilities
-                        ),
-                        viewStyle,
-                        messageListItemViewHolderFactory,
-                        messageBackgroundFactory,
-                        attachmentFactoryManager,
-                        showAvatarPredicate
-                    )
-                    .apply {
-                        setReactionClickHandler { message, reactionType ->
-                            messageReactionHandler.onMessageReaction(message, reactionType)
-                        }
-                        setConfirmDeleteMessageClickHandler { message, callback ->
-                            confirmDeleteMessageHandler.onConfirmDeleteMessage(
-                                message,
-                                callback::onConfirmDeleteMessage
-                            )
-                        }
-                        setConfirmFlagMessageClickHandler { message, callback ->
-                            confirmFlagMessageHandler.onConfirmFlagMessage(message, callback)
-                        }
-                        setMessageOptionsHandlers(
-                            MessageOptionsDialogFragment.MessageOptionsHandlers(
-                                threadReplyHandler = threadStartHandler,
-                                retryHandler = messageRetryHandler,
-                                editClickHandler = messageEditHandler,
-                                flagClickHandler = messageFlagHandler,
-                                pinClickHandler = messagePinHandler,
-                                unpinClickHandler = messageUnpinHandler,
-                                muteClickHandler = userMuteHandler,
-                                unmuteClickHandler = userUnmuteHandler,
-                                blockClickHandler = userBlockHandler,
-                                deleteClickHandler = messageDeleteHandler,
-                                replyClickHandler = messageReplyHandler,
-                            )
+                    MessageOptionsDialogFragment
+                        .newMessageOptionsInstance(
+                            message,
+                            MessageOptionsView.Configuration(
+                                viewStyle = viewStyle,
+                                channelConfig = channel.config,
+                                hasTextToCopy = message.text.isNotBlank(),
+                                suppressThreads = adapter.isThread || message.isInThread(),
+                                ownCapabilities = ownCapabilities
+                            ),
+                            viewStyle,
+                            messageListItemViewHolderFactory,
+                            messageBackgroundFactory,
+                            attachmentFactoryManager,
+                            showAvatarPredicate
                         )
-                    }
-                    .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+                        .apply {
+                            setReactionClickHandler { message, reactionType ->
+                                messageReactionHandler.onMessageReaction(message, reactionType)
+                            }
+                            setConfirmDeleteMessageClickHandler { message, callback ->
+                                confirmDeleteMessageHandler.onConfirmDeleteMessage(
+                                    message,
+                                    callback::onConfirmDeleteMessage
+                                )
+                            }
+                            setConfirmFlagMessageClickHandler { message, callback ->
+                                confirmFlagMessageHandler.onConfirmFlagMessage(message, callback)
+                            }
+                            setMessageOptionsHandlers(
+                                MessageOptionsDialogFragment.MessageOptionsHandlers(
+                                    threadReplyHandler = threadStartHandler,
+                                    retryHandler = messageRetryHandler,
+                                    editClickHandler = messageEditHandler,
+                                    flagClickHandler = messageFlagHandler,
+                                    pinClickHandler = messagePinHandler,
+                                    unpinClickHandler = messageUnpinHandler,
+                                    muteClickHandler = userMuteHandler,
+                                    unmuteClickHandler = userUnmuteHandler,
+                                    blockClickHandler = userBlockHandler,
+                                    deleteClickHandler = messageDeleteHandler,
+                                    replyClickHandler = messageReplyHandler,
+                                )
+                            )
+                        }
+                        .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+                }
             }
         }
     private val defaultMessageRetryListener =
@@ -626,6 +645,22 @@ public class MessageListView : ConstraintLayout {
         if (background == null) {
             setBackgroundColor(requireStyle().backgroundColor)
         }
+    }
+
+    /**
+     * Shows [ModeratedMessageDialog] if user interacts with a message that failed moderation.
+     *
+     * @param message The [Message] which failed moderation.
+     * @param fragmentManager [FragmentManager] to show the [ModeratedMessageDialog].
+     */
+    private fun showModeratedMessageDialog(message: Message, fragmentManager: FragmentManager) {
+        ModeratedMessageDialog.newInstance(message).apply {
+            setDialogSelectionHandler(object : ModeratedMessageDialog.DialogSelectionHandler {
+                override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
+                    moderatedMessageHandler.onModeratedMessageOptionSelected(message, action)
+                }
+            })
+        }.show(fragmentManager, ModeratedMessageDialog.TAG)
     }
 
     /**
@@ -1481,6 +1516,15 @@ public class MessageListView : ConstraintLayout {
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
         this.errorEventHandler = handler
     }
+
+    /**
+     * Sets the handler used when the user interacts with [ModeratedMessageDialog].
+     *
+     * @param handler The handler to use.
+     */
+    public fun setModeratedMessageHandler(handler: ModeratedMessageHandler) {
+        this.moderatedMessageHandler = handler
+    }
     //endregion
 
     //region Listener declarations
@@ -1630,6 +1674,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ErrorEventHandler {
         public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
+    }
+
+    public fun interface ModeratedMessageHandler {
+        public fun onModeratedMessageOptionSelected(message: Message, moderatedMessageOption: ModeratedMessageOption)
     }
     //endregion
 

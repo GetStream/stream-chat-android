@@ -263,7 +263,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun onEditMessageDismissed() {
-        if (mode is Mode.EditMessageMode) {
+        if (mode is Mode.EditMessageMode || mode is Mode.EditModeratedMessageMode) {
             mode = Mode.MessageMode
             clearContent()
         }
@@ -271,6 +271,10 @@ internal class MessageInputFieldView : FrameLayout {
 
     fun onEdit(edit: Message) {
         mode = Mode.EditMessageMode(edit)
+    }
+
+    fun onEditModeratedMessage(edit: Message) {
+        mode = Mode.EditModeratedMessageMode(edit)
     }
 
     private fun cancelAttachment(attachment: AttachmentMetaData) {
@@ -330,6 +334,7 @@ internal class MessageInputFieldView : FrameLayout {
             is Mode.CommandMode -> switchToCommandMode(currentMode)
             is Mode.ReplyMessageMode -> switchToReplyMessageMode(currentMode)
             is Mode.CustomAttachmentMode -> switchToCustomAttachmentsMode(currentMode)
+            is Mode.EditModeratedMessageMode -> switchToEditModeratedMessageMode(currentMode)
         }
         contentChangeListener?.onModeChanged(currentMode)
     }
@@ -411,6 +416,14 @@ internal class MessageInputFieldView : FrameLayout {
         messageText = oldMessage.text
     }
 
+    private fun switchToEditModeratedMessageMode(mode: Mode.EditModeratedMessageMode) {
+        binding.messageEditText.hint = normalModeHint
+
+        val oldMessage = mode.oldMessage
+
+        messageText = oldMessage.text
+    }
+
     private fun switchToCommandMode(mode: Mode.CommandMode) {
         messageHint = mode.command.args
         messageText = String.EMPTY
@@ -473,6 +486,7 @@ internal class MessageInputFieldView : FrameLayout {
         data class CommandMode(val command: Command) : Mode()
         data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+        data class EditModeratedMessageMode(val oldMessage: Message) : Mode()
 
         @ExperimentalStreamChatApi
         data class CustomAttachmentMode(
