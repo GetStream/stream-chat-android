@@ -79,6 +79,7 @@
 
 ### ✅ Added
 - Added `Modifier` as an argument to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
+- Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 
 ### ⚠️ Changed
 
