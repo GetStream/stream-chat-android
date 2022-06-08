@@ -20,21 +20,27 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 
 /**
  * Represents the default content shown at the start of [MessageComposerView].
  */
 public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerComponent {
-
     /**
      * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    private lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the pick attachments button.
@@ -51,7 +57,7 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
@@ -59,7 +65,7 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     }
 
     /**
-     * Initial UI rendering and setting up callbacks.
+     * Initializes the initial layout of the view.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
@@ -67,8 +73,19 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
     }
 
-    override fun setupView(style: MessageComposerViewStyle) {
-        // empty
+    /**
+     * Applies the given style to the message composer.
+     *
+     * @param style The style that will be applied to the component.
+     */
+    override fun applyStyle(style: MessageComposerViewStyle) {
+        this.style = style
+
+        binding.attachmentsButton.setImageDrawable(style.attachmentsButtonIconDrawable)
+        binding.attachmentsButton.setBorderlessRipple(style.attachmentsButtonRippleColor)
+
+        binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
+        binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
     }
 
     /**
@@ -86,7 +103,7 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-        binding.attachmentsButton.isEnabled = isAttachmentsButtonEnabled
-        binding.commandsButton.isEnabled = isCommandsButtonEnabled
+        binding.attachmentsButton.isEnabled = style.attachmentsButtonVisible && isAttachmentsButtonEnabled
+        binding.commandsButton.isEnabled = style.commandsButtonVisible && isCommandsButtonEnabled
     }
 }

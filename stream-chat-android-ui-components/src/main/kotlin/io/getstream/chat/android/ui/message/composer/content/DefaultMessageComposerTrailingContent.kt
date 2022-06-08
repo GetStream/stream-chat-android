@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
@@ -32,7 +33,6 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the end of [MessageComposerView].
  */
 public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerComponent {
-
     /**
      * Generated binding class for the XML layout.
      */
@@ -53,7 +53,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
@@ -61,7 +61,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     }
 
     /**
-     * Initial UI rendering and setting up callbacks.
+     * Initializes the initial layout of the view.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
@@ -69,9 +69,11 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     }
 
     /**
-     * empty
+     * Applies the given style to the message composer.
+     *
+     * @param style The style that will be applied to the component.
      */
-    override fun setupView(style: MessageComposerViewStyle) {
+    override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
 
         binding.sendMessageButton.setImageDrawable(style.sendButtonIcon)
@@ -91,7 +93,6 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
 
         val coolDownTime = state.coolDownTime
         val hasValidContent = (hasTextInput || hasAttachments) && isInputValid
-        val isButtonEnabled = hasValidContent && style.sendButtonEnabled
 
         binding.apply {
             if (coolDownTime > 0) {
@@ -101,7 +102,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             } else {
                 cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = true
-                sendMessageButton.isEnabled = isButtonEnabled
+                sendMessageButton.isEnabled = style.sendButtonEnabled && hasValidContent
             }
         }
     }

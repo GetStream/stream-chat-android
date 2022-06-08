@@ -24,6 +24,7 @@ import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
@@ -34,11 +35,15 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the top of [MessageComposerView].
  */
 public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerComponent {
-
     /**
      * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerDefaultHeaderContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    private lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the dismiss action button.
@@ -50,7 +55,7 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
@@ -58,15 +63,20 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Initial UI rendering and setting up callbacks.
+     * Initializes the initial layout of the view.
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultHeaderContentBinding.inflate(streamThemeInflater, this)
         binding.dismissButton.setOnClickListener { dismissActionClickListener() }
     }
 
-    override fun setupView(style: MessageComposerViewStyle) {
-        // empty
+    /**
+     * Applies the given style to the message composer.
+     *
+     * @param style The style that will be applied to the component.
+     */
+    override fun applyStyle(style: MessageComposerViewStyle) {
+        this.style = style
     }
 
     /**

@@ -24,6 +24,14 @@
 
         <!-- Leading content -->
 
+        <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsButtonRippleColor" format="color|reference" />
+
+        <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerCommandsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandsButtonRippleColor" format="color|reference" />
+
         <!-- Footer content -->
 
         <!-- Header content -->

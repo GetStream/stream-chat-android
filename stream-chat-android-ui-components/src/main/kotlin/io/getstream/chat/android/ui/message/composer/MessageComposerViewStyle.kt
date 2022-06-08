@@ -20,9 +20,11 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -31,13 +33,19 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 /**
  * Style for [MessageComposerView].
  *
+ * @param attachmentsButtonVisible If the button to pick attachments is displayed.
+ * @param attachmentsButtonIconDrawable The icon for the attachments button.
+ * @param attachmentsButtonRippleColor Ripple color of the attachments button.
+ * @param commandsButtonVisible If the button to select commands is displayed.
+ * @param commandsButtonIconDrawable The icon for the commands button.
+ * @param commandsButtonRippleColor Ripple color of the commands button.
+ *
  * @param sendButtonEnabled If the button to send message is enabled.
  * @param sendButtonIcon The icon for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
  * @param cooldownTimerBackgroundDrawable Background drawable for cooldown timer.
  */
 public data class MessageComposerViewStyle(
-
     // Command suggestions content
 
     // Mention suggestions content
@@ -45,7 +53,12 @@ public data class MessageComposerViewStyle(
     // Center content
 
     // Leading content
-
+    public val attachmentsButtonVisible: Boolean,
+    public val attachmentsButtonIconDrawable: Drawable,
+    @ColorInt public val attachmentsButtonRippleColor: Int?,
+    public val commandsButtonVisible: Boolean,
+    public val commandsButtonIconDrawable: Drawable,
+    @ColorInt public val commandsButtonRippleColor: Int?,
     // Footer content
 
     // Header content
@@ -79,6 +92,31 @@ public data class MessageComposerViewStyle(
                 /**
                  * Leading content
                  */
+
+                val attachmentsButtonVisible = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonVisible,
+                    true
+                )
+                val attachmentsButtonIconDrawable =
+                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
+
+                val attachmentsButtonRippleColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor
+                )
+
+                val commandsButtonVisible = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonVisible,
+                    true
+                )
+
+                val commandsButtonIconDrawable =
+                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
+
+                val commandsButtonRippleColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor
+                )
 
                 /**
                  * Footer content
@@ -132,7 +170,12 @@ public data class MessageComposerViewStyle(
                     // Center content
 
                     // Leading content
-
+                    attachmentsButtonVisible = attachmentsButtonVisible,
+                    attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
+                    attachmentsButtonRippleColor = attachmentsButtonRippleColor,
+                    commandsButtonVisible = commandsButtonVisible,
+                    commandsButtonIconDrawable = commandsButtonIconDrawable,
+                    commandsButtonRippleColor = commandsButtonRippleColor,
                     // Footer content
 
                     // Header content
