@@ -21,6 +21,12 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 
 /**
+ * Function to determine the offset of initials in an avatar group, which can contain up to 4 avatars in a grid.
+ *
+ * @param dimens [StreamDimens] that contain the offset.
+ * @param userPosition The position of the current users avatar in the group.
+ * @param memberCount The number of members inside the avatar group/channel.
+ *
  * @return The x and y offset of the avatar inside [DpOffset] depending on the item position inside the list.
  */
 internal fun getAvatarPositionOffset(
@@ -37,7 +43,7 @@ internal fun getAvatarPositionOffset(
             dimens.groupAvatarInitialsYOffset
         )
         1 -> {
-            if (memberCount == MaxSizeWithFullHeightAvatar) {
+            if (memberCount == 3) {
                 center
             } else {
                 DpOffset(
@@ -57,11 +63,6 @@ internal fun getAvatarPositionOffset(
         else -> center
     }
 }
-
-/**
- * If there are 3 avatars, the second one will have full height and doesn't need to be offset.
- */
-private const val MaxSizeWithFullHeightAvatar = 3
 
 /**
  * The last possible index of the avatars list.
