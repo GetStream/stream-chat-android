@@ -1082,7 +1082,13 @@
         <item name="streamUiMessageComposerCommandsButtonVisible">true</item>
         <item name="streamUiMessageComposerCommandsButtonIconDrawable">@drawable/stream_ui_ic_command</item>
         <item name="streamUiMessageComposerCommandsButtonRippleColor">@null</item>
+
         <!-- Footer content -->
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxVisible">true</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxDrawable">@null</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxText">@null</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxTextColor">@color/stream_ui_text_color_secondary</item>
 
         <!-- Header content -->
 

@@ -22,8 +22,10 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultFooterContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
@@ -77,6 +79,15 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
      */
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        with(binding.alsoSendToChannel) {
+            // For simplicity, the text is the same for distinct and named channels
+            text = style.alsoSendToChannelCheckboxText
+                ?: context.getString(R.string.stream_ui_message_input_send_to_channel)
+
+            setTextStyle(style.alsoSendToChannelCheckboxTextStyle)
+            style.alsoSendToChannelCheckboxDrawable?.let { buttonDrawable = it }
+        }
     }
 
     /**
@@ -85,8 +96,8 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
-        val shouldShowCheckbox = state.messageMode is MessageMode.MessageThread
-        binding.alsoSendToChannel.isVisible = shouldShowCheckbox
+        val isThreadModeActive = state.messageMode is MessageMode.MessageThread
+        binding.alsoSendToChannel.isVisible = style.alsoSendToChannelCheckboxVisible && isThreadModeActive
         binding.alsoSendToChannel.isChecked = state.alsoSendToChannel
     }
 }

@@ -42,6 +42,11 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param commandsButtonIconDrawable The icon for the commands button.
  * @param commandsButtonRippleColor Ripple color of the commands button.
  *
+ * @param alsoSendToChannelCheckboxVisible If the checkbox to send a message to the channel is displayed.
+ * @param alsoSendToChannelCheckboxDrawable The drawable that will be used for the checkbox.
+ * @param alsoSendToChannelCheckboxText The text that will be displayed next to the checkbox.
+ * @param alsoSendToChannelCheckboxTextStyle The text style that will be used for the checkbox text.
+ *
  * @param sendMessageButtonEnabled If the button to send message is enabled.
  * @param sendMessageButtonIconDrawable The icon for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
@@ -64,7 +69,10 @@ public data class MessageComposerViewStyle(
     public val commandsButtonIconDrawable: Drawable,
     @ColorInt public val commandsButtonRippleColor: Int?,
     // Footer content
-
+    public val alsoSendToChannelCheckboxVisible: Boolean,
+    public val alsoSendToChannelCheckboxDrawable: Drawable?,
+    public val alsoSendToChannelCheckboxText: CharSequence?,
+    public val alsoSendToChannelCheckboxTextStyle: TextStyle,
     // Header content
 
     // Trailing content
@@ -107,6 +115,7 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonVisible,
                     true
                 )
+
                 val attachmentsButtonIconDrawable =
                     a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
@@ -132,6 +141,38 @@ public data class MessageComposerViewStyle(
                  * Footer content
                  */
 
+                val alsoSendToChannelCheckboxVisible = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxVisible,
+                    true
+                )
+
+                val alsoSendToChannelCheckboxDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxDrawable
+                )
+
+                val alsoSendToChannelCheckboxText: CharSequence? = a.getText(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxText
+                )
+
+                val alsoSendToChannelCheckboxTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 /**
                  * Header content
                  */
@@ -145,9 +186,9 @@ public data class MessageComposerViewStyle(
                     true
                 )
 
-                val sendMessageButtonIconDrawable =
-                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
+                val sendMessageButtonIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
 
                 val cooldownTimerTextStyle = TextStyle.Builder(a)
                     .size(
@@ -159,8 +200,8 @@ public data class MessageComposerViewStyle(
                         context.getColorCompat(R.color.stream_ui_literal_white)
                     )
                     .font(
-                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextFont
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextStyle,
@@ -189,7 +230,10 @@ public data class MessageComposerViewStyle(
                     commandsButtonIconDrawable = commandsButtonIconDrawable,
                     commandsButtonRippleColor = commandsButtonRippleColor,
                     // Footer content
-
+                    alsoSendToChannelCheckboxVisible = alsoSendToChannelCheckboxVisible,
+                    alsoSendToChannelCheckboxDrawable = alsoSendToChannelCheckboxDrawable,
+                    alsoSendToChannelCheckboxText = alsoSendToChannelCheckboxText,
+                    alsoSendToChannelCheckboxTextStyle = alsoSendToChannelCheckboxTextStyle,
                     // Header content
 
                     // Trailing content

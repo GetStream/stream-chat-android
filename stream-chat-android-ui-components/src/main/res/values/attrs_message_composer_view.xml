@@ -31,22 +31,38 @@
         <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerCommandsButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerCommandsButtonRippleColor" format="color|reference" />
+
         <!-- Footer content -->
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxText" format="string" />
+
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxTextFont" format="string" />
+        <attr name="streamUiMessageComposerAlsoSendToChannelCheckboxTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
 
         <!-- Header content -->
 
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
+
         <attr name="streamUiMessageComposerCooldownTimerTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCooldownTimerTextColor" format="reference|color" />
-        <attr name="streamUiMessageComposerCooldownTimerFontAssets" format="string" />
-        <attr name="streamUiMessageComposerCooldownTimerFont" format="string" />
+        <attr name="streamUiMessageComposerCooldownTimerTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerCooldownTimerTextFont" format="string" />
         <attr name="streamUiMessageComposerCooldownTimerTextStyle" format="enum">
             <enum name="normal" value="0" />
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
         </attr>
+
         <attr name="streamUiMessageComposerCooldownTimerBackgroundDrawable" format="reference" />
     </declare-styleable>
 </resources>

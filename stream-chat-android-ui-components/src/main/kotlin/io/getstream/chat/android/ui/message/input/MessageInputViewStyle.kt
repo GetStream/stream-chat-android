@@ -86,18 +86,18 @@ public data class MessageInputViewStyle(
     public val sendButtonEnabled: Boolean, //
     public val sendButtonEnabledIcon: Drawable, //
     public val sendButtonDisabledIcon: Drawable, //
-    public val showSendAlsoToChannelCheckbox: Boolean,
-    public val sendAlsoToChannelCheckboxDrawable: Drawable?,
-    public val sendAlsoToChannelCheckboxGroupChatText: CharSequence?,
-    public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?,
-    public val sendAlsoToChannelCheckboxTextStyle: TextStyle,
+    public val showSendAlsoToChannelCheckbox: Boolean, //
+    public val sendAlsoToChannelCheckboxDrawable: Drawable?, //
+    public val sendAlsoToChannelCheckboxGroupChatText: CharSequence?, //
+    public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?, //
+    public val sendAlsoToChannelCheckboxTextStyle: TextStyle, //
     public val commandsEnabled: Boolean,
     public val mentionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int, //
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
-    public val dividerBackground: Drawable,
+    public val dividerBackground: Drawable, //
     public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle,
     public val commandInputCancelIcon: Drawable,
     public val commandInputBadgeIcon: Drawable,
