@@ -809,7 +809,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Enables fetch for messages at the bottom. 
+     * Enables fetch for messages at the bottom.
      */
     public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
         loadMoreListener.fetchAtBottom(shouldRequest)

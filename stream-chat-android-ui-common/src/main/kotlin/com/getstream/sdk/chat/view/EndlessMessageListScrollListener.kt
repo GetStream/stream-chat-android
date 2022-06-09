@@ -26,7 +26,8 @@ import androidx.recyclerview.widget.RecyclerView
  * @param loadMoreThreshold The number of items or positions ahead of the end of the list where we can trigger the
  * pagination.
  * @param loadMoreAtTopListener The handler which is called when pagination should be triggered in the top direction.
- * @param loadMoreAtBottomListener The handler which is called when pagination should be triggered in the bottom direction.
+ * @param loadMoreAtBottomListener The handler which is called when pagination should be triggered in the
+ * bottom direction.
  */
 public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
