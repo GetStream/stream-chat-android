@@ -116,7 +116,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Root content
                  */
-
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
@@ -124,7 +123,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Command suggestions content
                  */
-
                 val commandSuggestionsTitleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextSize,
@@ -198,7 +196,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Mention suggestions content
                  */
-
                 val mentionSuggestionsBackgroundColor = a.getColor(
                     R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionsBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_white)
@@ -249,7 +246,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Center content
                  */
-
                 val messageInputScrollbarEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerScrollbarEnabled,
                     false
@@ -262,15 +258,14 @@ public data class MessageComposerViewStyle(
                 /**
                  * Leading content
                  */
-
                 val attachmentsButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonVisible,
                     true
                 )
 
-                val attachmentsButtonIconDrawable =
-                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
+                val attachmentsButtonIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
 
                 val attachmentsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor
@@ -281,9 +276,9 @@ public data class MessageComposerViewStyle(
                     true
                 )
 
-                val commandsButtonIconDrawable =
-                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
+                val commandsButtonIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
 
                 val commandsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor
@@ -292,7 +287,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Footer content
                  */
-
                 val alsoSendToChannelCheckboxVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxVisible,
                     true
@@ -328,7 +322,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Header content
                  */
-
                 val editModeIconDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_edit)!!
@@ -344,7 +337,6 @@ public data class MessageComposerViewStyle(
                 /**
                  * Trailing content
                  */
-
                 val sendMessageButtonEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonEnabled,
                     true
