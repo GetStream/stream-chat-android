@@ -182,7 +182,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         ARG_CID to cid,
                         ARG_CHANNEL_NAME to channelName,
                         ARG_USER_DATA to user.toUserData(),
-                        ARG_OWN_CAPABILITIES to ownCapabilities.toTypedArray(),
+                        ARG_OWN_CAPABILITIES to ownCapabilities.toList(),
                     )
             }
     }
