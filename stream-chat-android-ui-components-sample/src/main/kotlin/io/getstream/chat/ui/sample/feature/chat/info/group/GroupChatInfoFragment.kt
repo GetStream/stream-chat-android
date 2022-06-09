@@ -110,7 +110,7 @@ class GroupChatInfoFragment : Fragment() {
                             args.cid,
                             it.channelName,
                             it.member.user,
-                            viewModel.state.value?.isCurrentUserOwnerOrAdmin == true
+                            viewModel.state.value?.ownCapabilities ?: setOf()
                         )
                             .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
