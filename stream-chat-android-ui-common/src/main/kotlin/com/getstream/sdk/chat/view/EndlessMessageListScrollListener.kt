@@ -25,7 +25,8 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * @param loadMoreThreshold The number of items or positions ahead of the end of the list where we can trigger the
  * pagination.
- * @param loadMoreListener The handler which is called when pagination should be triggered.
+ * @param loadMoreAtTopListener The handler which is called when pagination should be triggered in the top direction.
+ * @param loadMoreAtBottomListener The handler which is called when pagination should be triggered in the bottom direction.
  */
 public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
@@ -70,8 +71,8 @@ public class EndlessMessageListScrollListener(
     }
 
     /**
-     * Checks if the scroll is going up and if the threshold number of items has been shown. If the scroll is downwards,
-     * then it stops the check.
+     * Checks if the scroll is going up or down and if the threshold number of items has been shown. If
+     * [EndlessMessageListScrollListener] is configured to fetch bottom messages, it handles it when scrolling down.
      */
     private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         if (!paginationEnabled) return
@@ -87,6 +88,10 @@ public class EndlessMessageListScrollListener(
         }
     }
 
+    /**
+     * Handles a valid scroll down. If the threshold has been met and the scroll state has been reset previously, we
+     * trigger pagination.
+     */
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
         val total = recyclerView.adapter?.itemCount ?: 0

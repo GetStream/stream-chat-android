@@ -265,8 +265,14 @@ public class MessageListViewModel(
      */
     private var initialJob: Job? = null
 
+    /**
+     * Emits the status of searching situation. True when inside a search and false otherwise.
+     */
     private val _insideSearch = MediatorLiveData<Boolean>()
 
+    /**
+     * Emits the status of searching situation. True when inside a search and false otherwise.
+     */
     public val insideSearch: LiveData<Boolean> = _insideSearch
 
     init {
@@ -681,6 +687,9 @@ public class MessageListViewModel(
         }
     }
 
+    /**
+     * Loads more messages if we have reached the newest messages currently loaded and we are handling search.
+     */
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
@@ -861,6 +870,9 @@ public class MessageListViewModel(
          */
         public object EndRegionReached : Event()
 
+        /**
+         * When the newest loaded message in the list has been reached and there's still newer messages to be loaded.
+         */
         public data class BottomEndRegionReached(val messageId: String?) : Event()
 
         /**
