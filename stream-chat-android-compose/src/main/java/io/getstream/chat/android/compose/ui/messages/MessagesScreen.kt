@@ -328,7 +328,6 @@ private fun BoxScope.MessagesScreenMenus(
         )
     }
 
-
     AnimatedVisibility(
         visible = selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty(),
         enter = fadeIn(),
