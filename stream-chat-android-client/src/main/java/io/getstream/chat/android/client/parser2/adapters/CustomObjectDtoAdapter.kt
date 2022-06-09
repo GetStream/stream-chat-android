@@ -39,7 +39,7 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
      * [parseWithExtraData].
      */
     private val memberNames: List<String> by lazy {
-        kClass.declaredMemberProperties.map(KCallable<*>::name).minus(EXTRA_DATA)
+        kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
     }
 
     /**

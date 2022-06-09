@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2
+package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
