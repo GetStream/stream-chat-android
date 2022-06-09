@@ -23,6 +23,8 @@
         <!-- Mention suggestions content -->
 
         <!-- Center content -->
+        <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean"/>
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />

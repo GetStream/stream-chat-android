@@ -35,22 +35,22 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  *
  * @param dividerBackgroundDrawable The background of the divider at the top.
  *
+ * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
+ * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
+ *
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
  * @param commandsButtonVisible If the button to select commands is displayed.
  * @param commandsButtonIconDrawable The icon for the commands button.
  * @param commandsButtonRippleColor Ripple color of the commands button.
- *
  * @param alsoSendToChannelCheckboxVisible If the checkbox to send a message to the channel is displayed.
  * @param alsoSendToChannelCheckboxDrawable The drawable that will be used for the checkbox.
  * @param alsoSendToChannelCheckboxText The text that will be displayed next to the checkbox.
  * @param alsoSendToChannelCheckboxTextStyle The text style that will be used for the checkbox text.
- *
  * @param editModeIconDrawable The icon displayed in top left corner when the user edits a message.
  * @param replyModeIconDrawable The icon displayed in top left corner when the user replies to a message.
  * @param dismissModeIconDrawable The icon for the button that dismisses edit or reply mode.
- *
  * @param sendMessageButtonEnabled If the button to send message is enabled.
  * @param sendMessageButtonIconDrawable The icon for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
@@ -64,7 +64,8 @@ public data class MessageComposerViewStyle(
     // Mention suggestions content
 
     // Center content
-
+    public val messageInputScrollbarEnabled: Boolean,
+    public val messageInputScrollbarFadingEnabled: Boolean,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -112,6 +113,15 @@ public data class MessageComposerViewStyle(
                 /**
                  * Center content
                  */
+
+                val messageInputScrollbarEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiMessageInputScrollbarEnabled,
+                    false
+                )
+                val messageInputScrollbarFadingEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiMessageInputScrollbarFadingEnabled,
+                    false
+                )
 
                 /**
                  * Leading content
@@ -239,7 +249,8 @@ public data class MessageComposerViewStyle(
                     // Mention suggestions content
 
                     // Center content
-
+                    messageInputScrollbarEnabled = messageInputScrollbarEnabled,
+                    messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,

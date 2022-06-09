@@ -42,7 +42,6 @@ import io.getstream.chat.android.ui.message.composer.content.DefaultMessageCompo
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
-import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -201,7 +200,9 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
             val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {
                 it.attachmentsButtonClickListener = {
                     context.getFragmentManager()?.let {
-                        AttachmentSelectionDialogFragment.newInstance(MessageInputViewStyle.createDefault(context))
+                        val style = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
+
+                        AttachmentSelectionDialogFragment.newInstance(style)
                             .apply {
                                 val listener =
                                     AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource ->

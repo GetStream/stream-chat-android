@@ -127,6 +127,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      */
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
+        binding.messageEditText.isVerticalFadingEdgeEnabled = style.messageInputScrollbarFadingEnabled
     }
 
     /**

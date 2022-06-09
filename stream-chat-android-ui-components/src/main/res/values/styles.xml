@@ -1074,6 +1074,8 @@
         <!-- Mention suggestions content -->
 
         <!-- Center content -->
+        <item name="streamUiMessageComposerScrollbarEnabled">false</item>
+        <item name="streamUiMessageComposerScrollbarFadingEnabled">false</item>
 
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
@@ -1101,5 +1103,11 @@
         <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
+    </style>
+
+    <style name="StreamUi.AttachmentsPickerDialog" parent="StreamUi">
+        <item name="streamUiAttachmentsPickerImageAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
     </style>
 </resources>

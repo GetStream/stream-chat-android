@@ -81,8 +81,8 @@ public data class MessageInputViewStyle(
     public val commandsButtonEnabled: Boolean, //
     public val commandsButtonIcon: Drawable, //
     public val messageInputTextStyle: TextStyle,
-    public val messageInputScrollbarEnabled: Boolean,
-    public val messageInputScrollbarFadingEnabled: Boolean,
+    public val messageInputScrollbarEnabled: Boolean, //
+    public val messageInputScrollbarFadingEnabled: Boolean, //
     public val sendButtonEnabled: Boolean, //
     public val sendButtonEnabledIcon: Drawable, //
     public val sendButtonDisabledIcon: Drawable, //
@@ -98,7 +98,7 @@ public data class MessageInputViewStyle(
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable, //
-    public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle,
+    public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle, // <-------?
     public val commandInputCancelIcon: Drawable,
     public val commandInputBadgeIcon: Drawable,
     public val commandInputBadgeBackgroundDrawable: Drawable,
