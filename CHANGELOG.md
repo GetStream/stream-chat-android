@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Now the SDK can be used if R8 full mode. New rules were added to the library to support the aggresive optimizations.
 
 ### ✅ Added
 
