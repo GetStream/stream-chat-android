@@ -18,9 +18,65 @@
     <declare-styleable name="MessageComposerView">
         <!-- Root content -->
         <attr name="streamUiMessageComposerDividerBackgroundDrawable" format="reference" />
+
         <!-- Command suggestions content -->
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleTextFont" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference"/>
+        <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color"/>
+        <attr name="streamUiMessageComposerCommandSuggestionItemIconDrawable" format="reference"/>
+
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextFont" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont" format="string" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
 
         <!-- Mention suggestions content -->
+        <attr name="streamUiMessageComposerMentionSuggestionsBackgroundColor" format="reference|color" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawable" format="reference"/>
+
+        <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextFont" format="string" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextFont" format="string" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
 
         <!-- Center content -->
         <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean"/>

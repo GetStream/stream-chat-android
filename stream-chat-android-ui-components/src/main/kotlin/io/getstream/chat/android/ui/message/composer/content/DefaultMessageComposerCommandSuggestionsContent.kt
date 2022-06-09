@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
@@ -49,14 +50,14 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     private lateinit var style: MessageComposerViewStyle
 
     /**
+     * Adapter used to render command suggestions.
+     */
+    private lateinit var adapter: CommandsAdapter
+
+    /**
      * Selection listener invoked when a command is selected.
      */
     public var commandSelectionListener: (Command) -> Unit = {}
-
-    /**
-     * Adapter used to render command suggestions.
-     */
-    private val adapter = CommandsAdapter { commandSelectionListener(it) }
 
     public constructor(context: Context) : this(context, null)
 
@@ -76,7 +77,6 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     private fun init() {
         binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
-        binding.suggestionsRecyclerView.adapter = adapter
     }
 
     /**
@@ -86,6 +86,11 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
      */
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        adapter = CommandsAdapter(style) { commandSelectionListener(it) }
+        binding.suggestionsRecyclerView.adapter = adapter
+
+        binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
     }
 
     /**
@@ -101,9 +106,11 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
 /**
  * [RecyclerView.Adapter] responsible for displaying command suggestions in a RecyclerView.
  *
+ * @param style The style for [MessageComposerView].
  * @param commandSelectionListener The listener invoked when a command is selected from the list.
  */
 private class CommandsAdapter(
+    private val style: MessageComposerViewStyle,
     private val commandSelectionListener: (Command) -> Unit,
 ) : SimpleListAdapter<Command, CommandViewHolder>() {
 
@@ -117,7 +124,7 @@ private class CommandsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         return StreamUiItemCommandBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { CommandViewHolder(it, commandSelectionListener) }
+            .let { CommandViewHolder(it, style, commandSelectionListener) }
     }
 }
 
@@ -125,12 +132,20 @@ private class CommandsAdapter(
  * [RecyclerView.ViewHolder] used for rendering command items.
  *
  * @param binding Generated binding class for the XML layout.
+ * @param style The style for [MessageComposerView].
  * @param commandSelectionListener The listener invoked when a command is selected.
  */
 private class CommandViewHolder(
     private val binding: StreamUiItemCommandBinding,
+    style: MessageComposerViewStyle,
     private val commandSelectionListener: (Command) -> Unit,
 ) : SimpleListAdapter.ViewHolder<Command>(binding.root) {
+
+    init {
+        binding.commandNameTextView.setTextStyle(style.commandSuggestionItemCommandNameTextStyle)
+        binding.commandQueryTextView.setTextStyle(style.commandSuggestionItemCommandDescriptionTextStyle)
+        binding.instantCommandImageView.setImageDrawable(style.commandSuggestionItemIconDrawable)
+    }
 
     /**
      * Updates [itemView] elements for a given [Command] object.

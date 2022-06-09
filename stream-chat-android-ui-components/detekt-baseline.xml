@@ -113,6 +113,16 @@
     <ID>MaxLineLength:MessageComposerView.kt$MessageComposerView$*</ID>
     <ID>MaxLineLength:MessageComposerView.kt$MessageComposerView$AttachmentSelectionListener</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextStyle</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextColor</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFontAssets</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets</ID>
     <ID>MaxLineLength:MessageInputFieldView.kt$MessageInputFieldView$*</ID>
     <ID>MaxLineLength:MessageInputFieldView.kt$MessageInputFieldView$if</ID>
     <ID>MaxLineLength:MessageInputView.kt$MessageInputView$binding.messageInputFieldView.selectedAttachmentsCount.value > messageInputViewStyle.maxAttachmentsCount</ID>

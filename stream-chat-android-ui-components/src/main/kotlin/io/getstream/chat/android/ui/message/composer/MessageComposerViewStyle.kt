@@ -35,9 +35,18 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  *
  * @param dividerBackgroundDrawable The background of the divider at the top.
  *
+ * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
+ * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
+ * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
+ * @param commandSuggestionItemIconDrawable The icon for each mention item in the suggestion list.
+ * @param commandSuggestionItemCommandNameTextStyle The text style for the command name.
+ * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.*
+ * @param mentionSuggestionsBackgroundColor The background color of the mention suggestions dialog.
+ * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
+ * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
+ * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
  * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
- * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
- *
+ * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.f
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -60,9 +69,17 @@ public data class MessageComposerViewStyle(
     // Root content
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
-
+    public val commandSuggestionsTitleTextStyle: TextStyle,
+    public val commandSuggestionsTitleIconDrawable: Drawable,
+    @ColorInt public val commandSuggestionsBackgroundColor: Int,
+    public val commandSuggestionItemIconDrawable: Drawable,
+    public val commandSuggestionItemCommandNameTextStyle: TextStyle,
+    public val commandSuggestionItemCommandDescriptionTextStyle: TextStyle,
     // Mention suggestions content
-
+    @ColorInt public val mentionSuggestionsBackgroundColor: Int,
+    public val mentionSuggestionItemIconDrawable: Drawable,
+    public val mentionSuggestionItemUsernameTextStyle: TextStyle,
+    public val mentionSuggestionItemMentionTextStyle: TextStyle,
     // Center content
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
@@ -99,27 +116,146 @@ public data class MessageComposerViewStyle(
                 /**
                  * Root content
                  */
+
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
+
                 /**
                  * Command suggestions content
                  */
 
+                val commandSuggestionsTitleTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val commandSuggestionsTitleIconDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_blue)!!
+
+                val commandSuggestionsBackgroundColor = a.getColor(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
+                val commandSuggestionItemIconDrawable: Drawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_circle)!!
+
+                val commandSuggestionItemCommandNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val commandSuggestionItemCommandDescriptionTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
                 /**
                  * Mention suggestions content
                  */
+
+                val mentionSuggestionsBackgroundColor = a.getColor(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionsBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
+                val mentionSuggestionItemIconDrawable: Drawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+
+                val mentionSuggestionItemUsernameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mentionSuggestionItemMentionTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
 
                 /**
                  * Center content
                  */
 
                 val messageInputScrollbarEnabled = a.getBoolean(
-                    R.styleable.MessageInputView_streamUiMessageInputScrollbarEnabled,
+                    R.styleable.MessageComposerView_streamUiMessageComposerScrollbarEnabled,
                     false
                 )
                 val messageInputScrollbarFadingEnabled = a.getBoolean(
-                    R.styleable.MessageInputView_streamUiMessageInputScrollbarFadingEnabled,
+                    R.styleable.MessageComposerView_streamUiMessageComposerScrollbarFadingEnabled,
                     false
                 )
 
@@ -245,9 +381,17 @@ public data class MessageComposerViewStyle(
                     // Root content
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
-
+                    commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
+                    commandSuggestionsTitleIconDrawable = commandSuggestionsTitleIconDrawable,
+                    commandSuggestionsBackgroundColor = commandSuggestionsBackgroundColor,
+                    commandSuggestionItemIconDrawable = commandSuggestionItemIconDrawable,
+                    commandSuggestionItemCommandNameTextStyle = commandSuggestionItemCommandNameTextStyle,
+                    commandSuggestionItemCommandDescriptionTextStyle = commandSuggestionItemCommandDescriptionTextStyle,
                     // Mention suggestions content
-
+                    mentionSuggestionsBackgroundColor = mentionSuggestionsBackgroundColor,
+                    mentionSuggestionItemIconDrawable = mentionSuggestionItemIconDrawable,
+                    mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
+                    mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
                     // Center content
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,

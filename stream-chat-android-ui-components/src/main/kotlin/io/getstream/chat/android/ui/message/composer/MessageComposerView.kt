@@ -138,6 +138,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private val defaultMentionSuggestionsView: View by lazy {
         DefaultMessageComposerMentionSuggestionsContent(context).also {
             it.mentionSelectionListener = { mentionSelectionListener(it) }
+            it.applyStyle(style)
         }
     }
 
@@ -149,7 +150,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     /**
      * Mention suggestions list shown in a popup window above the [MessageComposerView].
      */
-    private val mentionSuggestionsContent: View = mentionSuggestionsContentOverride ?: defaultMentionSuggestionsView
+    private val mentionSuggestionsContent: View
+        get() = mentionSuggestionsContentOverride ?: defaultMentionSuggestionsView
 
     /**
      * Default implementation of [commandSuggestionsContent].
@@ -157,6 +159,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private val defaultCommandSuggestionsView: View by lazy {
         DefaultMessageComposerCommandSuggestionsContent(context).also {
             it.commandSelectionListener = { commandSelectionListener(it) }
+            it.applyStyle(style)
         }
     }
 
@@ -169,7 +172,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * Command suggestions list shown in a popup window above the [MessageComposerView].
      */
 
-    private val commandSuggestionsContent: View = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
+    private val commandSuggestionsContent: View
+        get() = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
 
     public constructor(context: Context) : this(context, null)
 
@@ -439,6 +443,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
     public fun <V> setMentionSuggestionsContent(view: V) where V : View, V : MessageComposerComponent {
         mentionSuggestionsContentOverride = view
+        view.applyStyle(style)
     }
 
     /**
@@ -450,6 +455,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
     public fun <V> setCommandSuggestionsContent(view: V) where V : View, V : MessageComposerComponent {
         commandSuggestionsContentOverride = view
+        view.applyStyle(style)
     }
 
     private companion object {

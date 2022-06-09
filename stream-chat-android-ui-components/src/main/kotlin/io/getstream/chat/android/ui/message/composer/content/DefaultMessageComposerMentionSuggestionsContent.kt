@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
@@ -50,14 +51,14 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
     private lateinit var style: MessageComposerViewStyle
 
     /**
+     * Adapter used to render mention suggestions.
+     */
+    private lateinit var adapter: MentionsAdapter
+
+    /**
      * Selection listener invoked when a mention is selected.
      */
     public var mentionSelectionListener: (User) -> Unit = {}
-
-    /**
-     * Adapter used to render mention suggestions.
-     */
-    private val adapter = MentionsAdapter { mentionSelectionListener(it) }
 
     public constructor(context: Context) : this(context, null)
 
@@ -78,7 +79,6 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
         binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
         binding.commandsTitleTextView.isVisible = false
-        binding.suggestionsRecyclerView.adapter = adapter
     }
 
     /**
@@ -88,6 +88,11 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
      */
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        adapter = MentionsAdapter(style) { mentionSelectionListener(it) }
+        binding.suggestionsRecyclerView.adapter = adapter
+
+        binding.suggestionsCardView.setCardBackgroundColor(style.mentionSuggestionsBackgroundColor)
     }
 
     /**
@@ -103,9 +108,11 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
 /**
  * [RecyclerView.Adapter] responsible for displaying mention suggestions in a RecyclerView.
  *
+ * @param style The style for [MessageComposerView].
  * @param mentionSelectionListener The listener invoked when a mention is selected from the list.
  */
 private class MentionsAdapter(
+    private val style: MessageComposerViewStyle,
     private inline val mentionSelectionListener: (User) -> Unit,
 ) : SimpleListAdapter<User, MentionsViewHolder>() {
 
@@ -119,7 +126,7 @@ private class MentionsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
         return StreamUiItemMentionBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { MentionsViewHolder(it, mentionSelectionListener) }
+            .let { MentionsViewHolder(it, style, mentionSelectionListener) }
     }
 }
 
@@ -127,12 +134,20 @@ private class MentionsAdapter(
  * [RecyclerView.ViewHolder] used for rendering mention items.
  *
  * @param binding Generated binding class for the XML layout.
+ * @param style The style for [MessageComposerView].
  * @param mentionSelectionListener The listener invoked when a mention is selected.
  */
 private class MentionsViewHolder(
     val binding: StreamUiItemMentionBinding,
+    style: MessageComposerViewStyle,
     val mentionSelectionListener: (User) -> Unit,
 ) : SimpleListAdapter.ViewHolder<User>(binding.root) {
+
+    init {
+        binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
+        binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
+        binding.mentionsIcon.setImageDrawable(style.mentionSuggestionItemIconDrawable)
+    }
 
     /**
      * Updates [itemView] elements for a given [User] object.
