@@ -129,7 +129,6 @@ internal fun DefaultImagesPickerItem(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             onSuccess = {
-
             }
         )
 

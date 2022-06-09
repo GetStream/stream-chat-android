@@ -1619,6 +1619,7 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 
 public final class io/getstream/chat/android/compose/ui/util/ImageUtilsKt {
 	public static final fun mirrorRtl (Landroidx/compose/ui/Modifier;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Modifier;
+	public static final fun rememberStreamImagePainter-MqR-F_0 (Ljava/lang/Object;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/layout/ContentScale;ILandroidx/compose/runtime/Composer;II)Lcoil/compose/AsyncImagePainter;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoaderKt {
