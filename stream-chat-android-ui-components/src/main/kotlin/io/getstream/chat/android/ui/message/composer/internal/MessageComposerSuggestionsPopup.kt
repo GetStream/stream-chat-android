@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.internal
 
 import android.content.res.Resources
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
  * Represents a popup window that is shown above the [MessageComposerView]. It is used

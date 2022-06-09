@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.internal
 
 import android.content.Context
+import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 
 /**
- * For backwards compatibility
+ * A mapper to convert [AttachmentsPickerDialogStyle] into the legacy style object that
+ * can be used with [AttachmentSelectionDialogFragment].
+ *
+ * @param context The context to load string resources.
  */
 internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Context): MessageInputViewStyle {
     return MessageInputViewStyle.createDefault(context).copy(

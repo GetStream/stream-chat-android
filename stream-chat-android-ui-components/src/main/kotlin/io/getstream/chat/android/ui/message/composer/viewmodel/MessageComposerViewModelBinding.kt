@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer
+@file:JvmName("MessageComposerViewModelBinding")
+
+package io.getstream.chat.android.ui.message.composer.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +24,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import kotlinx.coroutines.flow.collect
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import kotlinx.coroutines.launch
 
 /**
@@ -43,6 +45,7 @@ import kotlinx.coroutines.launch
  * @param commandsButtonClickListener Click listener for the pick commands button.
  * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
  */
+@JvmName("bind")
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
@@ -71,8 +74,6 @@ public fun MessageComposerViewModel.bindView(
     view.dismissSuggestionsListener = dismissSuggestionsListener
 
     lifecycleOwner.lifecycleScope.launch {
-        messageComposerState.collect {
-            view.renderState(it)
-        }
+        messageComposerState.collect(view::renderState)
     }
 }

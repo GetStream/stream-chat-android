@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.viewmodel
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Attachment
@@ -76,6 +76,16 @@ public class MessageComposerViewModel(
     public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors
 
     /**
+     * Represents the list of users that can be used to autocomplete the current mention input.
+     */
+    public val mentionSuggestions: MutableStateFlow<List<User>> = messageComposerController.mentionSuggestions
+
+    /**
+     * Represents the list of commands to be displayed in the command suggestion list popup.
+     */
+    public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
+
+    /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're sending a thread
      * reply or a regular message.
      */
@@ -85,6 +95,15 @@ public class MessageComposerViewModel(
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     public val lastActiveAction: Flow<MessageAction?> = messageComposerController.lastActiveAction
+
+    /**
+     * Holds information about the abilities the current user
+     * is able to exercise in the given channel.
+     *
+     * e.g. send messages, delete messages, etc...
+     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     */
+    public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 
     /**
      * Called when the input changes and the internal state needs to be updated.
@@ -196,6 +215,11 @@ public class MessageComposerViewModel(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility(): Unit = messageComposerController.toggleCommandsVisibility()
+
+    /**
+     * Clears the input and the current state of the composer.
+     */
+    public fun clearData(): Unit = messageComposerController.clearData()
 
     /**
      * Dismisses the suggestions popup above the message composer.

@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewModel
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 
 /**

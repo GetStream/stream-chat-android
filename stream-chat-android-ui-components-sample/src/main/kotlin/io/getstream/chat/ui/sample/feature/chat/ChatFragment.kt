@@ -41,8 +41,8 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewModel
-import io.getstream.chat.android.ui.message.composer.bindView
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
+import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate

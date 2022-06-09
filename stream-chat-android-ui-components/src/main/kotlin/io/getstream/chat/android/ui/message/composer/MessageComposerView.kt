@@ -42,6 +42,8 @@ import io.getstream.chat.android.ui.message.composer.content.DefaultMessageCompo
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.ui.message.composer.internal.MessageComposerSuggestionsPopup
+import io.getstream.chat.android.ui.message.composer.internal.toMessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
