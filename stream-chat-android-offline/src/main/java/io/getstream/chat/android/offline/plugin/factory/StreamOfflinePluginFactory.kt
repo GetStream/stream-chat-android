@@ -184,6 +184,7 @@ public class StreamOfflinePluginFactory(
         }
 
         val eventHandler: EventHandler = createEventHandler(
+            useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
             logicRegistry = logic,
@@ -241,6 +242,7 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun createEventHandler(
+        useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
         logicRegistry: LogicRegistry,
@@ -249,7 +251,7 @@ public class StreamOfflinePluginFactory(
         repos: RepositoryFacade,
         syncManager: SyncManager
     ): EventHandler {
-        return when (BuildConfig.DEBUG) {
+        return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
                 recoveryEnabled = true,
