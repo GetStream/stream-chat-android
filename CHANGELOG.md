@@ -28,6 +28,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fix the stale Channel data being stored into database. [3650](https://github.com/GetStream/stream-chat-android/pull/3650)
+- Fix race condition problem that allowed multiple threads to increment unread count, which could cause a mistake in the number of unread messages. [3656](https://github.com/GetStream/stream-chat-android/pull/3656)
 - A new optional argument `useSequentialEventHandler` has been added to `Config` class of offline plugin to enable a sequential event handling mechanism. [3659](https://github.com/GetStream/stream-chat-android/pull/3659)
 
 ### ⬆️ Improved
