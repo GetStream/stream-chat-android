@@ -252,7 +252,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id"))
+        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id."))
     }
 
     @Test
