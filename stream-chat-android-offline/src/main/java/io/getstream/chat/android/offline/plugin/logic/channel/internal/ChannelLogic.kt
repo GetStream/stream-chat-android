@@ -425,9 +425,7 @@ internal class ChannelLogic(
                         "New unread count: ${unreadCount + 1}"
                 )
 
-                mutableState._read.value = mutableState._read
-                    .value
-                    ?.copy(unreadMessages = unreadCount + 1, lastMessageSeenDate = message.createdAt)
+                mutableState._read.value = readState.apply { this?.unreadMessages = unreadCount + 1 }
                 mutableState._reads.value = mutableState._reads.value.apply {
                     this[currentUserId]?.lastMessageSeenDate = message.createdAt
                     this[currentUserId]?.unreadMessages = unreadCount + 1
