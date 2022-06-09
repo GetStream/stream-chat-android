@@ -253,14 +253,16 @@ class MessagesActivity : BaseConnectedActivity() {
             },
             input = { inputState ->
                 if (isOverlayShowing.value) {
-                    Text(modifier = Modifier
-                        .padding(horizontal = 0.dp, vertical = 8.dp)
-                        .background(Color.Blue, shape = ChatTheme.shapes.inputField)
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .weight(1f)
-                        .align(CenterVertically),
-                        text = "overlay")
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 0.dp, vertical = 8.dp)
+                            .background(Color.Blue, shape = ChatTheme.shapes.inputField)
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .weight(1f)
+                            .align(CenterVertically),
+                        text = "overlay"
+                    )
                 } else {
                     MessageInput(
                         modifier = Modifier
@@ -270,7 +272,8 @@ class MessagesActivity : BaseConnectedActivity() {
                         label = {
                             val text =
                                 if (composerViewModel.ownCapabilities.collectAsState().value.contains(
-                                        ChannelCapabilities.SEND_MESSAGE)
+                                        ChannelCapabilities.SEND_MESSAGE
+                                    )
                                 ) {
                                     stringResource(id = io.getstream.chat.android.compose.R.string.stream_compose_message_label)
                                 } else {
