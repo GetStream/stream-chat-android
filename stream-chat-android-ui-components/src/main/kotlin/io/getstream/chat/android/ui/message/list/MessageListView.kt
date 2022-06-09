@@ -1300,7 +1300,7 @@ public class MessageListView : ConstraintLayout {
 
     /**
      * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
-     * view becomes non linear and ti will be called until it becomes linear again.
+     * view becomes non linear and it will be called until it becomes linear again.
      *
      * @param bottomEndRegionReachedHandler The handler to use.
      */
