@@ -19,9 +19,7 @@ package io.getstream.chat.android.client.parser2.adapters
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredMemberProperties
 
 /**
  * Base class for implementing Moshi adapters that support our API's dynamic

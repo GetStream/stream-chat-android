@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
+import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -41,7 +42,6 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
-import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
