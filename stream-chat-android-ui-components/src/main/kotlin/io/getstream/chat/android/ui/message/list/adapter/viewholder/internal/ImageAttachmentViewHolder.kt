@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -139,7 +140,11 @@ internal class ImageAttachmentViewHolder(
                     container.threadClickListener.onThreadClick(data.message)
                 }
                 root.setOnLongClickListener {
-                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    if (data.message.isModerationFailed()) {
+                        container.moderatedMessageLongClickListener.onModeratedMessageLongClick(data.message)
+                    } else {
+                        container.messageLongClickListener.onMessageLongClick(data.message)
+                    }
                     true
                 }
                 avatarView.setOnClickListener {

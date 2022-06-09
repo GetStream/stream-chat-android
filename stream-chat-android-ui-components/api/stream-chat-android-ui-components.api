@@ -1723,7 +1723,8 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;)V
 	public final fun setMessageUnpinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageUnpinHandler;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
-	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageHandler;)V
+	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageOptionHandler;)V
+	public final fun setModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
@@ -1857,7 +1858,11 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$Mes
 	public static fun values ()[Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageHandler {
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener {
+	public abstract fun onModeratedMessageLongClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageOptionHandler {
 	public abstract fun onModeratedMessageOptionSelected (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/common/model/ModeratedMessageOption;)V
 }
 
@@ -2159,6 +2164,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getMessageClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageClickListener;
 	public abstract fun getMessageLongClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener;
 	public abstract fun getMessageRetryListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;
+	public abstract fun getModeratedMessageLongClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener;
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;

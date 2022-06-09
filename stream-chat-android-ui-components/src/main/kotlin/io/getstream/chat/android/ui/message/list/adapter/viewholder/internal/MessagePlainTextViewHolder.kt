@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
@@ -55,7 +56,11 @@ internal class MessagePlainTextViewHolder(
                     container.threadClickListener.onThreadClick(data.message)
                 }
                 root.setOnLongClickListener {
-                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    if (data.message.isModerationFailed()) {
+                        container.moderatedMessageLongClickListener.onModeratedMessageLongClick(data.message)
+                    } else {
+                        container.messageLongClickListener.onMessageLongClick(data.message)
+                    }
                     true
                 }
                 avatarView.setOnClickListener {

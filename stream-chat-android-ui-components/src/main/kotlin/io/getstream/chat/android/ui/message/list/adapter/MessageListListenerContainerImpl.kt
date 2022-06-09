@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.LinkClickListen
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageLongClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
@@ -39,6 +40,7 @@ internal class MessageListListenerContainerImpl(
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM),
     linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM),
+    moderatedMessageLongClickListener: ModeratedMessageLongClickListener = ModeratedMessageLongClickListener(EmptyFunctions.ONE_PARAM)
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
@@ -122,6 +124,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         LinkClickListener { url ->
             realListener().onLinkClick(url)
+        }
+    }
+
+    override var moderatedMessageLongClickListener: ModeratedMessageLongClickListener by ListenerDelegate(
+        moderatedMessageLongClickListener
+    ) { realListener ->
+        ModeratedMessageLongClickListener { message ->
+            realListener().onModeratedMessageLongClick(message)
         }
     }
 }
