@@ -2143,8 +2143,10 @@ internal constructor(
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
             .withPrecondition(scope) {
-                if (channelsIds.isNotEmpty()) Result.success(Unit)
-                else Result.error(ChatError("channelsIds must contain at least 1 id"))
+                when (channelsIds.isEmpty()) {
+                    true -> Result.error(ChatError("channelsIds must contain at least 1 id."))
+                    else -> Result.success(Unit)
+                }
             }
     }
 
