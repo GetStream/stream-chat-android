@@ -221,7 +221,7 @@ public final class io/getstream/chat/android/offline/plugin/configuration/Config
 	public final fun getBackgroundSyncEnabled ()Z
 	public final fun getPersistenceEnabled ()Z
 	public final fun getUploadAttachmentsNetworkType ()Lio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;
-	public final fun getUseSequentialEventHandling ()Z
+	public final fun getUseSequentialEventHandler ()Z
 	public final fun getUserPresence ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
