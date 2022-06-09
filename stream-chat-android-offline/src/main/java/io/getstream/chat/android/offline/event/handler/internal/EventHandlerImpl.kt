@@ -164,16 +164,21 @@ internal class EventHandlerImpl(
      */
     override suspend fun syncHistoryForActiveChannels() {
         logger.i { "[replayEventsForActiveChannels] no args" }
-        replayEventsForChannels(activeChannelsCid())
+        val activeChannelsCid = activeChannelsCid()
+        replayEventsForChannels(activeChannelsCid)
     }
 
     private fun activeChannelsCid(): List<String> {
         return logic.getActiveChannelsLogic().map { it.cid }
     }
 
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun replayEventsForChannels(cids: List<String>) {
+        if (cids.isEmpty()) {
+            logger.w { "[replayEventsForChannels] rejected (cids is empty" }
+            return
+        }
         logger.i { "[replayEventsForChannels] cids: $cids" }
-        return queryEvents(cids)
+        queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 logger.d { "[replayEventsForChannels] eventList.size: ${eventList.size}" }
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
@@ -219,10 +224,8 @@ internal class EventHandlerImpl(
                     }
 
                     // 4. recover missing events
-                    val activeChannelCids = activeChannelsCid()
-                    if (activeChannelCids.isNotEmpty()) {
-                        replayEventsForChannels(activeChannelCids)
-                    }
+                    val activeChannelsCid = activeChannelsCid()
+                    replayEventsForChannels(activeChannelsCid)
                 }
                 is HealthEvent -> {
                     logger.v { "[handleConnectEvents] received HealthEvent" }

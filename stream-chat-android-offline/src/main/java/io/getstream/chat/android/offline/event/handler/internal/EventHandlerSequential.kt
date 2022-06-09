@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -201,9 +200,7 @@ internal class EventHandlerSequential(
     override suspend fun syncHistoryForActiveChannels() {
         logger.d { "[syncHistoryForActiveChannels] no args" }
         val activeChannelsCid = activeChannelsCid()
-        if (activeChannelsCid.isNotEmpty()) {
-            syncHistory(activeChannelsCid)
-        }
+        syncHistory(activeChannelsCid)
     }
 
     private suspend fun initialize() {
@@ -234,9 +231,13 @@ internal class EventHandlerSequential(
         }
     }
 
-    private suspend fun syncHistory(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun syncHistory(cids: List<String>) {
+        if (cids.isEmpty()) {
+            logger.w { "[syncHistory] rejected (cids is empty)" }
+            return
+        }
         logger.i { "[syncHistory] cids.size: ${cids.size}" }
-        return syncManager.getSortedSyncHistory(cids)
+        syncManager.getSortedSyncHistory(cids)
             .onSuccessSuspend { sortedEvents ->
                 logger.d {
                     "[syncHistory] succeed(${sortedEvents.size}): ${sortedEvents.joinToString(separator = ", \n")}"
@@ -291,9 +292,7 @@ internal class EventHandlerSequential(
                     }
                     val activeChannelCids = activeChannelsCid()
                     logger.v { "[updateSyncManager] activeChannelCids.size: ${activeChannelCids.size}" }
-                    if (activeChannelCids.isNotEmpty()) {
-                        syncHistory(activeChannelCids)
-                    }
+                    syncHistory(activeChannelCids)
                 }
                 is HealthEvent -> if (batchEvent.isFromSocketConnection) {
                     syncManager.retryFailedEntities()
