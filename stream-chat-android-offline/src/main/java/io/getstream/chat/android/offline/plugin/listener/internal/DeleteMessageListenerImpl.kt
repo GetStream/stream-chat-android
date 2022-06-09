@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.utils.Result
@@ -34,6 +35,26 @@ internal class DeleteMessageListenerImpl(
     private val globalState: GlobalState,
     private val messageRepository: MessageRepository,
 ) : DeleteMessageListener {
+
+    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
+        return messageRepository.selectMessage(messageId)?.let { message ->
+
+            val isModerationFailed = message.user.id == globalState.user.value?.id
+                && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+                && message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            val channelLogic = logic.channel(channelType, channelId)
+
+            if (isModerationFailed) {
+                channelLogic.deleteMessage(message)
+                messageRepository.deleteChannelMessage(message)
+                Result.error(IllegalStateException("moderation failed: $messageId"))
+            } else {
+                Result.success(Unit)
+            }
+        } ?: Result.error(IllegalStateException("no message found with id: $messageId"))
+    }
 
     /**
      * Method called when a request to delete a message in the API happens

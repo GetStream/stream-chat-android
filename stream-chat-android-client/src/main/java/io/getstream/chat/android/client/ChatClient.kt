@@ -1226,6 +1226,9 @@ internal constructor(
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
+            .precondition(relevantPlugins) {
+                onMessageDeletePrecondition(messageId)
+            }
     }
 
     @CheckResult

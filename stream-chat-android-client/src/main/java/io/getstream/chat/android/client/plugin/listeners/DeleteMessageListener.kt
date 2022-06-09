@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.utils.Result
  */
 public interface DeleteMessageListener {
 
+    public suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit>
+
     /**
      * Method called when a request to delete a message in the API happens
      *
