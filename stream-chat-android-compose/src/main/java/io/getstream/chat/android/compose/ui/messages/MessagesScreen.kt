@@ -103,6 +103,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 public fun MessagesScreen(
@@ -266,6 +267,7 @@ private fun BoxScope.Rest(
     Log.d("Recomposed", "Rest")
 }
 
+@Suppress("LongMethod")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenMenus(
