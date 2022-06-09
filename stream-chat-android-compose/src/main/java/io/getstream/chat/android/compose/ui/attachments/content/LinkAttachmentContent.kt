@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
@@ -54,6 +53,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.extensions.internal.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.compose.ui.util.hasLink
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link
@@ -138,7 +138,7 @@ public fun LinkAttachmentContent(
 
 @Composable
 private fun LinkAttachmentImagePreview(attachment: Attachment) {
-    val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
+    val painter = rememberStreamImagePainter(data = attachment.imagePreviewUrl)
 
     BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
         Image(

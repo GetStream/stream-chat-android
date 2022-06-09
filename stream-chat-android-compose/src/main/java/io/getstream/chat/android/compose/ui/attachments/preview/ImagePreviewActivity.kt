@@ -89,8 +89,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -114,6 +112,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ShowInChat
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.offline.extensions.downloadAttachment
@@ -498,7 +497,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = rememberAsyncImagePainter(model = attachments[page].imagePreviewUrl)
+                val painter = rememberStreamImagePainter(data = attachments[page].imagePreviewUrl)
 
                 val density = LocalDensity.current
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -883,7 +882,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     }
                 }
         ) {
-            val painter = rememberImagePainter(attachment.imagePreviewUrl)
+            val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
             Image(
                 modifier = Modifier.fillMaxSize(),

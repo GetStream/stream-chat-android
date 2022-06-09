@@ -23,10 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
@@ -40,7 +40,7 @@ public fun ImageAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val imagePainter = rememberImagePainter(attachment.imagePreviewUrl)
+    val imagePainter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
     Image(
         modifier = modifier

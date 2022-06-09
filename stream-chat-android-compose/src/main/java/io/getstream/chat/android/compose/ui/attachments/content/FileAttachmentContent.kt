@@ -43,7 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
@@ -51,6 +50,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 
 /**
@@ -168,7 +168,7 @@ public fun FileAttachmentImage(attachment: Attachment) {
     val painter = if (isImage) {
         val dataToLoad = attachment.imageUrl ?: attachment.upload
 
-        rememberImagePainter(dataToLoad)
+        rememberStreamImagePainter(dataToLoad)
     } else {
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }

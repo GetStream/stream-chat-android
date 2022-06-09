@@ -53,6 +53,7 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 private const val DefaultNumberOfPicturesPerRow = 3
@@ -109,6 +110,7 @@ internal fun DefaultImagesPickerItem(
                 decoderFactory(VideoFrameDecoder.Factory())
             }
         }
+        .build()
 
     Box(
         modifier = Modifier
@@ -122,9 +124,13 @@ internal fun DefaultImagesPickerItem(
     ) {
         AsyncImage(
             model = imageRequest,
+            imageLoader = LocalStreamImageLoader.current,
             modifier = Modifier.fillMaxSize(),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            onSuccess = {
+
+            }
         )
 
         if (imageItem.isSelected) {

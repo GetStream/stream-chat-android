@@ -26,11 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * An avatar that renders an image from the provided image URL. In case the image URL
@@ -45,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param contentDescription Description of the image.
  * @param onClick OnClick action, that can be nullable.
  */
-@ExperimentalCoilApi
 @Composable
 public fun Avatar(
     imageUrl: String,
@@ -79,7 +77,10 @@ public fun Avatar(
         return
     }
 
-    val painter = rememberAsyncImagePainter(model = imageUrl)
+    val painter = rememberStreamImagePainter(
+        data = imageUrl,
+        placeholderPainter = painterResource(id = R.drawable.stream_compose_preview_avatar)
+    )
 
     if (painter.state is AsyncImagePainter.State.Error) {
         InitialsAvatar(

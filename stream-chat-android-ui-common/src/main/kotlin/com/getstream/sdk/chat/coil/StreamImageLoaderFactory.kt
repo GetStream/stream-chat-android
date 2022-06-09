@@ -42,8 +42,6 @@ public class StreamImageLoaderFactory(
             .memoryCache { MemoryCache.Builder(context).maxSizePercent(DEFAULT_MEMORY_PERCENTAGE).build() }
             .allowHardware(false)
             .crossfade(true)
-            .allowHardware(false)
-            .crossfade(true)
             .okHttpClient {
                 val cacheControlInterceptor = Interceptor { chain ->
                     chain.proceed(chain.request())
