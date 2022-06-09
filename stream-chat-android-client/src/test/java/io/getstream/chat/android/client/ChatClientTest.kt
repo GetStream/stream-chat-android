@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
@@ -236,6 +237,7 @@ internal class ChatClientTest {
     @Test
     @ExperimentalCoroutinesApi
     fun `Sync with empty cids`() = runTest {
+        /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.error(
                 ChatNetworkError.create(
@@ -246,8 +248,42 @@ internal class ChatClientTest {
             )
         )
 
-        client.getSyncHistory(emptyList(), Date()).await() shouldBeEqualTo Result.error(
-            ChatError("channelsIds must contain at least 1 id")
+        /* When */
+        val result = client.getSyncHistory(emptyList(), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id"))
+    }
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun `Sync with nonempty cids`() = runTest {
+        /* Given */
+        val date = Date()
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+            Result.success(
+                listOf(
+                    HealthEvent(
+                        type = "type",
+                        createdAt = date,
+                        connectionId = "12345"
+                    )
+                )
+            )
+        )
+
+        /* When */
+        val result = client.getSyncHistory(listOf("test"), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.success(
+            listOf(
+                HealthEvent(
+                    type = "type",
+                    createdAt = date,
+                    connectionId = "12345"
+                )
+            )
         )
     }
 }
