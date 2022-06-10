@@ -28,6 +28,7 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.ValidationError
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  */
+@ExperimentalStreamChatApi
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {

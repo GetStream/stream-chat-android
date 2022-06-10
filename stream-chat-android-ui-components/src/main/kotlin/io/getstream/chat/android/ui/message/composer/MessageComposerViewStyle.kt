@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.utils.AttachmentConstants
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -72,6 +73,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
  * @param cooldownTimerBackgroundDrawable Background drawable for cooldown timer.
  */
+@ExperimentalStreamChatApi
 public data class MessageComposerViewStyle(
     // Root content
     public val dividerBackgroundDrawable: Drawable,

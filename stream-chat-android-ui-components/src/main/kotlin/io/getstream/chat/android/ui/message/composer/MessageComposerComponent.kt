@@ -17,11 +17,13 @@
 package io.getstream.chat.android.ui.message.composer
 
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * An interface implemented by [MessageComposerView] and its children that is
  * used for state propagation.
  */
+@ExperimentalStreamChatApi
 public interface MessageComposerComponent {
     /**
      * Applies the given style to the message composer.
