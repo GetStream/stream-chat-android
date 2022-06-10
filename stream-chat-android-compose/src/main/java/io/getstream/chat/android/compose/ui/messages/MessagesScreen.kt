@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages
 
 import android.content.ClipboardManager
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -41,7 +40,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -188,8 +186,6 @@ public fun MessagesScreen(
                         composerViewModel.dismissMessageActions()
                     }
                 )
-
-                Log.d("Recomposed", "MessageComposer")
             }
         ) {
             val currentState = listViewModel.currentMessagesState
@@ -224,7 +220,7 @@ public fun MessagesScreen(
             )
         }
 
-        Rest(
+        MessageMenus(
             listViewModel = listViewModel,
             composerViewModel = composerViewModel
         )
@@ -232,22 +228,23 @@ public fun MessagesScreen(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel
         )
-        DeleteMessageDialog(listViewModel = listViewModel)
-        FlagMessageDialog(listViewModel = listViewModel)
+        MessageDialogs(listViewModel = listViewModel)
     }
-    Log.d("Recomposed", "MessagesScreen")
 }
 
+/**
+ * Contains the various menus and pickers the user
+ * can use to interact with messages.
+ *
+ * @param listViewModel The [MessageListViewModel] used to read state from.
+ * @param composerViewModel The [MessageComposerViewModel] used to read state from.
+ */
 @Composable
-private fun BoxScope.Rest(
+private fun BoxScope.MessageMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
-    val currentState = listViewModel.currentMessagesState
-
-    val selectedMessageState by remember(currentState.selectedMessageState) {
-        derivedStateOf { currentState.selectedMessageState }
-    }
+    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
 
     val selectedMessage = selectedMessageState?.message ?: Message()
 
@@ -259,14 +256,24 @@ private fun BoxScope.Rest(
     )
 
     MessagesScreenReactionsPicker(
+        listViewModel = listViewModel,
+        composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
         selectedMessage = selectedMessage,
-        composerViewModel = composerViewModel,
-        listViewModel = listViewModel
     )
-    Log.d("Recomposed", "Rest")
 }
 
+/**
+ * Contains selected message and reactions menus
+ * wrapped inside an animated composable.
+ *
+ * @param listViewModel The [MessageListViewModel] used to read state and
+ * perform actions.
+ * @param composerViewModel The [MessageComposerViewModel] used to read state and
+ * perform actions.
+ * @param selectedMessageState The state of the currently selected message.
+ * @param selectedMessage The currently selected message.
+ */
 @Suppress("LongMethod")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -361,16 +368,26 @@ private fun BoxScope.MessagesScreenMenus(
             ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
         )
     }
-    Log.d("Recomposed", "MessagesScreenMenus")
 }
 
+/**
+ * Contains the reactions picker wrapped inside
+ * of an animated composable.
+ *
+ * @param listViewModel The [MessageListViewModel] used to read state and
+ * perform actions.
+ * @param composerViewModel [MessageComposerViewModel] used to read state and
+ * perform actions.
+ * @param selectedMessageState The state of the currently selected message.
+ * @param selectedMessage The currently selected message.
+ */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenReactionsPicker(
+    listViewModel: MessageListViewModel,
+    composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
     selectedMessage: Message,
-    composerViewModel: MessageComposerViewModel,
-    listViewModel: MessageListViewModel,
 ) {
 
     AnimatedVisibility(
@@ -401,9 +418,17 @@ private fun BoxScope.MessagesScreenReactionsPicker(
             onDismiss = { listViewModel.removeOverlay() }
         )
     }
-    Log.d("Recomposed", "MessagesScreenReactionsPicker")
 }
 
+/**
+ * Contains the attachments picker menu wrapped inside
+ * of an animated composable.
+ *
+ * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] used to read state and
+ * perform actions.
+ * @param composerViewModel The [MessageComposerViewModel] used to read state and
+ * perform actions.
+ */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.AttachmentsPickerMenu(
@@ -443,11 +468,17 @@ private fun BoxScope.AttachmentsPickerMenu(
             }
         )
     }
-    Log.d("Recomposed", "AttachmentsPickerMenu")
 }
 
+/**
+ * Contains the message dialogs used to prompt the
+ * user with message flagging and deletion actions
+ *
+ * @param listViewModel The [MessageListViewModel] used to read state and
+ * perform actions.
+ */
 @Composable
-private fun DeleteMessageDialog(listViewModel: MessageListViewModel) {
+private fun MessageDialogs(listViewModel: MessageListViewModel) {
 
     val messageActions = listViewModel.messageActions
 
@@ -462,12 +493,6 @@ private fun DeleteMessageDialog(listViewModel: MessageListViewModel) {
             onDismiss = { listViewModel.dismissMessageAction(deleteAction) }
         )
     }
-    Log.d("Recomposed", "DeleteMessageDialog")
-}
-
-@Composable
-private fun FlagMessageDialog(listViewModel: MessageListViewModel) {
-    val messageActions = listViewModel.messageActions
 
     val flagAction = messageActions.firstOrNull { it is Flag }
 
@@ -480,7 +505,6 @@ private fun FlagMessageDialog(listViewModel: MessageListViewModel) {
             onDismiss = { listViewModel.dismissMessageAction(flagAction) }
         )
     }
-    Log.d("Recomposed", "FlagMessageDialog")
 }
 
 /**
