@@ -62,6 +62,7 @@
 - Added `MessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `PinnedMessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `TypingIndicatorViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
+- Added experimental implementation of `MessageComposerView` and `MessageComposerViewModel` which are supposed to replace `MessageInputView` in the future. [3019](https://github.com/GetStream/stream-chat-android/pull/3019)
 
 ### ⚠️ Changed
 
@@ -1009,7 +1010,6 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Added `MessageInputViewModel::sendMessageWithCustomAttachments` function allowing to send message with custom attachments list.
 - Added `MessageInputView::submitCustomAttachments` function allowing setting custom attachments in `MessageInputView`.
 - Added `SelectedCustomAttachmentViewHolderFactory` interface and `BaseSelectedCustomAttachmentViewHolder`class allowing defining how previews of custom attachments in `MessageInputView` should be rendered.
-- Added experimental implementation of `MessageComposerView` and `MessageComposerViewModel` which are supposed to replace `MessageInputView` in the future
 
 ### ⚠️ Changed
 - Added `MessageSendHandler::sendMessageWithCustomAttachments` and `MessageSendHandler::sendToThreadWithCustomAttachments` allowing to intercept sending custom attachments actions.
