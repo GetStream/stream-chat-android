@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -82,14 +81,10 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
 
-        with(binding.alsoSendToChannel) {
-            // For simplicity, the text is the same for distinct and named channels
-            text = style.alsoSendToChannelCheckboxText
-                ?: context.getString(R.string.stream_ui_message_input_send_to_channel)
-
-            setTextStyle(style.alsoSendToChannelCheckboxTextStyle)
-            style.alsoSendToChannelCheckboxDrawable?.let { buttonDrawable = it }
-        }
+        // For simplicity, the text is the same for distinct and named channels
+        binding.alsoSendToChannel.text = style.alsoSendToChannelCheckboxText
+        binding.alsoSendToChannel.setTextStyle(style.alsoSendToChannelCheckboxTextStyle)
+        style.alsoSendToChannelCheckboxDrawable?.let { binding.alsoSendToChannel.buttonDrawable = it }
     }
 
     /**

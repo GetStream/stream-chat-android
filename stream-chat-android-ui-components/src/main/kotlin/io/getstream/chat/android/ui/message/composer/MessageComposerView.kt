@@ -191,6 +191,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
 
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
+
+        binding.separator.background = style.dividerBackgroundDrawable
     }
 
     /**
@@ -198,9 +200,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      */
     private fun init(attr: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
-        style = MessageComposerViewStyle(context, attr)
-
-        binding.separator.background = style.dividerBackgroundDrawable
+        applyStyle(MessageComposerViewStyle(context, attr))
 
         binding.leadingContent.apply {
             val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {

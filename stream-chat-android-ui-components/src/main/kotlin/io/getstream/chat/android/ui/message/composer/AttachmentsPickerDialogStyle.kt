@@ -344,7 +344,6 @@ public data class AttachmentsPickerDialogStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
                 return AttachmentsPickerDialogStyle(
-                    // Generic properties
                     attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                     allowAccessButtonTextStyle = allowAccessButtonTextStyle,
                     submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,

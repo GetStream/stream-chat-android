@@ -91,7 +91,7 @@ public data class MessageComposerViewStyle(
     // Center content
     public val messageInputCommandsHandingEnabled: Boolean,
     public val messageInputMentionsHandingEnabled: Boolean,
-    public val messageInputTextStyle: TextStyle,
+    public val messageInputTextStyle: TextStyle, //
     public val messageInputBackgroundDrawable: Drawable,
     public val messageInputCursorDrawable: Drawable?,
     public val messageInputScrollbarEnabled: Boolean,
@@ -108,7 +108,7 @@ public data class MessageComposerViewStyle(
     // Footer content
     public val alsoSendToChannelCheckboxVisible: Boolean,
     public val alsoSendToChannelCheckboxDrawable: Drawable?,
-    public val alsoSendToChannelCheckboxText: CharSequence?,
+    public val alsoSendToChannelCheckboxText: String,
     public val alsoSendToChannelCheckboxTextStyle: TextStyle,
     // Header content
     public val editModeIconDrawable: Drawable,
@@ -363,9 +363,9 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxDrawable
                 )
 
-                val alsoSendToChannelCheckboxText: CharSequence? = a.getText(
+                val alsoSendToChannelCheckboxText: String = a.getText(
                     R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxText
-                )
+                )?.toString() ?: context.getString(R.string.stream_ui_message_input_send_to_channel)
 
                 val alsoSendToChannelCheckboxTextStyle = TextStyle.Builder(a)
                     .size(
