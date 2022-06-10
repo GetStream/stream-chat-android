@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Context): MessageInputViewStyle {
     return MessageInputViewStyle.createDefault(context).copy(
         attachmentSelectionDialogStyle = AttachmentSelectionDialogStyle.createDefault(context).copy(
-            pictureAttachmentIcon = imageAttachmentsTabIconDrawable,
+            pictureAttachmentIcon = mediaAttachmentsTabIconDrawable,
             fileAttachmentIcon = fileAttachmentsTabIconDrawable,
             cameraAttachmentIcon = cameraAttachmentsTabIconDrawable
         )

@@ -7,6 +7,7 @@
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
     <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
+    <ID>ComplexMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>ComplexMethod:MessageComposerView.kt$MessageComposerView$ private fun init(attr: AttributeSet? = null)</ID>
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
@@ -18,6 +19,7 @@
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
     <ID>LargeClass:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
+    <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
@@ -71,6 +73,13 @@
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentItemNameTextFontAssets</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentItemSizeTextFontAssets</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsNoFilesTextFontAssets</ID>
+    <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentNoMediaTextFontAssets</ID>
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$public</ID>
     <ID>MaxLineLength:AvatarView.kt$AvatarView$*</ID>

@@ -21,6 +21,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -34,7 +35,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [MessageComposerView].
  *
  * @param dividerBackgroundDrawable The background of the divider at the top.
- *
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
@@ -45,8 +45,15 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
  * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
+ * @param messageInputCommandsHandingEnabled If command suggestions are shown based on user input.
+ * @param messageInputMentionsHandingEnabled If mention suggestions are shown based on user input.
+ * @param messageInputTextStyle The text style of the text input field.
+ * @param messageInputBackgroundDrawable The background drawable of the text input field.
+ * @param messageInputCursorDrawable The drawable for the cursor in the text input field.
  * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
  * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.f
+ * @param attachmentMaxFileSizeMb The max attachment file size in MB. Stream CDN supports attachments up to 100MB.
+ * @param attachmentMaxFileCount The maximum number of attachments allowed for a single message. Cannot by more than 10.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -81,8 +88,15 @@ public data class MessageComposerViewStyle(
     public val mentionSuggestionItemUsernameTextStyle: TextStyle,
     public val mentionSuggestionItemMentionTextStyle: TextStyle,
     // Center content
+    public val messageInputCommandsHandingEnabled: Boolean,
+    public val messageInputMentionsHandingEnabled: Boolean,
+    public val messageInputTextStyle: TextStyle,
+    public val messageInputBackgroundDrawable: Drawable,
+    public val messageInputCursorDrawable: Drawable?,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
+    public val attachmentMaxFileSizeMb: Int,
+    public val attachmentMaxFileCount: Int,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -246,6 +260,51 @@ public data class MessageComposerViewStyle(
                 /**
                  * Center content
                  */
+                val messageInputCommandsHandingEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsHandingEnabled,
+                    true
+                )
+
+                val messageInputMentionsHandingEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionsHandingEnabled,
+                    true
+                )
+
+                val messageInputTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .hint(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintText,
+                        context.getString(R.string.stream_ui_message_input_hint)
+                    )
+                    .hintColor(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_hint)
+                    )
+                    .build()
+
+                val messageInputBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputBackgroundDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_shape_edit_text_round)!!
+
+                val messageInputCursorDrawable: Drawable? = a.getDrawable(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCursorDrawable
+                )
+
                 val messageInputScrollbarEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerScrollbarEnabled,
                     false
@@ -253,6 +312,16 @@ public data class MessageComposerViewStyle(
                 val messageInputScrollbarFadingEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerScrollbarFadingEnabled,
                     false
+                )
+
+                val attachmentMaxFileSizeMb = a.getInt(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileSizeMb,
+                    AttachmentConstants.MAX_UPLOAD_SIZE_IN_MB
+                )
+
+                val attachmentMaxFileCount = a.getInt(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileCount,
+                    AttachmentConstants.MAX_ATTACHMENTS_COUNT
                 )
 
                 /**
@@ -385,8 +454,15 @@ public data class MessageComposerViewStyle(
                     mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
                     mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
                     // Center content
+                    messageInputCommandsHandingEnabled = messageInputCommandsHandingEnabled,
+                    messageInputMentionsHandingEnabled = messageInputMentionsHandingEnabled,
+                    messageInputTextStyle = messageInputTextStyle,
+                    messageInputBackgroundDrawable = messageInputBackgroundDrawable,
+                    messageInputCursorDrawable = messageInputCursorDrawable,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
+                    attachmentMaxFileSizeMb = attachmentMaxFileSizeMb,
+                    attachmentMaxFileCount = attachmentMaxFileCount,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,

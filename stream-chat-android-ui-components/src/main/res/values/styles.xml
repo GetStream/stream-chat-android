@@ -1090,8 +1090,16 @@
         <item name="streamUiMessageComposerMentionSuggestionItemMentionTextColor">@color/stream_ui_text_color_secondary</item>
 
         <!-- Center content -->
+        <item name="streamUiMessageComposerCommandsHandingEnabled">true</item>
+        <item name="streamUiMessageComposerMentionsHandingEnabled">true</item>
+        <item name="streamUiMessageComposerMessageInputTextSize">@dimen/stream_ui_text_size_input</item>
+        <item name="streamUiMessageComposerMessageInputTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerMessageInputBackgroundDrawable">@drawable/stream_ui_shape_edit_text_round</item>
+        <item name="streamUiMessageComposerMessageInputCursorDrawable">@null</item>
         <item name="streamUiMessageComposerScrollbarEnabled">false</item>
         <item name="streamUiMessageComposerScrollbarFadingEnabled">false</item>
+        <item name="streamUiMessageComposerAttachmentMaxFileSizeMb">100</item>
+        <item name="streamUiMessageComposerAttachmentMaxFileCount">10</item>
 
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
@@ -1122,7 +1130,7 @@
     </style>
 
     <style name="StreamUi.AttachmentsPickerDialog" parent="StreamUi">
-        <item name="streamUiAttachmentsPickerImageAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
         <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
     </style>

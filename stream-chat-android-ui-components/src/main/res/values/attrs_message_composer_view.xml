@@ -16,7 +16,6 @@
 -->
 <resources>
     <declare-styleable name="MessageComposerView">
-        <!-- Root content -->
         <attr name="streamUiMessageComposerDividerBackgroundDrawable" format="reference" />
 
         <!-- Command suggestions content -->
@@ -79,8 +78,26 @@
         </attr>
 
         <!-- Center content -->
+        <attr name="streamUiMessageComposerCommandsHandingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerMentionsHandingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerMessageInputTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerMessageInputTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerMessageInputTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerMessageInputTextFont" format="string" />
+        <attr name="streamUiMessageComposerMessageInputTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageComposerMessageInputHintText" format="string"/>
+        <attr name="streamUiMessageComposerMessageInputHintColor" format="color|reference"/>
+
+        <attr name="streamUiMessageComposerMessageInputBackgroundDrawable" format="reference"/>
+        <attr name="streamUiMessageComposerMessageInputCursorDrawable" format="reference"/>
         <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean"/>
         <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerAttachmentMaxFileSizeMb" format="integer"/>
+        <attr name="streamUiMessageComposerAttachmentMaxFileCount" format="integer"/>
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />

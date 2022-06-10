@@ -76,29 +76,29 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * @property attachmentButtonRippleColor Ripple color of the attachment button. Default value is [colorControlHighlight]
  */
 public data class MessageInputViewStyle(
-    public val attachButtonEnabled: Boolean, //
-    public val attachButtonIcon: Drawable, //
-    public val commandsButtonEnabled: Boolean, //
-    public val commandsButtonIcon: Drawable, //
+    public val attachButtonEnabled: Boolean,
+    public val attachButtonIcon: Drawable,
+    public val commandsButtonEnabled: Boolean,
+    public val commandsButtonIcon: Drawable,
     public val messageInputTextStyle: TextStyle,
-    public val messageInputScrollbarEnabled: Boolean, //
-    public val messageInputScrollbarFadingEnabled: Boolean, //
-    public val sendButtonEnabled: Boolean, //
-    public val sendButtonEnabledIcon: Drawable, //
-    public val sendButtonDisabledIcon: Drawable, //
-    public val showSendAlsoToChannelCheckbox: Boolean, //
-    public val sendAlsoToChannelCheckboxDrawable: Drawable?, //
-    public val sendAlsoToChannelCheckboxGroupChatText: CharSequence?, //
-    public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?, //
-    public val sendAlsoToChannelCheckboxTextStyle: TextStyle, //
+    public val messageInputScrollbarEnabled: Boolean,
+    public val messageInputScrollbarFadingEnabled: Boolean,
+    public val sendButtonEnabled: Boolean,
+    public val sendButtonEnabledIcon: Drawable,
+    public val sendButtonDisabledIcon: Drawable,
+    public val showSendAlsoToChannelCheckbox: Boolean,
+    public val sendAlsoToChannelCheckboxDrawable: Drawable?,
+    public val sendAlsoToChannelCheckboxGroupChatText: CharSequence?,
+    public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?,
+    public val sendAlsoToChannelCheckboxTextStyle: TextStyle,
     public val commandsEnabled: Boolean,
     public val mentionsEnabled: Boolean,
-    @ColorInt public val backgroundColor: Int, //
+    @ColorInt public val backgroundColor: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
-    public val dividerBackground: Drawable, //
-    public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle, // <-------?
+    public val dividerBackground: Drawable,
+    public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle,
     public val commandInputCancelIcon: Drawable,
     public val commandInputBadgeIcon: Drawable,
     public val commandInputBadgeBackgroundDrawable: Drawable,
@@ -112,14 +112,14 @@ public data class MessageInputViewStyle(
     public val mediaAttachmentEmptyStateTextStyle: TextStyle,
     public val fileAttachmentEmptyStateText: String,
     public val mediaAttachmentEmptyStateText: String,
-    public val dismissIconDrawable: Drawable, //
-    public val cooldownTimerTextStyle: TextStyle, //
-    public val cooldownTimerBackgroundDrawable: Drawable, //
+    public val dismissIconDrawable: Drawable,
+    public val cooldownTimerTextStyle: TextStyle,
+    public val cooldownTimerBackgroundDrawable: Drawable,
     public val maxAttachmentsCount: Int,
-    public val editInputModeIcon: Drawable, //
-    public val replyInputModeIcon: Drawable, //
-    @ColorInt public val commandButtonRippleColor: Int?, //
-    @ColorInt public val attachmentButtonRippleColor: Int?, //
+    public val editInputModeIcon: Drawable,
+    public val replyInputModeIcon: Drawable,
+    @ColorInt public val commandButtonRippleColor: Int?,
+    @ColorInt public val attachmentButtonRippleColor: Int?,
 ) {
 
     public companion object {
