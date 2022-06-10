@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
@@ -49,11 +51,13 @@ internal class DeleteMessageListenerImpl(
             if (isModerationFailed) {
                 channelLogic.deleteMessage(message)
                 messageRepository.deleteChannelMessage(message)
-                Result.error(IllegalStateException("moderation failed: $messageId"))
+                Result.error(MessageModerationDeletedException(
+                    "Message with failed moderation has been deleted locally: $messageId"
+                ))
             } else {
                 Result.success(Unit)
             }
-        } ?: Result.error(IllegalStateException("no message found with id: $messageId"))
+        } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
     }
 
     /**
