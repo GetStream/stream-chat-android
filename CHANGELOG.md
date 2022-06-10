@@ -86,6 +86,7 @@
 - Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 
 ### ⚠️ Changed
+- Changed how the emoji only message size and how they are laid out depending on emoji count. [#3665](https://github.com/GetStream/stream-chat-android/pull/3665)
 
 ### ❌ Removed
 - Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)
