@@ -39,9 +39,9 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
@@ -51,12 +51,12 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import java.util.Calendar
 
+@OptIn(ExperimentalStreamChatApi::class)
 class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
@@ -187,26 +187,13 @@ class ChatFragment : Fragment() {
                     }
                 }
             }
-            binding.messageListView.setMessageReplyHandler { cid, message ->
+            binding.messageListView.setMessageReplyHandler { _, message ->
                 messageComposerViewModel.performMessageAction(Reply(message))
             }
             binding.messageListView.setMessageEditHandler { message ->
                 messageComposerViewModel.performMessageAction(Edit(message))
             }
         }
-
-        val defaultTrailingContent = DefaultMessageComposerTrailingContent(requireContext()).also {
-            it.sendMessageButtonClickListener = {
-                showToast("Custom trailing content")
-                binding.messageComposerView.sendMessageButtonClickListener()
-            }
-            // it.sendMessageButtonClickListener = {
-            //     showToast("Custom trailing content 2")
-            //     messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage())
-            // }
-        }
-
-        binding.messageComposerView.setTrailingContent(defaultTrailingContent)
     }
 
     private fun initMessagesViewModel() {

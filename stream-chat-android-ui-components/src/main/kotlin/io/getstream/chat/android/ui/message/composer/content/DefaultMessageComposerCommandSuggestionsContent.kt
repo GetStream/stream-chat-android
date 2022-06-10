@@ -27,6 +27,7 @@ import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -93,6 +94,8 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding.suggestionsRecyclerView.adapter = adapter
 
         binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
+        binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
+        binding.commandsTitleTextView.setStartDrawable(style.commandSuggestionsTitleIconDrawable)
     }
 
     /**

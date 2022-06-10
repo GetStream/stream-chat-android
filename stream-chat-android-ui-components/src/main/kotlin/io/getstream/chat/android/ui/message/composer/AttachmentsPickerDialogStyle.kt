@@ -109,9 +109,6 @@ public data class AttachmentsPickerDialogStyle(
                 R.attr.streamUiAttachmentsPickerDialogStyle,
                 R.style.StreamUi_AttachmentsPickerDialog,
             ).use { a ->
-                /**
-                 * Generic properties
-                 */
                 val attachmentsPickerBackgroundColor = a.getColor(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_white_smoke)

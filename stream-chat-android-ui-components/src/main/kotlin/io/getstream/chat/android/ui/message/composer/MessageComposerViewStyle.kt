@@ -75,7 +75,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  */
 @ExperimentalStreamChatApi
 public data class MessageComposerViewStyle(
-    // Root content
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleTextStyle: TextStyle,
@@ -129,9 +128,6 @@ public data class MessageComposerViewStyle(
                 R.attr.streamUiMessageComposerViewStyle,
                 R.style.StreamUi_MessageComposerView,
             ).use { a ->
-                /**
-                 * Root content
-                 */
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
@@ -374,7 +370,7 @@ public data class MessageComposerViewStyle(
                 val alsoSendToChannelCheckboxTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextSize,
-                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small)
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextColor,
@@ -441,7 +437,6 @@ public data class MessageComposerViewStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
 
                 return MessageComposerViewStyle(
-                    // Root content
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
