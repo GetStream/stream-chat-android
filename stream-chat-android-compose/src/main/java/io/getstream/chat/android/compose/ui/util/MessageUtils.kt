@@ -91,3 +91,20 @@ internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(this)
  * @return If the message is single emoji only or not.
  */
 internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
+
+/**
+ * @return If the emoji should be inside bubble or not.
+ */
+internal fun Message.getEmojiCount(): Int = EmojiUtil.getEmojiCount(this)
+
+/**
+ * @return If the message is emoji only and shoudl be shown without message buble or not.
+ */
+internal fun Message.isEmojiOnlyWithoutBubble(): Boolean = isEmojiOnly() &&
+    getEmojiCount() <= MaxFullSizeEmoji &&
+    replyTo == null
+
+/**
+ * Max number of emoji without showing it inside a bubble.
+ */
+internal const val MaxFullSizeEmoji: Int = 3
