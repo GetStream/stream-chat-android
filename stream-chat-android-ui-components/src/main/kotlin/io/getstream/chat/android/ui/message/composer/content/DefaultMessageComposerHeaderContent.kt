@@ -92,13 +92,13 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
         when (state.action) {
             is Reply -> {
                 binding.inputModeHeaderContainer.isVisible = true
-                binding.inputModeTitleTextView.text = context.getString(R.string.stream_ui_message_input_reply)
-                binding.inputModeIcon.setImageDrawable(style.replyModeIconDrawable)
+                binding.inputModeTextView.text = context.getString(R.string.stream_ui_message_input_reply)
+                binding.inputModeImageView.setImageDrawable(style.replyModeIconDrawable)
             }
             is Edit -> {
                 binding.inputModeHeaderContainer.isVisible = true
-                binding.inputModeTitleTextView.text = context.getString(R.string.stream_ui_message_list_edit_message)
-                binding.inputModeIcon.setImageDrawable(style.editModeIconDrawable)
+                binding.inputModeTextView.text = context.getString(R.string.stream_ui_message_list_edit_message)
+                binding.inputModeImageView.setImageDrawable(style.editModeIconDrawable)
             }
             else -> {
                 binding.inputModeHeaderContainer.isVisible = false

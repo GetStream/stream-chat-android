@@ -68,8 +68,8 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultFooterContentBinding.inflate(streamThemeInflater, this)
-        binding.alsoSendToChannel.setOnCheckedChangeListener { _, _ ->
-            alsoSendToChannelSelectionListener(binding.alsoSendToChannel.isChecked)
+        binding.alsoSendToChannelCheckBox.setOnCheckedChangeListener { _, _ ->
+            alsoSendToChannelSelectionListener(binding.alsoSendToChannelCheckBox.isChecked)
         }
     }
 
@@ -81,10 +81,9 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
 
-        // For simplicity, the text is the same for distinct and named channels
-        binding.alsoSendToChannel.text = style.alsoSendToChannelCheckboxText
-        binding.alsoSendToChannel.setTextStyle(style.alsoSendToChannelCheckboxTextStyle)
-        style.alsoSendToChannelCheckboxDrawable?.let { binding.alsoSendToChannel.buttonDrawable = it }
+        binding.alsoSendToChannelCheckBox.text = style.alsoSendToChannelCheckboxText
+        binding.alsoSendToChannelCheckBox.setTextStyle(style.alsoSendToChannelCheckboxTextStyle)
+        style.alsoSendToChannelCheckboxDrawable?.let { binding.alsoSendToChannelCheckBox.buttonDrawable = it }
     }
 
     /**
@@ -94,7 +93,7 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
      */
     override fun renderState(state: MessageComposerState) {
         val isThreadModeActive = state.messageMode is MessageMode.MessageThread
-        binding.alsoSendToChannel.isVisible = style.alsoSendToChannelCheckboxVisible && isThreadModeActive
-        binding.alsoSendToChannel.isChecked = state.alsoSendToChannel
+        binding.alsoSendToChannelCheckBox.isVisible = style.alsoSendToChannelCheckboxVisible && isThreadModeActive
+        binding.alsoSendToChannelCheckBox.isChecked = state.alsoSendToChannel
     }
 }

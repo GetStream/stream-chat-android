@@ -14,14 +14,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="bottom"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:paddingHorizontal="@dimen/stream_ui_message_composer_leading_content_horizontal_padding"
         android:paddingVertical="@dimen/stream_ui_message_composer_leading_content_vertical_padding"
         >
 
@@ -32,6 +34,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_attach"
+            tools:ignore="ContentDescription"
             />
 
         <ImageView
@@ -41,6 +44,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_command"
+            tools:ignore="ContentDescription"
             />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

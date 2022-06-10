@@ -28,7 +28,7 @@
         >
 
         <ImageView
-            android:id="@+id/inputModeIcon"
+            android:id="@+id/inputModeImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
@@ -37,7 +37,7 @@
             />
 
         <TextView
-            android:id="@+id/inputModeTitleTextView"
+            android:id="@+id/inputModeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
