@@ -44,12 +44,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
@@ -233,7 +235,7 @@ class MessagesActivity : BaseConnectedActivity() {
 
     @Composable
     fun MyCustomComposer() {
-        val isOverlayShowing = remember {
+        var isOverlayShowing by remember {
             mutableStateOf(false)
         }
 
@@ -247,12 +249,12 @@ class MessagesActivity : BaseConnectedActivity() {
                     messageInputState = it,
                     onAttachmentsClick = { },
                     onCommandsClick = { },
-                    onVoiceRecordingClicked = { isOverlayShowing.value = !isOverlayShowing.value },
+                    onVoiceRecordingClicked = { isOverlayShowing = !isOverlayShowing },
                     ownCapabilities = composerViewModel.ownCapabilities.collectAsState().value
                 )
             },
             input = { inputState ->
-                if (isOverlayShowing.value) {
+                if (isOverlayShowing) {
                     Text(
                         modifier = Modifier
                             .padding(horizontal = 0.dp, vertical = 8.dp)
@@ -261,7 +263,8 @@ class MessagesActivity : BaseConnectedActivity() {
                             .padding(vertical = 8.dp)
                             .weight(1f)
                             .align(CenterVertically),
-                        text = "overlay"
+                        text = "overlay",
+                        textAlign = TextAlign.Center
                     )
                 } else {
                     MessageInput(
@@ -319,7 +322,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 modifier = Modifier
                     .height(44.dp)
                     .padding(horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 if (canSendAttachments) {
                     IconButton(
