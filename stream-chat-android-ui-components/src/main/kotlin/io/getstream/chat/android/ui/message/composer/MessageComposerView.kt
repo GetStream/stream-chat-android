@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
-import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -478,9 +477,6 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * @param state [MessageComposerState] instance representing current UI state.
      */
     private fun renderValidationErrors(state: MessageComposerState) {
-        // Don't show the toast during snapshot testing
-        if (Looper.myLooper() != Looper.getMainLooper()) return
-
         val currentValidationError = state.validationErrors.firstOrNull()
 
         if (currentValidationError != null && currentValidationError != previousValidationError) {
