@@ -17,20 +17,25 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -177,6 +182,11 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private val commandSuggestionsContent: View
         get() = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
 
+    /**
+     * The validation error from the previous state update.
+     */
+    private var previousValidationError: ValidationError? = null
+
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -192,6 +202,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     override fun applyStyle(style: MessageComposerViewStyle) {
         this.style = style
 
+        setBackgroundColor(style.backgroundColor)
         binding.separator.background = style.dividerBackgroundDrawable
     }
 
@@ -295,6 +306,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
         (binding.headerContent.children.first() as? MessageComposerComponent)?.renderState(state)
 
         updateSuggestionsPopup(state)
+        renderValidationErrors(state)
     }
 
     /**
@@ -308,7 +320,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     /**
      * Re-renders suggestions popup window for the given [MessageComposerState] instance.
      *
-     * @param state [MessageComposerState] for which the suggestions popup is updated.
+     * @param state [MessageComposerState] instance representing current UI state.
      */
     private fun updateSuggestionsPopup(state: MessageComposerState) {
         when {
@@ -323,7 +335,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     /**
      * Displays list of command suggestions, or updates it according to the [MessageComposerState.commandSuggestions] list.
      *
-     * @param state Current instance of [MessageComposerState].
+     * @param state [MessageComposerState] instance representing current UI state.
      */
     private fun renderCommandsSuggestions(state: MessageComposerState) {
         // Do not do anything if the list hasn't changed
@@ -344,7 +356,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     /**
      * Displays list of mention suggestions, or updates it according to the [MessageComposerState.mentionSuggestions] list.
      *
-     * @param state Current instance of [MessageComposerState].
+     * @param state [MessageComposerState] instance representing current UI state.
      */
     private fun renderMentionSuggestions(state: MessageComposerState) {
         // Do not do anything if the list hasn't changed
@@ -458,6 +470,49 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     public fun <V> setCommandSuggestionsContent(view: V) where V : View, V : MessageComposerComponent {
         commandSuggestionsContentOverride = view
         view.applyStyle(style)
+    }
+
+    /**
+     * Displays the first validation error in a [Toast].
+     *
+     * @param state [MessageComposerState] instance representing current UI state.
+     */
+    private fun renderValidationErrors(state: MessageComposerState) {
+        // Don't show the toast during snapshot testing
+        if (Looper.myLooper() != Looper.getMainLooper()) return
+
+        val currentValidationError = state.validationErrors.firstOrNull()
+
+        if (currentValidationError != null && currentValidationError != previousValidationError) {
+            val errorMessage = when (currentValidationError) {
+                is ValidationError.MessageLengthExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_message_length,
+                        currentValidationError.maxMessageLength
+                    )
+                }
+                is ValidationError.AttachmentCountExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_attachment_count,
+                        currentValidationError.maxAttachmentCount
+                    )
+                }
+                is ValidationError.AttachmentSizeExceeded -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_error_file_size,
+                        MediaStringUtil.convertFileSizeByteCount(currentValidationError.maxAttachmentSize)
+                    )
+                }
+                is ValidationError.ContainsLinksWhenNotAllowed -> {
+                    context.getString(
+                        R.string.stream_ui_message_composer_sending_links_not_allowed,
+                    )
+                }
+            }
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+
+        this.previousValidationError = currentValidationError
     }
 
     private companion object {

@@ -1709,6 +1709,9 @@ public final class io/getstream/chat/android/compose/ui/util/UserUtilsKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/util/extensions/ChannelCapabilitiesKt {
+}
+
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/FilterObject;III)V

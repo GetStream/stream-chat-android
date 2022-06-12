@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 /**
  * Style for [MessageComposerView].
  *
+ * @param backgroundColor The background color of the message composer.
  * @param dividerBackgroundDrawable The background of the divider at the top.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
@@ -75,6 +76,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  */
 @ExperimentalStreamChatApi
 public data class MessageComposerViewStyle(
+    public val backgroundColor: Int,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleTextStyle: TextStyle,
@@ -128,6 +130,11 @@ public data class MessageComposerViewStyle(
                 R.attr.streamUiMessageComposerViewStyle,
                 R.style.StreamUi_MessageComposerView,
             ).use { a ->
+                var backgroundColor: Int
+                context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
+                    backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
+                }
+
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
@@ -437,6 +444,7 @@ public data class MessageComposerViewStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
 
                 return MessageComposerViewStyle(
+                    backgroundColor = backgroundColor,
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,

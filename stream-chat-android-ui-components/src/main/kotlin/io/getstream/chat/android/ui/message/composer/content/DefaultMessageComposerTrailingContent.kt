@@ -20,6 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -89,6 +90,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val isInputValid = state.validationErrors.isEmpty()
@@ -104,7 +106,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             } else {
                 cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = true
-                sendMessageButton.isEnabled = style.sendMessageButtonEnabled && hasValidContent
+                sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
             }
         }
     }

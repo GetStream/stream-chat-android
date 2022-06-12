@@ -22,8 +22,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -32,9 +30,9 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -150,6 +148,16 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
             }
         }
 
+        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+
+        if (canSendMessage) {
+            binding.messageEditText.isEnabled = true
+            binding.messageEditText.hint = context.getString(R.string.stream_ui_message_input_hint)
+        } else {
+            binding.messageEditText.isEnabled = false
+            binding.messageEditText.hint = context.getString(R.string.stream_ui_message_cannot_send_messages_hint)
+        }
+
         attachmentsAdapter.setAttachments(state.attachments)
 
         val action = state.action
@@ -166,39 +174,6 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         }
 
         binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
-        renderValidationErrors(state.validationErrors)
-    }
-
-    /**
-     * Displays first of the validation errors received using in Toast.
-     */
-    private fun renderValidationErrors(validationErrors: List<ValidationError>) {
-        if (validationErrors.isEmpty()) return
-
-        val errorMessage = when (val validationError = validationErrors.first()) {
-            is ValidationError.MessageLengthExceeded -> {
-                context.getString(
-                    R.string.stream_ui_message_composer_error_message_length,
-                    validationError.maxMessageLength
-                )
-            }
-            is ValidationError.AttachmentCountExceeded -> {
-                context.getString(
-                    R.string.stream_ui_message_composer_error_attachment_count,
-                    validationError.maxAttachmentCount
-                )
-            }
-            is ValidationError.AttachmentSizeExceeded -> {
-                context.getString(
-                    R.string.stream_ui_message_composer_error_file_size,
-                    MediaStringUtil.convertFileSizeByteCount(validationError.maxAttachmentSize)
-                )
-            }
-            is ValidationError.ContainsLinksWhenNotAllowed -> {
-                context.getString(R.string.stream_ui_message_composer_sending_links_not_allowed)
-            }
-        }
-        Toast.makeText(context, errorMessage, LENGTH_SHORT).show()
     }
 
     /**

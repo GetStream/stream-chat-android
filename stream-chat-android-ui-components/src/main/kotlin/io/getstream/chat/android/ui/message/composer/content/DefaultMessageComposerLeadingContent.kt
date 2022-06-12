@@ -19,6 +19,8 @@ package io.getstream.chat.android.ui.message.composer.content
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -96,6 +98,8 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val hasCommandInput = state.inputValue.startsWith("/")
@@ -107,5 +111,8 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
 
         binding.attachmentsButton.isEnabled = style.attachmentsButtonVisible && isAttachmentsButtonEnabled
         binding.commandsButton.isEnabled = style.commandsButtonVisible && isCommandsButtonEnabled
+
+        binding.attachmentsButton.isVisible = canSendMessage && canUploadFile
+        binding.commandsButton.isVisible = canSendMessage
     }
 }
