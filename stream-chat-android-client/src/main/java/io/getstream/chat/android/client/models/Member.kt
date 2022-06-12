@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
@@ -75,4 +76,19 @@ public data class Member(
      * The user's channel-level role.
      */
     var channelRole: String? = null,
-) : UserEntity
+) : UserEntity, ComparableFieldProvider {
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
+            "isInvited" -> isInvited
+            "inviteAcceptedAt" -> inviteAcceptedAt
+            "inviteRejectedAt" -> inviteRejectedAt
+            "shadowBanned" -> shadowBanned
+            "banned" -> banned
+            "channelRole" -> channelRole
+            else -> null
+        }
+    }
+}

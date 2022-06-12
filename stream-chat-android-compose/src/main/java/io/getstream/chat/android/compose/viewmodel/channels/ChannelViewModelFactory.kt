@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 
 /**
@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.models.Channel
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient,
-    private val querySort: QuerySort<Channel>,
+    private val querySort: QuerySorter<Channel>,
     private val filters: FilterObject?,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,

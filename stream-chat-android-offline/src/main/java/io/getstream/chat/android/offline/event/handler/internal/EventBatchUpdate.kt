@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.event.handler.internal
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.offline.extensions.internal.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.internal.updateLastMessage
@@ -27,6 +28,7 @@ import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
+import io.getstream.logging.StreamLog
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -48,12 +50,15 @@ import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrent
  * batch.execute()
  */
 internal class EventBatchUpdate private constructor(
+    private val id: Int,
     private val currentUserId: String?,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
     private val userMap: MutableMap<String, User>,
 ) {
+
+    private val logger = StreamLog.getLogger(TAG)
 
     /**
      * Adds the message and updates the last message for the given channel.
@@ -82,6 +87,11 @@ internal class EventBatchUpdate private constructor(
     }
 
     fun addChannel(channel: Channel) {
+        logger.v {
+            "[addChannel] id: $id" +
+                ", channel.lastMessageAt: ${channel.lastMessageAt}" +
+                ", channel.latestMessageId: ${channel.messages.latestOrNull()?.id}"
+        }
         // ensure we store all users for this channel
         addUsers(channel.users())
         // TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour
@@ -112,8 +122,8 @@ internal class EventBatchUpdate private constructor(
     suspend fun execute() {
         // actually insert the data
         currentUserId?.let { userMap -= it }
-
         enrichChannelsWithCapabilities()
+        logger.v { "[execute] id: $id, channelMap.size: ${channelMap.size}" }
 
         repos.storeStateForChannels(
             users = userMap.values.toList(),
@@ -133,11 +143,13 @@ internal class EventBatchUpdate private constructor(
             .filter { channel -> channel.ownCapabilities.isEmpty() }
             .map { channel -> channel.cid }
         val cachedChannels = repos.selectChannels(channelsWithoutCapabilities)
-
+        logger.v { "[enrichChannelsWithCapabilities] id: $id, cachedChannels.size: ${cachedChannels.size}" }
         channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
 
-    internal class Builder {
+    internal class Builder(
+        private val id: Int
+    ) {
         private val channelsToFetch = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
@@ -169,7 +181,12 @@ internal class EventBatchUpdate private constructor(
                 repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
             val channelMap: Map<String, Channel> =
                 repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
+            StreamLog.v(TAG) {
+                "[builder.build] id: $id, messageMap.size: ${messageMap.size}" +
+                    ", channelMap.size: ${channelMap.size}"
+            }
             return EventBatchUpdate(
+                id,
                 currentUserId,
                 repos,
                 channelMap.toMutableMap(),
@@ -177,5 +194,9 @@ internal class EventBatchUpdate private constructor(
                 users.associateBy(User::id).toMutableMap()
             )
         }
+    }
+
+    private companion object {
+        private const val TAG = "Chat:EventBatchUpdate"
     }
 }

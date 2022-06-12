@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 
 /**
  * The configuration for querying various bits of data. It's generic, so it can be used to query
@@ -28,5 +28,5 @@ import io.getstream.chat.android.client.api.models.QuerySort
  */
 public data class QueryConfig<T : Any>(
     val filters: FilterObject,
-    val querySort: QuerySort<T>,
+    val querySort: QuerySorter<T>,
 )

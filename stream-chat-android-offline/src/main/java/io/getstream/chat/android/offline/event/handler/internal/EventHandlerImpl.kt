@@ -99,6 +99,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import java.util.Date
 import java.util.InputMismatchException
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 private const val TAG = "Chat:EventHandlerOld"
 
@@ -162,16 +164,21 @@ internal class EventHandlerImpl(
      */
     override suspend fun syncHistoryForActiveChannels() {
         logger.i { "[replayEventsForActiveChannels] no args" }
-        replayEventsForChannels(activeChannelsCid())
+        val activeChannelsCid = activeChannelsCid()
+        replayEventsForChannels(activeChannelsCid)
     }
 
     private fun activeChannelsCid(): List<String> {
         return logic.getActiveChannelsLogic().map { it.cid }
     }
 
-    private suspend fun replayEventsForChannels(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun replayEventsForChannels(cids: List<String>) {
+        if (cids.isEmpty()) {
+            logger.w { "[replayEventsForChannels] rejected (cids is empty" }
+            return
+        }
         logger.i { "[replayEventsForChannels] cids: $cids" }
-        return queryEvents(cids)
+        queryEvents(cids)
             .onSuccessSuspend { eventList ->
                 logger.d { "[replayEventsForChannels] eventList.size: ${eventList.size}" }
                 syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
@@ -217,10 +224,8 @@ internal class EventHandlerImpl(
                     }
 
                     // 4. recover missing events
-                    val activeChannelCids = activeChannelsCid()
-                    if (activeChannelCids.isNotEmpty()) {
-                        replayEventsForChannels(activeChannelCids)
-                    }
+                    val activeChannelsCid = activeChannelsCid()
+                    replayEventsForChannels(activeChannelsCid)
                 }
                 is HealthEvent -> {
                     logger.v { "[handleConnectEvents] received HealthEvent" }
@@ -242,7 +247,8 @@ internal class EventHandlerImpl(
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
         val currentUserId = client.getCurrentUser()?.id
-        val batchBuilder = EventBatchUpdate.Builder()
+        val batchId = Random.nextInt().absoluteValue
+        val batchBuilder = EventBatchUpdate.Builder(batchId)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
@@ -326,8 +332,10 @@ internal class EventHandlerImpl(
                         cid = event.cid,
                     )
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
-                    repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
-                        ?.let(batch::addChannel)
+                    repos.selectChannelWithoutMessages(event.cid)?.copy(
+                        hidden = false,
+                        messages = listOf(event.message)
+                    )?.let(batch::addChannel)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)

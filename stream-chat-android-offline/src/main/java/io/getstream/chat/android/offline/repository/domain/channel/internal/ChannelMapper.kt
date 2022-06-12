@@ -21,26 +21,20 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.message.latestOrNull
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toModel
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
-import io.getstream.chat.android.offline.repository.domain.message.internal.toEntity
-import java.util.Date
 
 internal fun Channel.toEntity(): ChannelEntity {
-    var lastMessage: MessageEntity? = null
-    var lastMessageAt: Date? = this.lastMessageAt
-    messages.lastOrNull()?.let { message ->
-        lastMessage = message.toEntity()
-
-        if (lastMessageAt == null) {
-            lastMessageAt = message.createdAt ?: message.createdLocallyAt
-        }
-    }
+    val latestMessage = messages.latestOrNull()
+    val latestMessageId = latestMessage?.id
+    val latestMessageAt = latestMessage?.let { it.createdAt ?: it.createdLocallyAt }
+    val finalLatestMessageAt = max(lastMessageAt, latestMessageAt)
     return ChannelEntity(
         type = type,
         channelId = id,
@@ -58,8 +52,8 @@ internal fun Channel.toEntity(): ChannelEntity {
         members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
         memberCount = memberCount,
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
-        lastMessageId = lastMessage?.messageInnerEntity?.id,
-        lastMessageAt = lastMessageAt,
+        lastMessageId = latestMessageId,
+        lastMessageAt = finalLatestMessageAt,
         createdByUserId = createdBy.id,
         watcherIds = watchers.map(User::id),
         watcherCount = watcherCount,

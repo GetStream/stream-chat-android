@@ -615,6 +615,10 @@ public class MessageListView : ConstraintLayout {
 
             val style = requireStyle()
             binding.scrollToBottomButton.setScrollButtonViewStyle(style.scrollButtonViewStyle)
+            (binding.scrollToBottomButton.layoutParams as? LayoutParams)?.let { layoutParams ->
+                layoutParams.bottomMargin = style.scrollButtonBottomMargin
+                layoutParams.marginEnd = style.scrollButtonEndMargin
+            }
             scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
             scrollHelper.alwaysScrollToBottom = style.scrollButtonBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }

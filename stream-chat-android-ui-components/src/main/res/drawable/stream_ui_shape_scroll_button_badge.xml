@@ -16,4 +16,5 @@
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="10dp" />
+    <solid android:color="@color/stream_ui_accent_blue" />
 </shape>
