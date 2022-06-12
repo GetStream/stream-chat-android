@@ -27,10 +27,13 @@ private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
  */
 @InternalStreamChatApi
 public fun String.snakeToLowerCamelCase(): String {
-    return snakeRegex.replace(this) {
-        it.value.replace("_", "").uppercase()
+    return snakeRegex.replace(this) { matchResult ->
+        matchResult.value.replace("_", "").uppercase()
     }
 }
+
+@InternalStreamChatApi
+public fun String.lowerCamelCaseToGetter(): String = "get${this[0].uppercase()}${this.substring(1)}"
 
 /**
  * Converts String written in camel case to String in snake case.

@@ -27,9 +27,12 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
+import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.configuration.Config
@@ -53,6 +56,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventLis
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
@@ -179,18 +183,18 @@ public class StreamOfflinePluginFactory(
             syncManager.clearState()
         }
 
-        val eventHandler = EventHandlerImpl(
-            recoveryEnabled = true,
+        val eventHandler: EventHandler = createEventHandler(
+            useSequentialEventHandler = config.useSequentialEventHandler,
+            scope = scope,
             client = chatClient,
-            logic = logic,
-            state = stateRegistry,
+            logicRegistry = logic,
+            stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
             repos = repos,
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
-            eventHandler.initialize(user, scope)
-            eventHandler.startListening(scope)
+            eventHandler.startListening(user)
         }
 
         InitializationCoordinator.getOrCreate().run {
@@ -235,6 +239,40 @@ public class StreamOfflinePluginFactory(
             createChannelListener = CreateChannelListenerImpl(globalState, repos),
             activeUser = user
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
+    }
+
+    private fun createEventHandler(
+        useSequentialEventHandler: Boolean,
+        scope: CoroutineScope,
+        client: ChatClient,
+        logicRegistry: LogicRegistry,
+        stateRegistry: StateRegistry,
+        mutableGlobalState: GlobalMutableState,
+        repos: RepositoryFacade,
+        syncManager: SyncManager
+    ): EventHandler {
+        return when (BuildConfig.DEBUG || useSequentialEventHandler) {
+            true -> EventHandlerSequential(
+                scope = scope,
+                recoveryEnabled = true,
+                subscribeForEvents = { listener -> client.subscribe(listener) },
+                logicRegistry = logicRegistry,
+                stateRegistry = stateRegistry,
+                mutableGlobalState = mutableGlobalState,
+                repos = repos,
+                syncManager = syncManager,
+            )
+            else -> EventHandlerImpl(
+                scope = scope,
+                recoveryEnabled = true,
+                client = client,
+                logic = logicRegistry,
+                state = stateRegistry,
+                mutableGlobalState = mutableGlobalState,
+                repos = repos,
+                syncManager = syncManager,
+            )
+        }
     }
 
     private fun clearCachedInstance() {

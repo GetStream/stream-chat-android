@@ -32,9 +32,10 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
@@ -143,6 +144,7 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -150,6 +152,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -244,7 +247,11 @@ internal constructor(
             }
             currentUser?.let { updatedCurrentUser ->
                 userStateService.onUserUpdated(updatedCurrentUser)
-                storePushNotificationsConfig(updatedCurrentUser.id, updatedCurrentUser.name)
+                storePushNotificationsConfig(
+                    updatedCurrentUser.id,
+                    updatedCurrentUser.name,
+                    userStateService.state !is UserState.UserSet,
+                )
             }
         }
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
@@ -293,58 +300,84 @@ internal constructor(
      * for the initial token, and it's also invoked whenever the user's token has expired, to
      * fetch a new token.
      *
-     * This method performs required operations before connecting with the Stream API.
-     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
-     * You can use [listener] to get updates about socket connection.
-     *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
-     * @param listener Socket connection listener.
+     * @param timeoutMilliseconds A timeout in milliseconds when the process will be aborted.
+     *
+     * @return [Result] of [ConnectionData] with the info of the established connection or a detailed error.
      */
     private suspend fun setUser(
         user: User,
         tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
+        val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
-        if (tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id) {
-            logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
-            return Result.error(
-                ChatError(
-                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
-                )
-            )
-        }
         val userState = userStateService.state
         return when {
+            tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
+                logger.logE(
+                    "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                )
+                Result.error(
+                    ChatError(
+                        "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                    )
+                )
+            }
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
-                initializeClientWithUser(user, cacheableTokenProvider)
+                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user)
                 socketStateService.onConnectionRequested()
-                socket.connect(user)
-                waitConnection.first()
+                socket.connectUser(user, isAnonymous)
+                waitFirstConnection(timeoutMilliseconds)
             }
-            userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE(
+            userState is UserState.UserSet -> {
+                logger.logW(
                     "[setUser] Trying to set user without disconnecting the previous one - " +
                         "make sure that previously set user is disconnected."
                 )
-                Result.error(ChatError("User cannot be set until the previous one is disconnected."))
+                when {
+                    userState.user.id != user.id -> {
+                        logger.logE("[setUser] Trying to set different user without disconnect previous one.")
+                        Result.error(
+                            ChatError(
+                                "User cannot be set until the previous one is disconnected."
+                            )
+                        )
+                    }
+                    else -> {
+                        getConnectionId()?.let { Result.success(ConnectionData(userState.user, it)) }
+                            ?: run {
+                                logger.logE(
+                                    "[setUser] Trying to connect the same user twice without a previously completed " +
+                                        "connection."
+                                )
+                                Result.error(
+                                    ChatError(
+                                        "Failed to connect user. Please check you haven't connected a user already."
+                                    )
+                                )
+                            }
+                    }
+                }
             }
             else -> {
                 logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
-        }
+        }.onError { disconnect() }
     }
 
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
+        isAnonymous: Boolean,
     ) {
         initializationCoordinator.userConnected(user)
         // fire a handler here that the chatDomain and chatUI can use
-        config.isAnonymous = false
+        config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
@@ -374,14 +407,20 @@ internal constructor(
      *
      * @param user The user to set.
      * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
      *
      * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
-    public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectUser] userId: '${user.id}', username: '${user.name}'")
-            setUser(user, tokenProvider).also { result ->
+            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -401,8 +440,13 @@ internal constructor(
      * @return Executable [Call] responsible for connecting the user.
      */
     @CheckResult
-    public fun connectUser(user: User, token: String): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token))
+    @JvmOverloads
+    public fun connectUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
     }
 
     /**
@@ -422,6 +466,7 @@ internal constructor(
             initializeClientWithUser(
                 user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
+                isAnonymous = config.isAnonymous,
             )
         }
     }
@@ -431,37 +476,27 @@ internal constructor(
         return userCredentialStorage.get() != null
     }
 
-    private fun storePushNotificationsConfig(userId: String, userName: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String, isAnonymous: Boolean) {
         userCredentialStorage.put(
             CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
                 userName = userName,
+                isAnonymous = isAnonymous,
             ),
         )
     }
 
-    private suspend fun setAnonymousUser(): Result<ConnectionData> {
-        return if (userStateService.state is UserState.NotSet) {
-            socketStateService.onConnectionRequested()
-            userStateService.onSetAnonymous()
-            tokenManager.setTokenProvider(CacheableTokenProvider(ConstantTokenProvider("anon")))
-            config.isAnonymous = true
-            warmUp()
-            socket.connectAnonymously()
-            initializationCoordinator.userConnected(User(id = ANONYMOUS_USER_ID))
-            waitConnection.first()
-        } else {
-            logger.logE("Failed to connect user. Please check you don't have connected user already")
-            Result.error(ChatError("User cannot be set until previous one is disconnected."))
-        }
-    }
-
     @CheckResult
-    public fun connectAnonymousUser(): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectAnonymousUser] no args")
-            setAnonymousUser().also { result ->
+            setUser(
+                anonUser,
+                ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
+                timeoutMilliseconds,
+            ).also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
@@ -471,12 +506,23 @@ internal constructor(
         }
     }
 
+    private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
+        timeoutMilliseconds?.let {
+            withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
+                ?: Result.error(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+        } ?: waitConnection.first()
+
     @CheckResult
-    public fun connectGuestUser(userId: String, username: String): Call<ConnectionData> {
+    @JvmOverloads
+    public fun connectGuestUser(
+        userId: String,
+        username: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.logD("[connectGuestUser] userId: '$userId', username: '$username'")
             getGuestToken(userId, username).await()
-                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token)) }
+                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
                 .data()
                 .also { result ->
                     logger.logV(
@@ -514,7 +560,7 @@ internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
@@ -757,8 +803,8 @@ internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.UserSet -> socket.reconnectUser(userState.user)
-                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectAnonymously()
+                is UserState.UserSet -> socket.reconnectUser(userState.user, false)
+                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -957,7 +1003,7 @@ internal constructor(
         offset: Int? = null,
         limit: Int? = null,
         next: String? = null,
-        sort: QuerySort<Message>? = null,
+        sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
             return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
@@ -992,7 +1038,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return api.getPinnedMessages(
@@ -1919,7 +1965,7 @@ internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        sort: QuerySorter<BannedUsersSort> = QuerySortByField.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -2096,6 +2142,12 @@ internal constructor(
         lastSyncAt: Date,
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
+            .withPrecondition(scope) {
+                when (channelsIds.isEmpty()) {
+                    true -> Result.error(ChatError("channelsIds must contain at least 1 id."))
+                    else -> Result.success(Unit)
+                }
+            }
     }
 
     /**
@@ -2240,6 +2292,7 @@ internal constructor(
         private var userCredentialStorage: UserCredentialStorage? = null
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
+        private var debugRequests: Boolean = false
 
         /**
          * Sets the log level to be used by the client.
@@ -2386,6 +2439,14 @@ internal constructor(
         }
 
         /**
+         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
+         * release builds as it uses a memory cache.
+         */
+        public fun debugRequests(shouldDebug: Boolean): Builder = apply {
+            this.debugRequests = shouldDebug
+        }
+
+        /**
          * Sets a custom [RetryPolicy] used to determine whether a particular call should be retried.
          * By default, no calls are retried.
          * @see [NoRetryPolicy]
@@ -2444,7 +2505,8 @@ internal constructor(
                 wssUrl = "wss://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
-                distinctApiCalls = distinctApiCalls
+                distinctApiCalls = distinctApiCalls,
+                debugRequests
             )
 
             if (ToggleService.isInitialized().not()) {
@@ -2531,9 +2593,10 @@ internal constructor(
         private var instance: ChatClient? = null
 
         @JvmField
-        public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
+        public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
+        private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic
         public fun instance(): ChatClient {

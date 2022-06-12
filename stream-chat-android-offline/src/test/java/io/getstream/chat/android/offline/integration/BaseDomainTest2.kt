@@ -58,6 +58,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -166,7 +167,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
                 Result(data.reaction1)
             )
         }
-        whenever(client.connectUser(any(), any<String>())) doAnswer {
+        whenever(client.connectUser(any(), any<String>(), anyOrNull())) doAnswer {
             TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
         }
 

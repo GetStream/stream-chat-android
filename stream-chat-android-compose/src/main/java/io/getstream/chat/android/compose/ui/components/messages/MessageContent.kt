@@ -133,7 +133,7 @@ internal fun DefaultMessageContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit
+    onQuotedMessageClick: (Message) -> Unit,
 ) {
     Column {
         MessageAttachmentsContent(

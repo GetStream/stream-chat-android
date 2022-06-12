@@ -70,6 +70,7 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
+            .debugRequests(true)
             .build()
 
         // Using markdown as text transformer

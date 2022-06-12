@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
@@ -401,7 +402,7 @@ public class Messages {
 
         public void paginateOverAllPinnedMessages() {
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
+            channelClient.getPinnedMessages(10, new QuerySortByField<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();

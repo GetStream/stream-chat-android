@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.R
@@ -42,6 +43,7 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
  * @param textStyle The text style of the [initials] text.
  * @param placeholderPainter The placeholder to render while loading is in progress.
  * @param contentDescription Description of the image.
+ * @param initialsAvatarOffset The initials offset to apply to the avatar.
  * @param onClick OnClick action, that can be nullable.
  */
 @Composable
@@ -53,6 +55,7 @@ public fun Avatar(
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
     placeholderPainter: Painter? = null,
     contentDescription: String? = null,
+    initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
 ) {
     if (LocalInspectionMode.current && imageUrl.isNotBlank()) {
@@ -72,7 +75,8 @@ public fun Avatar(
             initials = initials,
             shape = shape,
             textStyle = textStyle,
-            onClick = onClick
+            onClick = onClick,
+            avatarOffset = initialsAvatarOffset
         )
         return
     }
@@ -88,7 +92,8 @@ public fun Avatar(
             initials = initials,
             shape = shape,
             textStyle = textStyle,
-            onClick = onClick
+            onClick = onClick,
+            avatarOffset = initialsAvatarOffset
         )
     } else if (painter.state is AsyncImagePainter.State.Loading && placeholderPainter != null) {
         ImageAvatar(
