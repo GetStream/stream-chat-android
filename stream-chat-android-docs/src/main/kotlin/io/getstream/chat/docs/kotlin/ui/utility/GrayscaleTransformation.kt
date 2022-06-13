@@ -9,7 +9,7 @@ import coil.size.Size
 import coil.transform.Transformation
 
 /**
- * A [Transformation] that converts an image to shades of gray.
+ * A [Transformation] that converts an image to grayscale.
  */
 class GrayscaleTransformation : Transformation {
 

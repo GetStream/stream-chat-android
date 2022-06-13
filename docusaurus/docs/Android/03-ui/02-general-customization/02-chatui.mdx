@@ -141,7 +141,7 @@ Which creates:
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
 
-Here's an example of a custom factory that extends `AvatarBitmapFactory`, which makes the avatar for offline users to shades of gray:
+Here's an example of a custom factory that extends `AvatarBitmapFactory`, which applies a grayscale transformation to the avatars of users who are currently offline:
 
 ```kotlin
 ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
