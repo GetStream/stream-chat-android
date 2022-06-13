@@ -87,7 +87,7 @@ internal class EventHandlerImplTest {
         syncManager = mock()
         user = randomUser()
 
-        globalState._user.value = user
+        globalState.setUser(user)
     }
 
     @ParameterizedTest

@@ -140,7 +140,7 @@ public class StreamOfflinePluginFactory(
             repositoryFactory(repositoryFactory)
         }.build()
 
-        val stateRegistry = StateRegistry.create(job, scope, globalState._user, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.create(job, scope, globalState.user, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
@@ -216,7 +216,7 @@ public class StreamOfflinePluginFactory(
             }
         }
 
-        globalState._user.value = user
+        globalState.setUser(user)
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
