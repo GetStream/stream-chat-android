@@ -98,10 +98,14 @@ internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
 internal fun Message.getEmojiCount(): Int = EmojiUtil.getEmojiCount(this)
 
 /**
+ * @return If the message should be rendered in full size or small size
+ */
+internal fun Message.isLargeFont(): Boolean = isEmojiOnly() && getEmojiCount() <= MaxFullSizeEmoji
+
+/**
  * @return If the message is emoji only and should be shown without a message bubble or not.
  */
-internal fun Message.isEmojiOnlyWithoutBubble(): Boolean = isEmojiOnly() &&
-    getEmojiCount() <= MaxFullSizeEmoji &&
+internal fun Message.isEmojiOnlyWithoutBubble(): Boolean = isLargeFont() &&
     replyTo == null
 
 /**

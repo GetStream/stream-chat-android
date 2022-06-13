@@ -48,13 +48,7 @@ public object EmojiUtil {
      *
      * @return The number of emojis inside a message.
      */
-    public fun getEmojiCount(message: Message): Int {
-        var emojiOnlyMessage = message.text
-        message.text.replace(EMOJI_REGEX, "").split(" ").forEach {
-            emojiOnlyMessage = emojiOnlyMessage.replace(it, "")
-        }
-        return emojiOnlyMessage.replace(EMOJI_REGEX, ".").count()
-    }
+    public fun getEmojiCount(message: Message): Int = EMOJI_REGEX.findAll(message.text).count()
 
     /**
      * Regex which matches emojis inside a string.
