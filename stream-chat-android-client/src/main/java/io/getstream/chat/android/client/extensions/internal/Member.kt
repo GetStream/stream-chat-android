@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
-import java.util.Date
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-/**
- * Check if current date has difference with [other] no more that [offset].
- */
-internal fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time
+/** Updates collection of members with more recent data of [users]. */
+@InternalStreamChatApi
+public fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collection<Member> = map { member ->
+    if (userMap.containsKey(member.getUserId())) {
+        member.copy(user = userMap[member.getUserId()] ?: member.user)
+    } else {
+        member
+    }
+}

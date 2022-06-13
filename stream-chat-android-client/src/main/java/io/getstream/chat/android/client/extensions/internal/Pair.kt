@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.internal.validateCid
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-/** Updates a collection of users by more fresh value of [users]. */
-internal fun Collection<User>.updateUsers(users: Map<String, User>) = map { user -> users[user.id] ?: user }
+/**
+ * Converts a pair of channelType and channelId into cid.
+ *
+ * @return String CID of the given channel type and id.
+ * @throws IllegalArgumentException if cid is not valid.
+ */
+@Throws(IllegalArgumentException::class)
+@InternalStreamChatApi
+public fun Pair<String, String>.toCid(): String {
+    val cid = "$first:$second"
+    validateCid(cid)
+    return cid
+}
