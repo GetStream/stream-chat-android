@@ -47,15 +47,13 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
  * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
- * @param messageInputCommandsHandingEnabled If command suggestions are shown based on user input.
- * @param messageInputMentionsHandingEnabled If mention suggestions are shown based on user input.
+ * @param messageInputCommandsHandlingEnabled If command suggestions are shown based on user input.
+ * @param messageInputMentionsHandlingEnabled If mention suggestions are shown based on user input.
  * @param messageInputTextStyle The text style of the text input field.
  * @param messageInputBackgroundDrawable The background drawable of the text input field.
  * @param messageInputCursorDrawable The drawable for the cursor in the text input field.
  * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
  * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.f
- * @param attachmentMaxFileSizeMb The max attachment file size in MB. Stream CDN supports attachments up to 100MB.
- * @param attachmentMaxFileCount The maximum number of attachments allowed for a single message. Cannot by more than 10.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.

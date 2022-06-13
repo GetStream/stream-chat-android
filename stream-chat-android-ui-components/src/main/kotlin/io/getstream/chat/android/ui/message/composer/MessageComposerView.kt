@@ -434,6 +434,7 @@ public class MessageComposerView : ConstraintLayout {
     private fun renderCommandsSuggestions(state: MessageComposerState) {
         // Do not do anything if the list hasn't changed
         if (this.commandSuggestions == state.commandSuggestions) return
+        if (!messageComposerContext.style.messageInputCommandsHandlingEnabled) return
 
         (commandSuggestionsContent as? MessageComposerContent)?.renderState(state)
 
@@ -456,6 +457,7 @@ public class MessageComposerView : ConstraintLayout {
     private fun renderMentionSuggestions(state: MessageComposerState) {
         // Do not do anything if the list hasn't changed
         if (this.mentionSuggestions == state.mentionSuggestions) return
+        if (!messageComposerContext.style.messageInputMentionsHandlingEnabled) return
 
         (mentionSuggestionsContent as? MessageComposerContent)?.renderState(state)
 
