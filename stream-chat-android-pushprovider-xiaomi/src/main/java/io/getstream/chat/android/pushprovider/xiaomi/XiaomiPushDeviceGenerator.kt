@@ -17,6 +17,7 @@
 package io.getstream.chat.android.pushprovider.xiaomi
 
 import android.content.Context
+import com.xiaomi.channel.commonutils.android.Region
 import com.xiaomi.mipush.sdk.MiPushClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
@@ -28,12 +29,14 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
  * @property appId The App ID for the app registered on Xiaomi Developer Console.
  * @property appKey The App Key for the app registered on Xiaomi Developer Console.
  * @property providerName Optional name for the provider name.
+ * @property region Computer area to be used by Xiaomi SDK.
  */
 public class XiaomiPushDeviceGenerator(
     context: Context,
     private val appId: String,
     private val appKey: String,
     private val providerName: String? = null,
+    private val region: Region = Region.Global,
 ) :
     PushDeviceGenerator {
     private val appContext = context.applicationContext
@@ -47,6 +50,7 @@ public class XiaomiPushDeviceGenerator(
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
         logger.logI("Getting Xiaomi token")
+        MiPushClient.setRegion(region)
         MiPushClient.registerPush(appContext, appId, appKey)
     }
 }
