@@ -98,7 +98,7 @@ internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
 internal fun Message.getEmojiCount(): Int = EmojiUtil.getEmojiCount(this)
 
 /**
- * @return If the message is emoji only and shoudl be shown without message buble or not.
+ * @return If the message is emoji only and should be shown without a message bubble or not.
  */
 internal fun Message.isEmojiOnlyWithoutBubble(): Boolean = isEmojiOnly() &&
     getEmojiCount() <= MaxFullSizeEmoji &&
