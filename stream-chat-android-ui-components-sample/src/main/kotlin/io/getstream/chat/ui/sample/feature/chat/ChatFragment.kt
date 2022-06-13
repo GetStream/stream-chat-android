@@ -42,6 +42,7 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
@@ -51,6 +52,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
@@ -194,6 +196,18 @@ class ChatFragment : Fragment() {
                 messageComposerViewModel.performMessageAction(Edit(message))
             }
         }
+
+        // TODO: remove this sample code
+        binding.messageComposerView.setTrailingContent(
+            DefaultMessageComposerTrailingContent(requireContext()).also {
+                it.sendMessageButtonClickListener = {
+                    showToast("Custom trailing content")
+                    messageComposerViewModel.sendMessage(
+                        messageComposerViewModel.buildNewMessage()
+                    )
+                }
+            }
+        )
     }
 
     private fun initMessagesViewModel() {

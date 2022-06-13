@@ -8,7 +8,6 @@
     <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ComplexMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
-    <ID>ComplexMethod:MessageComposerView.kt$MessageComposerView$ private fun init(attr: AttributeSet? = null)</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
@@ -27,7 +26,6 @@
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
     <ID>LongMethod:MentionListViewStyle.kt$MentionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MentionListViewStyle</ID>
-    <ID>LongMethod:MessageComposerView.kt$MessageComposerView$ private fun init(attr: AttributeSet? = null)</ID>
     <ID>LongMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>LongMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
@@ -121,7 +119,6 @@
     <ID>MaxLineLength:MentionListViewModel.kt$MentionListViewModel$logger.logD("Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})")</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerView.kt$MessageComposerView$*</ID>
-    <ID>MaxLineLength:MessageComposerView.kt$MessageComposerView$AttachmentSelectionListener</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
