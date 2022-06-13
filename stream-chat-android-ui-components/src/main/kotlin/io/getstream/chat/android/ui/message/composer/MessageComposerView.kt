@@ -22,19 +22,14 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -46,26 +41,41 @@ import io.getstream.chat.android.ui.message.composer.content.DefaultMessageCompo
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.ui.message.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.message.composer.internal.MessageComposerSuggestionsPopup
+import io.getstream.chat.android.ui.message.composer.internal.ValidationErrorRenderer
+import io.getstream.chat.android.ui.message.composer.internal.toAttachment
 import io.getstream.chat.android.ui.message.composer.internal.toMessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 
 /**
- * UI component designed for message handling message text input, attachments, actions, and sending the message.
+ * UI component designed for message handling message text input, attachments, actions,
+ * and sending the message.
  */
 @ExperimentalStreamChatApi
-public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
+public class MessageComposerView : ConstraintLayout {
     /**
      * Generated binding class for the XML layout.
      */
     private lateinit var binding: StreamUiMessageComposerBinding
 
     /**
-     * Style for the message composer.
+     * Legacy style that is needed for [AttachmentSelectionDialogFragment].
      */
-    private lateinit var style: MessageComposerViewStyle
+    private lateinit var messageInputViewStyle: MessageInputViewStyle
+
+    /**
+     * The context that will be propagated to each content view.
+     */
+    private lateinit var messageComposerContext: MessageComposerContext
+
+    /**
+     * A helper class that displays
+     */
+    private lateinit var validationErrorRenderer: ValidationErrorRenderer
 
     /**
      * Click listener for the send message button.
@@ -123,6 +133,23 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     public var dismissSuggestionsListener: () -> Unit = {}
 
     /**
+     * Click listener for the pick attachments button.
+     */
+    public var attachmentsButtonClickListener: () -> Unit = {
+        context.getFragmentManager()?.let {
+            AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
+                .apply {
+                    val listener =
+                        AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, _: AttachmentSource ->
+                            attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
+                        }
+                    setAttachmentSelectionListener(listener)
+                    show(it, AttachmentSelectionDialogFragment.TAG)
+                }
+        }
+    }
+
+    /**
      * Handle to [PopupWindow] which is currently displayed.
      * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, available commands.
      */
@@ -142,10 +169,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * Default implementation of [mentionSuggestionsContent].
      */
     private val defaultMentionSuggestionsView: View by lazy {
-        DefaultMessageComposerMentionSuggestionsContent(context).also {
-            it.mentionSelectionListener = { mentionSelectionListener(it) }
-            it.applyStyle(style)
-        }
+        DefaultMessageComposerMentionSuggestionsContent(context).attachContext()
     }
 
     /**
@@ -163,10 +187,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      * Default implementation of [commandSuggestionsContent].
      */
     private val defaultCommandSuggestionsView: View by lazy {
-        DefaultMessageComposerCommandSuggestionsContent(context).also {
-            it.commandSelectionListener = { commandSelectionListener(it) }
-            it.applyStyle(style)
-        }
+        DefaultMessageComposerCommandSuggestionsContent(context).attachContext()
     }
 
     /**
@@ -181,11 +202,6 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     private val commandSuggestionsContent: View
         get() = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
 
-    /**
-     * The validation error from the previous state update.
-     */
-    private var previousValidationError: ValidationError? = null
-
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -198,114 +214,192 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
         init(attrs)
     }
 
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
-
-        setBackgroundColor(style.backgroundColor)
-        binding.separator.background = style.dividerBackgroundDrawable
-    }
-
     /**
      * Initializing the view with default contents.
      */
     private fun init(attr: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
-        applyStyle(MessageComposerViewStyle(context, attr))
 
-        binding.leadingContent.apply {
-            val defaultLeadingContent = DefaultMessageComposerLeadingContent(context).also {
-                it.attachmentsButtonClickListener = {
-                    context.getFragmentManager()?.let {
-                        val style = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
+        validationErrorRenderer = ValidationErrorRenderer(context)
+        messageInputViewStyle = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
+        messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attr))
 
-                        AttachmentSelectionDialogFragment.newInstance(style)
-                            .apply {
-                                val listener =
-                                    AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource ->
-                                        attachments.map { // TODO move to view model
-                                            val fileFromUri = StorageHelper().getCachedFileFromUri(requireContext(), it)
-                                            Attachment(
-                                                upload = fileFromUri,
-                                                type = it.type,
-                                                name = it.title ?: fileFromUri.name ?: "",
-                                                fileSize = it.size.toInt(),
-                                                mimeType = it.mimeType,
-                                                title = it.title,
-                                            )
-                                        }.also {
-                                            attachmentSelectionListener(it)
-                                        }
-                                    }
-                                setAttachmentSelectionListener(listener)
-                                show(it, AttachmentSelectionDialogFragment.TAG)
-                            }
-                    }
-                }
+        setBackgroundColor(messageComposerContext.style.backgroundColor)
+        binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable
+
+        setLeadingContent(
+            DefaultMessageComposerLeadingContent(context).also {
+                it.attachmentsButtonClickListener = { attachmentsButtonClickListener() }
                 it.commandsButtonClickListener = { commandsButtonClickListener() }
             }
-            removeAllViews()
-            addView(defaultLeadingContent)
-            defaultLeadingContent.applyStyle(style)
-        }
-        binding.centerContent.apply {
-            val defaultCenterContent = DefaultMessageComposerCenterContent(context).also {
-                it.textInputChangeListener = { textInputChangeListener(it) }
+        )
+        setCenterContent(
+            DefaultMessageComposerCenterContent(context).also {
+                it.textInputChangeListener = { text -> textInputChangeListener(text) }
                 it.clearInputButtonClickListener = { clearInputButtonClickListener() }
-                it.attachmentRemovalListener = { attachmentRemovalListener(it) }
+                it.attachmentRemovalListener = { attachment -> attachmentRemovalListener(attachment) }
             }
-            removeAllViews()
-            addView(defaultCenterContent)
-            defaultCenterContent.applyStyle(style)
-        }
-        binding.trailingContent.apply {
-            val defaultTrailingContent = DefaultMessageComposerTrailingContent(context).also {
+        )
+        setTrailingContent(
+            DefaultMessageComposerTrailingContent(context).also {
                 it.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
             }
-            removeAllViews()
-            addView(defaultTrailingContent)
-            defaultTrailingContent.applyStyle(style)
-        }
-        binding.footerContent.apply {
-            val defaultFooterContent = DefaultMessageComposerFooterContent(context).also {
-                it.alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+        )
+        setFooterContent(
+            DefaultMessageComposerFooterContent(context).also {
+                it.alsoSendToChannelSelectionListener = { checked -> alsoSendToChannelSelectionListener(checked) }
             }
-            removeAllViews()
-            addView(defaultFooterContent)
-            defaultFooterContent.applyStyle(style)
-        }
-        binding.headerContent.apply {
-            val defaultHeaderContent = DefaultMessageComposerHeaderContent(context).also {
+        )
+        setHeaderContent(
+            DefaultMessageComposerHeaderContent(context).also {
                 it.dismissActionClickListener = { dismissActionClickListener() }
             }
-            removeAllViews()
-            addView(defaultHeaderContent)
-            defaultHeaderContent.applyStyle(style)
-        }
+        )
     }
 
     /**
-     * Called by external controller. Responsible for refreshing UI of the default contents [MessageComposerView].
-     * For example, when using [MessageComposerView] along with [MessageComposerViewModel] and connecting both with
-     * [MessageComposerViewModel.bindView] function the [MessageComposerView.renderState] will be invoked automatically
-     * on each change of the [MessageComposerViewModel.messageComposerState].
+     * Invoked when the state has changed and the UI needs to be updated accordingly.
      *
-     * In case you are not using [MessageComposerViewModel.bindView] mechanism, you can call this function on your own
-     * to refresh the state of the [MessageComposerView].
-     *
-     * Note that when you override the default contents using [setLeadingContent], [setCenterContent], or
-     * [setTrailingContent] calling this function will make no effect.
-     *
-     * @param state [MessageComposerState] instance representing current UI state.
+     * @param state The state that will be used to render the updated UI.
      */
-    public override fun renderState(state: MessageComposerState) {
-        (binding.trailingContent.children.first() as? MessageComposerComponent)?.renderState(state)
-        (binding.centerContent.children.first() as? MessageComposerComponent)?.renderState(state)
-        (binding.leadingContent.children.first() as? MessageComposerComponent)?.renderState(state)
-        (binding.footerContent.children.first() as? MessageComposerComponent)?.renderState(state)
-        (binding.headerContent.children.first() as? MessageComposerComponent)?.renderState(state)
+    public fun renderState(state: MessageComposerState) {
+        (binding.trailingContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.centerContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.leadingContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.footerContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
 
-        updateSuggestionsPopup(state)
-        renderValidationErrors(state)
+        renderSuggestion(state)
+
+        validationErrorRenderer.renderValidationErrors(state.validationErrors)
+    }
+
+    /**
+     * Sets custom leading content view. It must implement [MessageComposerContent] interface and should
+     * render a integration buttons according to the received state. The current mode is propagated to the
+     * [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows a section with integrations.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerLeadingContent]
+     */
+    public fun <V> setLeadingContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.leadingContent.removeAllViews()
+        binding.leadingContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets custom center content view. It must implement [MessageComposerContent] interface and should
+     * render a message input field according to the received state. The current mode is propagated to the
+     * [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows a message input field.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerCenterContent]
+     */
+    public fun <V> setCenterContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.centerContent.removeAllViews()
+        binding.centerContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets custom trailing content view. It must implement [MessageComposerContent] interface and should
+     * render a send button according to the received state. The current mode is propagated to the
+     * [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows a send button.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerTrailingContent]
+     */
+    public fun <V> setTrailingContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.trailingContent.removeAllViews()
+        binding.trailingContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets custom footer content view. It must implement [MessageComposerContent] interface and should
+     * render the "also send to channel" checkbox in the thread mode according to the received state. The
+     * current mode is propagated to the [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows the currently active mode.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerFooterContent]
+     */
+    public fun <V> setFooterContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.footerContent.removeAllViews()
+        binding.footerContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets custom header content view. It must implement [MessageComposerContent] interface and should
+     * render the currently active action according to the received state. The currently active action
+     * is propagated to the [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows the currently active action.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerHeaderContent]
+     */
+    public fun <V> setHeaderContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.headerContent.removeAllViews()
+        binding.headerContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets custom mention suggestions content view. It must implement [MessageComposerContent] interface,
+     * and should render mention suggestions according to the received state. List of currently available
+     * mention suggestions is propagated to the [contentView] in the [MessageComposerContent.renderState]
+     * function.
+     *
+     * @param contentView The [View] which shows mention suggestions list and allows to choose one of them.
+     * @see [DefaultMessageComposerMentionSuggestionsContent]
+     */
+    public fun <V> setMentionSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
+        mentionSuggestionsContentOverride = contentView.attachContext()
+    }
+
+    /**
+     * Sets custom command suggestions content view. It must implement [MessageComposerContent] interface,
+     * and should render command suggestions according to the received state. List of currently available
+     * command suggestions is propagated to the [contentView] in the [MessageComposerContent.renderState]
+     * function.
+     *
+     * @param contentView The [View] which shows command suggestions list and allows to choose one of them.
+     * @see [DefaultMessageComposerCommandSuggestionsContent]
+     */
+    public fun <V> setCommandSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
+        commandSuggestionsContentOverride = contentView.attachContext()
     }
 
     /**
@@ -321,7 +415,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
      *
      * @param state [MessageComposerState] instance representing current UI state.
      */
-    private fun updateSuggestionsPopup(state: MessageComposerState) {
+    private fun renderSuggestion(state: MessageComposerState) {
         when {
             state.mentionSuggestions.isNotEmpty() -> renderMentionSuggestions(state)
             state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
@@ -332,7 +426,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     }
 
     /**
-     * Displays list of command suggestions, or updates it according to the [MessageComposerState.commandSuggestions] list.
+     * Displays a list of command suggestions, or updates it according to the state in
+     * [MessageComposerState.commandSuggestions].
      *
      * @param state [MessageComposerState] instance representing current UI state.
      */
@@ -340,7 +435,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
         // Do not do anything if the list hasn't changed
         if (this.commandSuggestions == state.commandSuggestions) return
 
-        (commandSuggestionsContent as? MessageComposerComponent)?.renderState(state)
+        (commandSuggestionsContent as? MessageComposerContent)?.renderState(state)
 
         val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(commandSuggestionsContent, this) {
             suggestionsPopup = null
@@ -353,7 +448,8 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     }
 
     /**
-     * Displays list of mention suggestions, or updates it according to the [MessageComposerState.mentionSuggestions] list.
+     * Displays a list of mention suggestions, or updates it according to the state in
+     * [MessageComposerState.mentionSuggestions].
      *
      * @param state [MessageComposerState] instance representing current UI state.
      */
@@ -361,7 +457,7 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
         // Do not do anything if the list hasn't changed
         if (this.mentionSuggestions == state.mentionSuggestions) return
 
-        (mentionSuggestionsContent as? MessageComposerComponent)?.renderState(state)
+        (mentionSuggestionsContent as? MessageComposerContent)?.renderState(state)
 
         val suggestionsPopup = suggestionsPopup ?: MessageComposerSuggestionsPopup(mentionSuggestionsContent, this) {
             suggestionsPopup = null
@@ -373,151 +469,10 @@ public class MessageComposerView : ConstraintLayout, MessageComposerComponent {
     }
 
     /**
-     * Sets custom leading content view.
-     *
-     * @param view The [View] which replaces default leading content of [MessageComposerView]. It must implement [MessageComposerComponent] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
+     * Initializes the content view with with [MessageComposerContext].
      */
-    public fun <V> setLeadingContent(
-        view: V,
-        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
-    ) where V : View, V : MessageComposerComponent {
-        binding.leadingContent.removeAllViews()
-        binding.leadingContent.addView(view, layoutParams)
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom center content view.
-     *
-     * @param view The [View] which replaces default center content of [MessageComposerView]. It must implement [MessageComposerComponent] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
-     */
-    public fun <V> setCenterContent(
-        view: V,
-        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
-    ) where V : View, V : MessageComposerComponent {
-        binding.centerContent.removeAllViews()
-        binding.centerContent.addView(view, layoutParams)
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom trailing content view.
-     *
-     * @param view The [View] which replaces default trailing content of [MessageComposerView]. It must implement [MessageComposerComponent] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
-     */
-    public fun <V> setTrailingContent(
-        view: V,
-        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
-    ) where V : View, V : MessageComposerComponent {
-        binding.trailingContent.removeAllViews()
-        binding.trailingContent.addView(view, layoutParams)
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom footer content view.
-     *
-     * @param view The [View] which replaces default footer content of [MessageComposerView]. It must implement [MessageComposerComponent] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
-     */
-    public fun <V> setFooterContent(
-        view: V,
-        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
-    ) where V : View, V : MessageComposerComponent {
-        binding.footerContent.removeAllViews()
-        binding.footerContent.addView(view, layoutParams)
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom header content view.
-     *
-     * @param view The [View] which replaces default header content of [MessageComposerView]. It must implement [MessageComposerComponent] interface.
-     * @param layoutParams The [FrameLayout.LayoutParams] defining how the view will be situated inside its container.
-     */
-    public fun <V> setHeaderContent(
-        view: V,
-        layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams,
-    ) where V : View, V : MessageComposerComponent {
-        binding.headerContent.removeAllViews()
-        binding.headerContent.addView(view, layoutParams)
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom mention suggestions content view. It must implement [MessageComposerComponent] interface, and should
-     * render mention suggestions according to the received state. List of currently available mention suggestions is propagated
-     * to the [view] in the [MessageComposerComponent.renderState] hook function.
-     *
-     * @param view The [View] which shows mention suggestions list and allows to choose one of them.
-     */
-    public fun <V> setMentionSuggestionsContent(view: V) where V : View, V : MessageComposerComponent {
-        mentionSuggestionsContentOverride = view
-        view.applyStyle(style)
-    }
-
-    /**
-     * Sets custom command suggestions content view. It must implement [MessageComposerComponent] interface, and should
-     * render command suggestions according to the received state. List of currently available command suggestions is propagated
-     * to the [view] in the [MessageComposerComponent.renderState] hook function.
-     *
-     * @param view The [View] which shows command suggestions list and allows to choose one of them.
-     */
-    public fun <V> setCommandSuggestionsContent(view: V) where V : View, V : MessageComposerComponent {
-        commandSuggestionsContentOverride = view
-        view.applyStyle(style)
-    }
-
-    /**
-     * Displays the first validation error in a [Toast].
-     *
-     * @param state [MessageComposerState] instance representing current UI state.
-     */
-    private fun renderValidationErrors(state: MessageComposerState) {
-        val currentValidationError = state.validationErrors.firstOrNull()
-
-        if (currentValidationError != null && currentValidationError != previousValidationError) {
-            val errorMessage = when (currentValidationError) {
-                is ValidationError.MessageLengthExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_message_length,
-                        currentValidationError.maxMessageLength
-                    )
-                }
-                is ValidationError.AttachmentCountExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_attachment_count,
-                        currentValidationError.maxAttachmentCount
-                    )
-                }
-                is ValidationError.AttachmentSizeExceeded -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_error_file_size,
-                        MediaStringUtil.convertFileSizeByteCount(currentValidationError.maxAttachmentSize)
-                    )
-                }
-                is ValidationError.ContainsLinksWhenNotAllowed -> {
-                    context.getString(
-                        R.string.stream_ui_message_composer_sending_links_not_allowed,
-                    )
-                }
-            }
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-        }
-
-        this.previousValidationError = currentValidationError
-    }
-
-    private companion object {
-        private val defaultChildLayoutParams by lazy {
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER
-            )
-        }
+    private fun <V> V.attachContext(): V where V : View, V : MessageComposerContent {
+        attachContext(messageComposerContext)
+        return this
     }
 }

@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultFooterContentBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the bottom of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerComponent {
+public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -74,12 +74,12 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        this.style = messageComposerContext.style
 
         binding.alsoSendToChannelCheckBox.text = style.alsoSendToChannelCheckboxText
         binding.alsoSendToChannelCheckBox.setTextStyle(style.alsoSendToChannelCheckboxTextStyle)

@@ -26,7 +26,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
  * Represents the default content shown at the start of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerComponent {
+public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -78,12 +78,12 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     }
 
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        this.style = messageComposerContext.style
 
         binding.attachmentsButton.setImageDrawable(style.attachmentsButtonIconDrawable)
         binding.attachmentsButton.setBorderlessRipple(style.attachmentsButtonRippleColor)

@@ -33,7 +33,7 @@ import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
@@ -41,7 +41,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default mention suggestion list popup shown above [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, MessageComposerComponent {
+public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -84,12 +84,12 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
     }
 
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        this.style = messageComposerContext.style
 
         adapter = MentionsAdapter(style) { mentionSelectionListener(it) }
         binding.suggestionsRecyclerView.adapter = adapter

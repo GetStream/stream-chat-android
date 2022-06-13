@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the top of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerComponent {
+public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -73,12 +73,12 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        this.style = messageComposerContext.style
 
         binding.dismissInputModeButton.setImageDrawable(style.dismissModeIconDrawable)
     }

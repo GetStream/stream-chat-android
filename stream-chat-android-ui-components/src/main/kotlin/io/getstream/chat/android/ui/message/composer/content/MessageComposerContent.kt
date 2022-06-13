@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer
+package io.getstream.chat.android.ui.message.composer.content
 
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
- * An interface implemented by [MessageComposerView] and its children that is
- * used for state propagation.
+ * An interface that must be implemented by the content views of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public interface MessageComposerComponent {
+public interface MessageComposerContent {
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    public fun applyStyle(style: MessageComposerViewStyle)
+    public fun attachContext(messageComposerContext: MessageComposerContext)
 
     /**
      * Invoked when the state has changed and the UI needs to be updated accordingly.

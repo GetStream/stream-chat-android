@@ -43,7 +43,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBin
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerComponent
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 
@@ -51,7 +51,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the center of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerComponent {
+public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -121,12 +121,12 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     }
 
     /**
-     * Applies the given style to the message composer.
+     * Initializes the content view with with [MessageComposerContext].
      *
-     * @param style The style that will be applied to the component.
+     * @param messageComposerContext The context of this [MessageComposerView].
      */
-    override fun applyStyle(style: MessageComposerViewStyle) {
-        this.style = style
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        this.style = messageComposerContext.style
 
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
         binding.messageEditText.isVerticalFadingEdgeEnabled = style.messageInputScrollbarFadingEnabled
