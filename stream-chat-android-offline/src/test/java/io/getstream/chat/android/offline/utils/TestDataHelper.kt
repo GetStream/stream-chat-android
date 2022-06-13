@@ -56,9 +56,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateEntity
 import io.github.cdimascio.dotenv.dotenv
-import java.time.Instant
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -518,8 +516,6 @@ internal class TestDataHelper {
     )
     val channelDeletedEvent =
         ChannelDeletedEvent(EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null)
-
-    val syncState = SyncStateEntity(user1.id, lastSyncedAt = Date.from(Instant.now()))
 }
 
 internal fun calendar(
