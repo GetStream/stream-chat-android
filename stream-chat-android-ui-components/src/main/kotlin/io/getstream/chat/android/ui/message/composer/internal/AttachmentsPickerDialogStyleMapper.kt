@@ -31,9 +31,40 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Context): MessageInputViewStyle {
     return MessageInputViewStyle.createDefault(context).copy(
         attachmentSelectionDialogStyle = AttachmentSelectionDialogStyle.createDefault(context).copy(
+            backgroundColor = attachmentsPickerBackgroundColor,
+            grantPermissionsTextStyle = allowAccessButtonTextStyle,
+            attachButtonIcon = submitAttachmentsButtonIconDrawable,
+            toggleButtonColorStateList = attachmentTabToggleButtonStateList,
+            // Media attachments tab
             pictureAttachmentIcon = mediaAttachmentsTabIconDrawable,
+            allowAccessToGalleryText = allowAccessToMediaButtonText,
+            allowAccessToGalleryIcon = allowAccessToMediaIconDrawable,
+            videoLengthLabelVisible = videoLengthTextVisible,
+            videoDurationTextStyle = videoLengthTextStyle,
+            videoIconVisible = videoIconVisible,
+            videoIconDrawable = videoIconDrawable,
+            // File attachments tab
             fileAttachmentIcon = fileAttachmentsTabIconDrawable,
-            cameraAttachmentIcon = cameraAttachmentsTabIconDrawable
-        )
+            allowAccessToFilesText = allowAccessToFilesButtonText,
+            allowAccessToFilesIcon = allowAccessToFilesIconDrawable,
+            recentFilesText = recentFilesText,
+            recentFilesTextStyle = recentFilesTextStyle,
+            fileManagerIcon = fileManagerIconDrawable,
+            // Camera attachments tab
+            cameraAttachmentIcon = cameraAttachmentsTabIconDrawable,
+            allowAccessToCameraText = allowAccessToCameraButtonText,
+            allowAccessToCameraIcon = allowAccessToCameraIconDrawable,
+        ),
+        // Media attachments tab
+        mediaAttachmentEmptyStateText = mediaAttachmentNoMediaText,
+        mediaAttachmentEmptyStateTextStyle = mediaAttachmentNoMediaTextStyle,
+        // File attachments tab
+        fileAttachmentEmptyStateText = fileAttachmentsNoFilesText,
+        fileAttachmentEmptyStateTextStyle = fileAttachmentsNoFilesTextStyle,
+        fileNameTextStyle = fileAttachmentItemNameTextStyle,
+        fileSizeTextStyle = fileAttachmentItemSizeTextStyle,
+        fileCheckboxSelectedDrawable = fileAttachmentItemCheckboxSelectedDrawable,
+        fileCheckboxDeselectedDrawable = fileAttachmentItemCheckboxDeselectedDrawable,
+        fileCheckboxTextColor = fileAttachmentItemCheckboxTextColor,
     )
 }
