@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
+import io.getstream.chat.android.client.extensions.internal.incrementUnreadCount
+import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.extensions.internal.updateLastMessage
+import io.getstream.chat.android.client.extensions.internal.updateUsers
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.message.latestOrNull
-import io.getstream.chat.android.offline.extensions.internal.incrementUnreadCount
-import io.getstream.chat.android.offline.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.offline.extensions.internal.updateLastMessage
-import io.getstream.chat.android.offline.extensions.internal.updateUsers
-import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser

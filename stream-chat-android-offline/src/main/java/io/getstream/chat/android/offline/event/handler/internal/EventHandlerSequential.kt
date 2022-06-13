@@ -62,6 +62,16 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.addMember
+import io.getstream.chat.android.client.extensions.internal.addMembership
+import io.getstream.chat.android.client.extensions.internal.mergeReactions
+import io.getstream.chat.android.client.extensions.internal.removeMember
+import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.updateMember
+import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
+import io.getstream.chat.android.client.extensions.internal.updateMembership
+import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
+import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -73,21 +83,11 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.offline.extensions.internal.addMember
-import io.getstream.chat.android.offline.extensions.internal.addMembership
-import io.getstream.chat.android.offline.extensions.internal.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.removeMember
-import io.getstream.chat.android.offline.extensions.internal.removeMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMember
-import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
-import io.getstream.chat.android.offline.extensions.internal.updateMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
-import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
@@ -117,7 +117,7 @@ internal class EventHandlerSequential(
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
-    private val mutableGlobalState: GlobalMutableState,
+    private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -129,7 +129,7 @@ internal class EventHandlerSequential(
         subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
-        mutableGlobalState: GlobalMutableState,
+        mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
         currentUserId: UserId
@@ -312,16 +312,16 @@ internal class EventHandlerSequential(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
+                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(event.me)
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
-                    mutableGlobalState._initialized.value = true
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
+                    mutableGlobalState.setInitialized(true)
                 }
                 is ConnectingEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
@@ -335,28 +335,28 @@ internal class EventHandlerSequential(
                     mutableGlobalState.updateCurrentUser(event.user)
                 }
                 is MarkAllReadEvent -> {
-                    mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                    mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                    mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                    mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 else -> Unit
@@ -705,13 +705,13 @@ internal class EventHandlerSequential(
         }
     }
 
-    private fun GlobalMutableState.updateCurrentUser(me: User) {
-        _user.value = me
-        _mutedUsers.value = me.mutes
-        _channelMutes.value = me.channelMutes
-        _totalUnreadCount.value = me.totalUnreadCount
-        _channelUnreadCount.value = me.unreadChannels
-        _banned.value = me.banned
+    private fun MutableGlobalState.updateCurrentUser(me: User) {
+        setUser(me)
+        setMutedUsers(me.mutes)
+        setChannelMutes(me.channelMutes)
+        setTotalUnreadCount(me.totalUnreadCount)
+        setChannelUnreadCount(me.unreadChannels)
+        setBanned(me.banned)
     }
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {

@@ -70,6 +70,12 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.extensions.internal.users
+import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -87,13 +93,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.extensions.internal.NEVER
-import io.getstream.chat.android.offline.extensions.internal.applyPagination
-import io.getstream.chat.android.offline.extensions.internal.inOffsetWith
-import io.getstream.chat.android.offline.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.offline.extensions.internal.users
-import io.getstream.chat.android.offline.extensions.internal.wasCreatedAfter
-import io.getstream.chat.android.offline.extensions.internal.wasCreatedBeforeOrAt
+import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
@@ -101,6 +101,7 @@ import io.getstream.chat.android.offline.model.querychannels.pagination.internal
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
@@ -119,7 +120,7 @@ import kotlin.math.max
 @Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
-    private val globalMutableState: GlobalMutableState,
+    private val globalMutableState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
@@ -203,7 +204,7 @@ internal class ChannelLogic(
                     logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
                     mutableState.recoveryNeeded = true
                 }
-                globalMutableState._errorEvent.value = Event(error)
+                globalMutableState.setErrorEvent(Event(error))
             }
     }
 

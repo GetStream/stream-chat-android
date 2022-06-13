@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
-    private val globalState: GlobalMutableState,
+    private val globalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -150,7 +151,7 @@ internal class LogicRegistry internal constructor(
          */
         internal fun create(
             stateRegistry: StateRegistry,
-            globalState: GlobalMutableState,
+            globalState: MutableGlobalState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
