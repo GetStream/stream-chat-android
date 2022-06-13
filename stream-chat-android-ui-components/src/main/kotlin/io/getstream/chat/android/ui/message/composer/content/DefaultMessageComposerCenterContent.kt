@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.message.composer.content
 
 import android.content.Context
+import android.os.Build
 import android.text.Editable
 import android.util.AttributeSet
 import android.view.View
@@ -39,6 +40,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
@@ -128,8 +130,15 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
+        binding.messageInputContainer.background = style.messageInputBackgroundDrawable
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
         binding.messageEditText.isVerticalFadingEdgeEnabled = style.messageInputScrollbarFadingEnabled
+        binding.messageEditText.setTextStyle(style.messageInputTextStyle)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            style.messageInputCursorDrawable?.let {
+                binding.messageEditText.textCursorDrawable = it
+            }
+        }
     }
 
     /**

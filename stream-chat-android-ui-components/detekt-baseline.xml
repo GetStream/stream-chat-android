@@ -206,6 +206,8 @@
     <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder</ID>
     <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
+    <ID>UnusedPrivateMember:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$val attachmentMaxFileCount = a.getInt( R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileCount, AttachmentConstants.MAX_ATTACHMENTS_COUNT )</ID>
+    <ID>UnusedPrivateMember:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$val attachmentMaxFileSizeMb = a.getInt( R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileSizeMb, AttachmentConstants.MAX_UPLOAD_SIZE_IN_MB )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputHintTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputHintTextColor, context.getColorCompat(R.color.stream_ui_text_color_hint) )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputTextColor, context.getColorCompat(R.color.stream_ui_text_color_primary) )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputTextSize = a.getDimensionPixelSize( R.styleable.MessageInputView_streamUiMessageInputTextSize, context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input) ).toFloat()</ID>

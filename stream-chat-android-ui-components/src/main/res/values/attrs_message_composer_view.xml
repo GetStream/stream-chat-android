@@ -78,8 +78,8 @@
         </attr>
 
         <!-- Center content -->
-        <attr name="streamUiMessageComposerCommandsHandingEnabled" format="boolean"/>
-        <attr name="streamUiMessageComposerMentionsHandingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerCommandsHandlingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerMentionsHandlingEnabled" format="boolean"/>
         <attr name="streamUiMessageComposerMessageInputTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMessageInputTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerMessageInputTextFontAssets" format="string" />

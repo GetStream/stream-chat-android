@@ -91,15 +91,13 @@ public data class MessageComposerViewStyle(
     public val mentionSuggestionItemUsernameTextStyle: TextStyle,
     public val mentionSuggestionItemMentionTextStyle: TextStyle,
     // Center content
-    public val messageInputCommandsHandingEnabled: Boolean,
-    public val messageInputMentionsHandingEnabled: Boolean,
-    public val messageInputTextStyle: TextStyle, //
+    public val messageInputCommandsHandlingEnabled: Boolean,
+    public val messageInputMentionsHandlingEnabled: Boolean,
+    public val messageInputTextStyle: TextStyle,
     public val messageInputBackgroundDrawable: Drawable,
     public val messageInputCursorDrawable: Drawable?,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
-    public val attachmentMaxFileSizeMb: Int,
-    public val attachmentMaxFileCount: Int,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -265,13 +263,13 @@ public data class MessageComposerViewStyle(
                 /**
                  * Center content
                  */
-                val messageInputCommandsHandingEnabled = a.getBoolean(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsHandingEnabled,
+                val messageInputCommandsHandlingEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsHandlingEnabled,
                     true
                 )
 
-                val messageInputMentionsHandingEnabled = a.getBoolean(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMentionsHandingEnabled,
+                val messageInputMentionsHandlingEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionsHandlingEnabled,
                     true
                 )
 
@@ -402,10 +400,10 @@ public data class MessageComposerViewStyle(
 
                 val replyModeIconDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerReplyModeIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left_grey)!!
 
                 val dismissModeIconDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerDismissModeIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
 
                 /**
@@ -459,15 +457,13 @@ public data class MessageComposerViewStyle(
                     mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
                     mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
                     // Center content
-                    messageInputCommandsHandingEnabled = messageInputCommandsHandingEnabled,
-                    messageInputMentionsHandingEnabled = messageInputMentionsHandingEnabled,
+                    messageInputCommandsHandlingEnabled = messageInputCommandsHandlingEnabled,
+                    messageInputMentionsHandlingEnabled = messageInputMentionsHandlingEnabled,
                     messageInputTextStyle = messageInputTextStyle,
                     messageInputBackgroundDrawable = messageInputBackgroundDrawable,
                     messageInputCursorDrawable = messageInputCursorDrawable,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
-                    attachmentMaxFileSizeMb = attachmentMaxFileSizeMb,
-                    attachmentMaxFileCount = attachmentMaxFileCount,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,

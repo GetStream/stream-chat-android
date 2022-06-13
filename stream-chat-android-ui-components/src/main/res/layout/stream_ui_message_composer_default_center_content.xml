@@ -20,6 +20,7 @@
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageInputContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/stream_ui_shape_edit_text_round"
