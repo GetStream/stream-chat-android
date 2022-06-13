@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.message.composer
 
 /**
- * An abject with the data that will be propagated to each content view.
+ * An object with the data that will be propagated to each content view.
  *
  * @param style Style for [MessageComposerView].
  */
