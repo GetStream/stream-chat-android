@@ -26,14 +26,15 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 
 internal class UploadAttachmentsWorker(
     private val logic: LogicRegistry,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
+    private val mutableState: ChannelMutableState
 ) {
 
     suspend fun uploadAttachmentsForMessage(
@@ -101,7 +102,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            logic.channel(channelType, channelId)
+                            mutableState
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
@@ -142,23 +143,40 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val channel: ChannelLogic,
+        private val mutableState: ChannelMutableState
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
         override fun onError(error: ChatError) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
-            channel.updateAttachmentUploadState(
+            updateAttachmentUploadState(
                 messageId,
                 uploadId,
                 Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
             )
+        }
+
+        private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+            val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
+            if (message != null) {
+                val newAttachments = message.attachments.map { attachment ->
+                    if (attachment.uploadId == uploadId) {
+                        attachment.copy(uploadState = newState)
+                    } else {
+                        attachment
+                    }
+                }
+                val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
+                val newMessages =
+                    mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
+                mutableState._messages.value = newMessages
+            }
         }
     }
 }
