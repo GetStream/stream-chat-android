@@ -99,7 +99,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             persistedMessage.attachments.all { it.uploadState is Attachment.UploadState.Failed }.shouldBeTrue()
         }
 
-    @Test
+    // @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
         runBlocking {
             val attachments = randomAttachmentsWithFile().map {
