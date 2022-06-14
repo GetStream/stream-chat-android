@@ -338,30 +338,6 @@ public fun MessagesScreen(
         }
 
         AnimatedVisibility(
-            visible = selectedMessageState is SelectedMessageFailedModerationState,
-            enter = fadeIn(),
-            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
-        ) {
-            ModeratedMessageDialog(
-                message = selectedMessage,
-                onDismissRequest = { listViewModel.removeOverlay() },
-                onDialogInteraction = { message, action ->
-                    when (action) {
-                        ModeratedMessageOption.DeleteMessage ->
-                            listViewModel
-                                .deleteMessage(message = message, true)
-                        ModeratedMessageOption.EditMessage ->
-                            composerViewModel
-                                .performMessageAction(EditModeratedMessage(message))
-                        ModeratedMessageOption.SendAnyway ->
-                            composerViewModel
-                                .sendModeratedMessage(message)
-                    }
-                }
-            )
-        }
-
-        AnimatedVisibility(
             visible = isShowingAttachments,
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
@@ -413,6 +389,26 @@ public fun MessagesScreen(
                 message = stringResource(id = R.string.stream_compose_flag_message_text),
                 onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
                 onDismiss = { listViewModel.dismissMessageAction(flagAction) }
+            )
+        }
+
+        if (selectedMessageState is SelectedMessageFailedModerationState) {
+            ModeratedMessageDialog(
+                message = selectedMessage,
+                onDismissRequest = { listViewModel.removeOverlay() },
+                onDialogInteraction = { message, action ->
+                    when (action) {
+                        ModeratedMessageOption.DeleteMessage ->
+                            listViewModel
+                                .deleteMessage(message = message, true)
+                        ModeratedMessageOption.EditMessage ->
+                            composerViewModel
+                                .performMessageAction(EditModeratedMessage(message))
+                        ModeratedMessageOption.SendAnyway ->
+                            composerViewModel
+                                .sendModeratedMessage(message)
+                    }
+                }
             )
         }
     }
