@@ -25,6 +25,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
@@ -57,6 +59,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
     private lateinit var uploadAttachmentsWorker: UploadAttachmentsWorker
 
     private lateinit var logicRegistry: LogicRegistry
+    private lateinit var stateRegistry: StateRegistry
 
     @Before
     override fun setup() {
@@ -67,8 +70,14 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.channel(any(), any())) doReturn mock()
         }
 
+        val channelState: ChannelMutableState = mock()
+
+        stateRegistry = mock {
+            on(it.channel(any(), any())) doReturn channelState
+        }
+
         uploadAttachmentsWorker =
-            UploadAttachmentsWorker(logicRegistry, repositoryFacade, chatClient)
+            UploadAttachmentsWorker(logicRegistry, stateRegistry, repositoryFacade, chatClient)
     }
 
     @Test

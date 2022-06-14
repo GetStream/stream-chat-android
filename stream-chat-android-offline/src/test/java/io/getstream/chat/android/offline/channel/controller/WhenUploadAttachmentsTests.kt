@@ -26,6 +26,9 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -295,9 +298,18 @@ internal class WhenUploadAttachmentsTests {
     private class Fixture {
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
+
+        private val channelState: ChannelMutableState = mock()
+
         private var logicRegistry: LogicRegistry = mock {
             on(it.channel(any(), any())) doReturn mock()
         }
+
+        private var stateRegistry: StateRegistry = mock {
+            on(it.channel(any(), any())) doReturn channelState
+        }
+
+
 
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
@@ -323,6 +335,7 @@ internal class WhenUploadAttachmentsTests {
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
                 logic = logicRegistry,
+                state = stateRegistry,
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader
