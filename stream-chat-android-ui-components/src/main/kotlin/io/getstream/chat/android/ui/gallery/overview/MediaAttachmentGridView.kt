@@ -17,14 +17,11 @@
 package io.getstream.chat.android.ui.gallery.overview
 
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
-import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper

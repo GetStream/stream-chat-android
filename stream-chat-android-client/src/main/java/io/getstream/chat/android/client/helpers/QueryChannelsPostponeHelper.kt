@@ -23,10 +23,11 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.DELAY_DURATION
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import java.util.concurrent.TimeUnit
 
 /**
  * Class responsible for postponing query channels request until the socket connection is established.
