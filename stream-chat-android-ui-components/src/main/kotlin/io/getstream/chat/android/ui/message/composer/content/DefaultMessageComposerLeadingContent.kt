@@ -22,6 +22,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -105,11 +106,12 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val hasCommandInput = state.inputValue.startsWith("/")
         val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
         val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
+        val isInEditMode = state.action is Edit
 
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
 
-        binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile
-        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage
+        binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
+        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && ! isInEditMode
     }
 }

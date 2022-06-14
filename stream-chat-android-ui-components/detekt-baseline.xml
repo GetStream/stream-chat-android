@@ -101,6 +101,7 @@
     <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerAttachmentViewHolder$?:</ID>
     <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerAttachmentsAdapter$* List of [MessageComposerAttachmentPreviewFactory] instances responsible for providing specific [View] for given [Attachment].</ID>
     <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerImageAttachmentPreviewFactory$.</ID>
+    <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:DefaultStreamTransliterator.kt$DefaultStreamTransliterator$logger.logD("This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. User a custom StreamTransliterator to add transliteration.")</ID>
     <ID>MaxLineLength:DeletedMessageListItemPredicate.kt$DeletedMessageListItemPredicate$* Predicate class used to filter [MessageListItem.MessageItem] items which are deleted. Used by [MessageListView.setDeletedMessageListItemPredicate].</ID>
     <ID>MaxLineLength:DeletedMessageListItemPredicate.kt$DeletedMessageListItemPredicate.VisibleToAuthorOnly$* Predicate object used to hide deleted [MessageListItem.MessageItem] items from everyone except for the author of the message.</ID>
