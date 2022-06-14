@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.message.attachments.internal.Attachment
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
@@ -308,8 +307,6 @@ internal class WhenUploadAttachmentsTests {
         private var stateRegistry: StateRegistry = mock {
             on(it.channel(any(), any())) doReturn channelState
         }
-
-
 
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
