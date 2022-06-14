@@ -166,7 +166,7 @@ internal class ExtraDataValidator(
 
     private companion object {
 
-        private val reservedInChannel = arrayOf(
+        private fun reservedInChannel() = arrayOf(
             "cid",
             "id",
             "type",
@@ -180,7 +180,7 @@ internal class ExtraDataValidator(
             "config",
         )
 
-        private val reservedInMessage = arrayOf(
+        private fun reservedInMessage() = arrayOf(
             "id",
             "cid",
             "created_at",
@@ -188,15 +188,15 @@ internal class ExtraDataValidator(
             "deleted_at",
         )
 
-        private val reservedInUser = arrayOf(
+        private fun reservedInUser() = arrayOf(
             "id",
             "cid",
             "created_at",
             "updated_at",
         )
 
-        private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel::contains
-        private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage::contains
-        private val reservedInUserPredicate: (String) -> Boolean = reservedInUser::contains
+        private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel()::contains
+        private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage()::contains
+        private val reservedInUserPredicate: (String) -> Boolean = reservedInUser()::contains
     }
 }

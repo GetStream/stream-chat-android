@@ -50,7 +50,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createUserBitmapBlocking(user, style, avatarSize)
         }
         val bitmap = when (customBitmap) {
-            NOT_IMPLEMENTED_MARKER -> createUserBitmap(user, style, avatarSize)
+            notImplementedMarker() -> createUserBitmap(user, style, avatarSize)
             else -> customBitmap
         }
 
@@ -64,7 +64,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createDefaultUserBitmapBlocking(user, style, avatarSize)
         }
         return when (customDefaultBitmap) {
-            NOT_IMPLEMENTED_MARKER -> createDefaultUserBitmap(user, style, avatarSize)
+            notImplementedMarker() -> createDefaultUserBitmap(user, style, avatarSize)
             else -> customDefaultBitmap
         }
     }
@@ -84,7 +84,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap? {
-        return NOT_IMPLEMENTED_MARKER
+        return notImplementedMarker()
     }
 
     /**
@@ -119,7 +119,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap {
-        return NOT_IMPLEMENTED_MARKER
+        return notImplementedMarker()
     }
 
     /**
@@ -149,7 +149,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createChannelBitmapBlocking(channel, lastActiveUsers, style, avatarSize)
         }
         val bitmap = when (customBitmap) {
-            NOT_IMPLEMENTED_MARKER -> createChannelBitmap(channel, lastActiveUsers, style, avatarSize)
+            notImplementedMarker() -> createChannelBitmap(channel, lastActiveUsers, style, avatarSize)
             else -> customBitmap
         }
 
@@ -163,7 +163,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createDefaultChannelBitmapBlocking(channel, lastActiveUsers, style, avatarSize)
         }
         return when (customDefaultBitmap) {
-            NOT_IMPLEMENTED_MARKER -> createDefaultChannelBitmap(channel, lastActiveUsers, style, avatarSize)
+            notImplementedMarker() -> createDefaultChannelBitmap(channel, lastActiveUsers, style, avatarSize)
             else -> customDefaultBitmap
         }
     }
@@ -184,7 +184,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap? {
-        return NOT_IMPLEMENTED_MARKER
+        return notImplementedMarker()
     }
 
     /**
@@ -225,7 +225,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap {
-        return NOT_IMPLEMENTED_MARKER
+        return notImplementedMarker()
     }
 
     /**
@@ -355,6 +355,6 @@ public open class AvatarBitmapFactory(private val context: Context) {
         /**
          * Marker object to detect whether methods have been implemented by custom subclasses.
          */
-        private val NOT_IMPLEMENTED_MARKER = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
+        private fun notImplementedMarker() = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
     }
 }

@@ -636,7 +636,7 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
-        val containsMention = MentionPattern.matcher(messageText).find()
+        val containsMention = mentionPattern().matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
@@ -649,7 +649,7 @@ public class MessageComposerController(
      * Shows the command suggestion list popup if necessary.
      */
     private fun handleCommandSuggestions() {
-        val containsCommand = CommandPattern.matcher(messageText).find()
+        val containsCommand = commandPattern().matcher(messageText).find()
 
         commandSuggestions.value = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
@@ -692,12 +692,12 @@ public class MessageComposerController(
         /**
          * The regex pattern used to check if the message ends with incomplete mention.
          */
-        private val MentionPattern = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
+        private fun mentionPattern() = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
          */
-        private val CommandPattern = Pattern.compile("^/[a-z]*$")
+        private fun commandPattern() = Pattern.compile("^/[a-z]*$")
 
         /**
          * The default limit for messages count in requests.

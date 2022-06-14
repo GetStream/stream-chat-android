@@ -288,6 +288,6 @@ internal open class BaseChatModule(
 
     private companion object {
         private const val BASE_TIMEOUT = 30_000L
-        private var CDN_TIMEOUT = 30_000L
+        private const val CDN_TIMEOUT = 30_000L
     }
 }

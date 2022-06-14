@@ -169,43 +169,8 @@ public class MediaAttachmentGridView : FrameLayout {
         public fun onLoadMore()
     }
 
-    // TODO: leaves empty space after pagination
-    private class SharedMediaSpaceItemDecorator : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            parent.adapter?.let { adapter ->
-                // Add spaces between elements
-                when {
-                    parent.getChildAdapterPosition(view) % SPAN_COUNT == 0 -> {
-                        outRect.top = MEDIA_ITEM_SPACE
-                        outRect.right = MEDIA_ITEM_SPACE / 2
-                    }
-                    parent.getChildAdapterPosition(view) % SPAN_COUNT == SPAN_COUNT - 1 -> {
-                        outRect.top = MEDIA_ITEM_SPACE
-                        outRect.left = MEDIA_ITEM_SPACE / 2
-                    }
-                    else -> {
-                        outRect.top = MEDIA_ITEM_SPACE
-                        outRect.right = MEDIA_ITEM_SPACE / 4
-                        outRect.left = MEDIA_ITEM_SPACE / 4
-                    }
-                }
-
-                val lastRowCount = if (adapter.itemCount % SPAN_COUNT != 0) {
-                    adapter.itemCount % SPAN_COUNT
-                } else {
-                    SPAN_COUNT
-                }
-                // Add additional bottom margin for last row to enable scrolling to the top
-                if (parent.getChildAdapterPosition(view) >= adapter.itemCount - lastRowCount) {
-                    outRect.bottom = parent.height - (parent.width / SPAN_COUNT)
-                }
-            }
-        }
-    }
-
     public companion object {
         private const val LOAD_MORE_THRESHOLD = 10
         private const val SPAN_COUNT = 3
-        private val MEDIA_ITEM_SPACE = Utils.dpToPx(2)
     }
 }

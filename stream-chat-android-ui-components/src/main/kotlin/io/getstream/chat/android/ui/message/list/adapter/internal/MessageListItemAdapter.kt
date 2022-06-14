@@ -45,7 +45,7 @@ internal class MessageListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
-        holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+        holder.bindListItem(getItem(position), fullMessageListItemItemPayloadDiff())
     }
 
     override fun onBindViewHolder(
@@ -57,11 +57,9 @@ internal class MessageListItemAdapter(
             payloads
                 .filterIsInstance<MessageListItemPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
-                ?: listOf(FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+                ?: listOf(fullMessageListItemItemPayloadDiff())
             )
-            .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
-                acc + messageListItemPayloadDiff
-            }
+            .fold(emptyMessageListItemPayloadDiff(), MessageListItemPayloadDiff::plus)
 
         holder.bindListItem(getItem(position), diff)
     }
@@ -92,7 +90,7 @@ internal class MessageListItemAdapter(
     }
 
     companion object {
-        private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
+        private fun fullMessageListItemItemPayloadDiff() = MessageListItemPayloadDiff(
             text = true,
             reactions = true,
             attachments = true,
@@ -105,7 +103,7 @@ internal class MessageListItemAdapter(
             mentions = true,
             footer = true
         )
-        private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
+        private fun emptyMessageListItemPayloadDiff() = MessageListItemPayloadDiff(
             text = false,
             reactions = false,
             attachments = false,

@@ -37,7 +37,7 @@ internal class ChannelListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
-        bind(position, holder, FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF)
+        bind(position, holder, fullChannelListItemPayloadDiff())
     }
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -45,8 +45,8 @@ internal class ChannelListItemAdapter(
             payloads
                 .filterIsInstance<ChannelListPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
-                ?: listOf(FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF)
-            ).fold(EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF, ChannelListPayloadDiff::plus)
+                ?: listOf(fullChannelListItemPayloadDiff())
+            ).fold(emptyChannelListItemPayloadDiff(), ChannelListPayloadDiff::plus)
 
         bind(position, holder, diff)
     }
@@ -67,7 +67,7 @@ internal class ChannelListItemAdapter(
     }
 
     companion object {
-        private val FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
+        private fun fullChannelListItemPayloadDiff(): ChannelListPayloadDiff = ChannelListPayloadDiff(
             nameChanged = true,
             avatarViewChanged = true,
             usersChanged = true,
@@ -77,7 +77,7 @@ internal class ChannelListItemAdapter(
             extraDataChanged = true,
         )
 
-        val EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
+        private fun emptyChannelListItemPayloadDiff(): ChannelListPayloadDiff = ChannelListPayloadDiff(
             nameChanged = false,
             avatarViewChanged = false,
             usersChanged = false,

@@ -128,7 +128,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                         swiping = false
                         wasSwiping = false
                         // we should consume if we were swiping, and past threshold
-                        shouldConsume = abs(rawX - startX) > SWIPE_THRESHOLD
+                        shouldConsume = abs(rawX - startX) > swipeThreshold()
                         // signal end of swipe
                         swipeListener?.onSwipeCompleted(this, absoluteAdapterPosition, rawX, rawY)
                     }
@@ -156,6 +156,6 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
     }
 
     private companion object {
-        private val SWIPE_THRESHOLD = 16.dpToPxPrecise()
+        private fun swipeThreshold() = 16.dpToPxPrecise()
     }
 }

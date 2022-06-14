@@ -127,7 +127,7 @@ public class ChannelListView : FrameLayout {
      * @param layoutParams Defines how the view will be situated inside its container ViewGroup.
      */
     @JvmOverloads
-    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
+    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.emptyStateView)
         this.emptyStateView = view
         addView(emptyStateView, layoutParams)
@@ -139,7 +139,7 @@ public class ChannelListView : FrameLayout {
      * @param layoutParams Defines how the view will be situated inside its container ViewGroup.
      */
     @JvmOverloads
-    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
+    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.loadingView)
         this.loadingView = view
         addView(loadingView, layoutParams)
@@ -312,13 +312,12 @@ public class ChannelListView : FrameLayout {
     }
 
     private companion object {
-        private val defaultChildLayoutParams: LayoutParams by lazy {
+        private fun defaultChildLayoutParams(): LayoutParams =
             LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER
             )
-        }
     }
 
     private fun configureDefaultMoreOptionsListener(context: Context) {

@@ -42,7 +42,7 @@ public class MentionListViewModel : ViewModel() {
     private companion object {
         private const val QUERY_LIMIT = 30
 
-        val INITIAL_STATE = State(
+        fun initialState() = State(
             results = emptyList(),
             isLoading = false,
             canLoadMore = true,
@@ -56,7 +56,7 @@ public class MentionListViewModel : ViewModel() {
         scope.cancel()
     }
 
-    private val _state: MutableLiveData<State> = MutableLiveData(INITIAL_STATE)
+    private val _state: MutableLiveData<State> = MutableLiveData(initialState())
     public val state: LiveData<State> = _state
 
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()

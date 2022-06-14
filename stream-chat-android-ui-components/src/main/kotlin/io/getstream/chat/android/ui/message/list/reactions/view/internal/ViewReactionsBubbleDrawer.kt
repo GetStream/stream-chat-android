@@ -171,13 +171,13 @@ internal class ViewReactionsBubbleDrawer(
             if (isSingleReaction) {
                 bubbleWidth / 2 + bubbleOffset
             } else {
-                bubbleWidth + bubbleOffset - MULTIPLE_REACTIONS_BASELINE_OFFSET
+                bubbleWidth + bubbleOffset - multipleReactionsBaselineOffset()
             }
         } else {
             if (isSingleReaction) {
                 bubbleWidth / 2 - bubbleOffset
             } else {
-                MULTIPLE_REACTIONS_BASELINE_OFFSET - bubbleOffset
+                multipleReactionsBaselineOffset() - bubbleOffset
             }
         }
     }
@@ -199,6 +199,6 @@ internal class ViewReactionsBubbleDrawer(
     }
 
     private companion object {
-        private val MULTIPLE_REACTIONS_BASELINE_OFFSET = 32.dpToPx()
+        private fun multipleReactionsBaselineOffset() = 32.dpToPx()
     }
 }

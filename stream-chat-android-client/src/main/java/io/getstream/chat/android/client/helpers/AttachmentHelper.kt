@@ -35,12 +35,13 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
     }
 
     public fun hasStreamImageUrl(attachment: Attachment): Boolean {
-        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(STREAM_CDN_HOST_PATTERN::matches) ?: false
+        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let( streamCdnHostPatternRegex()::matches) ?: false
     }
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
-        private val STREAM_CDN_HOST_PATTERN =
-            "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
+        private const val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$"
+
+        private fun streamCdnHostPatternRegex() = STREAM_CDN_HOST_PATTERN.toRegex(RegexOption.IGNORE_CASE)
     }
 }

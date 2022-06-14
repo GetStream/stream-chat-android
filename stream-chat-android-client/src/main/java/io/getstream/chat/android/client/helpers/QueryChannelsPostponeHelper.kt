@@ -80,7 +80,7 @@ internal class QueryChannelsPostponeHelper(
 
     companion object {
         private const val DELAY_DURATION = 200L
-        private val MAX_DURATION = TimeUnit.SECONDS.toMillis(5)
-        private val MAX_ATTEMPTS_COUNT = (MAX_DURATION / DELAY_DURATION).toInt()
+        private const val MAX_DURATION: Long = 5000
+        private const val MAX_ATTEMPTS_COUNT = (MAX_DURATION / DELAY_DURATION).toInt()
     }
 }

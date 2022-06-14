@@ -53,11 +53,11 @@ internal class DateDividerViewHolder(
 
         style.textStyleDateSeparator.apply(binding.dateLabel)
 
-        binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS).build()
+        binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(defaultCornerRadius()).build()
             .let(::MaterialShapeDrawable).apply { setTint(style.dateSeparatorBackgroundColor) }
     }
 
     private companion object {
-        private val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
+        private fun defaultCornerRadius() = 16.dpToPxPrecise()
     }
 }

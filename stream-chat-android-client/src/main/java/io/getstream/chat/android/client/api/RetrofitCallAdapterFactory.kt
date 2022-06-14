@@ -29,13 +29,13 @@ import java.util.concurrent.Executor
 
 internal class RetrofitCallAdapterFactory private constructor(
     private val chatParser: ChatParser,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : CallAdapter.Factory() {
 
     override fun get(
         returnType: Type,
         annotations: Array<out Annotation>,
-        retrofit: Retrofit
+        retrofit: Retrofit,
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != RetrofitCall::class.java) {
             return null
@@ -48,7 +48,7 @@ internal class RetrofitCallAdapterFactory private constructor(
     }
 
     companion object {
-        private val mainThreadExecutor: Executor = object : Executor {
+        private fun mainThreadExecutor(): Executor = object : Executor {
             val handler: Handler by lazy { Handler(Looper.getMainLooper()) }
             override fun execute(command: Runnable?) {
                 command?.let(handler::post)
@@ -58,14 +58,14 @@ internal class RetrofitCallAdapterFactory private constructor(
         fun create(
             chatParser: ChatParser,
             callbackExecutor: Executor? = null,
-        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor ?: mainThreadExecutor)
+        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor ?: mainThreadExecutor())
     }
 }
 
 internal class RetrofitCallAdapter<T : Any>(
     private val responseType: Type,
     private val parser: ChatParser,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : CallAdapter<T, Call<T>> {
 
     override fun adapt(call: retrofit2.Call<T>): Call<T> {

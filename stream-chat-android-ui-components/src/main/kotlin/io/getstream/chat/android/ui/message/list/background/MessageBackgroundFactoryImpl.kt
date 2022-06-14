@@ -62,7 +62,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param data [MessageListItem.MessageItem].
      */
     override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
+        return shapeAppearanceModel(context, defaultCornerRadius(), 0F, data.isMine, data.isBottomPosition())
             .let(::MaterialShapeDrawable)
             .apply {
                 setTint(style.messageDeletedBackground)
@@ -107,7 +107,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      */
     private fun defaultBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         val shapeAppearanceModel =
-            shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
+            shapeAppearanceModel(context, defaultCornerRadius(), 0F, data.isMine, data.isBottomPosition())
 
         return MaterialShapeDrawable(shapeAppearanceModel).apply {
             val hasLink = data.message.attachments.any(Attachment::hasLink)
@@ -122,7 +122,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                 } else {
                     style.messageBackgroundColorMine ?: ContextCompat.getColor(
                         context,
-                        MESSAGE_CURRENT_USER_BACKGROUND
+                        messageCurrentUserBackground()
                     )
                 }
 
@@ -137,7 +137,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                 } else {
                     style.messageBackgroundColorTheirs ?: ContextCompat.getColor(
                         context,
-                        MESSAGE_OTHER_USER_BACKGROUND
+                        messageOtherUserBackground()
                     )
                 }
 
@@ -152,23 +152,23 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     override fun giphyAppearanceModel(context: Context): Drawable {
         return shapeAppearanceModel(
             context,
-            DEFAULT_CORNER_RADIUS,
-            SMALL_CARD_VIEW_CORNER_RADIUS,
+            defaultCornerRadius(),
+            smallCardViewCornerRadius(),
             isMine = true,
             isBottomPosition = true
         )
             .let(::MaterialShapeDrawable)
             .apply {
-                setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
+                setTint(ContextCompat.getColor(context, messageOtherUserBackground()))
             }
     }
 
     public companion object {
-        private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
-        private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_gainsboro
-        private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
+        private fun messageOtherUserBackground() = R.color.stream_ui_white
+        private fun messageCurrentUserBackground() = R.color.stream_ui_grey_gainsboro
+        private fun smallCardViewCornerRadius() = 2.dpToPxPrecise()
 
-        internal val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
+        internal fun defaultCornerRadius() = 16.dpToPxPrecise()
     }
 
     private fun shapeAppearanceModel(

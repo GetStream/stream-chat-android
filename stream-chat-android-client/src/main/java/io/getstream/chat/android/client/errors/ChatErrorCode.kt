@@ -61,7 +61,7 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     API_KEY_NOT_FOUND(API_KEY_NOT_FOUND_ERROR_CODE, "Api key is not found, verify it if it's correct or was created.");
 
     public companion object {
-        private val authenticationErrors = setOf(
+        private fun authenticationErrors() = setOf(
             AUTHENTICATION_ERROR_CODE,
             TOKEN_EXPIRED_ERROR_CODE,
             TOKEN_NOT_VALID_ERROR_CODE,
@@ -69,6 +69,6 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
             TOKEN_SIGNATURE_INCORRECT_ERROR_CODE,
         )
 
-        public fun isAuthenticationError(code: Int): Boolean = authenticationErrors.contains(code)
+        public fun isAuthenticationError(code: Int): Boolean = authenticationErrors().contains(code)
     }
 }
