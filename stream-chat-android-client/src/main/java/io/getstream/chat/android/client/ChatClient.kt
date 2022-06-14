@@ -328,7 +328,7 @@ internal constructor(
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
-                userStateService.onSetUser(user)
+                userStateService.onSetUser(user, isAnonymous)
                 socketStateService.onConnectionRequested()
                 socket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
@@ -804,7 +804,7 @@ internal constructor(
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
                 is UserState.UserSet -> socket.reconnectUser(userState.user, false)
-                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
+                is UserState.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit

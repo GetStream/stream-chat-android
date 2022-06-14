@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = false) {
+@InternalStreamChatApi
+public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = false) {
     updateReactions {
         if (enforceUnique) {
             clearOwnReactions(reaction.userId)
@@ -31,7 +33,8 @@ internal fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = 
     }
 }
 
-internal fun Message.removeMyReaction(reaction: Reaction) {
+@InternalStreamChatApi
+public fun Message.removeMyReaction(reaction: Reaction) {
     updateReactions {
         latestReactions.removeAll { it.type == reaction.type && it.userId == reaction.userId }
         val removed = ownReactions.removeAll { it.type == reaction.type && it.userId == reaction.userId }

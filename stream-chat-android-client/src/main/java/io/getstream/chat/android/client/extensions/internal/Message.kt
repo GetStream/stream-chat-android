@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 /** Updates collection of messages with more recent data of [users]. */
-internal fun Collection<Message>.updateUsers(users: Map<String, User>) = map { it.updateUsers(users) }
+@InternalStreamChatApi
+public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Message> = map { it.updateUsers(users) }
 
 /**
  * Updates a message with more recent data of [users]. It updates author user, latestReactions, replyTo message,
  * mentionedUsers, threadParticipants and pinnedBy user of this instance.
  */
-internal fun Message.updateUsers(users: Map<String, User>): Message =
+@InternalStreamChatApi
+public fun Message.updateUsers(users: Map<String, User>): Message =
     if (users().map(User::id).any(users::containsKey)) {
         copy(
             user = if (users.containsKey(user.id)) {
@@ -54,7 +57,8 @@ internal fun Message.updateUsers(users: Map<String, User>): Message =
  *
  * @param channel The channel whose members we can check for the mention.
  */
-internal fun Message.populateMentions(channel: Channel) {
+@InternalStreamChatApi
+public fun Message.populateMentions(channel: Channel) {
     if ('@' !in text) {
         return
     }
@@ -71,25 +75,31 @@ internal fun Message.populateMentions(channel: Channel) {
     mentionedUsersIds = mentions.toMutableList()
 }
 
-internal val NEVER = Date(0)
+@InternalStreamChatApi
+public val NEVER: Date = Date(0)
 
-internal fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
+@InternalStreamChatApi
+public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
     return createdAt ?: createdLocallyAt ?: NEVER >= date
 }
 
-internal fun Message.wasCreatedAfter(date: Date?): Boolean {
+@InternalStreamChatApi
+public fun Message.wasCreatedAfter(date: Date?): Boolean {
     return createdAt ?: createdLocallyAt ?: NEVER > date
 }
 
-internal fun Message.wasCreatedBefore(date: Date?): Boolean {
+@InternalStreamChatApi
+public fun Message.wasCreatedBefore(date: Date?): Boolean {
     return createdAt ?: createdLocallyAt ?: NEVER < date
 }
 
-internal fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
+@InternalStreamChatApi
+public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
     return createdAt ?: createdLocallyAt ?: NEVER <= date
 }
 
-internal fun Message.users(): List<User> {
+@InternalStreamChatApi
+public fun Message.users(): List<User> {
     return latestReactions.mapNotNull(Reaction::user) +
         user +
         (replyTo?.users().orEmpty()) +
@@ -106,7 +116,8 @@ internal fun Message.users(): List<User> {
  * @param lastMessageAtDate The Date of the last message the SDK is aware of. This is normally the ChannelUserRead.lastMessageSeenDate.
  * @param isChannelMuted If the channel is muted for the current user or not.
  */
-internal fun Message.shouldIncrementUnreadCount(
+@InternalStreamChatApi
+public fun Message.shouldIncrementUnreadCount(
     currentUserId: String,
     lastMessageAtDate: Date?,
     isChannelMuted: Boolean,
@@ -122,9 +133,11 @@ internal fun Message.shouldIncrementUnreadCount(
     return user.id != currentUserId && !silent && !shadowed && isMoreRecent
 }
 
-internal fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
+@InternalStreamChatApi
+public fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
 
-internal fun Message.hasPendingAttachments(): Boolean =
+@InternalStreamChatApi
+public fun Message.hasPendingAttachments(): Boolean =
     attachments.any {
         it.uploadState is Attachment.UploadState.InProgress ||
             it.uploadState is Attachment.UploadState.Idle

@@ -80,13 +80,6 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     }
 
     @Test
-    fun `Given disconnected connection state And anonymous pending state Should throw exception`() {
-        val sut = Fixture().givenDisconnectedConnectionState().givenAnonymousPendingState().get()
-
-        invoking { sut.reconnectSocket() }.shouldThrow(IllegalStateException::class)
-    }
-
-    @Test
     fun `Given disconnected connection state And user not set state Should throw exception`() {
         val sut = Fixture().givenDisconnectedConnectionState().givenUserNotSetState().get()
 
@@ -115,15 +108,11 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
         }
 
         fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(Mother.randomUser())
         }
 
         fun givenAnonymousUserSetState(user: User) = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(user)
-        }
-
-        fun givenAnonymousPendingState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.Pending
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(user)
         }
 
         fun givenUserNotSetState() = apply {
