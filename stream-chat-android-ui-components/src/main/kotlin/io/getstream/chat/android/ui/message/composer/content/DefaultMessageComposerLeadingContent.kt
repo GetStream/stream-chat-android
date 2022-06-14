@@ -109,9 +109,10 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val isInEditMode = state.action is Edit
 
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
-        binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
-
         binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
-        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && ! isInEditMode
+
+        binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
+        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode
+        binding.commandsButton.isSelected = hasCommandSuggestions
     }
 }
