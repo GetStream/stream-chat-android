@@ -21,7 +21,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -53,7 +52,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param messageInputBackgroundDrawable The background drawable of the text input field.
  * @param messageInputCursorDrawable The drawable for the cursor in the text input field.
  * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
- * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.f
+ * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
+ * @param messageInputMaxLines The maximum number of message input lines.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -96,6 +96,7 @@ public data class MessageComposerViewStyle(
     public val messageInputCursorDrawable: Drawable?,
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
+    public val messageInputMaxLines: Int,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -315,14 +316,9 @@ public data class MessageComposerViewStyle(
                     false
                 )
 
-                val attachmentMaxFileSizeMb = a.getInt(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileSizeMb,
-                    AttachmentConstants.MAX_UPLOAD_SIZE_IN_MB
-                )
-
-                val attachmentMaxFileCount = a.getInt(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentMaxFileCount,
-                    AttachmentConstants.MAX_ATTACHMENTS_COUNT
+                val messageInputMaxLines = a.getInt(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputMaxLines,
+                    7
                 )
 
                 /**
@@ -462,6 +458,7 @@ public data class MessageComposerViewStyle(
                     messageInputCursorDrawable = messageInputCursorDrawable,
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
+                    messageInputMaxLines = messageInputMaxLines,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,

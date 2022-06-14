@@ -29,9 +29,9 @@
             <enum name="italic" value="2" />
         </attr>
 
-        <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference"/>
-        <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color"/>
-        <attr name="streamUiMessageComposerCommandSuggestionItemIconDrawable" format="reference"/>
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color" />
+        <attr name="streamUiMessageComposerCommandSuggestionItemIconDrawable" format="reference" />
 
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor" format="reference|color" />
@@ -55,7 +55,7 @@
 
         <!-- Mention suggestions content -->
         <attr name="streamUiMessageComposerMentionSuggestionsBackgroundColor" format="reference|color" />
-        <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawable" format="reference"/>
+        <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawable" format="reference" />
 
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor" format="reference|color" />
@@ -78,8 +78,8 @@
         </attr>
 
         <!-- Center content -->
-        <attr name="streamUiMessageComposerCommandsHandlingEnabled" format="boolean"/>
-        <attr name="streamUiMessageComposerMentionsHandlingEnabled" format="boolean"/>
+        <attr name="streamUiMessageComposerCommandsHandlingEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerMentionsHandlingEnabled" format="boolean" />
         <attr name="streamUiMessageComposerMessageInputTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMessageInputTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerMessageInputTextFontAssets" format="string" />
@@ -89,15 +89,14 @@
             <enum name="bold" value="1" />
             <enum name="italic" value="2" />
         </attr>
-        <attr name="streamUiMessageComposerMessageInputHintText" format="string"/>
-        <attr name="streamUiMessageComposerMessageInputHintColor" format="color|reference"/>
+        <attr name="streamUiMessageComposerMessageInputHintText" format="string" />
+        <attr name="streamUiMessageComposerMessageInputHintColor" format="color|reference" />
 
-        <attr name="streamUiMessageComposerMessageInputBackgroundDrawable" format="reference"/>
-        <attr name="streamUiMessageComposerMessageInputCursorDrawable" format="reference"/>
-        <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean"/>
-        <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean"/>
-        <attr name="streamUiMessageComposerAttachmentMaxFileSizeMb" format="integer"/>
-        <attr name="streamUiMessageComposerAttachmentMaxFileCount" format="integer"/>
+        <attr name="streamUiMessageComposerMessageInputBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageComposerMessageInputCursorDrawable" format="reference" />
+        <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerMessageInputMaxLines" format="integer" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />

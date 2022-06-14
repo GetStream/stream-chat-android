@@ -103,6 +103,7 @@
             android:paddingTop="18dp"
             android:paddingEnd="@dimen/stream_ui_spacing_medium"
             android:paddingBottom="18dp"
+            android:ellipsize="end"
             android:scrollbars="vertical"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorHint="@color/stream_ui_text_color_hint"

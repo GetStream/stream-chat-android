@@ -162,9 +162,11 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         if (canSendMessage) {
             binding.messageEditText.isEnabled = true
             binding.messageEditText.hint = context.getString(R.string.stream_ui_message_input_hint)
+            binding.messageEditText.maxLines = style.messageInputMaxLines
         } else {
             binding.messageEditText.isEnabled = false
             binding.messageEditText.hint = context.getString(R.string.stream_ui_message_cannot_send_messages_hint)
+            binding.messageEditText.maxLines = 1
         }
 
         attachmentsAdapter.setAttachments(state.attachments)
