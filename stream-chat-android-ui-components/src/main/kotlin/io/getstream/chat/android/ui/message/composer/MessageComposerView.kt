@@ -169,7 +169,9 @@ public class MessageComposerView : ConstraintLayout {
      * Default implementation of [mentionSuggestionsContent].
      */
     private val defaultMentionSuggestionsView: View by lazy {
-        DefaultMessageComposerMentionSuggestionsContent(context).attachContext()
+        DefaultMessageComposerMentionSuggestionsContent(context).also {
+            it.mentionSelectionListener = { user -> mentionSelectionListener(user) }
+        }.attachContext()
     }
 
     /**
@@ -187,7 +189,9 @@ public class MessageComposerView : ConstraintLayout {
      * Default implementation of [commandSuggestionsContent].
      */
     private val defaultCommandSuggestionsView: View by lazy {
-        DefaultMessageComposerCommandSuggestionsContent(context).attachContext()
+        DefaultMessageComposerCommandSuggestionsContent(context).also {
+            it.commandSelectionListener = { command -> commandSelectionListener(command) }
+        }.attachContext()
     }
 
     /**
