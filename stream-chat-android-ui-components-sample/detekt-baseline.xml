@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:UserRepository.kt$UserRepository$apiKey != null &amp;&amp; id != null &amp;&amp; name != null &amp;&amp; token != null &amp;&amp; image != null</ID>
-    <ID>ForbiddenComment:ChatFragment.kt$ChatFragment$// TODO: remove this sample code</ID>
     <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
     <ID>ForbiddenComment:HomeFragmentViewModel.kt$HomeFragmentViewModel.State$// TODO: implement unread mentions count</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
