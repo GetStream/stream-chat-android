@@ -34,16 +34,6 @@ import io.getstream.chat.android.offline.extensions.downloadAttachment
 public interface PermissionHandler {
 
     /**
-     * Handler when the permission is not granted and it is required to prompt the user.
-     */
-    public val onPermissionRequired: (String) -> Unit
-
-    /**
-     * Handler that gets called if the permission is already granted. You can run custom logic for the provided payload.
-     */
-    public val onPermissionGranted: (String, Map<String, Any>) -> Unit
-
-    /**
      * Checks whether the permission handler can handle the given permission.
      *
      * @param permission The permission needed to handle.
@@ -55,7 +45,7 @@ public interface PermissionHandler {
     /**
      * Checks whether the permission handler can handle the given permissions.
      *
-     * @param permissions The permissions needed to be handled.
+     * @param permissions The permissions that need to be handled.
      *
      * @return If the handler can handle the permissions or not.
      */
@@ -75,7 +65,7 @@ public interface PermissionHandler {
  * Default implementation of the download permission handler. By default will request the user to enable the permission
  * and once it has been granted will download the attachment.
  *
- * @param permissionState The [permissionState] for the permission we need. By default it is
+ * @param permissionState The [permissionState] for the permission we need. This should be
  * [Manifest.permissions.WRITE_EXTERNAL_STORAGE].
  * @param context The context for executing actions.
  * @param onPermissionRequired Handler when the user wants to download a file but the permission has not been granted.
@@ -86,14 +76,14 @@ public interface PermissionHandler {
 public class DownloadPermissionHandler(
     private val permissionState: PermissionState,
     private val context: Context,
-    override val onPermissionRequired: (String) -> Unit = {
+    private val onPermissionRequired: () -> Unit = {
         if (!permissionState.hasPermission && permissionState.shouldShowRationale) {
             permissionState.launchPermissionRequest()
         } else {
             context.openSystemSettings()
         }
     },
-    override val onPermissionGranted: (String, Map<String, Any>) -> Unit = { _, payload ->
+    private val onPermissionGranted: (Map<String, Any>) -> Unit = { payload ->
         (payload[PayloadAttachment] as? Attachment)?.let {
             ChatClient
                 .instance()
@@ -116,23 +106,30 @@ public class DownloadPermissionHandler(
     public fun observePermissionChanges() {
         LaunchedEffect(key1 = permissionState.hasPermission) {
             if (permissionState.hasPermission) lastPayload?.let {
-                onPermissionGranted(permissionState.permission, it)
+                onPermissionGranted(it)
                 lastPayload = null
             }
         }
     }
 
+    /**
+     * Checks whether the permission handler can handle the given permissions.
+     *
+     * @param permission The permission needed to be handled.
+     *
+     * @return If the handler can handle the permissions or not.
+     */
     override fun canHandle(permission: String): Boolean {
         return permissionState.permission == permission
     }
 
     override fun onHandleRequest(payload: Map<String, Any>) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || permissionState.hasPermission) {
-            onPermissionGranted(permissionState.permission, payload)
+            onPermissionGranted(payload)
             lastPayload = null
         } else {
             lastPayload = payload
-            onPermissionRequired(permissionState.permission)
+            onPermissionRequired()
         }
     }
 
