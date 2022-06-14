@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.api.models.querysort
 
-import io.getstream.chat.android.client.models.User
+/** Sort order which can be ascending or descending. */
+public enum class SortDirection(public val value: Int) {
+    /** Descending sort order. */
+    DESC(-1),
 
-/** Updates a collection of users by more fresh value of [users]. */
-internal fun Collection<User>.updateUsers(users: Map<String, User>) = map { user -> users[user.id] ?: user }
+    /** Ascending sort order. */
+    ASC(1)
+}

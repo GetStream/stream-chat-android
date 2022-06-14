@@ -27,12 +27,12 @@ internal class UserStateService {
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
-    fun onSetUser(user: User) {
-        fsm.sendEvent(UserStateEvent.ConnectUser(user))
-    }
-
-    fun onSetAnonymous() {
-        fsm.sendEvent(UserStateEvent.ConnectAnonymous)
+    fun onSetUser(user: User, isAnonymous: Boolean) {
+        if (isAnonymous) {
+            fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
+        } else {
+            fsm.sendEvent(UserStateEvent.ConnectUser(user))
+        }
     }
 
     fun onLogout() {
@@ -54,7 +54,7 @@ internal class UserStateService {
         initialState(UserState.NotSet)
         state<UserState.NotSet> {
             onEvent<UserStateEvent.ConnectUser> { event -> UserState.UserSet(event.user) }
-            onEvent<UserStateEvent.ConnectAnonymous> { UserState.AnonymousUserSet(null) }
+            onEvent<UserStateEvent.ConnectAnonymous> { event -> UserState.AnonymousUserSet(event.user) }
         }
         state<UserState.UserSet> {
             onEvent<UserStateEvent.UserUpdated> { event -> UserState.UserSet(event.user) }
@@ -69,7 +69,7 @@ internal class UserStateService {
     private sealed class UserStateEvent {
         class ConnectUser(val user: User) : UserStateEvent()
         class UserUpdated(val user: User) : UserStateEvent()
-        object ConnectAnonymous : UserStateEvent()
+        class ConnectAnonymous(val user: User) : UserStateEvent()
         object UnsetUser : UserStateEvent()
     }
 }

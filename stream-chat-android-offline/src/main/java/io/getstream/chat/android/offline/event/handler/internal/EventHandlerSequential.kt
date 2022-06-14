@@ -62,33 +62,32 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.addMember
+import io.getstream.chat.android.client.extensions.internal.addMembership
+import io.getstream.chat.android.client.extensions.internal.mergeReactions
+import io.getstream.chat.android.client.extensions.internal.removeMember
+import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.updateMember
+import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
+import io.getstream.chat.android.client.extensions.internal.updateMembership
+import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
+import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.offline.extensions.internal.addMember
-import io.getstream.chat.android.offline.extensions.internal.addMembership
-import io.getstream.chat.android.offline.extensions.internal.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.removeMember
-import io.getstream.chat.android.offline.extensions.internal.removeMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMember
-import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
-import io.getstream.chat.android.offline.extensions.internal.updateMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
-import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
@@ -118,7 +117,7 @@ internal class EventHandlerSequential(
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
-    private val mutableGlobalState: GlobalMutableState,
+    private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -130,7 +129,7 @@ internal class EventHandlerSequential(
         subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
-        mutableGlobalState: GlobalMutableState,
+        mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
         currentUserId: UserId
@@ -201,9 +200,7 @@ internal class EventHandlerSequential(
     override suspend fun syncHistoryForActiveChannels() {
         logger.d { "[syncHistoryForActiveChannels] no args" }
         val activeChannelsCid = activeChannelsCid()
-        if (activeChannelsCid.isNotEmpty()) {
-            syncHistory(activeChannelsCid)
-        }
+        syncHistory(activeChannelsCid)
     }
 
     private suspend fun initialize() {
@@ -234,14 +231,18 @@ internal class EventHandlerSequential(
         }
     }
 
-    private suspend fun syncHistory(cids: List<String>): Result<List<ChatEvent>> {
+    private suspend fun syncHistory(cids: List<String>) {
+        if (cids.isEmpty()) {
+            logger.w { "[syncHistory] rejected (cids is empty)" }
+            return
+        }
         logger.i { "[syncHistory] cids.size: ${cids.size}" }
-        return syncManager.getSortedSyncHistory(cids)
+        syncManager.getSortedSyncHistory(cids)
             .onSuccessSuspend { sortedEvents ->
                 logger.d {
                     "[syncHistory] succeed(${sortedEvents.size}): ${sortedEvents.joinToString(separator = ", \n")}"
                 }
-                val batchEvent = BatchEvent(sortedEvents, isFromHistorySync = true)
+                val batchEvent = BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = true)
                 handleBatchEvent(batchEvent)
             }.onError {
                 logger.e { "[syncHistory] failed: ${it.stringify()}" }
@@ -253,7 +254,7 @@ internal class EventHandlerSequential(
      */
     @VisibleForTesting
     override suspend fun handleEvents(vararg events: ChatEvent) {
-        val batchEvent = BatchEvent(events.toList(), isFromHistorySync = false)
+        val batchEvent = BatchEvent(sortedEvents = events.toList(), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
@@ -263,22 +264,22 @@ internal class EventHandlerSequential(
             return
         }
         socketEventCollector.fireBatchEvent()
-        val batchEvent = BatchEvent(listOf(event), isFromHistorySync = false)
+        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
         handleBatchEvent(batchEvent)
     }
 
     private suspend fun handleBatchEvent(event: BatchEvent) = try {
         logger.d {
-            "[handleBatchEvent] >>> id: ${event.hashCode()}, fromSocket: ${event.isFromSocketConnection}" +
+            "[handleBatchEvent] >>> id: ${event.id}, fromSocket: ${event.isFromSocketConnection}" +
                 ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.type }}'"
         }
         updateGlobalState(event)
         updateSyncManager(event)
         updateOfflineStorage(event)
         updateChannelsState(event)
-        logger.v { "[handleBatchEvent] <<< id: ${event.hashCode()}" }
+        logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
     } catch (e: Throwable) {
-        logger.e(e) { "[handleBatchEvent] failed(${event.hashCode()}): ${e.message}" }
+        logger.e(e) { "[handleBatchEvent] failed(${event.id}): ${e.message}" }
     }
 
     private suspend fun updateSyncManager(batchEvent: BatchEvent) {
@@ -291,9 +292,7 @@ internal class EventHandlerSequential(
                     }
                     val activeChannelCids = activeChannelsCid()
                     logger.v { "[updateSyncManager] activeChannelCids.size: ${activeChannelCids.size}" }
-                    if (activeChannelCids.isNotEmpty()) {
-                        syncHistory(activeChannelCids)
-                    }
+                    syncHistory(activeChannelCids)
                 }
                 is HealthEvent -> if (batchEvent.isFromSocketConnection) {
                     syncManager.retryFailedEntities()
@@ -313,16 +312,16 @@ internal class EventHandlerSequential(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
+                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(event.me)
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
-                    mutableGlobalState._initialized.value = true
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
+                    mutableGlobalState.setInitialized(true)
                 }
                 is ConnectingEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
@@ -336,28 +335,28 @@ internal class EventHandlerSequential(
                     mutableGlobalState.updateCurrentUser(event.user)
                 }
                 is MarkAllReadEvent -> {
-                    mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                    mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                    mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                    mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
                     // can we somehow get rid of repos usage here?
                     if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                        mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
                     }
                 }
                 else -> Unit
@@ -420,11 +419,10 @@ internal class EventHandlerSequential(
     }
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {
-        logger.v { "[updateOfflineStorage] batchEvent.size: ${batchEvent.size}" }
+        logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
         val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
-
         val events = batchEvent.sortedEvents
-        val batchBuilder = EventBatchUpdate.Builder()
+        val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
@@ -453,8 +451,13 @@ internal class EventHandlerSequential(
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
-                    repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
-                        ?.let(batch::addChannel)
+                    repos.selectChannelWithoutMessages(event.cid)?.let { channel ->
+                        val updatedChannel = channel.copy(
+                            hidden = false,
+                            messages = listOf(event.message)
+                        )
+                        batch.addChannel(updatedChannel)
+                    }
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
@@ -702,13 +705,13 @@ internal class EventHandlerSequential(
         }
     }
 
-    private fun GlobalMutableState.updateCurrentUser(me: User) {
-        _user.value = me
-        _mutedUsers.value = me.mutes
-        _channelMutes.value = me.channelMutes
-        _totalUnreadCount.value = me.totalUnreadCount
-        _channelUnreadCount.value = me.unreadChannels
-        _banned.value = me.banned
+    private fun MutableGlobalState.updateCurrentUser(me: User) {
+        setUser(me)
+        setMutedUsers(me.mutes)
+        setChannelMutes(me.channelMutes)
+        setTotalUnreadCount(me.totalUnreadCount)
+        setChannelUnreadCount(me.unreadChannels)
+        setBanned(me.banned)
     }
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {

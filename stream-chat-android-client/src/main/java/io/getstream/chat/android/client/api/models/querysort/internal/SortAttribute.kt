@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models.internal
+package io.getstream.chat.android.client.api.models.querysort.internal
 
-import io.getstream.chat.android.client.api.models.QuerySort
+import kotlin.reflect.KProperty1
 
-internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
-    override fun compare(o1: T, o2: T): Int =
-        comparators.fold(QuerySort.EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
-            when (currentComparisonValue) {
-                QuerySort.EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
-                else -> currentComparisonValue
-            }
-        }
+/** Inner representation of sorting feature specification. */
+public sealed class SortAttribute<T> {
+    /** Name of attribute */
+    public abstract val name: String
+
+    /** KProperty referenced attribute. */
+    public data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
+        SortAttribute<T>()
+
+    /** Referenced by name attribute. */
+    public data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
 }

@@ -29,6 +29,9 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -41,13 +44,10 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.offline.extensions.internal.applyPagination
-import io.getstream.chat.android.offline.extensions.internal.toCid
-import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -60,7 +60,7 @@ internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
     private val repos: RepositoryFacade,
-    private val globalState: GlobalMutableState,
+    private val globalState: MutableGlobalState,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
 ) {
@@ -168,7 +168,7 @@ internal class QueryChannelsLogic(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
         channelConfigRepository: ChannelConfigRepository,
-        globalState: GlobalMutableState,
+        globalState: MutableGlobalState,
     ) {
         if (result.isSuccess) {
             mutableState._recoveryNeeded.value = false
@@ -186,7 +186,7 @@ internal class QueryChannelsLogic(
         } else {
             logger.logI("Query with filter ${request.filter} failed, marking it as recovery needed")
             mutableState._recoveryNeeded.value = true
-            globalState._errorEvent.value = Event(result.error())
+            globalState.setErrorEvent(Event(result.error()))
         }
     }
 

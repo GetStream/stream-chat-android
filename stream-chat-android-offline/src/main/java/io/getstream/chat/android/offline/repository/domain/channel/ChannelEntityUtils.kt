@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.offline.repository.domain.channel
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.utils.internal.validateCid
+import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity
 
 /**
- * Converts a pair of channelType and channelId into cid.
- *
- * @return String CID of the given channel type and id.
- * @throws IllegalArgumentException if cid is not valid.
+ * Composes a short version of [ChannelEntity.toString] with the last message information only.
  */
-@Throws(IllegalArgumentException::class)
-@InternalStreamChatApi
-public fun Pair<String, String>.toCid(): String {
-    val cid = "$first:$second"
-    validateCid(cid)
-    return cid
+internal fun ChannelEntity.lastMessageInfo(): String {
+    return "ChannelEntity(lastMessageId: $lastMessageId, lastMessageAt: $lastMessageAt, cid: $cid)"
 }

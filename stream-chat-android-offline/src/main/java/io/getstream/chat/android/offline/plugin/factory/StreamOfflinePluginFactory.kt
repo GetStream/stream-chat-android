@@ -140,7 +140,7 @@ public class StreamOfflinePluginFactory(
             repositoryFactory(repositoryFactory)
         }.build()
 
-        val stateRegistry = StateRegistry.create(job, scope, globalState._user, repos, repos.observeLatestUsers())
+        val stateRegistry = StateRegistry.create(job, scope, globalState.user, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
@@ -184,6 +184,7 @@ public class StreamOfflinePluginFactory(
         }
 
         val eventHandler: EventHandler = createEventHandler(
+            useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
             logicRegistry = logic,
@@ -215,7 +216,7 @@ public class StreamOfflinePluginFactory(
             }
         }
 
-        globalState._user.value = user
+        globalState.setUser(user)
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
@@ -241,6 +242,7 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun createEventHandler(
+        useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
         logicRegistry: LogicRegistry,
@@ -249,7 +251,7 @@ public class StreamOfflinePluginFactory(
         repos: RepositoryFacade,
         syncManager: SyncManager
     ): EventHandler {
-        return when (BuildConfig.DEBUG) {
+        return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
                 recoveryEnabled = true,

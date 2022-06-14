@@ -22,9 +22,9 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -445,7 +445,7 @@ constructor(
 
     override fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySorter<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -513,7 +513,7 @@ constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return channelApi.getPinnedMessages(
@@ -771,7 +771,7 @@ constructor(
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySort<Message>?,
+        sort: QuerySorter<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
             filter_conditions = channelFilter.toMap(),
@@ -868,7 +868,7 @@ constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(

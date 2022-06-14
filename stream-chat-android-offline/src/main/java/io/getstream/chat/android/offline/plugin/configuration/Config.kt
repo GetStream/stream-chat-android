@@ -25,10 +25,12 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
  * @param userPresence Whether the SDK should receive user presence changes.
  * @param persistenceEnabled Whether the data should be stored in the DB.
  * @param uploadAttachmentsNetworkType An enumeration of various network types used as a constraint inside upload attachments worker.
+ * @param useSequentialEventHandler Whether the SDK will use a new sequential event handling mechanism.
  */
-public data class Config(
+public data class Config @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
     public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    public val useSequentialEventHandler: Boolean = false,
 )

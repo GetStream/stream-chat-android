@@ -25,7 +25,6 @@
     <ID>ForbiddenComment:BaseDomainTest2.kt$BaseDomainTest2$// TODO: a chat domain without a user set should raise a clear error</ID>
     <ID>ForbiddenComment:ChatClientStateCalls.kt$ChatClientStateCalls$// todo: Fix this!!</ID>
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
-    <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>ForbiddenComment:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$// TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
     <ID>LongMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
@@ -45,13 +44,13 @@
     <ID>LongMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>LongMethod:StreamOfflinePluginFactory.kt$StreamOfflinePluginFactory$ private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin</ID>
-    <ID>LongParameterList:EventHandlerImpl.kt$EventHandlerImpl$( private val scope: CoroutineScope, private val recoveryEnabled: Boolean, private val client: ChatClient, private val logic: LogicRegistry, private val state: StateRegistry, private val mutableGlobalState: GlobalMutableState, private val repos: RepositoryFacade, private val syncManager: SyncManager, )</ID>
-    <ID>LongParameterList:EventHandlerSequential.kt$EventHandlerSequential$( scope: CoroutineScope, private val recoveryEnabled: Boolean, private val subscribeForEvents: (ChatEventListener&lt;ChatEvent>) -> Disposable, private val logicRegistry: LogicRegistry, private val stateRegistry: StateRegistry, private val mutableGlobalState: GlobalMutableState, private val repos: RepositoryFacade, private val syncManager: SyncManager, )</ID>
-    <ID>LongParameterList:EventHandlerSequential.kt$EventHandlerSequential$( scope: CoroutineScope, recoveryEnabled: Boolean, subscribeForEvents: (ChatEventListener&lt;ChatEvent>) -> Disposable, logicRegistry: LogicRegistry, stateRegistry: StateRegistry, mutableGlobalState: GlobalMutableState, repos: RepositoryFacade, syncManager: SyncManager, currentUserId: UserId )</ID>
+    <ID>LongParameterList:EventHandlerImpl.kt$EventHandlerImpl$( private val scope: CoroutineScope, private val recoveryEnabled: Boolean, private val client: ChatClient, private val logic: LogicRegistry, private val state: StateRegistry, private val mutableGlobalState: MutableGlobalState, private val repos: RepositoryFacade, private val syncManager: SyncManager, )</ID>
+    <ID>LongParameterList:EventHandlerSequential.kt$EventHandlerSequential$( scope: CoroutineScope, private val recoveryEnabled: Boolean, private val subscribeForEvents: (ChatEventListener&lt;ChatEvent>) -> Disposable, private val logicRegistry: LogicRegistry, private val stateRegistry: StateRegistry, private val mutableGlobalState: MutableGlobalState, private val repos: RepositoryFacade, private val syncManager: SyncManager, )</ID>
+    <ID>LongParameterList:EventHandlerSequential.kt$EventHandlerSequential$( scope: CoroutineScope, recoveryEnabled: Boolean, subscribeForEvents: (ChatEventListener&lt;ChatEvent>) -> Disposable, logicRegistry: LogicRegistry, stateRegistry: StateRegistry, mutableGlobalState: MutableGlobalState, repos: RepositoryFacade, syncManager: SyncManager, currentUserId: UserId )</ID>
     <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, internal val activeUser: User, )</ID>
     <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
     <ID>LongParameterList:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$( private val context: Context, private val logic: LogicRegistry, private val globalState: GlobalState, private val channelRepository: ChannelRepository, private val messageRepository: MessageRepository, private val attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val networkType: UploadAttachmentsNetworkType, )</ID>
-    <ID>LongParameterList:StreamOfflinePluginFactory.kt$StreamOfflinePluginFactory$( scope: CoroutineScope, client: ChatClient, logicRegistry: LogicRegistry, stateRegistry: StateRegistry, mutableGlobalState: GlobalMutableState, repos: RepositoryFacade, syncManager: SyncManager )</ID>
+    <ID>LongParameterList:StreamOfflinePluginFactory.kt$StreamOfflinePluginFactory$( useSequentialEventHandler: Boolean, scope: CoroutineScope, client: ChatClient, logicRegistry: LogicRegistry, stateRegistry: StateRegistry, mutableGlobalState: GlobalMutableState, repos: RepositoryFacade, syncManager: SyncManager )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
     <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
@@ -84,7 +83,6 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")</ID>
-    <ID>MaxLineLength:EventHandlerProvider.kt$EventHandlerProvider$get() = _eventHandler ?: throw IllegalStateException("EventHandler was not set in the EventHandlerProvider. Looks like there's a initialisation problem")</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
@@ -92,7 +90,6 @@
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
-    <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt; :dateFilter || createdLocallyAt &lt; :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt;= :dateFilter || createdLocallyAt &lt;= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
@@ -107,9 +104,6 @@
     <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
-    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val direction = (sortSpecMap[QuerySort.KEY_DIRECTION] as? Number)?.toInt() ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
-    <ID>MaxLineLength:QuerySortConverter.kt$QuerySortConverter$val fieldName = sortSpecMap[QuerySort.KEY_FIELD_NAME] as? String ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")</ID>
-    <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>
     <ID>MaxLineLength:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$// We enqueue attachments upload here if user is offline but an error is returned so message is not sent right away.</ID>
@@ -137,7 +131,6 @@
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>PrintStackTrace:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e</ID>
-    <ID>ReturnCount:Channel.kt$ internal fun Channel.addMember(member: Member?): Channel</ID>
     <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
     <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( channelType: String, channelId: String, messageId: String, ): Result&lt;Unit></ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
@@ -147,6 +140,7 @@
     <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
     <ID>TooManyFunctions:EventHandlerSequential.kt$EventHandlerSequential : EventHandler</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
+    <ID>UnusedImports:ChannelLogic.kt$import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>
@@ -170,16 +164,6 @@
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _unreadCount = MutableStateFlow(0)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _watcherCount = MutableStateFlow(0)</ID>
     <ID>VariableNaming:ChannelMutableState.kt$ChannelMutableState$internal val _watchers = MutableStateFlow&lt;Map&lt;String, User>>(emptyMap())</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _banned = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _channelMutes = MutableStateFlow&lt;List&lt;ChannelMute>>(emptyList())</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _channelUnreadCount = MutableStateFlow(0)</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _errorEvent = MutableStateFlow(Event(ChatError()))</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _initialized = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _mutedUsers = MutableStateFlow&lt;List&lt;Mute>>(emptyList())</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _totalUnreadCount = MutableStateFlow(0)</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))</ID>
-    <ID>VariableNaming:GlobalMutableState.kt$GlobalMutableState$internal val _user = MutableStateFlow&lt;User?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _channels = MutableStateFlow&lt;Map&lt;String, Channel>?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _endOfChannels = MutableStateFlow(false)</ID>

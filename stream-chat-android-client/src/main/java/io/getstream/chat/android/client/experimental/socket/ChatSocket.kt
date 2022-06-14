@@ -307,6 +307,8 @@ internal open class ChatSocket constructor(
 
     internal fun isConnected(): Boolean = state is State.Connected
 
+    internal fun isDisconnected(): Boolean = state is State.Disconnected
+
     /**
      * Get connection id of this connection.
      */

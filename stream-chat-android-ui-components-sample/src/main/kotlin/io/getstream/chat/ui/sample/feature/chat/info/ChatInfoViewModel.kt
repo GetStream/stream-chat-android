@@ -24,9 +24,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
@@ -35,7 +36,6 @@ import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -72,10 +72,14 @@ class ChatInfoViewModel(
 
                 _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { memberList ->
                     // Updates only if the user state is already set
-                    _state.value = _state.value!!.copy(canDeleteChannel = memberList.isCurrentUserOwnerOrAdmin())
                     memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
                         _state.value = _state.value?.copy(member = member)
                     }
+                }
+                _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
+                    _state.value = _state.value?.copy(
+                        canDeleteChannel = channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
+                    )
                 }
                 // Currently, we don't receive any event when channel member is banned/shadow banned, so
                 // we need to get member data from the server
@@ -84,7 +88,7 @@ class ChatInfoViewModel(
                         offset = 0,
                         limit = 1,
                         filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
-                        sort = QuerySort()
+                        sort = QuerySortByField()
                     ).await()
 
                 if (result.isSuccess) {
@@ -93,7 +97,7 @@ class ChatInfoViewModel(
                     _state.value = _state.value!!.copy(
                         member = member,
                         isMemberBlocked = member?.shadowBanned ?: false,
-                        loading = false,
+                        loading = false
                     )
                 } else {
                     // TODO: Handle error

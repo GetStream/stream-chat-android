@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.utils.internal
+package io.getstream.chat.android.client.utils.internal
 
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.internal.hasPendingAttachments
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.regex.Pattern
 
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 
 // TODO: type should be a sealed/class or enum at the client level
-internal fun getMessageType(message: Message): String {
+@InternalStreamChatApi
+public fun getMessageType(message: Message): String {
     val hasAttachments = message.attachments.isNotEmpty()
     val hasAttachmentsToUpload = message.hasPendingAttachments()
 

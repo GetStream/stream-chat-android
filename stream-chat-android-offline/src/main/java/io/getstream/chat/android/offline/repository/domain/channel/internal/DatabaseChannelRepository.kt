@@ -17,14 +17,16 @@
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import androidx.collection.LruCache
+import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.offline.extensions.internal.lastMessage
+import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 /**
@@ -37,6 +39,9 @@ internal class DatabaseChannelRepository(
     private val getMessage: suspend (messageId: String) -> Message?,
     cacheSize: Int = 100,
 ) : ChannelRepository {
+
+    private val logger = StreamLog.getLogger("Chat:ChannelRepository")
+
     // the channel cache is simple, just keeps the last several users in memory
     private val channelCache = LruCache<String, Channel>(cacheSize)
 
@@ -46,8 +51,10 @@ internal class DatabaseChannelRepository(
      * @param channel [Channel]
      */
     override suspend fun insertChannel(channel: Channel) {
+        val entity = channel.toEntity()
+        logger.v { "[insertChannel] entity: ${entity.lastMessageInfo()}" }
         updateCache(listOf(channel))
-        channelDao.insert(channel.toEntity())
+        channelDao.insert(entity)
     }
 
     /**
@@ -57,8 +64,10 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
+        val entities = channels.map(Channel::toEntity)
+        logger.v { "[insertChannels] entities.size: ${entities.size}" }
         updateCache(channels)
-        channelDao.insertMany(channels.map(Channel::toEntity))
+        channelDao.insertMany(entities)
     }
 
     /**
@@ -67,6 +76,7 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun deleteChannel(cid: String) {
+        logger.v { "[deleteChannel] cid: $cid" }
         channelCache.remove(cid)
         channelDao.delete(cid)
     }
@@ -77,7 +87,8 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return selectChannelsByCids(listOf(cid)).getOrNull(0)
+        val entity = channelDao.select(cid = cid)
+        return entity?.toModel(getUser, getMessage)
     }
 
     /**
@@ -201,10 +212,12 @@ internal class DatabaseChannelRepository(
     }
 
     override suspend fun evictChannel(cid: String) {
+        logger.v { "[evictChannel] cid: $cid" }
         channelCache.remove(cid)
     }
 
     override fun clearChannelCache() {
+        logger.v { "[clearChannelCache] no args" }
         channelCache.evictAll()
     }
 
@@ -213,6 +226,7 @@ internal class DatabaseChannelRepository(
     }
 
     private fun updateCache(channels: Collection<Channel>) {
+        logger.v { "[updateCache] channels.size: ${channels.size}" }
         for (channel in channels) {
             channelCache.put(channel.cid, channel)
         }

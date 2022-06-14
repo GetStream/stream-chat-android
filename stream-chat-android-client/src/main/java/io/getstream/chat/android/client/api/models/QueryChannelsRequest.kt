@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 
 /**
@@ -24,7 +26,7 @@ import io.getstream.chat.android.client.models.Channel
  * @property filter [FilterObject] conditions used by backend to filter queries response.
  * @property offset Pagination offset.
  * @property limit Number of channels to be returned by this query channels request.
- * @property querySort [QuerySort] Sort specification for api queries.
+ * @property querySort [QuerySorter] Sort specification for api queries.
  * @property messageLimit Number of messages in the response.
  * @property memberLimit Number of members in the response.
  */
@@ -32,7 +34,7 @@ public data class QueryChannelsRequest(
     public val filter: FilterObject,
     public var offset: Int = 0,
     public var limit: Int,
-    public val querySort: QuerySort<Channel> = QuerySort(),
+    public val querySort: QuerySorter<Channel> = QuerySortByField(),
     public var messageLimit: Int = 0,
     public var memberLimit: Int = 0,
 ) : ChannelRequest<QueryChannelsRequest> {

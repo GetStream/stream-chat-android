@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
-
-import java.util.Date
+package io.getstream.chat.android.client.api.models.querysort
 
 /**
- * Check if current date has difference with [other] no more that [offset].
+ * Implement this interface to use [QuerySortByField]. Implementations of this interface must provide comparable
+ * fields.
  */
-internal fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time
+public interface ComparableFieldProvider {
+
+    /**
+     * Gets a comparable fields from a name.
+     *
+     * @param fieldName The name of the field.
+     */
+    public fun getComparableField(fieldName: String): Comparable<*>?
+}
