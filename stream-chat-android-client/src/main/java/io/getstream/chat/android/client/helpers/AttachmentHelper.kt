@@ -35,7 +35,7 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
     }
 
     public fun hasStreamImageUrl(attachment: Attachment): Boolean {
-        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let( streamCdnHostPatternRegex()::matches) ?: false
+        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(streamCdnHostPatternRegex()::matches) ?: false
     }
 
     private companion object {
