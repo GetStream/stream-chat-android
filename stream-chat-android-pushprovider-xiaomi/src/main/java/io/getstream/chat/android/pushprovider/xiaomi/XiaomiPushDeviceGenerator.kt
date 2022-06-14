@@ -21,6 +21,7 @@ import com.xiaomi.channel.commonutils.android.Region
 import com.xiaomi.mipush.sdk.MiPushClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -51,10 +52,14 @@ public class XiaomiPushDeviceGenerator(
     }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
+        logger.logI("Getting Xiaomi token")
         if (isAlreadyRegistered.compareAndSet(false, true)) {
-            logger.logI("Getting Xiaomi token")
             MiPushClient.setRegion(region)
             MiPushClient.registerPush(appContext, appId, appKey)
+        } else {
+            MiPushClient.getRegId(appContext)?.let {
+                onDeviceGenerated(Device(it, PushProvider.XIAOMI, providerName))
+            }
         }
     }
 }
