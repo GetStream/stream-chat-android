@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Reducing memory usage of the SDK. [3679](https://github.com/GetStream/stream-chat-android/pull/3679)
 
 ### ✅ Added
 
