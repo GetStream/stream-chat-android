@@ -1008,6 +1008,10 @@ public final class io/getstream/chat/android/client/errors/ChatNetworkError$Comp
 	public static synthetic fun create$default (Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;Lio/getstream/chat/android/client/errors/ChatErrorCode;Ljava/lang/Throwable;IILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatNetworkError;
 }
 
+public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
 public final class io/getstream/chat/android/client/errors/cause/MessageModerationFailedException : io/getstream/chat/android/client/errors/cause/StreamCodeException {
 	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1036,6 +1040,12 @@ public final class io/getstream/chat/android/client/errors/cause/MessageModerati
 }
 
 public abstract class io/getstream/chat/android/client/errors/cause/StreamCodeException : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class io/getstream/chat/android/client/errors/cause/StreamException : java/lang/Exception {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -3382,6 +3392,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener {
+	public abstract fun onMessageDeletePrecondition (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeleteRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

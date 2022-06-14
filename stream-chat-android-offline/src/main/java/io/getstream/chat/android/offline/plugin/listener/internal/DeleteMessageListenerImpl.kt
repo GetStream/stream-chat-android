@@ -41,9 +41,9 @@ internal class DeleteMessageListenerImpl(
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
 
-            val isModerationFailed = message.user.id == globalState.user.value?.id
-                && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
-                && message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+            val isModerationFailed = message.user.id == globalState.user.value?.id &&
+                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
+                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             val (channelType, channelId) = message.cid.cidToTypeAndId()
             val channelLogic = logic.channel(channelType, channelId)
@@ -51,9 +51,11 @@ internal class DeleteMessageListenerImpl(
             if (isModerationFailed) {
                 channelLogic.deleteMessage(message)
                 messageRepository.deleteChannelMessage(message)
-                Result.error(MessageModerationDeletedException(
-                    "Message with failed moderation has been deleted locally: $messageId"
-                ))
+                Result.error(
+                    MessageModerationDeletedException(
+                        "Message with failed moderation has been deleted locally: $messageId"
+                    )
+                )
             } else {
                 Result.success(Unit)
             }
