@@ -69,49 +69,33 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
-import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.utils.Event
-import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import java.util.Date
-import kotlin.math.max
 
 /**
  * This class contains all the logic to manipulate and modify the state of the corresponding channel.
  *
  * @property mutableState [ChannelMutableState] Mutable state instance of the channel.
- * @property globalMutableState [GlobalMutableState] Global state of the SDK.
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
@@ -119,10 +103,10 @@ import kotlin.math.max
 @Suppress("TooManyFunctions")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
-    private val globalMutableState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val channelStateLogic: ChannelStateLogic
 ) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
@@ -177,15 +161,7 @@ internal class ChannelLogic(
                 updateDataFromChannel(channel)
                 loadingStateByRequest(request).value = false
             }
-            .onError { error ->
-                if (error.isPermanent()) {
-                    logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
-                } else {
-                    logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")
-                    mutableState.recoveryNeeded = true
-                }
-                globalMutableState.setErrorEvent(Event(error))
-            }
+            .onError(channelStateLogic::propagateQueryError)
     }
 
     private suspend fun storeStateForChannel(channel: Channel) {
@@ -314,54 +290,43 @@ internal class ChannelLogic(
 
     private fun updateOldMessagesFromChannel(c: Channel) {
         // Update all the flow objects based on the channel
-        updateChannelData(c)
-        setWatcherCount(c.watcherCount)
-        updateReads(c.read)
+        channelStateLogic.updateChannelData(c)
+        channelStateLogic.setWatcherCount(c.watcherCount)
+        channelStateLogic.updateReads(c.read)
         mutableState._membersCount.value = c.memberCount
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
-        setMembers(c.members)
-        setWatchers(c.watchers)
-        upsertOldMessages(c.messages)
-    }
-
-    private fun upsertOldMessages(messages: List<Message>) {
-        mutableState._oldMessages.value = parseMessages(messages)
+        channelStateLogic.setMembers(c.members)
+        channelStateLogic.setWatchers(c.watchers)
+        channelStateLogic.upsertOldMessages(c.messages)
     }
 
     internal fun updateDataFromChannel(c: Channel) {
         // Update all the flow objects based on the channel
-        updateChannelData(c)
-        setWatcherCount(c.watcherCount)
+        channelStateLogic.updateChannelData(c)
+        channelStateLogic.setWatcherCount(c.watcherCount)
 
         mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
         mutableState._membersCount.value = c.memberCount
 
-        updateReads(c.read)
+        channelStateLogic.updateReads(c.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
-        setMembers(c.members)
-        setWatchers(c.watchers)
-        upsertMessages(c.messages)
+        channelStateLogic.setMembers(c.members)
+        channelStateLogic.setWatchers(c.watchers)
+        channelStateLogic.upsertMessages(c.messages)
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
     }
-
-    internal fun upsertMessages(messages: List<Message>) {
-        val newMessages = parseMessages(messages)
-        updateLastMessageAtByNewMessages(newMessages.values)
-        mutableState._messages.value = newMessages
-    }
-
     /**
      * Updates the messages locally and saves it at database.
      *
      * @param messages The list of messages to be updated in the SDK and to be saved in database.
      */
     internal suspend fun updateAndSaveMessages(messages: List<Message>) {
-        upsertMessages(messages)
+        channelStateLogic.upsertMessages(messages)
         storeMessageLocally(messages)
     }
 
@@ -374,157 +339,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
-
-    internal fun setWatcherCount(watcherCount: Int) {
-        if (watcherCount != mutableState._watcherCount.value) {
-            mutableState._watcherCount.value = watcherCount
-        }
-    }
-
-    private fun setMembers(members: List<Member>) {
-        mutableState._members.value = (mutableState._members.value + members.associateBy(Member::getUserId))
-    }
-
-    private fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState._channelData.value?.ownCapabilities ?: emptySet()
-        mutableState._channelData.value = ChannelData(channel, currentOwnCapabilities)
-    }
-
-    private fun setWatchers(watchers: List<User>) {
-        mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
-    }
-
-    /**
-     * Increments the unread count of the Channel if necessary.
-     *
-     * @param message [Message].
-     */
-    private fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = globalMutableState.user.value?.id ?: return
-
-        /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
-         * same time, one increment can be lost.
-         */
-        synchronized(this) {
-            val readState = mutableState._read.value?.copy()
-            val unreadCount: Int = readState?.unreadMessages ?: 0
-            val lastMessageSeenDate = readState?.lastMessageSeenDate
-
-            val shouldIncrementUnreadCount =
-                message.shouldIncrementUnreadCount(
-                    currentUserId = currentUserId,
-                    lastMessageAtDate = lastMessageSeenDate,
-                    isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid)
-                )
-
-            if (shouldIncrementUnreadCount) {
-                logger.logD(
-                    "It is necessary to increment the unread count for channel: " +
-                        "${mutableState._channelData.value?.channelId}. The last seen message was " +
-                        "at: $lastMessageSeenDate. " +
-                        "New unread count: ${unreadCount + 1}"
-                )
-
-                mutableState._read.value = readState.apply { this?.unreadMessages = unreadCount + 1 }
-                mutableState._reads.value = mutableState._reads.value.apply {
-                    this[currentUserId]?.lastMessageSeenDate = message.createdAt
-                    this[currentUserId]?.unreadMessages = unreadCount + 1
-                }
-                mutableState._unreadCount.value = unreadCount + 1
-            }
-        }
-    }
-
-    internal fun updateReads(reads: List<ChannelUserRead>) {
-        globalMutableState.user.value?.let { currentUser ->
-            val currentUserId = currentUser.id
-            val previousUserIdToReadMap = mutableState._reads.value
-            val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
-
-            /**
-             * It's possible that the data coming back from the online channel query has a last read date that's
-             * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
-             * to show in the channel list.
-             */
-            incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
-                incomingUserRead.lastMessageSeenDate = mutableState._read.value?.lastMessageSeenDate
-
-                // the previous last Read date that is most current
-                val previousLastRead =
-                    mutableState._read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
-
-                // Use AFTER to determine if the incoming read is more current.
-                // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-                val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
-                    previousLastRead,
-                    OFFSET_EVENT_TIME
-                ) == true
-
-                if (shouldUpdateByIncoming) {
-                    mutableState._read.value = incomingUserRead
-                    mutableState._unreadCount.value = incomingUserRead.unreadMessages
-                } else {
-                    // if the previous Read was more current, replace the item in the update map
-                    incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
-                }
-            }
-
-            // always post the newly updated map
-            mutableState._reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
-        }
-    }
-
-    private fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
-
-    /**
-     * Updates [ChannelMutableState._messages] with new messages.
-     * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
-     *
-     * @param messages The list of messages to update.
-     */
-    private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState._messages.value
-        return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
-            .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
-            .associateBy(Message::id)
-    }
-
-    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
-        return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
-            currentMessage?.lastUpdateTime() ?: NEVER.time <= newMessage.lastUpdateTime()
-        } else {
-            currentMessage?.lastLocalUpdateTime() ?: NEVER.time <= newMessage.lastLocalUpdateTime()
-        }
-    }
-
-    private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
-        if (newMessages.isEmpty()) {
-            return
-        }
-        val newLastMessageAt =
-            newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOfOrNull(Date::getTime) ?: return
-        mutableState.lastMessageAt.value = when (val currentLastMessageAt = mutableState.lastMessageAt.value) {
-            null -> Date(newLastMessageAt)
-            else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
-        }
-    }
-
-    private fun Message.lastUpdateTime(): Long = listOfNotNull(
-        createdAt,
-        updatedAt,
-        deletedAt,
-    ).map { it.time }
-        .maxOrNull()
-        ?: NEVER.time
-
-    private fun Message.lastLocalUpdateTime(): Long = listOfNotNull(
-        createdLocallyAt,
-        updatedLocallyAt,
-        deletedAt,
-    ).map { it.time }
-        .maxOrNull()
-        ?: NEVER.time
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
 
     /**
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
@@ -532,7 +347,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
@@ -541,7 +356,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
     /**
@@ -584,7 +399,7 @@ internal class ChannelLogic(
      * @param message The [Message] to remove.
      */
     internal fun removeLocalMessage(message: Message) {
-        mutableState._messages.value = mutableState._messages.value - message.id
+        channelStateLogic.removeLocalMessage(message)
     }
 
     /**
@@ -594,18 +409,8 @@ internal class ChannelLogic(
      * @param date The date used for generating result.
      * @param systemMessage The system message to display.
      */
-    internal fun removeMessagesBefore(
-        date: Date,
-        systemMessage: Message? = null,
-    ) {
-        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
-
-        if (systemMessage == null) {
-            mutableState._messages.value = messages
-        } else {
-            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
-            updateLastMessageAtByNewMessages(listOf(systemMessage))
-        }
+    internal fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
+        channelStateLogic.removeMessagesBefore(date, systemMessage)
     }
 
     /**
@@ -614,7 +419,8 @@ internal class ChannelLogic(
      * @param date The date used for generating result.
      */
     internal fun hideMessagesBefore(date: Date) {
-        mutableState.hideMessagesBefore = date
+        channelStateLogic.hideMessagesBefore(date)
+        // mutableState.hideMessagesBefore = date
     }
 
     private fun upsertEventMessage(message: Message) {
@@ -622,7 +428,7 @@ internal class ChannelLogic(
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
         }
-        upsertMessages(listOf(message))
+        channelStateLogic.upsertMessages(listOf(message))
     }
 
     /**
@@ -650,14 +456,6 @@ internal class ChannelLogic(
         mutableState._membersCount.value -= 1
     }
 
-    private fun upsertMembers(members: List<Member>) {
-        mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
-    }
-
-    private fun upsertMember(member: Member) {
-        upsertMembers(listOf(member))
-    }
-
     private fun upsertUserPresence(user: User) {
         val userId = user.id
         // members and watchers have users
@@ -667,7 +465,7 @@ internal class ChannelLogic(
         val watcher = watchers.firstOrNull { it.id == userId }
         if (member != null) {
             member.user = user
-            upsertMember(member)
+            channelStateLogic.upsertMember(member)
         }
         if (watcher != null) {
             upsertWatcher(user)
@@ -719,19 +517,8 @@ internal class ChannelLogic(
             if (changed) changedMessages.add(message)
         }
         if (changedMessages.isNotEmpty()) {
-            upsertMessages(changedMessages)
+            channelStateLogic.upsertMessages(changedMessages)
         }
-    }
-
-    internal fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = mutableState._typing.value.toMutableMap()
-        if (event == null) {
-            copy.remove(userId)
-        } else {
-            copy[userId] = event
-        }
-        globalMutableState.user.value?.id.let(copy::remove)
-        mutableState._typing.value = copy.toMap()
     }
 
     /**
@@ -753,7 +540,7 @@ internal class ChannelLogic(
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
-                incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
             is MessageUpdatedEvent -> {
@@ -773,7 +560,7 @@ internal class ChannelLogic(
             }
             is NotificationMessageNewEvent -> {
                 upsertEventMessage(event.message)
-                incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
             is ReactionNewEvent -> {
@@ -793,14 +580,14 @@ internal class ChannelLogic(
             }
             is MemberAddedEvent -> {
                 mutableState._membersCount.value += 1
-                upsertMember(event.member)
+                channelStateLogic.upsertMember(event.member)
             }
             is MemberUpdatedEvent -> {
-                upsertMember(event.member)
+                channelStateLogic.upsertMember(event.member)
             }
             is NotificationAddedToChannelEvent -> {
                 mutableState._membersCount.value += event.channel.members.size
-                upsertMembers(event.channel.members)
+                channelStateLogic.upsertMembers(event.channel.members)
             }
             is UserPresenceChangedEvent -> {
                 upsertUserPresence(event.user)
@@ -810,17 +597,17 @@ internal class ChannelLogic(
             }
             is UserStartWatchingEvent -> {
                 upsertWatcher(event.user)
-                setWatcherCount(event.watcherCount)
+                channelStateLogic.setWatcherCount(event.watcherCount)
             }
             is UserStopWatchingEvent -> {
                 deleteWatcher(event.user)
-                setWatcherCount(event.watcherCount)
+                channelStateLogic.setWatcherCount(event.watcherCount)
             }
             is ChannelUpdatedEvent -> {
-                updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event.channel)
             }
             is ChannelUpdatedByUserEvent -> {
-                updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event.channel)
             }
             is ChannelHiddenEvent -> {
                 setHidden(true)
@@ -839,27 +626,27 @@ internal class ChannelLogic(
                 removeMessagesBefore(event.createdAt)
             }
             is TypingStopEvent -> {
-                setTyping(event.user.id, null)
+                channelStateLogic.setTyping(event.user.id, null)
             }
             is TypingStartEvent -> {
-                setTyping(event.user.id, event)
+                channelStateLogic.setTyping(event.user.id, event)
             }
             is MessageReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is NotificationMarkReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is MarkAllReadEvent -> {
-                updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is NotificationInviteAcceptedEvent -> {
-                upsertMember(event.member)
-                updateChannelData(event.channel)
+                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationInviteRejectedEvent -> {
-                upsertMember(event.member)
-                updateChannelData(event.channel)
+                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationChannelMutesUpdatedEvent -> {
                 mutableState._muted.value = event.me.channelMutes.any { mute ->
@@ -888,26 +675,5 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
-    }
-
-    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
-        if (message != null) {
-            val newAttachments = message.attachments.map { attachment ->
-                if (attachment.uploadId == uploadId) {
-                    attachment.copy(uploadState = newState)
-                } else {
-                    attachment
-                }
-            }
-            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages =
-                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-            mutableState._messages.value = newMessages
-        }
-    }
-
-    private companion object {
-        private const val OFFSET_EVENT_TIME = 5L
     }
 }
