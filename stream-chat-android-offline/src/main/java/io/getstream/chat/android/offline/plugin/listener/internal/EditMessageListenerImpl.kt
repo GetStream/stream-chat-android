@@ -17,12 +17,15 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
@@ -85,12 +88,15 @@ internal class EditMessageListenerImpl(
      * @param chatError [ChatError].
      */
     private fun Message.updateFailedMessage(chatError: ChatError): Message {
+        val isMessageModerationFailed = chatError is ChatNetworkError &&
+            chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
         return this.copy(
             syncStatus = if (chatError.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY
             } else {
                 SyncStatus.SYNC_NEEDED
             },
+            syncDescription = chatError.toMessageSyncDescription(),
             updatedLocallyAt = Date(),
         )
     }
