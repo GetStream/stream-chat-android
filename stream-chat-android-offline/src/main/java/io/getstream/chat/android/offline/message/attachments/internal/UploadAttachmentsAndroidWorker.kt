@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -46,6 +47,7 @@ internal class UploadAttachmentsAndroidWorker(
 
         return UploadAttachmentsWorker(
             LogicRegistry.get(),
+            StateRegistry.get(),
             repositoryProvider.get(MessageRepository::class.java),
             chatClient
         ).uploadAttachmentsForMessage(
