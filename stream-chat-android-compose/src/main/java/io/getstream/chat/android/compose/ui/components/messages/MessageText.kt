@@ -39,7 +39,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
-import io.getstream.chat.android.compose.ui.util.isLargeFont
+import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
@@ -154,7 +154,7 @@ public fun MessageText(
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
-        message.isLargeFont() -> ChatTheme.typography.emojiOnly
+        message.isFewEmoji() -> ChatTheme.typography.emojiOnly
         else -> ChatTheme.typography.bodyBold
     }
 
