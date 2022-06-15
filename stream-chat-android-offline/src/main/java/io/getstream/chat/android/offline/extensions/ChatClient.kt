@@ -372,7 +372,7 @@ private suspend fun ChatClient.doLoadMessageById(
             storeMessageLocally(listOf(message))
             loadMessagesAroundId(messageId)
         }
-         result
+        result
     } else try {
         val repositoryProvider = RepositoryProvider.get()
 
