@@ -31,6 +31,8 @@ internal class ViewReactionsBubbleDrawer(
     private val viewReactionsViewStyle: ViewReactionsViewStyle,
 ) {
 
+    private val multipleReactionsBaselineOffset = MULTIPLE_REACTIONS_BASELINE_OFFSET.dpToPx()
+
     private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = viewReactionsViewStyle.bubbleColorTheirs
         style = Paint.Style.FILL
@@ -171,13 +173,13 @@ internal class ViewReactionsBubbleDrawer(
             if (isSingleReaction) {
                 bubbleWidth / 2 + bubbleOffset
             } else {
-                bubbleWidth + bubbleOffset - multipleReactionsBaselineOffset()
+                bubbleWidth + bubbleOffset - multipleReactionsBaselineOffset
             }
         } else {
             if (isSingleReaction) {
                 bubbleWidth / 2 - bubbleOffset
             } else {
-                multipleReactionsBaselineOffset() - bubbleOffset
+                multipleReactionsBaselineOffset - bubbleOffset
             }
         }
     }
@@ -199,6 +201,6 @@ internal class ViewReactionsBubbleDrawer(
     }
 
     private companion object {
-        private fun multipleReactionsBaselineOffset() = 32.dpToPx()
+        private const val MULTIPLE_REACTIONS_BASELINE_OFFSET = 32
     }
 }

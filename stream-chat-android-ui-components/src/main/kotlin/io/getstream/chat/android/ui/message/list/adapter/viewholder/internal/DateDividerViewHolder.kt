@@ -40,6 +40,8 @@ internal class DateDividerViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root, decorators) {
 
+    private val defaultCornerRadius = DEFAULT_CORNER_RADIUS.dpToPxPrecise()
+
     override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
@@ -53,11 +55,11 @@ internal class DateDividerViewHolder(
 
         style.textStyleDateSeparator.apply(binding.dateLabel)
 
-        binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(defaultCornerRadius()).build()
+        binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(defaultCornerRadius).build()
             .let(::MaterialShapeDrawable).apply { setTint(style.dateSeparatorBackgroundColor) }
     }
 
     private companion object {
-        private fun defaultCornerRadius() = 16.dpToPxPrecise()
+        private const val DEFAULT_CORNER_RADIUS = 16
     }
 }

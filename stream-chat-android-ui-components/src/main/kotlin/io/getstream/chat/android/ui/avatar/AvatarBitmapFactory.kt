@@ -41,6 +41,11 @@ import kotlin.math.abs
 public open class AvatarBitmapFactory(private val context: Context) {
     private val gradientBaseColors = context.getIntArray(R.array.stream_ui_avatar_gradient_colors)
 
+    /**
+     * Marker object to detect whether methods have been implemented by custom subclasses.
+     */
+    private val notImplementedMarker = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
+
     internal suspend fun createUserBitmapInternal(
         user: User,
         style: AvatarStyle,
@@ -50,7 +55,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createUserBitmapBlocking(user, style, avatarSize)
         }
         val bitmap = when (customBitmap) {
-            notImplementedMarker() -> createUserBitmap(user, style, avatarSize)
+            notImplementedMarker -> createUserBitmap(user, style, avatarSize)
             else -> customBitmap
         }
 
@@ -64,7 +69,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createDefaultUserBitmapBlocking(user, style, avatarSize)
         }
         return when (customDefaultBitmap) {
-            notImplementedMarker() -> createDefaultUserBitmap(user, style, avatarSize)
+            notImplementedMarker -> createDefaultUserBitmap(user, style, avatarSize)
             else -> customDefaultBitmap
         }
     }
@@ -84,7 +89,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap? {
-        return notImplementedMarker()
+        return notImplementedMarker
     }
 
     /**
@@ -119,7 +124,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap {
-        return notImplementedMarker()
+        return notImplementedMarker
     }
 
     /**
@@ -149,7 +154,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createChannelBitmapBlocking(channel, lastActiveUsers, style, avatarSize)
         }
         val bitmap = when (customBitmap) {
-            notImplementedMarker() -> createChannelBitmap(channel, lastActiveUsers, style, avatarSize)
+            notImplementedMarker -> createChannelBitmap(channel, lastActiveUsers, style, avatarSize)
             else -> customBitmap
         }
 
@@ -163,7 +168,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
             createDefaultChannelBitmapBlocking(channel, lastActiveUsers, style, avatarSize)
         }
         return when (customDefaultBitmap) {
-            notImplementedMarker() -> createDefaultChannelBitmap(channel, lastActiveUsers, style, avatarSize)
+            notImplementedMarker -> createDefaultChannelBitmap(channel, lastActiveUsers, style, avatarSize)
             else -> customDefaultBitmap
         }
     }
@@ -184,7 +189,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap? {
-        return notImplementedMarker()
+        return notImplementedMarker
     }
 
     /**
@@ -225,7 +230,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         style: AvatarStyle,
         @Px avatarSize: Int,
     ): Bitmap {
-        return notImplementedMarker()
+        return notImplementedMarker
     }
 
     /**
@@ -351,10 +356,5 @@ public open class AvatarBitmapFactory(private val context: Context) {
     public companion object {
         private const val GRADIENT_DARKER_COLOR_FACTOR = 1.3f
         private const val GRADIENT_LIGHTER_COLOR_FACTOR = 0.7f
-
-        /**
-         * Marker object to detect whether methods have been implemented by custom subclasses.
-         */
-        private fun notImplementedMarker() = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
     }
 }

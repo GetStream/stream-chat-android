@@ -77,6 +77,16 @@ public class MessageComposerController(
 ) {
 
     /**
+     * The regex pattern used to check if the message ends with incomplete mention.
+     */
+    private val mentionPattern = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
+
+    /**
+     * The regex pattern used to check if the message ends with incomplete command.
+     */
+    private val commandPattern = Pattern.compile("^/[a-z]*$")
+
+    /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
      * ViewModel is disposed.
      *
@@ -636,7 +646,7 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
-        val containsMention = mentionPattern().matcher(messageText).find()
+        val containsMention = mentionPattern.matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
             users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
@@ -649,7 +659,7 @@ public class MessageComposerController(
      * Shows the command suggestion list popup if necessary.
      */
     private fun handleCommandSuggestions() {
-        val containsCommand = commandPattern().matcher(messageText).find()
+        val containsCommand = commandPattern.matcher(messageText).find()
 
         commandSuggestions.value = if (containsCommand) {
             val commandPattern = messageText.removePrefix("/")
@@ -688,16 +698,6 @@ public class MessageComposerController(
          * The default allowed number of characters in a message.
          */
         private const val DefaultMaxMessageLength: Int = 5000
-
-        /**
-         * The regex pattern used to check if the message ends with incomplete mention.
-         */
-        private fun mentionPattern() = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
-
-        /**
-         * The regex pattern used to check if the message ends with incomplete command.
-         */
-        private fun commandPattern() = Pattern.compile("^/[a-z]*$")
 
         /**
          * The default limit for messages count in requests.

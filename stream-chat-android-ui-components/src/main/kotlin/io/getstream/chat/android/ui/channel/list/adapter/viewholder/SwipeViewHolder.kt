@@ -27,6 +27,11 @@ import kotlin.math.absoluteValue
 public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewHolder(itemView) {
 
     /**
+     * Swipe threshold
+     */
+    private val swipeThreshold = SWIPE_THRESHOLD.dpToPxPrecise()
+
+    /**
      * The view that will be swiped.
      */
     public abstract fun getSwipeView(): View
@@ -128,7 +133,7 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
                         swiping = false
                         wasSwiping = false
                         // we should consume if we were swiping, and past threshold
-                        shouldConsume = abs(rawX - startX) > swipeThreshold()
+                        shouldConsume = abs(rawX - startX) > swipeThreshold
                         // signal end of swipe
                         swipeListener?.onSwipeCompleted(this, absoluteAdapterPosition, rawX, rawY)
                     }
@@ -156,6 +161,6 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
     }
 
     private companion object {
-        private fun swipeThreshold() = 16.dpToPxPrecise()
+        private const val SWIPE_THRESHOLD = 16
     }
 }

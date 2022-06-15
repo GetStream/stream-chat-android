@@ -164,39 +164,36 @@ internal class ExtraDataValidator(
         }
     }
 
-    private companion object {
+    private val reservedInChannel = arrayOf(
+        "cid",
+        "id",
+        "type",
+        "created_at",
+        "deleted_at",
+        "updated_at",
+        "member_count",
+        "created_by",
+        "last_message_at",
+        "own_capabilities",
+        "config",
+    )
 
-        private fun reservedInChannel() = arrayOf(
-            "cid",
-            "id",
-            "type",
-            "created_at",
-            "deleted_at",
-            "updated_at",
-            "member_count",
-            "created_by",
-            "last_message_at",
-            "own_capabilities",
-            "config",
-        )
+    private val reservedInMessage = arrayOf(
+        "id",
+        "cid",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
 
-        private fun reservedInMessage() = arrayOf(
-            "id",
-            "cid",
-            "created_at",
-            "updated_at",
-            "deleted_at",
-        )
+    private val reservedInUser = arrayOf(
+        "id",
+        "cid",
+        "created_at",
+        "updated_at",
+    )
 
-        private fun reservedInUser() = arrayOf(
-            "id",
-            "cid",
-            "created_at",
-            "updated_at",
-        )
-
-        private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel()::contains
-        private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage()::contains
-        private val reservedInUserPredicate: (String) -> Boolean = reservedInUser()::contains
-    }
+    private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel::contains
+    private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage::contains
+    private val reservedInUserPredicate: (String) -> Boolean = reservedInUser::contains
 }

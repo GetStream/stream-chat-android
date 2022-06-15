@@ -31,6 +31,33 @@ internal class MessageListItemAdapter(
 
     var isThread: Boolean = false
 
+    private val fullMessageListItemItemPayloadDiff = MessageListItemPayloadDiff(
+        text = true,
+        reactions = true,
+        attachments = true,
+        replies = true,
+        syncStatus = true,
+        deleted = true,
+        positions = true,
+        pinned = true,
+        user = true,
+        mentions = true,
+        footer = true
+    )
+    private val emptyMessageListItemPayloadDiff = MessageListItemPayloadDiff(
+        text = false,
+        reactions = false,
+        attachments = false,
+        replies = false,
+        syncStatus = false,
+        deleted = false,
+        positions = false,
+        pinned = false,
+        user = false,
+        mentions = false,
+        footer = false
+    )
+
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
@@ -45,7 +72,7 @@ internal class MessageListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
-        holder.bindListItem(getItem(position), fullMessageListItemItemPayloadDiff())
+        holder.bindListItem(getItem(position), fullMessageListItemItemPayloadDiff)
     }
 
     override fun onBindViewHolder(
@@ -57,9 +84,9 @@ internal class MessageListItemAdapter(
             payloads
                 .filterIsInstance<MessageListItemPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
-                ?: listOf(fullMessageListItemItemPayloadDiff())
+                ?: listOf(fullMessageListItemItemPayloadDiff)
             )
-            .fold(emptyMessageListItemPayloadDiff(), MessageListItemPayloadDiff::plus)
+            .fold(emptyMessageListItemPayloadDiff, MessageListItemPayloadDiff::plus)
 
         holder.bindListItem(getItem(position), diff)
     }
@@ -87,34 +114,5 @@ internal class MessageListItemAdapter(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         doForAllViewHolders(recyclerView) { it.onDetachedFromWindow() }
         super.onDetachedFromRecyclerView(recyclerView)
-    }
-
-    companion object {
-        private fun fullMessageListItemItemPayloadDiff() = MessageListItemPayloadDiff(
-            text = true,
-            reactions = true,
-            attachments = true,
-            replies = true,
-            syncStatus = true,
-            deleted = true,
-            positions = true,
-            pinned = true,
-            user = true,
-            mentions = true,
-            footer = true
-        )
-        private fun emptyMessageListItemPayloadDiff() = MessageListItemPayloadDiff(
-            text = false,
-            reactions = false,
-            attachments = false,
-            replies = false,
-            syncStatus = false,
-            deleted = false,
-            positions = false,
-            pinned = false,
-            user = false,
-            mentions = false,
-            footer = false
-        )
     }
 }

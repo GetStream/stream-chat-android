@@ -39,14 +39,14 @@ public class MentionListViewModel : ViewModel() {
         val isLoading: Boolean,
     )
 
+    private val initialState = State(
+        results = emptyList(),
+        isLoading = false,
+        canLoadMore = true,
+    )
+
     private companion object {
         private const val QUERY_LIMIT = 30
-
-        fun initialState() = State(
-            results = emptyList(),
-            isLoading = false,
-            canLoadMore = true,
-        )
     }
 
     private val scope = CoroutineScope(DispatcherProvider.Main + SupervisorJob())
@@ -56,7 +56,7 @@ public class MentionListViewModel : ViewModel() {
         scope.cancel()
     }
 
-    private val _state: MutableLiveData<State> = MutableLiveData(initialState())
+    private val _state: MutableLiveData<State> = MutableLiveData(initialState)
     public val state: LiveData<State> = _state
 
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()

@@ -24,6 +24,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 @InternalStreamChatApi
 public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
 
+    private val streamCdnHostPatternRegex = STREAM_CDN_HOST_PATTERN.toRegex(RegexOption.IGNORE_CASE)
+
     @Suppress("ReturnCount")
     public fun hasValidImageUrl(attachment: Attachment): Boolean {
         val url = attachment.imageUrl?.toHttpUrlOrNull() ?: return false
@@ -35,13 +37,11 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
     }
 
     public fun hasStreamImageUrl(attachment: Attachment): Boolean {
-        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(streamCdnHostPatternRegex()::matches) ?: false
+        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(streamCdnHostPatternRegex::matches) ?: false
     }
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
         private const val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$"
-
-        private fun streamCdnHostPatternRegex() = STREAM_CDN_HOST_PATTERN.toRegex(RegexOption.IGNORE_CASE)
     }
 }
