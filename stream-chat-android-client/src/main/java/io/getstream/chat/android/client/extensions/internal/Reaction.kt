@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -22,9 +22,11 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /** Updates collection of reactions with more recent data of [users]. */
-internal fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Collection<Reaction> =
+@InternalStreamChatApi
+public fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Collection<Reaction> =
     if (mapNotNull { it.user?.id }.any(userMap::containsKey)) {
         map { reaction ->
             if (userMap.containsKey(reaction.user?.id ?: reaction.userId)) {
@@ -45,7 +47,8 @@ internal fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Col
  *
  * @return Collection of reactions where cached data is substituted by more recent one if they have same [Reaction.type].
  */
-internal fun mergeReactions(
+@InternalStreamChatApi
+public fun mergeReactions(
     recentReactions: Collection<Reaction>,
     cachedReactions: Collection<Reaction>,
 ): Collection<Reaction> {
@@ -62,7 +65,8 @@ internal fun mergeReactions(
  *
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
-internal fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
+@InternalStreamChatApi
+public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
     return if (result.isSuccess) {
         copy(syncStatus = SyncStatus.COMPLETED)
     } else {
@@ -91,7 +95,8 @@ private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError): React
 /**
  *
  */
-internal fun Reaction.enrichWithDataBeforeSending(
+@InternalStreamChatApi
+public fun Reaction.enrichWithDataBeforeSending(
     currentUser: User,
     isOnline: Boolean,
     enforceUnique: Boolean,

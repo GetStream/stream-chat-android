@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.utils.internal
 
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.utils.internal.validateCid
+import java.util.regex.Pattern
 
-/**
- * Converts a pair of channelType and channelId into cid.
- *
- * @return String CID of the given channel type and id.
- * @throws IllegalArgumentException if cid is not valid.
- */
-@Throws(IllegalArgumentException::class)
+private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+
+// TODO: type should be a sealed/class or enum at the client level
 @InternalStreamChatApi
-public fun Pair<String, String>.toCid(): String {
-    val cid = "$first:$second"
-    validateCid(cid)
-    return cid
+public fun getMessageType(message: Message): String {
+    val hasAttachments = message.attachments.isNotEmpty()
+    val hasAttachmentsToUpload = message.hasPendingAttachments()
+
+    return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
+        Message.TYPE_EPHEMERAL
+    } else {
+        Message.TYPE_REGULAR
+    }
 }

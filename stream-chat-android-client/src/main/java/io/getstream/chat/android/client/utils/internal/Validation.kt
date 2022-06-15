@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.utils.internal
+package io.getstream.chat.android.client.utils.internal
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.regex.Pattern
 
 private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+$")
@@ -28,7 +29,8 @@ private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+
  * @throws IllegalArgumentException If CID is invalid.
  */
 @Throws(IllegalArgumentException::class)
-internal fun validateCid(cid: String): String = cid.apply {
+@InternalStreamChatApi
+public fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }
     require(cid.isNotBlank()) { "cid can not be blank" }
     require(cidPattern.matcher(cid).matches()) {
@@ -43,7 +45,8 @@ internal fun validateCid(cid: String): String = cid.apply {
  *
  * @return Successful [Result] if the cid is valid.
  */
-internal fun validateCidWithResult(cid: String): Result<String> {
+@InternalStreamChatApi
+public fun validateCidWithResult(cid: String): Result<String> {
     return try {
         Result.success(validateCid(cid))
     } catch (exception: IllegalArgumentException) {

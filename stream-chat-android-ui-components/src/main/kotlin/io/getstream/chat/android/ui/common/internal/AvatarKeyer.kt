@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.ui.common.internal
 
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import coil.key.Keyer
+import coil.request.Options
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.avatar.internal.Avatar
 
-/** Updates collection of members with more recent data of [users]. */
-internal fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collection<Member> = map { member ->
-    if (userMap.containsKey(member.getUserId())) {
-        member.copy(user = userMap[member.getUserId()] ?: member.user)
-    } else {
-        member
+internal object AvatarKeyer : Keyer<Avatar> {
+    override fun key(data: Avatar, options: Options): String? = when (data) {
+        is Avatar.UserAvatar -> ChatUI.avatarBitmapFactory.userBitmapKey(data.user)
+        is Avatar.ChannelAvatar -> ChatUI.avatarBitmapFactory.channelBitmapKey(data.channel)
     }
 }

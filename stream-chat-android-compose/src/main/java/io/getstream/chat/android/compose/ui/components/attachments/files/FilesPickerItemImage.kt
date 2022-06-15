@@ -22,10 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import coil.compose.rememberImagePainter
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file
@@ -44,7 +44,7 @@ public fun FilesPickerItemImage(
     val painter = if (isImage) {
         val dataToLoad = attachment.uri ?: attachment.file
 
-        rememberImagePainter(dataToLoad)
+        rememberStreamImagePainter(dataToLoad)
     } else {
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }

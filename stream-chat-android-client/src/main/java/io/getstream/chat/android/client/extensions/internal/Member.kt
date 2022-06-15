@@ -14,36 +14,18 @@
  * limitations under the License.
  */
 
-@file:JvmName("DateUtils")
+package io.getstream.chat.android.client.extensions.internal
 
-package io.getstream.chat.android.core.utils.date
-
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
 
-/**
- * Tests if [this] date is after [that] date.
- */
+/** Updates collection of members with more recent data of [users]. */
 @InternalStreamChatApi
-public infix fun Date?.after(that: Date?): Boolean {
-    return when {
-        this == null -> false
-        that == null -> true
-        else -> this.after(that)
+public fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collection<Member> = map { member ->
+    if (userMap.containsKey(member.getUserId())) {
+        member.copy(user = userMap[member.getUserId()] ?: member.user)
+    } else {
+        member
     }
 }
-
-/**
- * Returns the greater of two dates.
- */
-@InternalStreamChatApi
-public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
-    true -> dateA
-    else -> dateB
-}
-
-/**
- * Check if current date has difference with [other] no more that [offset].
- */
-@InternalStreamChatApi
-public fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time
