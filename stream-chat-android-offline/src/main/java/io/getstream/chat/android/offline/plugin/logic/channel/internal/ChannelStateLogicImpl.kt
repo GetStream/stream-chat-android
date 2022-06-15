@@ -24,7 +24,7 @@ import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrent
 import java.util.Date
 import kotlin.math.max
 
-internal class ChannelStateLogic(
+internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),

@@ -26,10 +26,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
 
 internal class UploadAttachmentsWorker(
-    private val stateLogicFun: (String, String) -> ChannelStateLogic,
+    private val stateLogicFun: (String, String) -> ChannelStateLogicImpl,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),

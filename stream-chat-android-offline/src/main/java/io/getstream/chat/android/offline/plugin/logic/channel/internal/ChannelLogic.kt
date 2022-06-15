@@ -104,7 +104,7 @@ import java.util.Date
 internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
-    private val channelStateLogic: ChannelStateLogic
+    private val channelStateLogic: ChannelStateLogicImpl
 ) : QueryChannelListener {
 
     private val mutableState = channelStateLogic.writeChannelState()
@@ -187,7 +187,7 @@ internal class ChannelLogic(
         return mutableState
     }
 
-    internal fun stateLogic(): ChannelStateLogic {
+    internal fun stateLogic(): ChannelStateLogicImpl {
         return channelStateLogic
     }
 
