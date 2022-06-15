@@ -58,11 +58,11 @@ import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState

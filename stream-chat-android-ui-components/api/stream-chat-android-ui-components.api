@@ -1188,17 +1188,6 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$EditModeratedMessage;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOldMessage ()Lio/getstream/chat/android/client/models/Message;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal;
 }

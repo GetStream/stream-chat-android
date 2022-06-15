@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
@@ -223,10 +222,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .align(Alignment.Bottom)
 
     if (!messageItem.isMine && (
-            messageItem.shouldShowFooter ||
-                messageItem.groupPosition == Bottom ||
-                messageItem.groupPosition == None
-            )
+        messageItem.shouldShowFooter ||
+            messageItem.groupPosition == Bottom ||
+            messageItem.groupPosition == None
+        )
     ) {
         UserAvatar(
             modifier = modifier,

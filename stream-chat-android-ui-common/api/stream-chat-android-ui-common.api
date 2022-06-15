@@ -420,8 +420,6 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun resendModeratedMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
-	public static synthetic fun resendModeratedMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ILjava/lang/Object;)V
 	public final fun resetThread ()V
 	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
 	public final fun sendMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
