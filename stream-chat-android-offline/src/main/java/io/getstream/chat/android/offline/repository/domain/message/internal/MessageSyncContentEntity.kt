@@ -17,22 +17,42 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.client.utils.SyncStatus
 
+/**
+ * An addition to provide more details of the [SyncStatus].
+ */
 internal sealed class MessageSyncContentEntity
 
+/**
+ * When no additional description is required to [SyncStatus].
+ */
 @JsonClass(generateAdapter = true)
 internal class MessageSyncNoneEntity : MessageSyncContentEntity() {
     override fun toString(): String = "MessageSyncNoneEntity"
 }
 
+/**
+ * When sync is in progress.
+ */
 internal sealed class MessageSyncInProgressEntity : MessageSyncContentEntity()
+
+/**
+ * When sync is failed.
+ */
 internal sealed class MessageSyncFailedEntity : MessageSyncContentEntity()
 
+/**
+ * When sync is in progress due to awaiting attachments.
+ */
 @JsonClass(generateAdapter = true)
 internal class MessageAwaitingAttachmentsEntity : MessageSyncInProgressEntity() {
     override fun toString(): String = "MessageAwaitingAttachmentsEntity"
 }
 
+/**
+ * When sync is failed due to moderation violation.
+ */
 @JsonClass(generateAdapter = true)
 internal data class MessageModerationFailedEntity(
     val violations: List<ViolationEntity>,

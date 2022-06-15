@@ -45,6 +45,7 @@ internal data class MessageEntity(
     indices = [
         Index(value = ["cid", "createdAt"]),
         Index(value = ["syncStatus"]),
+        Index(value = ["syncType"]),
         Index(value = ["syncStatus", "syncType"])
     ]
 )
@@ -112,7 +113,7 @@ internal data class MessageInnerEntity(
     val threadParticipantsIds: List<String> = emptyList(),
 )
 
-public data class MessageSyncEntity(
+internal data class MessageSyncDescriptionEntity(
     val type: MessageSyncType,
     val content: String,
 )
