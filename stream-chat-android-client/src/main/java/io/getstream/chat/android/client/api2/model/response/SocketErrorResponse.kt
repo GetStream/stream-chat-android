@@ -38,6 +38,7 @@ internal data class SocketErrorResponse(
         val details: List<ErrorDetail> = emptyList(),
     ) {
 
+        @JsonClass(generateAdapter = true)
         data class ErrorDetail(
             val code: Int = -1,
             val messages: List<String> = emptyList()
