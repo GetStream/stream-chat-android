@@ -45,7 +45,7 @@ internal class UploadAttachmentsAndroidWorker(
         val repositoryProvider = RepositoryProvider.get()
 
         return UploadAttachmentsWorker(
-            LogicRegistry.get(),
+            LogicRegistry.get().channel(channelType, channelId).stateLogic(),
             repositoryProvider.get(MessageRepository::class.java),
             chatClient
         ).uploadAttachmentsForMessage(

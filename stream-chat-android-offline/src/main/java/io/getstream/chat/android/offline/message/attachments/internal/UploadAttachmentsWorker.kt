@@ -29,7 +29,7 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLo
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
 
 internal class UploadAttachmentsWorker(
-    private val stateLogicFun: (String, String) -> ChannelStateLogicImpl,
+    private val stateLogic: ChannelStateLogicImpl,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -128,7 +128,7 @@ internal class UploadAttachmentsWorker(
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
 
-        stateLogicFun(channelType, channelId).upsertMessage(message)
+        stateLogic.upsertMessage(message)
 
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
