@@ -26,18 +26,21 @@ import io.getstream.chat.android.client.models.FileUploadConfig
  */
 internal class AppSettingManager(private val chatApi: ChatApi) {
 
+
     /**
      * Application settings configured in the dashboard and fetched from the backend.
      */
-    private var appSettings: AppSettings = createDefaultAppSettings()
+    private var appSettings: AppSettings? = null
 
     /**
      * Initializes [AppSettingManager] with application settings from the backend.
      */
     fun loadAppSettings() {
-        chatApi.appSettings().enqueue {
-            if (it.isSuccess) {
-                this.appSettings = it.data()
+        if (appSettings == null) {
+            chatApi.appSettings().enqueue {
+                if (it.isSuccess) {
+                    this.appSettings = it.data()
+                }
             }
         }
     }
@@ -47,7 +50,7 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
      *
      * @return The application settings.
      */
-    fun getAppSettings(): AppSettings = appSettings
+    fun getAppSettings(): AppSettings = appSettings ?: createDefaultAppSettings()
 
     /**
      * Clears the application settings fetched from the backend.
