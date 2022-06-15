@@ -17,13 +17,13 @@
 package io.getstream.chat.android.client.channel.state
 
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.ChannelData
 import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a channel.*/

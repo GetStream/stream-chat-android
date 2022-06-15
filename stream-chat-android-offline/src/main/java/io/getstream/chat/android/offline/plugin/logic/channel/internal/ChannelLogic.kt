@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -84,10 +85,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import java.util.Date
@@ -98,7 +97,6 @@ import java.util.Date
  * @property mutableState [ChannelMutableState] Mutable state instance of the channel.
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
- * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
  */
 @Suppress("TooManyFunctions")
 internal class ChannelLogic(
@@ -426,8 +424,6 @@ internal class ChannelLogic(
 
         return message
     }
-
-
 
     private fun upsertUserPresence(user: User) {
         val userId = user.id

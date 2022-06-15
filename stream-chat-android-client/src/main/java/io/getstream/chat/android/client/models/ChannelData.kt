@@ -19,7 +19,8 @@ package io.getstream.chat.android.client.models
 import java.util.Date
 
 /**
- * A class that only stores the channel data and not the channel state that changes a lot (for example messages, watchers, etc.).
+ * A class that only stores the channel data and not the channel state that changes a lot
+ * (for example messages, watchers, etc.).
  *
  * @param channelId Channel's unique ID.
  * @param type Type of the channel.
@@ -35,7 +36,8 @@ import java.util.Date
  * @param memberCount Number of members in the channel.
  * @param team Team the channel belongs to (multi-tenant only).
  * @param extraData A map of custom fields for the channel.
- * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
+ * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
+ * in the events.
  * @param membership Represents relationship of the current user to the channel.
  */
 public data class ChannelData(

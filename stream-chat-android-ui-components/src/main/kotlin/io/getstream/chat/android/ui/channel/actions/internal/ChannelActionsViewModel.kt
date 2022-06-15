@@ -22,10 +22,10 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

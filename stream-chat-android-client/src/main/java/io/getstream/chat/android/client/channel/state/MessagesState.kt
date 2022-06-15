@@ -39,7 +39,8 @@ public sealed class MessagesState {
      */
     public object Loading : MessagesState()
 
-    /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
+    /** If we are offline and don't have channels stored in offline storage, typically displayed as an error
+     * condition. */
     public object OfflineNoResults : MessagesState()
 
     /**

@@ -1,5 +1,23 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -8,6 +26,7 @@ import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -15,9 +34,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.client.models.ChannelData
-import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.Event
@@ -25,6 +41,7 @@ import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrent
 import java.util.Date
 import kotlin.math.max
 
+@Suppress("TooManyFunctions")
 internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
@@ -45,13 +62,14 @@ internal class ChannelStateLogicImpl(
         if (error.isPermanent()) {
             logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
         } else {
-            logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. " +
-                "Marking the channel as needing recovery. Error was $error")
+            logger.logW(
+                "Temporary failure calling channel.watch for channel ${mutableState.cid}. " +
+                    "Marking the channel as needing recovery. Error was $error"
+            )
             mutableState.recoveryNeeded = true
         }
         globalMutableState.setErrorEvent(Event(error))
     }
-
 
     /**
      * Increments the unread count of the Channel if necessary.
@@ -189,7 +207,6 @@ internal class ChannelStateLogicImpl(
     override fun removeLocalMessage(message: Message) {
         mutableState._messages.value = mutableState._messages.value - message.id
     }
-
 
     /**
      * Hides the messages created before the given date.
