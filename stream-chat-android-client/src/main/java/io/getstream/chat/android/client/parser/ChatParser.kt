@@ -65,7 +65,9 @@ internal interface ChatParser {
                 val cause = error.extractCause()
                 ChatNetworkError.create(
                     streamCode = error.code,
-                    description = error.message + moreInfoTemplate(error.moreInfo) + detailsTemplate(error.details),
+                    description = error.message
+                        + moreInfoTemplate(error.moreInfo)
+                        + buildDetailsTemplate(error.details),
                     statusCode = statusCode,
                     cause = cause
                 )
@@ -106,7 +108,7 @@ internal interface ChatParser {
         } else ""
     }
 
-    private fun detailsTemplate(details: List<ErrorDetail>): String {
+    private fun buildDetailsTemplate(details: List<ErrorDetail>): String {
         return if (details.isNotEmpty()) {
             "\nError details: $details"
         } else ""

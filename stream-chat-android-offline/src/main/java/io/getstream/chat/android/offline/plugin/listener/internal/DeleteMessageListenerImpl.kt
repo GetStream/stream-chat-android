@@ -38,6 +38,11 @@ internal class DeleteMessageListenerImpl(
     private val messageRepository: MessageRepository,
 ) : DeleteMessageListener {
 
+    /**
+     * Checks if message can be safely deleted.
+     *
+     * @param messageId The message id to be deleted.
+     */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
 

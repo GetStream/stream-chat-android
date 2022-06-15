@@ -6,22 +6,21 @@ import io.getstream.chat.android.client.errors.cause.MessageModerationFailedExce
 import io.getstream.chat.android.client.models.MessageModerationFailed
 import io.getstream.chat.android.client.models.MessageSyncDescription
 import io.getstream.chat.android.client.models.MessageSyncType
+import io.getstream.chat.android.client.models.ModerationViolation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public fun ChatError.toMessageSyncDescription(): MessageSyncDescription? {
-    return when (this is ChatNetworkError) {
-        true -> when (val cause = cause) {
-            is MessageModerationFailedException -> MessageSyncDescription(
-                type = MessageSyncType.FAILED_MODERATION,
-                content = MessageModerationFailed(
-                    violations = cause.details.map { detail ->
-                        MessageModerationFailed.Violation(detail.code, detail.messages)
-                    }
-                )
+    val networkError = this as? ChatNetworkError ?: return null
+    return when (val cause = networkError.cause) {
+        is MessageModerationFailedException -> MessageSyncDescription(
+            type = MessageSyncType.FAILED_MODERATION,
+            content = MessageModerationFailed(
+                violations = cause.details.map { detail ->
+                    ModerationViolation(detail.code, detail.messages)
+                }
             )
-            else -> null
-        }
+        )
         else -> null
     }
 }

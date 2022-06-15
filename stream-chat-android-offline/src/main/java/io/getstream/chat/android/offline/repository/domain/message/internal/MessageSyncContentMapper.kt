@@ -19,12 +19,13 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 import io.getstream.chat.android.client.models.MessageAwaitingAttachments
 import io.getstream.chat.android.client.models.MessageModerationFailed
 import io.getstream.chat.android.client.models.MessageSyncContent
+import io.getstream.chat.android.client.models.ModerationViolation
 
 internal fun MessageSyncContentEntity.toModel(): MessageSyncContent {
     return when (this) {
         is MessageModerationFailedEntity -> MessageModerationFailed(
             violations = violations.map { violation ->
-                MessageModerationFailed.Violation(
+                ModerationViolation(
                     code = violation.code,
                     messages = violation.messages
                 )

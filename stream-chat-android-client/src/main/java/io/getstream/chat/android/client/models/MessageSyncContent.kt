@@ -26,10 +26,10 @@ public object MessageAwaitingAttachments : MessageSyncInProgress() {
 }
 
 public data class MessageModerationFailed(
-    val violations: List<Violation>,
-) : MessageSyncFailed() {
-    public data class Violation(
-        val code: Int,
-        val messages: List<String>,
-    )
-}
+    val violations: List<ModerationViolation>,
+) : MessageSyncFailed()
+
+public data class ModerationViolation(
+    val code: Int,
+    val messages: List<String>,
+)

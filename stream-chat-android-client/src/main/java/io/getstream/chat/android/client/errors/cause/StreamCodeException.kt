@@ -16,6 +16,11 @@
 
 package io.getstream.chat.android.client.errors.cause
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
+
+/**
+ * Exceptions hierarchy based on backed error codes.
+ */
 public sealed class StreamCodeException : Exception {
     protected constructor() : super()
     protected constructor(message: String?) : super(message)
@@ -23,6 +28,9 @@ public sealed class StreamCodeException : Exception {
     protected constructor(cause: Throwable?) : super(cause)
 }
 
+/**
+ * Corresponding exception to [ChatErrorCode.MESSAGE_MODERATION_FAILED].
+ */
 public data class MessageModerationFailedException(
     val details: List<Detail>,
     override val message: String? = null
