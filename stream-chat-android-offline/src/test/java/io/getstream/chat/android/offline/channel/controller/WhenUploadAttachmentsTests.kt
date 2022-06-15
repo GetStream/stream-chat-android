@@ -304,10 +304,6 @@ internal class WhenUploadAttachmentsTests {
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        private var stateRegistry: StateRegistry = mock {
-            on(it.channel(any(), any())) doReturn channelState
-        }
-
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
             whenever(it.containsStoredCredentials()) doReturn true
@@ -332,7 +328,7 @@ internal class WhenUploadAttachmentsTests {
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
                 logic = logicRegistry,
-                state = stateRegistry,
+                { _, _ -> channelState },
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader

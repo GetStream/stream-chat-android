@@ -27,13 +27,13 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
 internal class UploadAttachmentsWorker(
     private val logic: LogicRegistry,
-    private val state: StateRegistry,
+    private val mutableStateFun: (String, String) -> ChannelState,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -104,7 +104,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            state.channel(channelType, channelId).toMutableState()
+                            mutableStateFun(channelType, channelId).toMutableState()
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
