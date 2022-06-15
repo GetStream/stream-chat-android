@@ -288,18 +288,18 @@ private fun BoxScope.MessagesScreenMenus(
 
     val ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
 
-    val isInThread = remember {
-        mutableStateOf(listViewModel.isInThread)
-    }
+    val isInThread = listViewModel.isInThread
 
     val newMessageOptions = defaultMessageOptionsState(
         selectedMessage = selectedMessage,
         currentUser = user,
-        isInThread = isInThread.value,
+        isInThread = isInThread,
         ownCapabilities = ownCapabilities
     )
 
-    var messageOptions by remember { mutableStateOf<List<MessageOptionItemState>>(emptyList()) }
+    var messageOptions by remember {
+        mutableStateOf<List<MessageOptionItemState>>(emptyList())
+    }
 
     if (newMessageOptions.isNotEmpty()) {
         messageOptions = newMessageOptions
