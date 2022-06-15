@@ -19,6 +19,7 @@ package com.getstream.sdk.chat.startup
 import android.content.Context
 import androidx.startup.Initializer
 import com.jakewharton.threetenabp.AndroidThreeTen
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -26,14 +27,10 @@ import kotlinx.coroutines.runBlocking
  */
 public class ThreeTenInitializer : Initializer<Unit> {
 
-    override fun create(context: Context): Unit = runBlocking {
+    override fun create(context: Context): Unit = runBlocking(DispatcherProvider.IO) {
         initThreeTen(context)
     }
 
-    /**
-     * Initializes ThreeTen in a coroutine for faster
-     * initialization. Cancels the scope afterwards.
-     */
     private fun initThreeTen(context: Context) {
         AndroidThreeTen.init(context)
     }

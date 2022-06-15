@@ -42,10 +42,6 @@ public class ChatUIInitializer : Initializer<Unit> {
         setImageLoader(context)
     }
 
-    /**
-     * Sets the image loader in a coroutine for faster
-     * initialization. Cancels the scope afterwards.
-     */
     private fun setImageLoader(context: Context) {
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
             componentRegistry {
