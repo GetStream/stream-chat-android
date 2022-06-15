@@ -15,7 +15,6 @@ public final class io/getstream/chat/android/client/call/Call$DefaultImpls {
 
 public final class io/getstream/chat/android/client/call/CallKt {
 	public static final fun await (Lio/getstream/chat/android/client/call/Call;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun enqueue$default (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/getstream/chat/android/client/call/Call {
@@ -78,7 +77,6 @@ public abstract interface annotation class io/getstream/chat/android/core/Experi
 }
 
 public final class io/getstream/chat/android/core/internal/ExtensionsKt {
-	public static final fun getExhaustive (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract interface annotation class io/getstream/chat/android/core/internal/InternalStreamChatApi : java/lang/annotation/Annotation {
