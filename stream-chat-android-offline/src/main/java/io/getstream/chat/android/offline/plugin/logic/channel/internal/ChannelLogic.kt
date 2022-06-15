@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -172,11 +171,6 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
-                Log.d(
-                    "ChannelLogic",
-                    "Is around: ${request.isFilteringAroundIdMessages()}. " +
-                        "messages size: ${channel.messages.size}. Is newer: ${request.isFilteringNewerMessages()}"
-                )
                 val noMoreMessages = request.messagesLimit() > channel.messages.size
 
                 searchLogic.handleMessageBounds(request, noMoreMessages)
