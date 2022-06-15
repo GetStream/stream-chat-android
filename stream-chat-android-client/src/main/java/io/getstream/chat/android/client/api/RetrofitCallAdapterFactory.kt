@@ -48,7 +48,7 @@ internal class RetrofitCallAdapterFactory private constructor(
     }
 
     companion object {
-        private fun mainThreadExecutor(): Executor = object : Executor {
+        private val mainThreadExecutor: Executor = object : Executor {
             val handler: Handler by lazy { Handler(Looper.getMainLooper()) }
             override fun execute(command: Runnable?) {
                 command?.let(handler::post)
@@ -58,7 +58,7 @@ internal class RetrofitCallAdapterFactory private constructor(
         fun create(
             chatParser: ChatParser,
             callbackExecutor: Executor? = null,
-        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor ?: mainThreadExecutor())
+        ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor ?: mainThreadExecutor)
     }
 }
 
