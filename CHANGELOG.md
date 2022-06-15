@@ -88,6 +88,7 @@
 
 ### ⚠️ Changed
 - Since Coil 2.0, the `LocalImageLoader` has been deprecated. So now we support our own image loader, `StreamImageLoader` for providing composition local. [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
+- Changed how the emoji only message size and how they are laid out depending on emoji count. [#3665](https://github.com/GetStream/stream-chat-android/pull/3665)
 
 ### ❌ Removed
 - Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)

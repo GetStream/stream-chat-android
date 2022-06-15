@@ -130,11 +130,11 @@ public data class StreamTypography(
                 fontFamily = fontFamily
             ),
             singleEmoji = TextStyle(
-                fontSize = 36.sp,
+                fontSize = 50.sp,
                 fontFamily = fontFamily
             ),
             emojiOnly = TextStyle(
-                fontSize = 28.sp,
+                fontSize = 50.sp,
                 fontFamily = fontFamily
             )
         )
