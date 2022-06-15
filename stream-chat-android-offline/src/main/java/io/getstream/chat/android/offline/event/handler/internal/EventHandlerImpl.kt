@@ -70,6 +70,16 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.addMember
+import io.getstream.chat.android.client.extensions.internal.addMembership
+import io.getstream.chat.android.client.extensions.internal.mergeReactions
+import io.getstream.chat.android.client.extensions.internal.removeMember
+import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.updateMember
+import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
+import io.getstream.chat.android.client.extensions.internal.updateMembership
+import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
+import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -78,20 +88,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.extensions.internal.addMember
-import io.getstream.chat.android.offline.extensions.internal.addMembership
-import io.getstream.chat.android.offline.extensions.internal.mergeReactions
-import io.getstream.chat.android.offline.extensions.internal.removeMember
-import io.getstream.chat.android.offline.extensions.internal.removeMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMember
-import io.getstream.chat.android.offline.extensions.internal.updateMemberBanned
-import io.getstream.chat.android.offline.extensions.internal.updateMembership
-import io.getstream.chat.android.offline.extensions.internal.updateMembershipBanned
-import io.getstream.chat.android.offline.extensions.internal.updateReads
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
@@ -110,7 +110,7 @@ internal class EventHandlerImpl(
     private val client: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
-    private val mutableGlobalState: GlobalMutableState,
+    private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -210,14 +210,14 @@ internal class EventHandlerImpl(
             when (event) {
                 is DisconnectedEvent -> {
                     logger.i { "[handleConnectEvents] received DisconnectedEvent" }
-                    mutableGlobalState._connectionState.value = ConnectionState.OFFLINE
+                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
                     updateCurrentUser(event.me)
 
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTED
-                    mutableGlobalState._initialized.value = true
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
+                    mutableGlobalState.setInitialized(true)
 
                     if (recoveryEnabled) {
                         syncManager.connectionRecovered()
@@ -234,7 +234,7 @@ internal class EventHandlerImpl(
 
                 is ConnectingEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectingEvent" }
-                    mutableGlobalState._connectionState.value = ConnectionState.CONNECTING
+                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
                 }
 
                 else -> Unit // Ignore other events
@@ -484,8 +484,8 @@ internal class EventHandlerImpl(
                 // we use syncState to store the last markAllRead date for a given
                 // user since it makes more sense to write to the database once instead of N times.
                 is MarkAllReadEvent -> {
-                    mutableGlobalState._totalUnreadCount.value = event.totalUnreadCount
-                    mutableGlobalState._channelUnreadCount.value = event.unreadChannels
+                    mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
+                    mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
 
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
@@ -523,7 +523,7 @@ internal class EventHandlerImpl(
                 }
                 is UserUpdatedEvent -> {
                     event.user
-                        .takeIf { it.id == mutableGlobalState._user.value?.id }
+                        .takeIf { it.id == mutableGlobalState.user.value?.id }
                         ?.let {
                             updateCurrentUser(it)
                         }
@@ -647,8 +647,8 @@ internal class EventHandlerImpl(
         cid: String,
     ) {
         if (shouldUpdateTotalUnreadCounts(isFromSync, cid)) {
-            mutableGlobalState._totalUnreadCount.value = totalUnreadCount
-            mutableGlobalState._channelUnreadCount.value = channelUnreadCount
+            mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
+            mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
         }
     }
 
@@ -681,11 +681,11 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        ownReactions = if (user != null && mutableGlobalState._user.value?.id != user.id) {
+        ownReactions = if (user != null && mutableGlobalState.user.value?.id != user.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == mutableGlobalState._user.value?.id ?: "" },
+                latestReactions.filter { it.userId == mutableGlobalState.user.value?.id ?: "" },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
@@ -698,12 +698,12 @@ internal class EventHandlerImpl(
         }
 
         mutableGlobalState.run {
-            _user.value = me
-            _mutedUsers.value = me.mutes
-            _channelMutes.value = me.channelMutes
-            _totalUnreadCount.value = me.totalUnreadCount
-            _channelUnreadCount.value = me.unreadChannels
-            _banned.value = me.banned
+            setUser(me)
+            setMutedUsers(me.mutes)
+            setChannelMutes(me.channelMutes)
+            setTotalUnreadCount(me.totalUnreadCount)
+            setChannelUnreadCount(me.unreadChannels)
+            setBanned(me.banned)
         }
 
         repos.insertCurrentUser(me)

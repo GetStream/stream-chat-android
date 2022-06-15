@@ -41,3 +41,9 @@ public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
     true -> dateA
     else -> dateB
 }
+
+/**
+ * Check if current date has difference with [other] no more that [offset].
+ */
+@InternalStreamChatApi
+public fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time

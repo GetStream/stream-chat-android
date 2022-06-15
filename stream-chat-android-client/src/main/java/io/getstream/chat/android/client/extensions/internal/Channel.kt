@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 import java.util.Date
 
@@ -30,7 +31,8 @@ private const val TAG = "Chat:ChannelTools"
 /**
  * Returns all users including watchers of a channel that are associated with it.
  */
-internal fun Channel.users(): List<User> {
+@InternalStreamChatApi
+public fun Channel.users(): List<User> {
     return members.map(Member::user) +
         read.map(ChannelUserRead::user) +
         createdBy +
@@ -38,10 +40,12 @@ internal fun Channel.users(): List<User> {
         watchers
 }
 
-internal val Channel.lastMessage: Message?
+@InternalStreamChatApi
+public val Channel.lastMessage: Message?
     get() = messages.lastOrNull()
 
-internal fun Channel.updateLastMessage(message: Message) {
+@InternalStreamChatApi
+public fun Channel.updateLastMessage(message: Message) {
     val createdAt = message.createdAt ?: message.createdLocallyAt
     val messageCreatedAt =
         checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
@@ -60,7 +64,8 @@ internal fun Channel.updateLastMessage(message: Message) {
  * @param currentUserId User id of the currently logged in user.
  * @param memberUserId User id of the removed member.
  */
-internal fun Channel.removeMember(memberUserId: String?): Channel {
+@InternalStreamChatApi
+public fun Channel.removeMember(memberUserId: String?): Channel {
     memberUserId ?: return this
     members = members.filterNot { it.user.id == memberUserId }
     memberCount -= 1
@@ -72,7 +77,8 @@ internal fun Channel.removeMember(memberUserId: String?): Channel {
  *
  * @param member Added member.
  */
-internal fun Channel.addMember(member: Member?): Channel {
+@InternalStreamChatApi
+public fun Channel.addMember(member: Member?): Channel {
     val memberUserId = member?.user?.id ?: return this
     val foundMember = members.find { it.user.id == memberUserId }
     if (foundMember != null) return this
@@ -86,7 +92,8 @@ internal fun Channel.addMember(member: Member?): Channel {
  *
  * @param member Updated member.
  */
-internal fun Channel.updateMember(member: Member?): Channel {
+@InternalStreamChatApi
+public fun Channel.updateMember(member: Member?): Channel {
     val memberUserId = member?.user?.id ?: return this
     members = members.map { iterableMember ->
         when (iterableMember.user.id == memberUserId) {
@@ -103,7 +110,8 @@ internal fun Channel.updateMember(member: Member?): Channel {
  * @param memberUserId Updated member user id.
  * @param banned Shows whether a user is banned or not in this channel.
  */
-internal fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean): Channel {
+@InternalStreamChatApi
+public fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean): Channel {
     members = members.map { member ->
         member.apply {
             if (this.user.id == memberUserId) {
@@ -120,7 +128,8 @@ internal fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean):
  * @param currentUserId User id of the currently logged in user.
  * @param member Added member.
  */
-internal fun Channel.addMembership(currentUserId: String?, member: Member?): Channel {
+@InternalStreamChatApi
+public fun Channel.addMembership(currentUserId: String?, member: Member?): Channel {
     if (member?.user?.id == currentUserId) {
         membership = member
     }
@@ -132,7 +141,8 @@ internal fun Channel.addMembership(currentUserId: String?, member: Member?): Cha
  *
  * @param member Updated member.
  */
-internal fun Channel.updateMembership(member: Member?): Channel {
+@InternalStreamChatApi
+public fun Channel.updateMembership(member: Member?): Channel {
     val memberUserId = member?.user?.id
     val membershipUserId = membership?.user?.id
     if (memberUserId == membershipUserId) {
@@ -149,7 +159,8 @@ internal fun Channel.updateMembership(member: Member?): Channel {
  * @param memberUserId Member user id.
  * @param banned Shows whether a user is banned or not in this channel.
  */
-internal fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean): Channel {
+@InternalStreamChatApi
+public fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean): Channel {
     if (membership?.user?.id == memberUserId) {
         membership?.banned = banned
     }
@@ -161,14 +172,16 @@ internal fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boole
  *
  * @param currentUserId User id of the currently logged in user.
  */
-internal fun Channel.removeMembership(currentUserId: String?): Channel {
+@InternalStreamChatApi
+public fun Channel.removeMembership(currentUserId: String?): Channel {
     if (membership?.user?.id == currentUserId) {
         membership = null
     }
     return this
 }
 
-internal fun Channel.updateReads(newRead: ChannelUserRead) {
+@InternalStreamChatApi
+public fun Channel.updateReads(newRead: ChannelUserRead) {
     val oldRead = read.firstOrNull { it.user == newRead.user }
     read = if (oldRead != null) {
         read - oldRead + newRead
@@ -183,7 +196,8 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
  * @param currentUserId The id of the user that should have the unread count incremented for this Channel.
  * @param lastMessageSeenDate The Date of the last message that the SDK is aware of.
  */
-internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?) {
+@InternalStreamChatApi
+public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?) {
     read.firstOrNull { it.user.id == currentUserId }
         ?.let {
             it.lastMessageSeenDate = lastMessageSeenDate
@@ -191,7 +205,8 @@ internal fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeen
         }
 }
 
-internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
+@InternalStreamChatApi
+public fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
     val logger = StreamLog.getLogger("ChannelSort")
 
     return asSequence()
@@ -214,7 +229,8 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
 }
 
 /** Updates collection of channels with more recent data of [users]. */
-internal fun Collection<Channel>.updateUsers(users: Map<String, User>) = map { it.updateUsers(users) }
+@InternalStreamChatApi
+public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Channel> = map { it.updateUsers(users) }
 
 /**
  * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy and
