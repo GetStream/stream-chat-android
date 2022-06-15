@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.clientstate
+package io.getstream.chat.android.ui.common.internal
 
-import io.getstream.chat.android.client.models.User as UserModel
+import coil.key.Keyer
+import coil.request.Options
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.avatar.internal.Avatar
 
-internal sealed class UserState {
-    object NotSet : UserState()
-    class UserSet(val user: UserModel) : UserState()
-    class AnonymousUserSet(val anonymousUser: UserModel) : UserState()
-
-    internal fun userOrError(): UserModel = when (this) {
-        is UserSet -> user
-        is AnonymousUserSet -> anonymousUser
-        else -> error("This state doesn't contain user!")
+internal object AvatarKeyer : Keyer<Avatar> {
+    override fun key(data: Avatar, options: Options): String? = when (data) {
+        is Avatar.UserAvatar -> ChatUI.avatarBitmapFactory.userBitmapKey(data.user)
+        is Avatar.ChannelAvatar -> ChatUI.avatarBitmapFactory.channelBitmapKey(data.channel)
     }
 }

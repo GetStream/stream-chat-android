@@ -27,11 +27,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * An avatar that renders an image from the provided image URL. In case the image URL
@@ -47,7 +46,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param initialsAvatarOffset The initials offset to apply to the avatar.
  * @param onClick OnClick action, that can be nullable.
  */
-@ExperimentalCoilApi
 @Composable
 public fun Avatar(
     imageUrl: String,
@@ -83,9 +81,12 @@ public fun Avatar(
         return
     }
 
-    val painter = rememberImagePainter(data = imageUrl)
+    val painter = rememberStreamImagePainter(
+        data = imageUrl,
+        placeholderPainter = painterResource(id = R.drawable.stream_compose_preview_avatar)
+    )
 
-    if (painter.state is ImagePainter.State.Error) {
+    if (painter.state is AsyncImagePainter.State.Error) {
         InitialsAvatar(
             modifier = modifier,
             initials = initials,
@@ -94,7 +95,7 @@ public fun Avatar(
             onClick = onClick,
             avatarOffset = initialsAvatarOffset
         )
-    } else if (painter.state is ImagePainter.State.Loading && placeholderPainter != null) {
+    } else if (painter.state is AsyncImagePainter.State.Loading && placeholderPainter != null) {
         ImageAvatar(
             modifier = modifier,
             shape = shape,

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import coil.imageLoader
 import coil.request.ImageRequest
-import coil.transform.BlurTransformation
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
@@ -30,6 +29,7 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.docs.R
+import io.getstream.chat.docs.kotlin.ui.utility.GrayscaleTransformation
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -85,7 +85,7 @@ private class ChatUiSnippets {
                         .data(user.image)
                         .apply {
                             if (!user.online) {
-                                transformations(BlurTransformation(context))
+                                transformations(GrayscaleTransformation())
                             }
                         }
                         .build()
