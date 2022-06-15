@@ -26,8 +26,7 @@ import android.os.Build
 import android.widget.ImageView
 import coil.drawable.MovieDrawable
 import coil.drawable.ScaleDrawable
-import coil.fetch.VideoFrameUriFetcher
-import coil.loadAny
+import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
@@ -69,7 +68,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.load(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -93,7 +92,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.loadAny(data, context.streamImageLoader) {
+        val disposable = target.load(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderDrawable?.let(::placeholder)
             listener(
@@ -168,7 +167,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.loadAny(uri, context.streamImageLoader) {
+        val disposable = target.load(uri, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
@@ -177,7 +176,6 @@ internal object CoilStreamImageLoader : StreamImageLoader {
                 onError = { _, _ -> onComplete() },
                 onSuccess = { _, _ -> onComplete() },
             )
-            fetcher(VideoFrameUriFetcher(context))
             applyTransformation(transformation)
         }
 

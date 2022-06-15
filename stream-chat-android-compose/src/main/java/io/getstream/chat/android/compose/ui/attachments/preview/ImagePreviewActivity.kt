@@ -88,9 +88,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -114,6 +112,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ShowInChat
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.offline.extensions.downloadAttachment
@@ -478,7 +477,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
      */
-    @OptIn(ExperimentalCoilApi::class)
+    @Suppress("LongMethod", "ComplexMethod")
     @Composable
     private fun ImagePreviewContent(
         pagerState: PagerState,
@@ -498,7 +497,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
+                val painter = rememberStreamImagePainter(data = attachments[page].imagePreviewUrl)
 
                 val density = LocalDensity.current
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -509,7 +508,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
 
                 val scale by animateFloatAsState(targetValue = currentScale)
 
-                val transformModifier = if (painter.state is ImagePainter.State.Success) {
+                val transformModifier = if (painter.state is AsyncImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Modifier.aspectRatio(size.width / size.height, true)
                 } else {
@@ -883,7 +882,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     }
                 }
         ) {
-            val painter = rememberImagePainter(attachment.imagePreviewUrl)
+            val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
             Image(
                 modifier = Modifier.fillMaxSize(),
