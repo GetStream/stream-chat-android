@@ -2238,7 +2238,6 @@ public abstract interface class io/getstream/chat/android/ui/message/list/backgr
 }
 
 public class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl : io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
-	public static final field Companion Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl$Companion;
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;)V
 	public fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun fileAttachmentsMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
@@ -2247,9 +2246,6 @@ public class io/getstream/chat/android/ui/message/list/background/MessageBackgro
 	public fun linkAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
-}
-
-public final class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl$Companion {
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
