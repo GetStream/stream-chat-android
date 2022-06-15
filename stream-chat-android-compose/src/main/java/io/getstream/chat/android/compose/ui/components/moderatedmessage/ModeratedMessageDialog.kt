@@ -16,25 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components.moderatedmessage
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -45,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.model.ModeratedMessageOption
-import io.getstream.chat.android.common.model.messageModerationOptions
+import io.getstream.chat.android.common.model.defaultMessageModerationOptions
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -54,82 +43,74 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * send the message again, edit it and then send it or to delete it.
  *
  * @param message The moderated [Message] upon which the user can take action.
+ * @param modifier Modifier for styling.
+ * @param moderatedMessageOptions List of options that the user can choose from for the moderated message.
  * @param onDismissRequest Handler for dialog dismissal.
  * @param onDialogInteraction Handler for detecting the action take upon the dialog.
- * @param dialogTitle Title composable slot.
- * @param dialogDescription Description composable slot.
+ * @param dialogTitle Composable that represents the dialog title. Shows an icon and the cause by default.
+ * @param dialogDescription Composable that represents the dialog description. Shows more information about the cause
+ * to the user.
+ * @param dialogOptions Composable that represents the [ModeratedMessageOption]s the user can choose for the moderated
+ * message. By default uses [defaultMessageModerationOptions].
  */
 @Composable
 public fun ModeratedMessageDialog(
     message: Message,
     onDismissRequest: () -> Unit,
-    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit = { _, _ -> },
-    dialogTitle: @Composable () -> Unit = {
-        ModeratedMessageDialogTitle(
-            R.drawable.stream_compose_ic_flag,
-            stringResource(id = R.string.stream_ui_moderation_dialog_title)
+    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
+    modifier: Modifier = Modifier,
+    moderatedMessageOptions: List<ModeratedMessageOption> = defaultMessageModerationOptions(),
+    dialogTitle: @Composable () -> Unit = { DefaultModeratedMessageDialogTitle() },
+    dialogDescription: @Composable () -> Unit = { DefaultModeratedMessageDialogDescription() },
+    dialogOptions: @Composable () -> Unit = {
+        DefaultModeratedDialogOptions(
+            message = message,
+            messageOptions = moderatedMessageOptions,
+            onDialogInteraction = onDialogInteraction,
+            onDismissRequest = onDismissRequest
         )
     },
-    dialogDescription: @Composable () -> Unit = {
-        ModeratedMessageDialogDescription(stringResource(id = R.string.stream_ui_moderation_dialog_description))
-    },
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Column(
-            modifier = Modifier.background(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colors.surface
-            ),
+            modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             dialogTitle()
 
             dialogDescription()
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            LazyColumn {
-                items(messageModerationOptions()) { option ->
-                    Divider(color = ChatTheme.colors.borders)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple()
-                            ) {
-                                onDialogInteraction(message, option)
-                                onDismissRequest()
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = option.text),
-                            style = ChatTheme.typography.body,
-                            color = ChatTheme.colors.primaryAccent
-                        )
-                    }
-                }
-            }
+            dialogOptions()
         }
     }
 }
 
-/**
- * Moderated message dialog title composable. Show icon and title.
- *
- * @param imageResource The resource fot the icon to be show above title.
- * @param titleText The string to be show as the title.
- * */
+// TODO - docs for everything
 @Composable
-public fun ModeratedMessageDialogTitle(
-    @DrawableRes imageResource: Int,
-    titleText: String
+internal fun DefaultModeratedDialogOptions(
+    message: Message,
+    messageOptions: List<ModeratedMessageOption>,
+    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     Spacer(modifier = Modifier.height(12.dp))
 
-    val painter = painterResource(id = imageResource)
+    ModeratedMessageDialogOptions(
+        message = message,
+        options = messageOptions,
+        onDismissRequest = onDismissRequest,
+        onDialogInteraction = onDialogInteraction
+    )
+}
+
+/**
+ * Moderated message dialog title composable. Shows an icon and a title.
+ * */
+@Composable
+internal fun DefaultModeratedMessageDialogTitle() {
+    Spacer(modifier = Modifier.height(12.dp))
+
+    val painter = painterResource(id = R.drawable.stream_compose_ic_flag)
     Image(
         painter = painter,
         contentDescription = "",
@@ -139,7 +120,7 @@ public fun ModeratedMessageDialogTitle(
     Spacer(modifier = Modifier.height(4.dp))
 
     Text(
-        text = titleText,
+        text = stringResource(id = R.string.stream_ui_moderation_dialog_title),
         textAlign = TextAlign.Center,
         style = ChatTheme.typography.title3
     )
@@ -147,22 +128,17 @@ public fun ModeratedMessageDialogTitle(
 
 /**
  * Moderated message dialog description composable.
- *
- * @param descriptionText The string to show as description.
  */
 @Composable
-public fun ModeratedMessageDialogDescription(descriptionText: String) {
+internal fun DefaultModeratedMessageDialogDescription() {
     Spacer(modifier = Modifier.height(12.dp))
 
-    Box(
+    Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        Text(
-            text = descriptionText,
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.body
-        )
-    }
+            .padding(horizontal = 8.dp),
+        text = stringResource(id = R.string.stream_ui_moderation_dialog_description),
+        textAlign = TextAlign.Center,
+        style = ChatTheme.typography.body
+    )
 }

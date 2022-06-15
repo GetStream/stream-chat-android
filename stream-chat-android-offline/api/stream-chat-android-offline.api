@@ -417,20 +417,6 @@ public final class io/getstream/chat/android/offline/repository/domain/message/a
 	public fun observeAttachmentsForMessage (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 }
 
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageAwaitingAttachmentsEntity : io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncInProgressEntity {
-	public fun <init> ()V
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageAwaitingAttachmentsEntityJsonAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> (Lcom/squareup/moshi/Moshi;)V
-	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageAwaitingAttachmentsEntity;
-	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageAwaitingAttachmentsEntity;)V
-	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageDao_Impl {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun deleteAttachments (Ljava/util/List;)V
@@ -458,61 +444,6 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun selectWaitForAttachments (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity : io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncFailedEntity {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getViolations ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity$ViolationEntity {
-	public fun <init> (ILjava/util/List;)V
-	public final fun component1 ()I
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity$ViolationEntity;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity$ViolationEntity;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity$ViolationEntity;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCode ()I
-	public final fun getMessages ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntityJsonAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> (Lcom/squareup/moshi/Moshi;)V
-	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity;
-	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageModerationFailedEntity;)V
-	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncContentEntity {
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncEntity {
-	public fun <init> (Lio/getstream/chat/android/client/models/MessageSyncType;Ljava/lang/String;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/MessageSyncType;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Lio/getstream/chat/android/client/models/MessageSyncType;Ljava/lang/String;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncEntity;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncEntity;Lio/getstream/chat/android/client/models/MessageSyncType;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncEntity;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getContent ()Ljava/lang/String;
-	public final fun getType ()Lio/getstream/chat/android/client/models/MessageSyncType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncFailedEntity : io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncContentEntity {
-}
-
-public abstract class io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncInProgressEntity : io/getstream/chat/android/offline/repository/domain/message/internal/MessageSyncContentEntity {
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao_Impl {

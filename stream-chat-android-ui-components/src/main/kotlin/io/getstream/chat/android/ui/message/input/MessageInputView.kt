@@ -506,7 +506,7 @@ public class MessageInputView : ConstraintLayout {
                             is InputMode.Thread -> sendThreadMessage(it.parentMessage)
                             is InputMode.Edit -> editMessage(it.oldMessage)
                             is InputMode.Reply -> sendMessage(it.repliedMessage)
-                            is InputMode.EditModeratedMessage -> editModeratedMessage(it.oldMessage)
+                            is InputMode.EditModeratedMessage -> editMessage(it.oldMessage)
                         }
                     }
                     binding.messageInputFieldView.clearContent()
@@ -908,7 +908,7 @@ public class MessageInputView : ConstraintLayout {
         with(binding) {
             val isCommandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
             val isEditMode = messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode ||
-                messageInputFieldView.mode is MessageInputFieldView.Mode.EditModeratedMessageMode
+                messageInputFieldView.mode is MessageInputFieldView.Mode.EditModeratedMessageMode // TODO
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
@@ -1074,7 +1074,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun editModeratedMessage(oldMessage: Message) {
-        sendMessageHandler.editModeratedMessage(oldMessage, getTrimmedMessageText())
+        sendMessageHandler.editMessage(oldMessage, getTrimmedMessageText())
         inputMode = InputMode.Normal
     }
 
@@ -1164,10 +1164,6 @@ public class MessageInputView : ConstraintLayout {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
 
-            override fun editModeratedMessage(oldMessage: Message, newMessageText: String) {
-                throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to edit moderated messages")
-            }
-
             override fun dismissReply() {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -1248,8 +1244,6 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
-
-        public fun editModeratedMessage(oldMessage: Message, newMessageText: String)
 
         public fun dismissReply()
     }

@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.EditModeratedMessage
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
@@ -235,20 +234,20 @@ public class MessageComposerController(
      */
     public val lastActiveAction: Flow<MessageAction?>
         get() = messageActions.map { actions ->
-            actions.lastOrNull { it is Edit || it is Reply || it is EditModeratedMessage }
+            actions.lastOrNull { it is Edit || it is Reply }
         }
 
     /**
      * Gets the active [Edit], [Reply] or [EditModeratedMessage] action, whichever is last, to show on the UI.
      */
     private val activeAction: MessageAction?
-        get() = messageActions.value.lastOrNull { it is Edit || it is Reply || it is EditModeratedMessage }
+        get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
 
     /**
      * Gives us information if the active action is Edit, for business logic purposes.
      */
     private val isInEditMode: Boolean
-        get() = activeAction is Edit || activeAction is EditModeratedMessage
+        get() = activeAction is Edit
 
     /**
      * Gets the parent message id if we are in thread mode, or null otherwise.
@@ -396,11 +395,6 @@ public class MessageComposerController(
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
-            is EditModeratedMessage -> {
-                input.value = messageAction.message.text
-                selectedAttachments.value = messageAction.message.attachments
-                messageActions.value = messageActions.value + messageAction
-            }
             else -> {
                 // no op, custom user action
             }
@@ -473,7 +467,7 @@ public class MessageComposerController(
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
-        if (activeAction is EditModeratedMessage || message.isModerationFailed()) {
+        if (message.isModerationFailed()) {
             sendModeratedMessage(message)
             return
         }
@@ -501,6 +495,7 @@ public class MessageComposerController(
      * @param message The message to send.
      */
     public fun sendModeratedMessage(message: Message) {
+        // TODO - edit check?
         (activeAction?.message?.id ?: message.id).let { chatClient.deleteMessage(it, true).enqueue() }
 
         val newMessage = buildNewMessage(
@@ -511,11 +506,9 @@ public class MessageComposerController(
         val (channelType, channelId) = newMessage.cid.cidToTypeAndId()
         val sendMessageCall = chatClient.sendMessage(channelType, channelId, newMessage)
 
-        if (activeAction is EditModeratedMessage) {
-            dismissMessageActions()
-            clearData()
-            handleCooldownTimer()
-        }
+        dismissMessageActions()
+        clearData()
+        handleCooldownTimer()
 
         sendMessageCall.enqueue()
     }
@@ -538,12 +531,13 @@ public class MessageComposerController(
         val activeAction = activeAction
 
         val trimmedMessage = message.trim()
-        val actionMessage = activeAction?.message ?: Message()
+        val activeMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode && activeAction !is EditModeratedMessage) {
-            actionMessage.copy(
+        // TODO - check this logic if this still makes sense
+        return if (isInEditMode && !activeMessage.isModerationFailed()) {
+            activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions

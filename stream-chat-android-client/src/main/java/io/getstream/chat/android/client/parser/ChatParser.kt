@@ -65,9 +65,9 @@ internal interface ChatParser {
                 val cause = error.extractCause()
                 ChatNetworkError.create(
                     streamCode = error.code,
-                    description = error.message
-                        + moreInfoTemplate(error.moreInfo)
-                        + buildDetailsTemplate(error.details),
+                    description = error.message +
+                        moreInfoTemplate(error.moreInfo) +
+                        buildDetailsTemplate(error.details),
                     statusCode = statusCode,
                     cause = cause
                 )

@@ -21,7 +21,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.ModeratedMessageOption
+import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogModeratedMessageBinding
 
@@ -67,17 +70,17 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
     private fun initSelectionListeners() {
         with(binding) {
             sendAnyway.setOnClickListener {
-                selectionHandler?.onModeratedOptionSelected(message, ModeratedMessageOption.SendAnyway)
+                selectionHandler?.onModeratedOptionSelected(message, SendAnyway)
                 dismiss()
             }
 
             editMessage.setOnClickListener {
-                selectionHandler?.onModeratedOptionSelected(message, ModeratedMessageOption.EditMessage)
+                selectionHandler?.onModeratedOptionSelected(message, EditMessage)
                 dismiss()
             }
 
             deleteMessage.setOnClickListener {
-                selectionHandler?.onModeratedOptionSelected(message, ModeratedMessageOption.DeleteMessage)
+                selectionHandler?.onModeratedOptionSelected(message, DeleteMessage)
                 dismiss()
             }
         }

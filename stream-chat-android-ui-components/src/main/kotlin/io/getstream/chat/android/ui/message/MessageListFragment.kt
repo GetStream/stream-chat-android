@@ -29,7 +29,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.common.model.ModeratedMessageOption
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
+import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -171,11 +173,14 @@ public open class MessageListFragment : Fragment() {
 
         binding.messageListView.setModeratedMessageHandler { message, action ->
             when (action) {
-                ModeratedMessageOption.DeleteMessage -> messageListViewModel.onEvent(
+                DeleteMessage -> messageListViewModel.onEvent(
                     MessageListViewModel.Event.DeleteMessage(message)
                 )
-                ModeratedMessageOption.EditMessage -> messageInputViewModel.postMessageToEdit(message)
-                ModeratedMessageOption.SendAnyway -> messageInputViewModel.resendModeratedMessage(message)
+                EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                SendAnyway -> messageInputViewModel.resendModeratedMessage(message)
+                else -> {
+                    // custom actions
+                }
             }
         }
     }

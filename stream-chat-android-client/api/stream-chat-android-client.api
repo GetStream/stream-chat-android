@@ -2970,19 +2970,6 @@ public final class io/getstream/chat/android/client/models/MessageModerationFail
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/models/MessageModerationFailed$Violation {
-	public fun <init> (ILjava/util/List;)V
-	public final fun component1 ()I
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/client/models/MessageModerationFailed$Violation;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/MessageModerationFailed$Violation;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/MessageModerationFailed$Violation;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCode ()I
-	public final fun getMessages ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract class io/getstream/chat/android/client/models/MessageSyncContent {
 }
 
@@ -3005,10 +2992,15 @@ public abstract class io/getstream/chat/android/client/models/MessageSyncFailed 
 public abstract class io/getstream/chat/android/client/models/MessageSyncInProgress : io/getstream/chat/android/client/models/MessageSyncContent {
 }
 
+public final class io/getstream/chat/android/client/models/MessageSyncNone : io/getstream/chat/android/client/models/MessageSyncContent {
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/MessageSyncNone;
+}
+
 public final class io/getstream/chat/android/client/models/MessageSyncType : java/lang/Enum {
 	public static final field Companion Lio/getstream/chat/android/client/models/MessageSyncType$Companion;
 	public static final field FAILED_MODERATION Lio/getstream/chat/android/client/models/MessageSyncType;
 	public static final field IN_PROGRESS_AWAIT_ATTACHMENTS Lio/getstream/chat/android/client/models/MessageSyncType;
+	public static final field NONE Lio/getstream/chat/android/client/models/MessageSyncType;
 	public static final field TYPE Ljava/lang/String;
 	public final fun getAlias ()Ljava/lang/String;
 	public final fun getType ()I
@@ -3018,6 +3010,19 @@ public final class io/getstream/chat/android/client/models/MessageSyncType : jav
 
 public final class io/getstream/chat/android/client/models/MessageSyncType$Companion {
 	public final fun fromInt (I)Lio/getstream/chat/android/client/models/MessageSyncType;
+}
+
+public final class io/getstream/chat/android/client/models/ModerationViolation {
+	public fun <init> (ILjava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/client/models/ModerationViolation;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/ModerationViolation;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/ModerationViolation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()I
+	public final fun getMessages ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/Mute {
@@ -3661,6 +3666,9 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
+}
+
+public final class io/getstream/chat/android/client/utils/internal/ChatErrorMapperKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/MessageUtilsKt {

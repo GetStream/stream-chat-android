@@ -24,29 +24,37 @@ import io.getstream.chat.android.ui.common.R
  *
  * @param text The text to be shown for the action.
  */
-public sealed class ModeratedMessageOption(public val text: Int) {
-    /**
-     * Prompts the user to send the message anyway if the message was flagged by moderation.
-     */
-    public object SendAnyway : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_send)
+public sealed class ModeratedMessageOption(public val text: Int)
 
-    /**
-     * Prompts the user to edit the message if the message was flagged by moderation.
-     */
-    public object EditMessage : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_edit)
+/**
+ * Prompts the user to send the message anyway if the message was flagged by moderation.
+ */
+public object SendAnyway : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_send)
 
-    /**
-     * Prompts the user to delete the message if the message was flagged by moderation.
-     */
-    public object DeleteMessage : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_delete)
-}
+/**
+ * Prompts the user to edit the message if the message was flagged by moderation.
+ */
+public object EditMessage : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_edit)
+
+/**
+ * Prompts the user to delete the message if the message was flagged by moderation.
+ */
+public object DeleteMessage : ModeratedMessageOption(R.string.stream_ui_moderation_dialog_delete)
+
+/**
+ * Custom actions that you can define for moderated messages.
+ */
+public class CustomModerationOption(
+    text: Int,
+    public val extraData: Map<String, Any> = emptyMap(),
+) : ModeratedMessageOption(text)
 
 /**
  * @return A list of [ModeratedMessageOption] to show to the user.
  */
 @InternalStreamChatApi
-public fun messageModerationOptions(): List<ModeratedMessageOption> = listOf(
-    ModeratedMessageOption.SendAnyway,
-    ModeratedMessageOption.EditMessage,
-    ModeratedMessageOption.DeleteMessage
+public fun defaultMessageModerationOptions(): List<ModeratedMessageOption> = listOf(
+    SendAnyway,
+    EditMessage,
+    DeleteMessage
 )

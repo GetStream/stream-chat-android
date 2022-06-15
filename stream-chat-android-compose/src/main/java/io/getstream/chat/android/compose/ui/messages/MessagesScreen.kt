@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -51,10 +52,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.ModeratedMessageOption
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
+import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.EditModeratedMessage
+import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
@@ -395,18 +398,19 @@ public fun MessagesScreen(
         if (selectedMessageState is SelectedMessageFailedModerationState) {
             ModeratedMessageDialog(
                 message = selectedMessage,
+                modifier = Modifier.background(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colors.surface
+                ),
                 onDismissRequest = { listViewModel.removeOverlay() },
                 onDialogInteraction = { message, action ->
                     when (action) {
-                        ModeratedMessageOption.DeleteMessage ->
-                            listViewModel
-                                .deleteMessage(message = message, true)
-                        ModeratedMessageOption.EditMessage ->
-                            composerViewModel
-                                .performMessageAction(EditModeratedMessage(message))
-                        ModeratedMessageOption.SendAnyway ->
-                            composerViewModel
-                                .sendModeratedMessage(message)
+                        DeleteMessage -> listViewModel.deleteMessage(message = message, true)
+                        EditMessage -> composerViewModel.performMessageAction(Edit(message))
+                        SendAnyway -> composerViewModel.sendModeratedMessage(message)
+                        else -> {
+                            // Custom events
+                        }
                     }
                 }
             )
