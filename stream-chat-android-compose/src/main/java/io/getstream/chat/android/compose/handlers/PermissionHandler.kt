@@ -103,7 +103,7 @@ public class DownloadPermissionHandler(
      * been granted.
      */
     @Composable
-    public fun observePermissionChanges() {
+    public fun ObservePermissionChanges() {
         LaunchedEffect(key1 = permissionState.hasPermission) {
             if (permissionState.hasPermission) lastPayload?.let {
                 onPermissionGranted(it)

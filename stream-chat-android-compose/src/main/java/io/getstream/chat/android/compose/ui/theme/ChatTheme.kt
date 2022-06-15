@@ -146,7 +146,7 @@ public fun ChatTheme(
     permissionHandlers: List<PermissionHandler> = StreamPermissionHandlers.defaultHandlers(
         LocalContext.current,
         listOf(rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE))
-    ).onEach { if (it is DownloadPermissionHandler) it.observePermissionChanges() },
+    ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {

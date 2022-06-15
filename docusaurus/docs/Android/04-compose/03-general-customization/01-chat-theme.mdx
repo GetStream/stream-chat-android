@@ -9,11 +9,13 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **RippleTheme**: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
 * **AttachmentFactories**: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
 * **AttachmentPreviewHandlers**: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
+* **QuotedAttachmentFactories**: Used to process quoted messages and show different types of attachment UI inside the quoted messages, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom quoted attachment types. If none of quoted factories can handle the attachment will default to AttachmentFactories.
 * **ReactionIconFactory**: Used to create a reaction icon for the given reaction type. You can use the default factory that supports a predefined set of reactions, or provide a custom one.
 * **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 * **ChannelNameFormatter**: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 * **MessagePreviewFormatter**: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
 * **ImageLoaderFactory**: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
+* **PermissionHandlers**: Used to handle permissions inside the app without having to propagate lambdas to the call site. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 * **MessageAlignmentProvider** Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 
 :::note
