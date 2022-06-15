@@ -30,17 +30,8 @@ import kotlinx.coroutines.launch
 public class ThreeTenInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        CoroutineScope(DispatcherProvider.IO).initThreeTen(context)
-    }
-
-    /**
-     * Initializes ThreeTen in a coroutine for faster
-     * initialization. Cancels the scope afterwards.
-     */
-    private fun CoroutineScope.initThreeTen(context: Context) {
-        launch {
+        CoroutineScope(DispatcherProvider.IO).launch {
             AndroidThreeTen.init(context)
-            this@initThreeTen.cancel()
         }
     }
 

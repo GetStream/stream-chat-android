@@ -41,31 +41,24 @@ public class ChatUIInitializer : Initializer<Unit> {
         ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
         ChatUI.appContext = context
 
-        CoroutineScope(DispatcherProvider.IO).setImageLoader(context)
+        CoroutineScope(DispatcherProvider.IO).launch { setImageLoader(context) }
     }
 
-    /**
-     * Sets the image loader in a coroutine for faster
-     * initialization. Cancels the scope afterwards.
-     */
-    private fun CoroutineScope.setImageLoader(context: Context) {
-        launch {
-            val imageLoaderFactory = StreamImageLoaderFactory(context) {
-                componentRegistry {
-                    // duplicated as we can not extend component
-                    // registry of existing image loader builder
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        add(ImageDecoderDecoder(context))
-                    } else {
-                        add(GifDecoder())
-                    }
-
-                    add(AvatarFetcher())
+    private fun setImageLoader(context: Context) {
+        val imageLoaderFactory = StreamImageLoaderFactory(context) {
+            componentRegistry {
+                // duplicated as we can not extend component
+                // registry of existing image loader builder
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    add(ImageDecoderDecoder(context))
+                } else {
+                    add(GifDecoder())
                 }
+
+                add(AvatarFetcher())
             }
-            StreamCoil.setImageLoader(imageLoaderFactory)
-            this@setImageLoader.cancel()
         }
+        StreamCoil.setImageLoader(imageLoaderFactory)
     }
 
     override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
