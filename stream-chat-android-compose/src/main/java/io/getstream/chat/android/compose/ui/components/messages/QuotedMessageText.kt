@@ -28,7 +28,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
+import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isFile
+import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.
@@ -44,6 +46,13 @@ public fun QuotedMessageText(
     quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
     val attachment = message.attachments.firstOrNull()
+
+    // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    val style = when {
+        message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
+        message.isFewEmoji() -> ChatTheme.typography.emojiOnly
+        else -> ChatTheme.typography.bodyBold
+    }
 
     val quotedMessageText = when {
         message.text.isNotBlank() -> message.text
@@ -85,7 +94,7 @@ public fun QuotedMessageText(
             )
             .clipToBounds(),
         text = styledText,
-        style = ChatTheme.typography.bodyBold,
+        style = style,
         maxLines = quoteMaxLines,
         overflow = TextOverflow.Ellipsis
     )
