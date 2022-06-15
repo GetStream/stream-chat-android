@@ -19,13 +19,29 @@ package com.getstream.sdk.chat.startup
 import android.content.Context
 import androidx.startup.Initializer
 import com.jakewharton.threetenabp.AndroidThreeTen
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * Jetpack Startup Initializer for the TreeTenABP library.
  */
 public class ThreeTenInitializer : Initializer<Unit> {
+
     override fun create(context: Context) {
-        AndroidThreeTen.init(context)
+        CoroutineScope(DispatcherProvider.IO).initThreeTen(context)
+    }
+
+    /**
+     * Initializes ThreeTen in a coroutine for faster
+     * initialization. Cancels the scope afterwards.
+     */
+    private fun CoroutineScope.initThreeTen(context: Context) {
+        launch {
+            AndroidThreeTen.init(context)
+            this@initThreeTen.cancel()
+        }
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
