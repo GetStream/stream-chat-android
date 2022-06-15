@@ -140,10 +140,6 @@ public fun MessageInputViewModel.bindView(
                 viewModel.editMessage(oldMessage.copy(text = newMessageText))
             }
 
-            override fun editModeratedMessage(oldMessage: Message, newMessageText: String) {
-                viewModel.resendModeratedMessage(oldMessage, newMessageText)
-            }
-
             override fun dismissReply() {
                 viewModel.dismissReply()
             }
