@@ -74,7 +74,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
         }
 
         uploadAttachmentsWorker =
-            UploadAttachmentsWorker(logicRegistry, { _, _ -> channelState }, repositoryFacade, chatClient)
+            UploadAttachmentsWorker(logicRegistry, channelState, repositoryFacade, chatClient)
     }
 
     @Test

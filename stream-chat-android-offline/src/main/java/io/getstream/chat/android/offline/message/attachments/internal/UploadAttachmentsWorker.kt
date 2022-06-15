@@ -33,7 +33,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 
 internal class UploadAttachmentsWorker(
     private val logic: LogicRegistry,
-    private val mutableStateFun: (String, String) -> ChannelState,
+    private val mutableState: ChannelState,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -104,7 +104,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            mutableStateFun(channelType, channelId).toMutableState()
+                            mutableState.toMutableState()
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
