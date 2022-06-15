@@ -140,6 +140,7 @@
     <ID>TooManyFunctions:EventHandlerSequential.kt$EventHandlerSequential : EventHandler</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedImports:ChannelLogic.kt$import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState</ID>
+    <ID>UnusedPrivateMember:EditMessageListenerImpl.kt$EditMessageListenerImpl$val isMessageModerationFailed = chatError is ChatNetworkError &amp;&amp; chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>
