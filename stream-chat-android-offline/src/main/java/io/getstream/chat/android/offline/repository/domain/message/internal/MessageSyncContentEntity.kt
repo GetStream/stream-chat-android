@@ -18,21 +18,26 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import com.squareup.moshi.JsonClass
 
-public sealed class MessageSyncContentEntity
-
-public sealed class MessageSyncInProgressEntity : MessageSyncContentEntity()
-public sealed class MessageSyncFailedEntity : MessageSyncContentEntity()
+internal sealed class MessageSyncContentEntity
 
 @JsonClass(generateAdapter = true)
-public class MessageAwaitingAttachmentsEntity : MessageSyncInProgressEntity() {
+internal class MessageSyncNoneEntity : MessageSyncContentEntity() {
+    override fun toString(): String = "MessageSyncNoneEntity"
+}
+
+internal sealed class MessageSyncInProgressEntity : MessageSyncContentEntity()
+internal sealed class MessageSyncFailedEntity : MessageSyncContentEntity()
+
+@JsonClass(generateAdapter = true)
+internal class MessageAwaitingAttachmentsEntity : MessageSyncInProgressEntity() {
     override fun toString(): String = "MessageAwaitingAttachmentsEntity"
 }
 
 @JsonClass(generateAdapter = true)
-public data class MessageModerationFailedEntity(
+internal data class MessageModerationFailedEntity(
     val violations: List<ViolationEntity>,
 ) : MessageSyncFailedEntity() {
-    public data class ViolationEntity(
+    internal data class ViolationEntity(
         val code: Int,
         val messages: List<String>,
     )

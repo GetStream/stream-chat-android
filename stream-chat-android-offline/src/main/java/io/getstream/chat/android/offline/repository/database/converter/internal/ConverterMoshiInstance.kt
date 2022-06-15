@@ -24,11 +24,13 @@ import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageAwaitingAttachmentsEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageModerationFailedEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncContentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncNoneEntity
 
 @OptIn(ExperimentalStdlibApi::class)
 internal val moshi: Moshi = Moshi.Builder()
     .add(
         PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, "type")
+            .withSubtype(MessageSyncNoneEntity::class.java, "message.sync.none")
             .withSubtype(MessageAwaitingAttachmentsEntity::class.java, "message.sync.in_progress.await_attachments")
             .withSubtype(MessageModerationFailedEntity::class.java, "message.sync.failed.moderation")
     )
