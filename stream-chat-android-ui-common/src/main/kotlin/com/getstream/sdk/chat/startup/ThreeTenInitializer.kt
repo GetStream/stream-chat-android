@@ -21,7 +21,6 @@ import androidx.startup.Initializer
 import com.jakewharton.threetenabp.AndroidThreeTen
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 /**
