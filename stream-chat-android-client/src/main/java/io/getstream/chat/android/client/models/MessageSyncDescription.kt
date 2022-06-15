@@ -16,6 +16,11 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.utils.SyncStatus
+
+/**
+ * An addition to [SyncStatus] to cover message related statuses in detail.
+ */
 public data class MessageSyncDescription(
     val type: MessageSyncType,
     val content: MessageSyncContent

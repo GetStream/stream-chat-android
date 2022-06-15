@@ -16,18 +16,45 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.utils.SyncStatus
+
+private const val NONE_TYPE = 0
 private const val IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE = 100
 private const val FAILED_MODERATION_TYPE = 200
 
+/**
+ * A type of message sync description.
+ *
+ * @see [MessageSyncDescription]
+ */
 public enum class MessageSyncType(
     public val alias: String,
     public val type: Int,
 ) {
 
+    /**
+     * When no additional description is required to [SyncStatus].
+     */
+    NONE(
+        alias = "message.none",
+        type = NONE_TYPE
+    ),
+
+    /**
+     * When sync is in progress due to awaiting attachments.
+     *
+     * @see [SyncStatus.IN_PROGRESS]
+     */
     IN_PROGRESS_AWAIT_ATTACHMENTS(
         alias = "message.in_progress.await_attachments",
         type = IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE
     ),
+
+    /**
+     * Failed due to moderation violation.
+     *
+     * @see [SyncStatus.FAILED_PERMANENTLY]
+     */
     FAILED_MODERATION(
         alias = "message.failed.moderation",
         type = FAILED_MODERATION_TYPE
