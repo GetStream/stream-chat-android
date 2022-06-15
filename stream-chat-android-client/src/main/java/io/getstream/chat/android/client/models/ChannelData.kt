@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.channel
+package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import java.util.Date
 
 /**
@@ -99,7 +94,8 @@ public data class ChannelData(
      *
      * @return A [Channel] object.
      */
-    internal fun toChannel(
+    //Todo revert to internal if possible
+    public fun toChannel(
         messages: List<Message>,
         members: List<Member>,
         reads: List<ChannelUserRead>,

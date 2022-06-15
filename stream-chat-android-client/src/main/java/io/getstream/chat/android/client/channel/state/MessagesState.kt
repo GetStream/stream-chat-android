@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.state.channel
+package io.getstream.chat.android.client.channel.state
 
 import io.getstream.chat.android.client.models.Message
 

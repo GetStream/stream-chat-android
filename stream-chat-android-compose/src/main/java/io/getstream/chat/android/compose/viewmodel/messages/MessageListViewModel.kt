@@ -75,7 +75,7 @@ import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -269,15 +269,15 @@ public class MessageListViewModel(
             channelState.filterNotNull().collectLatest { channelState ->
                 combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
                     when (state) {
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
+                        is io.getstream.chat.android.client.channel.state.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.client.channel.state.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
+                        is io.getstream.chat.android.client.channel.state.MessagesState.OfflineNoResults ->
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = emptyList(),
                             )
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
+                        is io.getstream.chat.android.client.channel.state.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
