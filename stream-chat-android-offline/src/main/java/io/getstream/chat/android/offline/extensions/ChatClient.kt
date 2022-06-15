@@ -348,32 +348,36 @@ public fun ChatClient.loadMessageById(
     messageId: String,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(cid)
+        doLoadMessageById(cid, messageId)
+    }
+}
 
-        if (cidValidationResult.isSuccess) {
-            val result = getMessage(messageId).await()
+private suspend fun ChatClient.doLoadMessageById(
+    cid: String,
+    messageId: String,
+): Result<Message> {
+    val cidValidationResult = validateCidWithResult(cid)
 
-            if (result.isSuccess) {
-                val message = result.data()
-                val (channelType, channelId) = cid.cidToTypeAndId()
+    if (!cidValidationResult.isSuccess) {
+        return cidValidationResult.error().toResultError()
+    }
+    val result = getMessage(messageId).await()
+    if (result.isSuccess) {
+        val message = result.data()
+        val (channelType, channelId) = cid.cidToTypeAndId()
 
-                logic.channel(channelType = channelType, channelId = channelId).run {
-                    storeMessageLocally(listOf(message))
-                    loadMessagesAroundId(messageId)
-                }
-                result
-            } else {
-                try {
-                    val repositoryProvider = RepositoryProvider.get()
-
-                    repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
-                        ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-                } catch (exception: Exception) {
-                    Result.error(exception)
-                }
-            }
-        } else {
-            cidValidationResult.error().toResultError()
+        logic.channel(channelType = channelType, channelId = channelId).run {
+            storeMessageLocally(listOf(message))
+            loadMessagesAroundId(messageId)
         }
+        return result
+    }
+    return try {
+        val repositoryProvider = RepositoryProvider.get()
+
+        repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
+            ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+    } catch (exception: Exception) {
+        Result.error(exception)
     }
 }
