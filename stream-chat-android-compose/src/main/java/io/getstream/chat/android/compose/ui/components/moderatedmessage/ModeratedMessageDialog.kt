@@ -46,7 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param moderatedMessageOptions List of options that the user can choose from for the moderated message.
  * @param onDismissRequest Handler for dialog dismissal.
- * @param onDialogInteraction Handler for detecting the action take upon the dialog.
+ * @param onDialogOptionInteraction Handler for detecting the action taken upon the dialog.
  * @param dialogTitle Composable that represents the dialog title. Shows an icon and the cause by default.
  * @param dialogDescription Composable that represents the dialog description. Shows more information about the cause
  * to the user.
@@ -57,7 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun ModeratedMessageDialog(
     message: Message,
     onDismissRequest: () -> Unit,
-    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
+    onDialogOptionInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
     modifier: Modifier = Modifier,
     moderatedMessageOptions: List<ModeratedMessageOption> = defaultMessageModerationOptions(),
     dialogTitle: @Composable () -> Unit = { DefaultModeratedMessageDialogTitle() },
@@ -65,8 +65,8 @@ public fun ModeratedMessageDialog(
     dialogOptions: @Composable () -> Unit = {
         DefaultModeratedDialogOptions(
             message = message,
-            messageOptions = moderatedMessageOptions,
-            onDialogInteraction = onDialogInteraction,
+            moderatedMessageOptions = moderatedMessageOptions,
+            onDialogOptionInteraction = onDialogOptionInteraction,
             onDismissRequest = onDismissRequest
         )
     },
@@ -85,21 +85,30 @@ public fun ModeratedMessageDialog(
     }
 }
 
-// TODO - docs for everything
+/**
+ * Represents the default content shown for the moderated message dialog options.
+ *
+ * By default we show the options to send the message anyway, edit it or delete it.
+ *
+ * @param message The moderated [Message] upon which the user can take action.
+ * @param moderatedMessageOptions The list of options user can select in the dialog.
+ * @param onDialogOptionInteraction Handler for detecting the action taken upon the dialog.
+ * @param onDismissRequest Handler for dialog dismissal.
+ */
 @Composable
 internal fun DefaultModeratedDialogOptions(
     message: Message,
-    messageOptions: List<ModeratedMessageOption>,
-    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
+    moderatedMessageOptions: List<ModeratedMessageOption>,
+    onDialogOptionInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     Spacer(modifier = Modifier.height(12.dp))
 
     ModeratedMessageDialogOptions(
         message = message,
-        options = messageOptions,
+        options = moderatedMessageOptions,
         onDismissRequest = onDismissRequest,
-        onDialogInteraction = onDialogInteraction
+        onDialogOptionInteraction = onDialogOptionInteraction
     )
 }
 

@@ -79,7 +79,6 @@ import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
 import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
-import io.getstream.chat.android.compose.ui.util.isModerationFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 
 /**
@@ -101,7 +100,6 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
  * current user.
@@ -125,7 +123,6 @@ public fun MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onModeratedItemInteraction: (Message) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },
@@ -159,19 +156,8 @@ public fun MessageItem(
         Modifier.combinedClickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = {
-                when {
-                    message.isModerationFailed() -> onModeratedItemInteraction(message)
-                    message.hasThread() -> onThreadClick(message)
-                }
-            },
-            onLongClick = {
-                if (message.isModerationFailed()) {
-                    onModeratedItemInteraction(message)
-                } else if (!message.isUploading()) {
-                    onLongItemClick(message)
-                }
-            }
+            onClick = { if (message.hasThread()) onThreadClick(message) },
+            onLongClick = { if (!message.isUploading()) onLongItemClick(message) }
         )
     }
 
@@ -237,10 +223,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .align(Alignment.Bottom)
 
     if (!messageItem.isMine && (
-        messageItem.shouldShowFooter ||
-            messageItem.groupPosition == Bottom ||
-            messageItem.groupPosition == None
-        )
+            messageItem.shouldShowFooter ||
+                messageItem.groupPosition == Bottom ||
+                messageItem.groupPosition == None
+            )
     ) {
         UserAvatar(
             modifier = modifier,

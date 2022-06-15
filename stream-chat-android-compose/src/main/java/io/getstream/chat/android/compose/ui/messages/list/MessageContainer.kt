@@ -52,7 +52,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
  * @param systemMessageContent Composable that represents system messages.
@@ -67,7 +66,6 @@ public fun MessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    onModeratedItemInteraction: (Message) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
@@ -86,7 +84,6 @@ public fun MessageContainer(
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
-            onModeratedItemInteraction = onModeratedItemInteraction,
         )
     },
 ) {
@@ -193,7 +190,6 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user receives an image preview result.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  */
 @Composable
 internal fun DefaultMessageItem(
@@ -204,7 +200,6 @@ internal fun DefaultMessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
-    onModeratedItemInteraction: (Message) -> Unit = {},
 ) {
     MessageItem(
         messageItem = messageItem,
@@ -214,6 +209,5 @@ internal fun DefaultMessageItem(
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onImagePreviewResult = onImagePreviewResult,
-        onModeratedItemInteraction = onModeratedItemInteraction,
     )
 }

@@ -23,10 +23,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
-// TODO - docs
+/**
+ * Composable that represents a single option inisde the [ModeratedMessageDialog].
+ * By default shows only text of the action a user can perform.
+ *
+ * @param option The option that the user can choose for the moderated message.
+ * @param modifier The [Modifier] for styling.
+ */
 @Composable
 public fun ModeratedMessageOptionItem(
     option: ModeratedMessageOption,

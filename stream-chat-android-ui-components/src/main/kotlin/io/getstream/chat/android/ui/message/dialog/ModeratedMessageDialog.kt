@@ -28,13 +28,23 @@ import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogModeratedMessageBinding
 
+/**
+ * Dialog that is shown when the user selects a moderated message. The options the user can select are to send the
+ * message anyway, edit it or to delete it.
+ */
 internal class ModeratedMessageDialog private constructor() : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogModeratedMessageBinding? = null
     private val binding: StreamUiDialogModeratedMessageBinding get() = _binding!!
 
+    /**
+     * The moderated message that the user can act upon.
+     */
     private lateinit var message: Message
 
+    /**
+     * Handler that notifies of a selected dialog option.
+     */
     private var selectionHandler: DialogSelectionHandler? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -51,9 +61,13 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
 
     override fun onDestroyView() {
         _binding = null
+        messageArg = null
         super.onDestroyView()
     }
 
+    /**
+     * Gets the moderated message passed as an argument to the dialog.
+     */
     private fun consumeMessageArg() {
         messageArg?.let {
             message = it
@@ -61,12 +75,18 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
         } ?: dismiss()
     }
 
+    /**
+     * Sets up the root click listener so taps outside the dialog dismiss it.
+     */
     private fun setupDismissalArea() {
         binding.container.setOnClickListener {
             dismiss()
         }
     }
 
+    /**
+     * Initialisation of click listeners for dialog options.
+     */
     private fun initSelectionListeners() {
         with(binding) {
             sendAnyway.setOnClickListener {
@@ -86,19 +106,34 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
         }
     }
 
+    /**
+     * Set the handler for listening to dialog options selection.
+     */
     fun setDialogSelectionHandler(selectionHandler: DialogSelectionHandler) {
         this.selectionHandler = selectionHandler
     }
 
+    /**
+     * Handler that notifies when a moderated message option is selected.
+     */
     interface DialogSelectionHandler {
+        /**
+         * @param message The moderated [Message] upon which a user can take action.
+         */
         fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption)
     }
 
     companion object {
         const val TAG = "ModeratedMessageDialog"
 
+        /**
+         * The moderated [Message] extra argument upon which a user can take action.
+         */
         private var messageArg: Message? = null
 
+        /**
+         * Creates a new instance of [ModeratedMessageDialog] to show to the user.
+         */
         fun newInstance(message: Message): ModeratedMessageDialog {
             this.messageArg = message
             return ModeratedMessageDialog()

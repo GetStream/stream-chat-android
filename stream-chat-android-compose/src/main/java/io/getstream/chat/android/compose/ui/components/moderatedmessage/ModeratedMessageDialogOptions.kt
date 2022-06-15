@@ -30,16 +30,25 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 
-// TODO - docs for everything
+/**
+ * Composable that represents the dialog options a user can select to act upon a moderated message.
+ *
+ * @param message The moderated [Message] upon which the user can take action.
+ * @param modifier Modifier for styling.
+ * @param options List of options that the user can choose from for the moderated message.
+ * @param onDismissRequest Handler for dialog dismissal.
+ * @param onDialogOptionInteraction Handler for detecting the action taken upon the dialog.
+ * @param itemContent Composable that represents a single option item. By default shows just a text.
+ */
 @Composable
 public fun ModeratedMessageDialogOptions(
     message: Message,
     options: List<ModeratedMessageOption>,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit = {},
-    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit = { _, _ -> },
+    onDialogOptionInteraction: (message: Message, option: ModeratedMessageOption) -> Unit = { _, _ -> },
     itemContent: @Composable (ModeratedMessageOption) -> Unit = { option ->
-        DefaultModeratedMessageOptionItem(message, option, onDismissRequest, onDialogInteraction)
+        DefaultModeratedMessageOptionItem(message, option, onDismissRequest, onDialogOptionInteraction)
     },
 ) {
     LazyColumn(modifier = modifier) {
@@ -49,12 +58,22 @@ public fun ModeratedMessageDialogOptions(
     }
 }
 
+/**
+ * Represents the default moderated message options item.
+ *
+ * By default shows only text of the action a user can perform.
+ *
+ * @param message The moderated [Message] upon which the user can take action.
+ * @param option The option that the user can choose for the moderated message.
+ * @param onDismissRequest Handler for dialog dismissal.
+ * @param onDialogOptionInteraction Handler for detecting the action taken upon the dialog.
+ */
 @Composable
 internal fun DefaultModeratedMessageOptionItem(
     message: Message,
     option: ModeratedMessageOption,
     onDismissRequest: () -> Unit,
-    onDialogInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
+    onDialogOptionInteraction: (message: Message, option: ModeratedMessageOption) -> Unit,
 ) {
     ModeratedMessageOptionItem(
         option = option,
@@ -65,7 +84,7 @@ internal fun DefaultModeratedMessageOptionItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple()
             ) {
-                onDialogInteraction(message, option)
+                onDialogOptionInteraction(message, option)
                 onDismissRequest()
             }
     )

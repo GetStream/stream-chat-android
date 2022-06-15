@@ -58,6 +58,7 @@ import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
@@ -403,11 +404,11 @@ public fun MessagesScreen(
                     color = MaterialTheme.colors.surface
                 ),
                 onDismissRequest = { listViewModel.removeOverlay() },
-                onDialogInteraction = { message, action ->
+                onDialogOptionInteraction = { message, action ->
                     when (action) {
                         DeleteMessage -> listViewModel.deleteMessage(message = message, true)
                         EditMessage -> composerViewModel.performMessageAction(Edit(message))
-                        SendAnyway -> composerViewModel.sendModeratedMessage(message)
+                        SendAnyway -> listViewModel.performMessageAction(Resend(message))
                         else -> {
                             // Custom events
                         }

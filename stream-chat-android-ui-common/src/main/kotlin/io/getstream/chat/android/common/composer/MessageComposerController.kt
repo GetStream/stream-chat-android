@@ -458,53 +458,25 @@ public class MessageComposerController(
     }
 
     /**
-     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using [ChatClient]. If the message was a moderated message the logic for
-     * sending will be delegated to [sendModeratedMessage].
+     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing message, or we
+     * send a new message, using [ChatClient]. In case the message is a moderated message the old one is deleted before
+     * the replacing one is sent.
      *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
-        if (message.isModerationFailed()) {
-            sendModeratedMessage(message)
-            return
-        }
+        val activeMessage = activeAction?.message ?: message
 
-        val sendMessageCall = if (isInEditMode) {
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed()) {
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
+            if (activeMessage.isModerationFailed()) chatClient.deleteMessage(activeMessage.id, true).enqueue()
             chatClient.sendMessage(channelType, channelId, message)
         }
-
-        dismissMessageActions()
-        clearData()
-        handleCooldownTimer()
-
-        sendMessageCall.enqueue()
-    }
-
-    /**
-     * Sends a given message using our Stream API in the case the message has been moderated. If the user was editing
-     * a moderated message it will be deleted and the edit will be sent and if the user resent the message, the old one
-     * is deleted and the new one is sent. In case of editing it will also dismiss the current action.
-     *
-     * @param message The message to send.
-     */
-    public fun sendModeratedMessage(message: Message) {
-        // TODO - edit check?
-        (activeAction?.message?.id ?: message.id).let { chatClient.deleteMessage(it, true).enqueue() }
-
-        val newMessage = buildNewMessage(
-            message = message.text,
-            attachments = message.attachments
-        )
-
-        val (channelType, channelId) = newMessage.cid.cidToTypeAndId()
-        val sendMessageCall = chatClient.sendMessage(channelType, channelId, newMessage)
 
         dismissMessageActions()
         clearData()
@@ -535,7 +507,6 @@ public class MessageComposerController(
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        // TODO - check this logic if this still makes sense
         return if (isInEditMode && !activeMessage.isModerationFailed()) {
             activeMessage.copy(
                 text = trimmedMessage,

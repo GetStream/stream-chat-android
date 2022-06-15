@@ -51,7 +51,7 @@ public fun Message.getCreatedAtOrNull(): Date? {
 }
 
 /**
- * @return if the message failed at moderation or not
+ * @return if the message failed at moderation or not.
  */
 public fun Message.isModerationFailed(): Boolean = isMine() &&
     syncStatus == SyncStatus.FAILED_PERMANENTLY &&

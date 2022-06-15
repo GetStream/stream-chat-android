@@ -62,7 +62,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -92,9 +91,6 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    onModeratedItemInteraction: (Message) -> Unit = {
-        viewModel.selectModeratedMessage(it)
-    },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -113,7 +109,6 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
-            onModeratedItemInteraction = onModeratedItemInteraction
         )
     },
 ) {
@@ -134,7 +129,6 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
-        onModeratedItemInteraction = onModeratedItemInteraction,
     )
 }
 
@@ -148,7 +142,6 @@ public fun MessageList(
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  */
 @Composable
 internal fun DefaultMessageContainer(
@@ -159,7 +152,6 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
-    onModeratedItemInteraction: (Message) -> Unit = {},
 ) {
     MessageContainer(
         messageListItem = messageListItem,
@@ -169,7 +161,6 @@ internal fun DefaultMessageContainer(
         onGiphyActionClick = onGiphyActionClick,
         onImagePreviewResult = onImagePreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
-        onModeratedItemInteraction = onModeratedItemInteraction
     )
 }
 
@@ -222,7 +213,6 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onModeratedItemInteraction Handler when the user taps or long taps the moderated message.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -246,7 +236,6 @@ public fun MessageList(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onModeratedItemInteraction: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -262,7 +251,6 @@ public fun MessageList(
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
-            onModeratedItemInteraction = onModeratedItemInteraction,
         )
     },
 ) {

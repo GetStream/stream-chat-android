@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -547,21 +548,18 @@ public class MessageListViewModel(
     public fun selectMessage(message: Message?) {
         if (message != null) {
             changeSelectMessageState(
-                SelectedMessageOptionsState(
-                    message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
-            )
-        }
-    }
+                if (message.isModerationFailed()) {
+                    SelectedMessageFailedModerationState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                } else {
+                    SelectedMessageOptionsState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                }
 
-    /**
-     * Triggered when user clicks or long taps and selects a moderated message.
-     */
-    public fun selectModeratedMessage(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                SelectedMessageFailedModerationState(message, ownCapabilities.value)
             )
         }
     }
