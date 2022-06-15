@@ -17,7 +17,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **ImageLoaderFactory**: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
 * **MessageAlignmentProvider**: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 * **MessageOptionsUserReactionAlignment**: Used to define how message reactions are aligned when browsing all reactions for a given message.
-* **PermissionHandlers**: Used to handle permissions inside the app without having to propagate lambdas to the call site. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
+* **PermissionHandlers**: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
