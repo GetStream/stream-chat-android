@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.FileUploadConfig
  */
 internal class AppSettingManager(private val chatApi: ChatApi) {
 
-
     /**
      * Application settings configured in the dashboard and fetched from the backend.
      */
