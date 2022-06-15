@@ -361,8 +361,10 @@ private suspend fun ChatClient.doLoadMessageById(
     if (!cidValidationResult.isSuccess) {
         return cidValidationResult.error().toResultError()
     }
+
     val result = getMessage(messageId).await()
-    if (result.isSuccess) {
+
+    return if (result.isSuccess) {
         val message = result.data()
         val (channelType, channelId) = cid.cidToTypeAndId()
 
@@ -370,9 +372,8 @@ private suspend fun ChatClient.doLoadMessageById(
             storeMessageLocally(listOf(message))
             loadMessagesAroundId(messageId)
         }
-        return result
-    }
-    return try {
+         result
+    } else try {
         val repositoryProvider = RepositoryProvider.get()
 
         repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
