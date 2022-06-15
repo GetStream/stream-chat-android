@@ -8,6 +8,7 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;
+	public final fun getAttachmentPreviewFactoryManager ()Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewFactoryManager;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
 	public final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/ChannelNameFormatter;
 	public final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
@@ -21,6 +22,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
+	public final fun setAttachmentPreviewFactoryManager (Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewFactoryManager;)V
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/ChannelNameFormatter;)V
 	public final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/CurrentUserProvider;)V
@@ -1326,11 +1328,48 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerViewStyle$Companion {
 }
 
+public final class io/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewFactoryManager {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/composer/attachment/factory/FallbackAttachmentPreviewFactory;)V
+	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/composer/attachment/factory/FallbackAttachmentPreviewFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getItemViewType (Lio/getstream/chat/android/client/models/Attachment;)I
+	public final fun onCreateViewHolder (Landroid/view/ViewGroup;ILkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+}
+
+public abstract class io/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public abstract fun bind (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun getContext ()Landroid/content/Context;
+	public final fun getItemView ()Landroid/view/View;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public abstract fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/composer/attachment/factory/FallbackAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/composer/attachment/factory/FileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/message/composer/attachment/factory/ImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+}
+
 public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun addAttachmentViewFactory ([Lio/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory;)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
 	public final fun getAttachmentRemovalListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getClearInputButtonClickListener ()Lkotlin/jvm/functions/Function0;
@@ -1403,26 +1442,9 @@ public final class io/getstream/chat/android/ui/message/composer/content/Default
 	public final fun setSendMessageButtonClickListener (Lkotlin/jvm/functions/Function0;)V
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
-	public abstract fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public abstract fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
 public abstract interface class io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
 	public abstract fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
 	public abstract fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
-}
-
-public class io/getstream/chat/android/ui/message/composer/content/MessageComposerFileAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
-}
-
-public class io/getstream/chat/android/ui/message/composer/content/MessageComposerImageAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/content/MessageComposerAttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public fun createAttachmentPreview (Landroid/view/ViewGroup;Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)Landroid/view/View;
 }
 
 public final class io/getstream/chat/android/ui/message/composer/viewmodel/MessageComposerViewModel : androidx/lifecycle/ViewModel {

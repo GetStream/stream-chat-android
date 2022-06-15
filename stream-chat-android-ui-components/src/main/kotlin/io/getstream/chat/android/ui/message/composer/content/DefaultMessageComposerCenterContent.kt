@@ -20,16 +20,11 @@ import android.content.Context
 import android.os.Build
 import android.text.Editable
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
@@ -39,15 +34,13 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
-import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerAttachmentContainerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
 
 /**
  * Represents the default content shown at the center of [MessageComposerView].
@@ -80,19 +73,10 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     public var attachmentRemovalListener: (Attachment) -> Unit = {}
 
     /**
-     * Default attachment preview factories.
-     */
-    private var attachmentPreviewFactories: List<MessageComposerAttachmentPreviewFactory> =
-        listOf(
-            MessageComposerImageAttachmentPreviewFactory(),
-            MessageComposerFileAttachmentPreviewFactory(),
-        )
-
-    /**
      * Adapter used to render attachments previews list.
      */
-    private val attachmentsAdapter: MessageComposerAttachmentsAdapter by lazy {
-        MessageComposerAttachmentsAdapter { attachmentRemovalListener(it) }
+    private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
+        AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachmentRemovalListener(it) }
     }
 
     public constructor(context: Context) : this(context, null)
@@ -118,7 +102,6 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         binding.clearCommandButton.setOnClickListener {
             clearInputButtonClickListener()
         }
-        attachmentsAdapter.viewFactories = this.attachmentPreviewFactories
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter
     }
 
@@ -186,192 +169,68 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
 
         binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
     }
-
-    /**
-     * Allows overriding default attachment previews. Useful when you want to add support for custom attachments previews.
-     *
-     * @param factory Implementation of [MessageComposerAttachmentPreviewFactory] interface.
-     */
-    public fun addAttachmentViewFactory(vararg factory: MessageComposerAttachmentPreviewFactory) {
-        attachmentPreviewFactories = factory.toList() + attachmentPreviewFactories
-        attachmentsAdapter.apply {
-            viewFactories = attachmentPreviewFactories
-            notifyDataSetChanged()
-        }
-    }
 }
 
 /**
- * [RecyclerView.Adapter] rendering attachments previews.
+ * [RecyclerView.Adapter] responsible for displaying attachment previews in a RecyclerView.
  *
- * @property attachmentRemovalListener Callback invoked when specific [Attachment] gets removed by the user.
+ * @param factoryManager A manager for registered attachment preview factories.
+ * @param attachmentRemovalListener Click listener for the remove attachment button.
  */
-private class MessageComposerAttachmentsAdapter(
-    private inline val attachmentRemovalListener: (Attachment) -> Unit,
-) : RecyclerView.Adapter<MessageComposerAttachmentViewHolder>() {
-    /**
-     * List of attachments to render.
-     */
-    private val attachments: MutableList<Attachment> = mutableListOf()
+private class AttachmentPreviewAdapter(
+    private val factoryManager: AttachmentPreviewFactoryManager,
+    private val attachmentRemovalListener: (Attachment) -> Unit,
+) : RecyclerView.Adapter<AttachmentPreviewViewHolder>() {
 
     /**
-     * List of [MessageComposerAttachmentPreviewFactory] instances responsible for providing specific [View] for given [Attachment].
+     * The attachments that will be displayed in the list.
      */
-    var viewFactories: List<MessageComposerAttachmentPreviewFactory> = listOf()
+    private val attachments = mutableListOf<Attachment>()
 
     /**
-     * Updates the list of currently displayed attachments. Re-renders all the attachments.
+     * Replaces all the items and notifies that the data set has changed.
+     *
+     * @param attachments
      */
     fun setAttachments(attachments: List<Attachment>) {
-        this.attachments.apply {
-            clear()
-            addAll(attachments)
-            notifyDataSetChanged()
-        }
-    }
-
-    /**
-     * Removes all the attachments.
-     */
-    fun clear() {
-        attachments.clear()
+        this.attachments.clear()
+        this.attachments.addAll(attachments)
         notifyDataSetChanged()
     }
 
     /**
-     * Creates and instantiates a new instance of [MessageComposerAttachmentViewHolder].
+     * Creates and instantiates a new instance of [AttachmentPreviewViewHolder].
      *
-     * @param parent The ViewGroup into which the new View will be added.
-     * @param viewType The view type of the new View.
-     * @return A new [CommandViewHolder] instance.
+     * @param parentView The parent container.
+     * @return An instance of attachment preview ViewHolder.
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageComposerAttachmentViewHolder {
-        return MessageComposerAttachmentViewHolder(
-            StreamUiMessageComposerAttachmentContainerBinding.inflate(parent.streamThemeInflater, parent, false),
-            viewFactories
-        ) { attachmentRemovalListener(it) }
+    override fun onCreateViewHolder(parentView: ViewGroup, viewType: Int): AttachmentPreviewViewHolder {
+        return factoryManager.onCreateViewHolder(parentView, viewType, attachmentRemovalListener)
     }
 
     /**
-     * Calls [MessageComposerAttachmentViewHolder] to update its [MessageComposerAttachmentViewHolder.itemView].
+     * Binds the created View in the ViewHolder to the attachment data.
+     *
+     * @param holder The ViewHolder which should be updated to represent the attachment.
+     * @param position The position of the item in the list.
      */
-    override fun onBindViewHolder(holder: MessageComposerAttachmentViewHolder, position: Int) {
-        holder.bindData(attachments[position])
+    override fun onBindViewHolder(holder: AttachmentPreviewViewHolder, position: Int) {
+        holder.bind(attachments[position])
     }
 
     /**
-     * @return size of the attachments list.
+     * Returns the view type associated with the factory that will handle this attachment.
+     *
+     * @param position The position of the item in the list.
+     */
+    override fun getItemViewType(position: Int): Int {
+        return factoryManager.getItemViewType(attachments[position])
+    }
+
+    /**
+     * Returns the number of attachment items.
+     *
+     * @return The number of attachments.
      */
     override fun getItemCount(): Int = attachments.size
-}
-
-/**
- * [RecyclerView.ViewHolder] implementation responsible for rendering previews of various [Attachment] types.
- */
-private class MessageComposerAttachmentViewHolder(
-    private val binding: StreamUiMessageComposerAttachmentContainerBinding,
-    private val attachmentViewFactories: List<MessageComposerAttachmentPreviewFactory>,
-    private inline val onRemoveAttachment: (Attachment) -> Unit,
-) : RecyclerView.ViewHolder(binding.root) {
-
-    /**
-     * Picks the first factory capable of rendering given attachment and use it to create the preview.
-     * Pushes the [View] created by factory into the attachment container.
-     */
-    fun bindData(attachment: Attachment) {
-        val attachmentContainer = binding.root
-        val previewFactory = attachmentViewFactories.firstOrNull { it.canHandle(attachment) }
-            ?: throw IllegalStateException("No MessageComposerAttachmentPreviewFactory instances found capable of handling attachment: $attachment")
-        val view = previewFactory.createAttachmentPreview(binding.root, attachment) { onRemoveAttachment(attachment) }
-        attachmentContainer.removeAllViews()
-        attachmentContainer.addView(view)
-    }
-}
-
-/**
- * Default factory providing preview for [Attachment] of image type, e.g. gallery image, photo.
- */
-public open class MessageComposerImageAttachmentPreviewFactory : MessageComposerAttachmentPreviewFactory {
-
-    /**
-     * @return true if given attachment is of image or giphy type, false otherwise.
-     */
-    public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.type in listOf(ModelType.attach_image, ModelType.attach_giphy)
-    }
-
-    /**
-     * @return Image attachment view.
-     */
-    public override fun createAttachmentPreview(
-        parent: ViewGroup,
-        attachment: Attachment,
-        attachmentRemovalListener: (Attachment) -> Unit,
-    ): View {
-        val context = parent.context
-        return StreamUiMediaAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
-            .apply {
-                val shapeAppearanceModel = mediaImage.shapeAppearanceModel.toBuilder()
-                    .setAllCornerSizes(context.resources.getDimension(R.dimen.stream_ui_message_composer_attachment_corner_radius))
-                    .build()
-                mediaImage.shapeAppearanceModel = shapeAppearanceModel
-                mediaImage.loadAttachmentThumb(attachment)
-                removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
-            }.root
-    }
-}
-
-/**
- * Default factory providing preview for [Attachment] of file type.
- */
-public open class MessageComposerFileAttachmentPreviewFactory : MessageComposerAttachmentPreviewFactory {
-
-    /**
-     * @return true if given attachment is of file type, false otherwise.
-     */
-    public override fun canHandle(attachment: Attachment): Boolean =
-        attachment.upload != null || attachment.uploadId != null
-
-    /**
-     * @return File attachment view.
-     */
-    public override fun createAttachmentPreview(
-        parent: ViewGroup,
-        attachment: Attachment,
-        attachmentRemovalListener: (Attachment) -> Unit,
-    ): View {
-        val context = parent.context
-        return StreamUiFileAttachmentPreviewBinding.inflate(context.streamThemeInflater, parent, false)
-            .apply {
-                fileThumb.loadAttachmentThumb(attachment)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
-                fileTitle.text = attachment.title
-                fileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_black))
-                removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
-            }.root
-    }
-}
-
-/**
- * Factory returning [View] instance which is a preview of a given [Attachment].
- * It is also providing information if the specific [Attachment] can be rendered with it.
- */
-public interface MessageComposerAttachmentPreviewFactory {
-    /**
-     * @param attachment instance of [Attachment] to check if is compatible with this [MessageComposerAttachmentPreviewFactory] instance.
-     *
-     * @return true if the factory is able to provide preview for the given [Attachment], false otherwise.
-     */
-    public fun canHandle(attachment: Attachment): Boolean
-
-    /**
-     * @param attachment [Attachment] for which the preview is returned.
-     *
-     * @return [View] which is supposed to be a preview of the [Attachment].
-     */
-    public fun createAttachmentPreview(
-        parent: ViewGroup,
-        attachment: Attachment,
-        attachmentRemovalListener: (Attachment) -> Unit,
-    ): View
 }

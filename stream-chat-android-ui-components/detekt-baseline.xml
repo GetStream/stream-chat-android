@@ -95,13 +95,9 @@
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)</ID>
     <ID>MaxLineLength:ChannelListViewModelFactory.kt$ChannelListViewModelFactory$*</ID>
     <ID>MaxLineLength:ChannelListViewStyle.kt$ChannelListViewStyle$*</ID>
+    <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
     <ID>MaxLineLength:CustomAttachmentsViewHolder.kt$CustomAttachmentsViewHolder$this.innerAttachmentViewHolder</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$DefaultMessageComposerCenterContent$*</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerAttachmentPreviewFactory$*</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerAttachmentViewHolder$?:</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerAttachmentsAdapter$* List of [MessageComposerAttachmentPreviewFactory] instances responsible for providing specific [View] for given [Attachment].</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterContent.kt$MessageComposerImageAttachmentPreviewFactory$.</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:DefaultStreamTransliterator.kt$DefaultStreamTransliterator$logger.logD("This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. User a custom StreamTransliterator to add transliteration.")</ID>
     <ID>MaxLineLength:DeletedMessageListItemPredicate.kt$DeletedMessageListItemPredicate$* Predicate class used to filter [MessageListItem.MessageItem] items which are deleted. Used by [MessageListView.setDeletedMessageListItemPredicate].</ID>

@@ -19,16 +19,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_message_composer_attachment_height"
-    android:minWidth="@dimen/stream_ui_message_composer_file_attachment_min_width"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="4dp"
+    android:layout_margin="@dimen/stream_ui_spacing_tiny"
     android:background="@drawable/stream_ui_shape_selected_media_round"
+    android:minWidth="@dimen/stream_ui_message_composer_file_attachment_min_width"
     >
 
     <ImageView
-        android:id="@+id/file_thumb"
+        android:id="@+id/fileThumbImageView"
         android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
         android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
         android:layout_marginStart="8dp"
@@ -41,7 +38,7 @@
         />
 
     <TextView
-        android:id="@+id/file_title"
+        android:id="@+id/fileTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
@@ -49,16 +46,16 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-        app:layout_constraintBottom_toTopOf="@id/file_size"
-        app:layout_constraintEnd_toStartOf="@id/remove_button"
-        app:layout_constraintStart_toEndOf="@id/file_thumb"
+        app:layout_constraintBottom_toTopOf="@id/fileSizeTextView"
+        app:layout_constraintEnd_toStartOf="@id/removeButton"
+        app:layout_constraintStart_toEndOf="@id/fileThumbImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="SlimAaron.pdf"
         />
 
     <TextView
-        android:id="@+id/file_size"
+        android:id="@+id/fileSizeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
@@ -66,13 +63,13 @@
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/file_thumb"
-        app:layout_constraintTop_toBottomOf="@id/file_title"
+        app:layout_constraintStart_toEndOf="@id/fileThumbImageView"
+        app:layout_constraintTop_toBottomOf="@id/fileTitleTextView"
         tools:text="123 KB"
         />
 
     <ImageButton
-        android:id="@+id/remove_button"
+        android:id="@+id/removeButton"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:background="@drawable/stream_ui_circle_white"
@@ -87,3 +84,4 @@
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
