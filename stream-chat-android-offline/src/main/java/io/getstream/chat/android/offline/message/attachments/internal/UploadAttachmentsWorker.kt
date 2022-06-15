@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -27,10 +26,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 
 internal class UploadAttachmentsWorker(
-    private val logic: LogicRegistry,
+    private val stateLogicFun: (String, String) -> ChannelStateLogic,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -66,12 +65,7 @@ internal class UploadAttachmentsWorker(
                     return Result.success(Unit)
                 }
 
-                val attachments = uploadAttachments(
-                    message,
-                    channelType,
-                    channelId
-                )
-
+                val attachments = uploadAttachments(message, channelType, channelId)
                 updateMessages(message, channelType, channelId)
 
                 if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
@@ -98,11 +92,11 @@ internal class UploadAttachmentsWorker(
                         channelType,
                         channelId,
                         attachment,
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            logic.channel(channelType, channelId)
-                        )
+                        // ProgressCallbackImpl(
+                        //     message.id,
+                        //     attachment.uploadId!!,
+                        //     logic.channel(channelType, channelId)
+                        // )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
@@ -133,7 +127,9 @@ internal class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
-        logic.channel(channelType, channelId).upsertMessage(message)
+
+        stateLogicFun(channelType, channelId).upsertMessage(message)
+
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
         messageRepository.insertMessage(message)
@@ -146,19 +142,19 @@ internal class UploadAttachmentsWorker(
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
+            // channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
         override fun onError(error: ChatError) {
-            channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
+            // channel.updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
-            channel.updateAttachmentUploadState(
-                messageId,
-                uploadId,
-                Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
-            )
+            // channel.updateAttachmentUploadState(
+            //     messageId,
+            //     uploadId,
+            //     Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
+            // )
         }
     }
 }

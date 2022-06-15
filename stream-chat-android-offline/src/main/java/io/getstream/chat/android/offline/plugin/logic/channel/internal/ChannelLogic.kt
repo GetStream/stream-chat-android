@@ -102,13 +102,12 @@ import java.util.Date
  */
 @Suppress("TooManyFunctions")
 internal class ChannelLogic(
-    private val mutableState: ChannelMutableState,
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
-    private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     private val channelStateLogic: ChannelStateLogic
 ) : QueryChannelListener {
 
+    private val mutableState = channelStateLogic.writeChannelState()
     private val logger = ChatLogger.get("Query channel request")
 
     val cid: String
@@ -188,6 +187,10 @@ internal class ChannelLogic(
         return mutableState
     }
 
+    internal fun stateLogic(): ChannelStateLogic {
+        return channelStateLogic
+    }
+
     /**
      * Starts to watch this channel.
      *
@@ -248,7 +251,7 @@ internal class ChannelLogic(
         }
     }
 
-    internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+    private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
         loader.value = true
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
@@ -263,15 +266,14 @@ internal class ChannelLogic(
     }
 
     private fun updateDataFromLocalChannel(localChannel: Channel) {
-        localChannel.hidden?.let(::setHidden)
+        localChannel.hidden?.let(channelStateLogic::setHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateDataFromChannel(localChannel)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
-        localChannel.hidden?.let(::setHidden)
-        mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateOldMessagesFromChannel(localChannel)
+        localChannel.hidden?.let(channelStateLogic::setHidden)
+        channelStateLogic.updateOldMessagesFromChannel(localChannel)
     }
 
     private suspend fun selectAndEnrichChannel(
@@ -285,40 +287,11 @@ internal class ChannelLogic(
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     internal fun setHidden(hidden: Boolean) {
-        mutableState._hidden.value = hidden
-    }
-
-    private fun updateOldMessagesFromChannel(c: Channel) {
-        // Update all the flow objects based on the channel
-        channelStateLogic.updateChannelData(c)
-        channelStateLogic.setWatcherCount(c.watcherCount)
-        channelStateLogic.updateReads(c.read)
-        mutableState._membersCount.value = c.memberCount
-
-        // there are some edge cases here, this code adds to the members, watchers and messages
-        // this means that if the offline sync went out of sync things go wrong
-        channelStateLogic.setMembers(c.members)
-        channelStateLogic.setWatchers(c.watchers)
-        channelStateLogic.upsertOldMessages(c.messages)
+        channelStateLogic.setHidden(hidden)
     }
 
     internal fun updateDataFromChannel(c: Channel) {
-        // Update all the flow objects based on the channel
-        channelStateLogic.updateChannelData(c)
-        channelStateLogic.setWatcherCount(c.watcherCount)
-
-        mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
-        mutableState._membersCount.value = c.memberCount
-
-        channelStateLogic.updateReads(c.read)
-
-        // there are some edge cases here, this code adds to the members, watchers and messages
-        // this means that if the offline sync went out of sync things go wrong
-        channelStateLogic.setMembers(c.members)
-        channelStateLogic.setWatchers(c.watchers)
-        channelStateLogic.upsertMessages(c.messages)
-        mutableState.lastMessageAt.value = c.lastMessageAt
-        mutableState._channelConfig.value = c.config
+        channelStateLogic.updateDataFromChannel(c)
     }
     /**
      * Updates the messages locally and saves it at database.
@@ -340,6 +313,10 @@ internal class ChannelLogic(
     }
 
     internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+
+    internal fun upsertMessages(messages: List<Message>) {
+        channelStateLogic.upsertMessages(messages)
+    }
 
     /**
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
@@ -420,7 +397,6 @@ internal class ChannelLogic(
      */
     internal fun hideMessagesBefore(date: Date) {
         channelStateLogic.hideMessagesBefore(date)
-        // mutableState.hideMessagesBefore = date
     }
 
     private fun upsertEventMessage(message: Message) {
@@ -451,10 +427,7 @@ internal class ChannelLogic(
         return message
     }
 
-    private fun deleteMember(userId: String) {
-        mutableState._members.value = mutableState._members.value - userId
-        mutableState._membersCount.value -= 1
-    }
+
 
     private fun upsertUserPresence(user: User) {
         val userId = user.id
@@ -468,16 +441,8 @@ internal class ChannelLogic(
             channelStateLogic.upsertMember(member)
         }
         if (watcher != null) {
-            upsertWatcher(user)
+            channelStateLogic.upsertWatcher(user)
         }
-    }
-
-    private fun upsertWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value + mapOf(user.id to user)
-    }
-
-    private fun deleteWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value - user.id
     }
 
     private fun upsertUser(user: User) {
@@ -541,14 +506,14 @@ internal class ChannelLogic(
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                setHidden(false)
+                channelStateLogic.setHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
                     replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
                 }.let(::upsertEventMessage)
 
-                setHidden(false)
+                channelStateLogic.setHidden(false)
             }
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
@@ -556,12 +521,12 @@ internal class ChannelLogic(
                 } else {
                     upsertEventMessage(event.message)
                 }
-                setHidden(false)
+                channelStateLogic.setHidden(false)
             }
             is NotificationMessageNewEvent -> {
                 upsertEventMessage(event.message)
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                setHidden(false)
+                channelStateLogic.setHidden(false)
             }
             is ReactionNewEvent -> {
                 upsertMessage(event.message)
@@ -573,10 +538,10 @@ internal class ChannelLogic(
                 upsertMessage(event.message)
             }
             is MemberRemovedEvent -> {
-                deleteMember(event.user.id)
+                channelStateLogic.deleteMember(event.user.id)
             }
             is NotificationRemovedFromChannelEvent -> {
-                deleteMember(event.member.user.id)
+                channelStateLogic.deleteMember(event.member.user.id)
             }
             is MemberAddedEvent -> {
                 mutableState._membersCount.value += 1
@@ -596,11 +561,11 @@ internal class ChannelLogic(
                 upsertUser(event.user)
             }
             is UserStartWatchingEvent -> {
-                upsertWatcher(event.user)
+                channelStateLogic.upsertWatcher(event.user)
                 channelStateLogic.setWatcherCount(event.watcherCount)
             }
             is UserStopWatchingEvent -> {
-                deleteWatcher(event.user)
+                channelStateLogic.deleteWatcher(event.user)
                 channelStateLogic.setWatcherCount(event.watcherCount)
             }
             is ChannelUpdatedEvent -> {
@@ -610,10 +575,10 @@ internal class ChannelLogic(
                 channelStateLogic.updateChannelData(event.channel)
             }
             is ChannelHiddenEvent -> {
-                setHidden(true)
+                channelStateLogic.setHidden(true)
             }
             is ChannelVisibleEvent -> {
-                setHidden(false)
+                channelStateLogic.setHidden(false)
             }
             is ChannelDeletedEvent -> {
                 removeMessagesBefore(event.createdAt)
@@ -674,6 +639,6 @@ internal class ChannelLogic(
     fun toChannel(): Channel = mutableState.toChannel()
 
     internal fun replyMessage(repliedMessage: Message?) {
-        mutableState._repliedMessage.value = repliedMessage
+        channelStateLogic.replyMessage(repliedMessage)
     }
 }

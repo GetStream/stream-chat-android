@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.Event
@@ -30,6 +31,14 @@ internal class ChannelStateLogic(
 ) {
 
     private val logger = ChatLogger.get("ChannelStateLogic")
+
+    internal fun listerForChannelState(): ChannelState {
+        return mutableState
+    }
+
+    internal fun writeChannelState(): ChannelMutableState {
+        return mutableState
+    }
 
     fun propagateQueryError(error: ChatError) {
         if (error.isPermanent()) {
@@ -155,6 +164,10 @@ internal class ChannelStateLogic(
         mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
     }
 
+    internal fun upsertMessage(message: Message) {
+        upsertMessages(listOf(message))
+    }
+
     internal fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
@@ -196,6 +209,62 @@ internal class ChannelStateLogic(
 
     internal fun upsertOldMessages(messages: List<Message>) {
         mutableState._oldMessages.value = parseMessages(messages)
+    }
+
+    internal fun deleteMember(userId: String) {
+        mutableState._members.value = mutableState._members.value - userId
+        mutableState._membersCount.value -= 1
+    }
+
+    internal fun upsertWatcher(user: User) {
+        mutableState._watchers.value = mutableState._watchers.value + mapOf(user.id to user)
+    }
+
+    internal fun deleteWatcher(user: User) {
+        mutableState._watchers.value = mutableState._watchers.value - user.id
+    }
+
+    internal fun setHidden(hidden: Boolean) {
+        mutableState._hidden.value = hidden
+    }
+
+    internal fun replyMessage(repliedMessage: Message?) {
+        mutableState._repliedMessage.value = repliedMessage
+    }
+
+    internal fun updateDataFromChannel(c: Channel) {
+        // Update all the flow objects based on the channel
+        updateChannelData(c)
+        setWatcherCount(c.watcherCount)
+
+        mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
+        mutableState._membersCount.value = c.memberCount
+
+        updateReads(c.read)
+
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        upsertMessages(c.messages)
+        mutableState.lastMessageAt.value = c.lastMessageAt
+        mutableState._channelConfig.value = c.config
+    }
+
+    internal fun updateOldMessagesFromChannel(c: Channel) {
+        mutableState.hideMessagesBefore = c.hiddenMessagesBefore
+
+        // Update all the flow objects based on the channel
+        updateChannelData(c)
+        setWatcherCount(c.watcherCount)
+        updateReads(c.read)
+        mutableState._membersCount.value = c.memberCount
+
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        upsertOldMessages(c.messages)
     }
 
     /**
