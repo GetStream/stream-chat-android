@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -35,16 +33,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
  */
 internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : QueryChannelsListener {
 
-    private val logger = ChatLogger.get("QueryChannelsLogic")
-
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
-        val loader = logic.queryChannels(request).loadingForCurrentRequest()
-        return if (loader.value) {
-            logger.logI("Another request to load channels is in progress. Ignoring this request.")
-            Result.error(ChatError("Another request to load messages is in progress. Ignoring this request."))
-        } else {
-            Result.success(Unit)
-        }
+        return Result.success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
