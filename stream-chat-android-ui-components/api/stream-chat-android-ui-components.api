@@ -1240,7 +1240,6 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler {
 	public abstract fun dismissReply ()V
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
-	public abstract fun editModeratedMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 	public abstract fun sendMessage (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
