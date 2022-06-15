@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Migrated to Coil version 2.1.0 [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
 
 ### ❌ Removed
 
@@ -87,6 +88,7 @@
 - Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3673](https://github.com/GetStream/stream-chat-android/pull/3676)
 
 ### ⚠️ Changed
+- Since Coil 2.0, the `LocalImageLoader` has been deprecated. So now we support our own image loader, `StreamImageLoader` for providing composition local. [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
 
 ### ❌ Removed
 - Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)
