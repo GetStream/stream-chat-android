@@ -173,11 +173,9 @@ public open class MessageListFragment : Fragment() {
 
         binding.messageListView.setModeratedMessageHandler { message, action ->
             when (action) {
-                DeleteMessage -> messageListViewModel.onEvent(
-                    MessageListViewModel.Event.DeleteMessage(message)
-                )
+                DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
                 EditMessage -> messageInputViewModel.postMessageToEdit(message)
-                SendAnyway -> messageInputViewModel.resendModeratedMessage(message)
+                SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
                 else -> {
                     // custom actions
                 }

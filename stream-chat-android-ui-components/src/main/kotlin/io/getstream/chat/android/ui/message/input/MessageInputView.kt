@@ -257,22 +257,12 @@ public class MessageInputView : ConstraintLayout {
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
 
-            is InputMode.EditModeratedMessage -> {
-                suggestionListController?.commandsEnabled = false
-                binding.inputModeHeader.isVisible = true
-                binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
-                binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
-                binding.messageInputFieldView.onEditModeratedMessage(newValue.oldMessage)
-                binding.commandsButton.isEnabled = false
-                binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
-            }
-
             else -> {
                 suggestionListController?.commandsEnabled = commandsEnabled
                 binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
-                } else if (previousValue is InputMode.Edit || previousValue is InputMode.EditModeratedMessage) {
+                } else if (previousValue is InputMode.Edit) {
                     binding.messageInputFieldView.onEditMessageDismissed()
                 }
             }
@@ -506,7 +496,6 @@ public class MessageInputView : ConstraintLayout {
                             is InputMode.Thread -> sendThreadMessage(it.parentMessage)
                             is InputMode.Edit -> editMessage(it.oldMessage)
                             is InputMode.Reply -> sendMessage(it.repliedMessage)
-                            is InputMode.EditModeratedMessage -> editMessage(it.oldMessage)
                         }
                     }
                     binding.messageInputFieldView.clearContent()
@@ -907,8 +896,7 @@ public class MessageInputView : ConstraintLayout {
     private fun refreshControlsState() {
         with(binding) {
             val isCommandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
-            val isEditMode = messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode ||
-                messageInputFieldView.mode is MessageInputFieldView.Mode.EditModeratedMessageMode // TODO
+            val isEditMode = messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
             val hasContent = messageInputFieldView.hasValidContent()
             val hasValidContent = hasContent && !isMessageTooLong()
 
@@ -983,8 +971,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun shouldShowCommandsButton(): Boolean {
-        val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode ||
-            binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditModeratedMessageMode
+        val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 
         val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
         return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
@@ -1188,11 +1175,6 @@ public class MessageInputView : ConstraintLayout {
          * A mode when the user can edit the message
          */
         public data class Edit(val oldMessage: Message) : InputMode()
-
-        /**
-         * A mode when the user can edit a moderated message
-         */
-        public data class EditModeratedMessage(val oldMessage: Message) : InputMode()
 
         /**
          * A mode when the user can reply to the message

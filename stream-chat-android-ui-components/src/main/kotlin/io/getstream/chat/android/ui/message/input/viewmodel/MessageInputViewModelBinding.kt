@@ -19,7 +19,6 @@
 package io.getstream.chat.android.ui.message.input.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
@@ -63,14 +62,7 @@ public fun MessageInputViewModel.bindView(
         }
     }
     messageToEdit.observe(lifecycleOwner) { message ->
-        message?.let {
-            view.inputMode =
-                if (it.isModerationFailed()) {
-                    MessageInputView.InputMode.EditModeratedMessage(it)
-                } else {
-                    MessageInputView.InputMode.Edit(it)
-                }
-        }
+        message?.let { view.inputMode = MessageInputView.InputMode.Edit(it) }
     }
     isDirectMessage.observe(lifecycleOwner) { isDirectMessage ->
         view.chatMode = if (isDirectMessage) DIRECT_CHAT else GROUP_CHAT
