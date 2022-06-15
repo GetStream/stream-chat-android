@@ -66,7 +66,7 @@ public interface PermissionHandler {
  * and once it has been granted will download the attachment.
  *
  * @param permissionState The [permissionState] for the permission we need. This should be
- * [Manifest.permissions.WRITE_EXTERNAL_STORAGE].
+ * [Manifest.permission.WRITE_EXTERNAL_STORAGE].
  * @param context The context for executing actions.
  * @param onPermissionRequired Handler when the user wants to download a file but the permission has not been granted.
  * By default it will prompt the user for the permission or take him directly to settings.
