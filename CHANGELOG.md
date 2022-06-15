@@ -8,6 +8,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Migrated to Coil version 2.1.0 [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
 
 ### ❌ Removed
 
@@ -87,6 +88,7 @@
 - Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 
 ### ⚠️ Changed
+- Since Coil 2.0, the `LocalImageLoader` has been deprecated. So now we support our own image loader, `StreamImageLoader` for providing composition local. [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
 
 ### ❌ Removed
 - Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)

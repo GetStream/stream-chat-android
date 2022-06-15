@@ -27,7 +27,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -36,6 +35,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
@@ -151,7 +151,7 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
-        LocalImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
+        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment
     ) {
