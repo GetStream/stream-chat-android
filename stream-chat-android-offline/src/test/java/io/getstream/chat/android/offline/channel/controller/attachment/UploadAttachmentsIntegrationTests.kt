@@ -31,6 +31,7 @@ import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
@@ -70,7 +71,9 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        val channelState: ChannelMutableState = mock()
+        val channelState: ChannelMutableState = mock {
+            on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
+        }
 
         stateRegistry = mock {
             on(it.channel(any(), any())) doReturn channelState
