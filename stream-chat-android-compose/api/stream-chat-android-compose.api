@@ -21,9 +21,9 @@ public final class io/getstream/chat/android/compose/handlers/DownloadPermission
 	public static final field PayloadAttachment Ljava/lang/String;
 	public fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun ObservePermissionChanges (Landroidx/compose/runtime/Composer;I)V
 	public fun canHandle (Ljava/lang/String;)Z
 	public fun canHandle (Ljava/util/List;)Z
-	public final fun observePermissionChanges (Landroidx/compose/runtime/Composer;I)V
 	public fun onHandleRequest (Ljava/util/Map;)V
 }
 

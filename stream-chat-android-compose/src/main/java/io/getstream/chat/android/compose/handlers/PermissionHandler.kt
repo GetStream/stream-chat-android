@@ -77,7 +77,9 @@ public class DownloadPermissionHandler(
     private val permissionState: PermissionState,
     private val context: Context,
     private val onPermissionRequired: () -> Unit = {
-        if (!permissionState.hasPermission && permissionState.shouldShowRationale) {
+        if (!permissionState.hasPermission &&
+            (permissionState.shouldShowRationale || !permissionState.permissionRequested)
+        ) {
             permissionState.launchPermissionRequest()
         } else {
             context.openSystemSettings()
