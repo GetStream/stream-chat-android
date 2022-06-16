@@ -144,6 +144,7 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -377,7 +378,7 @@ internal constructor(
                 logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
-        }
+        }.onError { disconnect() }
     }
 
     private fun initializeClientWithUser(
