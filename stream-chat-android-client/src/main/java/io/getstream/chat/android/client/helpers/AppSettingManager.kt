@@ -55,7 +55,7 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
      * Clears the application settings fetched from the backend.
      */
     fun clear() {
-        appSettings = createDefaultAppSettings()
+        appSettings = null
     }
 
     companion object {
