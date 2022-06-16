@@ -29,7 +29,7 @@ public class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
-    internal suspend fun uploadAttachment(
+    public suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,

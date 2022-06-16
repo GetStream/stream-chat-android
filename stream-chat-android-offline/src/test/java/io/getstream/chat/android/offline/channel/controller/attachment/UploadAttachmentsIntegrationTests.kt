@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.attachments.AttachmentUploader
 import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
@@ -40,7 +41,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.same
@@ -60,6 +63,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
     private lateinit var uploadAttachmentsWorker: UploadAttachmentsWorker
 
     private lateinit var logicRegistry: LogicRegistry
+    private var uploader: AttachmentUploader? = null
 
     @Before
     override fun setup() {
@@ -70,19 +74,31 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        val channelLogic: ChannelStateLogic = mock()
-
         val channelState: ChannelMutableStateImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
+        val channelLogic: ChannelStateLogic = mock{
+            on(it.writeChannelState()) doReturn channelState
+        }
+
+        uploader = mock()
 
         uploadAttachmentsWorker =
-            UploadAttachmentsWorker(channelType, channelId, channelLogic, repositoryFacade, chatClient)
+            UploadAttachmentsWorker(
+                channelType,
+                channelId,
+                channelLogic,
+                repositoryFacade,
+                chatClient,
+                uploader!!
+            )
     }
 
     @Test
     fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
         runBlocking {
+            whenever(uploader!!.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()
@@ -102,6 +118,12 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
     @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
         runBlocking {
+            whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
+                .doAnswer { invocation ->
+                    val attachment = invocation.arguments[2] as Attachment
+                    Result(attachment.copy(uploadState = Attachment.UploadState.Success))
+                }
+
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()

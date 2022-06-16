@@ -120,6 +120,8 @@ public interface ChannelStateLogic {
      */
     public fun deleteMember(userId: String)
 
+    public fun deleteChannel(deleteDate: Date)
+
     /**
      * Kdocs here.
      */

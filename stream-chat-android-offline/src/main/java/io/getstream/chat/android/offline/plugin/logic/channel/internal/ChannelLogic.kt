@@ -572,7 +572,7 @@ internal class ChannelLogic(
             }
             is ChannelDeletedEvent -> {
                 removeMessagesBefore(event.createdAt)
-                mutableState._channelData.value = mutableState.channelData.value.copy(deletedAt = event.createdAt)
+                channelStateLogic.deleteChannel(event.createdAt)
             }
             is ChannelTruncatedEvent -> {
                 removeMessagesBefore(event.createdAt, event.message)
