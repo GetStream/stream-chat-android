@@ -55,7 +55,9 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     /**
      * Adapter used to render command suggestions.
      */
-    private lateinit var adapter: CommandsAdapter
+    private val adapter: CommandsAdapter by lazy {
+        CommandsAdapter(style) { commandSelectionListener(it) }
+    }
 
     /**
      * Selection listener invoked when a command is selected.
@@ -90,9 +92,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
-        adapter = CommandsAdapter(style) { commandSelectionListener(it) }
         binding.suggestionsRecyclerView.adapter = adapter
-
         binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(style.commandSuggestionsTitleIconDrawable)
@@ -146,7 +146,10 @@ private class CommandViewHolder(
     private val commandSelectionListener: (Command) -> Unit,
 ) : SimpleListAdapter.ViewHolder<Command>(binding.root) {
 
+    private lateinit var item: Command
+
     init {
+        binding.root.setOnClickListener { commandSelectionListener(item) }
         binding.commandNameTextView.setTextStyle(style.commandSuggestionItemCommandNameTextStyle)
         binding.commandQueryTextView.setTextStyle(style.commandSuggestionItemCommandDescriptionTextStyle)
         binding.instantCommandImageView.setImageDrawable(style.commandSuggestionItemIconDrawable)
@@ -158,7 +161,8 @@ private class CommandViewHolder(
      * @param item Single command suggestion represented by [Command] class.
      */
     override fun bind(item: Command) {
-        binding.root.setOnClickListener { commandSelectionListener(item) }
+        this.item = item
+
         binding.commandNameTextView.text = item.name.replaceFirstChar(Char::uppercase)
         binding.commandQueryTextView.text = context.getString(
             R.string.stream_ui_message_input_command_template,

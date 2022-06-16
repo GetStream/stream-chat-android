@@ -82,7 +82,7 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
         override fun bind(attachment: Attachment) {
             this.attachment = attachment
 
-            binding.fileTitleTextView.text = attachment.title
+            binding.fileNameTextView.text = attachment.title
             binding.fileThumbImageView.loadAttachmentThumb(attachment)
             binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
         }

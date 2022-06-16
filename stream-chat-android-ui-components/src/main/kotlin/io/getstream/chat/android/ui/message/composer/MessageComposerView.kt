@@ -88,11 +88,6 @@ public class MessageComposerView : ConstraintLayout {
     public var textInputChangeListener: (String) -> Unit = {}
 
     /**
-     * Click listener for the clear input button.
-     */
-    public var clearInputButtonClickListener: () -> Unit = {}
-
-    /**
      * Selection listener invoked when attachments are selected.
      */
     public var attachmentSelectionListener: (List<Attachment>) -> Unit = {}
@@ -240,7 +235,6 @@ public class MessageComposerView : ConstraintLayout {
         setCenterContent(
             DefaultMessageComposerCenterContent(context).also {
                 it.textInputChangeListener = { text -> textInputChangeListener(text) }
-                it.clearInputButtonClickListener = { clearInputButtonClickListener() }
                 it.attachmentRemovalListener = { attachment -> attachmentRemovalListener(attachment) }
             }
         )

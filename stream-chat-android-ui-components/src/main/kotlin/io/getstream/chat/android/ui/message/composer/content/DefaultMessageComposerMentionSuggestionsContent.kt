@@ -55,7 +55,9 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
     /**
      * Adapter used to render mention suggestions.
      */
-    private lateinit var adapter: MentionsAdapter
+    private val adapter: MentionsAdapter by lazy {
+        MentionsAdapter(style) { mentionSelectionListener(it) }
+    }
 
     /**
      * Selection listener invoked when a mention is selected.
@@ -91,9 +93,7 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
-        adapter = MentionsAdapter(style) { mentionSelectionListener(it) }
         binding.suggestionsRecyclerView.adapter = adapter
-
         binding.suggestionsCardView.setCardBackgroundColor(style.mentionSuggestionsBackgroundColor)
     }
 
@@ -145,7 +145,10 @@ private class MentionsViewHolder(
     val mentionSelectionListener: (User) -> Unit,
 ) : SimpleListAdapter.ViewHolder<User>(binding.root) {
 
+    private lateinit var item: User
+
     init {
+        binding.root.setOnClickListener { mentionSelectionListener(item) }
         binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
         binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
         binding.mentionsIcon.setImageDrawable(style.mentionSuggestionItemIconDrawable)
@@ -157,7 +160,8 @@ private class MentionsViewHolder(
      * @param item Single mention suggestion represented by [User] class.
      */
     override fun bind(item: User) {
-        binding.root.setOnClickListener { mentionSelectionListener(item) }
+        this.item = item
+
         // Workaround for race condition caused by Coil trying to load stale avatar on layout.
         binding.avatarView.doOnLayout {
             binding.avatarView.setUserData(item)

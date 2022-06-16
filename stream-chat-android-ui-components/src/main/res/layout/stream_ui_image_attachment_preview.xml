@@ -18,7 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/stream_ui_message_composer_attachment_height"
     android:layout_height="@dimen/stream_ui_message_composer_image_attachment_width"
-    android:layout_margin="@dimen/stream_ui_spacing_tiny"
+    android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
     >
 
     <com.google.android.material.imageview.ShapeableImageView

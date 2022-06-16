@@ -36,7 +36,6 @@ import kotlinx.coroutines.launch
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
  * @param sendMessageButtonClickListener Click listener for the send message button.
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
- * @param clearInputButtonClickListener Click listener for the clear input button.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
  * @param attachmentRemovalListener Click listener for the remove attachment button.
  * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
@@ -53,7 +52,6 @@ public fun MessageComposerViewModel.bindView(
     lifecycleOwner: LifecycleOwner,
     sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
     textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
-    clearInputButtonClickListener: () -> Unit = { setMessageInput("") },
     attachmentSelectionListener: (List<Attachment>) -> Unit = { setSelectedAttachments(it) },
     attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     mentionSelectionListener: (User) -> Unit = { selectMention(it) },
@@ -65,7 +63,6 @@ public fun MessageComposerViewModel.bindView(
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
-    view.clearInputButtonClickListener = clearInputButtonClickListener
     view.attachmentSelectionListener = attachmentSelectionListener
     view.attachmentRemovalListener = attachmentRemovalListener
     view.mentionSelectionListener = mentionSelectionListener

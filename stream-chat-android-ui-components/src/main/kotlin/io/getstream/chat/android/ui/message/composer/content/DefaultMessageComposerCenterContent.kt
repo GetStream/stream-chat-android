@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.message.composer.content
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.text.Editable
@@ -63,11 +64,6 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     public var textInputChangeListener: (String) -> Unit = {}
 
     /**
-     * Click listener for the clear input button.
-     */
-    public var clearInputButtonClickListener: () -> Unit = {}
-
-    /**
      * Click listener for the remove attachment button.
      */
     public var attachmentRemovalListener: (Attachment) -> Unit = {}
@@ -76,7 +72,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      * Adapter used to render attachments previews list.
      */
     private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
-        AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachmentRemovalListener(it) }
+        AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachment ->
+            attachmentRemovalListener(attachment)
+        }
     }
 
     public constructor(context: Context) : this(context, null)
@@ -96,11 +94,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
+
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
             textInputChangeListener(editable?.toString() ?: "")
-        }
-        binding.clearCommandButton.setOnClickListener {
-            clearInputButtonClickListener()
         }
         binding.attachmentsRecyclerView.adapter = attachmentsAdapter
     }
@@ -114,9 +110,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         this.style = messageComposerContext.style
 
         binding.messageInputContainer.background = style.messageInputBackgroundDrawable
+        binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
         binding.messageEditText.isVerticalFadingEdgeEnabled = style.messageInputScrollbarFadingEnabled
-        binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             style.messageInputCursorDrawable?.let {
                 binding.messageEditText.textCursorDrawable = it
@@ -130,18 +126,28 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        renderTextInputState(state)
+        renderReplyState(state)
+        renderAttachmentState(state)
+    }
+
+    /**
+     * Renders the state of the text input field.
+     *
+     * @param state The state that will be used to render the updated UI.
+     */
+    private fun renderTextInputState(state: MessageComposerState) {
         binding.messageEditText.apply {
             val currentValue = text.toString()
             val newValue = state.inputValue
             if (newValue != currentValue) {
                 setText(state.inputValue)
-                // placing cursor at the end of the text
+                // Place the cursor at the end
                 setSelection(length())
             }
         }
 
         val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-
         if (canSendMessage) {
             binding.messageEditText.isEnabled = true
             binding.messageEditText.hint = context.getString(R.string.stream_ui_message_input_hint)
@@ -149,25 +155,39 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         } else {
             binding.messageEditText.isEnabled = false
             binding.messageEditText.hint = context.getString(R.string.stream_ui_message_cannot_send_messages_hint)
+            // Avoid multiline text input due to the long hint above
             binding.messageEditText.maxLines = 1
         }
+    }
 
-        attachmentsAdapter.setAttachments(state.attachments)
-
+    /**
+     * Renders a bubble with the message we are replying to.
+     *
+     * @param state The state that will be used to render the updated UI.
+     */
+    private fun renderReplyState(state: MessageComposerState) {
         val action = state.action
         if (action is Reply) {
-            val message = action.message
+            val quotedMessage = action.message
             binding.messageReplyView.setMessage(
-                message,
-                ChatUI.currentUserProvider.getCurrentUser()?.id == message.user.id,
+                quotedMessage,
+                ChatUI.currentUserProvider.getCurrentUser()?.id == quotedMessage.user.id,
                 null,
             )
             binding.messageReplyView.isVisible = true
         } else {
             binding.messageReplyView.isVisible = false
         }
+    }
 
-        binding.selectedAttachmentsContainer.isVisible = state.attachments.isNotEmpty()
+    /**
+     * Renders previews for the selected attachments.
+     *
+     * @param state The state that will be used to render the updated UI.
+     */
+    private fun renderAttachmentState(state: MessageComposerState) {
+        binding.attachmentsRecyclerView.isVisible = state.attachments.isNotEmpty()
+        attachmentsAdapter.setAttachments(state.attachments)
     }
 }
 
@@ -192,6 +212,7 @@ private class AttachmentPreviewAdapter(
      *
      * @param attachments
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun setAttachments(attachments: List<Attachment>) {
         this.attachments.clear()
         this.attachments.addAll(attachments)
