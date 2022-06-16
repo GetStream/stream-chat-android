@@ -19,9 +19,10 @@ package io.getstream.chat.android.uitests.util
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import coil.ComponentRegistry
 import coil.ImageLoader
-import coil.bitmap.BitmapPool
 import coil.decode.DataSource
+import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.DefaultRequestOptions
 import coil.request.Disposable
@@ -29,6 +30,7 @@ import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.request.SuccessResult
 import io.getstream.chat.android.uitests.R
+import kotlinx.coroutines.CompletableDeferred
 
 /**
  * A fake implementation of [ImageLoader] which returns [Drawable]s from resources.
@@ -48,42 +50,38 @@ class FakeImageLoader(
     ),
 ) : ImageLoader {
 
-    private val disposable = object : Disposable {
-        override val isDisposed get() = true
-        override fun dispose() {}
-        override suspend fun await() {}
-    }
-
     override val defaults = DefaultRequestOptions()
-
-    // Optionally, you can add a custom fake memory cache implementation.
-    override val memoryCache get() = throw UnsupportedOperationException()
-
-    override val bitmapPool = BitmapPool(0)
+    override val components = ComponentRegistry()
+    override val memoryCache: MemoryCache? get() = null
+    override val diskCache: DiskCache? get() = null
 
     override fun enqueue(request: ImageRequest): Disposable {
         // Always call onStart before onSuccess.
-        request.target?.onStart(placeholder = createDrawable(context, request))
-        request.target?.onSuccess(result = createDrawable(context, request))
-        return disposable
+        request.target?.onStart(request.placeholder)
+        val result = createDrawable(context, request)
+        request.target?.onSuccess(result)
+        return object : Disposable {
+            override val job = CompletableDeferred(newResult(request, result))
+            override val isDisposed get() = true
+            override fun dispose() {}
+        }
     }
 
     override suspend fun execute(request: ImageRequest): ImageResult {
+        return newResult(request, createDrawable(context, request))
+    }
+
+    private fun newResult(request: ImageRequest, drawable: Drawable): SuccessResult {
         return SuccessResult(
-            drawable = createDrawable(context, request),
+            drawable = drawable,
             request = request,
-            metadata = ImageResult.Metadata(
-                memoryCacheKey = MemoryCache.Key(""),
-                isSampled = false,
-                dataSource = DataSource.MEMORY_CACHE,
-                isPlaceholderMemoryCacheKeyPresent = false
-            )
+            dataSource = DataSource.MEMORY_CACHE
         )
     }
 
-    override fun shutdown() {}
+    override fun newBuilder() = throw UnsupportedOperationException()
 
-    override fun newBuilder() = ImageLoader.Builder(context)
+    override fun shutdown() {}
 
     private fun createDrawable(context: Context, request: ImageRequest): Drawable {
         val data = request.data

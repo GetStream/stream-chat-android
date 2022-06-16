@@ -19,12 +19,19 @@ package com.getstream.sdk.chat.startup
 import android.content.Context
 import androidx.startup.Initializer
 import com.jakewharton.threetenabp.AndroidThreeTen
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.runBlocking
 
 /**
  * Jetpack Startup Initializer for the TreeTenABP library.
  */
 public class ThreeTenInitializer : Initializer<Unit> {
-    override fun create(context: Context) {
+
+    override fun create(context: Context): Unit = runBlocking(DispatcherProvider.IO) {
+        initThreeTen(context)
+    }
+
+    private fun initThreeTen(context: Context) {
         AndroidThreeTen.init(context)
     }
 
