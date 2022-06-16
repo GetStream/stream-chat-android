@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
+import io.getstream.chat.android.client.channel.state.ChannelMutableStateInterface
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.channel.state.MessagesState
 import io.getstream.chat.android.client.events.ChatEvent
@@ -47,38 +48,38 @@ internal class ChannelMutableState(
     private val scope: CoroutineScope,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
-) : ChannelState {
+) : ChannelMutableStateInterface {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
-    internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    internal val _watcherCount = MutableStateFlow(0)
-    internal val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
-    internal val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
-    internal val _read = MutableStateFlow<ChannelUserRead?>(null)
-    internal val _endOfNewerMessages = MutableStateFlow(false)
-    internal val _endOfOlderMessages = MutableStateFlow(false)
-    internal val _loading = MutableStateFlow(false)
-    internal val _hidden = MutableStateFlow(false)
-    internal val _muted = MutableStateFlow(false)
-    internal val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
-    internal val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
-    internal val _loadingOlderMessages = MutableStateFlow(false)
-    internal val _loadingNewerMessages = MutableStateFlow(false)
-    internal val _channelData = MutableStateFlow<ChannelData?>(null)
-    internal val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    internal val lastMessageAt = MutableStateFlow<Date?>(null)
-    internal val _repliedMessage = MutableStateFlow<Message?>(null)
-    internal val _unreadCount = MutableStateFlow(0)
-    internal val _membersCount = MutableStateFlow(0)
+    override val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    override val _watcherCount = MutableStateFlow(0)
+    override val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
+    override val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
+    override val _read = MutableStateFlow<ChannelUserRead?>(null)
+    override val _endOfNewerMessages = MutableStateFlow(false)
+    override val _endOfOlderMessages = MutableStateFlow(false)
+    override val _loading = MutableStateFlow(false)
+    override val _hidden = MutableStateFlow(false)
+    override val _muted = MutableStateFlow(false)
+    override val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
+    override val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
+    override val _loadingOlderMessages = MutableStateFlow(false)
+    override val _loadingNewerMessages = MutableStateFlow(false)
+    override val _channelData = MutableStateFlow<ChannelData?>(null)
+    override val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    override val lastMessageAt = MutableStateFlow<Date?>(null)
+    override val _repliedMessage = MutableStateFlow<Message?>(null)
+    override val _unreadCount = MutableStateFlow(0)
+    override val _membersCount = MutableStateFlow(0)
 
     /** Channel config data. */
-    internal val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
+    override val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
-    internal var hideMessagesBefore: Date? = null
+    override var hideMessagesBefore: Date? = null
 
     /** The raw message list updated by recent users value. */
-    internal val messageList: StateFlow<List<Message>> =
+    override val messageList: StateFlow<List<Message>> =
         _messages.combine(latestUsers) { messageMap, userMap -> messageMap.values.updateUsers(userMap) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 

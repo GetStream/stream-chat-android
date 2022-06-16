@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.message.attachments
+package io.getstream.chat.android.client.models
 
 import androidx.work.NetworkType
 

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachments
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelMutableStateInterface
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
@@ -27,8 +28,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
 internal class UploadAttachmentsWorker(
     private val channelType: String,
@@ -95,7 +94,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            stateLogic.listerForChannelState().toMutableState()
+                            stateLogic.writeChannelState()
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
@@ -134,7 +133,7 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: ChannelMutableState
+        private val mutableState: ChannelMutableStateInterface
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {

@@ -28,6 +28,7 @@ import java.util.Date
 public interface ChannelStateLogic {
 
     public fun listerForChannelState(): ChannelState
+    public fun writeChannelState(): ChannelMutableStateInterface
     public fun incrementUnreadCountIfNecessary(message: Message)
     public fun updateChannelData(channel: Channel)
     public fun updateReads(reads: List<ChannelUserRead>)

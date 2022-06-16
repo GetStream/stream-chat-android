@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachments
 
 import android.content.Context
 import androidx.work.Constraints
@@ -25,12 +25,14 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.UUID
 
-internal class UploadAttachmentsAndroidWorker(
+@InternalStreamChatApi
+public class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -56,12 +58,12 @@ internal class UploadAttachmentsAndroidWorker(
         }
     }
 
-    companion object {
+    public companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-        fun start(
+        public fun start(
             context: Context,
             channelType: String,
             channelId: String,
@@ -93,7 +95,7 @@ internal class UploadAttachmentsAndroidWorker(
          * @param context Context of the application.
          * @param workId UUID of the enqueued work.
          */
-        fun stop(context: Context, workId: UUID) {
+        public fun stop(context: Context, workId: UUID) {
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }

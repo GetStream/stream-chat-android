@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachments
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
+@InternalStreamChatApi
+public class AttachmentUrlValidator(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
 
-    fun updateValidAttachmentsUrl(newMessages: List<Message>, oldMessages: Map<String, Message>): List<Message> {
+    public fun updateValidAttachmentsUrl(newMessages: List<Message>, oldMessages: Map<String, Message>): List<Message> {
         if (oldMessages.isEmpty()) {
             return newMessages
         }
