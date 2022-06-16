@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
@@ -76,7 +76,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
-    private lateinit var channelMutableState: ChannelMutableState
+    private lateinit var channelMutableState: ChannelMutableStateImpl
     private val globalMutableState = mock<MutableGlobalState> {
         on(it.user) doReturn userFlow
     }
@@ -87,7 +87,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelMutableState = ChannelMutableState(
+        channelMutableState = ChannelMutableStateImpl(
             "type1", channelId, testCoroutines.scope, userFlow,
             MutableStateFlow(
                 mapOf(currentUser.id to currentUser)

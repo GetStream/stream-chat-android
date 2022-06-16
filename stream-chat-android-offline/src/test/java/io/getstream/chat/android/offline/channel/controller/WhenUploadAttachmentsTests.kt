@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.attachments.AttachmentUploader
 import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -290,7 +290,7 @@ internal class WhenUploadAttachmentsTests {
         private var messageRepository: MessageRepository = mock()
 
         private val channelLogic: ChannelLogic = mock()
-        private val channelState: ChannelMutableState = mock()
+        private val channelState: ChannelMutableStateImpl = mock()
 
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()

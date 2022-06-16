@@ -89,7 +89,7 @@ internal class SendReactionListenerImpl(
     }
 
     /**
-     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.messages].
+     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl.messages].
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param message The [Message] to update.

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.attachments
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.state.ChannelMutableStateInterface
+import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
@@ -132,7 +132,7 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: ChannelMutableStateInterface,
+        private val mutableState: ChannelMutableState,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {

@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -87,14 +88,14 @@ import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import java.util.Date
 
 /**
  * This class contains all the logic to manipulate and modify the state of the corresponding channel.
  *
- * @property mutableState [ChannelMutableState] Mutable state instance of the channel.
+ * @property mutableState [ChannelMutableStateImpl] Mutable state instance of the channel.
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  */
@@ -102,10 +103,10 @@ import java.util.Date
 internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
-    private val channelStateLogic: ChannelStateLogicImpl
+    private val channelStateLogic: ChannelStateLogic
 ) : QueryChannelListener {
 
-    private val mutableState = channelStateLogic.writeChannelState()
+    private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
     private val logger = ChatLogger.get("Query channel request")
 
     val cid: String
@@ -395,7 +396,7 @@ internal class ChannelLogic(
     }
 
     /**
-     * Returns message stored in [ChannelMutableState] if exists and wasn't hidden.
+     * Returns message stored in [ChannelMutableStateImpl] if exists and wasn't hidden.
      *
      * @param messageId The id of the message.
      *
@@ -488,7 +489,7 @@ internal class ChannelLogic(
 
     /**
      * Handles event received from the socket.
-     * Responsible for synchronizing [ChannelMutableState].
+     * Responsible for synchronizing [ChannelMutableStateImpl].
      */
     internal fun handleEvent(event: ChatEvent) {
         when (event) {

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
@@ -57,7 +57,7 @@ public class StateRegistry private constructor(
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableStateImpl> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
     /**
@@ -84,7 +84,7 @@ public class StateRegistry private constructor(
      */
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, scope, userStateFlow, latestUsers)
+            ChannelMutableStateImpl(channelType, channelId, scope, userStateFlow, latestUsers)
         }
     }
 

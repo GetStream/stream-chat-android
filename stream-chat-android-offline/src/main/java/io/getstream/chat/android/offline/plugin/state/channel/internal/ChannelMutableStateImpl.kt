@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
-import io.getstream.chat.android.client.channel.state.ChannelMutableStateInterface
+import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.channel.state.MessagesState
 import io.getstream.chat.android.client.events.ChatEvent
@@ -42,13 +42,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
-internal class ChannelMutableState(
+internal class ChannelMutableStateImpl(
     override val channelType: String,
     override val channelId: String,
     private val scope: CoroutineScope,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
-) : ChannelMutableStateInterface {
+) : ChannelMutableState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
@@ -202,4 +202,4 @@ internal class ChannelMutableState(
     }
 }
 
-internal fun ChannelState.toMutableState(): ChannelMutableState = this as ChannelMutableState
+internal fun ChannelState.toMutableState(): ChannelMutableStateImpl = this as ChannelMutableStateImpl

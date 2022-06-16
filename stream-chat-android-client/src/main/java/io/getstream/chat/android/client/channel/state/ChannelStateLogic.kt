@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.channel.state
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -28,28 +29,132 @@ import java.util.Date
 public interface ChannelStateLogic {
 
     public fun listerForChannelState(): ChannelState
-    public fun writeChannelState(): ChannelMutableStateInterface
+
+    /**
+     * Kdocs here.
+     */
+    public fun writeChannelState(): ChannelMutableState
+
+    /**
+     * Kdocs here.
+     */
     public fun incrementUnreadCountIfNecessary(message: Message)
+
+    /**
+     * Kdocs here.
+     */
     public fun updateChannelData(channel: Channel)
+
+    /**
+     * Kdocs here.
+     */
     public fun updateReads(reads: List<ChannelUserRead>)
+
+    /**
+     * Kdocs here.
+     */
     public fun updateRead(read: ChannelUserRead)
+
+    /**
+     * Kdocs here.
+     */
     public fun setTyping(userId: String, event: ChatEvent?)
+
+    /**
+     * Kdocs here.
+     */
     public fun setWatcherCount(watcherCount: Int)
+
+    /**
+     * Kdocs here.
+     */
     public fun setMembers(members: List<Member>)
+
+    /**
+     * Kdocs here.
+     */
     public fun setWatchers(watchers: List<User>)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertMessage(message: Message)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertMessages(messages: List<Message>)
+
+    /**
+     * Kdocs here.
+     */
     public fun removeMessagesBefore(date: Date, systemMessage: Message? = null)
+
+    /**
+     * Kdocs here.
+     */
     public fun removeLocalMessage(message: Message)
+
+    /**
+     * Kdocs here.
+     */
     public fun hideMessagesBefore(date: Date)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertMember(member: Member)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertMembers(members: List<Member>)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertOldMessages(messages: List<Message>)
+
+    /**
+     * Kdocs here.
+     */
     public fun deleteMember(userId: String)
+
+    /**
+     * Kdocs here.
+     */
     public fun upsertWatcher(user: User)
+
+    /**
+     * Kdocs here.
+     */
     public fun deleteWatcher(user: User)
+
+    /**
+     * Kdocs here.
+     */
     public fun setHidden(hidden: Boolean)
+
+    /**
+     * Kdocs here.
+     */
     public fun replyMessage(repliedMessage: Message?)
+
+    /**
+     * Kdocs here.
+     */
     public fun updateDataFromChannel(c: Channel)
+
+    /**
+     * Kdocs here.
+     */
     public fun updateOldMessagesFromChannel(c: Channel)
+
+    /**
+     * Kdocs here.
+     */
+    public fun propagateQueryError(error: ChatError)
+    /**
+     * Kdocs here.
+     */
 }

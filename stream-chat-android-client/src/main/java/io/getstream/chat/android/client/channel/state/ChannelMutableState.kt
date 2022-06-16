@@ -13,7 +13,7 @@ import java.util.Date
 
 // Todo: Change this name
 @Suppress("VariableNaming")
-public interface ChannelMutableStateInterface: ChannelState {
+public interface ChannelMutableState: ChannelState {
 
     public val _messages: MutableStateFlow<Map<String, Message>>
     public val _watcherCount: MutableStateFlow<Int>
@@ -42,5 +42,8 @@ public interface ChannelMutableStateInterface: ChannelState {
     public var hideMessagesBefore: Date?
 
     public val messageList: StateFlow<List<Message>>
+
+    /** If we need to recover state when connection established again. */
+    override var recoveryNeeded: Boolean
 
 }

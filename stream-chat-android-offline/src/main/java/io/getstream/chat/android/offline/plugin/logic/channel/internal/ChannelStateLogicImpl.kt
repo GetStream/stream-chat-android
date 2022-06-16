@@ -34,7 +34,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.Event
@@ -59,7 +59,7 @@ internal class ChannelStateLogicImpl(
         return mutableState.toMutableState()
     }
 
-    fun propagateQueryError(error: ChatError) {
+    override fun propagateQueryError(error: ChatError) {
         if (error.isPermanent()) {
             logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
         } else {
@@ -287,7 +287,7 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableState._messages] with new messages.
+     * Updates [ChannelMutableStateImpl._messages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.

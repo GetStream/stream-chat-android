@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegra
 import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
@@ -72,7 +72,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
         val channelLogic: ChannelLogic = mock()
 
-        val channelState: ChannelMutableState = mock {
+        val channelState: ChannelMutableStateImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
 
