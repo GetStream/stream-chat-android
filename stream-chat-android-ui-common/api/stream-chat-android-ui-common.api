@@ -149,10 +149,6 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 }
 
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
-	public static synthetic fun loadAndResize$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
 
 public final class com/getstream/sdk/chat/model/AttachmentMetaData {
@@ -287,14 +283,12 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
-	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
-	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/DateKt {
@@ -321,11 +315,9 @@ public final class com/getstream/sdk/chat/utils/extensions/StringKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
-	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ViewKt {
-	public static final fun getActivity (Landroid/view/View;)Landroidx/appcompat/app/AppCompatActivity;
 }
 
 public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
