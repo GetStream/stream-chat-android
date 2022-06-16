@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
+import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
@@ -33,8 +35,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
-import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.Event

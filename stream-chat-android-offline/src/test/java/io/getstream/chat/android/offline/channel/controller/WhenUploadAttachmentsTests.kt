@@ -17,14 +17,14 @@
 package io.getstream.chat.android.offline.channel.controller
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.attachments.AttachmentUploader
+import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.attachments.AttachmentUploader
-import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.randomAttachment

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.offline.channel
 
+import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import org.amshove.kluent.shouldBeEqualTo

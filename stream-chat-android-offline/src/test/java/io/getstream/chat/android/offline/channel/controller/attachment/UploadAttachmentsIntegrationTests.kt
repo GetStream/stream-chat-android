@@ -19,11 +19,11 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
-import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
