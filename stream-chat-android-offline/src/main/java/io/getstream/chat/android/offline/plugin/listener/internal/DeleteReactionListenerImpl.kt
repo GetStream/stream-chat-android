@@ -18,14 +18,14 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.removeMyReaction
+import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.extensions.internal.removeMyReaction
-import io.getstream.chat.android.offline.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade

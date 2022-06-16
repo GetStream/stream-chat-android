@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 
@@ -47,7 +47,7 @@ public interface QueryMembersListener {
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     )
 }

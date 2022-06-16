@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
@@ -40,6 +41,7 @@ internal class FakeSocket(
 ) {
 
     private var connectionUserId: String? = null
+    private var connectionConf: SocketFactory.ConnectionConf? = null
 
     private val listeners = mutableSetOf<SocketListener>()
 
@@ -49,12 +51,9 @@ internal class FakeSocket(
         }
     }
 
-    override fun connectAnonymously() {
-        // no-op
-    }
-
-    override fun connect(user: User) {
-        // no-op
+    override fun connect(connectionConf: SocketFactory.ConnectionConf) {
+        super.connect(connectionConf)
+        this.connectionConf = connectionConf
     }
 
     override fun disconnect() {
@@ -91,5 +90,9 @@ internal class FakeSocket(
 
     fun verifyNoConnectionUserId() {
         connectionUserId.shouldBeNull()
+    }
+
+    fun verifyUserToConnect(connectUser: User) {
+        this.connectionConf?.user shouldBeEqualTo connectUser
     }
 }

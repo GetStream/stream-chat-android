@@ -82,10 +82,12 @@ internal class SocketFactoryTest {
                     "${endpoint}connect?json=${buildMinimumUserJson(it)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
                 )
             },
-            Arguments.of(
-                SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey).asReconnectionConf(),
-                "${endpoint}connect?json=${buildMinimumUserJson(User("anon"))}&api_key=$apiKey&stream-auth-type=anonymous"
-            ),
+            User("anon").let {
+                Arguments.of(
+                    SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
+                    "${endpoint}connect?json=${buildMinimumUserJson(it)}&api_key=$apiKey&stream-auth-type=anonymous"
+                )
+            }
         )
 
         private fun buildMinimumUserJson(user: User): String = encode(

@@ -20,8 +20,10 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -32,14 +34,15 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -58,7 +61,7 @@ private const val QUERIES_TO_RETRY = 3
  */
 internal class SyncManager(
     private val chatClient: ChatClient,
-    private val globalState: GlobalMutableState,
+    private val globalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -66,15 +69,25 @@ internal class SyncManager(
 ) {
 
     private val entitiesRetryMutex = Mutex()
-    private var logger = ChatLogger.get("SyncManager")
+    private val logger = ChatLogger.get("SyncManager")
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
+
+    internal suspend fun getSortedSyncHistory(cids: List<String>): Result<List<ChatEvent>> {
+        val lastSyncAt = syncStateFlow.value?.lastSyncedAt ?: Date()
+        return chatClient.getSyncHistory(cids, lastSyncAt).await()
+            .map { events -> events.sortedBy { it.createdAt } }
+            .onSuccessSuspend { sortedEvents ->
+                val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
+                updateLastSyncedDate(latestEventDate)
+            }
+    }
 
     /**
      * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
      */
     internal suspend fun connectionRecovered() {
-        logger.logD("[connectionRecovered] firstConnect $firstConnect")
+        logger.logD("[connectionRecovered] firstConnect: $firstConnect")
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
@@ -82,6 +95,7 @@ internal class SyncManager(
             // the second time (ie coming from background, or reconnecting we should recover all)
             connectionRecovered(true)
         }
+        logger.logV("[connectionRecovered] completed")
     }
 
     /**
@@ -89,12 +103,12 @@ internal class SyncManager(
      */
     internal fun clearState() {
         globalState.run {
-            _totalUnreadCount.value = 0
-            _channelUnreadCount.value = 0
-            _initialized.value = false
-            _connectionState.value = ConnectionState.OFFLINE
-            _banned.value = false
-            _mutedUsers.value = emptyList()
+            setTotalUnreadCount(0)
+            setChannelUnreadCount(0)
+            setInitialized(false)
+            setConnectionState(ConnectionState.OFFLINE)
+            setBanned(false)
+            setMutedUsers(emptyList())
         }
     }
 
@@ -169,7 +183,7 @@ internal class SyncManager(
      * This method needs to be refactored. It's too long.
      */
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        logger.logD("[connectionRecovered] recoverAll $recoverAll")
+        logger.logD("[connectionRecovered] recoverAll: $recoverAll")
         // 0. ensure load is complete
         val online = globalState.isOnline()
 
@@ -375,6 +389,6 @@ internal class SyncManager(
     }
 
     private fun addTypingChannel(channelLogic: ChannelLogic) {
-        globalState._typingChannels.tryEmit(channelLogic.state().typing.value)
+        globalState.tryEmitTypingEvent(channelLogic.state().typing.value)
     }
 }

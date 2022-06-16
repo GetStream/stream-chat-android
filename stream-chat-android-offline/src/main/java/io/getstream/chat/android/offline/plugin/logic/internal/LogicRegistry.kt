@@ -19,7 +19,7 @@ package io.getstream.chat.android.offline.plugin.logic.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -44,18 +45,18 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
-    private val globalState: GlobalMutableState,
+    private val globalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
 ) {
 
-    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
+    private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
+    fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
@@ -150,7 +151,7 @@ internal class LogicRegistry internal constructor(
          */
         internal fun create(
             stateRegistry: StateRegistry,
-            globalState: GlobalMutableState,
+            globalState: MutableGlobalState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,

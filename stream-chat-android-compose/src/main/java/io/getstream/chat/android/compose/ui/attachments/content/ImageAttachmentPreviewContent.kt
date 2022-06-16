@@ -31,11 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * UI for currently selected image attachments, within the [MessageInput].
@@ -56,7 +56,7 @@ public fun ImageAttachmentPreviewContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
     ) {
         items(attachments) { image ->
-            val painter = rememberImagePainter(data = image.upload ?: image.imagePreviewUrl)
+            val painter = rememberStreamImagePainter(data = image.upload ?: image.imagePreviewUrl)
 
             Box(
                 modifier = Modifier

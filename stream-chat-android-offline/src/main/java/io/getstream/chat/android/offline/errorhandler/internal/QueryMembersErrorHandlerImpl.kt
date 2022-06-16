@@ -17,16 +17,16 @@
 package io.getstream.chat.android.offline.errorhandler.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
+import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.internal.toCid
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.logging.StreamLog
@@ -55,7 +55,7 @@ internal class QueryMembersErrorHandlerImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ): ReturnOnErrorCall<List<Member>> {
         return originalCall.onErrorReturn(scope) { originalError ->

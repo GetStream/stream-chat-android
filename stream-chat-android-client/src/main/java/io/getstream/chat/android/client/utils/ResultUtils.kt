@@ -16,22 +16,32 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
+/**
+ * Converts [Result] into human-readable string.
+ */
+@InternalStreamChatApi
+public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
     return when {
         isSuccess -> toString(data())
-        isError -> {
-            val error = error()
-            when {
-                error is ChatNetworkError -> error.toString()
-                error.message != null && error.cause != null ->
-                    "ChatError(message=${error.message}, cause=${error.cause})"
-                error.message != null -> "ChatError(message=${error.message})"
-                error.cause != null -> "ChatError(cause=${error.cause})"
-                else -> "ChatError(Empty)"
-            }
-        }
+        isError -> error().stringify()
         else -> "Result(Empty)"
+    }
+}
+
+/**
+ * Converts [ChatError] into human-readable string.
+ */
+@InternalStreamChatApi
+public fun ChatError.stringify(): String {
+    return when {
+        this is ChatNetworkError -> toString()
+        message != null && cause != null -> "ChatError(message=$message, cause=$cause)"
+        message != null -> "ChatError(message=$message)"
+        cause != null -> "ChatError(cause=$cause)"
+        else -> "ChatError(Empty)"
     }
 }

@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Message
 import java.util.Date
 
@@ -68,7 +68,11 @@ internal data class PinnedMessagesRequest(
          *
          * @return Request data class for the pinned messages.
          */
-        fun create(limit: Int, sort: QuerySort<Message>, pagination: PinnedMessagesPagination): PinnedMessagesRequest {
+        fun create(
+            limit: Int,
+            sort: QuerySorter<Message>,
+            pagination: PinnedMessagesPagination,
+        ): PinnedMessagesRequest {
             return when (pagination) {
                 is PinnedMessagesPagination.AroundDate -> PinnedMessagesRequest(
                     limit = limit,

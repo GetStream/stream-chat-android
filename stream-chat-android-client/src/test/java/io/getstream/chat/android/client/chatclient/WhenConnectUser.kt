@@ -36,6 +36,7 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
@@ -56,12 +57,14 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         val result = sut.connectUser(user, "token").await()
 
-        verify(userStateService).state
-        verifyNoInteractions(socket)
+        verify(userStateService, times(2)).state
+        verify(userStateService).onLogout()
+        verify(socket).disconnect()
+        verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(listener)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
+        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test
@@ -74,7 +77,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "differentUserId" }, "token").enqueue()
 
-        verify(socket, never()).connect(any())
+        verify(socket, never()).connectUser(any(), any())
         verify(userStateService, never()).onUserUpdated(any())
         verify(tokenManager, never()).setTokenProvider(any())
     }
@@ -89,7 +92,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(user, "token").enqueue()
 
-        verify(userStateService).onSetUser(user)
+        verify(userStateService).onSetUser(user, false)
     }
 
     @Test
@@ -116,7 +119,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(user, "token").enqueue()
 
-        verify(socket).connect(user)
+        verify(socket).connectUser(user, isAnonymous = false)
     }
 
     @Test
@@ -181,11 +184,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
-        }
-
-        fun givenAnonymousPendingState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.Pending
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(Mother.randomUser())
         }
 
         fun givenUserNotSetState() = apply {
