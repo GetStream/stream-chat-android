@@ -20,11 +20,11 @@ import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
+import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
@@ -70,14 +70,14 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        val channelLogic: ChannelLogic = mock()
+        val channelLogic: ChannelStateLogic = mock()
 
         val channelState: ChannelMutableStateImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
 
         uploadAttachmentsWorker =
-            UploadAttachmentsWorker(channelType, channelId, channelLogic, channelState, repositoryFacade, chatClient)
+            UploadAttachmentsWorker(channelType, channelId, channelLogic, repositoryFacade, chatClient)
     }
 
     @Test

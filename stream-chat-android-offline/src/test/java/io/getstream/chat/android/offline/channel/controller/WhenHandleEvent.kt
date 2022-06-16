@@ -95,11 +95,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         )
 
         channelLogic = ChannelLogic(
-            channelMutableState,
-            globalMutableState,
             repos,
             false,
-            attachmentUrlValidator
+            mock()
         )
     }
 

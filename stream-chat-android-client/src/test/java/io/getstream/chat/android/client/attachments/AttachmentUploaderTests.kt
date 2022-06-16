@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.channel.controller.attachment
+package io.getstream.chat.android.client.attachments
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.attachments.AttachmentUploader
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -46,6 +46,7 @@ import org.mockito.kotlin.same
 import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import java.io.File
+import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -217,4 +218,17 @@ internal class AttachmentUploaderTests {
             return AttachmentUploader(clientMock)
         }
     }
+}
+
+internal fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Attachment = {
+        Attachment(upload = randomFile()).apply {
+            uploadId = generateUploadId()
+        }
+    },
+): List<Attachment> = (1..size).map(creationFunction)
+
+internal fun generateUploadId(): String {
+    return "upload_id_${UUID.randomUUID()}"
 }
