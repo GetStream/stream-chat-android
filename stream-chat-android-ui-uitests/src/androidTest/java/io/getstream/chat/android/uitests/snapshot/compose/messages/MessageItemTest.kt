@@ -25,7 +25,7 @@ import org.junit.Test
 class MessageItemTest : ComposeScreenshotTest() {
 
     @Test
-    fun messageItemForTheirsMessage() = runScreenshotTest {
+    fun messageItemForTheirMessage() = runScreenshotTest {
         MessageItem(
             messageItem = MessageItemState(
                 message = TestData.message1(),

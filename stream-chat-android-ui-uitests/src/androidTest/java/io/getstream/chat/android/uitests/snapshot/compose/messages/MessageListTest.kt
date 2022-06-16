@@ -26,7 +26,7 @@ import org.junit.Test
 class MessageListTest : ComposeScreenshotTest() {
 
     @Test
-    fun messageListWithTheirsMessages() = runScreenshotTest {
+    fun messageListWithTheirMessages() = runScreenshotTest {
         MessageList(
             currentState = MessagesState(
                 isLoading = false,

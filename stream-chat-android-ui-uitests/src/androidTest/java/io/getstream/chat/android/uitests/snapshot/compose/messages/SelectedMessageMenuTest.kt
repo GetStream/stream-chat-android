@@ -40,7 +40,7 @@ class SelectedMessageMenuTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun selectedMessageMenuForTheirsMessage() {
+    fun selectedMessageMenuForTheirMessage() {
         selectedMessageMenu(TestData.user1(), TestData.message2())
     }
 
