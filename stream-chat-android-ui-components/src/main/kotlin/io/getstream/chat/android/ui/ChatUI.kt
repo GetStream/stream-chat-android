@@ -114,7 +114,7 @@ public object ChatUI {
     public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
 
     /**
-     * Allows adding support for custom attachments in the message composer preview.
+     * Allows adding support for custom attachments in the preview section of the message composer.
      */
     public var attachmentPreviewFactoryManager: AttachmentPreviewFactoryManager by lazyVar { AttachmentPreviewFactoryManager() }
 

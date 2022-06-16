@@ -37,7 +37,7 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * Style for [AttachmentSelectionDialogFragment].
  *
  * @param attachmentsPickerBackgroundColor The background color of the picker.
- * @param allowAccessButtonTextStyle The text style used for all the button to the request required permissions.
+ * @param allowAccessButtonTextStyle The text style used for all the buttons used to request required permissions.
  * @param submitAttachmentsButtonIconDrawable The icon for the submit selected attachments button.
  * @param attachmentTabToggleButtonStateList The color selector that will be applied to each tab button.
  * @param mediaAttachmentsTabIconDrawable The icon for the image attachments tab.
@@ -47,8 +47,8 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * @param videoLengthTextStyle The text style used for video duration caption in each tile.
  * @param videoIconVisible If the video icon is displayed.
  * @param videoIconDrawable The icon used for video files.
- * @param mediaAttachmentNoMediaText The text that will be displayed if there are no media on the device.
- * @param mediaAttachmentNoMediaTextStyle The text style for the the no media text.
+ * @param mediaAttachmentNoMediaText The text that will be displayed if there are no media files on the device.
+ * @param mediaAttachmentNoMediaTextStyle The text style for the the no media files text.
  * @param fileAttachmentsTabIconDrawable The icon for the file attachments tab.
  * @param allowAccessToFilesButtonText The text to request required permissions on the file attachments tab.
  * @param allowAccessToFilesIconDrawable The icon above the permissions text on the file attachments tab.

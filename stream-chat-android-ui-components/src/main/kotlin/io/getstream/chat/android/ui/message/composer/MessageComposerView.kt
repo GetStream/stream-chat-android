@@ -52,7 +52,7 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 
 /**
- * UI component designed for message handling message text input, attachments, actions,
+ * UI component designed for handling message text input, attachments, actions,
  * and sending the message.
  */
 @ExperimentalStreamChatApi
@@ -73,7 +73,7 @@ public class MessageComposerView : ConstraintLayout {
     private lateinit var messageComposerContext: MessageComposerContext
 
     /**
-     * A helper class that displays
+     * A helper class that displays validation errors.
      */
     private lateinit var validationErrorRenderer: ValidationErrorRenderer
 
@@ -145,8 +145,8 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Handle to [PopupWindow] which is currently displayed.
-     * It is shown above [MessageComposerView] to display hints/suggestions, e.g. suggested mentions, available commands.
+     * Handle to [PopupWindow] which is currently displayed. Used to display command
+     * and mention suggestions.
      */
     private var suggestionsPopup: MessageComposerSuggestionsPopup? = null
 
@@ -197,7 +197,6 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Command suggestions list shown in a popup window above the [MessageComposerView].
      */
-
     private val commandSuggestionsContent: View
         get() = commandSuggestionsContentOverride ?: defaultCommandSuggestionsView
 
