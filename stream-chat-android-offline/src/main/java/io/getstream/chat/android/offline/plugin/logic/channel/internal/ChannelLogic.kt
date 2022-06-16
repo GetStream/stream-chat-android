@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -122,13 +123,7 @@ internal class ChannelLogic(
         channelId: String,
         request: QueryChannelRequest,
     ): Result<Unit> {
-        val loader = loadingStateByRequest(request)
-        return if (loader.value) {
-            logger.logI("Another request to load messages is in progress. Ignoring this request.")
-            Result.error(ChatError("Another request to load messages is in progress. Ignoring this request."))
-        } else {
-            Result.success(Unit)
-        }
+        return Result(Unit)
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
@@ -229,11 +224,6 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
-        val preconditionResult = onQueryChannelPrecondition(mutableState.channelType, mutableState.channelId, request)
-        if (preconditionResult.isError) {
-            return Result.error(preconditionResult.error())
-        }
-
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
@@ -640,5 +630,9 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         channelStateLogic.replyMessage(repliedMessage)
+    }
+
+    private companion object {
+        private const val OFFSET_EVENT_TIME = 5L
     }
 }

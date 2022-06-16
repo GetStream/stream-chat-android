@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -45,12 +46,13 @@ internal class UploadAttachmentsAndroidWorker(
         val repositoryProvider = RepositoryProvider.get()
 
         return UploadAttachmentsWorker(
-            LogicRegistry.get().channel(channelType, channelId).stateLogic(),
-            repositoryProvider.get(MessageRepository::class.java),
-            chatClient
+            channelType = channelType,
+            channelId = channelId,
+            channelLogic = LogicRegistry.get().channel(channelType, channelId),
+            channelState = StateRegistry.get().channel(channelType, channelId),
+            messageRepository = repositoryProvider.get(MessageRepository::class.java),
+            chatClient = chatClient
         ).uploadAttachmentsForMessage(
-            channelType,
-            channelId,
             messageId
         ).let { result ->
             if (result.isSuccess) Result.success() else Result.failure()

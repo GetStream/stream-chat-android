@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.util.extensions
 
 import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Creates a set of channel capabilities fully populated
@@ -25,7 +26,8 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
  * Used for previews, using it in production would grant every user
  * all privileges.
  */
-internal fun ChannelCapabilities.toSet(): Set<String> = setOf(
+@InternalStreamChatApi
+public fun ChannelCapabilities.toSet(): Set<String> = setOf(
     BAN_CHANNEL_MEMBERS,
     CONNECT_EVENTS,
     DELETE_ANY_MESSAGE,

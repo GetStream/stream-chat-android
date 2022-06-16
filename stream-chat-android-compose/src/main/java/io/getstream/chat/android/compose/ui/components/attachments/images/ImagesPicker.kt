@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -45,14 +44,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import coil.fetch.VideoFrameUriFetcher
+import coil.compose.AsyncImage
+import coil.decode.VideoFrameDecoder
+import coil.request.ImageRequest
 import coil.request.videoFrameMillis
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 private const val DefaultNumberOfPicturesPerRow = 3
@@ -101,15 +102,15 @@ internal fun DefaultImagesPickerItem(
     val attachmentMetaData = imageItem.attachmentMetaData
     val isVideo = attachmentMetaData.type == ModelType.attach_video
 
-    val painter = rememberImagePainter(
-        data = attachmentMetaData.uri.toString(),
-        builder = {
+    val imageRequest = ImageRequest.Builder(LocalContext.current)
+        .data(attachmentMetaData.uri.toString())
+        .apply {
             if (isVideo) {
                 videoFrameMillis(VideoFrameMillis)
-                fetcher(VideoFrameUriFetcher(LocalContext.current))
+                decoderFactory(VideoFrameDecoder.Factory())
             }
         }
-    )
+        .build()
 
     Box(
         modifier = Modifier
@@ -121,11 +122,14 @@ internal fun DefaultImagesPickerItem(
                 onClick = { onImageSelected(imageItem) }
             )
     ) {
-        Image(
+        AsyncImage(
+            model = imageRequest,
+            imageLoader = LocalStreamImageLoader.current,
             modifier = Modifier.fillMaxSize(),
-            painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            onSuccess = {
+            }
         )
 
         if (imageItem.isSelected) {
