@@ -38,49 +38,49 @@ internal class UploadAttachmentsWorker(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
 
+    @Suppress("TooGenericExceptionCaught")
     suspend fun uploadAttachmentsForMessage(
         messageId: String,
     ): Result<Unit> {
         val message = messageRepository.selectMessage(messageId)
 
         return try {
-            chatClient.apply {
-                if (getCurrentUser() == null) {
-                    if (!chatClient.containsStoredCredentials()) {
-                        return Result.error(ChatError("Could not set user"))
-                    }
-
-                    chatClient.setUserWithoutConnectingIfNeeded()
-                }
-            }
-
-            if (message == null) {
-                Result.success(Unit)
-            } else {
-                val hasPendingAttachment = message.attachments.any { attachment ->
-                    attachment.uploadState is Attachment.UploadState.InProgress ||
-                        attachment.uploadState is Attachment.UploadState.Idle
-                }
-
-                if (!hasPendingAttachment) {
-                    return Result.success(Unit)
-                }
-
-                val attachments = uploadAttachments(message)
-                updateMessages(message)
-
-                if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
-                    Result.success(Unit)
-                } else {
-                    Result.error(ChatError())
-                }
-            }
+            message?.let { sendAttachments(it) } ?: Result.success(Unit)
         } catch (e: Exception) {
             message?.let { updateMessages(it) }
             Result.error(e)
         }
     }
 
+    private suspend fun sendAttachments(message: Message): Result<Unit> {
+        if (chatClient.getCurrentUser() == null) {
+            if (!chatClient.containsStoredCredentials()) {
+                return Result.error(ChatError("Could not set user"))
+            }
+
+            chatClient.setUserWithoutConnectingIfNeeded()
+        }
+
+        val hasPendingAttachment = message.attachments.any { attachment ->
+            attachment.uploadState is Attachment.UploadState.InProgress ||
+                attachment.uploadState is Attachment.UploadState.Idle
+        }
+
+        return if (!hasPendingAttachment) {
+            Result.success(Unit)
+        } else {
+            val attachments = uploadAttachments(message)
+            updateMessages(message)
+
+            if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
+                Result.success(Unit)
+            } else {
+                Result.error(ChatError())
+            }
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(
         message: Message,
     ): List<Attachment> {
@@ -104,7 +104,6 @@ internal class UploadAttachmentsWorker(
                 }
             }.toMutableList()
         } catch (e: Exception) {
-            e.printStackTrace()
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
@@ -133,7 +132,7 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: ChannelMutableStateInterface
+        private val mutableState: ChannelMutableStateInterface,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {

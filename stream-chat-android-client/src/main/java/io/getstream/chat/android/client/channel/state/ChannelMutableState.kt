@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
-//Todo: Change this name
+// Todo: Change this name
+@Suppress("VariableNaming")
 public interface ChannelMutableStateInterface: ChannelState {
 
     public val _messages: MutableStateFlow<Map<String, Message>>
