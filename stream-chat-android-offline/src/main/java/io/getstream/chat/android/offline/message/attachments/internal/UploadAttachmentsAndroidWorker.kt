@@ -46,13 +46,13 @@ internal class UploadAttachmentsAndroidWorker(
         val repositoryProvider = RepositoryProvider.get()
 
         return UploadAttachmentsWorker(
-            LogicRegistry.get(),
-            StateRegistry.get().channel(channelType, channelId),
-            repositoryProvider.get(MessageRepository::class.java),
-            chatClient
+            channelType = channelType,
+            channelId = channelId,
+            channelLogic = LogicRegistry.get().channel(channelType, channelId),
+            channelState = StateRegistry.get().channel(channelType, channelId),
+            messageRepository = repositoryProvider.get(MessageRepository::class.java),
+            chatClient = chatClient
         ).uploadAttachmentsForMessage(
-            channelType,
-            channelId,
             messageId
         ).let { result ->
             if (result.isSuccess) Result.success() else Result.failure()
