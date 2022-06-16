@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -47,7 +46,7 @@ internal class UploadAttachmentsAndroidWorker(
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
-            stateLogic = LogicRegistry.get().channel(channelType, channelId).stateLogic(),
+            stateLogic = chatClient.channelStateLogicProvider.stateLogic(channelType, channelId),
             messageRepository = repositoryProvider.get(MessageRepository::class.java),
             chatClient = chatClient
         ).uploadAttachmentsForMessage(

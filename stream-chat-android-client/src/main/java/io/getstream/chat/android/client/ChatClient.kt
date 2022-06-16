@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -205,6 +206,19 @@ internal constructor(
     internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
+
+    private var _channelStateLogicProvider: ChannelStateLogicProvider? = null
+
+    public var channelStateLogicProvider: ChannelStateLogicProvider
+        get() {
+            return _channelStateLogicProvider ?: throw IllegalStateException(
+                "channelStateLogicProvider was not initialized. You must initialize OfflinePlugin or set an " +
+                    "implementation for channelStateLogicProvider"
+            )
+        }
+        set(value) {
+            _channelStateLogicProvider = value
+        }
 
     /**
      * Error handlers for API calls.

@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.channel.state.ChannelStateLogic
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -50,7 +52,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
-) {
+) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
@@ -84,6 +86,10 @@ internal class LogicRegistry internal constructor(
 
             ChannelLogic(repos = repos, userPresence = userPresence, channelStateLogic = stateLogic)
         }
+    }
+
+    override fun stateLogic(channelType: String, channelId: String): ChannelStateLogic {
+        return channel(channelType, channelId).stateLogic()
     }
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
