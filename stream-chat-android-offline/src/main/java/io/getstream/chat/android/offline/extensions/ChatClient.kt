@@ -348,11 +348,11 @@ public fun ChatClient.loadMessageById(
     messageId: String,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
-        doLoadMessageById(cid, messageId)
+        loadMessageByIdInternal(cid, messageId)
     }
 }
 
-private suspend fun ChatClient.doLoadMessageById(
+private suspend fun ChatClient.loadMessageByIdInternal(
     cid: String,
     messageId: String,
 ): Result<Message> {
