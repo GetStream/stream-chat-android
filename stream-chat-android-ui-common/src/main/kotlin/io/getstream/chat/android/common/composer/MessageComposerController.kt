@@ -443,6 +443,19 @@ public class MessageComposerController(
     }
 
     /**
+     * Replaces the previously selected attachments with the newly selected attachments from the attachment
+     * picker. These will be shown in the UI, within the composer component. We upload and send these
+     * attachments once the user taps on the send button.
+     *
+     * @param attachments The attachments to store and show in the composer.
+     */
+    public fun setSelectedAttachments(attachments: List<Attachment>) {
+        selectedAttachments.value = emptyList()
+
+        addSelectedAttachments(attachments)
+    }
+
+    /**
      * Clears all the data from the input - both the current [input] value and the
      * [selectedAttachments].
      */

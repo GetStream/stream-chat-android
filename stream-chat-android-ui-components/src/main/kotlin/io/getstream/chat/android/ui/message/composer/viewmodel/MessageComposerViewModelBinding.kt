@@ -54,7 +54,7 @@ public fun MessageComposerViewModel.bindView(
     sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
     textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
     clearInputButtonClickListener: () -> Unit = { setMessageInput("") },
-    attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
+    attachmentSelectionListener: (List<Attachment>) -> Unit = { setSelectedAttachments(it) },
     attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     mentionSelectionListener: (User) -> Unit = { selectMention(it) },
     commandSelectionListener: (Command) -> Unit = { selectCommand(it) },

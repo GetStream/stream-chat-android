@@ -165,6 +165,16 @@ public class MessageComposerViewModel(
         messageComposerController.removeSelectedAttachment(attachment)
 
     /**
+     * Replaces the previously selected attachments with the newly selected attachments from the attachment
+     * picker. These will be shown in the UI, within the composer component. We upload and send these
+     * attachments once the user taps on the send button.
+     *
+     * @param attachments The attachments to store and show in the composer.
+     */
+    public fun setSelectedAttachments(attachments: List<Attachment>): Unit =
+        messageComposerController.setSelectedAttachments(attachments)
+
+    /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
      * or we send a new message, using our API.
      *
