@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.message.attachments.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -26,8 +27,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
@@ -68,8 +67,8 @@ internal class UploadAttachmentsWorker(
                     return Result.success(Unit)
                 }
 
-                val attachments = uploadAttachments(message, channelType, channelId)
-                updateMessages(message, channelType, channelId)
+                val attachments = uploadAttachments(message)
+                updateMessages(message)
 
                 if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                     Result.success(Unit)
@@ -96,7 +95,7 @@ internal class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            channelState.toMutableState()
+                            stateLogic.listerForChannelState().toMutableState()
                         )
                     )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
