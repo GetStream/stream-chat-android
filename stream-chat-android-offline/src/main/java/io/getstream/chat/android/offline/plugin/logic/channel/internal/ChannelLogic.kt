@@ -631,8 +631,4 @@ internal class ChannelLogic(
     internal fun replyMessage(repliedMessage: Message?) {
         channelStateLogic.replyMessage(repliedMessage)
     }
-
-    private companion object {
-        private const val OFFSET_EVENT_TIME = 5L
-    }
 }
