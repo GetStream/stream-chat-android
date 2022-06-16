@@ -57,7 +57,9 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         val result = sut.connectUser(user, "token").await()
 
-        verify(userStateService, times(1)).state
+        verify(userStateService, times(2)).state
+        verify(userStateService).onLogout()
+        verify(socket).disconnect()
         verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
