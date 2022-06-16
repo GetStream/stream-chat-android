@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -76,9 +75,7 @@ import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -141,13 +138,7 @@ internal class ChannelLogic(
         channelId: String,
         request: QueryChannelRequest,
     ): Result<Unit> {
-        val loader = loadingStateByRequest(request)
-        return if (loader.value) {
-            logger.logI("Another request to load messages is in progress. Ignoring this request.")
-            Result.error(ChatError("Another request to load messages is in progress. Ignoring this request."))
-        } else {
-            Result.success(Unit)
-        }
+        return Result(Unit)
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
@@ -252,11 +243,6 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
-        val preconditionResult = onQueryChannelPrecondition(mutableState.channelType, mutableState.channelId, request)
-        if (preconditionResult.isError) {
-            return Result.error(preconditionResult.error())
-        }
-
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
@@ -272,7 +258,7 @@ internal class ChannelLogic(
         }
     }
 
-    internal suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+    private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
         val loader = loadingStateByRequest(request)
         loader.value = true
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
@@ -376,7 +362,7 @@ internal class ChannelLogic(
 
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
-    internal fun setWatcherCount(watcherCount: Int) {
+    private fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
             mutableState._watcherCount.value = watcherCount
         }
@@ -532,7 +518,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    internal fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
@@ -541,7 +527,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    internal fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
+    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
     /**
@@ -723,7 +709,7 @@ internal class ChannelLogic(
         }
     }
 
-    internal fun setTyping(userId: String, event: ChatEvent?) {
+    private fun setTyping(userId: String, event: ChatEvent?) {
         val copy = mutableState._typing.value.toMutableMap()
         if (event == null) {
             copy.remove(userId)
@@ -888,23 +874,6 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
-    }
-
-    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
-        if (message != null) {
-            val newAttachments = message.attachments.map { attachment ->
-                if (attachment.uploadId == uploadId) {
-                    attachment.copy(uploadState = newState)
-                } else {
-                    attachment
-                }
-            }
-            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages =
-                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-            mutableState._messages.value = newMessages
-        }
     }
 
     private companion object {

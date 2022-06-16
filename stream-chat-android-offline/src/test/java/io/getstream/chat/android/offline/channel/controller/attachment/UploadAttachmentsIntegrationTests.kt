@@ -24,11 +24,14 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
@@ -67,8 +70,14 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.channel(any(), any())) doReturn mock()
         }
 
+        val channelLogic: ChannelLogic = mock()
+
+        val channelState: ChannelMutableState = mock {
+            on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
+        }
+
         uploadAttachmentsWorker =
-            UploadAttachmentsWorker(logicRegistry, repositoryFacade, chatClient)
+            UploadAttachmentsWorker(channelType, channelId, channelLogic, channelState, repositoryFacade, chatClient)
     }
 
     @Test
@@ -83,7 +92,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
             repositoryFacade.insertMessage(message)
 
-            uploadAttachmentsWorker.uploadAttachmentsForMessage(channelType, channelId, message.id)
+            uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
 
             val persistedMessage = repositoryFacade.selectMessage(message.id)!!
             persistedMessage.attachments.size shouldBeEqualTo attachments.size
@@ -102,7 +111,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
             repositoryFacade.insertMessage(message)
 
-            uploadAttachmentsWorker.uploadAttachmentsForMessage(channelType, channelId, message.id)
+            uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
 
             val persistedMessage = repositoryFacade.selectMessage(message.id)!!
             persistedMessage.attachments.size shouldBeEqualTo attachments.size

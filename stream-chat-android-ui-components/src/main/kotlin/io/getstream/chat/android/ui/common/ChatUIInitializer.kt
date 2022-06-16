@@ -27,7 +27,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.internal.AvatarFetcher
+import io.getstream.chat.android.ui.common.internal.AvatarFetcherFactory
+import io.getstream.chat.android.ui.common.internal.AvatarKeyer
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -44,16 +45,16 @@ public class ChatUIInitializer : Initializer<Unit> {
 
     private fun setImageLoader(context: Context) {
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
-            componentRegistry {
+            components {
                 // duplicated as we can not extend component
                 // registry of existing image loader builder
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(context))
+                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
-
-                add(AvatarFetcher())
+                add(AvatarFetcherFactory())
+                add(AvatarKeyer)
             }
         }
         StreamCoil.setImageLoader(imageLoaderFactory)
