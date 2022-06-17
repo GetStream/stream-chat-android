@@ -32,7 +32,8 @@ internal fun Message.isDeleted(): Boolean = deletedAt != null
 /**
  * @return if the message was sent by current user.
  */
-@Deprecated("use isMine version with ChatClient parameter",
+@Deprecated(
+    "use isMine version with ChatClient parameter",
     ReplaceWith(
         "Message.isMine(chatClient: ChatClient)",
         "io.getstream.chat.android.client.ChatClient"
@@ -65,7 +66,8 @@ public fun Message.getCreatedAtOrNull(): Date? {
 /**
  * @return if the message failed at moderation or not.
  */
-@Deprecated("use isModerationFailed version with ChatClient parameter",
+@Deprecated(
+    "use isModerationFailed version with ChatClient parameter",
     ReplaceWith(
         "Message.isModerationFailed(chatClient: ChatClient)",
         "io.getstream.chat.android.client.ChatClient"
