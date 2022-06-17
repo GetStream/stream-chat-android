@@ -77,10 +77,10 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
         /**
          * Creates instances of [AttachmentGalleryOptionsDialogFragment].
          *
-         * @param showInChatHandler A callback for c
-         * @param replyHandler
-         * @param deleteHandler
-         * @param saveImageHandler
+         * @param showInChatHandler A callback for the "show in chat" option.
+         * @param replyHandler A callback for the "reply" option.
+         * @param deleteHandler A callback for the "delete" option.
+         * @param saveImageHandler A callback for the "save image" option.
          * @param isMine If the message belongs to the current user.
          */
         fun newInstance(
