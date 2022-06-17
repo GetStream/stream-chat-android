@@ -1003,7 +1003,7 @@ public final class io/getstream/chat/android/client/errors/ChatNetworkError$Comp
 	public static synthetic fun create$default (Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;Lio/getstream/chat/android/client/errors/ChatErrorCode;Ljava/lang/Throwable;IILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatNetworkError;
 }
 
-public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamException {
+public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamSdkException {
 	public fun <init> (Ljava/lang/String;)V
 }
 
@@ -1034,13 +1034,19 @@ public final class io/getstream/chat/android/client/errors/cause/MessageModerati
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class io/getstream/chat/android/client/errors/cause/StreamCodeException : java/lang/Exception {
+public abstract class io/getstream/chat/android/client/errors/cause/StreamCodeException : io/getstream/chat/android/client/errors/cause/StreamException {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public abstract class io/getstream/chat/android/client/errors/cause/StreamException : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class io/getstream/chat/android/client/errors/cause/StreamSdkException : io/getstream/chat/android/client/errors/cause/StreamException {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
