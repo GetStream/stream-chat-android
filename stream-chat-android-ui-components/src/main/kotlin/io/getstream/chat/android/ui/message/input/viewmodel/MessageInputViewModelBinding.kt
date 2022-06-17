@@ -145,6 +145,8 @@ public fun MessageInputViewModel.bindView(
         }
     )
 
+    view.setTypingUpdatesBuffer(typingUpdatesBuffer)
+
     repliedMessage.observe(lifecycleOwner) {
         if (it != null) {
             view.inputMode = MessageInputView.InputMode.Reply(it)

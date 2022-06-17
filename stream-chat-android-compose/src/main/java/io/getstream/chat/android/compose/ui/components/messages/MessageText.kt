@@ -38,6 +38,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
+import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
@@ -149,13 +151,10 @@ public fun MessageText(
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
-    val isEmojiOnly = message.isEmojiOnly()
-    val isSingleEmoji = message.isSingleEmoji()
-
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
-        isSingleEmoji -> ChatTheme.typography.singleEmoji
-        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
+        message.isFewEmoji() -> ChatTheme.typography.emojiOnly
         else -> ChatTheme.typography.bodyBold
     }
 
@@ -186,14 +185,13 @@ public fun MessageText(
             }
         }
     } else {
-        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
+        val horizontalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 12.dp
+        val verticalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 8.dp
         Text(
             modifier = modifier
                 .padding(
-                    start = horizontalPadding,
-                    end = horizontalPadding,
-                    top = if (isEmojiOnly) 0.dp else 8.dp,
-                    bottom = if (isEmojiOnly) 0.dp else 8.dp
+                    horizontal = horizontalPadding,
+                    vertical = verticalPadding
                 )
                 .clipToBounds(),
             text = styledText,

@@ -58,7 +58,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
 	public static final fun getOFFLINE_SUPPORT_ENABLED ()Z
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -189,14 +188,10 @@ public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuil
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {
 	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun getOFFLINE_SUPPORT_ENABLED ()Z
-	public final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun handlePushMessage (Lio/getstream/chat/android/client/models/PushMessage;)V
 	public final fun instance ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun isInitialized ()Z
 	public final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
-	public final fun setOFFLINE_SUPPORT_ENABLED (Z)V
-	public final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/ChatEventListener {
@@ -2076,7 +2071,6 @@ public final class io/getstream/chat/android/client/extensions/CallKt {
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
-	public static synthetic fun getUsersExcludingCurrent$default (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 }
@@ -2096,18 +2090,15 @@ public final class io/getstream/chat/android/client/extensions/StringExtensionsK
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/ChannelKt {
-	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/MemberKt {
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/MessageKt {
-	public static final fun getNEVER ()Ljava/util/Date;
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/MessageReactionsKt {
-	public static synthetic fun addMyReaction$default (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/PairKt {
@@ -2875,7 +2866,6 @@ public final class io/getstream/chat/android/client/models/Message : io/getstrea
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/client/utils/SyncStatus;Lio/getstream/chat/android/client/models/MessageSyncDescription;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/client/models/ChannelInfo;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/List;IILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Ljava/util/List;
-	public final fun getChannelInfo ()Lio/getstream/chat/android/client/models/ChannelInfo;
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCommand ()Ljava/lang/String;
 	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
@@ -2915,7 +2905,6 @@ public final class io/getstream/chat/android/client/models/Message : io/getstrea
 	public fun hashCode ()I
 	public fun putExtraValue (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun setAttachments (Ljava/util/List;)V
-	public final fun setChannelInfo (Lio/getstream/chat/android/client/models/ChannelInfo;)V
 	public final fun setCid (Ljava/lang/String;)V
 	public final fun setCommand (Ljava/lang/String;)V
 	public final fun setCreatedAt (Ljava/util/Date;)V
@@ -3678,7 +3667,6 @@ public final class io/getstream/chat/android/client/utils/internal/ValidationKt 
 }
 
 public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {
-	public static synthetic fun init$default (Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion;Landroid/content/Context;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService;
 }
 
 public final class io/getstream/chat/android/client/utils/message/MessageUtils {

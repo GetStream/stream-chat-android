@@ -28,7 +28,7 @@ internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : Quer
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = logic.channel(channelType, channelId).onQueryChannelPrecondition(channelType, channelId, request)
+    ): Result<Unit> = Result.success(Unit)
 
     override suspend fun onQueryChannelRequest(
         channelType: String,
