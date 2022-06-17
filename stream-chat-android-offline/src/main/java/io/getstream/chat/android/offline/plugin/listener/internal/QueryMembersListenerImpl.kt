@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.internal.toCid
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 
 /**
@@ -41,7 +41,7 @@ internal class QueryMembersListenerImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ) {
         if (result.isSuccess) {

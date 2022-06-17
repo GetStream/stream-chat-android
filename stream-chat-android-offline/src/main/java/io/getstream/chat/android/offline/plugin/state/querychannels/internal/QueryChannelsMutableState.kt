@@ -18,13 +18,13 @@ package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.offline.extensions.internal.updateUsers
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.logging.StreamLog
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.stateIn
 
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
-    override val sort: QuerySort<Channel>,
+    override val sort: QuerySorter<Channel>,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {

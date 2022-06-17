@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
+    <ID>MaxLineLength:Message.kt$*</ID>
+    <ID>MaxLineLength:Reaction.kt$*</ID>
+    <ID>ReturnCount:Channel.kt$ @InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -16,12 +16,17 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
@@ -31,15 +36,20 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -61,6 +71,7 @@ internal class ChatClientTest {
         val eventF = UnknownEvent("f", Date(), null, emptyMap<Any, Any>())
     }
 
+    lateinit var api: ChatApi
     lateinit var socket: FakeSocket
     lateinit var client: ChatClient
     lateinit var result: MutableList<ChatEvent>
@@ -82,13 +93,14 @@ internal class ChatClientTest {
             false
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
+        api = mock()
         socket = FakeSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
-            api = mock(),
+            api = api,
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
@@ -220,5 +232,58 @@ internal class ChatClientTest {
         socket.sendEvent(Mother.randomUserPresenceChangedEvent(updateUser))
 
         client.getCurrentUser() shouldBeEqualTo updateUser
+    }
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun `Sync with empty cids`() = runTest {
+        /* Given */
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+            Result.error(
+                ChatNetworkError.create(
+                    statusCode = 400,
+                    streamCode = 4,
+                    description = "channel_cids must contain at least 1 item"
+                )
+            )
+        )
+
+        /* When */
+        val result = client.getSyncHistory(emptyList(), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id."))
+    }
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun `Sync with nonempty cids`() = runTest {
+        /* Given */
+        val date = Date()
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+            Result.success(
+                listOf(
+                    HealthEvent(
+                        type = "type",
+                        createdAt = date,
+                        connectionId = "12345"
+                    )
+                )
+            )
+        )
+
+        /* When */
+        val result = client.getSyncHistory(listOf("test"), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.success(
+            listOf(
+                HealthEvent(
+                    type = "type",
+                    createdAt = date,
+                    connectionId = "12345"
+                )
+            )
+        )
     }
 }
