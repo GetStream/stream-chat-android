@@ -2152,7 +2152,6 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getMessageClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageClickListener;
 	public abstract fun getMessageLongClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener;
 	public abstract fun getMessageRetryListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;
-	public abstract fun getModeratedMessageLongClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener;
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;

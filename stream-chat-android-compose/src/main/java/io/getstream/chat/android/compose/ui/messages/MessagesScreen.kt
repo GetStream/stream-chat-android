@@ -401,7 +401,7 @@ public fun MessagesScreen(
                 message = selectedMessage,
                 modifier = Modifier.background(
                     shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colors.surface
+                    color = ChatTheme.colors.inputBackground
                 ),
                 onDismissRequest = { listViewModel.removeOverlay() },
                 onDialogOptionInteraction = { message, action ->
