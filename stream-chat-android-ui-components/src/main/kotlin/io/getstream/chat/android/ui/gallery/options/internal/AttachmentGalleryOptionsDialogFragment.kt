@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.list.options.attachment.internal
+package io.getstream.chat.android.ui.gallery.options.internal
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,7 +24,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentOptionsBinding
 
-internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
+/**
+ * Represents the image options menu, used to perform different actions for
+ * the currently selected image.
+ */
+internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiFragmentAttachmentOptionsBinding? = null
     private val binding get() = _binding!!
 
@@ -41,40 +45,25 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.attachmentOptionsMenu.setReplyClickListener(
-            object : AttachmentOptionsView.ReplyClickListener {
-                override fun onClick() {
-                    replyHandler?.onClick()
-                    dismiss()
-                }
-            }
-        )
-        binding.attachmentOptionsMenu.setDeleteClickListener(
-            object : AttachmentOptionsView.DeleteClickListener {
-                override fun onClick() {
-                    deleteHandler?.onClick()
-                    dismiss()
-                }
-            }
-        )
-        binding.attachmentOptionsMenu.setShowInChatClickListener(
-            object : AttachmentOptionsView.ShowInChatClickListener {
-                override fun onClick() {
-                    showInChatHandler?.onClick()
-                    dismiss()
-                }
-            }
-        )
-        binding.attachmentOptionsMenu.setSaveImageClickListener(
-            object : AttachmentOptionsView.SaveImageClickListener {
-                override fun onClick() {
-                    saveImageHandler?.onClick()
-                    dismiss()
-                }
-            }
-        )
+        binding.attachmentOptionsMenu.setReplyClickListener {
+            replyHandler?.onClick()
+            dismiss()
+        }
+        binding.attachmentOptionsMenu.setDeleteClickListener {
+            deleteHandler?.onClick()
+            dismiss()
+        }
+        binding.attachmentOptionsMenu.setShowInChatClickListener {
+            showInChatHandler?.onClick()
+            dismiss()
+        }
+        binding.attachmentOptionsMenu.setSaveImageClickListener {
+            saveImageHandler?.onClick()
+            dismiss()
+        }
+        binding.attachmentOptionsMenu.setIsMine(isMine)
+
         binding.root.setOnClickListener { dismiss() }
-        binding.attachmentOptionsMenu.setDeleteItemVisiblity(isMine && binding.attachmentOptionsMenu.isDeleteEnabled)
     }
 
     override fun onDestroyView() {
@@ -85,14 +74,23 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     companion object {
         const val TAG = "AttachmentOptionsDialogFragment"
 
+        /**
+         * Creates instances of [AttachmentGalleryOptionsDialogFragment].
+         *
+         * @param showInChatHandler A callback for c
+         * @param replyHandler
+         * @param deleteHandler
+         * @param saveImageHandler
+         * @param isMine If the message belongs to the current user.
+         */
         fun newInstance(
             showInChatHandler: AttachmentOptionHandler,
             replyHandler: AttachmentOptionHandler,
             deleteHandler: AttachmentOptionHandler,
             saveImageHandler: AttachmentOptionHandler,
             isMine: Boolean,
-        ): AttachmentOptionsDialogFragment {
-            return AttachmentOptionsDialogFragment().apply {
+        ): AttachmentGalleryOptionsDialogFragment {
+            return AttachmentGalleryOptionsDialogFragment().apply {
                 this.showInChatHandler = showInChatHandler
                 this.deleteHandler = deleteHandler
                 this.replyHandler = replyHandler
@@ -102,7 +100,13 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
+    /**
+     * Interface definition for a callback to be invoked when an option is clicked.
+     */
     fun interface AttachmentOptionHandler {
+        /**
+         * Called when an option has been clicked.
+         */
         fun onClick()
     }
 }

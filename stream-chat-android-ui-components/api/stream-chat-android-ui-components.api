@@ -76,6 +76,7 @@ public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawa
 
 public final class io/getstream/chat/android/ui/TransformStyle {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/TransformStyle;
+	public final fun getAttachmentGalleryOptionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -98,6 +99,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun setAttachmentGalleryOptionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -964,6 +966,33 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle {
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)V
+	public final fun component1 ()Z
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()Z
+	public final fun component4 ()Landroid/graphics/drawable/Drawable;
+	public final fun component5 ()Z
+	public final fun component6 ()Landroid/graphics/drawable/Drawable;
+	public final fun component7 ()Z
+	public final fun component8 ()Landroid/graphics/drawable/Drawable;
+	public final fun component9 ()I
+	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeleteOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getDeleteOptionEnabled ()Z
+	public final fun getDeleteOptionTextColor ()I
+	public final fun getReplyOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getReplyOptionEnabled ()Z
+	public final fun getSaveImageOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSaveImageOptionEnabled ()Z
+	public final fun getShowInChatOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getShowInChatOptionEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {

@@ -149,6 +149,7 @@
     <ID>MaxLineLength:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener$internal</ID>
     <ID>MaxLineLength:SuggestionListViewStyle.kt$SuggestionListViewStyle$*</ID>
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
+    <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var attachmentGalleryOptionsStyleTransformer: StyleTransformer&lt;AttachmentGalleryOptionsViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer&lt;DefaultQuotedAttachmentViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
@@ -157,11 +158,11 @@
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
     <ID>ReturnCount:DefaultUserLookupHandler.kt$private fun levenshtein(search: CharSequence, target: CharSequence): Int</ID>
-    <ID>SerialVersionUIDInSerializableClass:AttachmentOptionsView.kt$AttachmentOptionsView$Configuration : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$MessageOptionsHandlers : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:MessageOptionsView.kt$MessageOptionsView$Configuration : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
+    <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:MessageInputView.kt$MessageInputView$e: Exception</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
