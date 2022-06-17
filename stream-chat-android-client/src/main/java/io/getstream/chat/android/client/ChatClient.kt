@@ -809,7 +809,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect(DisconnectCause.UnrecoverableError(null))
+            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
         } else {
             socket.disconnect()
         }
@@ -991,7 +991,7 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.UnrecoverableError(null))
+            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
         }
         userCredentialStorage.clear()
         lifecycleObserver.dispose()

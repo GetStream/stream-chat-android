@@ -34,6 +34,7 @@ internal class ConnectionLifecyclePublisher : LifecyclePublisher {
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     var connectionConf: SocketFactory.ConnectionConf? = null
         private set
+
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
         logger.logD("$it")
     }

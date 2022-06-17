@@ -65,15 +65,16 @@ public class FiniteStateMachine<S : Any, E : Any>(
      */
     public fun sendEvent(event: E) {
         runBlocking {
-            mutex.withLock {
+            val shouldNotify = mutex.withLock {
                 val oldState = _state
                 val functions = stateFunctions[oldState::class]
                 val handler = functions?.getHandler(event) ?: defaultEventHandler
                 _state = handler(oldState, event)
-                if (_state != oldState) {
-                    with(_state) {
-                        notifyOnEnter(event)
-                    }
+                _state != oldState
+            }
+            if (shouldNotify) {
+                with(_state) {
+                    notifyOnEnter(event)
                 }
             }
         }

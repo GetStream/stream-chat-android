@@ -53,7 +53,7 @@ internal open class ChatSocket constructor(
     private val parser: ChatParser,
     private val lifecycleObservers: List<LifecyclePublisher>,
 ) {
-    private var pendingConnectionConfig: SocketFactory.ConnectionConf? = null
+    private var pendingStartEvent: Event.Lifecycle.Started? = null
     private val logger = ChatLogger.get("ChatSocket")
 
     private var connectLifecyclePublisher = ConnectionLifecyclePublisher()
@@ -105,9 +105,9 @@ internal open class ChatSocket constructor(
                         }
                     }
                     callListeners { listener -> listener.onDisconnected(this.disconnectCause) }
-                    pendingConnectionConfig?.also {
-                        connectLifecyclePublisher.onConnect(it)
-                        pendingConnectionConfig = null
+                    pendingStartEvent?.also {
+                        stateMachine.sendEvent(it)
+                        pendingStartEvent = null
                     }
                 }
                 onEvent<Event.Lifecycle.Started> {
@@ -173,6 +173,10 @@ internal open class ChatSocket constructor(
             }
 
             state<State.Disconnecting> {
+                onEvent<Event.Lifecycle.Started> { event ->
+                    pendingStartEvent = event
+                    this
+                }
                 onEvent<Event.WebSocket.Terminate> {
                     State.Disconnected(this.disconnectCause)
                 }
@@ -195,12 +199,7 @@ internal open class ChatSocket constructor(
     }
 
     private fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
-        if (state !is State.Disconnected) {
-            // Temporarily store this configuration as previous socket connection is yet to be disconnected.
-            pendingConnectionConfig = connectionConf
-        } else {
-            connectLifecyclePublisher.onConnect(connectionConf)
-        }
+        connectLifecyclePublisher.onConnect(connectionConf)
     }
 
     fun disconnect(cause: DisconnectCause? = null) {
