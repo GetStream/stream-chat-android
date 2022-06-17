@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.errors.cause
 
 /**
- * Exceptions hierarchy for SDK internal usage only.
+ * Stream root exception.
  */
 public sealed class StreamException : Exception {
     protected constructor() : super()
@@ -25,8 +25,3 @@ public sealed class StreamException : Exception {
     protected constructor(message: String?, cause: Throwable?) : super(message, cause)
     protected constructor(cause: Throwable?) : super(cause)
 }
-
-/**
- * Identifies that message cannot be deleted, because it is in failed state due to the moderation violations.
- */
-public class MessageModerationDeletedException(message: String?) : StreamException(message)

@@ -25,6 +25,9 @@ private const val FAILED_MODERATION_TYPE = 200
 /**
  * A type of message sync description.
  *
+ * @param alias An string representation of the [MessageSyncType].
+ * @param type An integer representation of the [MessageSyncType].
+ *
  * @see [MessageSyncDescription]
  */
 public enum class MessageSyncType(
@@ -36,7 +39,7 @@ public enum class MessageSyncType(
      * When no additional description is required to [SyncStatus].
      */
     NONE(
-        alias = "message.none",
+        alias = "message.sync.none",
         type = NONE_TYPE
     ),
 
@@ -46,7 +49,7 @@ public enum class MessageSyncType(
      * @see [SyncStatus.IN_PROGRESS]
      */
     IN_PROGRESS_AWAIT_ATTACHMENTS(
-        alias = "message.in_progress.await_attachments",
+        alias = "message.sync.in_progress.await_attachments",
         type = IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE
     ),
 
@@ -56,7 +59,7 @@ public enum class MessageSyncType(
      * @see [SyncStatus.FAILED_PERMANENTLY]
      */
     FAILED_MODERATION(
-        alias = "message.failed.moderation",
+        alias = "message.sync.failed.moderation",
         type = FAILED_MODERATION_TYPE
     );
 

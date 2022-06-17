@@ -16,12 +16,10 @@
 
 package io.getstream.chat.android.client.errors.cause
 
-import io.getstream.chat.android.client.errors.ChatErrorCode
-
 /**
- * Exceptions hierarchy based on backed error codes.
+ * Exceptions hierarchy for SDK internal usage only.
  */
-public sealed class StreamCodeException : StreamException {
+public sealed class StreamSdkException : StreamException {
     protected constructor() : super()
     protected constructor(message: String?) : super(message)
     protected constructor(message: String?, cause: Throwable?) : super(message, cause)
@@ -29,15 +27,6 @@ public sealed class StreamCodeException : StreamException {
 }
 
 /**
- * Corresponding exception to [ChatErrorCode.MESSAGE_MODERATION_FAILED].
+ * Identifies that message cannot be deleted, because it is in failed state due to the moderation violations.
  */
-public data class MessageModerationFailedException(
-    val details: List<Detail>,
-    override val message: String? = null
-) : StreamCodeException(message) {
-
-    public data class Detail(
-        public val code: Int,
-        public val messages: List<String>
-    )
-}
+public class MessageModerationDeletedException(message: String?) : StreamSdkException(message)
