@@ -98,12 +98,13 @@ internal class CustomAttachmentsViewHolder(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        this.innerAttachmentViewHolder = attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
-            .also { attachmentViewHolder ->
-                attachmentViewHolder.onBindViewHolder(data.message)
-                binding.attachmentsContainer.removeAllViews()
-                binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
-            }
+        this.innerAttachmentViewHolder =
+            attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
+                .also { attachmentViewHolder ->
+                    attachmentViewHolder.onBindViewHolder(data.message)
+                    binding.attachmentsContainer.removeAllViews()
+                    binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
+                }
     }
 
     /**
@@ -123,11 +124,7 @@ internal class CustomAttachmentsViewHolder(
                     container.threadClickListener.onThreadClick(data.message)
                 }
                 root.setOnLongClickListener {
-                    if (data.message.isModerationFailed()) {
-                        container.moderatedMessageLongClickListener.onModeratedMessageLongClick(data.message)
-                    } else {
-                        container.messageLongClickListener.onMessageLongClick(data.message)
-                    }
+                    container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
                 avatarView.setOnClickListener {

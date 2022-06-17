@@ -143,8 +143,7 @@ public fun MessageText(
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit,
-    onModeratedMessageInteraction: (Message) -> Unit
+    onLongItemClick: (Message) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -172,13 +171,7 @@ public fun MessageText(
                 ),
             text = styledText,
             style = style,
-            onLongPress = {
-                if (message.isModerationFailed()) {
-                    onModeratedMessageInteraction(message)
-                } else {
-                    onLongItemClick(message)
-                }
-            }
+            onLongPress = { onLongItemClick(message) }
         ) { position ->
             val targetUrl = annotations.firstOrNull {
                 position in it.start..it.end

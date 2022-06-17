@@ -24,7 +24,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView.LinkClickListen
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
-import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageLongClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 
@@ -39,5 +38,4 @@ public sealed interface MessageListListenerContainer {
     public val userClickListener: UserClickListener
     public val giphySendListener: GiphySendListener
     public val linkClickListener: LinkClickListener
-    public val moderatedMessageLongClickListener: ModeratedMessageLongClickListener
 }

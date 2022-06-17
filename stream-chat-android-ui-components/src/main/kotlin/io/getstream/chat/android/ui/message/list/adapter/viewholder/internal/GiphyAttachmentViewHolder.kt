@@ -79,11 +79,7 @@ internal class GiphyAttachmentViewHolder(
                     container.threadClickListener.onThreadClick(data.message)
                 }
                 root.setOnLongClickListener {
-                    if (data.message.isModerationFailed()) {
-                        container.moderatedMessageLongClickListener.onModeratedMessageLongClick(data.message)
-                    } else {
-                        container.messageLongClickListener.onMessageLongClick(data.message)
-                    }
+                    container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
                 avatarView.setOnClickListener {
