@@ -18,30 +18,22 @@
 
 package io.getstream.chat.ui.sample.feature.chat
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
-import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
@@ -49,7 +41,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.utils.DownloadRequestContract
+import io.getstream.chat.android.ui.utils.AttachmentDownloader
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -84,12 +76,9 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 
-    private val requestStoragePermissionLauncher: ActivityResultLauncher<() -> Call<Unit>> =
-        registerForActivityResult(DownloadRequestContract()) { result ->
-            if (result.first) {
-                messageListViewModel.onEvent(MessageListViewModel.Event.DownloadAttachment(result.second))
-            }
-        }
+    private val attachmentDownloader: AttachmentDownloader = AttachmentDownloader().apply {
+        registerForActivityResult(this@ChatFragment)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
@@ -174,7 +163,9 @@ class ChatFragment : Fragment() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
             bindView(binding.messageListView, viewLifecycleOwner)
-            binding.messageListView.setAttachmentDownloadHandler(::onDownloadAttachment)
+            binding.messageListView.setAttachmentDownloadHandler { downloadCall ->
+                attachmentDownloader.onDownloadAttachment(requireContext(), downloadCall)
+            }
 
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {
@@ -225,23 +216,6 @@ class ChatFragment : Fragment() {
                     ConfirmationDialogFragment.newMessageFlaggedInstance(requireContext())
                         .show(parentFragmentManager, null)
                 }
-            }
-        }
-    }
-
-    @OptIn(InternalStreamChatApi::class)
-    private fun onDownloadAttachment(downloadCall: () -> Call<Unit>) {
-        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-        val hasPermission =
-            ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P || hasPermission) {
-            messageListViewModel.onEvent(MessageListViewModel.Event.DownloadAttachment(downloadCall))
-        } else {
-            if (!hasPermission || shouldShowRequestPermissionRationale(permission)) {
-                requestStoragePermissionLauncher.launch(downloadCall)
-            } else {
-                context?.openSystemSettings()
             }
         }
     }
