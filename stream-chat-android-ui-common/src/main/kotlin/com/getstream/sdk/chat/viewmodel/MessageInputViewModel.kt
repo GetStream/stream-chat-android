@@ -316,7 +316,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
 
-        if (message.isModerationFailed()) {
+        if (message.isModerationFailed(chatClient)) {
             onEditModeratedMessage(message)
         } else {
             chatClient.updateMessage(updatedMessage).enqueue(

@@ -32,8 +32,20 @@ internal fun Message.isDeleted(): Boolean = deletedAt != null
 /**
  * @return if the message was sent by current user.
  */
+@Deprecated("use isMine version with ChatClient parameter",
+    ReplaceWith(
+        "Message.isMine(chatClient: ChatClient)",
+        "io.getstream.chat.android.client.ChatClient"
+    )
+)
 @InternalStreamChatApi
 public fun Message.isMine(): Boolean = ChatClient.instance().getCurrentUser()?.id == user.id
+
+/**
+ * @return if the message was sent by current user.
+ */
+@InternalStreamChatApi
+public fun Message.isMine(chatClient: ChatClient): Boolean = chatClient.getCurrentUser()?.id == user.id
 
 /**
  * @return when the message was created or throw an exception.
@@ -53,6 +65,19 @@ public fun Message.getCreatedAtOrNull(): Date? {
 /**
  * @return if the message failed at moderation or not.
  */
+@Deprecated("use isModerationFailed version with ChatClient parameter",
+    ReplaceWith(
+        "Message.isModerationFailed(chatClient: ChatClient)",
+        "io.getstream.chat.android.client.ChatClient"
+    )
+)
 public fun Message.isModerationFailed(): Boolean = isMine() &&
+    syncStatus == SyncStatus.FAILED_PERMANENTLY &&
+    syncDescription?.type == MessageSyncType.FAILED_MODERATION
+
+/**
+ * @return if the message failed at moderation or not.
+ */
+public fun Message.isModerationFailed(chatClient: ChatClient): Boolean = isMine(chatClient) &&
     syncStatus == SyncStatus.FAILED_PERMANENTLY &&
     syncDescription?.type == MessageSyncType.FAILED_MODERATION
