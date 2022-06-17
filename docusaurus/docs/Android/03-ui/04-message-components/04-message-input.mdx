@@ -54,7 +54,7 @@ messageInputView.setOnSendButtonClickListener {
 ```
 
 If you want to listen to typing updates, you can set your own instance of [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer.kt) on the `MessageInputView`.
-The buffer is designed to save valuable API calls by not firing an event on each keystroke, it intelligently times them based on an internal interval. Additionally, it automatically tracks typing inactivity after the last keystroke and sends a stop typing event after a period of time has elapsed.
+The buffer is designed to save valuable API calls by not firing an event on each keystroke, but intelligently time them based on an interval. Additionally, it automatically tracks typing inactivity after the last keystroke and sends a stop typing event after a set period of time.
 
 ```kotlin
 messageInputView.setTypingUpdatesBuffer(
