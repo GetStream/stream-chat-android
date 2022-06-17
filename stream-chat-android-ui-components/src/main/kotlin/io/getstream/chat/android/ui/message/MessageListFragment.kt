@@ -16,19 +16,26 @@
 
 package io.getstream.chat.android.ui.message
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.StyleRes
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -39,6 +46,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.utils.DownloadRequestContract
 
 /**
  * Self-contained chat screen which internally contains the following components:
@@ -91,6 +99,17 @@ public open class MessageListFragment : Fragment() {
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
     protected val binding: StreamUiFragmentMessageListBinding get() = _binding!!
+
+    /**
+     * [ActivityResultLauncher] instance tasked with requesting [Manifest.permission.WRITE_EXTERNAL_STORAGE] permission.
+     * By default will ask for permission and if it is granted will download the file.
+     */
+    protected val requestStoragePermissionLauncher: ActivityResultLauncher<() -> Call<Unit>> =
+        registerForActivityResult(DownloadRequestContract()) { result ->
+            if (result.first) {
+                result.second()
+            }
+        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -153,6 +172,7 @@ public open class MessageListFragment : Fragment() {
      */
     protected open fun setupMessageList(messageListView: MessageListView) {
         messageListViewModel.bindView(messageListView, viewLifecycleOwner)
+        messageListView.setAttachmentDownloadHandler { downloadCall -> onDownloadAttachment(downloadCall) }
 
         messageListViewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -165,6 +185,29 @@ public open class MessageListFragment : Fragment() {
                         backPressListener?.onBackPress()
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Gets called when a user attempts to download an attachment. If the user has granted
+     * [Manifest.permission.WRITE_EXTERNAL_STORAGE] the file will get downloaded, and if the permission was not granted
+     * will prompt the user for the permission or take him to settings to grant the permission. Once the permission is
+     * granted the file is automatically downloaded.
+     * @see [DownloadRequestContract]
+     */
+    private fun onDownloadAttachment(downloadCall: () -> Call<Unit>) {
+        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val hasPermission =
+            ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P || hasPermission) {
+            messageListViewModel.onEvent(MessageListViewModel.Event.DownloadAttachment(downloadCall))
+        } else {
+            if (!hasPermission || shouldShowRequestPermissionRationale(permission)) {
+                requestStoragePermissionLauncher.launch(downloadCall)
+            } else {
+                context?.openSystemSettings()
             }
         }
     }

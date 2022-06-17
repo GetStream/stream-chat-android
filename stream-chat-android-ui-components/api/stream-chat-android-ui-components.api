@@ -1075,6 +1075,7 @@ public class io/getstream/chat/android/ui/message/MessageListFragment : androidx
 	protected final fun getMessageInputViewModel ()Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;
 	protected final fun getMessageListHeaderViewModel ()Lio/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel;
 	protected final fun getMessageListViewModel ()Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;
+	protected final fun getRequestStoragePermissionLauncher ()Landroidx/activity/result/ActivityResultLauncher;
 	protected final fun getShowHeader ()Z
 	protected fun getTheme ()I
 	protected final fun getThemeResId ()I
@@ -2899,6 +2900,14 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
 	public final fun chatClient (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
+}
+
+public final class io/getstream/chat/android/ui/utils/DownloadRequestContract : androidx/activity/result/contract/ActivityResultContract {
+	public fun <init> ()V
+	public synthetic fun createIntent (Landroid/content/Context;Ljava/lang/Object;)Landroid/content/Intent;
+	public fun createIntent (Landroid/content/Context;Lkotlin/jvm/functions/Function0;)Landroid/content/Intent;
+	public synthetic fun parseResult (ILandroid/content/Intent;)Ljava/lang/Object;
+	public fun parseResult (ILandroid/content/Intent;)Lkotlin/Pair;
 }
 
 public final class io/getstream/chat/android/ui/utils/GiphyInfo {
