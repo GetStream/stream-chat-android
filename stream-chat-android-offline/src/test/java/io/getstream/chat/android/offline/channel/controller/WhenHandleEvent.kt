@@ -24,9 +24,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.SynchronizedCoroutineTest
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
-import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
-import io.getstream.chat.android.offline.randomChannelUpdatedEvent
 import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMemberAddedEvent
 import io.getstream.chat.android.offline.randomMessage
@@ -45,7 +43,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -135,47 +132,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).upsertMessages(listOf(message))
     }
-
-
-    // Todo: Move this to ChannelStateLogic test
-    // @Test
-    // fun `when a message update event is outdated, it should be ignored`() = runTest {
-    //     val messageId = randomString()
-    //     val createdAt = randomDate()
-    //     val createdLocallyAt = randomDateBefore(createdAt.time)
-    //     val updatedAt = randomDateAfter(createdAt.time)
-    //     val oldUpdatedAt = randomDateBefore(updatedAt.time)
-    //     val recentMessage = randomMessage(
-    //         id = messageId,
-    //         user = User(id = "otherUserId"),
-    //         createdAt = createdAt,
-    //         createdLocallyAt = createdLocallyAt,
-    //         updatedAt = updatedAt,
-    //         updatedLocallyAt = updatedAt,
-    //         deletedAt = null,
-    //         silent = false,
-    //         showInChannel = true
-    //     )
-    //     val oldMessage = randomMessage(
-    //         id = messageId,
-    //         user = User(id = "otherUserId"),
-    //         createdAt = createdAt,
-    //         createdLocallyAt = createdLocallyAt,
-    //         updatedAt = oldUpdatedAt,
-    //         updatedLocallyAt = oldUpdatedAt,
-    //         deletedAt = null,
-    //         silent = false,
-    //         showInChannel = true
-    //     )
-    //     channelLogic.upsertMessages(listOf(recentMessage))
-    //     val messageUpdateEvent = randomMessageUpdateEvent(message = oldMessage)
-    //
-    //     channelLogic.handleEvent(messageUpdateEvent)
-    //
-    //     channelMutableState.messages.value shouldBeEqualTo listOf(recentMessage)
-    //     channelMutableState.messages.value shouldNotBeEqualTo listOf(oldMessage)
-    // }
-
+    
     // Member added event
     @Test
     fun `when member is added, it should be propagated`(): Unit = runTest {
