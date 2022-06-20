@@ -710,8 +710,8 @@ public final class io/getstream/chat/android/ui/common/ChannelNameFormatter$Comp
 
 public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
 	public fun <init> ()V
-	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
 	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun create (Landroid/content/Context;)V
 	public fun dependencies ()Ljava/util/List;
 }
 
@@ -1140,6 +1140,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListViewHolderFactory (Lio/getstream/chat/android/ui/suggestion/list/adapter/SuggestionListItemViewHolderFactory;)V
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
 	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V
@@ -1670,6 +1671,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setBlockUserEnabled (Z)V
+	public final fun setBottomEndRegionReachedHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
@@ -1727,6 +1729,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
 	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
+	public final fun shouldRequestMessagesAtBottom (Z)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 	public final fun showLoadingView ()V
@@ -1742,6 +1745,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler {
 	public abstract fun onAttachmentDownload (Lkotlin/jvm/functions/Function0;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler {
+	public abstract fun onBottomEndRegionReached (Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler {

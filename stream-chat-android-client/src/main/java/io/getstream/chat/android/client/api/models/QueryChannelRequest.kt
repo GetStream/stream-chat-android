@@ -85,6 +85,14 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
 
+    public fun isFilteringAroundIdMessages(): Boolean {
+        if (messages.isEmpty()) {
+            return false
+        }
+        val keys = messages.keys
+        return keys.contains(Pagination.AROUND_ID.toString())
+    }
+
     /**
      * Returns offset of watchers for a requested channel.
      */

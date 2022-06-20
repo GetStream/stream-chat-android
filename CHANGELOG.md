@@ -15,12 +15,15 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+-  Avoid multiple calls to `/app` endpoint. [3686](https://github.com/GetStream/stream-chat-android/pull/3686)
 
 ### ✅ Added
 -. `ChatClient::connectUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectAnonymousUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectGuestUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectUser` doesn't return an error in the case there is a previous connection with the same user. [#3653](https://github.com/GetStream/stream-chat-android/pull/3653)
+- Added `ChatClient::countUnreadMentions` extension function which counts messages in which the user is mentioned.
+  The method relies only on the local data, so the result might be not accurate. [#3644](https://github.com/GetStream/stream-chat-android/pull/3644)
 
 ### ⚠️ Changed
 
@@ -67,12 +70,16 @@
 - Added `MessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `PinnedMessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `TypingIndicatorViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
-- Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [#3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added support for bottom infinite scrolling when searching for messages or navigating to messages in a non-linear way inside MessageListView. [3654](https://github.com/GetStream/stream-chat-android/pull/3654)
+- A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
+- A new method `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachment. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
 
 ### ⚠️ Changed
 - Dimens `stream_ui_spacing_small` no longer has an effect on the internal margins of `ScrollButtonView`, instead use the `MessageListView` attribute `streamUIScrollButtonInternalMargin` to set internal margins. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
 - The default elevation of the unread count badge inside `ScrollButtonView` was changed from `10dp` to `3dp`. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Deprecated `MessageInputView.TypingListener` in favor of `TypingUpdatesBuffer` and `MessageInputView.setTypingListener(TypingListener)` in favor of `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)`. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 
 ### ❌ Removed
 
@@ -86,6 +93,8 @@
 ### ✅ Added
 - Added `Modifier` as an argument to `FileUploadItem` and `FileAttachmentItem`. [#3603](https://github.com/GetStream/stream-chat-android/pull/3603)
 - Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
+- A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
+- A new method `MessageComposerViewModel.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3673](https://github.com/GetStream/stream-chat-android/pull/3676)
 
 ### ⚠️ Changed
@@ -130,10 +139,12 @@
 
 ## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
+- Fix crash when used on Android API 31+ [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Upgrade MiPush SDK to version 5.0.6 [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
 
 ### ⚠️ Changed
 

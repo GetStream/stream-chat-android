@@ -91,6 +91,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -147,7 +148,9 @@ internal class EventHandlerSequential(
     }
 
     private val logger = StreamLog.getLogger(TAG)
-    private val scope = scope + SupervisorJob()
+    private val scope = scope + SupervisorJob() + CoroutineExceptionHandler { context, throwable ->
+        logger.e(throwable) { "[uncaughtCoroutineException] throwable: $throwable, context: $context" }
+    }
     private val currentUserId = AtomicReference<UserId>()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
     private val socketEventCollector = SocketEventCollector(scope) { pendingBatchEvent ->
