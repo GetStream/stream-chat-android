@@ -123,6 +123,7 @@ internal class ClientConnectionTests {
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock()
         )
     }
 

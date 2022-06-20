@@ -99,11 +99,12 @@ import java.util.Date
  * @property repos [RepositoryFacade] that interact with data sources.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
-    private val channelStateLogic: ChannelStateLogic
+    private val channelStateLogic: ChannelStateLogic,
+    private val searchLogic: SearchLogic,
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
@@ -127,7 +128,11 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
-        runChannelQueryOffline(request)
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (!request.isFilteringNewerMessages()) {
+            runChannelQueryOffline(request)
+        }
     }
 
     override suspend fun onQueryChannelResult(
@@ -142,15 +147,24 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
+                val noMoreMessages = request.messagesLimit() > channel.messages.size
+
+                searchLogic.handleMessageBounds(request, noMoreMessages)
                 mutableState.recoveryNeeded = false
-                if (request.messagesLimit() > channel.messages.size) {
+
+                if (noMoreMessages) {
                     if (request.isFilteringNewerMessages()) {
                         mutableState._endOfNewerMessages.value = true
                     } else {
                         mutableState._endOfOlderMessages.value = true
                     }
                 }
-                updateDataFromChannel(channel)
+
+                updateDataFromChannel(
+                    channel,
+                    shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+                    scrollUpdate = true
+                )
                 loadingStateByRequest(request).value = false
             }
             .onError(channelStateLogic::propagateQueryError)
@@ -176,9 +190,7 @@ internal class ChannelLogic(
      *
      * @return [ChannelState]
      */
-    internal fun state(): ChannelState {
-        return mutableState
-    }
+    internal fun state(): ChannelState = mutableState
 
     internal fun stateLogic(): ChannelStateLogic {
         return channelStateLogic
@@ -223,6 +235,10 @@ internal class ChannelLogic(
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
+    internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
+        return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
+    }
+
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
@@ -256,7 +272,7 @@ internal class ChannelLogic(
     private fun updateDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(channelStateLogic::setHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel)
+        updateDataFromChannel(localChannel, scrollUpdate = true)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -278,7 +294,11 @@ internal class ChannelLogic(
         channelStateLogic.setHidden(hidden)
     }
 
-    internal fun updateDataFromChannel(c: Channel) {
+    internal fun updateDataFromChannel(
+        c: Channel,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+    ) {
         channelStateLogic.updateDataFromChannel(c)
     }
     /**
@@ -324,6 +344,13 @@ internal class ChannelLogic(
     private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
+    private fun aroundIdWatchChannelRequest(aroundMessageId: String): WatchChannelRequest {
+        return QueryChannelPaginationRequest().apply {
+            messageFilterDirection = Pagination.AROUND_ID
+            messageFilterValue = aroundMessageId
+        }.toWatchChannelRequest(userPresence)
+    }
+
     /**
      * Creates instance of [WatchChannelRequest] according to [Pagination].
      *
@@ -354,6 +381,7 @@ internal class ChannelLogic(
             -> messages.last().id
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
+            Pagination.AROUND_ID,
             -> messages.first().id
         }
     }
@@ -392,6 +420,7 @@ internal class ChannelLogic(
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
         }
+
         channelStateLogic.upsertMessages(listOf(message))
     }
 
@@ -494,7 +523,9 @@ internal class ChannelLogic(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                upsertEventMessage(event.message)
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.setHidden(false)
             }
@@ -514,7 +545,9 @@ internal class ChannelLogic(
                 channelStateLogic.setHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                upsertEventMessage(event.message)
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.setHidden(false)
             }

@@ -18,6 +18,8 @@ package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.extensions.containsLinks
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -38,6 +40,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -67,6 +70,7 @@ import java.util.regex.Pattern
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 @Suppress("TooManyFunctions")
 public class MessageComposerController(
@@ -89,9 +93,12 @@ public class MessageComposerController(
     /**
      * Buffers typing updates.
      *
-     * @see [TypingUpdateBuffer]
+     * @see [DefaultTypingUpdatesBuffer]
      */
-    private val typingUpdateBuffer = TypingUpdateBuffer()
+    public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
+        onTypingStarted = ::sendKeystrokeEvent,
+        onTypingStopped = ::sendStopTypingEvent
+    )
 
     /**
      * Holds information about the current state of the [Channel].
@@ -342,7 +349,7 @@ public class MessageComposerController(
         this.input.value = value
 
         if (canSendTypingUpdates.value) {
-            typingUpdateBuffer.onTypingEvent()
+            typingUpdatesBuffer.onKeystroke()
         }
         handleMentionSuggestions()
         handleCommandSuggestions()
@@ -553,7 +560,7 @@ public class MessageComposerController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
-        typingUpdateBuffer.clearTypingUpdates()
+        typingUpdatesBuffer.clear()
         scope.cancel()
     }
 
@@ -683,6 +690,24 @@ public class MessageComposerController(
         return chatClient.updateMessage(message)
     }
 
+    /**
+     * Makes an API call signaling that a typing event has occurred.
+     */
+    private fun sendKeystrokeEvent() {
+        val (type, id) = channelId.cidToTypeAndId()
+
+        chatClient.keystroke(type, id, parentMessageId).enqueue()
+    }
+
+    /**
+     * Makes an API call signaling that a stop typing event has occurred.
+     */
+    private fun sendStopTypingEvent() {
+        val (type, id) = channelId.cidToTypeAndId()
+
+        chatClient.stopTyping(type, id, parentMessageId).enqueue()
+    }
+
     private companion object {
         /**
          * The default allowed number of characters in a message.
@@ -704,88 +729,6 @@ public class MessageComposerController(
          */
         private const val DefaultMessageLimit: Int = 30
 
-        private const val DefaultTypingUpdateIntervalMillis = 3000L
         private const val OneSecond = 1000L
-    }
-
-    /**
-     * A class designed to buffer typing updates.
-     * It works by sending the initial keystroke event and
-     * delaying for [delayInterval] before sending a stop typing
-     * event.
-     *
-     * Every subsequent keystroke will cancel the previous work
-     * and reset the time before sending a stop typing event.
-     *
-     * @param delayInterval The interval between the sending the
-     * keystroke event and the stop typing event.
-     */
-    private inner class TypingUpdateBuffer(private val delayInterval: Long = DefaultTypingUpdateIntervalMillis) {
-
-        /**
-         * If the user is currently typing or not.
-         *
-         * Sends out a typing related event on every value
-         * change.
-         */
-        private var isTyping: Boolean = false
-            set(value) {
-                field = value
-                handleTypingEvent(isTyping)
-            }
-
-        /**
-         * Holds the currently running job.
-         */
-        var job: Job? = null
-
-        /**
-         * Used to send a stop typing event after a
-         * set amount of time dictated by [delayInterval].
-         */
-        private suspend fun startTypingTimer() {
-            delay(delayInterval)
-            clearTypingUpdates()
-        }
-
-        /**
-         * Sets the value of [isTyping] only if there is
-         * a change in state in order to not create unnecessary events.
-         *
-         * It also resets the job to stop typing events after delay, debouncing keystrokes.
-         */
-        fun onTypingEvent() {
-            if (!isTyping) {
-                isTyping = true
-            }
-            job?.cancel()
-            job = scope.launch { startTypingTimer() }
-        }
-
-        /**
-         * Sets [isTyping] to false.
-         *
-         * Useful for clearing the state manually and in [onCleared].
-         */
-        fun clearTypingUpdates() {
-            isTyping = false
-        }
-
-        /**
-         * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
-         *
-         * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
-         * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
-         *
-         * @param isTyping If the user is currently typing.
-         */
-        private fun handleTypingEvent(isTyping: Boolean) {
-            val (type, id) = channelId.cidToTypeAndId()
-            if (isTyping) {
-                chatClient.keystroke(type, id, parentMessageId)
-            } else {
-                chatClient.stopTyping(type, id, parentMessageId)
-            }.enqueue()
-        }
     }
 }

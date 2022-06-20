@@ -57,19 +57,18 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
-        object : HealthMonitor.HealthCallback {
-            override fun reconnect() {
-                if (state is State.DisconnectedTemporarily) {
-                    this@ChatSocket.reconnect(connectionConf)
-                }
+        reconnectCallback = {
+            if (state is State.DisconnectedTemporarily) {
+                this@ChatSocket.reconnect(connectionConf)
             }
-            override fun check() {
-                (state as? State.Connected)?.let {
-                    sendEvent(it.event)
-                }
+        },
+        checkCallback = {
+            (state as? State.Connected)?.let {
+                sendEvent(it.event)
             }
         }
     )
+
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
             logger.logI("Network connected. Socket state: ${state.javaClass.simpleName}")

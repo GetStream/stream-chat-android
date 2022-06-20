@@ -181,6 +181,8 @@ internal class ChannelMutableStateImpl(
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
     override var recoveryNeeded: Boolean = false
 
+    override val insideSearch: StateFlow<Boolean> = _insideSearch
+
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
         val channelData = channelData.value

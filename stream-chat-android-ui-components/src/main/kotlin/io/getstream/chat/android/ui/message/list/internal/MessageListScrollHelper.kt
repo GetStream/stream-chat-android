@@ -47,6 +47,8 @@ internal class MessageListScrollHelper(
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
 
+    internal var unreadCountEnabled: Boolean = true
+
     /**
      * True when the latest message is visible.
      *
@@ -181,6 +183,8 @@ internal class MessageListScrollHelper(
     }
 
     private fun refreshUnreadCount() {
+        if (!unreadCountEnabled) return
+
         var unreadCount = 0
         for (i in currentList.lastIndex downTo getLastSeenItemPosition() + 1) {
             if (currentList[i].isValid()) {

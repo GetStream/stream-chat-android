@@ -105,6 +105,8 @@ public interface ChannelState {
     /** Channel config data */
     public val channelConfig: StateFlow<Config>
 
+    public val insideSearch: StateFlow<Boolean>
+
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
 }
