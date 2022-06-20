@@ -83,7 +83,7 @@ public interface ChannelStateLogic {
     /**
      * Kdocs here.
      */
-    public fun upsertMessages(messages: List<Message>)
+    public fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false)
 
     /**
      * Kdocs here.

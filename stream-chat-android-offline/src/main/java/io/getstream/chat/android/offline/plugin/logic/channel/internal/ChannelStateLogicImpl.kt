@@ -188,8 +188,8 @@ internal class ChannelStateLogicImpl(
         upsertMessages(listOf(message))
     }
 
-    override fun upsertMessages(messages: List<Message>) {
-        val newMessages = parseMessages(messages)
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+        val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
     }
@@ -255,7 +255,6 @@ internal class ChannelStateLogicImpl(
         mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
     }
 
-    // Todo: Handle message refresh!!
     override fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
@@ -272,7 +271,7 @@ internal class ChannelStateLogicImpl(
         setWatchers(c.watchers)
 
         if (!mutableState.insideSearch.value || scrollUpdate) {
-            upsertMessages(c.messages)
+            upsertMessages(c.messages, shouldRefreshMessages)
         }
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
@@ -295,13 +294,13 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableStateImpl._messages] with new messages.
+     * Updates [ChannelMutableState._messages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.
      */
-    private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState._messages.value
+    private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
+        val currentMessages = if (shouldRefresh) emptyMap() else mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
@@ -309,9 +308,9 @@ internal class ChannelStateLogicImpl(
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
         return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
-            currentMessage?.lastUpdateTime() ?: NEVER.time <= newMessage.lastUpdateTime()
+            (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
         } else {
-            currentMessage?.lastLocalUpdateTime() ?: NEVER.time <= newMessage.lastLocalUpdateTime()
+            (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
         }
     }
 
