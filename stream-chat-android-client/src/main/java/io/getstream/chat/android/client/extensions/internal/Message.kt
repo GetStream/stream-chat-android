@@ -142,3 +142,10 @@ public fun Message.hasPendingAttachments(): Boolean =
         it.uploadState is Attachment.UploadState.InProgress ||
             it.uploadState is Attachment.UploadState.Idle
     }
+
+/**
+ * Checks if the message mentions the [user].
+ */
+internal fun Message.containsUserMention(user: User): Boolean {
+    return mentionedUsersIds.contains(user.id) || mentionedUsers.any { mentionedUser -> mentionedUser.id == user.id }
+}
