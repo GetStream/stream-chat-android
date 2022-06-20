@@ -79,6 +79,7 @@ internal class ConnectUserTest {
             scope = testCoroutines.scope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock()
         )
     }
 
@@ -151,7 +152,7 @@ internal class ConnectUserTest {
     fun `Where there is an ongoing connection with the same user, an error should be propagated`() = testCoroutines.runTest {
         /* Given */
         val user = User(id = "jc")
-        userStateService.onSetUser(user)
+        userStateService.onSetUser(user, false)
         val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
 
         /* When */
@@ -180,7 +181,7 @@ internal class ConnectUserTest {
     fun `When there is an user connected and try to connect a different user, an error should be propagated`() = testCoroutines.runTest {
         /* Given */
         val user = User(id = "jc")
-        userStateService.onSetUser(user)
+        userStateService.onSetUser(user, false)
         val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
 
         /* When */
@@ -266,7 +267,7 @@ internal class ConnectUserTest {
     }
 
     private fun prepareAliveConnection(user: User, connectionId: String) {
-        userStateService.onSetUser(user)
+        userStateService.onSetUser(user, false)
         socketStateService.onConnectionRequested()
         socketStateService.onConnected(connectionId)
     }

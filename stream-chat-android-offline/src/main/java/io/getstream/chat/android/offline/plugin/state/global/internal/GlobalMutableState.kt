@@ -32,20 +32,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
-public class GlobalMutableState private constructor() : GlobalState {
+public class GlobalMutableState private constructor() : MutableGlobalState {
 
-    internal val _initialized = MutableStateFlow(false)
-    internal val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
-    internal val _totalUnreadCount = MutableStateFlow(0)
-    internal val _channelUnreadCount = MutableStateFlow(0)
-    internal val _errorEvent = MutableStateFlow(Event(ChatError()))
-    internal val _banned = MutableStateFlow(false)
+    private val _initialized = MutableStateFlow(false)
+    private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val _totalUnreadCount = MutableStateFlow(0)
+    private val _channelUnreadCount = MutableStateFlow(0)
+    private val _errorEvent = MutableStateFlow(Event(ChatError()))
+    private val _banned = MutableStateFlow(false)
 
-    internal val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
-    internal val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    internal val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
+    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
+    private val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
 
-    internal val _user = MutableStateFlow<User?>(null)
+    private val _user = MutableStateFlow<User?>(null)
 
     override val user: StateFlow<User?> = _user
 
@@ -118,6 +118,46 @@ public class GlobalMutableState private constructor() : GlobalState {
         _mutedUsers.value = emptyList()
         _channelMutes.value = emptyList()
         _user.value = null
+    }
+
+    override fun setErrorEvent(errorEvent: Event<ChatError>) {
+        _errorEvent.value = errorEvent
+    }
+
+    override fun setUser(user: User) {
+        _user.value = user
+    }
+
+    override fun setConnectionState(connectionState: ConnectionState) {
+        _connectionState.value = connectionState
+    }
+
+    override fun setInitialized(initialized: Boolean) {
+        _initialized.value = initialized
+    }
+
+    override fun setTotalUnreadCount(totalUnreadCount: Int) {
+        _totalUnreadCount.value = totalUnreadCount
+    }
+
+    override fun setChannelUnreadCount(channelUnreadCount: Int) {
+        _channelUnreadCount.value = channelUnreadCount
+    }
+
+    override fun setBanned(banned: Boolean) {
+        _banned.value = banned
+    }
+
+    override fun setChannelMutes(channelMutes: List<ChannelMute>) {
+        _channelMutes.value = channelMutes
+    }
+
+    override fun setMutedUsers(mutedUsers: List<Mute>) {
+        _mutedUsers.value = mutedUsers
+    }
+
+    override fun tryEmitTypingEvent(typingEvent: TypingEvent) {
+        _typingChannels.tryEmit(typingEvent)
     }
 }
 

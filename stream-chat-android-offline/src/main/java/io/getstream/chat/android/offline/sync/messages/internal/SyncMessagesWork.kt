@@ -27,9 +27,9 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.extensions.internal.logic
-import io.getstream.chat.android.offline.utils.internal.validateCid
 
 internal class SyncMessagesWork(
     appContext: Context,
