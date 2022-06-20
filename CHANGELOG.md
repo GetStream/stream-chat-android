@@ -15,6 +15,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+-  Avoid multiple calls to `/app` endpoint. [3686](https://github.com/GetStream/stream-chat-android/pull/3686)
 
 ### ✅ Added
 -. `ChatClient::connectUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
