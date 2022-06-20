@@ -41,7 +41,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.utils.AttachmentDownloader
+import io.getstream.chat.android.ui.utils.DownloadPermissionHandler
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -76,9 +76,8 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 
-    private val attachmentDownloader: AttachmentDownloader = AttachmentDownloader().apply {
-        registerForActivityResult(this@ChatFragment)
-    }
+    private val downloadHandler: DownloadPermissionHandler = DownloadPermissionHandler()
+        .apply { registerForActivityResult(this@ChatFragment) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
@@ -164,7 +163,7 @@ class ChatFragment : Fragment() {
         messageListViewModel.apply {
             bindView(binding.messageListView, viewLifecycleOwner)
             binding.messageListView.setAttachmentDownloadHandler { downloadCall ->
-                attachmentDownloader.onDownloadAttachment(requireContext(), downloadCall)
+                downloadHandler.onHandleRequest(requireContext(), downloadCall)
             }
 
             setDateSeparatorHandler { previousMessage, message ->
