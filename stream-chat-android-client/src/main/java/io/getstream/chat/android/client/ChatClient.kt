@@ -2536,7 +2536,6 @@ internal constructor(
             level = DeprecationLevel.ERROR
         )
         override fun internalBuild(): ChatClient {
-
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
@@ -2548,11 +2547,16 @@ internal constructor(
                 )
             }
 
+            // Use clear text traffic for instrumented tests
+            val isLocalHost = baseUrl.contains("localhost")
+            val httpProtocol = if (isLocalHost) "http" else "https"
+            val wsProtocol = if (isLocalHost) "ws" else "wss"
+
             val config = ChatClientConfig(
                 apiKey = apiKey,
-                httpUrl = "https://$baseUrl/",
-                cdnHttpUrl = "https://$cdnUrl/",
-                wssUrl = "wss://$baseUrl/",
+                httpUrl = "$httpProtocol://$baseUrl/",
+                cdnHttpUrl = "$httpProtocol://$cdnUrl/",
+                wssUrl = "$wsProtocol://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,

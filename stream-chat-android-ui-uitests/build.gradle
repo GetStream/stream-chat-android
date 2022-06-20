@@ -101,4 +101,5 @@ dependencies {
     androidTestImplementation Dependencies.composeUiTest
     androidTestImplementation Dependencies.composeUiTestManifest
     androidTestImplementation Dependencies.testParameterInjector
+    androidTestImplementation Dependencies.okhttpMockWebserver
 }

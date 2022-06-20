@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.suite
+package io.getstream.chat.android.uitests.ui.uicomponents.test
 
-import io.getstream.chat.android.uitests.ui.test.MessagesTests
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import io.getstream.chat.android.uitests.ui.BaseUiTest
+import io.getstream.chat.android.uitests.ui.compose.robot.composeLoginRobot
+import io.getstream.chat.android.uitests.ui.uicomponents.robot.channelsRobot
+import org.junit.Test
 
-@Suite.SuiteClasses(MessagesTests::class)
-@RunWith(Suite::class)
-internal class MessagesSuite
+internal class UiComponentsChannelsTest : BaseUiTest() {
+
+    @Test
+    fun testChannelList() {
+        composeTestRule.composeLoginRobot {
+            selectedUiComponentsSdk()
+            loginWithUser("Jc Miñarro")
+        }
+
+        channelsRobot {
+            assertChannelIsDisplayed()
+        }
+    }
+}
