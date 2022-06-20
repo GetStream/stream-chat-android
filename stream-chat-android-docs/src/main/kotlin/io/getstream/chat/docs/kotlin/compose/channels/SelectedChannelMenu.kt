@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
@@ -36,7 +36,7 @@ private object SelectedChannelMenuUsageSnippet {
         val factory by lazy {
             ChannelViewModelFactory(
                 ChatClient.instance(),
-                QuerySort.desc("last_updated"),
+                QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
@@ -96,7 +96,7 @@ private object SelectedChannelMenuHandlingActionsSnippet {
         val factory by lazy {
             ChannelViewModelFactory(
                 ChatClient.instance(),
-                QuerySort.desc("last_updated"),
+                QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
@@ -162,7 +162,7 @@ private object SelectedChannelMenuCustomizationSnippet {
         val factory by lazy {
             ChannelViewModelFactory(
                 ChatClient.instance(),
-                QuerySort.desc("last_updated"),
+                QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))

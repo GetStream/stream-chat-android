@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.utils.internal
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.validateCid
+import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.toResult
 import org.amshove.kluent.invoking
 import org.amshove.kluent.`should be equal to`

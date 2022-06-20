@@ -25,6 +25,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
@@ -52,8 +53,8 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
     private val user: User by lazy {
         userData.toUser()
     }
-    private val isOwnerOrAdmin: Boolean by lazy {
-        requireArguments().getBoolean(ARG_IS_OWNER_OR_ADMIN)
+    private val ownCapabilities: Set<String> by lazy {
+        requireArguments().getStringArrayList(ARG_OWN_CAPABILITIES)?.toSet() ?: setOf()
     }
 
     private val viewModel: GroupChatInfoMemberOptionsViewModel by viewModels {
@@ -93,7 +94,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                 viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
             }
 
-            if (isAnonymousChannel(cid) || !isOwnerOrAdmin) {
+            if (isAnonymousChannel(cid) || !ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
                 optionRemove.isVisible = false
             } else {
                 optionRemove.setOnClickListener {
@@ -172,16 +173,16 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CID = "cid"
         private const val ARG_CHANNEL_NAME = "channel_name"
         private const val ARG_USER_DATA = "user_data"
-        private const val ARG_IS_OWNER_OR_ADMIN = "is_owner_or_admin"
+        private const val ARG_OWN_CAPABILITIES = "own_capabilities"
 
-        fun newInstance(cid: String, channelName: String, user: User, isOwnerOrAdmin: Boolean) =
+        fun newInstance(cid: String, channelName: String, user: User, ownCapabilities: Set<String>) =
             GroupChatInfoMemberOptionsDialogFragment().apply {
                 arguments =
                     bundleOf(
                         ARG_CID to cid,
                         ARG_CHANNEL_NAME to channelName,
                         ARG_USER_DATA to user.toUserData(),
-                        ARG_IS_OWNER_OR_ADMIN to isOwnerOrAdmin,
+                        ARG_OWN_CAPABILITIES to ownCapabilities.toList(),
                     )
             }
     }

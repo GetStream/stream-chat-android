@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
@@ -216,6 +217,13 @@ public class MessageComposerViewModel(
      */
     public fun toggleCommandsVisibility(): Unit =
         messageComposerController.toggleCommandsVisibility()
+
+    /**
+     * Sets the typing updates buffer.
+     */
+    public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
+        messageComposerController.typingUpdatesBuffer = buffer
+    }
 
     /**
      * Clears the input and the current state of the composer.

@@ -32,9 +32,10 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
@@ -327,21 +328,40 @@ internal constructor(
             userState is UserState.NotSet -> {
                 logger.logV("[setUser] user is NotSet")
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
-                userStateService.onSetUser(user)
+                userStateService.onSetUser(user, isAnonymous)
                 socketStateService.onConnectionRequested()
                 socket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
-            userState is UserState.UserSet && userState.user.id != user.id -> {
-                logger.logE(
+            userState is UserState.UserSet -> {
+                logger.logW(
                     "[setUser] Trying to set user without disconnecting the previous one - " +
                         "make sure that previously set user is disconnected."
                 )
-                Result.error<ConnectionData>(
-                    ChatError(
-                        "User cannot be set until the previous one is disconnected."
-                    )
-                )
+                when {
+                    userState.user.id != user.id -> {
+                        logger.logE("[setUser] Trying to set different user without disconnect previous one.")
+                        Result.error(
+                            ChatError(
+                                "User cannot be set until the previous one is disconnected."
+                            )
+                        )
+                    }
+                    else -> {
+                        getConnectionId()?.let { Result.success(ConnectionData(userState.user, it)) }
+                            ?: run {
+                                logger.logE(
+                                    "[setUser] Trying to connect the same user twice without a previously completed " +
+                                        "connection."
+                                )
+                                Result.error(
+                                    ChatError(
+                                        "Failed to connect user. Please check you haven't connected a user already."
+                                    )
+                                )
+                            }
+                    }
+                }
             }
             else -> {
                 logger.logE("[setUser] Failed to connect user. Please check you don't have connected user already.")
@@ -540,7 +560,7 @@ internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
@@ -784,7 +804,7 @@ internal constructor(
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
                 is UserState.UserSet -> socket.reconnectUser(userState.user, false)
-                is UserState.Anonymous.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
+                is UserState.AnonymousUserSet -> socket.reconnectUser(userState.anonymousUser, true)
                 else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
@@ -983,7 +1003,7 @@ internal constructor(
         offset: Int? = null,
         limit: Int? = null,
         next: String? = null,
-        sort: QuerySort<Message>? = null,
+        sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
             return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
@@ -1018,7 +1038,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return api.getPinnedMessages(
@@ -1945,7 +1965,7 @@ internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        sort: QuerySorter<BannedUsersSort> = QuerySortByField.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -2122,6 +2142,12 @@ internal constructor(
         lastSyncAt: Date,
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
+            .withPrecondition(scope) {
+                when (channelsIds.isEmpty()) {
+                    true -> Result.error(ChatError("channelsIds must contain at least 1 id."))
+                    else -> Result.success(Unit)
+                }
+            }
     }
 
     /**
@@ -2567,7 +2593,7 @@ internal constructor(
         private var instance: ChatClient? = null
 
         @JvmField
-        public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
+        public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
         private const val ANONYMOUS_USER_ID = "!anon"
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }

@@ -39,11 +39,13 @@ class App : Application() {
         instance = this
         DebugMetricsHelper.init()
         Coil.setImageLoader(
-            ImageLoader.Builder(this).componentRegistry {
+            ImageLoader.Builder(this).components {
+                // duplicated as we can not extend component
+                // registry of existing image loader builder
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(this@App))
+                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
             }.build()
         )

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.internal.containsUserMention
+import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi

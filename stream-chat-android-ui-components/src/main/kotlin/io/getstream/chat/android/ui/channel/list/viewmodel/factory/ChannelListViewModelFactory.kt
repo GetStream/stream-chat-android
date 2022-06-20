@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.channel.list.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
@@ -37,11 +37,11 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  *
  * @see Filters
- * @see QuerySort
+ * @see QuerySorter
  */
 public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject? = null,
-    private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
+    private val sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
@@ -71,7 +71,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     public class Builder @SinceKotlin("99999.9") constructor() {
 
         private var filter: FilterObject? = null
-        private var sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT
+        private var sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT
         private var limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT
         private var messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT
         private var memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT
@@ -87,7 +87,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         /**
          * Sets the way to sort the channels, defaults to last_updated.
          */
-        public fun sort(sort: QuerySort<Channel>): Builder = apply {
+        public fun sort(sort: QuerySorter<Channel>): Builder = apply {
             this.sort = sort
         }
 

@@ -40,7 +40,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -51,6 +50,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewCont
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
@@ -177,7 +177,7 @@ internal fun ImageAttachmentContentItem(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val painter = rememberImagePainter(attachment.imagePreviewUrl)
+    val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
     val imagePreviewLauncher = rememberLauncherForActivityResult(
         contract = ImagePreviewContract(),

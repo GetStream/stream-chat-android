@@ -17,11 +17,14 @@
 package io.getstream.chat.android.offline.event.handler.internal.batch
 
 import io.getstream.chat.android.client.events.ChatEvent
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 /**
  * Events container to represent the source of the received events.
  */
 internal class BatchEvent(
+    val id: Int = Random.nextInt().absoluteValue,
     val sortedEvents: List<ChatEvent>,
     val isFromHistorySync: Boolean,
 ) {
