@@ -45,6 +45,8 @@ import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.UserApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
+import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -69,6 +71,8 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.experimental.socket.SocketFactory as SocketFactoryExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
@@ -92,6 +96,9 @@ internal open class BaseChatModule(
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
     }
+    private val chatSocketExperimental: ChatSocketExperimental by lazy {
+        buildExperimentalChatSocket(config, moshiParser)
+    }
     private val defaultFileUploader by lazy {
         StreamFileUploader(buildRetrofitCdnApi())
     }
@@ -101,40 +108,33 @@ internal open class BaseChatModule(
     val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
-            socketStateService,
-            networkScope,
+            socketStateService = socketStateService,
+            coroutineScope = networkScope,
+            chatSocketExperimental = chatSocketExperimental
         )
     }
 
     //region Modules
 
-    fun api(): ChatApi {
-        return defaultApi
-    }
+    fun api(): ChatApi = defaultApi
 
-    fun socket(): ChatSocket {
-        return defaultSocket
-    }
+    fun socket(): ChatSocket = defaultSocket
 
-    fun logger(): ChatLogger {
-        return defaultLogger
-    }
+    fun experimentalSocket() = chatSocketExperimental
 
-    fun notifications(): ChatNotifications {
-        return defaultNotifications
-    }
+    fun logger(): ChatLogger = defaultLogger
+
+    fun notifications(): ChatNotifications = defaultNotifications
 
     //endregion
 
     private fun buildNotification(
         handler: NotificationHandler,
         notificationConfig: NotificationConfig,
-    ): ChatNotifications {
-        return if (notificationConfig.pushNotificationsEnabled) {
-            ChatNotificationsImpl(handler, notificationConfig, appContext)
-        } else {
-            NoOpChatNotifications
-        }
+    ): ChatNotifications = if (notificationConfig.pushNotificationsEnabled) {
+        ChatNotificationsImpl(handler, notificationConfig, appContext)
+    } else {
+        NoOpChatNotifications
     }
 
     private fun buildRetrofit(
@@ -213,38 +213,50 @@ internal open class BaseChatModule(
     private fun buildSocket(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
-    ): ChatSocket {
-        return ChatSocket(
-            chatConfig.apiKey,
-            chatConfig.wssUrl,
-            tokenManager,
-            SocketFactory(parser, tokenManager),
-            NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
-            parser,
-            networkScope,
-        )
-    }
+    ) = ChatSocket(
+        chatConfig.apiKey,
+        chatConfig.wssUrl,
+        tokenManager,
+        SocketFactory(parser, tokenManager),
+        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+        parser,
+        networkScope,
+    )
+
+    private fun buildExperimentalChatSocket(
+        chatConfig: ChatClientConfig,
+        parser: ChatParser,
+    ) = ChatSocketExperimental(
+        chatConfig.apiKey,
+        chatConfig.wssUrl,
+        tokenManager,
+        SocketFactoryExperimental(parser, tokenManager),
+        networkScope,
+        parser,
+        listOf(
+            StreamLifecyclePublisher(),
+            NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+        ),
+    )
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        return MoshiChatApi(
-            fileUploader ?: defaultFileUploader,
-            buildRetrofitApi<UserApi>(),
-            buildRetrofitApi<GuestApi>(),
-            buildRetrofitApi<MessageApi>(),
-            buildRetrofitApi<ChannelApi>(),
-            buildRetrofitApi<DeviceApi>(),
-            buildRetrofitApi<ModerationApi>(),
-            buildRetrofitApi<GeneralApi>(),
-            buildRetrofitApi<ConfigApi>(),
-            networkScope,
-        ).let { originalApi ->
-            DistinctChatApiEnabler(DistinctChatApi(originalApi)) {
-                chatConfig.distinctApiCalls
-            }
-        }.let { originalApi ->
-            ExtraDataValidator(originalApi)
+    private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
+        fileUploader ?: defaultFileUploader,
+        buildRetrofitApi<UserApi>(),
+        buildRetrofitApi<GuestApi>(),
+        buildRetrofitApi<MessageApi>(),
+        buildRetrofitApi<ChannelApi>(),
+        buildRetrofitApi<DeviceApi>(),
+        buildRetrofitApi<ModerationApi>(),
+        buildRetrofitApi<GeneralApi>(),
+        buildRetrofitApi<ConfigApi>(),
+        networkScope,
+    ).let { originalApi ->
+        DistinctChatApiEnabler(DistinctChatApi(originalApi)) {
+            chatConfig.distinctApiCalls
         }
+    }.let { originalApi ->
+        ExtraDataValidator(originalApi)
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {

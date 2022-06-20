@@ -41,7 +41,8 @@ public sealed class DisconnectCause {
     public class UnrecoverableError(public val error: ChatNetworkError?) : DisconnectCause()
 
     /**
-     * Happens when disconnection has been done intentionally. E.g. we release connection when app went to background.
+     * Happens when disconnection has been done intentionally. E.g. we release connection when app went to background
+     * or when the user logout.
      */
     public object ConnectionReleased : DisconnectCause()
 }

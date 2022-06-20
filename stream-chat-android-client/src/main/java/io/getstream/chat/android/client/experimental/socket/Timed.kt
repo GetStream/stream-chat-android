@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.clientstate
+package io.getstream.chat.android.client.experimental.socket
 
-import io.getstream.chat.android.client.models.User as UserModel
-
-internal sealed class UserState {
-    object NotSet : UserState()
-    class UserSet(val user: UserModel) : UserState()
-
-    class AnonymousUserSet(val anonymousUser: UserModel) : UserState()
-
-    internal fun userOrError(): UserModel = when (this) {
-        is UserSet -> user
-        is AnonymousUserSet -> anonymousUser
-        else -> error("This state doesn't contain user!")
-    }
-}
+/**
+ * A wrapper that contains timestamp along with the [value].
+ */
+internal data class Timed<T>(val value: T, val time: Long)
