@@ -299,7 +299,7 @@ internal class ChannelLogic(
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(c)
+        channelStateLogic.updateDataFromChannel(c, shouldRefreshMessages, scrollUpdate)
     }
     /**
      * Updates the messages locally and saves it at database.

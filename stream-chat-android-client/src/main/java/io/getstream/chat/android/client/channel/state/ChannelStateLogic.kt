@@ -145,7 +145,11 @@ public interface ChannelStateLogic {
     /**
      * Kdocs here.
      */
-    public fun updateDataFromChannel(c: Channel)
+    public fun updateDataFromChannel(
+        c: Channel,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+    )
 
     /**
      * Kdocs here.

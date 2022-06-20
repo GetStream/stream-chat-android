@@ -255,7 +255,7 @@ internal class ChannelStateLogicImpl(
         mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
     }
 
-    override fun updateDataFromChannel(c: Channel) {
+    override fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -269,7 +269,10 @@ internal class ChannelStateLogicImpl(
         // this means that if the offline sync went out of sync things go wrong
         setMembers(c.members)
         setWatchers(c.watchers)
-        upsertMessages(c.messages)
+
+        if (!mutableState.insideSearch.value || scrollUpdate) {
+            upsertMessages(c.messages)
+        }
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
     }
