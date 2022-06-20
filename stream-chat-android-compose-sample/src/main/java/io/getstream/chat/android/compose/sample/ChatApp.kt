@@ -31,10 +31,10 @@ class ChatApp : Application() {
         credentialsRepository = UserCredentialsRepository(this)
         dateFormatter = DateFormatter.from(this)
 
+        initializeToggleService()
+
         // Initialize Stream SDK
         ChatHelper.initializeSdk(this, getApiKey())
-
-        initializeToggleService()
     }
 
     private fun getApiKey(): String {
