@@ -138,7 +138,9 @@ public fun AttachmentsPicker(
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(it)
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(it) {
+                            storagePermissionState.hasPermission
+                        }
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())

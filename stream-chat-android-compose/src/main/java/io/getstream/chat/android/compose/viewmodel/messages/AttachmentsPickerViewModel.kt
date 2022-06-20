@@ -93,6 +93,22 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
+     * Changes the currently selected [AttachmentsPickerMode] and loads the required data. If no permission is granted
+     * will not try and load data to avoid crashes.
+     *
+     * @param attachmentsPickerMode The currently selected picker mode.
+     * @param hasPermission Handler to check if there is permission for wanted action.
+     */
+    public fun changeAttachmentPickerMode(
+        attachmentsPickerMode: AttachmentsPickerMode,
+        hasPermission: () -> Boolean = { true },
+    ) {
+        this.attachmentsPickerMode = attachmentsPickerMode
+
+        if (hasPermission()) loadAttachmentsData(attachmentsPickerMode)
+    }
+
+    /**
      * Notifies the ViewModel if we should show attachments or not.
      *
      * @param showAttachments If we need to show attachments or hide them.
