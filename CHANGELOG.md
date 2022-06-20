@@ -134,10 +134,12 @@
 
 ## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
+- Fix crash when used on Android API 31+ [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Upgrade MiPush SDK to version 5.0.6 [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
 
 ### ⚠️ Changed
 
