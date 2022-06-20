@@ -67,7 +67,8 @@
 - Added `MessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `PinnedMessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `TypingIndicatorViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
-- Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [#3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachment. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
 
 ### ⚠️ Changed
 - Dimens `stream_ui_spacing_small` no longer has an effect on the internal margins of `ScrollButtonView`, instead use the `MessageListView` attribute `streamUIScrollButtonInternalMargin` to set internal margins. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)

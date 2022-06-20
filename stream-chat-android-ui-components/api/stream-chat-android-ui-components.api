@@ -1067,7 +1067,6 @@ public final class io/getstream/chat/android/ui/message/MessageListActivity$Comp
 public class io/getstream/chat/android/ui/message/MessageListFragment : androidx/fragment/app/Fragment {
 	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;
 	public fun <init> ()V
-	protected final fun getAttachmentDownloader ()Lio/getstream/chat/android/ui/utils/AttachmentDownloader;
 	protected final fun getBackPressListener ()Lio/getstream/chat/android/ui/message/MessageListFragment$BackPressListener;
 	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentMessageListBinding;
 	protected final fun getCid ()Ljava/lang/String;
@@ -2901,17 +2900,8 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 }
 
-public class io/getstream/chat/android/ui/utils/AttachmentDownloader : androidx/activity/result/contract/ActivityResultContract {
+public final class io/getstream/chat/android/ui/utils/DownloadPermissionHandler : io/getstream/chat/android/ui/utils/PermissionHandler {
 	public fun <init> ()V
-	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun createIntent (Landroid/content/Context;Ljava/lang/Object;)Landroid/content/Intent;
-	public fun createIntent (Landroid/content/Context;Lkotlin/jvm/functions/Function0;)Landroid/content/Intent;
-	public fun onDownloadAttachment (Landroid/content/Context;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun parseResult (ILandroid/content/Intent;)Ljava/lang/Object;
-	public fun parseResult (ILandroid/content/Intent;)V
-	public final fun registerForActivityResult (Landroidx/appcompat/app/AppCompatActivity;)V
-	public final fun registerForActivityResult (Landroidx/fragment/app/Fragment;)V
 }
 
 public final class io/getstream/chat/android/ui/utils/GiphyInfo {
@@ -2940,5 +2930,18 @@ public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/
 
 public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
 	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+}
+
+public class io/getstream/chat/android/ui/utils/PermissionHandler {
+	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getOnPermissionDenied ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnPermissionGranted ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnPermissionRequired ()Lkotlin/jvm/functions/Function2;
+	public final fun getPermission ()Ljava/lang/String;
+	public fun onHandleRequest (Landroid/content/Context;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun onHandleRequest$default (Lio/getstream/chat/android/ui/utils/PermissionHandler;Landroid/content/Context;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public final fun registerForActivityResult (Landroidx/appcompat/app/AppCompatActivity;)V
+	public final fun registerForActivityResult (Landroidx/fragment/app/Fragment;)V
 }
 
