@@ -285,4 +285,25 @@ internal class ChannelStateLogicImplTest {
 
         _messages.value `should be equal to` mapOf(message.id to message)
     }
+
+    @Test
+    fun `given message should be refreshes, old messages should be clean`() {
+        val message = randomMessage()
+        val message2 = randomMessage()
+
+        channelStateLogicImpl.updateDataFromChannel(
+            randomChannel(messages = listOf(message)),
+            shouldRefreshMessages = false,
+            scrollUpdate = true
+        )
+
+        channelStateLogicImpl.updateDataFromChannel(
+            randomChannel(messages = listOf(message2)),
+            shouldRefreshMessages = true,
+            scrollUpdate = true
+        )
+
+        _messages.value `should be equal to` mapOf(message2.id to message2)
+
+    }
 }
