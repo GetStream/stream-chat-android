@@ -77,7 +77,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
         val channelState: ChannelMutableStateImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
-        val channelLogic: ChannelStateLogic = mock{
+        val channelLogic: ChannelStateLogic = mock {
             on(it.writeChannelState()) doReturn channelState
         }
 

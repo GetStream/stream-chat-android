@@ -74,7 +74,6 @@ internal class ChannelMutableStateImpl(
     override val _membersCount = MutableStateFlow(0)
     override val _insideSearch = MutableStateFlow<Boolean>(false)
 
-
     /** Channel config data. */
     override val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 

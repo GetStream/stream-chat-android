@@ -88,7 +88,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic = ChannelLogic(
             repos,
             false,
-            channelStateLogic
+            channelStateLogic,
+            mock()
         )
     }
 
@@ -132,8 +133,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).upsertMessages(listOf(message))
     }
-    
-    // Member added event
+
+// Member added event
     @Test
     fun `when member is added, it should be propagated`(): Unit = runTest {
         val user = randomUser()
