@@ -211,23 +211,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         verify(channelStateLogic).deleteChannel(deleteChannelEvent.createdAt)
     }
 
-    // Todo: Move this to ChannelStateLogic test
-    // @Test
-    // fun `when channel is deleted, the status is updated`() = runTest {
-    //     val channel = randomChannel()
-    //     val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
-    //     val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
-    //
-    //     channelLogic.handleEvent(updateChannelEvent)
-    //     channelLogic.handleEvent(deleteChannelEvent)
-    //
-    //
-    //
-    //     val channelFlowValue = channelMutableState.channelData.value
-    //     channelFlowValue.channelId shouldBeEqualTo channel.id
-    //     channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
-    // }
-
     private companion object {
         private const val CURRENT_USER_ID = "currentUserId"
     }

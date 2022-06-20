@@ -18,29 +18,66 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.client.channel.state.ChannelMutableState
+import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ChannelStateLogicImplTest {
 
+    private val user = randomUser()
     private val _messages: MutableStateFlow<Map<String, Message>> = MutableStateFlow(emptyMap())
+    private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
+    private val lastMessageAt: MutableStateFlow<Date?> = MutableStateFlow(null)
+    private val _read: MutableStateFlow<ChannelUserRead?> = MutableStateFlow(ChannelUserRead(user))
+    private val _channelData: MutableStateFlow<ChannelData?> = MutableStateFlow(ChannelData(randomChannel(), emptySet()))
+    private val _reads: MutableStateFlow<Map<String, ChannelUserRead>> = MutableStateFlow(emptyMap())
+
     private val mutableState: ChannelMutableState = mock {
         on(it._messages) doReturn _messages
+        on(it._unreadCount) doReturn _unreadCount
+        on(it.lastMessageAt) doReturn lastMessageAt
+        on(it._read) doReturn _read
+        on(it.cid) doReturn randomCID()
+        on(it._channelData) doReturn _channelData
+        on(it._reads) doReturn _reads
     }
-    private val globalMutableState: MutableGlobalState = mock()
+    private val globalMutableState: MutableGlobalState = mock {
+        on(it.user) doReturn MutableStateFlow(user)
+    }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
-        on(it.updateValidAttachmentsUrl(any(), any())) doReturn emptyList()
+        on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
+            invocationOnMock.arguments[0] as List<Message>
+        }
+    }
+
+    @BeforeEach
+    fun setUp() {
+        _messages.value = emptyMap()
+        _unreadCount.value = 0
+        lastMessageAt.value = null
+        _read.value = ChannelUserRead(user)
+        _channelData.value = ChannelData(randomChannel(), emptySet())
+        _reads.value = emptyMap()
     }
 
     private val channelStateLogicImpl = ChannelStateLogicImpl(mutableState, globalMutableState, attachmentUrlValidator)
@@ -78,5 +115,125 @@ internal class ChannelStateLogicImplTest {
 
         // Only the new message is available
         _messages.value `should not be equal to` mapOf(recentMessage.id to recentMessage)
+    }
+
+    @Test
+    fun `new messages should increment the unread count`() {
+        val createdAt = randomDate()
+        val createdLocallyAt = randomDateBefore(createdAt.time)
+        val updatedAt = randomDateAfter(createdAt.time)
+        val oldUpdatedAt = randomDateBefore(updatedAt.time)
+
+        whenever(mutableState._read) doReturn MutableStateFlow(
+            ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE))
+        )
+
+        val recentMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+        val oldMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = oldUpdatedAt,
+            updatedLocallyAt = oldUpdatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+
+        channelStateLogicImpl.incrementUnreadCountIfNecessary(oldMessage)
+        channelStateLogicImpl.incrementUnreadCountIfNecessary(recentMessage)
+
+        _unreadCount.value `should be equal to` 2
+    }
+
+    @Test
+    fun `old messages should NOT increment the unread count`() {
+        // The last message is really new.
+        whenever(mutableState._read) doReturn MutableStateFlow(
+            ChannelUserRead(user, lastMessageSeenDate = Date(Long.MAX_VALUE))
+        )
+
+        repeat(3) {
+            channelStateLogicImpl.incrementUnreadCountIfNecessary(randomMessage())
+        }
+
+        _unreadCount.value `should be equal to` 0
+    }
+
+    @Test
+    fun `given new messages were upserted the newest date one should be become the new lastMessageAt - older and newer message`() {
+        val createdAt = randomDate()
+        val oldCreatedAt = randomDateBefore(createdAt.time)
+        val updatedAt = randomDateAfter(createdAt.time)
+
+        val recentMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = createdAt,
+            createdLocallyAt = createdAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+        val oldMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = oldCreatedAt,
+            createdLocallyAt = oldCreatedAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+
+        channelStateLogicImpl.upsertMessage(oldMessage)
+        lastMessageAt.value `should be equal to` oldCreatedAt
+
+        channelStateLogicImpl.upsertMessage(recentMessage)
+        lastMessageAt.value `should be equal to` createdAt
+    }
+
+    @Test
+    fun `given new messages were upserted the newest date one should be become the new lastMessageAt - newer and old message`() {
+        val createdAt = randomDate()
+        val oldCreatedAt = randomDateBefore(createdAt.time)
+        val updatedAt = randomDateAfter(createdAt.time)
+
+        val recentMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = createdAt,
+            createdLocallyAt = createdAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+        val oldMessage = randomMessage(
+            user = User(id = "otherUserId"),
+            createdAt = oldCreatedAt,
+            createdLocallyAt = oldCreatedAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
+            silent = false,
+            showInChannel = true
+        )
+
+        channelStateLogicImpl.upsertMessage(recentMessage)
+        lastMessageAt.value `should be equal to` createdAt
+
+        channelStateLogicImpl.upsertMessage(oldMessage)
+        lastMessageAt.value `should be equal to` createdAt
     }
 }
