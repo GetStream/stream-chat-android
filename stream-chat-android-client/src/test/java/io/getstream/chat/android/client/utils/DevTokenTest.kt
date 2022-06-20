@@ -51,6 +51,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
         appSettingsManager = mock(),
+        chatSocketExperimental = mock()
     )
 
     @Test
