@@ -304,6 +304,5 @@ internal class ChannelStateLogicImplTest {
         )
 
         _messages.value `should be equal to` mapOf(message2.id to message2)
-
     }
 }
