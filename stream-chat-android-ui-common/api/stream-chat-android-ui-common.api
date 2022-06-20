@@ -351,6 +351,17 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public fun clear ()V
+	public fun onKeystroke ()V
+}
+
+public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public abstract fun clear ()V
+	public abstract fun onKeystroke ()V
+}
+
 public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
 	public fun <init> (ILkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
@@ -408,6 +419,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
+	public final fun getTypingUpdatesBuffer ()Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
@@ -420,6 +432,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessageWithCustomAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun stopTyping ()V
 }
 

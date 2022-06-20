@@ -1831,6 +1831,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/common/state/MessageMode;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun toggleCommandsVisibility ()V
 }
 

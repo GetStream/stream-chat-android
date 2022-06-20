@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -37,13 +36,16 @@ import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -69,7 +71,7 @@ internal class SyncManager(
 ) {
 
     private val entitiesRetryMutex = Mutex()
-    private val logger = ChatLogger.get("SyncManager")
+    private val logger = StreamLog.getLogger("SyncManager")
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
 
@@ -87,7 +89,7 @@ internal class SyncManager(
      * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
      */
     internal suspend fun connectionRecovered() {
-        logger.logD("[connectionRecovered] firstConnect: $firstConnect")
+        logger.d { "[connectionRecovered] firstConnect: $firstConnect" }
         if (firstConnect) {
             firstConnect = false
             connectionRecovered(false)
@@ -95,7 +97,7 @@ internal class SyncManager(
             // the second time (ie coming from background, or reconnecting we should recover all)
             connectionRecovered(true)
         }
-        logger.logV("[connectionRecovered] completed")
+        logger.v { "[connectionRecovered] completed" }
     }
 
     /**
@@ -168,13 +170,12 @@ internal class SyncManager(
      */
     internal suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {
-            val thread = Thread.currentThread().run { "$name:$id" }
-            logger.logD("($thread) [retryFailedEntities] no args")
+            logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..
             retryChannels()
             retryMessages()
             retryReactions()
-            logger.logV("[retryFailedEntities] completed")
+            logger.v { "[retryFailedEntities] completed" }
         }
     }
 
@@ -183,146 +184,179 @@ internal class SyncManager(
      * This method needs to be refactored. It's too long.
      */
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        logger.logD("[connectionRecovered] recoverAll: $recoverAll")
+        logger.d { "[connectionRecovered] recoverAll: $recoverAll" }
         // 0. ensure load is complete
         val online = globalState.isOnline()
 
         // 1. Retry any failed requests first (synchronous)
+        logger.v { "[connectionRecovered] online: $online" }
         if (online) {
             retryFailedEntities()
         }
+        val updatedCids = updateActiveQueryChannels(recoverAll)
+        logger.v { "[connectionRecovered] updatedCids.size: ${updatedCids.size}" }
+        updateActiveChannels(
+            recoverAll,
+            online,
+            updatedCids
+        )
+    }
 
-        var queriesToRetry: Int
-
+    private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Set<String> {
         // 2. update the results for queries that are actively being shown right now (synchronous)
-        val updatedChannelIds = mutableSetOf<String>()
-        logicRegistry.getActiveQueryChannelsLogic()
+        logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
+        val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
+            .asSequence()
             .filter { queryChannelsLogic -> queryChannelsLogic.state().recoveryNeeded.value || recoverAll }
             .take(QUERIES_TO_RETRY)
-            .also { queryChannelStateList ->
-                queriesToRetry = queryChannelStateList.size
-            }
-            .forEach { queryLogic ->
-                // val
-                val request = QueryChannelsRequest(
-                    filter = queryLogic.state().filter,
-                    offset = INITIAL_CHANNEL_OFFSET,
-                    limit = CHANNEL_LIMIT,
-                    querySort = queryLogic.state().sort,
-                    messageLimit = MESSAGE_LIMIT,
-                    memberLimit = MEMBER_LIMIT,
-                )
+            .toList()
+        if (queryLogicsToRestore.isEmpty()) {
+            logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
+            return emptySet()
+        }
+        logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
 
-                queryLogic.runQueryOnline(request)
-                    .onSuccessSuspend { channels ->
-                        queryLogic.updateOnlineChannels(channels, true)
-                        updatedChannelIds.addAll(channels.map { it.cid })
+        val updatedCids = mutableSetOf<String>()
+        queryLogicsToRestore.forEach { queryLogic ->
+            val request = QueryChannelsRequest(
+                filter = queryLogic.state().filter,
+                offset = INITIAL_CHANNEL_OFFSET,
+                limit = CHANNEL_LIMIT,
+                querySort = queryLogic.state().sort,
+                messageLimit = MESSAGE_LIMIT,
+                memberLimit = MEMBER_LIMIT,
+            )
+            logger.v { "[updateActiveQueryChannels] request: $request" }
+            chatClient.queryChannelsInternal(request)
+                .await()
+                .also { queryLogic.onQueryChannelsResult(it, request) }
+                .onError {
+                    logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
+                }
+                .onSuccessSuspend { foundChannels ->
+                    logger.v {
+                        "[updateActiveQueryChannels] request completed; foundChannels.size: ${foundChannels.size}"
                     }
-            }
+                    queryLogic.updateOnlineChannels(foundChannels, true)
+                    updatedCids.addAll(foundChannels.map { it.cid })
+                    logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
+                }
+        }
+        return updatedCids
+    }
 
+    private suspend fun updateActiveChannels(
+        recoverAll: Boolean,
+        online: Boolean,
+        cidsToExclude: Set<String>,
+    ) {
         // 3. update the data for all channels that are being show right now...
         // exclude ones we just updated
         // (synchronous)
-
-        val cids: List<String> = stateRegistry.getActiveChannelStates()
+        logger.d {
+            "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
+        }
+        val missingCids: List<String> = stateRegistry.getActiveChannelStates()
             .asSequence()
-            .filter { (it.recoveryNeeded || recoverAll) && !updatedChannelIds.contains(it.cid) }
+            .filter { (it.recoveryNeeded || recoverAll) && !cidsToExclude.contains(it.cid) }
             .take(30)
             .map { it.cid }
             .toList()
 
-        logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying $queriesToRetry queries and ${cids.size} channels")
-
-        var missingChannelIds = listOf<String>()
-
-        if (cids.isNotEmpty() && online) {
-            val filter = Filters.`in`("cid", cids)
-            val request = QueryChannelsRequest(filter, 0, 30)
-            chatClient.queryChannelsInternal(request)
-                .await()
-                .onSuccessSuspend { channels ->
-                    val foundChannelCids = channels.map { it.cid }
-
-                    channels.forEach { channel ->
-                        val channelLogic = logicRegistry.channel(channel.type, channel.id)
-                        addTypingChannel(channelLogic)
-                        channelLogic.updateDataFromChannel(channel)
-                    }
-
-                    missingChannelIds = cids.filterNot { cid -> foundChannelCids.contains(cid) }
-                    storeStateForChannels(channels)
-                }
-
-            // create channels that are not present on the API
-            missingChannelIds.map { cid ->
-                val (type, id) = cid.cidToTypeAndId()
-                logicRegistry.channel(type, id)
-            }.forEach { channelLogic ->
-                channelLogic.watch(userPresence = userPresence)
-            }
+        logger.v { "[updateActiveChannels] missingCids.size: ${missingCids.size}" }
+        if (missingCids.isEmpty() || !online) {
+            return
         }
+        val filter = Filters.`in`("cid", missingCids)
+        val request = QueryChannelsRequest(filter, 0, 30)
+        logger.v { "[updateActiveChannels] request: $request" }
+        chatClient.queryChannelsInternal(request)
+            .await()
+            .onError {
+                logger.e { "[updateActiveChannels] request failed: ${it.stringify()}" }
+            }
+            .onSuccessSuspend { foundChannels ->
+                logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
+
+                foundChannels.forEach { channel ->
+                    val channelLogic = logicRegistry.channel(channel.type, channel.id)
+                    addTypingChannel(channelLogic)
+                    channelLogic.updateDataFromChannel(channel)
+                }
+                storeStateForChannels(foundChannels)
+                val foundCids = foundChannels.map { it.cid }
+                val stillMissingCids = missingCids - foundCids.toSet()
+                logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingCids.size}" }
+
+                // create channels that are not present on the API
+                stillMissingCids.forEach { cid ->
+                    val (type, id) = cid.cidToTypeAndId()
+                    val channelLogic = logicRegistry.channel(type, id)
+                    channelLogic.watch(userPresence = userPresence)
+                }
+            }
     }
 
     private suspend fun retryChannels() {
         val cids = repos.selectChannelCidsBySyncNeeded()
-        logger.logD("[retryChannels] cids.size: ${cids.size}")
+        logger.v { "[retryChannels] cids.size: ${cids.size}" }
         cids.forEach { cid ->
-            logger.logD("[retryReactions] process channel($cid)")
+            logger.d { "[retryReactions] process channel($cid)" }
             val channel = repos.selectChannelByCid(cid) ?: return@forEach
-            logger.logV("[retryChannels] sending channel($cid)")
+            logger.v { "[retryChannels] sending channel($cid)" }
             val result = chatClient.createChannel(
                 channel.type,
                 channel.id,
                 channel.members.map(UserEntity::getUserId),
                 channel.extraData
             ).await()
-            logger.logV("[retryChannels] result($cid).isSuccess: ${result.isSuccess}")
+            logger.v { "[retryChannels] result($cid).isSuccess: ${result.isSuccess}" }
         }
     }
 
     @VisibleForTesting
     private suspend fun retryMessages() {
-        logger.logD("[retryMessages] no args")
+        logger.d { "[retryMessages] no args" }
         retryMessagesWithSyncedAttachments()
         retryMessagesWithPendingAttachments()
-        logger.logV("[retryMessages] completed")
+        logger.v { "[retryMessages] completed" }
     }
 
     private suspend fun retryReactions() {
         val ids = repos.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
-        logger.logD("[retryReactions] ids.size: ${ids.size}")
+        logger.d { "[retryReactions] ids.size: ${ids.size}" }
         ids.forEach { id ->
-            logger.logD("[retryReactions] process reaction($id)")
+            logger.d { "[retryReactions] process reaction($id)" }
             val reaction = repos.selectReactionById(id) ?: return@forEach
             val result = if (reaction.deletedAt != null) {
-                logger.logV("[retryReactions] deleting reaction($id) for messageId: ${reaction.messageId}")
+                logger.v { "[retryReactions] deleting reaction($id) for messageId: ${reaction.messageId}" }
                 chatClient.deleteReaction(reaction.messageId, reaction.type)
             } else {
-                logger.logV("[retryReactions] sending reaction($id) for messageId: ${reaction.messageId}")
+                logger.v { "[retryReactions] sending reaction($id) for messageId: ${reaction.messageId}" }
                 chatClient.sendReaction(reaction, reaction.enforceUnique)
             }.await()
-            logger.logV("[retryReactions] result($id).isSuccess: ${result.isSuccess}")
+            logger.v { "[retryReactions] result($id).isSuccess: ${result.isSuccess}" }
         }
     }
 
     private suspend fun retryMessagesWithSyncedAttachments() {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
-        logger.logD("[retryMgsWithSyncedAttachments] ids.size: ${ids.size}")
+        logger.d { "[retryMgsWithSyncedAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
-            logger.logD("[retryMgsWithSyncedAttachments] process message($id)")
+            logger.d { "[retryMgsWithSyncedAttachments] process message($id)" }
             val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
                 message.deletedAt != null -> {
-                    logger.logV("[retryMgsWithSyncedAttachments] deleting message($id)")
+                    logger.v { "[retryMgsWithSyncedAttachments] deleting message($id)" }
                     channelClient.deleteMessage(message.id).await()
                 }
                 message.updatedLocallyAt != null && message.createdAt != null -> {
-                    logger.logV("[retryMgsWithSyncedAttachments] updating message($id)")
+                    logger.v { "[retryMgsWithSyncedAttachments] updating message($id)" }
                     channelClient.updateMessage(message).await()
                 }
                 else -> {
-                    logger.logV("[retryMgsWithSyncedAttachments] sending message($id)")
+                    logger.v { "[retryMgsWithSyncedAttachments] sending message($id)" }
                     channelClient.sendMessage(message).await().also { result ->
                         if (result.isSuccess) {
                             repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
@@ -332,7 +366,7 @@ internal class SyncManager(
                     }
                 }
             }
-            logger.logV("[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result.isSuccess}")
+            logger.v { "[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result.isSuccess}" }
         }
     }
 
@@ -341,16 +375,16 @@ internal class SyncManager(
      */
     private suspend fun retryMessagesWithPendingAttachments() {
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
-        logger.logD("[retryMessagesWithPendingAttachments] ids.size: ${ids.size}")
+        logger.d { "[retryMessagesWithPendingAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
-            logger.logD("[retryMessagesWithPendingAttachments] process message($id)")
+            logger.d { "[retryMessagesWithPendingAttachments] process message($id)" }
             val message = repos.selectMessage(id) ?: return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
             if (isFailed) {
-                logger.logV("[retryMessagesWithSyncedAttachments] marking message(${message.id}) as failed")
+                logger.v { "[retryMessagesWithSyncedAttachments] marking message(${message.id}) as failed" }
                 repos.markMessageAsFailed(message)
             } else {
-                logger.logV("[retryMessagesWithSyncedAttachments] sending message(${message.id})")
+                logger.v { "[retryMessagesWithSyncedAttachments] sending message(${message.id})" }
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 chatClient.sendMessage(channelType, channelId, message, true).await()
             }
@@ -385,10 +419,16 @@ internal class SyncManager(
             messages = messages
         )
 
-        logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
+        logger.i {
+            "storeStateForChannels stored ${channelsResponse.size} channels, " +
+                "${configs.size} configs, " +
+                "${users.size} users " +
+                "and ${messages.size} messages"
+        }
     }
 
     private fun addTypingChannel(channelLogic: ChannelLogic) {
+        logger.d { "[addTypingChannel] channelLogic.cid: ${channelLogic.cid}" }
         globalState.tryEmitTypingEvent(channelLogic.state().typing.value)
     }
 }
