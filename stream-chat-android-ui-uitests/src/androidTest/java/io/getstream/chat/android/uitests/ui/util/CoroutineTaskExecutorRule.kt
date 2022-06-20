@@ -16,11 +16,16 @@
 
 package io.getstream.chat.android.uitests.ui.util
 
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A Junit Test Rule that helps to synchronize Espresso tests with the work that is
@@ -53,5 +58,54 @@ internal class CoroutineTaskExecutorRule : TestWatcher() {
         super.finished(description)
         DispatcherProvider.reset()
         dispatcher.reset()
+    }
+}
+
+/**
+ * A [CoroutineDispatcher] implementation that wraps a delegate [CoroutineDispatcher] and
+ * helps Espresso to synchronize test execution with the jobs that are being executed on
+ * the delegate dispatcher.
+ *
+ * @property delegate The inner dispatcher that will be wrapped.
+ */
+private class DelegatingIdlingResourceDispatcher(
+    private val delegate: CoroutineDispatcher,
+) : CoroutineDispatcher() {
+
+    /**
+     * An [IdlingResource] responsible for tracking jobs that are being executed on
+     * the [delegate] dispatcher.
+     */
+    private val countingIdlingResource: CountingIdlingResource =
+        CountingIdlingResource("DelegatingIdlingResourceDispatcher for $delegate")
+
+    init {
+        IdlingRegistry.getInstance().register(countingIdlingResource)
+    }
+
+    /**
+     * Dispatches execution of a runnable [block] onto another thread in the given [context].
+     * Also tracks running jobs with the help of [countingIdlingResource], so that Espresso
+     * is able to do necessary synchronization during test execution.
+     */
+    override fun dispatch(context: CoroutineContext, block: Runnable) {
+        countingIdlingResource.increment()
+
+        val wrappedBlock = Runnable {
+            try {
+                block.run()
+            } finally {
+                countingIdlingResource.decrement()
+            }
+        }
+        delegate.dispatch(context, wrappedBlock)
+    }
+
+    /**
+     * Unregisters the [IdlingResource] that was used to track ongoing jobs
+     * executed on the [delegate] dispatcher.
+     */
+    fun reset() {
+        IdlingRegistry.getInstance().unregister(countingIdlingResource)
     }
 }

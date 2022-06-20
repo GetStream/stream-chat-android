@@ -413,6 +413,7 @@ public final class io/getstream/chat/android/client/api/models/OrFilterObject : 
 }
 
 public final class io/getstream/chat/android/client/api/models/Pagination : java/lang/Enum {
+	public static final field AROUND_ID Lio/getstream/chat/android/client/api/models/Pagination;
 	public static final field GREATER_THAN Lio/getstream/chat/android/client/api/models/Pagination;
 	public static final field GREATER_THAN_OR_EQUAL Lio/getstream/chat/android/client/api/models/Pagination;
 	public static final field LESS_THAN Lio/getstream/chat/android/client/api/models/Pagination;
@@ -509,6 +510,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getState ()Z
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
+	public final fun isFilteringAroundIdMessages ()Z
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
 	public final fun membersOffset ()I

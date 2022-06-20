@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.compose
+package io.getstream.chat.android.uitests.ui.compose.robot
 
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import org.junit.rules.TestRule

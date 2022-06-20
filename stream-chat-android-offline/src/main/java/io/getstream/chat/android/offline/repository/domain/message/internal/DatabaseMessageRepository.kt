@@ -178,6 +178,7 @@ internal class DatabaseMessageRepository(
                 Pagination.LESS_THAN -> {
                     messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
                 }
+                Pagination.AROUND_ID -> emptyList()
             }
         } else {
             messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)

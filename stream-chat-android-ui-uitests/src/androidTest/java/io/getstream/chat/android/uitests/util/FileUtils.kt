@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.view.messages
-
-import com.getstream.sdk.chat.adapter.MessageListItem
+package io.getstream.chat.android.uitests.util
 
 /**
- * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ * Reads the file under "/resources" directory into string.
+ *
+ * @param name The name of the file to read.
  */
-public data class MessageListItemWrapper(
-    val items: List<MessageListItem> = listOf(),
-    val hasNewMessages: Boolean = false,
-    val isTyping: Boolean = false,
-    val isThread: Boolean = false,
-)
+fun readFileContents(name: String): String {
+    return Resources.javaClass.classLoader
+        .getResourceAsStream(name)
+        .bufferedReader()
+        .readText()
+}
+
+private object Resources
