@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.sample
 
 import android.app.Application
 import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 class ChatApp : Application() {
 
@@ -31,10 +33,17 @@ class ChatApp : Application() {
 
         // Initialize Stream SDK
         ChatHelper.initializeSdk(this, getApiKey())
+
+        initializeToggleService()
     }
 
     private fun getApiKey(): String {
         return credentialsRepository.loadApiKey() ?: PredefinedUserCredentials.API_KEY
+    }
+
+    @OptIn(InternalStreamChatApi::class)
+    private fun initializeToggleService() {
+        ToggleService.init(applicationContext, mapOf(ToggleService.TOGGLE_KEY_SOCKET_REFACTOR to BuildConfig.DEBUG))
     }
 
     companion object {

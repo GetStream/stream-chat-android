@@ -25,7 +25,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
@@ -47,8 +48,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class WhenUploadAttachmentsTests {
-    private val channelType = "channelType"
-    private val channelId = "channelId"
 
     private val attachmentsSent = mutableListOf(
         randomAttachment {
@@ -80,8 +79,6 @@ internal class WhenUploadAttachmentsTests {
 
             val sut = Fixture().givenMessageRepository(repositoryFacade).get()
             val result = sut.uploadAttachmentsForMessage(
-                channelType,
-                channelId,
                 defaultMessageSentAttachments.id,
             )
 
@@ -97,8 +94,6 @@ internal class WhenUploadAttachmentsTests {
 
         val sut = Fixture().givenMessageRepository(repositoryFacade).get()
         val result = sut.uploadAttachmentsForMessage(
-            channelType,
-            channelId,
             defaultMessagePendingAttachments.id,
         )
 
@@ -113,8 +108,6 @@ internal class WhenUploadAttachmentsTests {
         }
         val result = Fixture().givenMessageRepository(repositoryFacade).get()
             .uploadAttachmentsForMessage(
-                channelType,
-                channelId,
                 defaultMessagePendingAttachments.id,
             )
 
@@ -125,8 +118,6 @@ internal class WhenUploadAttachmentsTests {
     fun `when user can not be set, it should return an error`() = runTest {
         val result = Fixture().givenChatClientNoStoredCredentials().get()
             .uploadAttachmentsForMessage(
-                channelType,
-                channelId,
                 defaultMessagePendingAttachments.id,
             )
 
@@ -154,7 +145,7 @@ internal class WhenUploadAttachmentsTests {
                 .givenMessage(message)
                 .get()
 
-        sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
+        sut.uploadAttachmentsForMessage(message.id)
 
         verify(repository).insertMessage(
             argThat { id == "messageId123" && syncStatus == SyncStatus.FAILED_PERMANENTLY },
@@ -188,7 +179,7 @@ internal class WhenUploadAttachmentsTests {
                     .givenMessage(message)
                     .get()
 
-            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
+            sut.uploadAttachmentsForMessage(message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -235,7 +226,7 @@ internal class WhenUploadAttachmentsTests {
                     .givenMessage(message)
                     .get()
 
-            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
+            sut.uploadAttachmentsForMessage(message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -278,7 +269,7 @@ internal class WhenUploadAttachmentsTests {
                     .givenMessage(message)
                     .get()
 
-            sut.uploadAttachmentsForMessage(channelType, channelId, message.id)
+            sut.uploadAttachmentsForMessage(message.id)
 
             verify(repository).insertMessage(
                 argThat {
@@ -293,11 +284,13 @@ internal class WhenUploadAttachmentsTests {
         }
 
     private class Fixture {
+        private val channelType = "channelType"
+        private val channelId = "channelId"
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
-        private var logicRegistry: LogicRegistry = mock {
-            on(it.channel(any(), any())) doReturn mock()
-        }
+
+        private val channelLogic: ChannelLogic = mock()
+        private val channelState: ChannelMutableState = mock()
 
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
@@ -322,7 +315,9 @@ internal class WhenUploadAttachmentsTests {
 
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
-                logic = logicRegistry,
+                channelType, channelId,
+                channelLogic = channelLogic,
+                channelState = channelState,
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader

@@ -86,6 +86,7 @@ internal open class BaseChatClientTest {
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
+            chatSocketExperimental = mock()
         )
         Mockito.reset(
             socketStateService,

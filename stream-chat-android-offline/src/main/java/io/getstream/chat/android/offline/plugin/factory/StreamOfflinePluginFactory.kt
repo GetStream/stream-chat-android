@@ -63,6 +63,8 @@ import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRep
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
+import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -119,8 +121,13 @@ public class StreamOfflinePluginFactory(
             clearState()
         }
 
+        val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
+            StreamLog.e("StreamOfflinePlugin", throwable) {
+                "[uncaughtCoroutineException] throwable: $throwable, context: $context"
+            }
+        }
         val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO)
+        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
 
         val repositoryFactory =
             repositoryFactory ?: createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)

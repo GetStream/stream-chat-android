@@ -75,9 +75,7 @@ import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -115,13 +113,14 @@ import kotlin.math.max
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property attachmentUrlValidator [AttachmentUrlValidator] A validator to validate attachments' url.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val searchLogic: SearchLogic = SearchLogic(mutableState),
 ) : QueryChannelListener {
 
     private val logger = ChatLogger.get("Query channel request")
@@ -144,7 +143,11 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
-        runChannelQueryOffline(request)
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (!request.isFilteringNewerMessages()) {
+            runChannelQueryOffline(request)
+        }
     }
 
     override suspend fun onQueryChannelResult(
@@ -159,15 +162,24 @@ internal class ChannelLogic(
             storeStateForChannel(channel)
         }
             .onSuccess { channel ->
+                val noMoreMessages = request.messagesLimit() > channel.messages.size
+
+                searchLogic.handleMessageBounds(request, noMoreMessages)
                 mutableState.recoveryNeeded = false
-                if (request.messagesLimit() > channel.messages.size) {
+
+                if (noMoreMessages) {
                     if (request.isFilteringNewerMessages()) {
                         mutableState._endOfNewerMessages.value = true
                     } else {
                         mutableState._endOfOlderMessages.value = true
                     }
                 }
-                updateDataFromChannel(channel)
+
+                updateDataFromChannel(
+                    channel,
+                    shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+                    scrollUpdate = true
+                )
                 loadingStateByRequest(request).value = false
             }
             .onError { error ->
@@ -201,9 +213,7 @@ internal class ChannelLogic(
      *
      * @return [ChannelState]
      */
-    internal fun state(): ChannelState {
-        return mutableState
-    }
+    internal fun state(): ChannelState = mutableState
 
     /**
      * Starts to watch this channel.
@@ -244,6 +254,10 @@ internal class ChannelLogic(
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
+    internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
+        return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
+    }
+
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
@@ -277,7 +291,7 @@ internal class ChannelLogic(
     private fun updateDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel)
+        updateDataFromChannel(localChannel, scrollUpdate = true)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -318,7 +332,11 @@ internal class ChannelLogic(
         mutableState._oldMessages.value = parseMessages(messages)
     }
 
-    internal fun updateDataFromChannel(c: Channel) {
+    internal fun updateDataFromChannel(
+        c: Channel,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+    ) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -332,13 +350,16 @@ internal class ChannelLogic(
         // this means that if the offline sync went out of sync things go wrong
         setMembers(c.members)
         setWatchers(c.watchers)
-        upsertMessages(c.messages)
+
+        if (!mutableState.insideSearch.value || scrollUpdate) {
+            upsertMessages(c.messages, shouldRefreshMessages)
+        }
         mutableState.lastMessageAt.value = c.lastMessageAt
         mutableState._channelConfig.value = c.config
     }
 
-    internal fun upsertMessages(messages: List<Message>) {
-        val newMessages = parseMessages(messages)
+    internal fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
+        val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
     }
@@ -471,8 +492,8 @@ internal class ChannelLogic(
      *
      * @param messages The list of messages to update.
      */
-    private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState._messages.value
+    private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
+        val currentMessages = if (shouldRefresh) emptyMap() else mutableState._messages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
@@ -532,6 +553,13 @@ internal class ChannelLogic(
     private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
         watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
+    private fun aroundIdWatchChannelRequest(aroundMessageId: String): WatchChannelRequest {
+        return QueryChannelPaginationRequest().apply {
+            messageFilterDirection = Pagination.AROUND_ID
+            messageFilterValue = aroundMessageId
+        }.toWatchChannelRequest(userPresence)
+    }
+
     /**
      * Creates instance of [WatchChannelRequest] according to [Pagination].
      *
@@ -562,6 +590,7 @@ internal class ChannelLogic(
             -> messages.last().id
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
+            Pagination.AROUND_ID,
             -> messages.first().id
         }
     }
@@ -610,6 +639,7 @@ internal class ChannelLogic(
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
         }
+
         upsertMessages(listOf(message))
     }
 
@@ -740,7 +770,11 @@ internal class ChannelLogic(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                upsertEventMessage(event.message)
+                /* If we are inside a search, ignore new messages, because the last message is not available in the
+                 * screen */
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
@@ -760,7 +794,11 @@ internal class ChannelLogic(
                 setHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                upsertEventMessage(event.message)
+                /* If we are inside a search, ignore new messages, because the last message is not available in the
+                 * screen */
+                if (!mutableState.insideSearch.value) {
+                    upsertEventMessage(event.message)
+                }
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
@@ -876,23 +914,6 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
-    }
-
-    internal fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-        val message = mutableState.messageList.value.firstOrNull { it.id == messageId }
-        if (message != null) {
-            val newAttachments = message.attachments.map { attachment ->
-                if (attachment.uploadId == uploadId) {
-                    attachment.copy(uploadState = newState)
-                } else {
-                    attachment
-                }
-            }
-            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-            val newMessages =
-                mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-            mutableState._messages.value = newMessages
-        }
     }
 
     private companion object {
