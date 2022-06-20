@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.compose
+package io.getstream.chat.android.uitests.ui.compose.robot
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -58,5 +60,29 @@ internal class ComposeMessagesRobot(
         composeTestRule
             .onNodeWithContentDescription("Send button")
             .performClick()
+    }
+
+    /**
+     * Assert that any message is displayed.
+     */
+    fun assertMessageIsDisplayed() {
+        val contentDescription = "Message item"
+
+        composeTestRule.waitUntil(DEFAULT_WAIT_TIMEOUT) {
+            composeTestRule
+                .onAllNodesWithContentDescription(contentDescription)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        composeTestRule
+            .onAllNodesWithContentDescription(contentDescription)[0]
+            .assertIsDisplayed()
+    }
+
+    companion object {
+        /**
+         * The default time to wait for the component to appear.
+         */
+        private const val DEFAULT_WAIT_TIMEOUT = 5000L
     }
 }
