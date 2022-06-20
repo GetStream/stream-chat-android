@@ -30,7 +30,7 @@ public object StreamPermissionHandlers {
      * @param context [Context]
      * @param permissionStates The [PermissionState] of the default permission handlers.
      *
-     * @return default [PermissionHandler] implementations
+     * @return default [PermissionHandler] implementations.
      */
     @OptIn(ExperimentalPermissionsApi::class)
     public fun defaultHandlers(context: Context, permissionStates: List<PermissionState>): List<PermissionHandler> {
