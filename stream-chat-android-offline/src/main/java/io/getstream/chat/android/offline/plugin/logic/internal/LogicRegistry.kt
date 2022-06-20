@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -79,12 +80,14 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
-            val stateLogic = ChannelStateLogicImpl(
-                stateRegistry.channel(channelType, channelId).toMutableState(),
-                globalState
-            )
+            val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
+            val stateLogic = ChannelStateLogicImpl(mutableState, globalState)
 
-            ChannelLogic(repos = repos, userPresence = userPresence, channelStateLogic = stateLogic)
+            ChannelLogic(repos = repos,
+                userPresence = userPresence,
+                channelStateLogic = stateLogic,
+                searchLogic = SearchLogic(mutableState)
+            )
         }
     }
 

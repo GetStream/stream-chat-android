@@ -50,6 +50,7 @@ public interface ChannelMutableState : ChannelState {
     public val _repliedMessage: MutableStateFlow<Message?>
     public val _unreadCount: MutableStateFlow<Int>
     public val _membersCount: MutableStateFlow<Int>
+    public val _insideSearch: MutableStateFlow<Boolean>
 
     /** Channel config data. */
     public val _channelConfig: MutableStateFlow<Config>
