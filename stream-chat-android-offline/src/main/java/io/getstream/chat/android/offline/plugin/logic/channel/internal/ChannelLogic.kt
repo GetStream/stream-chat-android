@@ -68,7 +68,6 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.extensions.NEVER
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.extensions.uploadId
@@ -88,6 +87,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.extensions.internal.NEVER
 import io.getstream.chat.android.offline.extensions.internal.applyPagination
 import io.getstream.chat.android.offline.extensions.internal.inOffsetWith
 import io.getstream.chat.android.offline.extensions.internal.shouldIncrementUnreadCount
