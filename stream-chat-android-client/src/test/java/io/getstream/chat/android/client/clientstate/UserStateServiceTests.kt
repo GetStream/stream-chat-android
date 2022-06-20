@@ -75,7 +75,7 @@ internal class UserStateServiceTests {
     }
 
     @Test
-    fun `Given user not set state When set anonymous Should move to anonymous pending state`() {
+    fun `Given user not set state When set anonymous Should move to anonymous user state`() {
         val sut = Fixture().please()
 
         val anonymousUser = User(id = "!anon")

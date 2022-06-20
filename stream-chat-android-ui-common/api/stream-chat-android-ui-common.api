@@ -363,9 +363,10 @@ public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdate
 }
 
 public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
-	public fun <init> (ILkotlin/jvm/functions/Function0;)V
+	public fun <init> (ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
 	public final fun enablePagination ()V
+	public final fun fetchAtBottom (Z)V
 	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
 	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
 }
@@ -444,6 +445,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getInsideSearch ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
@@ -548,6 +550,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

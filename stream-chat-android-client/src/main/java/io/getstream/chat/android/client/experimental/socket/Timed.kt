@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.view.messages
-
-import com.getstream.sdk.chat.adapter.MessageListItem
+package io.getstream.chat.android.client.experimental.socket
 
 /**
- * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ * A wrapper that contains timestamp along with the [value].
  */
-public data class MessageListItemWrapper(
-    val items: List<MessageListItem> = listOf(),
-    val hasNewMessages: Boolean = false,
-    val isTyping: Boolean = false,
-    val isThread: Boolean = false,
-)
+internal data class Timed<T>(val value: T, val time: Long)

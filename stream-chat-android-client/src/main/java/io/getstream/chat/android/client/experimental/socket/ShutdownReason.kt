@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.view.messages
-
-import com.getstream.sdk.chat.adapter.MessageListItem
+package io.getstream.chat.android.client.experimental.socket
 
 /**
- * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ * Used to initiate a shutdown of a WebSocket.
+ *
+ * @property code Status code as defined by [Section 7.4 of RFC 6455](http://tools.ietf.org/html/rfc6455#section-7.4)
+ * or `0`.
+ * @property reason Reason for shutting down.
  */
-public data class MessageListItemWrapper(
-    val items: List<MessageListItem> = listOf(),
-    val hasNewMessages: Boolean = false,
-    val isTyping: Boolean = false,
-    val isThread: Boolean = false,
-)
+internal data class ShutdownReason(val code: Int, val reason: String) {
+    companion object {
+        private const val NORMAL_CLOSURE_STATUS_CODE = 1000
+        private const val NORMAL_CLOSURE_REASON = "Normal closure"
+
+        @JvmField
+        val GRACEFUL = ShutdownReason(NORMAL_CLOSURE_STATUS_CODE, NORMAL_CLOSURE_REASON)
+    }
+}
