@@ -25,5 +25,5 @@ public data class MessageListItemWrapper(
     val items: List<MessageListItem> = listOf(),
     val hasNewMessages: Boolean = false,
     val isTyping: Boolean = false,
-    val isThread: Boolean = false
+    val isThread: Boolean = false,
 )
