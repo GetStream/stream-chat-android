@@ -45,25 +45,33 @@ viewModel.bindView(messageInputView, viewLifecycleOwner)
 
 ## Handling Actions 
 
-Actions can be handled by setting listeners on this view. For example, you can handle clicks of the send button or when the user starts and stops typing:
+Actions can be handled by setting listeners on this view. For example, you can handle clicks of the send button:
 
 ```kotlin
 messageInputView.setOnSendButtonClickListener {
     // Handle send button click
 }
+```
 
-messageInputView.setTypingListener(
-    object : MessageInputView.TypingListener {
-        override fun onKeystroke() {
-            // Handle keystroke case
-        }
+If you want to listen to typing updates, you can set your own instance of [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer.kt) on the `MessageInputView`.
+The buffer is designed to save valuable API calls by not firing an event on each keystroke, but intelligently time them based on an interval. Additionally, it automatically tracks typing inactivity after the last keystroke and sends a stop typing event after a set period of time.
 
-        override fun onStopTyping() {
-            // Handle stop typing case
+```kotlin
+messageInputView.setTypingUpdatesBuffer(
+    DefaultTypingUpdatesBuffer(
+        onTypingStarted = {
+            // Make a keystroke API call
+            // Implement your custom action
+        },
+        onTypingStopped = {
+            // Make a typing stopped API call
+            // Implement your custom action
         }
-    }
+    )
 )
 ```
+
+If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer.kt) interface instead.
 
 You can show a custom error when the maximum message length is exceeded:
 

@@ -23,10 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds a file attachment quoted message which shows a single file in the attachments list.
@@ -43,7 +43,7 @@ public fun FileAttachmentQuotedContent(
     val painter = if (isImage) {
         val dataToLoad = attachment.imageUrl ?: attachment.upload
 
-        rememberImagePainter(dataToLoad)
+        rememberStreamImagePainter(dataToLoad)
     } else {
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }

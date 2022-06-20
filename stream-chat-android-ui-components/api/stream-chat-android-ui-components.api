@@ -710,8 +710,8 @@ public final class io/getstream/chat/android/ui/common/ChannelNameFormatter$Comp
 
 public final class io/getstream/chat/android/ui/common/ChatUIInitializer : androidx/startup/Initializer {
 	public fun <init> ()V
-	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
 	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun create (Landroid/content/Context;)V
 	public fun dependencies ()Ljava/util/List;
 }
 
@@ -1141,6 +1141,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListViewHolderFactory (Lio/getstream/chat/android/ui/suggestion/list/adapter/SuggestionListItemViewHolderFactory;)V
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
 	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V

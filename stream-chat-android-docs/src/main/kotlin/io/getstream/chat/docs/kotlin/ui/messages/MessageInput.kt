@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -51,16 +52,17 @@ private class MessageInputViewSnippets() : Fragment() {
         messageInputView.setOnSendButtonClickListener {
             // Handle send button click
         }
-        messageInputView.setTypingListener(
-            object : MessageInputView.TypingListener {
-                override fun onKeystroke() {
-                    // Handle keystroke case
+        messageInputView.setTypingUpdatesBuffer(
+            DefaultTypingUpdatesBuffer(
+                onTypingStarted = {
+                    // Make a keystroke API call
+                    // Implement your custom action
+                },
+                onTypingStopped = {
+                    // Make a typing stopped API call
+                    // Implement your custom action
                 }
-
-                override fun onStopTyping() {
-                    // Handle stop typing case
-                }
-            }
+            )
         )
         messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
             if (maxMessageLengthExceeded) {
