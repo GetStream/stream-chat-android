@@ -82,17 +82,6 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Changes the currently selected [AttachmentsPickerMode] and loads the required data.
-     *
-     * @param attachmentsPickerMode The currently selected picker mode.
-     */
-    public fun changeAttachmentPickerMode(attachmentsPickerMode: AttachmentsPickerMode) {
-        this.attachmentsPickerMode = attachmentsPickerMode
-
-        loadAttachmentsData(attachmentsPickerMode)
-    }
-
-    /**
      * Changes the currently selected [AttachmentsPickerMode] and loads the required data. If no permission is granted
      * will not try and load data to avoid crashes.
      *

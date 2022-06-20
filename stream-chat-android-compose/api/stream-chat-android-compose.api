@@ -1818,7 +1818,6 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 public final class io/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/compose/ui/util/StorageHelperWrapper;)V
-	public final fun changeAttachmentPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;)V
 	public final fun changeAttachmentPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;Lkotlin/jvm/functions/Function0;)V
 	public static synthetic fun changeAttachmentPickerMode$default (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun changeAttachmentState (Z)V
