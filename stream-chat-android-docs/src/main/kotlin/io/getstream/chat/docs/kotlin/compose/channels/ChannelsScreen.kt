@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -80,7 +80,7 @@ private object ChannelsScreenCustomizationSnippet {
                             Filters.eq("type", "messaging"),
                             Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
                         ),
-                        querySort = QuerySort.desc("last_updated"),
+                        querySort = QuerySortByField.descByName("last_updated"),
                         title = "Stream Chat",
                         isShowingHeader = true,
                         isShowingSearch = true,

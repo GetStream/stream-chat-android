@@ -3,6 +3,7 @@
 package io.getstream.chat.docs.kotlin.compose.messages
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -122,6 +124,40 @@ private object MessageComposerHandlingActionsSnippet {
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * [Handling Typing Updates](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#handling-actions)
+ */
+private object HandlingTypingUpdatesSnippet {
+
+    class MyActivity : AppCompatActivity() {
+        val factory by lazy {
+            MessagesViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            )
+        }
+
+        val composerViewModel = factory.create(MessageComposerViewModel::class.java)
+
+        override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+            super.onCreate(savedInstanceState, persistentState)
+
+            composerViewModel.setTypingUpdatesBuffer(
+                DefaultTypingUpdatesBuffer(
+                    onTypingStarted = {
+                        // Make a keystroke API call
+                        // Implement your custom action
+                    },
+                    onTypingStopped = {
+                        // Make a typing stopped API call
+                        // Implement your custom action
+                    }
+                )
+            )
         }
     }
 }

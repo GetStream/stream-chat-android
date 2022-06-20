@@ -141,7 +141,7 @@ Which creates:
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
 
-Here's an example of a custom factory that extends `AvatarBitmapFactory`, which makes the avatar for offline users blurred:
+Here's an example of a custom factory that extends `AvatarBitmapFactory`, which applies a grayscale transformation to the avatars of users who are currently offline:
 
 ```kotlin
 ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
@@ -151,7 +151,7 @@ ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
                 .data(user.image)
                 .apply {
                     if (!user.online) {
-                        transformations(BlurTransformation(context))
+                        transformations(GrayscaleTransformation())
                     }
                 }
                 .build()
@@ -163,12 +163,12 @@ ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
 ```
 
 :::note
-This example uses the [Coil](https://github.com/coil-kt/coil) library for loading the image URL and applying transformations to it.
+This example uses the [Coil](https://github.com/coil-kt/coil) library for loading the image URL and applying transformations to it. If you use Coil version 2.x, you should copy-paste [GrayscaleTransformation.kt](https://github.com/coil-kt/coil/blob/845f39383f332428077c666e3567b954675ce248/coil-base/src/main/java/coil/transform/GrayscaleTransformation.kt) manually in your project for building this example.
 :::
 
 This results in avatars rendered like this:
 
-![Blurred images for offline users](../../assets/blurred_images.png)
+![Shades of gray images for offline users](../../assets/gray_scaled_image.png)
 
 ### Adding Extra Headers to Image Requests
 

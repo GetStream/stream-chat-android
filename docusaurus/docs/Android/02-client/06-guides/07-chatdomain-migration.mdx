@@ -16,6 +16,7 @@ val offlinePluginFactory = StreamOfflinePluginFactory(
         userPresence = true,
         persistenceEnabled = true,
         uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        useSequentialEventHandler = false,
     ),
     appContext = context,
 )
@@ -87,6 +88,35 @@ val threadState = chatClient.state.thread(messageId = "parentMessageId")
 
 // Gives you access to GlobalState object
 val globalState = chatClient.globalState
+```
+
+:::warning
+Methods mentioned above return a state object associated with the API call but don't perform the API call itself.
+Make sure to request the data using `ChatClient` object.
+:::
+
+The snippet below shows you how to request channels and observe the state:
+```kotlin
+// 1. Get the first 30 channels to which thierry belongs
+val filter = Filters.`in`("members", "thierry")
+val sort = QuerySort.desc<Channel>("last_updated")
+val request = QueryChannelsRequest(
+    filter = filter,
+    querySort = sort,
+    limit = 30,
+    offset = 0,
+    messageLimit = 1,
+    memberLimit = 30,
+)
+ChatClient.instance().queryChannels(request).enqueue { result ->
+    if (result.isSuccess) {
+        // Request successful. Data will be propagated to the state object
+    } else {
+        // Handle error
+    }
+}
+// 2. Get the state object associated with the above API call
+val queryChannelsState = ChatClient.instance().state.queryChannels(filter = filter, sort = sort)
 ```
 
 In addition to that, the offline library provides a bunch of extension methods that can be used to obtain the state after performing a particular API call:

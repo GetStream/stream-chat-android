@@ -34,13 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds a Giphy attachment message.
@@ -69,7 +70,7 @@ public fun GiphyAttachmentContent(
         "Missing preview URL."
     }
 
-    val painter = rememberImagePainter(attachment.imagePreviewUrl)
+    val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
     Box(
         modifier = modifier
@@ -101,7 +102,7 @@ public fun GiphyAttachmentContent(
                 .padding(8.dp)
                 .width(64.dp)
                 .wrapContentHeight(),
-            painter = rememberImagePainter(R.drawable.stream_compose_giphy_label),
+            painter = painterResource(R.drawable.stream_compose_giphy_label),
             contentDescription = null,
             contentScale = ContentScale.Inside
         )

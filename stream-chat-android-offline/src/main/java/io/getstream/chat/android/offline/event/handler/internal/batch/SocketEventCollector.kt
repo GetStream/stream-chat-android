@@ -97,7 +97,7 @@ internal class SocketEventCollector(
         postponed.clear()
         timeoutJob.reset()
         fireEvent(
-            BatchEvent(sortedEvents, isFromHistorySync = false)
+            BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = false)
         )
     }
 

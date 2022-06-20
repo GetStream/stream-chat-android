@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.builder.internal
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
@@ -35,7 +36,6 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
-import io.getstream.chat.android.offline.extensions.internal.users
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -72,6 +72,8 @@ internal class RepositoryFacade(
     ): List<Channel> {
         // fetch the channel entities from room
         val channels = channelsRepository.selectChannels(channelIds, forceCache)
+        // TODO why it is not compared this way?
+        //  pagination?.isRequestingMoreThanLastMessage() == true
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -83,7 +85,9 @@ internal class RepositoryFacade(
             emptyMap()
         }
 
-        return channels.onEach { it.enrichChannel(messagesMap, defaultConfig) }
+        return channels.onEach { channel ->
+            channel.enrichChannel(messagesMap, defaultConfig)
+        }
     }
 
     @VisibleForTesting
