@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryOptionsViewBinding
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
@@ -103,26 +104,32 @@ internal class AttachmentGalleryOptionsView : FrameLayout {
     private fun init(attrs: AttributeSet?) {
         style = AttachmentGalleryOptionsViewStyle(context, attrs)
 
+        binding.optionsContainer.setCardBackgroundColor(style.backgroundColor)
+
         if (style.replyOptionEnabled) {
             binding.reply.setStartDrawable(style.replyOptionDrawable)
+            binding.reply.setTextStyle(style.optionTextStyle)
         } else {
             binding.reply.isVisible = false
         }
 
         if (style.showInChatOptionEnabled) {
             binding.showInChat.setStartDrawable(style.showInChatOptionDrawable)
+            binding.showInChat.setTextStyle(style.optionTextStyle)
         } else {
             binding.showInChat.isVisible = false
         }
 
         if (style.saveImageOptionEnabled) {
             binding.saveImage.setStartDrawable(style.saveImageOptionDrawable)
+            binding.saveImage.setTextStyle(style.optionTextStyle)
         } else {
             binding.saveImage.isVisible = false
         }
 
         if (style.deleteOptionEnabled) {
             binding.delete.setStartDrawable(style.deleteOptionDrawable)
+            binding.delete.setTextStyle(style.optionTextStyle)
             binding.delete.setTextColor(style.deleteOptionTextColor)
         } else {
             binding.delete.isVisible = false

@@ -969,22 +969,26 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$
 }
 
 public final class io/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle {
-	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)V
-	public final fun component1 ()Z
-	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component10 ()Landroid/graphics/drawable/Drawable;
+	public final fun component11 ()I
+	public final fun component2 ()I
 	public final fun component3 ()Z
 	public final fun component4 ()Landroid/graphics/drawable/Drawable;
 	public final fun component5 ()Z
 	public final fun component6 ()Landroid/graphics/drawable/Drawable;
 	public final fun component7 ()Z
 	public final fun component8 ()Landroid/graphics/drawable/Drawable;
-	public final fun component9 ()I
-	public final fun copy (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public final fun component9 ()Z
+	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
 	public final fun getDeleteOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getDeleteOptionEnabled ()Z
 	public final fun getDeleteOptionTextColor ()I
+	public final fun getOptionTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getReplyOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getReplyOptionEnabled ()Z
 	public final fun getSaveImageOptionDrawable ()Landroid/graphics/drawable/Drawable;

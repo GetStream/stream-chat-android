@@ -16,20 +16,37 @@
 -->
 <resources>
     <declare-styleable name="AttachmentOptionsView">
+        <!-- Text size of the option text -->
+        <attr name="streamUiAttachmentOptionTextSize" format="dimension|reference" />
+        <!-- A color of the option text -->
+        <attr name="streamUiAttachmentOptionTextColor" format="color|reference" />
+        <!-- Font name of the option text -->
+        <attr name="streamUiAttachmentOptionTextFont" format="reference" />
+        <!-- Font assets reference for the option text -->
+        <attr name="streamUiAttachmentOptionTextFontAssets" format="string" />
+        <!-- Text style of the option text: "normal", "bold", and "italic". -->
+        <attr name="streamUiAttachmentOptionTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Background color of the options dialog -->
+        <attr name="streamUiAttachmentOptionsBackgroundColor" format="color|reference" />
         <!-- "Reply to attachment" enabled/disabled -->
         <attr name="streamUiAttachmentReplyEnabled" format="boolean" />
         <!-- Reply icon drawable -->
         <attr name="streamUiReplyIcon" format="reference" />
         <!-- "Show in chat" enabled/disabled -->
-        <attr name="streamUiShowInChatEnabled" format="boolean"/>
+        <attr name="streamUiShowInChatEnabled" format="boolean" />
         <!-- "Show in chat" icon drawable -->
         <attr name="streamUiShowInChatIcon" format="reference" />
         <!-- "Save image" enabled/disabled -->
-        <attr name="streamUiSaveImageEnabled" format="boolean"/>
+        <attr name="streamUiSaveImageEnabled" format="boolean" />
         <!-- "Save" icon drawable -->
         <attr name="streamUiSaveImageIcon" format="reference" />
         <!-- "Delete" enabled/disabled -->
-        <attr name="streamUiDeleteEnabled" format="boolean"/>
+        <attr name="streamUiDeleteEnabled" format="boolean" />
         <!-- "Delete" icon drawable -->
         <attr name="streamUiDeleteIcon" format="reference" />
         <!-- "Delete" text tint -->

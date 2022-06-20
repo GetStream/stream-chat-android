@@ -18,19 +18,25 @@ package io.getstream.chat.android.ui.gallery.options
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsView
 
 /**
  * Style for [AttachmentGalleryOptionsView].
  *
+ * @param optionTextStyle The text style of each option.
+ * @param backgroundColor The background color of the options dialog.
  * @param replyOptionEnabled If the "reply" option is present in the list.
  * @param replyOptionDrawable  The icon to the "reply" option.
  * @param showInChatOptionEnabled If the "show in chat" option present in the list.
@@ -42,6 +48,8 @@ import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOp
  * @param deleteOptionTextColor The text color of the "delete" option.
  */
 public data class AttachmentGalleryOptionsViewStyle(
+    val optionTextStyle: TextStyle,
+    @ColorInt val backgroundColor: Int,
     val replyOptionEnabled: Boolean,
     val replyOptionDrawable: Drawable,
     val showInChatOptionEnabled: Boolean,
@@ -66,6 +74,31 @@ public data class AttachmentGalleryOptionsViewStyle(
         }
 
         operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle {
+            val optionTextStyle = TextStyle.Builder(it)
+                .size(
+                    R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .color(
+                    R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFontAssets,
+                    R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFont,
+                    ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+                )
+                .style(
+                    R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
+            val backgroundColor = it.getColor(
+                R.styleable.AttachmentOptionsView_streamUiAttachmentOptionsBackgroundColor,
+                context.getColorCompat(R.color.stream_ui_white_snow)
+            )
+
             val replyOptionEnabled = it.getBoolean(
                 R.styleable.AttachmentOptionsView_streamUiAttachmentReplyEnabled,
                 true
@@ -108,6 +141,8 @@ public data class AttachmentGalleryOptionsViewStyle(
             )
 
             return AttachmentGalleryOptionsViewStyle(
+                optionTextStyle = optionTextStyle,
+                backgroundColor = backgroundColor,
                 replyOptionEnabled = replyOptionEnabled,
                 replyOptionDrawable = replyOptionDrawable,
                 showInChatOptionEnabled = showInChatOptionEnabled,
