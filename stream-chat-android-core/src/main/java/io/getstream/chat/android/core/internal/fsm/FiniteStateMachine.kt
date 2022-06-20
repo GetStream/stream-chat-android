@@ -85,12 +85,15 @@ public class FiniteStateMachine<S : Any, E : Any>(
         if (handler != null) {
             return handler
         }
-        for ((clazz: KClass<out E>, eventHandler: (S, E) -> S) in this) {
+
+        var eventHandler = defaultEventHandler
+        for ((clazz: KClass<out E>, evHandler: (S, E) -> S) in this) {
             if (clazz.isInstance(event)) {
-                return eventHandler
+                eventHandler = evHandler
+                break
             }
         }
-        return defaultEventHandler
+        return eventHandler
     }
 
     /**
