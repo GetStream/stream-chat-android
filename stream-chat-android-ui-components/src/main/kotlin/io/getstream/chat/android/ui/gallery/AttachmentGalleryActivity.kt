@@ -34,16 +34,20 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryPagerAdapter
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryViewModel
+import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
+import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsDialogFragment
 import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentDialogFragment
-import io.getstream.chat.android.ui.message.list.options.attachment.internal.AttachmentOptionsDialogFragment
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,7 +55,30 @@ import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
+
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
+
+    private val logger = ChatLogger.get("AttachmentGalleryActivity")
+
+    /**
+     * If the "reply" option is present in the list.
+     */
+    private var replyOptionEnabled: Boolean = true
+
+    /**
+     * If the "show in chat" option present in the list.
+     */
+    private var showInChatOptionEnabled: Boolean = true
+
+    /**
+     * If the "save image" option is present in the list
+     */
+    private var saveImageOptionEnabled: Boolean = true
+
+    /**
+     * If the "delete" option is present in the list.
+     */
+    private var deleteOptionEnabled: Boolean = true
 
     private val initialIndex: Int by lazy { intent.getIntExtra(EXTRA_KEY_INITIAL_INDEX, 0) }
     private val viewModel: AttachmentGalleryViewModel by viewModels()
@@ -104,6 +131,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             setupGalleryAdapter()
             setupShareImageButton()
             setupAttachmentActionsButton()
+            obtainOptionsViewStyle()
             observePageChanges()
         }
     }
@@ -140,13 +168,13 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private fun setupAttachmentActionsButton() {
         binding.attachmentActionsButton.setOnClickListener {
-            AttachmentOptionsDialogFragment.newInstance(
+            AttachmentGalleryOptionsDialogFragment.newInstance(
                 showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
                 deleteHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
                 saveImageHandler = handleSaveImage,
                 isMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
-            ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
+            ).show(supportFragmentManager, AttachmentGalleryOptionsDialogFragment.TAG)
         }
     }
 
@@ -161,7 +189,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         onGalleryPageSelected(initialIndex)
     }
 
-    private val handleSaveImage = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+    private val handleSaveImage = AttachmentGalleryOptionsDialogFragment.AttachmentOptionHandler {
         permissionChecker.checkWriteStoragePermissions(
             binding.root,
             onPermissionGranted = {
@@ -188,6 +216,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val currentItem = attachmentGalleryItems[position]
         binding.attachmentDateTextView.text = getRelativeAttachmentDate(currentItem.createdAt)
         binding.userTextView.text = currentItem.user.name
+        binding.attachmentActionsButton.isVisible = shouldShowOptionsButton(currentItem.isMine)
     }
 
     private fun getRelativeAttachmentDate(createdAt: Date): String {
@@ -247,6 +276,41 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 constrainViewToParentBySide(galleryViewPager, ConstraintSet.END)
             }.applyTo(binding.root)
         }
+    }
+
+    /**
+     * Obtains style attributes for the options list.
+     */
+    private fun obtainOptionsViewStyle() {
+        try {
+            createStreamThemeWrapper().obtainStyledAttributes(
+                null,
+                R.styleable.AttachmentOptionsView,
+                R.attr.streamUiAttachmentGalleryOptionsStyle,
+                R.style.StreamUi_AttachmentGallery_Options
+            ).use {
+                val style = AttachmentGalleryOptionsViewStyle(this, it)
+                replyOptionEnabled = style.replyOptionEnabled
+                showInChatOptionEnabled = style.showInChatOptionEnabled
+                saveImageOptionEnabled = style.saveImageOptionEnabled
+                deleteOptionEnabled = style.deleteOptionEnabled
+            }
+        } catch (e: Exception) {
+            logger.logE("Failed to obtain style attribute for the options menu", e)
+        }
+    }
+
+    /**
+     * Checks if we need to show the options menu button. We show the options button
+     * if there is at least one option available.
+     *
+     * @param isMine If the message belongs to the current user.
+     */
+    private fun shouldShowOptionsButton(isMine: Boolean): Boolean {
+        return replyOptionEnabled ||
+            showInChatOptionEnabled ||
+            saveImageOptionEnabled ||
+            (deleteOptionEnabled && isMine)
     }
 
     public fun interface AttachmentShowInChatOptionHandler {
