@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
@@ -49,8 +51,15 @@ internal class ChannelStateLogicImplTest {
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
     private val lastMessageAt: MutableStateFlow<Date?> = MutableStateFlow(null)
     private val _read: MutableStateFlow<ChannelUserRead?> = MutableStateFlow(ChannelUserRead(user))
-    private val _channelData: MutableStateFlow<ChannelData?> = MutableStateFlow(ChannelData(randomChannel(), emptySet()))
+    private val _channelData: MutableStateFlow<ChannelData?> =
+        MutableStateFlow(ChannelData(randomChannel(), emptySet()))
     private val _reads: MutableStateFlow<Map<String, ChannelUserRead>> = MutableStateFlow(emptyMap())
+    private val _insideSearch = MutableStateFlow(false)
+    private val _watchers: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    private val _watcherCount = MutableStateFlow(0)
+    private val _membersCount = MutableStateFlow(0)
+    private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
+    private val _channelConfig = MutableStateFlow(Config())
 
     private val mutableState: ChannelMutableState = mock {
         on(it._messages) doReturn _messages
@@ -60,6 +69,13 @@ internal class ChannelStateLogicImplTest {
         on(it.cid) doReturn randomCID()
         on(it._channelData) doReturn _channelData
         on(it._reads) doReturn _reads
+        on(it._insideSearch) doReturn _insideSearch
+        on(it.insideSearch) doReturn _insideSearch
+        on(it._watchers) doReturn _watchers
+        on(it._watcherCount) doReturn _watcherCount
+        on(it._members) doReturn _members
+        on(it._membersCount) doReturn _membersCount
+        on(it._channelConfig) doReturn _channelConfig
     }
     private val globalMutableState: MutableGlobalState = mock {
         on(it.user) doReturn MutableStateFlow(user)
@@ -78,6 +94,9 @@ internal class ChannelStateLogicImplTest {
         _read.value = ChannelUserRead(user)
         _channelData.value = ChannelData(randomChannel(), emptySet())
         _reads.value = emptyMap()
+        _insideSearch.value = false
+        _watcherCount.value = 0
+        _watcherCount.value = 0
     }
 
     private val channelStateLogicImpl = ChannelStateLogicImpl(mutableState, globalMutableState, attachmentUrlValidator)
@@ -235,5 +254,35 @@ internal class ChannelStateLogicImplTest {
 
         channelStateLogicImpl.upsertMessage(oldMessage)
         lastMessageAt.value `should be equal to` createdAt
+    }
+
+    @Test
+    fun `given inside search should not upsert messages when messages are not coming from scroll update`() {
+        _insideSearch.value = true
+
+        val message = randomMessage()
+
+        channelStateLogicImpl.updateDataFromChannel(
+            randomChannel(messages = listOf(message)),
+            shouldRefreshMessages = false,
+            scrollUpdate = false
+        )
+
+        _messages.value `should be equal to` emptyMap()
+    }
+
+    @Test
+    fun `given inside search should upsert messages when messages are coming from scroll update`() {
+        _insideSearch.value = true
+
+        val message = randomMessage()
+
+        channelStateLogicImpl.updateDataFromChannel(
+            randomChannel(messages = listOf(message)),
+            shouldRefreshMessages = false,
+            scrollUpdate = true
+        )
+
+        _messages.value `should be equal to` mapOf(message.id to message)
     }
 }

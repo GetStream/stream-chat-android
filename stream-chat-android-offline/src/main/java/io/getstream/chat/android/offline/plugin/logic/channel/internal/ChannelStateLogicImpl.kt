@@ -255,6 +255,7 @@ internal class ChannelStateLogicImpl(
         mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
     }
 
+    // Todo: Handle message refresh!!
     override fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
