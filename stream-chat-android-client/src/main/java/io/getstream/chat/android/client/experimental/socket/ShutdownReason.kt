@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.clientstate
+package io.getstream.chat.android.client.experimental.socket
 
-import io.getstream.chat.android.client.models.User as UserModel
+/**
+ * Used to initiate a shutdown of a WebSocket.
+ *
+ * @property code Status code as defined by [Section 7.4 of RFC 6455](http://tools.ietf.org/html/rfc6455#section-7.4)
+ * or `0`.
+ * @property reason Reason for shutting down.
+ */
+internal data class ShutdownReason(val code: Int, val reason: String) {
+    companion object {
+        private const val NORMAL_CLOSURE_STATUS_CODE = 1000
+        private const val NORMAL_CLOSURE_REASON = "Normal closure"
 
-internal sealed class UserState {
-    object NotSet : UserState()
-    class UserSet(val user: UserModel) : UserState()
-
-    class AnonymousUserSet(val anonymousUser: UserModel) : UserState()
-
-    internal fun userOrError(): UserModel = when (this) {
-        is UserSet -> user
-        is AnonymousUserSet -> anonymousUser
-        else -> error("This state doesn't contain user!")
+        @JvmField
+        val GRACEFUL = ShutdownReason(NORMAL_CLOSURE_STATUS_CODE, NORMAL_CLOSURE_REASON)
     }
 }
