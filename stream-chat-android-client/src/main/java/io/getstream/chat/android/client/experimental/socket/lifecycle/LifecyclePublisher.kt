@@ -27,9 +27,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 internal interface LifecyclePublisher {
     val lifecycleEvents: Flow<Timed<Event.Lifecycle>>
 
-    fun observe()
+    suspend fun observe()
 
-    fun dispose()
+    suspend fun dispose()
 }
 
 internal fun List<LifecyclePublisher>.combine(): Flow<Event.Lifecycle> {

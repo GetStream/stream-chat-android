@@ -82,7 +82,7 @@ internal open class ChatSocket constructor(
                 stateMachine.sendEvent(it)
             }
             .launchIn(coroutineScope)
-        startObservers()
+        coroutineScope.launch { startObservers() }
     }
 
     private val stateMachine: FiniteStateMachine<State, Event> by lazy {
@@ -183,7 +183,7 @@ internal open class ChatSocket constructor(
             }
 
             state<State.Destroyed> {
-                onEnter { disposeObservers() }
+                onEnter { coroutineScope.launch { disposeObservers() } }
             }
         }
     }
@@ -218,11 +218,11 @@ internal open class ChatSocket constructor(
         }
     }
 
-    private fun startObservers() {
+    private suspend fun startObservers() {
         lifecycleObservers.forEach { it.observe() }
     }
 
-    private fun disposeObservers() {
+    private suspend fun disposeObservers() {
         lifecycleObservers.forEach { it.dispose() }
     }
 

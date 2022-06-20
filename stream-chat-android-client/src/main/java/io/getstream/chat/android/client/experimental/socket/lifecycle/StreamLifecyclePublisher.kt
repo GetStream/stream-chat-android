@@ -25,13 +25,11 @@ import io.getstream.chat.android.client.experimental.socket.ShutdownReason
 import io.getstream.chat.android.client.experimental.socket.Timed
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePublisher {
     private val logger = ChatLogger.get("StreamLifecycle")
@@ -44,11 +42,10 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
         logger.logD("$it")
     }
 
-    override fun observe() {
+    override suspend fun observe() {
         if (isObserving.not()) {
             isObserving = true
-            @OptIn(DelicateCoroutinesApi::class)
-            GlobalScope.launch(DispatcherProvider.Main) {
+            withContext(DispatcherProvider.Main) {
                 ProcessLifecycleOwner.get()
                     .lifecycle
                     .addObserver(this@StreamLifecyclePublisher)
@@ -56,10 +53,9 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
         }
     }
 
-    override fun dispose() {
+    override suspend fun dispose() {
         if (isObserving) {
-            @OptIn(DelicateCoroutinesApi::class)
-            GlobalScope.launch(DispatcherProvider.Main) {
+            withContext(DispatcherProvider.Main) {
                 ProcessLifecycleOwner.get()
                     .lifecycle
                     .removeObserver(this@StreamLifecyclePublisher)

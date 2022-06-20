@@ -56,7 +56,7 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
-    override fun observe() {
+    override suspend fun observe() {
         if (isRegistered.compareAndSet(false, true)) {
             connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
         }
@@ -64,7 +64,7 @@ internal class NetworkLifecyclePublisher(private val connectivityManager: Connec
         notifyListenersIfNetworkStateChanged()
     }
 
-    override fun dispose() {
+    override suspend fun dispose() {
         if (isRegistered.compareAndSet(true, false)) {
             connectivityManager.unregisterNetworkCallback(callback)
         }

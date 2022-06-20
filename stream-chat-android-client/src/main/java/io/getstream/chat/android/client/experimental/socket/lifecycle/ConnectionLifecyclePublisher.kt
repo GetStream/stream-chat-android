@@ -39,11 +39,11 @@ internal class ConnectionLifecyclePublisher : LifecyclePublisher {
         logger.logD("$it")
     }
 
-    override fun observe() {
+    override suspend fun observe() {
         // no-op
     }
 
-    override fun dispose() {
+    override suspend fun dispose() {
         // no-op
     }
 
