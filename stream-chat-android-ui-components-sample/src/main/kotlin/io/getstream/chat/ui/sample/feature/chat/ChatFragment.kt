@@ -62,6 +62,13 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
+    /**
+     * [DownloadPermissionHandler] instance tasked with requesting [Manifest.permission.WRITE_EXTERNAL_STORAGE]
+     * permission. By default will ask for permission and if it is granted will download the file.
+     */
+    private val downloadHandler: DownloadPermissionHandler = DownloadPermissionHandler()
+        .apply { registerForActivityResult(this@ChatFragment) }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,9 +82,6 @@ class ChatFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    private val downloadHandler: DownloadPermissionHandler = DownloadPermissionHandler()
-        .apply { registerForActivityResult(this@ChatFragment) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
