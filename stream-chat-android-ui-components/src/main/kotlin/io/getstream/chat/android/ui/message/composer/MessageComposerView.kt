@@ -379,7 +379,7 @@ public class MessageComposerView : ConstraintLayout {
      * mention suggestions is propagated to the [contentView] in the [MessageComposerContent.renderState]
      * function.
      *
-     * @param contentView The [View] which shows mention suggestions list and allows to choose one of them.
+     * @param contentView The [View] which shows the mention suggestions list and allows the user to choose one of them.
      * @see [DefaultMessageComposerMentionSuggestionsContent]
      */
     public fun <V> setMentionSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
