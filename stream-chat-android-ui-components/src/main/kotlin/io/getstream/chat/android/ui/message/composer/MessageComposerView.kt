@@ -408,7 +408,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Re-renders suggestions popup window for the given [MessageComposerState] instance.
+     * Re-renders the suggestions popup window for the given [MessageComposerState] instance.
      *
      * @param state [MessageComposerState] instance representing current UI state.
      */
