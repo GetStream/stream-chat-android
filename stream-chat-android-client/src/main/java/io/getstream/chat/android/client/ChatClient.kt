@@ -211,6 +211,9 @@ internal constructor(
 
     private var _channelStateLogicProvider: ChannelStateLogicProvider? = null
 
+    /**
+     * Provider to channel state logic.
+     */
     public var channelStateLogicProvider: ChannelStateLogicProvider?
         get() {
             return _channelStateLogicProvider
