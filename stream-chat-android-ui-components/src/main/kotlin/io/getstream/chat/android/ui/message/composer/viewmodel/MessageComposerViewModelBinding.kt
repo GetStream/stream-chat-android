@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view
- * renders the state delivered by view model, and view model intercepts user's actions automatically.
+ * renders the state delivered by the ViewModel, and the ViewModel intercepts the user's actions automatically.
  *
  * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
