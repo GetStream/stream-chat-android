@@ -699,8 +699,10 @@ internal class EventHandlerImpl(
         val me = self.me
         val currentUser = mutableGlobalState.user.value
         if (me.id != currentUser?.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} " +
-                "while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
+            throw InputMismatchException(
+                "received connect event for user with id ${me.id} while for user configured " +
+                    "has id ${currentUser?.id}. Looks like there's a problem in the user set"
+            )
         }
         mutableGlobalState.updateCurrentUser(self)
         repos.insertCurrentUser(me)
