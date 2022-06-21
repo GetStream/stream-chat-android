@@ -18,10 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
@@ -58,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
@@ -140,7 +138,9 @@ public fun AttachmentsPicker(
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(it)
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(it) {
+                            storagePermissionState.hasPermission
+                        }
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
@@ -284,15 +284,7 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
 
         TextButton(
             colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-            onClick = {
-                // TODO pull this out into a utility function
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    val uri: Uri = Uri.fromParts("package", context.packageName, null)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    data = uri
-                }
-                context.startActivity(intent)
-            }
+            onClick = { context.openSystemSettings() }
         ) {
             Text(stringResource(id = R.string.stream_compose_grant_permission))
         }

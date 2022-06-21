@@ -48,11 +48,15 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStat
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -80,6 +84,8 @@ public class ChannelListViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
+
+    private var queryJob: Job? = null
 
     /**
      * Represents the current state containing channel list
@@ -129,9 +135,7 @@ public class ChannelListViewModel(
     /**
      * Filters the requested channels.
      */
-    private val filterLiveData: LiveData<FilterObject?> =
-        filter?.let(::MutableLiveData) ?: globalState.user.map(Filters::defaultChannelListFilter)
-            .asLiveData()
+    private val filterLiveData: MutableLiveData<FilterObject?> = MutableLiveData(filter)
 
     /**
      * Represents the current state of the channels query.
@@ -139,11 +143,26 @@ public class ChannelListViewModel(
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     init {
+        if (filter == null) {
+            viewModelScope.launch {
+                val filter = buildDefaultFilter().first()
+
+                this@ChannelListViewModel.filterLiveData.value = filter
+            }
+        }
+
         stateMerger.addSource(filterLiveData) { filter ->
             if (filter != null) {
                 initData(filter)
             }
         }
+    }
+
+    /**
+     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
+     */
+    private fun buildDefaultFilter(): Flow<FilterObject> {
+        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -168,8 +187,20 @@ public class ChannelListViewModel(
                 memberLimit = memberLimit,
             )
         queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
-        viewModelScope.launch {
+
+        /**
+         * We clean up any previous loads to make sure the current one is the only one running.
+         */
+        if (queryJob != null) {
+            queryJob?.cancel()
+        }
+
+        queryJob = viewModelScope.launch {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+                if (!isActive) {
+                    return@collectLatest
+                }
+
                 queryChannelsState.chatEventHandler =
                     chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
                 stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
@@ -309,6 +340,15 @@ public class ChannelListViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Allows us to change the filter based on our requirements.
+     *
+     * @param filterObject The new filter to be applied to the query which lets us fetch different data.
+     */
+    public fun setFilters(filterObject: FilterObject) {
+        this.filterLiveData.value = filterObject
     }
 
     /**

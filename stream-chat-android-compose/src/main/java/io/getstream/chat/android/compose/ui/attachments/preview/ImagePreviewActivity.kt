@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -80,7 +81,6 @@ import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -101,6 +101,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
+import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.state.imagepreview.Delete
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewAction
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewOption
@@ -115,7 +117,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.math.abs
@@ -385,7 +386,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
     ) {
-        val context = LocalContext.current
+        val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
+            .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
 
         Row(
             modifier = Modifier
@@ -396,7 +398,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     onClick = {
                         imagePreviewViewModel.toggleImageOptions(isShowingOptions = false)
-                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, context)
+                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, downloadPermissionHandler)
                     }
                 )
                 .padding(8.dp),
@@ -432,7 +434,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private fun handleImageAction(
         imagePreviewAction: ImagePreviewAction,
         currentPage: Int,
-        context: Context,
+        permissionHandler: PermissionHandler,
     ) {
         val message = imagePreviewAction.message
 
@@ -450,10 +452,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
             }
             is Delete -> imagePreviewViewModel.deleteCurrentImage(message.attachments[currentPage])
             is SaveImage -> {
-                ChatClient
-                    .instance()
-                    .downloadAttachment(context, message.attachments[currentPage])
-                    .enqueue()
+                permissionHandler
+                    .onHandleRequest(
+                        mapOf(DownloadPermissionHandler.PayloadAttachment to message.attachments[currentPage])
+                    )
             }
         }
     }
