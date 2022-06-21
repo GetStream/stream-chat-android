@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.action
+package io.getstream.chat.android.uitests.ui.uicomponents.action
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView

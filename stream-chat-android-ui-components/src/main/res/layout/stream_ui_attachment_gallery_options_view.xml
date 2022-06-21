@@ -17,14 +17,14 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/optionsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white_snow"
+    app:cardBackgroundColor="@color/stream_ui_white_snow"
     app:cardCornerRadius="@dimen/stream_ui_options_menu_corner_radius"
     >
 
     <LinearLayout
-        android:id="@+id/optionListContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@drawable/stream_ui_divider"
@@ -34,33 +34,33 @@
 
         <TextView
             android:id="@+id/reply"
-            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_reply"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
             />
 
         <TextView
             android:id="@+id/showInChat"
-            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_show_in_chat"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
             />
 
         <TextView
             android:id="@+id/saveImage"
-            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_save_image"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_download"
             />
 
         <TextView
             android:id="@+id/delete"
-            android:textDirection="locale"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_delete"
+            android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />
 
