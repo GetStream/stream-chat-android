@@ -23,8 +23,11 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
@@ -80,6 +83,14 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         this.style = messageComposerContext.style
 
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
+        style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.sendMessageButton.imageTintList = getColorList(
+                normalColor = tintColor,
+                selectedColor = tintColor,
+                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
+            )
+        }
+
         binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
         binding.cooldownBadgeTextView.background = style.cooldownTimerBackgroundDrawable
     }

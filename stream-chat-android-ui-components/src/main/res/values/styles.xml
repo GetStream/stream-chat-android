@@ -1081,6 +1081,7 @@
 
     <style name="StreamUi.MessageComposerView" parent="StreamUi">
         <item name="streamUiMessageComposerDividerBackgroundDrawable">@drawable/stream_ui_divider</item>
+        <item name="streamUiMessageComposerIconDrawableTintColor">@null</item>
 
         <!-- Command suggestions content -->
         <item name="streamUiMessageComposerCommandSuggestionsTitleTextSize">@dimen/stream_ui_text_medium</item>

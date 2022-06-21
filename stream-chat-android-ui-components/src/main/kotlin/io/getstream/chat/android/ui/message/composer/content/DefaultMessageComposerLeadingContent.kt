@@ -24,8 +24,11 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
@@ -91,6 +94,16 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
 
         binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
         binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
+
+        style.buttonIconDrawableTintColor?.let { tintColor ->
+            val colorStateList = getColorList(
+                normalColor = context.getColorCompat(R.color.stream_ui_grey),
+                selectedColor = tintColor,
+                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
+            )
+            binding.attachmentsButton.imageTintList = colorStateList
+            binding.commandsButton.imageTintList = colorStateList
+        }
     }
 
     /**

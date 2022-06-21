@@ -17,6 +17,7 @@
 <resources>
     <declare-styleable name="MessageComposerView">
         <attr name="streamUiMessageComposerDividerBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageComposerIconDrawableTintColor" format="reference|color" />
 
         <!-- Command suggestions content -->
         <attr name="streamUiMessageComposerCommandSuggestionsTitleTextSize" format="dimension" />

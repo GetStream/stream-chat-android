@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [MessageComposerView].
  *
  * @param backgroundColor The background color of the message composer.
+ * @param buttonIconDrawableTintColor The tint applied to attachments, commands and send buttons.
  * @param dividerBackgroundDrawable The background of the divider at the top.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
@@ -74,7 +75,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  */
 @ExperimentalStreamChatApi
 public data class MessageComposerViewStyle(
-    public val backgroundColor: Int,
+    @ColorInt public val backgroundColor: Int,
+    @ColorInt public val buttonIconDrawableTintColor: Int?,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleTextStyle: TextStyle,
@@ -131,6 +133,10 @@ public data class MessageComposerViewStyle(
                 context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.background)).use {
                     backgroundColor = it.getColor(0, context.getColorCompat(R.color.stream_ui_white))
                 }
+
+                val buttonIconDrawableTintColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerIconDrawableTintColor
+                )
 
                 val dividerBackgroundDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
@@ -437,6 +443,7 @@ public data class MessageComposerViewStyle(
 
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
+                    buttonIconDrawableTintColor = buttonIconDrawableTintColor,
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
