@@ -72,6 +72,7 @@
 - Added `PinnedMessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `TypingIndicatorViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added a way to change runtime filters for Channels in `ChannelListViewModel`, using `setFilters(FilterObject)`. [#3687](https://github.com/GetStream/stream-chat-android/pull/3687) 
 - Added support for bottom infinite scrolling when searching for messages or navigating to messages in a non-linear way inside MessageListView. [3654](https://github.com/GetStream/stream-chat-android/pull/3654)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
