@@ -149,10 +149,6 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 }
 
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
-	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
-	public static synthetic fun loadAndResize$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/getstream/sdk/chat/disposable/Disposable;
 }
 
 public final class com/getstream/sdk/chat/model/AttachmentMetaData {
@@ -287,14 +283,14 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
-	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
-	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
+	public static final fun onPermissionRequested (Landroid/content/Context;Ljava/lang/String;)V
+	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/DateKt {
@@ -321,11 +317,9 @@ public final class com/getstream/sdk/chat/utils/extensions/StringKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
-	public static final fun getInflater (Landroid/view/ViewGroup;)Landroid/view/LayoutInflater;
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ViewKt {
-	public static final fun getActivity (Landroid/view/View;)Landroidx/appcompat/app/AppCompatActivity;
 }
 
 public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
@@ -359,10 +353,22 @@ public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/ge
 	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public fun clear ()V
+	public fun onKeystroke ()V
+}
+
+public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
+	public abstract fun clear ()V
+	public abstract fun onKeystroke ()V
+}
+
 public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
-	public fun <init> (ILkotlin/jvm/functions/Function0;)V
+	public fun <init> (ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public final fun disablePagination ()V
 	public final fun enablePagination ()V
+	public final fun fetchAtBottom (Z)V
 	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
 	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
 }
@@ -416,6 +422,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
+	public final fun getTypingUpdatesBuffer ()Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
 	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
@@ -428,6 +435,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessageWithCustomAttachments$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun stopTyping ()V
 }
 
@@ -439,6 +447,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getInsideSearch ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
@@ -543,6 +552,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BottomEndRegionReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

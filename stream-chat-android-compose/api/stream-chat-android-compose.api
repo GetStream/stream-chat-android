@@ -15,8 +15,40 @@ public final class io/getstream/chat/android/compose/handlers/ClipboardHandlerIm
 	public fun copyMessage (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public final class io/getstream/chat/android/compose/handlers/DownloadPermissionHandler : io/getstream/chat/android/compose/handlers/PermissionHandler {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/handlers/DownloadPermissionHandler$Companion;
+	public static final field PayloadAttachment Ljava/lang/String;
+	public fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun ObservePermissionChanges (Landroidx/compose/runtime/Composer;I)V
+	public fun canHandle (Ljava/lang/String;)Z
+	public fun canHandle (Ljava/util/List;)Z
+	public fun onHandleRequest (Ljava/util/Map;)V
+}
+
+public final class io/getstream/chat/android/compose/handlers/DownloadPermissionHandler$Companion {
+}
+
 public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt {
 	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
+public abstract interface class io/getstream/chat/android/compose/handlers/PermissionHandler {
+	public abstract fun canHandle (Ljava/lang/String;)Z
+	public abstract fun canHandle (Ljava/util/List;)Z
+	public abstract fun onHandleRequest (Ljava/util/Map;)V
+}
+
+public final class io/getstream/chat/android/compose/handlers/PermissionHandler$DefaultImpls {
+	public static fun canHandle (Lio/getstream/chat/android/compose/handlers/PermissionHandler;Ljava/util/List;)Z
+	public static synthetic fun onHandleRequest$default (Lio/getstream/chat/android/compose/handlers/PermissionHandler;Ljava/util/Map;ILjava/lang/Object;)V
+}
+
+public final class io/getstream/chat/android/compose/handlers/StreamPermissionHandlers {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/handlers/StreamPermissionHandlers;
+	public final fun defaultHandlers (Landroid/content/Context;Ljava/util/List;)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
@@ -1356,6 +1388,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public final fun getMessageAlignmentProvider (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;
 	public final fun getMessageOptionsUserReactionAlignment (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;
 	public final fun getMessagePreviewFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
+	public final fun getPermissionHandlerProvider (Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 	public final fun getQuotedAttachmentFactories (Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 	public final fun getReactionIconFactory (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;
 	public final fun getShapes (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamShapes;
@@ -1363,7 +1396,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
-	public static final fun ChatTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/material/ripple/RippleTheme;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChatTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/material/ripple/RippleTheme;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/common/MessageOptionsUserReactionAlignment;Ljava/util/List;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
@@ -1623,6 +1656,11 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 
 public final class io/getstream/chat/android/compose/ui/util/ImageUtilsKt {
 	public static final fun mirrorRtl (Landroidx/compose/ui/Modifier;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Modifier;
+	public static final fun rememberStreamImagePainter-MqR-F_0 (Ljava/lang/Object;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/layout/ContentScale;ILandroidx/compose/runtime/Composer;II)Lcoil/compose/AsyncImagePainter;
+}
+
+public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoaderKt {
+	public static final fun getLocalStreamImageLoader ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider {
@@ -1705,6 +1743,21 @@ public final class io/getstream/chat/android/compose/ui/util/StreamCoilImageLoad
 	public final fun defaultFactory ()Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;
 }
 
+public final class io/getstream/chat/android/compose/ui/util/StreamImageLoaderProvidableCompositionLocal {
+	public static final synthetic fun box-impl (Landroidx/compose/runtime/ProvidableCompositionLocal;)Lio/getstream/chat/android/compose/ui/util/StreamImageLoaderProvidableCompositionLocal;
+	public static synthetic fun constructor-impl$default (Landroidx/compose/runtime/ProvidableCompositionLocal;ILkotlin/jvm/internal/DefaultConstructorMarker;)Landroidx/compose/runtime/ProvidableCompositionLocal;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Landroidx/compose/runtime/ProvidableCompositionLocal;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Landroidx/compose/runtime/ProvidableCompositionLocal;Landroidx/compose/runtime/ProvidableCompositionLocal;)Z
+	public static final fun getCurrent (Landroidx/compose/runtime/ProvidableCompositionLocal;Landroidx/compose/runtime/Composer;I)Lcoil/ImageLoader;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Landroidx/compose/runtime/ProvidableCompositionLocal;)I
+	public static final fun provides-impl (Landroidx/compose/runtime/ProvidableCompositionLocal;Lcoil/ImageLoader;)Landroidx/compose/runtime/ProvidedValue;
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Landroidx/compose/runtime/ProvidableCompositionLocal;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
 public final class io/getstream/chat/android/compose/ui/util/UserUtilsKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
@@ -1765,7 +1818,8 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 public final class io/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/compose/ui/util/StorageHelperWrapper;)V
-	public final fun changeAttachmentPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;)V
+	public final fun changeAttachmentPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun changeAttachmentPickerMode$default (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun changeAttachmentState (Z)V
 	public final fun changeSelectedAttachments (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState;)V
 	public final fun dismissAttachments ()V
@@ -1811,6 +1865,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/common/state/MessageMode;)V
+	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun toggleCommandsVisibility ()V
 }
 

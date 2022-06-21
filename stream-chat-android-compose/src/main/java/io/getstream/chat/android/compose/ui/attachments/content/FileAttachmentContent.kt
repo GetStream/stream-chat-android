@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import android.Manifest
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -39,20 +40,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler.Companion.PayloadAttachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -168,7 +167,7 @@ private fun FileAttachmentDescription(attachment: Attachment) {
  */
 @Composable
 private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
-    val context = LocalContext.current
+    val permissionHandlers = ChatTheme.permissionHandlerProvider
 
     Icon(
         modifier = Modifier
@@ -178,10 +177,11 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false)
             ) {
-                ChatClient
-                    .instance()
-                    .downloadAttachment(context, attachment)
-                    .enqueue()
+                permissionHandlers
+                    .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
+                    .apply {
+                        onHandleRequest(mapOf(PayloadAttachment to attachment))
+                    }
             },
         painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
         contentDescription = stringResource(id = R.string.stream_compose_download),
@@ -202,7 +202,7 @@ public fun FileAttachmentImage(attachment: Attachment) {
     val painter = if (isImage) {
         val dataToLoad = attachment.imageUrl ?: attachment.upload
 
-        rememberImagePainter(dataToLoad)
+        rememberStreamImagePainter(dataToLoad)
     } else {
         painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }

@@ -44,7 +44,7 @@ internal class ChatEventsObservableTest {
     @Before
     fun before() {
         socket = FakeSocket()
-        observable = ChatEventsObservable(socket, mock(), testCoroutines.scope)
+        observable = ChatEventsObservable(socket, mock(), testCoroutines.scope, mock())
         result = mutableListOf()
     }
 

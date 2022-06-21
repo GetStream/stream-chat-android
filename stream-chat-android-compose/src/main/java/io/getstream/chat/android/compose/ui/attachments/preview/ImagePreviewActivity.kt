@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -80,7 +81,6 @@ import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -88,9 +88,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -103,6 +101,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
+import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.state.imagepreview.Delete
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewAction
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewOption
@@ -114,9 +114,9 @@ import io.getstream.chat.android.compose.state.imagepreview.ShowInChat
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.math.abs
@@ -386,7 +386,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
     ) {
-        val context = LocalContext.current
+        val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
+            .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
 
         Row(
             modifier = Modifier
@@ -397,7 +398,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     onClick = {
                         imagePreviewViewModel.toggleImageOptions(isShowingOptions = false)
-                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, context)
+                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, downloadPermissionHandler)
                     }
                 )
                 .padding(8.dp),
@@ -433,7 +434,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private fun handleImageAction(
         imagePreviewAction: ImagePreviewAction,
         currentPage: Int,
-        context: Context,
+        permissionHandler: PermissionHandler,
     ) {
         val message = imagePreviewAction.message
 
@@ -451,10 +452,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
             }
             is Delete -> imagePreviewViewModel.deleteCurrentImage(message.attachments[currentPage])
             is SaveImage -> {
-                ChatClient
-                    .instance()
-                    .downloadAttachment(context, message.attachments[currentPage])
-                    .enqueue()
+                permissionHandler
+                    .onHandleRequest(
+                        mapOf(DownloadPermissionHandler.PayloadAttachment to message.attachments[currentPage])
+                    )
             }
         }
     }
@@ -478,7 +479,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the content pager.
      * @param attachments The attachments to show within the pager.
      */
-    @OptIn(ExperimentalCoilApi::class)
+    @Suppress("LongMethod", "ComplexMethod")
     @Composable
     private fun ImagePreviewContent(
         pagerState: PagerState,
@@ -498,7 +499,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
+                val painter = rememberStreamImagePainter(data = attachments[page].imagePreviewUrl)
 
                 val density = LocalDensity.current
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -509,7 +510,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
 
                 val scale by animateFloatAsState(targetValue = currentScale)
 
-                val transformModifier = if (painter.state is ImagePainter.State.Success) {
+                val transformModifier = if (painter.state is AsyncImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Modifier.aspectRatio(size.width / size.height, true)
                 } else {
@@ -883,7 +884,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     }
                 }
         ) {
-            val painter = rememberImagePainter(attachment.imagePreviewUrl)
+            val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
             Image(
                 modifier = Modifier.fillMaxSize(),

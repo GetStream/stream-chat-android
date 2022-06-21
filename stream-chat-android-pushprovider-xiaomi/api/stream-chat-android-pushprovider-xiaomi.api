@@ -20,8 +20,8 @@ public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiMessaging
 }
 
 public final class io/getstream/chat/android/pushprovider/xiaomi/XiaomiPushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/xiaomi/channel/commonutils/android/Region;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/xiaomi/channel/commonutils/android/Region;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public fun isValidForThisDevice (Landroid/content/Context;)Z
 	public fun onPushDeviceGeneratorSelected ()V
