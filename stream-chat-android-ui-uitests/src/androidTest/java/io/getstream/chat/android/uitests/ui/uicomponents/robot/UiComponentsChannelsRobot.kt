@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.uicomponents
+package io.getstream.chat.android.uitests.ui.uicomponents.robot
 
 import io.getstream.chat.android.uitests.R
 
@@ -33,5 +33,12 @@ internal class ChannelsRobotUiComponents : BaseUiComponentsTestRobot() {
      */
     fun clickAnyChannel() {
         clickElementByIdWithDelay(R.id.channelItemView)
+    }
+
+    /**
+     * Assert that any channel is displayed on the screen.
+     */
+    fun assertChannelIsDisplayed() {
+        assertElementWithIdIsDisplayed(R.id.channelItemView)
     }
 }

@@ -60,6 +60,7 @@
 ### 🐞 Fixed
 - Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
+- Now the options button is not displayed on the gallery screen if there are no options available. [3696](https://github.com/GetStream/stream-chat-android/pull/3696)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
@@ -74,6 +75,7 @@
 - Added support for bottom infinite scrolling when searching for messages or navigating to messages in a non-linear way inside MessageListView. [3654](https://github.com/GetStream/stream-chat-android/pull/3654)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
+- Added possibility to customize gallery options style via `TransformStyle.attachmentGalleryOptionsStyleTransformer`. [3696](https://github.com/GetStream/stream-chat-android/pull/3696)
 - Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachment. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
 
 ### ⚠️ Changed
@@ -95,7 +97,7 @@
 - Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageComposerViewModel.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
-- Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3673](https://github.com/GetStream/stream-chat-android/pull/3676)
+- Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3676](https://github.com/GetStream/stream-chat-android/pull/3676)
 
 ### ⚠️ Changed
 - Since Coil 2.0, the `LocalImageLoader` has been deprecated. So now we support our own image loader, `StreamImageLoader` for providing composition local. [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)

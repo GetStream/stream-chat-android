@@ -1,0 +1,32 @@
+{
+  "type":"health.check",
+  "connection_id":"629907b1-0a05-4049-0000-000000d23bc7",
+  "cid":"*",
+  "me":{
+    "id":"jc",
+    "role":"user",
+    "created_at":"2021-10-21T21:58:10.387472Z",
+    "updated_at":"2022-06-02T18:12:00.798292Z",
+    "last_active":"2022-06-06T09:03:57.285035223Z",
+    "banned":false,
+    "online":true,
+    "invisible":false,
+    "devices":[
+      {
+        "push_provider":"firebase",
+        "id":"c1TnnnM-Q_idjnbPVT1Hy0:APA91bENvNhP6vqsI8ZzdbzXbrhTKllbOuaWWYavW7CIkG_bULEgyhxPGwkTCACE3dLePKELN8tRojtpmKX_wTcSyGbOPMBx6PzUsbV-G3xIPB3JiEqGdvoOdEsqu6ZDhexJ_Bc23BIZ",
+        "created_at":"2022-06-06T07:27:18.040619Z",
+        "user_id":"jc"
+      }
+    ],
+    "mutes":[],
+    "channel_mutes":[],
+    "unread_count":0,
+    "total_unread_count":0,
+    "unread_channels":0,
+    "language":"",
+    "name":"Jc Miñarro",
+    "image":"https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
+  },
+  "created_at":"2022-06-06T09:03:57.296379607Z"
+}

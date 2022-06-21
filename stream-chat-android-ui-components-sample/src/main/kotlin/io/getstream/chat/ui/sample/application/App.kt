@@ -36,6 +36,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initializeToggleService()
         chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
@@ -51,7 +52,6 @@ class App : Application() {
             }.build()
         )
         ApplicationConfigurator.configureApp(this)
-        initializeToggleService()
     }
 
     private fun getApiKey(): String {

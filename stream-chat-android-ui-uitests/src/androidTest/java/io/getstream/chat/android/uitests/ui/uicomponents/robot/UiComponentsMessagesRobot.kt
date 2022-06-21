@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uitests.ui.robot.uicomponents
+package io.getstream.chat.android.uitests.ui.uicomponents.robot
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -39,15 +38,22 @@ internal class MessagesRobotUiComponents : BaseUiComponentsTestRobot() {
      * @param text The text what will be typed in the message input.
      */
     fun typeMessageText(text: String) {
-        onView(withId(R.id.messageEditText))
-            .perform(typeText(text), closeSoftKeyboard())
+        waitForViewWithId(R.id.messageEditText)
+        onView(withId(R.id.messageEditText)).perform(typeText(text), closeSoftKeyboard())
     }
 
     /**
      * Clicks the "send message" button.
      */
     fun clickSendButton() {
-        onView(withId(R.id.sendButtonContainer))
-            .perform(ViewActions.click())
+        waitForViewWithId(R.id.sendButtonContainer)
+        clickElementById(R.id.sendButtonContainer)
+    }
+
+    /**
+     * Assert that any channel is displayed on the screen.
+     */
+    fun assertMessageIsDisplayed() {
+        assertElementWithIdIsDisplayed(R.id.messageItemView)
     }
 }

@@ -14,19 +14,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-
-    <io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsView
-        android:id="@+id/attachmentOptionsMenu"
-        android:layout_width="182dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:layout_marginTop="?actionBarSize"
-        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
-        />
-
-</FrameLayout>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>
