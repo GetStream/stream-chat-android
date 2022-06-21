@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -362,23 +363,17 @@ private suspend fun ChatClient.loadMessageByIdInternal(
         return cidValidationResult.error().toResultError()
     }
 
-    val result = getMessage(messageId).await()
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    val result = logic.channel(channelType = channelType, channelId = channelId)
+        .loadMessagesAroundId(messageId)
 
     return if (result.isSuccess) {
-        val message = result.data()
-        val (channelType, channelId) = cid.cidToTypeAndId()
-
-        logic.channel(channelType = channelType, channelId = channelId).run {
-            storeMessageLocally(listOf(message))
-            loadMessagesAroundId(messageId)
+        result.map { channel ->
+            channel.messages.first { message ->
+                message.id == messageId
+            }
         }
-        result
-    } else try {
-        val repositoryProvider = RepositoryProvider.get()
-
-        repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
-            ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-    } catch (exception: Exception) {
-        Result.error(exception)
+    } else {
+        Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
     }
 }
