@@ -68,7 +68,7 @@ internal class SocketFactory(
     private fun buildUserDetailJson(connectionConf: ConnectionConf): String {
         val data = mapOf(
             "user_details" to connectionConf.reduceUserDetails(),
-            "user_id" to connectionConf.user.id,
+            "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
             "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
         )
@@ -81,7 +81,7 @@ internal class SocketFactory(
      *
      * @return A map of User's properties to update.
      */
-    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to user.id)
+    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
         .apply {
             if (!isReconnection) {
                 put("role", user.role)
@@ -114,5 +114,11 @@ internal class SocketFactory(
         ) : ConnectionConf()
 
         internal fun asReconnectionConf(): ConnectionConf = this.also { isReconnection = true }
+
+        internal val id: String
+            get() = when (this) {
+                is AnonymousConnectionConf -> user.id.replace("!", "")
+                is UserConnectionConf -> user.id
+            }
     }
 }
