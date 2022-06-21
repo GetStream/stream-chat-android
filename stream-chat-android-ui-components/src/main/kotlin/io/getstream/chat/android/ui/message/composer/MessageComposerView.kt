@@ -354,7 +354,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Sets custom header content view. It must implement [MessageComposerContent] interface and should
+     * Sets a custom header content view. It must implement the [MessageComposerContent] interface and should
      * render the currently active action according to the received state. The currently active action
      * is propagated to the [contentView] in the [MessageComposerContent.renderState] function.
      *
