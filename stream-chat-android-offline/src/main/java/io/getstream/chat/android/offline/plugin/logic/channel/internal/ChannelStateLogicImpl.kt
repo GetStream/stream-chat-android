@@ -51,14 +51,27 @@ internal class ChannelStateLogicImpl(
 
     private val logger = ChatLogger.get("ChannelStateLogic")
 
-    override fun listerForChannelState(): ChannelState {
+    /**
+     * Return [ChannelState] representing the state of the channel. Use this when you would like to
+     * keep track of the state without changing it.
+     */
+    override fun listenForChannelState(): ChannelState {
         return mutableState
     }
 
+    /**
+     * Return [ChannelState] representing the state of the channel. Use this when you would like to
+     * keep track of the state and would like to write a new state too.
+     */
     override fun writeChannelState(): ChannelMutableState {
         return mutableState.toMutableState()
     }
 
+    /**
+     * Propagates the error in a query.
+     *
+     * @param error [ChatError]
+     */
     override fun propagateQueryError(error: ChatError) {
         if (error.isPermanent()) {
             logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
@@ -113,11 +126,21 @@ internal class ChannelStateLogicImpl(
         }
     }
 
+    /**
+     * Updates the channel data of the state of the SDK.
+     *
+     * @param channel the data of [Channel] to be updated.
+     */
     override fun updateChannelData(channel: Channel) {
         val currentOwnCapabilities = mutableState._channelData.value?.ownCapabilities ?: emptySet()
         mutableState._channelData.value = ChannelData(channel, currentOwnCapabilities)
     }
 
+    /**
+     * Updates the read information of this channel.
+     *
+     * @param reads the information about the read.
+     */
     override fun updateReads(reads: List<ChannelUserRead>) {
         globalMutableState.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
@@ -157,8 +180,19 @@ internal class ChannelStateLogicImpl(
         }
     }
 
+    /**
+     * Updates the read information of this channel.
+     *
+     * @param read the information about the read.
+     */
     override fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
+    /**
+     * Sets the typing status for a user in the channel.
+     *
+     * @param userId the id of the user
+     * @param event the event of typing.
+     */
     override fun setTyping(userId: String, event: ChatEvent?) {
         val copy = mutableState._typing.value.toMutableMap()
         if (event == null) {
@@ -170,30 +204,61 @@ internal class ChannelStateLogicImpl(
         mutableState._typing.value = copy.toMap()
     }
 
+    /**
+     * Sets the watcher count for the channel.
+     *
+     * @param watcherCount the count of watchers.
+     */
     override fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != mutableState._watcherCount.value) {
             mutableState._watcherCount.value = watcherCount
         }
     }
 
+    /**
+     * Sets the members of the channel.
+     */
     override fun setMembers(members: List<Member>) {
         mutableState._members.value = (mutableState._members.value + members.associateBy(Member::getUserId))
     }
 
+    /**
+     * Sets the watchers of the channel.
+     *
+     * @param watchers the [User] to be added or updated
+     */
     override fun setWatchers(watchers: List<User>) {
         mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
     }
 
+    /**
+     * Upsert members in the channel.
+     *
+     * @param message The message to be added or updated.
+     */
     override fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 
+    /**
+     * Upsert members in the channel.
+     *
+     * @param messages the list of [Message] to be upserted
+     * @param shouldRefreshMessages if the current messages should be removed or not and only
+     * new messages should be kept.
+     */
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
         mutableState._messages.value = newMessages
     }
 
+    /**
+     * Removes messages before a certain date
+     *
+     * @param date all messages will be removed before this date.
+     * @param systemMessage the system message to be added to inform the user.
+     */
     override fun removeMessagesBefore(date: Date, systemMessage: Message?) {
         val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
 
@@ -205,6 +270,11 @@ internal class ChannelStateLogicImpl(
         }
     }
 
+    /**
+     * Removes local messages. Doesn't remove message in database.
+     *
+     * @param message The [Message] to be deleted.
+     */
     override fun removeLocalMessage(message: Message) {
         mutableState._messages.value = mutableState._messages.value - message.id
     }
@@ -218,43 +288,96 @@ internal class ChannelStateLogicImpl(
         mutableState.hideMessagesBefore = date
     }
 
+    /**
+     * Upsert member in the channel.
+     *
+     * @param member the member to be upserted.
+     */
     override fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 
+    /**
+     * Upsert members in the channel.
+     *
+     * @param members list of members to be upserted.
+     */
     override fun upsertMembers(members: List<Member>) {
         mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
     }
 
+    /**
+     * Upsert old messages.
+     *
+     * @param messages The list of messages to be upserted.
+     */
     override fun upsertOldMessages(messages: List<Message>) {
         mutableState._oldMessages.value = parseMessages(messages)
     }
 
+    /**
+     * Deletes a member. Doesn't delete in the database.
+     *
+     * @param userId Id of the user.
+     */
     override fun deleteMember(userId: String) {
         mutableState._members.value = mutableState._members.value - userId
         mutableState._membersCount.value -= 1
     }
 
+    /**
+     * Upsert watcher.
+     *
+     * @param user [User]
+     */
     override fun upsertWatcher(user: User) {
         mutableState._watchers.value = mutableState._watchers.value + mapOf(user.id to user)
     }
 
+    /**
+     * Removes watcher.
+     *
+     * @param user [User]
+     */
     override fun deleteWatcher(user: User) {
         mutableState._watchers.value = mutableState._watchers.value - user.id
     }
 
+    /**
+     * Sets channel as hidden.
+     *
+     * @param hidden Boolean.
+     */
     override fun setHidden(hidden: Boolean) {
         mutableState._hidden.value = hidden
     }
 
+    /**
+     * Sets a replied message.
+     *
+     * @param repliedMessage The message that contains the reply.
+     */
     override fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
     }
 
+    /**
+     * Deletes channel.
+     *
+     * @param deleteDate The date when the channel was deleted.
+     */
     override fun deleteChannel(deleteDate: Date) {
         mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
     }
 
+    /**
+     * Updates data from channel.
+     *
+     * @param c [Channel]
+     * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
+     * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
+     * when the user is searching in the channel.
+     */
     override fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
@@ -277,6 +400,9 @@ internal class ChannelStateLogicImpl(
         mutableState._channelConfig.value = c.config
     }
 
+    /**
+     *
+     */
     override fun updateOldMessagesFromChannel(c: Channel) {
         mutableState.hideMessagesBefore = c.hiddenMessagesBefore
 
