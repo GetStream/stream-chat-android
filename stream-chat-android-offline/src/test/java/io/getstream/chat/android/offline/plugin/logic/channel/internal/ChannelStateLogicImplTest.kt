@@ -287,7 +287,7 @@ internal class ChannelStateLogicImplTest {
     }
 
     @Test
-    fun `given message should be refreshes, old messages should be clean`() {
+    fun `given message should be refreshed, old messages should be clean`() {
         val message = randomMessage()
         val message2 = randomMessage()
 
