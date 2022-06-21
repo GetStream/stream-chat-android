@@ -21,7 +21,9 @@ import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
 import com.getstream.sdk.chat.utils.extensions.openSystemSettings
+import com.getstream.sdk.chat.utils.extensions.wasPermissionRequested
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
@@ -77,9 +79,7 @@ public class DownloadPermissionHandler(
     private val permissionState: PermissionState,
     private val context: Context,
     private val onPermissionRequired: () -> Unit = {
-        if (!permissionState.hasPermission &&
-            (permissionState.shouldShowRationale || !permissionState.permissionRequested)
-        ) {
+        if (!context.wasPermissionRequested(permissionState.permission) || permissionState.shouldShowRationale) {
             permissionState.launchPermissionRequest()
         } else {
             context.openSystemSettings()
@@ -132,6 +132,7 @@ public class DownloadPermissionHandler(
         } else {
             lastPayload = payload
             onPermissionRequired()
+            context.onPermissionRequested(permissionState.permission)
         }
     }
 
