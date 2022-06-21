@@ -387,7 +387,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Sets custom command suggestions content view. It must implement [MessageComposerContent] interface,
+     * Sets a custom command suggestions content view. It must implement the [MessageComposerContent] interface,
      * and should render command suggestions according to the received state. List of currently available
      * command suggestions is propagated to the [contentView] in the [MessageComposerContent.renderState]
      * function.
