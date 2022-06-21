@@ -21,6 +21,7 @@
 package io.getstream.chat.android.ui.message.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
@@ -95,7 +96,11 @@ public fun MessageListViewModel.bindView(
     view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
-    view.setAttachmentDownloadHandler { downloadAttachmentCall -> onEvent(DownloadAttachment(downloadAttachmentCall)) }
+    view.setAttachmentDownloadHandler { downloadAttachmentCall ->
+        PermissionChecker().checkWriteStoragePermissions(view) {
+            onEvent(DownloadAttachment(downloadAttachmentCall))
+        }
+    }
     view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
 
     ownCapabilities.observe(lifecycleOwner) {
