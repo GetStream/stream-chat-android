@@ -1113,6 +1113,7 @@ public class io/getstream/chat/android/ui/message/MessageListFragment : androidx
 	protected final fun getThemeResId ()I
 	public static final fun newInstance (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 	public static final fun newInstance (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/MessageListFragment;
+	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onDetach ()V

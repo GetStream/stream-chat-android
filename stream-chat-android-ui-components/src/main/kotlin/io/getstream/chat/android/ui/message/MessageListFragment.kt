@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.message
 
+import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
@@ -89,6 +91,11 @@ public open class MessageListFragment : Fragment() {
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
     protected val binding: StreamUiFragmentMessageListBinding get() = _binding!!
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        backPressListener = findListener()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

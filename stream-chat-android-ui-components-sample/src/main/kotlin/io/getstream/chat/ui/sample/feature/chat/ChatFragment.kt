@@ -78,7 +78,6 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
-
         initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
@@ -158,7 +157,6 @@ class ChatFragment : Fragment() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
             bindView(binding.messageListView, viewLifecycleOwner)
-
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {
                     true
