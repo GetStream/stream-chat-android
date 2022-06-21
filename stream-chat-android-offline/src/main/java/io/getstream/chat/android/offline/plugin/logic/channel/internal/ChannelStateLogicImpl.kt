@@ -363,6 +363,11 @@ internal class ChannelStateLogicImpl(
         mutableState._repliedMessage.value = repliedMessage
     }
 
+    /**
+     * Sets the channels as muted or unmuted.
+     *
+     * @param isMuted
+     */
     override fun updateMute(isMuted: Boolean) {
         mutableState._muted.value = isMuted
     }
@@ -398,7 +403,9 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
+     * Update the old messages for channel. It doesn't add new messages.
      *
+     * @param c [Channel] the channel containing the data to be updated.
      */
     override fun updateOldMessagesFromChannel(c: Channel) {
         mutableState.hideMessagesBefore = c.hiddenMessagesBefore
@@ -416,6 +423,12 @@ internal class ChannelStateLogicImpl(
         upsertOldMessages(c.messages)
     }
 
+    /**
+     * Propagates the channel query. The data of the channel will be propagated to the SDK.
+     *
+     * @param channel [Channel]
+     * @param request [QueryChannelRequest]
+     */
     override fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
         val noMoreMessages = request.messagesLimit() > channel.messages.size
 

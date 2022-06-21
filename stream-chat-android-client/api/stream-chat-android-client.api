@@ -995,6 +995,7 @@ public abstract interface class io/getstream/chat/android/client/channel/state/C
 	public abstract fun hideMessagesBefore (Ljava/util/Date;)V
 	public abstract fun incrementUnreadCountIfNecessary (Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun listenForChannelState ()Lio/getstream/chat/android/client/channel/state/ChannelState;
+	public abstract fun propagateChannelQuery (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)V
 	public abstract fun propagateQueryError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun removeLocalMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun removeMessagesBefore (Ljava/util/Date;Lio/getstream/chat/android/client/models/Message;)V
@@ -1006,6 +1007,7 @@ public abstract interface class io/getstream/chat/android/client/channel/state/C
 	public abstract fun setWatchers (Ljava/util/List;)V
 	public abstract fun updateChannelData (Lio/getstream/chat/android/client/models/Channel;)V
 	public abstract fun updateDataFromChannel (Lio/getstream/chat/android/client/models/Channel;ZZ)V
+	public abstract fun updateMute (Z)V
 	public abstract fun updateOldMessagesFromChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public abstract fun updateRead (Lio/getstream/chat/android/client/models/ChannelUserRead;)V
 	public abstract fun updateReads (Ljava/util/List;)V

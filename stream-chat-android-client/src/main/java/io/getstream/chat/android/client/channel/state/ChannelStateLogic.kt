@@ -201,6 +201,11 @@ public interface ChannelStateLogic {
      */
     public fun replyMessage(repliedMessage: Message?)
 
+    /**
+     * Sets the channels as muted or unmuted.
+     *
+     * @param isMuted
+     */
     public fun updateMute(isMuted: Boolean)
 
     /**
@@ -224,6 +229,12 @@ public interface ChannelStateLogic {
      */
     public fun updateOldMessagesFromChannel(c: Channel)
 
+    /**
+     * Propagates the channel query. The data of the channel will be propagated to the SDK.
+     *
+     * @param channel [Channel]
+     * @param request [QueryChannelRequest]
+     */
     public fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest)
 
     /**
