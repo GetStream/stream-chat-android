@@ -334,7 +334,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Sets custom footer content view. It must implement [MessageComposerContent] interface and should
+     * Sets a custom footer content view. It must implement [MessageComposerContent] interface and should
      * render the "also send to channel" checkbox in the thread mode according to the received state. The
      * current mode is propagated to the [contentView] in the [MessageComposerContent.renderState] function.
      *
