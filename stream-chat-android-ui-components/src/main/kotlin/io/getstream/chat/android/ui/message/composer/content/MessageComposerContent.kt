@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerView
 @ExperimentalStreamChatApi
 public interface MessageComposerContent {
     /**
-     * Initializes the content view with with [MessageComposerContext].
+     * Initializes the content view with [MessageComposerContext].
      *
      * @param messageComposerContext The context of this [MessageComposerView].
      */
