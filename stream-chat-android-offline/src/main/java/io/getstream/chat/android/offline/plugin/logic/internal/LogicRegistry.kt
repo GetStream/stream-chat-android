@@ -81,13 +81,12 @@ internal class LogicRegistry internal constructor(
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
             val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
-            val stateLogic = ChannelStateLogicImpl(mutableState, globalState)
+            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, SearchLogic(mutableState))
 
             ChannelLogic(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
-                searchLogic = SearchLogic(mutableState)
             )
         }
     }

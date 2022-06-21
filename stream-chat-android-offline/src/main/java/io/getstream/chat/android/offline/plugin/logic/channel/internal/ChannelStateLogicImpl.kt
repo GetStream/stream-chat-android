@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
 import io.getstream.chat.android.client.channel.state.ChannelMutableState
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -54,6 +55,7 @@ import kotlin.math.max
 internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelStateLogic {
 
@@ -294,6 +296,7 @@ internal class ChannelStateLogicImpl(
      */
     override fun upsertMembers(members: List<Member>) {
         mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
+        mutableState._membersCount.value = mutableState._members.value.size
     }
 
     /**
@@ -360,6 +363,10 @@ internal class ChannelStateLogicImpl(
         mutableState._repliedMessage.value = repliedMessage
     }
 
+    override fun updateMute(isMuted: Boolean) {
+        mutableState._muted.value = isMuted
+    }
+
     /**
      * Updates data from channel.
      *
@@ -407,6 +414,27 @@ internal class ChannelStateLogicImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertOldMessages(c.messages)
+    }
+
+    override fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
+        val noMoreMessages = request.messagesLimit() > channel.messages.size
+
+        searchLogic.handleMessageBounds(request, noMoreMessages)
+        mutableState.recoveryNeeded = false
+
+        if (noMoreMessages) {
+            if (request.isFilteringNewerMessages()) {
+                mutableState._endOfNewerMessages.value = true
+            } else {
+                mutableState._endOfOlderMessages.value = true
+            }
+        }
+
+        updateDataFromChannel(
+            channel,
+            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+            scrollUpdate = true
+        )
     }
 
     /**

@@ -104,7 +104,6 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
-    private val searchLogic: SearchLogic,
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
@@ -112,12 +111,6 @@ internal class ChannelLogic(
 
     val cid: String
         get() = mutableState.cid
-
-    private fun loadingStateByRequest(request: QueryChannelRequest) = when {
-        request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
-        request.filteringOlderMessages() -> mutableState._loadingOlderMessages
-        else -> mutableState._loading
-    }
 
     override suspend fun onQueryChannelPrecondition(
         channelType: String,
@@ -146,27 +139,7 @@ internal class ChannelLogic(
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
         }
-            .onSuccess { channel ->
-                val noMoreMessages = request.messagesLimit() > channel.messages.size
-
-                searchLogic.handleMessageBounds(request, noMoreMessages)
-                mutableState.recoveryNeeded = false
-
-                if (noMoreMessages) {
-                    if (request.isFilteringNewerMessages()) {
-                        mutableState._endOfNewerMessages.value = true
-                    } else {
-                        mutableState._endOfOlderMessages.value = true
-                    }
-                }
-
-                updateDataFromChannel(
-                    channel,
-                    shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-                    scrollUpdate = true
-                )
-                loadingStateByRequest(request).value = false
-            }
+            .onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
             .onError(channelStateLogic::propagateQueryError)
     }
 
@@ -256,8 +229,6 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
-        val loader = loadingStateByRequest(request)
-        loader.value = true
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
             if (request.filteringOlderMessages()) {
@@ -265,7 +236,6 @@ internal class ChannelLogic(
             } else {
                 updateDataFromLocalChannel(channel)
             }
-            loader.value = false
         }
     }
 
@@ -301,6 +271,7 @@ internal class ChannelLogic(
     ) {
         channelStateLogic.updateDataFromChannel(c, shouldRefreshMessages, scrollUpdate)
     }
+
     /**
      * Updates the messages locally and saves it at database.
      *
@@ -567,14 +538,12 @@ internal class ChannelLogic(
                 channelStateLogic.deleteMember(event.member.user.id)
             }
             is MemberAddedEvent -> {
-                mutableState._membersCount.value += 1
                 channelStateLogic.upsertMember(event.member)
             }
             is MemberUpdatedEvent -> {
                 channelStateLogic.upsertMember(event.member)
             }
             is NotificationAddedToChannelEvent -> {
-                mutableState._membersCount.value += event.channel.members.size
                 channelStateLogic.upsertMembers(event.channel.members)
             }
             is UserPresenceChangedEvent -> {
@@ -637,9 +606,9 @@ internal class ChannelLogic(
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationChannelMutesUpdatedEvent -> {
-                mutableState._muted.value = event.me.channelMutes.any { mute ->
+                event.me.channelMutes.any { mute ->
                     mute.channel.cid == mutableState.cid
-                }
+                }.let(channelStateLogic::updateMute)
             }
             is ChannelUserBannedEvent,
             is ChannelUserUnbannedEvent,

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.channel.state
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
@@ -200,6 +201,8 @@ public interface ChannelStateLogic {
      */
     public fun replyMessage(repliedMessage: Message?)
 
+    public fun updateMute(isMuted: Boolean)
+
     /**
      * Updates data from channel.
      *
@@ -220,6 +223,8 @@ public interface ChannelStateLogic {
      * @param c [Channel] the channel containing the data to be updated.
      */
     public fun updateOldMessagesFromChannel(c: Channel)
+
+    public fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest)
 
     /**
      * Propagates the error in a query.
