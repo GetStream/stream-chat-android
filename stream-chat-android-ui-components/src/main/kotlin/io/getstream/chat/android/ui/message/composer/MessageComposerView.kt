@@ -170,7 +170,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Handle to a custom mention suggestions view set with [setMentionSuggestionsContent].
+     * Handle for a custom mention suggestions view set with [setMentionSuggestionsContent].
      */
     private var mentionSuggestionsContentOverride: View? = null
 
