@@ -145,7 +145,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Handle to [PopupWindow] which is currently displayed. Used to display command
+     * Handle for [PopupWindow] which is currently displayed. Used to display command
      * and mention suggestions.
      */
     private var suggestionsPopup: MessageComposerSuggestionsPopup? = null
