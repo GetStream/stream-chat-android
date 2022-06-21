@@ -468,7 +468,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Initializes the content view with with [MessageComposerContext].
+     * Initializes the content view with [MessageComposerContext].
      */
     private fun <V> V.attachContext(): V where V : View, V : MessageComposerContent {
         attachContext(messageComposerContext)
