@@ -2650,7 +2650,7 @@ internal constructor(
         @JvmField
         public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
-        private const val ANONYMOUS_USER_ID = "!anon"
+        private const val ANONYMOUS_USER_ID = "anon"
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic

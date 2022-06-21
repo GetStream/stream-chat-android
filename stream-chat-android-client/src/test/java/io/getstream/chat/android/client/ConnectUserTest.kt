@@ -234,7 +234,7 @@ internal class ConnectUserTest {
     @Test
     fun `Connect an anonymous user when no previous connection was performed should return a success`() = testCoroutines.runTest {
         /* Given */
-        val user = User(id = "!anon")
+        val user = User(id = "anon")
         val connectionId = randomString()
         val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
 
