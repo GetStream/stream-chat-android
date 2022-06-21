@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.call.await
@@ -82,6 +83,7 @@ internal class ChatClientTest {
 
     @BeforeEach
     fun setUp() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val config = ChatClientConfig(
             "api-key",
             "hello.http",
@@ -113,6 +115,7 @@ internal class ChatClientTest {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         ).apply {
             connectUser(user, token).enqueue()
         }

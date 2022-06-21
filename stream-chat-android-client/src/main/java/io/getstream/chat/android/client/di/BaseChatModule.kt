@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -83,6 +84,7 @@ internal open class BaseChatModule(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
     private val customOkHttpClient: OkHttpClient? = null,
+    private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
@@ -233,7 +235,7 @@ internal open class BaseChatModule(
         networkScope,
         parser,
         listOf(
-            StreamLifecyclePublisher(),
+            StreamLifecyclePublisher(lifecycle),
             NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
         ),
     )
