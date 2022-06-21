@@ -94,7 +94,7 @@
 - Added option to customise `InitialsAvatar` offset passing it custom offset and through `groupAvatarInitialsXOffset` and `groupAvatarInitialsYOffset` dimens. [#3609](https://github.com/GetStream/stream-chat-android/pull/3609)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageComposerViewModel.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
-- Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3673](https://github.com/GetStream/stream-chat-android/pull/3676)
+- Added `PermissionHandler` and `DownloadPermissionHandler` to automatically request storage permission if needed and download the attachments. [#3676](https://github.com/GetStream/stream-chat-android/pull/3676)
 
 ### ⚠️ Changed
 - Since Coil 2.0, the `LocalImageLoader` has been deprecated. So now we support our own image loader, `StreamImageLoader` for providing composition local. [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
