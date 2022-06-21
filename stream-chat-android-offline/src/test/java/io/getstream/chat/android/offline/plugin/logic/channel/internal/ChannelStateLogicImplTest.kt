@@ -99,7 +99,8 @@ internal class ChannelStateLogicImplTest {
         _watcherCount.value = 0
     }
 
-    private val channelStateLogicImpl = ChannelStateLogicImpl(mutableState, globalMutableState, attachmentUrlValidator)
+    private val channelStateLogicImpl =
+        ChannelStateLogicImpl(mutableState, globalMutableState, mock(), attachmentUrlValidator)
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
