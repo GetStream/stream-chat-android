@@ -78,14 +78,14 @@ public interface PermissionHandler {
 public class DownloadPermissionHandler(
     private val permissionState: PermissionState,
     private val context: Context,
-    private val onPermissionRequired: () -> Unit = {
+    private inline val onPermissionRequired: () -> Unit = {
         if (!context.wasPermissionRequested(permissionState.permission) || permissionState.shouldShowRationale) {
             permissionState.launchPermissionRequest()
         } else {
             context.openSystemSettings()
         }
     },
-    private val onPermissionGranted: (Map<String, Any>) -> Unit = { payload ->
+    private inline val onPermissionGranted: (Map<String, Any>) -> Unit = { payload ->
         (payload[PayloadAttachment] as? Attachment)?.let {
             ChatClient
                 .instance()
