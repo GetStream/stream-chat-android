@@ -59,7 +59,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     private lateinit var style: MessageComposerViewStyle
 
     /**
-     * Text change listener invoked each time after text was changed.
+     * Text change listener invoked after each input change.
      */
     public var textInputChangeListener: (String) -> Unit = {}
 
