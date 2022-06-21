@@ -52,7 +52,7 @@ public fun MessageComposerViewModel.bindView(
     lifecycleOwner: LifecycleOwner,
     sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
     textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
-    attachmentSelectionListener: (List<Attachment>) -> Unit = { setSelectedAttachments(it) },
+    attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
     attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
     mentionSelectionListener: (User) -> Unit = { selectMention(it) },
     commandSelectionListener: (Command) -> Unit = { selectCommand(it) },

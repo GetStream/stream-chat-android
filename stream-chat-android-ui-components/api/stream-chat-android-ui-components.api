@@ -1504,7 +1504,6 @@ public final class io/getstream/chat/android/ui/message/composer/viewmodel/Messa
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/common/state/MessageMode;)V
-	public final fun setSelectedAttachments (Ljava/util/List;)V
 	public final fun toggleCommandsVisibility ()V
 }
 
