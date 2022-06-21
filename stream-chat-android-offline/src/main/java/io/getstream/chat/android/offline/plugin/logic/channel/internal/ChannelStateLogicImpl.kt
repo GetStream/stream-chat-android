@@ -43,6 +43,14 @@ import java.util.Date
 import kotlin.math.max
 
 @Suppress("TooManyFunctions")
+/**
+ * The logic of the state of a channel. This class contains the logic of how to
+ * update the state of the channel in the SDK.
+ *
+ * @property mutableState [ChannelMutableState]
+ * @property globalMutableState [MutableGlobalState]
+ * @property attachmentUrlValidator [AttachmentUrlValidator]
+ */
 internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
@@ -65,24 +73,6 @@ internal class ChannelStateLogicImpl(
      */
     override fun writeChannelState(): ChannelMutableState {
         return mutableState.toMutableState()
-    }
-
-    /**
-     * Propagates the error in a query.
-     *
-     * @param error [ChatError]
-     */
-    override fun propagateQueryError(error: ChatError) {
-        if (error.isPermanent()) {
-            logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
-        } else {
-            logger.logW(
-                "Temporary failure calling channel.watch for channel ${mutableState.cid}. " +
-                    "Marking the channel as needing recovery. Error was $error"
-            )
-            mutableState.recoveryNeeded = true
-        }
-        globalMutableState.setErrorEvent(Event(error))
     }
 
     /**
@@ -326,6 +316,15 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
+     * Deletes channel.
+     *
+     * @param deleteDate The date when the channel was deleted.
+     */
+    override fun deleteChannel(deleteDate: Date) {
+        mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
+    }
+
+    /**
      * Upsert watcher.
      *
      * @param user [User]
@@ -359,15 +358,6 @@ internal class ChannelStateLogicImpl(
      */
     override fun replyMessage(repliedMessage: Message?) {
         mutableState._repliedMessage.value = repliedMessage
-    }
-
-    /**
-     * Deletes channel.
-     *
-     * @param deleteDate The date when the channel was deleted.
-     */
-    override fun deleteChannel(deleteDate: Date) {
-        mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
     }
 
     /**
@@ -417,6 +407,24 @@ internal class ChannelStateLogicImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertOldMessages(c.messages)
+    }
+
+    /**
+     * Propagates the error in a query.
+     *
+     * @param error [ChatError]
+     */
+    override fun propagateQueryError(error: ChatError) {
+        if (error.isPermanent()) {
+            logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
+        } else {
+            logger.logW(
+                "Temporary failure calling channel.watch for channel ${mutableState.cid}. " +
+                    "Marking the channel as needing recovery. Error was $error"
+            )
+            mutableState.recoveryNeeded = true
+        }
+        globalMutableState.setErrorEvent(Event(error))
     }
 
     /**
