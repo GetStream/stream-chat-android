@@ -994,7 +994,7 @@ public abstract interface class io/getstream/chat/android/client/channel/state/C
 	public abstract fun deleteWatcher (Lio/getstream/chat/android/client/models/User;)V
 	public abstract fun hideMessagesBefore (Ljava/util/Date;)V
 	public abstract fun incrementUnreadCountIfNecessary (Lio/getstream/chat/android/client/models/Message;)V
-	public abstract fun listerForChannelState ()Lio/getstream/chat/android/client/channel/state/ChannelState;
+	public abstract fun listenForChannelState ()Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public abstract fun propagateQueryError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun removeLocalMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun removeMessagesBefore (Ljava/util/Date;Lio/getstream/chat/android/client/models/Message;)V
