@@ -2940,10 +2940,6 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 }
 
-public final class io/getstream/chat/android/ui/utils/DownloadPermissionHandler : io/getstream/chat/android/ui/utils/PermissionHandler {
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/ui/utils/GiphyInfo {
 	public fun <init> (Ljava/lang/String;II)V
 	public final fun component1 ()Ljava/lang/String;
@@ -2970,18 +2966,5 @@ public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/
 
 public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
 	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
-}
-
-public class io/getstream/chat/android/ui/utils/PermissionHandler {
-	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)V
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getOnPermissionDenied ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnPermissionGranted ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnPermissionRequired ()Lkotlin/jvm/functions/Function2;
-	public final fun getPermission ()Ljava/lang/String;
-	public fun onHandleRequest (Landroid/content/Context;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)V
-	public static synthetic fun onHandleRequest$default (Lio/getstream/chat/android/ui/utils/PermissionHandler;Landroid/content/Context;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
-	public final fun registerForActivityResult (Landroidx/appcompat/app/AppCompatActivity;)V
-	public final fun registerForActivityResult (Landroidx/fragment/app/Fragment;)V
 }
 

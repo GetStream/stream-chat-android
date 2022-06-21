@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.message
 
-import android.Manifest
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -38,7 +37,6 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.utils.DownloadPermissionHandler
 
 /**
  * Self-contained chat screen which internally contains the following components:
@@ -91,13 +89,6 @@ public open class MessageListFragment : Fragment() {
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
     protected val binding: StreamUiFragmentMessageListBinding get() = _binding!!
-
-    /**
-     * [DownloadPermissionHandler] instance tasked with requesting [Manifest.permission.WRITE_EXTERNAL_STORAGE]
-     * permission. By default will ask for permission and if it is granted will download the file.
-     */
-    private val downloadHandler: DownloadPermissionHandler = DownloadPermissionHandler()
-        .apply { registerForActivityResult(this@MessageListFragment) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -155,9 +146,6 @@ public open class MessageListFragment : Fragment() {
      */
     protected open fun setupMessageList(messageListView: MessageListView) {
         messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-        messageListView.setAttachmentDownloadHandler { downloadCall ->
-            downloadHandler.onHandleRequest(requireContext(), downloadCall)
-        }
 
         messageListViewModel.state.observe(viewLifecycleOwner) {
             when (it) {

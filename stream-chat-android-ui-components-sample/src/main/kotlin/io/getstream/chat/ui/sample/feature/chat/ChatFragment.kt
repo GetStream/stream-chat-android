@@ -41,7 +41,6 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.android.ui.utils.DownloadPermissionHandler
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
@@ -61,13 +60,6 @@ class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-
-    /**
-     * [DownloadPermissionHandler] instance tasked with requesting [Manifest.permission.WRITE_EXTERNAL_STORAGE]
-     * permission. By default will ask for permission and if it is granted will download the file.
-     */
-    private val downloadHandler: DownloadPermissionHandler = DownloadPermissionHandler()
-        .apply { registerForActivityResult(this@ChatFragment) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -166,9 +158,6 @@ class ChatFragment : Fragment() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
             bindView(binding.messageListView, viewLifecycleOwner)
-            binding.messageListView.setAttachmentDownloadHandler { downloadCall ->
-                downloadHandler.onHandleRequest(requireContext(), downloadCall)
-            }
 
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {
