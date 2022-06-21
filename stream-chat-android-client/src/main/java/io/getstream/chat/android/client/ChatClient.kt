@@ -211,12 +211,9 @@ internal constructor(
 
     private var _channelStateLogicProvider: ChannelStateLogicProvider? = null
 
-    public var channelStateLogicProvider: ChannelStateLogicProvider
+    public var channelStateLogicProvider: ChannelStateLogicProvider?
         get() {
-            return _channelStateLogicProvider ?: throw IllegalStateException(
-                "channelStateLogicProvider was not initialized. You must initialize OfflinePlugin or set an " +
-                    "implementation for channelStateLogicProvider"
-            )
+            return _channelStateLogicProvider
         }
         set(value) {
             _channelStateLogicProvider = value

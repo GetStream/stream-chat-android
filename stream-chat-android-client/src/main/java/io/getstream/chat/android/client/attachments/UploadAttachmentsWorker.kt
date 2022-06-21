@@ -34,7 +34,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 public class UploadAttachmentsWorker(
     private val channelType: String,
     private val channelId: String,
-    private val stateLogic: ChannelStateLogic,
+    private val stateLogic: ChannelStateLogic?,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -89,16 +89,11 @@ public class UploadAttachmentsWorker(
         return try {
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
-                    attachmentUploader.uploadAttachment(
-                        channelType,
-                        channelId,
-                        attachment,
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            stateLogic.writeChannelState()
-                        )
-                    )
+                    val progressCallback = stateLogic?.writeChannelState()?.let { channelMutableState ->
+                        ProgressCallbackImpl(message.id, attachment.uploadId!!, channelMutableState)
+                    }
+
+                    attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
                 } else {
@@ -125,7 +120,7 @@ public class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
-        stateLogic.upsertMessage(message)
+        stateLogic?.upsertMessage(message)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
         messageRepository.insertMessage(message)
