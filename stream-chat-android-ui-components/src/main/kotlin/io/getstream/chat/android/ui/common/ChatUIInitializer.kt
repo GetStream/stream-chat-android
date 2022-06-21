@@ -25,18 +25,25 @@ import com.getstream.sdk.chat.coil.StreamCoil
 import com.getstream.sdk.chat.coil.StreamImageLoaderFactory
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.internal.AvatarFetcherFactory
 import io.getstream.chat.android.ui.common.internal.AvatarKeyer
+import kotlinx.coroutines.runBlocking
 
 /**
  * Jetpack Startup Initializer for Stream's Chat UI Components.
  */
-public class ChatUIInitializer : Initializer<ChatUI> {
-    override fun create(context: Context): ChatUI {
+public class ChatUIInitializer : Initializer<Unit> {
+
+    override fun create(context: Context): Unit = runBlocking(DispatcherProvider.IO) {
         ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
         ChatUI.appContext = context
 
+        setImageLoader(context)
+    }
+
+    private fun setImageLoader(context: Context) {
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
             components {
                 // duplicated as we can not extend component
@@ -51,8 +58,6 @@ public class ChatUIInitializer : Initializer<ChatUI> {
             }
         }
         StreamCoil.setImageLoader(imageLoaderFactory)
-
-        return ChatUI
     }
 
     override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()

@@ -31,8 +31,7 @@ public object EmojiUtil {
      * @param message The message that was sent/received by user.
      */
     public fun isEmojiOnly(message: Message): Boolean {
-        if (message.replyTo != null || message.attachments.isNotEmpty() || message.deletedAt != null) return false
-        return message.text.replace(EMOJI_REGEX, "").isEmpty()
+        return message.text.isNotBlank() && message.text.replace(EMOJI_REGEX, "").isEmpty() && message.deletedAt == null
     }
 
     /**
@@ -43,6 +42,13 @@ public object EmojiUtil {
     public fun isSingleEmoji(message: Message): Boolean {
         return isEmojiOnly(message) && message.text.replaceFirst(EMOJI_REGEX, "").isEmpty()
     }
+
+    /**
+     * Counts the number of emoji inside a message.
+     *
+     * @return The number of emojis inside a message.
+     */
+    public fun getEmojiCount(message: Message): Int = EMOJI_REGEX.findAll(message.text).count()
 
     /**
      * Regex which matches emojis inside a string.

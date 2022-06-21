@@ -42,7 +42,6 @@ class MessageReadStatusIconTest : ComposeScreenshotTest() {
 
     @Test
     fun messageReadStatusIconForSyncNeededMessage() = runScreenshotTest {
-
         MessageReadStatusIcon(
             message = TestData.message1().apply { syncStatus = SyncStatus.SYNC_NEEDED },
             isMessageRead = false,

@@ -106,6 +106,7 @@ internal class MockClientBuilder(
             scope = testCoroutineScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
         )
 
         client.connectUser(user, token).enqueue()

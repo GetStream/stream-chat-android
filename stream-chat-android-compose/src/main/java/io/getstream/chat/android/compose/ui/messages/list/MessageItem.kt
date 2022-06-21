@@ -49,6 +49,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -75,7 +77,7 @@ import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasThread
 import io.getstream.chat.android.compose.ui.util.isDeleted
-import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -184,12 +186,14 @@ public fun MessageItem(
     ).value else backgroundColor
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+    val description = stringResource(id = R.string.stream_compose_cd_message_item)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = color),
+            .background(color = color)
+            .semantics { contentDescription = description },
         contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(
@@ -397,7 +401,7 @@ internal fun DefaultMessageItemCenterContent(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
-    if (messageItem.message.isEmojiOnly()) {
+    if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
             modifier = modifier,
             messageItem = messageItem,

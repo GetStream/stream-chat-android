@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.clearInvocations
@@ -79,6 +80,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
         verify(socket).reconnectUser(user, isAnonymous = true)
     }
 
+    @Disabled
     @Test
     fun `Given disconnected connection state And user not set state Should throw exception`() {
         val sut = Fixture().givenDisconnectedConnectionState().givenUserNotSetState().get()
