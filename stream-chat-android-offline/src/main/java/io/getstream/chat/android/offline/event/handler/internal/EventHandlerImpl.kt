@@ -88,6 +88,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
+import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
+import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
+import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -214,7 +218,7 @@ internal class EventHandlerImpl(
                 }
                 is ConnectedEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
-                    updateCurrentUser(event.me)
+                    updateCurrentUser(SelfUserFull(event.me))
 
                     mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
                     mutableGlobalState.setInitialized(true)
@@ -392,7 +396,7 @@ internal class EventHandlerImpl(
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
-                    updateCurrentUser(event.me)
+                    updateCurrentUser(SelfUserFull(event.me))
                 }
 
                 is ReactionNewEvent -> {
@@ -475,7 +479,7 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
-                    updateCurrentUser(event.me)
+                    updateCurrentUser(SelfUserFull(event.me))
                 }
                 is NotificationChannelTruncatedEvent -> {
                     batch.addChannel(event.channel)
@@ -525,7 +529,7 @@ internal class EventHandlerImpl(
                     event.user
                         .takeIf { it.id == mutableGlobalState.user.value?.id }
                         ?.let {
-                            updateCurrentUser(it)
+                            updateCurrentUser(SelfUserPart(it))
                         }
                 }
                 is TypingStartEvent,
@@ -691,21 +695,14 @@ internal class EventHandlerImpl(
         }
     }
 
-    private suspend fun updateCurrentUser(me: User) {
+    private suspend fun updateCurrentUser(self: SelfUser) {
+        val me = self.me
         val currentUser = mutableGlobalState.user.value
         if (me.id != currentUser?.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
+            throw InputMismatchException("received connect event for user with id ${me.id} " +
+                "while for user configured has id ${currentUser?.id}. Looks like there's a problem in the user set")
         }
-
-        mutableGlobalState.run {
-            setUser(me)
-            setMutedUsers(me.mutes)
-            setChannelMutes(me.channelMutes)
-            setTotalUnreadCount(me.totalUnreadCount)
-            setChannelUnreadCount(me.unreadChannels)
-            setBanned(me.banned)
-        }
-
+        mutableGlobalState.updateCurrentUser(self)
         repos.insertCurrentUser(me)
     }
 
