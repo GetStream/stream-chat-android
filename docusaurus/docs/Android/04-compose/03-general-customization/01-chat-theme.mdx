@@ -2,6 +2,7 @@
 
 The `ChatTheme` component is a wrapper that **you should use as the root** of all Compose UI Components. It's used to provide the default properties that help us style the application, such as:
 
+* **IsDarkTheme**: Flag that determines if the application should be themed in light or dark mode.
 * **Colors**: Defines a palette of colors we support in the app. These are applied to all components and provide us with a dark/light mode by default, but can be used to override the design system completely.
 * **Dimens**: Used for defining the dimensions of various components such as avatars, attachment content, reactions etc.
 * **Typography**: Used for all text elements, to apply different text styles to each component. Can be used to change the typography completely.
@@ -17,6 +18,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **ImageLoaderFactory**: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
 * **MessageAlignmentProvider**: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 * **MessageOptionsUserReactionAlignment**: Used to define how message reactions are aligned when browsing all reactions for a given message.
+* **PermissionHandlers**: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
