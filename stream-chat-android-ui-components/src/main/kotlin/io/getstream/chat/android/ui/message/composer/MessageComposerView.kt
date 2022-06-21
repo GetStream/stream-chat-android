@@ -190,7 +190,7 @@ public class MessageComposerView : ConstraintLayout {
     }
 
     /**
-     * Handle to a custom command suggestions view set with [setCommandSuggestionsContent].
+     * Handle for a custom command suggestions view set with [setCommandSuggestionsContent].
      */
     private var commandSuggestionsContentOverride: View? = null
 
