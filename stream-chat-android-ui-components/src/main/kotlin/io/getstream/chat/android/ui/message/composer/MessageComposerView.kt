@@ -273,7 +273,7 @@ public class MessageComposerView : ConstraintLayout {
 
     /**
      * Sets custom leading content view. It must implement [MessageComposerContent] interface and should
-     * render a integration buttons according to the received state. The current mode is propagated to the
+     * render integration buttons according to the received state. The current mode is propagated to the
      * [contentView] in the [MessageComposerContent.renderState] function.
      *
      * @param contentView The [View] which shows a section with integrations.
