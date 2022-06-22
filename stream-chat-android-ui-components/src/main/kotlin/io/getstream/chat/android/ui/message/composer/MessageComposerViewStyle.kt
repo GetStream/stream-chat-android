@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
  * Style for [MessageComposerView].
@@ -357,7 +358,8 @@ public data class MessageComposerViewStyle(
                     true
                 )
 
-                val attachmentsButtonIconDrawable = a.getDrawable(
+                val attachmentsButtonIconDrawable = a.getDrawableCompat(
+                    context,
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
 
@@ -370,7 +372,8 @@ public data class MessageComposerViewStyle(
                     true
                 )
 
-                val commandsButtonIconDrawable = a.getDrawable(
+                val commandsButtonIconDrawable = a.getDrawableCompat(
+                    context,
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
 
@@ -444,7 +447,8 @@ public data class MessageComposerViewStyle(
                     true
                 )
 
-                val sendMessageButtonIconDrawable = a.getDrawable(
+                val sendMessageButtonIconDrawable = a.getDrawableCompat(
+                    context,
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
 

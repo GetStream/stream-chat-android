@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
  * Style for [AttachmentSelectionDialogFragment].
@@ -133,7 +134,8 @@ public data class AttachmentsPickerDialogStyle(
                     )
                     .build()
 
-                val submitAttachmentsButtonIconDrawable = a.getDrawable(
+                val submitAttachmentsButtonIconDrawable = a.getDrawableCompat(
+                    context,
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerSubmitAttachmentsButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
