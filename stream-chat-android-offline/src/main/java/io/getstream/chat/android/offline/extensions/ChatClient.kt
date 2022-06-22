@@ -368,12 +368,16 @@ private suspend fun ChatClient.loadMessageByIdInternal(
         .loadMessagesAroundId(messageId)
 
     return if (result.isSuccess) {
-        result.map { channel ->
-            channel.messages.first { message ->
-                message.id == messageId
-            }
+        val message = result.data().messages.firstOrNull { message ->
+            message.id == messageId
+        }
+
+        if (message != null) {
+            result.map { message }
+        } else {
+            Result.error(ChatError("The message could not be found."))
         }
     } else {
-        Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
+        Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
     }
 }
