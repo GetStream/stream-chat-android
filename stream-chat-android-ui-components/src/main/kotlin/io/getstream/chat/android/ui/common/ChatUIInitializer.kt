@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.startup.Initializer
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.decode.VideoFrameDecoder
 import com.getstream.sdk.chat.coil.StreamCoil
 import com.getstream.sdk.chat.coil.StreamImageLoaderFactory
 import io.getstream.chat.android.client.ChatClient
@@ -55,6 +56,7 @@ public class ChatUIInitializer : Initializer<Unit> {
                 }
                 add(AvatarFetcherFactory())
                 add(AvatarKeyer)
+                add(VideoFrameDecoder.Factory())
             }
         }
         StreamCoil.setImageLoader(imageLoaderFactory)
