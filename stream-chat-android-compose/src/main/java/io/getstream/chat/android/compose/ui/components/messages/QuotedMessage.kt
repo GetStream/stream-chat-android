@@ -55,7 +55,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
             "onQuotedMessageClick: (Message) -> Unit)",
         imports = ["io.getstream.chat.android.compose.ui.components.messages.QuotedMessage"]
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 @Composable
 public fun QuotedMessage(
@@ -85,6 +85,7 @@ public fun QuotedMessage(
                     )
 
                     if (message.text.isNotEmpty()) {
+                        @Suppress("DEPRECATION_ERROR")
                         MessageText(
                             isQuote = true,
                             message = message,

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.utils.DateFormatter
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
@@ -42,16 +43,17 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
- * @param deletedMessageListItemPredicate [MessageListView.MessageListItemPredicate] Predicate to hide or show the the deleted message accordingly to the logic provided.
+ * @param deletedMessageVisibility [DeletedMessageVisibility] Used to hide or show the the deleted message accordingly to the logic provided.
  * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
  */
+@Suppress("LongParameterList")
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
-    deletedMessageListItemPredicate: MessageListView.MessageListItemPredicate,
+    deletedMessageVisibility: DeletedMessageVisibility,
     isCurrentUserBanned: () -> Boolean,
 ) : DecoratorProvider {
 
@@ -69,7 +71,7 @@ internal class MessageListItemDecoratorProvider(
             dateFormatter,
             isDirectMessage,
             messageListViewStyle,
-            deletedMessageListItemPredicate
+            deletedMessageVisibility
         ),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )
