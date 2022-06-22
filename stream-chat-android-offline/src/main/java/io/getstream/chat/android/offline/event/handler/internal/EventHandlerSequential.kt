@@ -83,6 +83,9 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
+import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
+import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
+import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -319,7 +322,7 @@ internal class EventHandlerSequential(
                 }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(event.me)
+                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
                     mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
                     mutableGlobalState.setInitialized(true)
                 }
@@ -328,14 +331,14 @@ internal class EventHandlerSequential(
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(event.me)
+                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(event.me)
+                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    mutableGlobalState.updateCurrentUser(event.user)
+                    mutableGlobalState.updateCurrentUser(SelfUserPart(event.user))
                 }
                 is MarkAllReadEvent -> {
                     mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
@@ -706,15 +709,6 @@ internal class EventHandlerSequential(
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
-    }
-
-    private fun MutableGlobalState.updateCurrentUser(me: User) {
-        setUser(me)
-        setMutedUsers(me.mutes)
-        setChannelMutes(me.channelMutes)
-        setTotalUnreadCount(me.totalUnreadCount)
-        setChannelUnreadCount(me.unreadChannels)
-        setBanned(me.banned)
     }
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {
