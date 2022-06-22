@@ -3,7 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Now the SDK can be used if R8 full mode. New rules were added to the library to support the aggresive optimizations.
+- Now the SDK can be used if R8 full mode. New rules were added to the library to support the aggressive optimizations [3663](https://github.com/GetStream/stream-chat-android/pull/3663).
 
 ### ✅ Added
 
