@@ -155,7 +155,9 @@ class ChatFragment : Fragment() {
     private fun initMessagesViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
-            messageListViewModel.setDeletedMessageVisibility(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
+            messageListViewModel.setDeletedMessageVisibility(
+                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {

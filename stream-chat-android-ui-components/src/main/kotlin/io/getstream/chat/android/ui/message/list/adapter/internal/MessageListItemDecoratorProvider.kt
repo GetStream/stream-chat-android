@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
  * @param deletedMessageVisibility [DeletedMessageVisibility] Used to hide or show the the deleted message accordingly to the logic provided.
  * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
  */
+@Suppress("LongParameterList")
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
