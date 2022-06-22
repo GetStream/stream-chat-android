@@ -218,7 +218,7 @@ public class MessageComposerView : ConstraintLayout {
     private fun init(attr: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
 
-        validationErrorRenderer = ValidationErrorRenderer(context)
+        validationErrorRenderer = ValidationErrorRenderer(context, this)
         messageInputViewStyle = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
         messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attr))
 
@@ -404,6 +404,7 @@ public class MessageComposerView : ConstraintLayout {
      */
     override fun onDetachedFromWindow() {
         suggestionsPopup?.dismiss()
+        validationErrorRenderer.dismissValidationErrors()
         super.onDetachedFromWindow()
     }
 
