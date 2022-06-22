@@ -72,7 +72,6 @@ import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
-import io.getstream.chat.android.client.experimental.socket.SocketFactory as SocketFactoryExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
@@ -230,7 +229,7 @@ internal open class BaseChatModule(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
-        SocketFactoryExperimental(parser, tokenManager),
+        SocketFactory(parser, tokenManager),
         networkScope,
         parser,
         listOf(

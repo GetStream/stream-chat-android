@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.HealthMonitor
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
