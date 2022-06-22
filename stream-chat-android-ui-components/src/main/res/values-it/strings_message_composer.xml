@@ -15,7 +15,19 @@
     limitations under the License.
 -->
 <resources>
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_composer_instant_commands">"Commandi istantanei"</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_composer_gallery_access">"Consenti l\'accesso alla tua Galleria"</string>
+    <string name="stream_ui_message_composer_files_access">"Consenti l\'accesso ai tuoi File"</string>
+    <string name="stream_ui_message_composer_camera_access">"Consenti l\'accesso alla tua Fotocamera"</string>
+    <string name="stream_ui_message_composer_recent_files">"File Recenti"</string>
+    <string name="stream_ui_message_composer_no_files">"Non ci sono foto o video."</string>
+
+    <!-- Validation Errors -->
     <string name="stream_ui_message_composer_error_message_length">La lunghezza massima del messaggio (%d) è stata superata.</string>
     <string name="stream_ui_message_composer_error_file_size">File troppo grande - max %s.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Attenzione: il limite massimo di %d file è stato superato.</string>
+    <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
 </resources>

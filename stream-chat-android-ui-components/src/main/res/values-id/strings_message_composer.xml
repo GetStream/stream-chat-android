@@ -16,14 +16,14 @@
 -->
 <resources>
     <!-- Commands Popup -->
-    <string name="stream_ui_message_composer_instant_commands">"インスタントコマンド"</string>
+    <string name="stream_ui_message_composer_instant_commands">"Perintah Instan"</string>
 
     <!-- File Picker Dialog -->
-    <string name="stream_ui_message_composer_gallery_access">"ギャラリーへのアクセスを許可する"</string>
-    <string name="stream_ui_message_composer_files_access">"ファイルへのアクセスを許可する"</string>
-    <string name="stream_ui_message_composer_camera_access">"カメラへのアクセスを許可する"</string>
-    <string name="stream_ui_message_composer_recent_files">"最近使用したファイル"</string>
-    <string name="stream_ui_message_composer_no_files">"写真やビデオはありません"</string>
+    <string name="stream_ui_message_composer_gallery_access">"Izinkan akses ke Galeri"</string>
+    <string name="stream_ui_message_composer_files_access">"Izinkan akses ke Berkas"</string>
+    <string name="stream_ui_message_composer_camera_access">"Izinkan akses ke Kamera"</string>
+    <string name="stream_ui_message_composer_recent_files">"Berkas Terkini"</string>
+    <string name="stream_ui_message_composer_no_files">"Tidak ada foto atau video."</string>
 
     <!-- Validation Errors -->
     <string name="stream_ui_message_composer_error_message_length">"最大メッセージ長（%d)字を超えました"</string>

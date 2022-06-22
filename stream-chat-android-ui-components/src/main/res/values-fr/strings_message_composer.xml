@@ -15,7 +15,19 @@
     limitations under the License.
 -->
 <resources>
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_composer_instant_commands">"Commandes instantanées"</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_composer_gallery_access">"Autoriser l\'accès à votre galerie"</string>
+    <string name="stream_ui_message_composer_files_access">"Autoriser l\'accès à vos fichiers"</string>
+    <string name="stream_ui_message_composer_camera_access">"Autoriser l\'accès à votre appareil photo"</string>
+    <string name="stream_ui_message_composer_recent_files">"Fichiers récents"</string>
+    <string name="stream_ui_message_composer_no_files">"Il n\'y a ni photo ni vidéo."</string>
+
+    <!-- Validation Errors -->
     <string name="stream_ui_message_composer_error_message_length">Longueur maximale du message (%d) dépassée.</string>
     <string name="stream_ui_message_composer_error_file_size">Le fichier est trop volumineux - %s maximum.</string>
     <string name="stream_ui_message_composer_error_attachment_count">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %d pièces jointes</string>
+    <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
 </resources>

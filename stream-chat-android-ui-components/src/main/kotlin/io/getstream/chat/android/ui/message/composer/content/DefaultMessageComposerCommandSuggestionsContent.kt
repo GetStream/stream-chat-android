@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -95,6 +94,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
 
         binding.suggestionsRecyclerView.adapter = adapter
         binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
+        binding.commandsTitleTextView.text = style.commandSuggestionsTitleText
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(style.commandSuggestionsTitleIconDrawable)
     }
@@ -149,6 +149,12 @@ private class CommandViewHolder(
 
     private lateinit var item: Command
 
+    /**
+     * The template string for the command description with two placeholders for command name
+     * and arguments.
+     */
+    private val commandDescriptionText = style.commandSuggestionItemCommandDescriptionText
+
     init {
         binding.root.setOnClickListener { commandSelectionListener(item) }
         binding.commandNameTextView.setTextStyle(style.commandSuggestionItemCommandNameTextStyle)
@@ -165,10 +171,6 @@ private class CommandViewHolder(
         this.item = item
 
         binding.commandNameTextView.text = item.name.replaceFirstChar(Char::uppercase)
-        binding.commandQueryTextView.text = context.getString(
-            R.string.stream_ui_message_input_command_template,
-            item.name,
-            item.args
-        )
+        binding.commandQueryTextView.text = String.format(commandDescriptionText, item.name, item.args)
     }
 }

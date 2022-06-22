@@ -150,7 +150,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToMediaButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToMediaButtonText
-                )?.toString() ?: context.getString(R.string.stream_ui_message_input_gallery_access)
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_gallery_access)
 
                 val allowAccessToMediaIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToMediaIconDrawable
@@ -191,7 +191,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val mediaAttachmentNoMediaText = a.getString(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentNoMediaText
-                ) ?: context.getString(R.string.stream_ui_message_input_no_files)
+                ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
 
                 val mediaAttachmentNoMediaTextStyle = TextStyle.Builder(a)
                     .size(
@@ -221,7 +221,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToFilesButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToFilesButtonText
-                )?.toString() ?: context.getString(R.string.stream_ui_message_input_files_access)
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_access)
 
                 val allowAccessToFilesIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToFilesIconDrawable
@@ -229,7 +229,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val recentFilesText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerRecentFilesText
-                )?.toString() ?: context.getString(R.string.stream_ui_message_input_recent_files)
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_recent_files)
 
                 val recentFilesTextStyle = TextStyle.Builder(a)
                     .size(
@@ -256,7 +256,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val fileAttachmentsNoFilesText = a.getString(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsNoFilesText
-                ) ?: context.getString(R.string.stream_ui_message_input_no_files)
+                ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
 
                 val fileAttachmentsNoFilesTextStyle = TextStyle.Builder(a)
                     .size(
@@ -337,7 +337,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToCameraButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToCameraButtonText
-                )?.toString() ?: context.getString(R.string.stream_ui_message_input_camera_access)
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_camera_access)
 
                 val allowAccessToCameraIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToCameraIconDrawable

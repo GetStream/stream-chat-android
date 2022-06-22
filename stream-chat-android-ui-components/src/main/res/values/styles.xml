@@ -1084,6 +1084,7 @@
         <item name="streamUiMessageComposerIconDrawableTintColor">@null</item>
 
         <!-- Command suggestions content -->
+        <item name="streamUiMessageComposerCommandSuggestionsTitleText">@string/stream_ui_message_composer_instant_commands</item>
         <item name="streamUiMessageComposerCommandSuggestionsTitleTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerCommandSuggestionsTitleTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable">@drawable/stream_ui_ic_command_blue</item>
@@ -1092,6 +1093,7 @@
         <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionText">@string/stream_ui_message_composer_command_template</item>
         <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor">@color/stream_ui_text_color_primary</item>
 
         <!-- Mention suggestions content -->

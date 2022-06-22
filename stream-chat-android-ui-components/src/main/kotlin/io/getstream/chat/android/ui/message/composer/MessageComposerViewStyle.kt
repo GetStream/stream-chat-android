@@ -37,12 +37,14 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param backgroundColor The background color of the message composer.
  * @param buttonIconDrawableTintColor The tint applied to attachments, commands and send buttons.
  * @param dividerBackgroundDrawable The background of the divider at the top.
+ * @param commandSuggestionsTitleText The text for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
  * @param commandSuggestionItemIconDrawable The icon for each mention item in the suggestion list.
  * @param commandSuggestionItemCommandNameTextStyle The text style for the command name.
- * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.*
+ * @param commandSuggestionItemCommandDescriptionText The command description template with two placeholders.
+ * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.
  * @param mentionSuggestionsBackgroundColor The background color of the mention suggestions dialog.
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
@@ -79,11 +81,13 @@ public data class MessageComposerViewStyle(
     @ColorInt public val buttonIconDrawableTintColor: Int?,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
+    public val commandSuggestionsTitleText: String,
     public val commandSuggestionsTitleTextStyle: TextStyle,
     public val commandSuggestionsTitleIconDrawable: Drawable,
     @ColorInt public val commandSuggestionsBackgroundColor: Int,
     public val commandSuggestionItemIconDrawable: Drawable,
     public val commandSuggestionItemCommandNameTextStyle: TextStyle,
+    public val commandSuggestionItemCommandDescriptionText: String,
     public val commandSuggestionItemCommandDescriptionTextStyle: TextStyle,
     // Mention suggestions content
     @ColorInt public val mentionSuggestionsBackgroundColor: Int,
@@ -145,6 +149,10 @@ public data class MessageComposerViewStyle(
                 /**
                  * Command suggestions content
                  */
+                val commandSuggestionsTitleText = a.getString(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleText
+                ) ?: context.getString(R.string.stream_ui_message_composer_instant_commands)
+
                 val commandSuggestionsTitleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextSize,
@@ -195,6 +203,10 @@ public data class MessageComposerViewStyle(
                         Typeface.NORMAL
                     )
                     .build()
+
+                val commandSuggestionItemCommandDescriptionText = a.getString(
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionText
+                ) ?: context.getString(R.string.stream_ui_message_composer_command_template)
 
                 val commandSuggestionItemCommandDescriptionTextStyle = TextStyle.Builder(a)
                     .size(
@@ -446,11 +458,13 @@ public data class MessageComposerViewStyle(
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,
                     dividerBackgroundDrawable = dividerBackgroundDrawable,
                     // Command suggestions content
+                    commandSuggestionsTitleText = commandSuggestionsTitleText,
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
                     commandSuggestionsTitleIconDrawable = commandSuggestionsTitleIconDrawable,
                     commandSuggestionsBackgroundColor = commandSuggestionsBackgroundColor,
                     commandSuggestionItemIconDrawable = commandSuggestionItemIconDrawable,
                     commandSuggestionItemCommandNameTextStyle = commandSuggestionItemCommandNameTextStyle,
+                    commandSuggestionItemCommandDescriptionText = commandSuggestionItemCommandDescriptionText,
                     commandSuggestionItemCommandDescriptionTextStyle = commandSuggestionItemCommandDescriptionTextStyle,
                     // Mention suggestions content
                     mentionSuggestionsBackgroundColor = mentionSuggestionsBackgroundColor,

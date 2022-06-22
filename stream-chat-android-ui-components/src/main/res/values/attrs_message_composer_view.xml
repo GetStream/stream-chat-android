@@ -20,6 +20,8 @@
         <attr name="streamUiMessageComposerIconDrawableTintColor" format="reference|color" />
 
         <!-- Command suggestions content -->
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleText" format="string" />
+
         <attr name="streamUiMessageComposerCommandSuggestionsTitleTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCommandSuggestionsTitleTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerCommandSuggestionsTitleTextFontAssets" format="string" />
@@ -44,6 +46,7 @@
             <enum name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionText" format="string" />
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets" format="string" />
