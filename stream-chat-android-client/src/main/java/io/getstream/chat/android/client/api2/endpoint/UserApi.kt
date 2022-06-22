@@ -14,37 +14,41 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2
+package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.client.api2.UrlQueryPayload
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
+import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Query
 
 @AuthenticatedApi
-internal interface DeviceApi {
-
-    @GET("/devices")
-    fun getDevices(
+internal interface UserApi {
+    @POST("/users")
+    fun updateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<DevicesResponse>
+        @Body body: UpdateUsersRequest,
+    ): RetrofitCall<UpdateUsersResponse>
 
-    @POST("devices")
-    fun addDevices(
+    @PATCH("/users")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
+    fun partialUpdateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: AddDeviceRequest,
-    ): RetrofitCall<CompletableResponse>
+        @Body body: PartialUpdateUsersRequest,
+    ): RetrofitCall<UpdateUsersResponse>
 
-    @DELETE("/devices")
-    fun deleteDevice(
-        @Query("id") deviceId: String,
+    @GET("/users")
+    fun queryUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<CompletableResponse>
+        @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
+    ): RetrofitCall<UsersResponse>
 }

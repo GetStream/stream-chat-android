@@ -27,7 +27,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 @Deprecated(
     message = "Use Channel::ownCapabilities to determine user permissions!.",
     replaceWith = ReplaceWith("Use Channel::ownCapabilities to determine user permissions!"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public val Member.isOwnerOrAdmin: Boolean
     get() = role == "owner" || role == "admin"
@@ -38,7 +38,7 @@ public val Member.isOwnerOrAdmin: Boolean
 @Deprecated(
     message = "Use Channel::ownCapabilities to determine user permissions!.",
     replaceWith = ReplaceWith("Use Channel::ownCapabilities to determine user permissions!"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public fun List<Member>?.isCurrentUserOwnerOrAdmin(): Boolean {
     return if (isNullOrEmpty()) {
