@@ -4,17 +4,18 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-[//]: # (TODO: update InputField deprecation date and version before release)
-| `MessageInputView.setTypingListener` | 2022.06.07<br/>5.3.2 | 2022.07.05 ⌛ | 2022.08.02 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
-| `MessageInputView.TypingListener` | 2022.06.07<br/>5.3.2 | 2022.07.05 ⌛ | 2022.08.02 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
-| `InputField` | 2022.06.07<br/>5.3.1 | 2022.07.24 ⌛ | 2022.08.14 ⌛ | Use the new implementation of `InputField`. |
-| `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
-| `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
-| `QuotedText` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use new implementation of `QuotedText`. |
-| `MessageText` | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | 2022.06.21 ⌛ | Use the new implementation of `MessageText`. |
-| `DeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | Use `DeletedMessageVisibility` in conjunction with `MessageListViewModel.setDeletedMessagesVisibility` instead. |
-| `MessageListView.setDeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.07 ⌛ | Use `MessageListViewModel.setDeletedMessagesVisibility` instead. |
-| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.06.21 ⌛ | Use `Member.channelRole` instead. |
+| `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use QuerySortByReflection. |
+| `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the version without offsets, as it uses less requests to backend. |
+| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
+| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
+| `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the new implementation of `InputField`. |
+| `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
+| `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
+| `QuotedMessage` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use new implementation of `QuotedText`. |
+| `MessageText` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.06.04 ⌛ | Use the new implementation of `MessageText`. |
+| `DeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `DeletedMessageVisibility` in conjunction with `MessageListViewModel.setDeletedMessagesVisibility` instead. |
+| `MessageListView.setDeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `MessageListViewModel.setDeletedMessagesVisibility` instead. |
+| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.07.04 ⌛ | Use `Member.channelRole` instead. |
 | `ChannelController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `ChannelState` instead |
 | `QueryChannelsController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `QueryChannelsState` instead |
 | `ChatDomain` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `OfflinePlugin` instead |
