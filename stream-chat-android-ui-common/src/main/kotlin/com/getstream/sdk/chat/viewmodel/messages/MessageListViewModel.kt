@@ -127,8 +127,13 @@ public class MessageListViewModel(
     /**
      * Regulates the visibility of deleted messages.
      */
-    private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+    private var _deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
         MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+
+    /**
+     * Regulates the visibility of deleted messages.
+     */
+    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> = _deletedMessageVisibility
 
     /**
      * Regulates the message footer visibility.
@@ -819,7 +824,7 @@ public class MessageListViewModel(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this.deletedMessageVisibility.value = deletedMessageVisibility
+        this._deletedMessageVisibility.value = deletedMessageVisibility
     }
 
     /**
