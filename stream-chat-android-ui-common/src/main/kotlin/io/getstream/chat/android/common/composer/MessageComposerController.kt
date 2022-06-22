@@ -666,7 +666,7 @@ public class MessageComposerController(
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
 
-        commandSuggestions.value = if (containsCommand) {
+        commandSuggestions.value = if (containsCommand && selectedAttachments.value.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
