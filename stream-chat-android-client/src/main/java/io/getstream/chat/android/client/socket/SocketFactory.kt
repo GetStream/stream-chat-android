@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
@@ -37,14 +39,26 @@ internal class SocketFactory(
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
-        val url = buildUrl(connectionConf)
-        val request = Request.Builder().url(url).build()
+        val request = buildRequest(connectionConf)
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
-
-        logger.logI("new web socket: $url")
-
+        logger.logI("new web socket: ${request.url}")
         return Socket(newWebSocket, parser)
     }
+
+    @Throws(UnsupportedEncodingException::class)
+    fun createSocket(connectionConf: ConnectionConf): OkHttpWebSocket {
+        val request = buildRequest(connectionConf)
+        val eventsObserver = WebSocketEventObserver()
+        httpClient.newWebSocket(request, eventsObserver)
+        logger.logI("new web socket: ${request.url}")
+        return OkHttpWebSocket(eventsObserver, parser)
+    }
+
+    @Throws(UnsupportedEncodingException::class)
+    private fun buildRequest(connectionConf: ConnectionConf): Request =
+        Request.Builder()
+            .url(buildUrl(connectionConf))
+            .build()
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)
