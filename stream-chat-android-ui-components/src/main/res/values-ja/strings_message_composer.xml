@@ -15,6 +15,12 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">"チャネルにも送ります"</string>
+    <string name="stream_ui_message_composer_mode_reply">"返信"</string>
+    <string name="stream_ui_message_composer_mode_edit">"メッセージを編集する"</string>
+    <string name="stream_ui_message_composer_hint_normal">"ここに何か書く"</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">"インスタントコマンド"</string>
 

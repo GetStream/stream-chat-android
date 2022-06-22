@@ -71,6 +71,8 @@
             <enum name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiMessageComposerMentionSuggestionItemMentionText" format="string" />
+
         <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets" format="string" />
@@ -101,6 +103,7 @@
         <attr name="streamUiMessageComposerScrollbarEnabled" format="boolean" />
         <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean" />
         <attr name="streamUiMessageComposerMessageInputMaxLines" format="integer" />
+        <attr name="streamUiMessageComposerMessageInputCannotSendHintText" format="string" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
@@ -126,7 +129,9 @@
         </attr>
 
         <!-- Header content -->
+        <attr name="streamUiMessageComposerEditModeText" format="string" />
         <attr name="streamUiMessageComposerEditModeIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerReplyModeText" format="string" />
         <attr name="streamUiMessageComposerReplyModeIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerDismissModeIconDrawable" format="reference" />
 

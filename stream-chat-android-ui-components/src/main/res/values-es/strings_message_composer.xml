@@ -15,6 +15,12 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">"También enviar al canal"</string>
+    <string name="stream_ui_message_composer_mode_reply">"Contestar"</string>
+    <string name="stream_ui_message_composer_mode_edit">"Editar Mensaje"</string>
+    <string name="stream_ui_message_composer_hint_normal">"Escribe algo aquí"</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">"Comandos instantáneos"</string>
 

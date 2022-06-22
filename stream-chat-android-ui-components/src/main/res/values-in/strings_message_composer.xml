@@ -15,6 +15,12 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">Kirim ke grup</string>
+    <string name="stream_ui_message_composer_mode_reply">Balas</string>
+    <string name="stream_ui_message_composer_mode_edit">Sunting Pesan</string>
+    <string name="stream_ui_message_composer_hint_normal">Masukkan pesan</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">Perintah Instan</string>
 

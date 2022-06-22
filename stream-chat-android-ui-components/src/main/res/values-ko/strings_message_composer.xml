@@ -15,6 +15,12 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">"채널에도 전송"</string>
+    <string name="stream_ui_message_composer_mode_reply">"답장"</string>
+    <string name="stream_ui_message_composer_mode_edit">"메시지 수정"</string>
+    <string name="stream_ui_message_composer_hint_normal">"메세지 입력"</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">"인스턴트 명령어"</string>
 

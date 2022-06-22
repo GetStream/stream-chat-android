@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/stream_ui_message_input_reply"
+            android:text="@string/stream_ui_message_composer_mode_reply"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             />
 

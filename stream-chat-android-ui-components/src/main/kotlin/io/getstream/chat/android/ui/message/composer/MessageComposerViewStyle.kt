@@ -48,6 +48,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param mentionSuggestionsBackgroundColor The background color of the mention suggestions dialog.
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
+ * @param mentionSuggestionItemMentionText The mention template that will be used for the mention preview.
  * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
  * @param messageInputCommandsHandlingEnabled If command suggestions are shown based on user input.
  * @param messageInputMentionsHandlingEnabled If mention suggestions are shown based on user input.
@@ -57,6 +58,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param messageInputScrollbarEnabled If the vertical scrollbar should be drawn or not.
  * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
  * @param messageInputMaxLines The maximum number of message input lines.
+ * @param messageInputCannotSendHintText The input hint text in case we can't send messages in this channel.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -67,7 +69,9 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param alsoSendToChannelCheckboxDrawable The drawable that will be used for the checkbox.
  * @param alsoSendToChannelCheckboxText The text that will be displayed next to the checkbox.
  * @param alsoSendToChannelCheckboxTextStyle The text style that will be used for the checkbox text.
+ * @param editModeText The text for edit mode title.
  * @param editModeIconDrawable The icon displayed in top left corner when the user edits a message.
+ * @param replyModeText The text for reply mode title.
  * @param replyModeIconDrawable The icon displayed in top left corner when the user replies to a message.
  * @param dismissModeIconDrawable The icon for the button that dismisses edit or reply mode.
  * @param sendMessageButtonEnabled If the button to send message is enabled.
@@ -93,6 +97,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val mentionSuggestionsBackgroundColor: Int,
     public val mentionSuggestionItemIconDrawable: Drawable,
     public val mentionSuggestionItemUsernameTextStyle: TextStyle,
+    public val mentionSuggestionItemMentionText: String,
     public val mentionSuggestionItemMentionTextStyle: TextStyle,
     // Center content
     public val messageInputCommandsHandlingEnabled: Boolean,
@@ -103,6 +108,7 @@ public data class MessageComposerViewStyle(
     public val messageInputScrollbarEnabled: Boolean,
     public val messageInputScrollbarFadingEnabled: Boolean,
     public val messageInputMaxLines: Int,
+    public val messageInputCannotSendHintText: String,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -116,7 +122,9 @@ public data class MessageComposerViewStyle(
     public val alsoSendToChannelCheckboxText: String,
     public val alsoSendToChannelCheckboxTextStyle: TextStyle,
     // Header content
+    public val editModeText: String,
     public val editModeIconDrawable: Drawable,
+    public val replyModeText: String,
     public val replyModeIconDrawable: Drawable,
     public val dismissModeIconDrawable: Drawable,
     // Trailing content
@@ -258,6 +266,10 @@ public data class MessageComposerViewStyle(
                     )
                     .build()
 
+                val mentionSuggestionItemMentionText = a.getString(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionText
+                ) ?: context.getString(R.string.stream_ui_message_composer_mention_template)
+
                 val mentionSuggestionItemMentionTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextSize,
@@ -309,7 +321,7 @@ public data class MessageComposerViewStyle(
                     )
                     .hint(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintText,
-                        context.getString(R.string.stream_ui_message_input_hint)
+                        context.getString(R.string.stream_ui_message_composer_hint_normal)
                     )
                     .hintColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintColor,
@@ -338,6 +350,10 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageInputMaxLines,
                     7
                 )
+
+                val messageInputCannotSendHintText = a.getString(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCannotSendHintText
+                ) ?: context.getString(R.string.stream_ui_message_composer_hint_cannot_send_message)
 
                 /**
                  * Leading content
@@ -382,7 +398,7 @@ public data class MessageComposerViewStyle(
 
                 val alsoSendToChannelCheckboxText: String = a.getText(
                     R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxText
-                )?.toString() ?: context.getString(R.string.stream_ui_message_input_send_to_channel)
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_send_to_channel)
 
                 val alsoSendToChannelCheckboxTextStyle = TextStyle.Builder(a)
                     .size(
@@ -406,9 +422,17 @@ public data class MessageComposerViewStyle(
                 /**
                  * Header content
                  */
+                val editModeText: String = a.getText(
+                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeText
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_mode_edit)
+
                 val editModeIconDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_edit)!!
+
+                val replyModeText: String = a.getText(
+                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeText
+                )?.toString() ?: context.getString(R.string.stream_ui_message_composer_mode_reply)
 
                 val replyModeIconDrawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerReplyModeIconDrawable
@@ -470,6 +494,7 @@ public data class MessageComposerViewStyle(
                     mentionSuggestionsBackgroundColor = mentionSuggestionsBackgroundColor,
                     mentionSuggestionItemIconDrawable = mentionSuggestionItemIconDrawable,
                     mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
+                    mentionSuggestionItemMentionText = mentionSuggestionItemMentionText,
                     mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
                     // Center content
                     messageInputCommandsHandlingEnabled = messageInputCommandsHandlingEnabled,
@@ -480,6 +505,7 @@ public data class MessageComposerViewStyle(
                     messageInputScrollbarEnabled = messageInputScrollbarEnabled,
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
                     messageInputMaxLines = messageInputMaxLines,
+                    messageInputCannotSendHintText = messageInputCannotSendHintText,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
@@ -493,7 +519,9 @@ public data class MessageComposerViewStyle(
                     alsoSendToChannelCheckboxText = alsoSendToChannelCheckboxText,
                     alsoSendToChannelCheckboxTextStyle = alsoSendToChannelCheckboxTextStyle,
                     // Header content
+                    editModeText = editModeText,
                     editModeIconDrawable = editModeIconDrawable,
+                    replyModeText = replyModeText,
                     replyModeIconDrawable = replyModeIconDrawable,
                     dismissModeIconDrawable = dismissModeIconDrawable,
                     // Trailing content

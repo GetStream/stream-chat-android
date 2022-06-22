@@ -24,7 +24,6 @@ import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
@@ -92,12 +91,12 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
         when (state.action) {
             is Reply -> {
                 binding.inputModeHeaderContainer.isVisible = true
-                binding.inputModeTextView.text = context.getString(R.string.stream_ui_message_input_reply)
+                binding.inputModeTextView.text = style.replyModeText
                 binding.inputModeImageView.setImageDrawable(style.replyModeIconDrawable)
             }
             is Edit -> {
                 binding.inputModeHeaderContainer.isVisible = true
-                binding.inputModeTextView.text = context.getString(R.string.stream_ui_message_list_edit_message)
+                binding.inputModeTextView.text = style.editModeText
                 binding.inputModeImageView.setImageDrawable(style.editModeIconDrawable)
             }
             else -> {

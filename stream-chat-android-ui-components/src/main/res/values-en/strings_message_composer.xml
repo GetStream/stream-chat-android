@@ -15,6 +15,15 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">Also send to channel</string>
+    <string name="stream_ui_message_composer_mode_reply">Reply to message</string>
+    <string name="stream_ui_message_composer_mode_edit">Edit Message</string>
+    <string name="stream_ui_message_composer_hint_normal">Write something here</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
+    <!-- Mentions Popup -->
+    <string name="stream_ui_message_composer_mention_template" translatable="false">\@%1$s</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">Instant Commands</string>
     <string name="stream_ui_message_composer_command_template" translatable="false">/%1$s %2$s</string>

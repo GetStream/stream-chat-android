@@ -153,7 +153,7 @@ private class CommandViewHolder(
      * The template string for the command description with two placeholders for command name
      * and arguments.
      */
-    private val commandDescriptionText = style.commandSuggestionItemCommandDescriptionText
+    private val commandTemplateText = style.commandSuggestionItemCommandDescriptionText
 
     init {
         binding.root.setOnClickListener { commandSelectionListener(item) }
@@ -171,6 +171,6 @@ private class CommandViewHolder(
         this.item = item
 
         binding.commandNameTextView.text = item.name.replaceFirstChar(Char::uppercase)
-        binding.commandQueryTextView.text = String.format(commandDescriptionText, item.name, item.args)
+        binding.commandQueryTextView.text = String.format(commandTemplateText, item.name, item.args)
     }
 }

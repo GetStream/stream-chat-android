@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
@@ -146,6 +145,11 @@ private class MentionsViewHolder(
 
     private lateinit var item: User
 
+    /**
+     * The template string for the mention item with user name placeholder.
+     */
+    private val mentionTemplateText = style.mentionSuggestionItemMentionText
+
     init {
         binding.root.setOnClickListener { mentionSelectionListener(item) }
         binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
@@ -166,9 +170,6 @@ private class MentionsViewHolder(
             binding.avatarView.setUserData(item)
         }
         binding.usernameTextView.text = item.name
-        binding.mentionNameTextView.text = context.getString(
-            R.string.stream_ui_mention,
-            item.name.lowercase()
-        )
+        binding.mentionNameTextView.text = String.format(mentionTemplateText, item.name.lowercase())
     }
 }

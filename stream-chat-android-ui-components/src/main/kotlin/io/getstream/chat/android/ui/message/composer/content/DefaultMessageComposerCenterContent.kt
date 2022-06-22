@@ -32,7 +32,6 @@ import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -150,11 +149,11 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
         if (canSendMessage) {
             binding.messageEditText.isEnabled = true
-            binding.messageEditText.hint = context.getString(R.string.stream_ui_message_input_hint)
+            binding.messageEditText.hint = style.messageInputTextStyle.hint
             binding.messageEditText.maxLines = style.messageInputMaxLines
         } else {
             binding.messageEditText.isEnabled = false
-            binding.messageEditText.hint = context.getString(R.string.stream_ui_message_cannot_send_messages_hint)
+            binding.messageEditText.hint = style.messageInputCannotSendHintText
             // Avoid multiline text input due to the long hint above
             binding.messageEditText.maxLines = 1
         }

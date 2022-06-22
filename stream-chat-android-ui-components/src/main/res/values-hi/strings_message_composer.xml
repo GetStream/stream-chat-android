@@ -15,6 +15,12 @@
     limitations under the License.
 -->
 <resources>
+    <string name="stream_ui_message_composer_send_to_channel">"चैनल पर भी भेजें"</string>
+    <string name="stream_ui_message_composer_mode_reply">"जवाब दें"</string>
+    <string name="stream_ui_message_composer_mode_edit">"मैसेज एडिट करें"</string>
+    <string name="stream_ui_message_composer_hint_normal">"यहाँ कुछ लिखें"</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+
     <!-- Commands Popup -->
     <string name="stream_ui_message_composer_instant_commands">"इंस्टेंट कमांड"</string>
 
