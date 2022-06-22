@@ -82,6 +82,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     private fun init() {
         binding = StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
         binding.suggestionsCardView.isVisible = true
+        binding.commandsTitleTextView.isVisible = true
     }
 
     /**
