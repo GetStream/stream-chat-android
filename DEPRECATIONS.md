@@ -12,7 +12,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use Channel::ownCapabilities to determine user permissions. |
 | `QuotedMessage` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use new implementation of `QuotedText`. |
-| `MessageText` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.06.04 ⌛ | Use the new implementation of `MessageText`. |
+| `MessageText` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 ⌛ | Use the new implementation of `MessageText`. |
 | `DeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `DeletedMessageVisibility` in conjunction with `MessageListViewModel.setDeletedMessagesVisibility` instead. |
 | `MessageListView.setDeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `MessageListViewModel.setDeletedMessagesVisibility` instead. |
 | `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.07.04 ⌛ | Use `Member.channelRole` instead. |
