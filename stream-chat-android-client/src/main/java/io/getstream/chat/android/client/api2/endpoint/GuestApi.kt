@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2
+package io.getstream.chat.android.client.api2.endpoint
 
-import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
+import io.getstream.chat.android.client.api.AnonymousApi
+import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
+import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.call.RetrofitCall
-import retrofit2.http.GET
+import retrofit2.http.Body
+import retrofit2.http.POST
 
-/**
- * API for configurations, settings in the dashboard with read and write possibilities (not mandatorily).
- */
-@AuthenticatedApi
-internal interface ConfigApi {
+@AnonymousApi
+internal interface GuestApi {
 
-    @GET("/app")
-    fun getAppSettings(): RetrofitCall<AppSettingsResponse>
+    @POST("/guest")
+    fun getGuestUser(
+        @Body body: GuestUserRequest,
+    ): RetrofitCall<TokenResponse>
 }

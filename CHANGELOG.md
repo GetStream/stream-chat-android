@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Now the SDK can be used if R8 full mode. New rules were added to the library to support the aggressive optimizations [3663](https://github.com/GetStream/stream-chat-android/pull/3663).
 
 ### ✅ Added
 
@@ -34,6 +35,7 @@
 - Fix the stale Channel data being stored into database. [3650](https://github.com/GetStream/stream-chat-android/pull/3650)
 - Fix race condition problem that allowed multiple threads to increment unread count, which could cause a mistake in the number of unread messages. [3656](https://github.com/GetStream/stream-chat-android/pull/3656)
 - A new optional argument `useSequentialEventHandler` has been added to `Config` class of offline plugin to enable a sequential event handling mechanism. [3659](https://github.com/GetStream/stream-chat-android/pull/3659)
+- Fix channel mutes being dropped on user updates [3728](https://github.com/GetStream/stream-chat-android/pull/3728)
 
 ### ⬆️ Improved
 - Added logs of all properties available in a class and which one was searched for then QuerySort fails to find a field. [3597](https://github.com/GetStream/stream-chat-android/pull/3597)
@@ -72,6 +74,7 @@
 - Added `PinnedMessageListViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added `TypingIndicatorViewModelFactory.Builder` for Java users. [#3617](https://github.com/GetStream/stream-chat-android/pull/3617)
 - Added new attributes to `MessageListView` that are designed to customize the scroll to bottom button. They are listed in the linked PR. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
+- Added a way to change runtime filters for Channels in `ChannelListViewModel`, using `setFilters(FilterObject)`. [#3687](https://github.com/GetStream/stream-chat-android/pull/3687) 
 - Added support for bottom infinite scrolling when searching for messages or navigating to messages in a non-linear way inside MessageListView. [3654](https://github.com/GetStream/stream-chat-android/pull/3654)
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)

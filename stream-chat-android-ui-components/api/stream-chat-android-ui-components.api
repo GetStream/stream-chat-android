@@ -599,6 +599,7 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public final fun leaveChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun markAllRead ()V
 	public final fun onAction (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action;)V
+	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 }
 
 public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {

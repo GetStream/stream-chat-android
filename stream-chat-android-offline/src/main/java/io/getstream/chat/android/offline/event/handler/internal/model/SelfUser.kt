@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2
+package io.getstream.chat.android.offline.event.handler.internal.model
 
-import io.getstream.chat.android.client.api.AnonymousApi
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
-import io.getstream.chat.android.client.call.RetrofitCall
-import retrofit2.http.Body
-import retrofit2.http.POST
+import io.getstream.chat.android.client.models.User
 
-@AnonymousApi
-internal interface GuestApi {
-
-    @POST("/guest")
-    fun getGuestUser(
-        @Body body: GuestUserRequest,
-    ): RetrofitCall<TokenResponse>
+/**
+ * Represents currently logged in user.
+ */
+internal sealed class SelfUser {
+    abstract val me: User
 }
+
+/**
+ * Contains a full [User] information.
+ */
+internal data class SelfUserFull(override val me: User) : SelfUser()
+
+/**
+ * Contains a limited [User] information, like [User.id], [User.role], [User.name], [User.online], [User.banned],
+ * [User.image], [User.createdAt], [User.updatedAt], [User.lastActive]
+ */
+internal data class SelfUserPart(override val me: User) : SelfUser()

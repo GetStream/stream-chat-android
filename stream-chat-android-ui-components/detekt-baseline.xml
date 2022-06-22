@@ -93,7 +93,6 @@
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$queryChannelsState.chatEventHandler = chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)</ID>
     <ID>MaxLineLength:ChannelListViewModelFactory.kt$ChannelListViewModelFactory$*</ID>
     <ID>MaxLineLength:ChannelListViewStyle.kt$ChannelListViewStyle$*</ID>
     <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
