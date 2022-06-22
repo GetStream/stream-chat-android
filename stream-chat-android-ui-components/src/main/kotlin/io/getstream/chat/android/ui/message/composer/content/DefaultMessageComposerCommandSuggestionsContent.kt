@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBindin
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 /**
  * Represents the default command suggestion list popup shown above [MessageComposerView].
@@ -96,7 +97,9 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
         binding.commandsTitleTextView.text = style.commandSuggestionsTitleText
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
-        binding.commandsTitleTextView.setStartDrawable(style.commandSuggestionsTitleIconDrawable)
+        binding.commandsTitleTextView.setStartDrawable(
+            style.commandSuggestionsTitleIconDrawable.applyTint(style.buttonIconDrawableTintColor)
+        )
     }
 
     /**
@@ -159,7 +162,7 @@ private class CommandViewHolder(
         binding.root.setOnClickListener { commandSelectionListener(item) }
         binding.commandNameTextView.setTextStyle(style.commandSuggestionItemCommandNameTextStyle)
         binding.commandQueryTextView.setTextStyle(style.commandSuggestionItemCommandDescriptionTextStyle)
-        binding.instantCommandImageView.setImageDrawable(style.commandSuggestionItemIconDrawable)
+        binding.instantCommandImageView.isVisible = false
     }
 
     /**

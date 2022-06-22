@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBindin
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 /**
  * Represents the default mention suggestion list popup shown above [MessageComposerView].
@@ -154,7 +155,9 @@ private class MentionsViewHolder(
         binding.root.setOnClickListener { mentionSelectionListener(item) }
         binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
         binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
-        binding.mentionsIcon.setImageDrawable(style.mentionSuggestionItemIconDrawable)
+        binding.mentionsIcon.setImageDrawable(
+            style.mentionSuggestionItemIconDrawable.applyTint(style.buttonIconDrawableTintColor)
+        )
     }
 
     /**

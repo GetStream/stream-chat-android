@@ -34,7 +34,6 @@
 
         <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color" />
-        <attr name="streamUiMessageComposerCommandSuggestionItemIconDrawable" format="reference" />
 
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor" format="reference|color" />

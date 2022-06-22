@@ -41,7 +41,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
- * @param commandSuggestionItemIconDrawable The icon for each mention item in the suggestion list.
  * @param commandSuggestionItemCommandNameTextStyle The text style for the command name.
  * @param commandSuggestionItemCommandDescriptionText The command description template with two placeholders.
  * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.
@@ -89,7 +88,6 @@ public data class MessageComposerViewStyle(
     public val commandSuggestionsTitleTextStyle: TextStyle,
     public val commandSuggestionsTitleIconDrawable: Drawable,
     @ColorInt public val commandSuggestionsBackgroundColor: Int,
-    public val commandSuggestionItemIconDrawable: Drawable,
     public val commandSuggestionItemCommandNameTextStyle: TextStyle,
     public val commandSuggestionItemCommandDescriptionText: String,
     public val commandSuggestionItemCommandDescriptionTextStyle: TextStyle,
@@ -188,10 +186,6 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_white)
                 )
-
-                val commandSuggestionItemIconDrawable: Drawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_circle)!!
 
                 val commandSuggestionItemCommandNameTextStyle = TextStyle.Builder(a)
                     .size(
@@ -486,7 +480,6 @@ public data class MessageComposerViewStyle(
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
                     commandSuggestionsTitleIconDrawable = commandSuggestionsTitleIconDrawable,
                     commandSuggestionsBackgroundColor = commandSuggestionsBackgroundColor,
-                    commandSuggestionItemIconDrawable = commandSuggestionItemIconDrawable,
                     commandSuggestionItemCommandNameTextStyle = commandSuggestionItemCommandNameTextStyle,
                     commandSuggestionItemCommandDescriptionText = commandSuggestionItemCommandDescriptionText,
                     commandSuggestionItemCommandDescriptionTextStyle = commandSuggestionItemCommandDescriptionTextStyle,
