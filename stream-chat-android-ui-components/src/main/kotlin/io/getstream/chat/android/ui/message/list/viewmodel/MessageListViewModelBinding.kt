@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 @file:JvmName("MessageListViewModelBinding")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
