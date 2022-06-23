@@ -59,15 +59,20 @@ class UserLoginViewModel : ViewModel() {
             name = user.name
         }
 
-        ChatClient.instance().connectUser(chatUser, user.token)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    logger.logD("User set successfully")
-                } else {
-                    _events.postValue(Event(UiEvent.Error(result.error().message)))
-                    logger.logD("Failed to set user ${result.error()}")
-                }
+        ChatClient.instance().run {
+            if (getCurrentUser() == null) {
+                connectUser(chatUser, user.token)
+                    .enqueue { result ->
+                        if (result.isSuccess) {
+                            logger.logD("User set successfully")
+                        } else {
+                            _events.postValue(Event(UiEvent.Error(result.error().message)))
+                            logger.logD("Failed to set user ${result.error()}")
+                        }
+                    }
             }
+        }
+
         _events.postValue(Event(UiEvent.RedirectToChannels))
     }
 
