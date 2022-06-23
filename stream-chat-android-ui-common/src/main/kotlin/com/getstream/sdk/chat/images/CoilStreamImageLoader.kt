@@ -29,7 +29,6 @@ import coil.drawable.ScaleDrawable
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import coil.transform.RoundedCornersTransformation
 import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import com.getstream.sdk.chat.disposable.CoilDisposable
 import com.getstream.sdk.chat.disposable.Disposable
