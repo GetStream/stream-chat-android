@@ -14,7 +14,6 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed the socket being stuck after Airplane mode gets disabled. [3755](https://github.com/GetStream/stream-chat-android/pull/3755)
 
 ### ⬆️ Improved
 -  Avoid multiple calls to `/app` endpoint. [3686](https://github.com/GetStream/stream-chat-android/pull/3686)
