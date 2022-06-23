@@ -27,6 +27,8 @@
   The method relies only on the local data, so the result might be not accurate. [#3644](https://github.com/GetStream/stream-chat-android/pull/3644)
 
 ### ⚠️ Changed
+- 🚨 Changed `ChatClient::connectUser` - the method shouldn't be called when the user is already set and will automatically disconnect if this happens.
+  You can use `ChatClient::getCurrentUser` to verify if the user is already connected. 🚨
 
 ### ❌ Removed
 
