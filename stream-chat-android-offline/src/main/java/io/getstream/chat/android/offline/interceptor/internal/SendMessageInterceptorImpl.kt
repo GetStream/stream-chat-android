@@ -90,7 +90,7 @@ internal class SendMessageInterceptorImpl(
      *
      * @return [Result] with a prepared message.
      */
-    suspend fun prepareNewMessageWithAttachments(
+    private suspend fun prepareNewMessageWithAttachments(
         message: Message,
         channelType: String,
         channelId: String,
@@ -173,18 +173,16 @@ internal class SendMessageInterceptorImpl(
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
         return when {
-            globalState.isOnline() ->
-                if (message.hasPendingAttachments()) {
-                    waitForAttachmentsToBeSent(message, channelType, channelId)
-                } else {
-                    Result.success(message.copy(type = Message.TYPE_REGULAR))
-                }
+            globalState.isOnline() && message.hasPendingAttachments() ->
+                waitForAttachmentsToBeSent(message, channelType, channelId)
 
-            message.hasPendingAttachments() -> {
+            !globalState.isOnline() && message.hasPendingAttachments() -> {
                 // We enqueue attachments upload here if user is offline but an error is returned so message is not sent right away.
                 enqueueAttachmentUpload(message, channelType, channelId)
                 Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
             }
+
+            !message.hasPendingAttachments() -> Result.success(message.copy(type = Message.TYPE_REGULAR))
 
             else -> {
                 logger.logI("Chat is offline and there is no pending attachments to upload in message with ${message.id} and text ${message.text}")
