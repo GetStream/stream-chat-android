@@ -67,6 +67,7 @@
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 - Now the options button is not displayed on the gallery screen if there are no options available. [#3696](https://github.com/GetStream/stream-chat-android/pull/3696)
 - Fixed `app:streamUiMessageInputHintText` not getting applied properly in `MessageInputView`. [#3749](https://github.com/GetStream/stream-chat-android/pull/3749)
+- Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
@@ -95,6 +96,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the display of `ChannelAvatar` for a channel with two members and neither of them is the current user. [3598](https://github.com/GetStream/stream-chat-android/pull/3598)
+- Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 
 ### ⬆️ Improved
 - Improved padding customization options of `InputField`. [#3596](https://github.com/GetStream/stream-chat-android/pull/3596)
