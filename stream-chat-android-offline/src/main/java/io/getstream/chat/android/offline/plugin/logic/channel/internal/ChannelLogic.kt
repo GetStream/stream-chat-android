@@ -410,15 +410,16 @@ internal class ChannelLogic(
      * @param message [Message].
      */
     private fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = globalMutableState.user.value?.id ?: return
+        val user = globalMutableState.user.value ?: return
+        val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
          * same time, one increment can be lost.
          */
         synchronized(this) {
-            val readState = mutableState._read.value?.copy()
-            val unreadCount: Int = readState?.unreadMessages ?: 0
-            val lastMessageSeenDate = readState?.lastMessageSeenDate
+            val readState = mutableState._read.value?.copy() ?: ChannelUserRead(user)
+            val unreadCount: Int = readState.unreadMessages
+            val lastMessageSeenDate = readState.lastMessageSeenDate
 
             val shouldIncrementUnreadCount =
                 message.shouldIncrementUnreadCount(
@@ -435,7 +436,10 @@ internal class ChannelLogic(
                         "New unread count: ${unreadCount + 1}"
                 )
 
-                mutableState._read.value = readState.apply { this?.unreadMessages = unreadCount + 1 }
+                mutableState._read.value = readState.apply {
+                    this.unreadMessages = unreadCount + 1
+                    this.lastMessageSeenDate = message.createdAt
+                }
                 mutableState._reads.value = mutableState._reads.value.apply {
                     this[currentUserId]?.lastMessageSeenDate = message.createdAt
                     this[currentUserId]?.unreadMessages = unreadCount + 1
