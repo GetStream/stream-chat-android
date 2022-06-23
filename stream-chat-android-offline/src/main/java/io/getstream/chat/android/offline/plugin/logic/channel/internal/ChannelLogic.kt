@@ -411,7 +411,7 @@ internal class ChannelLogic(
      */
     private fun incrementUnreadCountIfNecessary(message: Message) {
         val user = globalMutableState.user.value ?: return
-        val currentUserId = user.id ?: return
+        val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
          * same time, one increment can be lost.
