@@ -27,6 +27,8 @@
   The method relies only on the local data, so the result might be not accurate. [#3644](https://github.com/GetStream/stream-chat-android/pull/3644)
 
 ### ⚠️ Changed
+- 🚨 Changed `ChatClient::connectUser` - the method shouldn't be called when the user is already set and will automatically disconnect if this happens.
+  You can use `ChatClient::getCurrentUser` to verify if the user is already connected. 🚨
 
 ### ❌ Removed
 
@@ -62,7 +64,8 @@
 ### 🐞 Fixed
 - Fixed potential NPE when disconnecting the user. [#3612](https://github.com/GetStream/stream-chat-android/pull/3612)
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
-- Now the options button is not displayed on the gallery screen if there are no options available. [3696](https://github.com/GetStream/stream-chat-android/pull/3696)
+- Now the options button is not displayed on the gallery screen if there are no options available. [#3696](https://github.com/GetStream/stream-chat-android/pull/3696)
+- Fixed `app:streamUiMessageInputHintText` not getting applied properly in `MessageInputView`. [#3749](https://github.com/GetStream/stream-chat-android/pull/3749)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
