@@ -78,10 +78,8 @@ class UserLoginActivity : AppCompatActivity() {
                             // login screen then we need to reinitialize the SDK with our API key.
                             ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
                         }
-                        ChatHelper.connectUser(
-                            userCredentials = userCredentials,
-                            onSuccess = ::openChannels,
-                        )
+                        ChatHelper.connectUser(userCredentials = userCredentials)
+                        openChannels()
                     },
                     onCustomLoginClick = ::openCustomLogin
                 )
