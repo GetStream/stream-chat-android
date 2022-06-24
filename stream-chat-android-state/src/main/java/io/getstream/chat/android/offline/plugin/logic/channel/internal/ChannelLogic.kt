@@ -233,6 +233,16 @@ internal class ChannelLogic(
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
+    // TODO see with Leo if this is to hacky, called so that the request.isFilteringAroundIdMessage()
+    //  and the messages would get refreshed, maybe something else can be called
+    internal suspend fun loadNewestMessages(limit: Int): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                messageFilterDirection = Pagination.AROUND_ID
+            }.toWatchChannelRequest(userPresence)
+        )
+    }
+
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 

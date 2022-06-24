@@ -78,3 +78,9 @@ public data class MessagesState(
         if (offset != focusedMessageOffsetState.value) focusedMessageOffsetState.value = offset
     }
 }
+
+public enum class ScrollToStartState {
+    LOADING_DATA,
+    SCROLLING,
+    IDLE
+}

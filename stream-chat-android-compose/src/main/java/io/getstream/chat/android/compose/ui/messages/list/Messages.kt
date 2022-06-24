@@ -101,6 +101,8 @@ public fun Messages(
     messagesState: MessagesState,
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
+    onMessagesEndReached: (String) -> Unit,
+    onScrollToBottom: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,6 +121,7 @@ public fun Messages(
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
+    val startOfMessages = messagesState.startOfMessages
 
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
@@ -173,11 +176,21 @@ public fun Messages(
                         onScrolledToBottom()
                     }
 
-                    if (!endOfMessages && index == messages.lastIndex &&
+                    if (!endOfMessages &&
+                        index == messages.lastIndex &&
                         messages.isNotEmpty() &&
                         lazyListState.isScrollInProgress
                     ) {
                         onMessagesStartReached()
+                    }
+
+                    val newestMessageItem = (messages.firstOrNull { it is MessageItemState } as? MessageItemState)
+                    if (!startOfMessages &&
+                        index == 0 &&
+                        messages.isNotEmpty() &&
+                        lazyListState.isScrollInProgress
+                    ) {
+                        newestMessageItem?.message?.id?.let(onMessagesEndReached)
                     }
                 }
             }

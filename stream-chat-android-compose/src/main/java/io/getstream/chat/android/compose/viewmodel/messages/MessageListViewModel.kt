@@ -298,6 +298,15 @@ public class MessageListViewModel(
                                 messageItems = emptyList(),
                             )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
+
+                            // TODO
+                            val scrollingState: ScrollToStartState = when (messagesState.scrollingToStartState) {
+                                ScrollToStartState.LOADING_DATA -> ScrollToStartState.SCROLLING
+                                ScrollToStartState.SCROLLING -> ScrollToStartState.SCROLLING
+                                else -> ScrollToStartState.IDLE
+                            }
+                            println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}")
+
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
@@ -588,6 +597,30 @@ public class MessageListViewModel(
             threadLoadMore(messageMode)
         } else {
             messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
+            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
+        }
+    }
+
+    public fun loadNewerMessages(messageId: String) {
+        if (chatClient.globalState.isOffline()) return
+        val messageMode = messageMode
+
+        if (messageMode is MessageMode.MessageThread) {
+            threadLoadMore(messageMode)
+        } else {
+            messagesState = messagesState.copy(isLoadingMore = true)
+            chatClient.loadNewerMessages(channelId, messageId, messageLimit).enqueue()
+        }
+    }
+
+    public fun loadOlderMessages() {
+        if (chatClient.globalState.isOffline()) return
+        val messageMode = messageMode
+
+        if (messageMode is MessageMode.MessageThread) {
+            threadLoadMore(messageMode)
+        } else {
+            messagesState = messagesState.copy(isLoadingMore = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
         }
     }
@@ -1159,9 +1192,9 @@ public class MessageListViewModel(
      */
     public fun clearNewMessageState() {
         if (!messagesState.startOfMessages) return
-        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
+        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
 
-        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
+        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
     }
 
     /**

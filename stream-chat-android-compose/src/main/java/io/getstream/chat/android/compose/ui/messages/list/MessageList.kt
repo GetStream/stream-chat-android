@@ -58,7 +58,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onMessagesStartReached Handler for pagination when the end of the oldest messages has been reached.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
- * @param onScrollToBottom Handler when the user reaches the bottom.
+ * @param onScrolledToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -85,7 +85,8 @@ public fun MessageList(
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
-    onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onScrolledToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onScrollToBottom: () -> Unit = { viewModel.scrollToBottom() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
@@ -126,7 +127,7 @@ public fun MessageList(
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
-        onScrolledToBottom = onScrollToBottom,
+        onScrolledToBottom = onScrolledToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         helperContent = helperContent,
@@ -237,7 +238,9 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
+    onMessageEndReached: (String) -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
+    onScrollToBottom: () -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
