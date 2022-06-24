@@ -31,5 +31,6 @@ public fun User.mergePartially(that: User): User {
     this.banned = that.banned
     this.name = that.name
     this.image = that.image
+    this.extraData = that.extraData
     return this
 }
