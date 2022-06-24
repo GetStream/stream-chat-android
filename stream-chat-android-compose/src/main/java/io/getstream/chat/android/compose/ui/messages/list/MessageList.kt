@@ -58,7 +58,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
- * @param onScrollToBottom Handler when the user reaches the bottom.
+ * @param onScrolledToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -81,9 +81,11 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
+    onMessageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
-    onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onScrolledToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onScrollToBottom: () -> Unit = { viewModel.scrollToBottom() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
@@ -97,6 +99,7 @@ public fun MessageList(
         DefaultMessagesHelperContent(
             messagesState = viewModel.currentMessagesState,
             lazyListState = lazyListState,
+            scrollToBottom = onScrollToBottom
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -121,7 +124,7 @@ public fun MessageList(
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
-        onScrolledToBottom = onScrollToBottom,
+        onScrolledToBottom = onScrolledToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         helperContent = helperContent,
@@ -129,6 +132,8 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
+        onMessageEndReached = onMessageEndReached,
+        onScrollToBottom = onScrollToBottom
     )
 }
 
@@ -228,7 +233,9 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
+    onMessageEndReached: (String) -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
+    onScrollToBottom: () -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
@@ -239,7 +246,7 @@ public fun MessageList(
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(currentState, lazyListState)
+        DefaultMessagesHelperContent(currentState, lazyListState, onScrollToBottom)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
@@ -269,6 +276,8 @@ public fun MessageList(
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
+            onMessagesEndReached = onMessageEndReached,
+            onScrollToBottom = onScrollToBottom
         )
         else -> emptyContent()
     }

@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.ScrollToStartState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -80,15 +81,24 @@ public fun Messages(
     messagesState: MessagesState,
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
+    onMessagesEndReached: (String) -> Unit,
+    onScrollToBottom: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) },
+    helperContent: @Composable BoxScope.() -> Unit = {
+        DefaultMessagesHelperContent(
+            messagesState,
+            lazyListState,
+            onScrollToBottom
+        )
+    },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages) = messagesState
+    val startOfMessages = messagesState.startOfMessages
 
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
@@ -143,11 +153,21 @@ public fun Messages(
                         onScrolledToBottom()
                     }
 
-                    if (!endOfMessages && index == messages.lastIndex &&
+                    if (!endOfMessages &&
+                        index == messages.lastIndex &&
                         messages.isNotEmpty() &&
                         lazyListState.isScrollInProgress
                     ) {
                         onMessagesStartReached()
+                    }
+
+                    val newestMessageItem = (messages.firstOrNull { it is MessageItemState } as? MessageItemState)
+                    if (!startOfMessages &&
+                        index == 0 &&
+                        messages.isNotEmpty() &&
+                        lazyListState.isScrollInProgress
+                    ) {
+                        newestMessageItem?.message?.id?.let(onMessagesEndReached)
                     }
                 }
             }
@@ -173,8 +193,10 @@ public fun Messages(
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
     lazyListState: LazyListState,
+    scrollToBottom: () -> Unit,
 ) {
     val (_, _, _, messages, _, _, newMessageState) = messagesState
+    val scrollToStartState = messagesState.scrollingToStartState
     val coroutineScope = rememberCoroutineScope()
 
     val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
@@ -187,21 +209,29 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         newMessageState,
         firstVisibleItemIndex,
         focusedItemIndex,
-        offset.value
+        offset.value,
+        scrollToStartState
     ) {
-        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress) {
+        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress && scrollToStartState != ScrollToStartState.SCROLLING) {
             coroutineScope.launch {
                 lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
             }
         }
 
+        if (scrollToStartState == ScrollToStartState.SCROLLING) {
+            println("scroll to bottom")
+            lazyListState.scrollToItem(0)
+        }
+
         when {
-            !lazyListState.isScrollInProgress && newMessageState == Other &&
+            focusedItemIndex == -1 &&
+                !lazyListState.isScrollInProgress && newMessageState == Other &&
                 firstVisibleItemIndex < 3 -> coroutineScope.launch {
                 lazyListState.animateScrollToItem(0)
             }
 
-            !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
+            focusedItemIndex == -1 &&
+                !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)
                 }
@@ -216,10 +246,14 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             modifier = Modifier.align(Alignment.BottomEnd),
             onClick = {
                 coroutineScope.launch {
-                    if (firstVisibleItemIndex > 5) {
-                        lazyListState.scrollToItem(5)
+                    if (messagesState.startOfMessages) {
+                        if (firstVisibleItemIndex > 5) {
+                            lazyListState.scrollToItem(5)
+                        }
+                        lazyListState.animateScrollToItem(0)
+                    } else {
+                        scrollToBottom()
                     }
-                    lazyListState.animateScrollToItem(0)
                 }
             }
         )

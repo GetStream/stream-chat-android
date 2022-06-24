@@ -167,6 +167,8 @@ internal class ChannelLogic(
                 searchLogic.handleMessageBounds(request, noMoreMessages)
                 mutableState.recoveryNeeded = false
 
+                // TODO see with Leo to sort out state, now it can be true when on a jumped message, probably connected
+                //  to the fact i call Pagination.aroundId to refresh the messages
                 if (noMoreMessages) {
                     if (request.isFilteringNewerMessages()) {
                         mutableState._endOfNewerMessages.value = true
@@ -256,6 +258,16 @@ internal class ChannelLogic(
 
     internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
+    }
+
+    // TODO see with Leo if this is to hacky, called so that the request.isFilteringAroundIdMessage()
+    //  and the messages would get refreshed, maybe something else can be called
+    internal suspend fun loadNewestMessages(limit: Int): Result<Channel> {
+        return runChannelQuery(
+            QueryChannelPaginationRequest(limit).apply {
+                messageFilterDirection = Pagination.AROUND_ID
+            }.toWatchChannelRequest(userPresence)
+        )
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {

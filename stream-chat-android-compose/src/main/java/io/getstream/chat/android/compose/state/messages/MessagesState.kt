@@ -45,6 +45,8 @@ public data class MessagesState(
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
+    val startOfMessages: Boolean = false,
+    val scrollingToStartState: ScrollToStartState = ScrollToStartState.IDLE
 ) {
 
     /**
@@ -67,4 +69,10 @@ public data class MessagesState(
             _focusedMessageOffset.value = -sizeDiff
         }
     }
+}
+
+public enum class ScrollToStartState {
+    LOADING_DATA,
+    SCROLLING,
+    IDLE
 }
