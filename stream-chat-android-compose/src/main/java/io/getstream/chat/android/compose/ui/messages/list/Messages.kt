@@ -93,6 +93,14 @@ public fun Messages(
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
 
+    /** Marks the bottom most item as read every time it changes. **/
+    OnLastVisibleItemChanged(lazyListState) {
+        val message = messagesState.messageItems[it]
+        if (message is MessageItemState) {
+            onLastVisibleMessageChanged(message.message)
+        }
+    }
+
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -135,10 +143,6 @@ public fun Messages(
                 Box(modifier = messageItemModifier) {
                     itemContent(item)
 
-                    if (item is MessageItemState) {
-                        onLastVisibleMessageChanged(item.message)
-                    }
-
                     if (index == 0 && lazyListState.isScrollInProgress) {
                         onScrolledToBottom()
                     }
@@ -161,6 +165,15 @@ public fun Messages(
 
         helperContent()
     }
+}
+
+/**
+ * Used to hoist state in a way that defers reads to a lambda,
+ * hence skipping unnecessary recomposition of the parent composable.
+ */
+@Composable
+private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (firstVisibleItemIndex: Int) -> Unit) {
+    onChanged(lazyListState.firstVisibleItemIndex)
 }
 
 /**
