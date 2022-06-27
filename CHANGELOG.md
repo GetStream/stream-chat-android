@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixing state of channel while retrying to send messages after killing the app. [#3769](https://github.com/GetStream/stream-chat-android/pull/3769)
 
 ### ⬆️ Improved
 
