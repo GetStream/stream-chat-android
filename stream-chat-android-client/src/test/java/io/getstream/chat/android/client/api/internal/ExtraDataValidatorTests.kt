@@ -21,14 +21,17 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeFalse
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+@ExtendWith(TestCoroutineExtension::class)
 internal class ExtraDataValidatorTests {
 
     private val chatApi: ChatApi = mock()

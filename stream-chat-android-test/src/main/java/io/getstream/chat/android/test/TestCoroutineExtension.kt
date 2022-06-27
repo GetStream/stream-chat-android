@@ -20,6 +20,7 @@ package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -28,13 +29,15 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, AfterAllCallback {
+public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
-    public val dispatcher: TestDispatcher = UnconfinedTestDispatcher()
-    public val scope: TestScope = TestScope(dispatcher)
-
+    private var _scope: TestScope? = null
+    public val dispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
+    public val scope: TestScope
+        get() = requireNotNull(_scope)
     private var beforeAllCalled: Boolean = false
 
     override fun beforeAll(context: ExtensionContext) {
@@ -53,5 +56,10 @@ public class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, Afte
     override fun afterAll(context: ExtensionContext) {
         Dispatchers.resetMain()
         DispatcherProvider.reset()
+        _scope = null
+    }
+
+    override fun beforeEach(context: ExtensionContext?) {
+        _scope = TestScope(dispatcher)
     }
 }

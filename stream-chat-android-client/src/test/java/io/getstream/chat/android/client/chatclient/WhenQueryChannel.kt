@@ -104,7 +104,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
 
         fun givenChannelResponse(channelProvider: () -> Channel) = apply {
             whenever(api.queryChannel(any(), any(), any())) doAnswer {
-                CoroutineCall(coroutineRule.scope) {
+                CoroutineCall(testCoroutines.scope) {
                     Result.success(channelProvider())
                 }
             }

@@ -48,6 +48,7 @@ import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
@@ -185,7 +186,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(testCoroutines.ioDispatcher.asExecutor())
+            .setQueryExecutor(Dispatchers.IO.asExecutor())
             .build()
     }
 
