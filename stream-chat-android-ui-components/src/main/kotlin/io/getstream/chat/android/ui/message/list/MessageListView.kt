@@ -988,7 +988,7 @@ public class MessageListView : ConstraintLayout {
      * Allows clients to set a custom implementation of [MessageOptionItemsFactory]. Use this
      * method if you want to change the message options on the message options overlay.
      *
-     * @param messageOptionItemsFactory The custom factory that provides options item for the message options overlay.
+     * @param messageOptionItemsFactory The custom factory that provides option items for the message options overlay.
      */
     public fun setMessageOptionItemsFactory(messageOptionItemsFactory: MessageOptionItemsFactory) {
         check(isAdapterInitialized().not()) {
