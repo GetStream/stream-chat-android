@@ -235,7 +235,7 @@ internal class QueryChannelsLogic(
     ) {
         val existingChannels = mutableState._channels.value
         if (isFirstPage && !existingChannels.isNullOrEmpty()) {
-            (existingChannels - channels.map { it.cid }).values
+            (existingChannels - channels.map { it.cid }.toSet()).values
                 .map(Channel::cid)
                 .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it, repos) }
@@ -254,9 +254,9 @@ internal class QueryChannelsLogic(
             logger.logW("Skipping remove channels as they are not loaded yet.")
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
+        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList.toSet()
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = existingChannels - cidList
+        mutableState._channels.value = existingChannels - cidList.toSet()
     }
 
     /**
@@ -322,7 +322,7 @@ internal class QueryChannelsLogic(
             return
         }
         mutableState._channels.value = existingChannels + mutableState.queryChannelsSpec.cids
-            .intersect(cidList)
+            .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
                 stateRegistry.isActiveChannel(
