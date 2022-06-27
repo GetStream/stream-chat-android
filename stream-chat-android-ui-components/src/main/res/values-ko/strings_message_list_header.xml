@@ -24,7 +24,7 @@
   </plurals>
   <string name="stream_ui_message_list_header_back_button_content_description">"뒤로 가기"</string>
   <string name="stream_ui_message_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
-  <string name="stream_ui_message_list_header_member_count_online">"%s, %d온라인"</string>
+  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d온라인"</string>
   <string name="stream_ui_message_list_header_offline">"오프라인…"</string>
   <string name="stream_ui_message_list_header_retry">"재연결"</string>
   <string name="stream_ui_message_list_header_thread_subtitle">"%s 참여"</string>
