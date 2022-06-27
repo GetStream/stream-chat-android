@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
