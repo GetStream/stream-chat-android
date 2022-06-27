@@ -1722,6 +1722,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageItemTransformer (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer;)V
 	public final fun setMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener;)V
+	public final fun setMessageOptionItemsFactory (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory;)V
 	public final fun setMessagePinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessagePinHandler;)V
 	public final fun setMessageReactionHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageReactionHandler;)V
 	public final fun setMessageReplyHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageReplyHandler;)V

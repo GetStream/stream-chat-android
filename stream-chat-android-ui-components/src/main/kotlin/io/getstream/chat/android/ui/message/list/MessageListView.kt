@@ -985,6 +985,19 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Allows clients to set a custom implementation of [MessageOptionItemsFactory]. Use this
+     * method if you want to change the message options on the message options overlay.
+     *
+     * @param messageOptionItemsFactory The custom factory that provides options item for the message options overlay.
+     */
+    public fun setMessageOptionItemsFactory(messageOptionItemsFactory: MessageOptionItemsFactory) {
+        check(isAdapterInitialized().not()) {
+            "Adapter was already initialized, please set MessageOptionItemsFactory first"
+        }
+        this.messageOptionItemsFactory = messageOptionItemsFactory
+    }
+
+    /**
      * Allows clients to set a custom implementation of [DateFormatter] to format the message date.
      *
      * @param messageDateFormatter The formatter that is used to format the message date.
