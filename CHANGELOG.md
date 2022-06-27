@@ -67,6 +67,7 @@
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 - Now the options button is not displayed on the gallery screen if there are no options available. [#3696](https://github.com/GetStream/stream-chat-android/pull/3696)
 - Fixed `app:streamUiMessageInputHintText` not getting applied properly in `MessageInputView`. [#3749](https://github.com/GetStream/stream-chat-android/pull/3749)
+- Fixed backwards compatibility of the `ChannelListView` attribute `streamUiIndicatorPendingSyncIcon` and the `MessageListView` attribute `streamUiIconIndicatorPendingSync`. These are now backwards compatible down to API 21 [#3766](https://github.com/GetStream/stream-chat-android/pull/3766)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
@@ -89,6 +90,8 @@
 - The default elevation of the unread count badge inside `ScrollButtonView` was changed from `10dp` to `3dp`. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
 - Deprecated `MessageInputView.TypingListener` in favor of `TypingUpdatesBuffer` and `MessageInputView.setTypingListener(TypingListener)` in favor of `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)`. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - Added `WRITE_EXTERNAL_STORAGE` permission check on the default implementation of the download handler when using `MessageListViewModel.bindView`. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
+- Removed the default filter from `ChannelListFragment` so that it can rely on the default filter from `ChannelListViewModel`. [3762](https://github.com/GetStream/stream-chat-android/pull/3762)
+
 
 ### ❌ Removed
 
