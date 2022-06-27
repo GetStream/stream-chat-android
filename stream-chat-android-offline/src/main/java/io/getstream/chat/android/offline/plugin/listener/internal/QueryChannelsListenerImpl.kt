@@ -17,13 +17,17 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
 /**
  * [QueryChannelsListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
@@ -31,21 +35,42 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
  *
  * @param logic [LogicRegistry] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  */
-internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : QueryChannelsListener {
+internal class QueryChannelsListenerImpl(
+    private val logic: LogicRegistry,
+    private val stateRegistry: StateRegistry,
+) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-        logic.queryChannels(request).run {
+         val channelsResult = logic.queryChannels(request).run {
             setCurrentQueryChannelsRequest(request)
             queryOffline(request.toPagination())
+        }
+
+        if (channelsResult.isSuccess) {
+            channelsResult.data().let(::updateStateChannelData)
+        }
+    }
+
+    private fun updateStateChannelData(channels: List<Channel>) {
+        channels.forEach { channel ->
+            val (type, id) = channel.cid.cidToTypeAndId()
+            stateRegistry.channel(type, id)
+                .toMutableState()
+                ._channelData
+                .value = ChannelData(channel, emptySet())
         }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logic.queryChannels(request).onQueryChannelsResult(result, request)
+
+        if (result.isSuccess) {
+            result.data().let(::updateStateChannelData)
+        }
     }
 
     private companion object {
