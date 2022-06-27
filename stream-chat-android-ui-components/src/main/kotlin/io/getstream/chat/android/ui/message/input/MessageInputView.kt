@@ -972,7 +972,8 @@ public class MessageInputView : ConstraintLayout {
 
         if (canSend) {
             enableSendButton()
-            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_input_hint)
+            binding.messageInputFieldView
+                .binding.messageEditText.hint = messageInputViewStyle.messageInputTextStyle.hint
         } else {
             disableSendButton()
             binding.messageInputFieldView.binding.messageEditText.setHint(
