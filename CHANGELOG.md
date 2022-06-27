@@ -83,6 +83,7 @@
 - A new interface `TypingUpdatesBuffer` and its implementation `DefaultTypingUpdatesBuffer` used for buffering typing updates in order to save API calls. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - A new method `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)` used for setting the typing updates buffer. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - Added possibility to customize gallery options style via `TransformStyle.attachmentGalleryOptionsStyleTransformer`. [3696](https://github.com/GetStream/stream-chat-android/pull/3696)
+- Added `MessageListView::setMessageOptionItemsFactory` and `MessageListView::setCustomActionHandler` methods to add and handle custom actions in `MessageListView`. [3768](https://github.com/GetStream/stream-chat-android/pull/3768)
 
 ### ⚠️ Changed
 - Dimens `stream_ui_spacing_small` no longer has an effect on the internal margins of `ScrollButtonView`, instead use the `MessageListView` attribute `streamUIScrollButtonInternalMargin` to set internal margins. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
