@@ -3567,6 +3567,9 @@ public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public final fun provideCurrentTimeInSeconds ()J
 }
 
+public final class io/getstream/chat/android/client/utils/UserUtilsKt {
+}
+
 public final class io/getstream/chat/android/client/utils/internal/MessageUtilsKt {
 }
 

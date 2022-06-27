@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
@@ -40,6 +41,7 @@ import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsVie
 import io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
  * Style for view holders used inside [MessageListView].
@@ -442,9 +444,10 @@ public data class MessageListItemStyle(
             val iconIndicatorRead = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconIndicatorRead
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double)!!
-            val iconIndicatorPendingSync = attributes.getDrawable(
+            val iconIndicatorPendingSync = attributes.getDrawableCompat(
+                context,
                 R.styleable.MessageListView_streamUiIconIndicatorPendingSync
-            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clock)!!
+            ) ?: AppCompatResources.getDrawable(context, R.drawable.stream_ui_ic_clock)!!
 
             val iconOnlyVisibleToYou = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconOnlyVisibleToYou
