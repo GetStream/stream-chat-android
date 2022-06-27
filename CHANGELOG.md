@@ -1,20 +1,12 @@
-# UNRELEASED CHANGELOG
+# June 27th, 2022 - 5.4.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Now the SDK can be used if R8 full mode. New rules were added to the library to support the aggressive optimizations [3663](https://github.com/GetStream/stream-chat-android/pull/3663).
-
-### ✅ Added
 
 ### ⚠️ Changed
 - Migrated to Coil version 2.1.0 [#3538](https://github.com/GetStream/stream-chat-android/pull/3538)
 
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 -  Avoid multiple calls to `/app` endpoint. [3686](https://github.com/GetStream/stream-chat-android/pull/3686)
 
@@ -24,13 +16,9 @@
 -. `ChatClient::connectGuestUser` as a new optional argument to configure a timeout to be waiting until the connection is established, in another case an error will be returned [#3605](https://github.com/GetStream/stream-chat-android/pull/3605)
 -. `ChatClient::connectUser` doesn't return an error in the case there is a previous connection with the same user. [#3653](https://github.com/GetStream/stream-chat-android/pull/3653)
 - Added `ChatClient::countUnreadMentions` extension function which counts messages in which the user is mentioned.
-  The method relies only on the local data, so the result might be not accurate. [#3644](https://github.com/GetStream/stream-chat-android/pull/3644)
 
 ### ⚠️ Changed
 - 🚨 Changed `ChatClient::connectUser` - the method shouldn't be called when the user is already set and will automatically disconnect if this happens.
-  You can use `ChatClient::getCurrentUser` to verify if the user is already connected. 🚨
-
-### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -46,20 +34,9 @@
 ### ✅ Added
 - Added `EventHandlerSequential` to support a sequential event processing. [3604](https://github.com/GetStream/stream-chat-android/pull/3604)
 - Logging when unread count is updated. [3642](https://github.com/GetStream/stream-chat-android/pull/3642)
+
 ### ⚠️ Changed
 -  Added interface `QuerySorter` and new implementation of query sort `QuerySortByField` so users can choose between implementations that use reflection or not. [3624](https://github.com/GetStream/stream-chat-android/pull/3624)
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -92,9 +69,6 @@
 - Added `WRITE_EXTERNAL_STORAGE` permission check on the default implementation of the download handler when using `MessageListViewModel.bindView`. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
 - Removed the default filter from `ChannelListFragment` so that it can rely on the default filter from `ChannelListViewModel`. [3762](https://github.com/GetStream/stream-chat-android/pull/3762)
 
-
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the display of `ChannelAvatar` for a channel with two members and neither of them is the current user. [3598](https://github.com/GetStream/stream-chat-android/pull/3598)
@@ -116,51 +90,12 @@
 ### ❌ Removed
 - Removed the default gray background from `LoadingIndicator`. [#3599](https://github.com/GetStream/stream-chat-android/pull/3599)
 
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
 - Fix crash when used on Android API 31+ [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Upgrade MiPush SDK to version 5.0.6 [#3678](https://github.com/GetStream/stream-chat-android/pull/3678)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # Jun 1st, 2022 - 5.3.1
 ## stream-chat-android-client
