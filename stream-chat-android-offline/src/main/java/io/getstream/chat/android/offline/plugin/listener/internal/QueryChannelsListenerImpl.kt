@@ -45,7 +45,7 @@ internal class QueryChannelsListenerImpl(
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-         val channelsResult = logic.queryChannels(request).run {
+        val channelsResult = logic.queryChannels(request).run {
             setCurrentQueryChannelsRequest(request)
             queryOffline(request.toPagination())
         }
