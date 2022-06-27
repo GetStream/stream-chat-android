@@ -142,6 +142,7 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
+import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
@@ -246,21 +247,26 @@ internal constructor(
                 else -> Unit // Ignore other events
             }
 
-            val currentUser = when {
-                event is HasOwnUser -> event.me
-                event is UserEvent && event.user.id == (getCurrentUser()?.id ?: "") -> event.user
-                else -> null
-            }
-            currentUser?.let { updatedCurrentUser ->
-                userStateService.onUserUpdated(updatedCurrentUser)
+            event.extractCurrentUser()?.let { currentUser ->
+                userStateService.onUserUpdated(currentUser)
                 storePushNotificationsConfig(
-                    updatedCurrentUser.id,
-                    updatedCurrentUser.name,
+                    currentUser.id,
+                    currentUser.name,
                     userStateService.state !is UserState.UserSet,
                 )
             }
         }
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
+    }
+
+    private fun ChatEvent.extractCurrentUser(): User? {
+        return when (this) {
+            is HasOwnUser -> me
+            is UserEvent -> getCurrentUser()
+                ?.takeIf { it.id == user.id }
+                ?.mergePartially(user)
+            else -> null
+        }
     }
 
     internal fun addPlugins(plugins: List<Plugin>) {
@@ -1454,20 +1460,20 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        logger.logD("Querying single channel")
+        logger.logD("[queryChannel] channelType: $channelType, channelId: $channelId")
 
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
         return api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelRequest")
+                    logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
                     plugin.onQueryChannelRequest(channelType, channelId, request)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.logD("Applying ${plugin::class.qualifiedName}.onQueryChannelResult")
+                    logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
                     plugin.onQueryChannelResult(result, channelType, channelId, request)
                 }
             }
