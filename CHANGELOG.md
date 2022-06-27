@@ -67,6 +67,7 @@
 - The channel will now be marked as read once the latest message inside `MessagesListView` is reached. Previously scrolling down to it would not trigger this action. [#3620](https://github.com/GetStream/stream-chat-android/pull/3620)
 - Now the options button is not displayed on the gallery screen if there are no options available. [#3696](https://github.com/GetStream/stream-chat-android/pull/3696)
 - Fixed `app:streamUiMessageInputHintText` not getting applied properly in `MessageInputView`. [#3749](https://github.com/GetStream/stream-chat-android/pull/3749)
+- Fixed backwards compatibility of the `ChannelListView` attribute `streamUiIndicatorPendingSyncIcon` and the `MessageListView` attribute `streamUiIconIndicatorPendingSync`. These are now backwards compatible down to API 21 [#3766](https://github.com/GetStream/stream-chat-android/pull/3766)
 
 ### ⬆️ Improved
 - Improved displaying the upload progress of files being uploaded. Now the upload progress text is less likely to get ellipsized. [#3618](https://github.com/GetStream/stream-chat-android/pull/3618)
