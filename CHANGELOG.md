@@ -89,6 +89,8 @@
 - The default elevation of the unread count badge inside `ScrollButtonView` was changed from `10dp` to `3dp`. [3634](https://github.com/GetStream/stream-chat-android/pull/3634)
 - Deprecated `MessageInputView.TypingListener` in favor of `TypingUpdatesBuffer` and `MessageInputView.setTypingListener(TypingListener)` in favor of `MessageInputView.setTypingUpdatesBuffer(TypingUpdatesBuffer)`. [3633](https://github.com/GetStream/stream-chat-android/pull/3633)
 - Added `WRITE_EXTERNAL_STORAGE` permission check on the default implementation of the download handler when using `MessageListViewModel.bindView`. [#3719](https://github.com/GetStream/stream-chat-android/pull/3719)
+- Removed the default filter from `ChannelListFragment` so that it can rely on the default filter from `ChannelListViewModel`. [3762](https://github.com/GetStream/stream-chat-android/pull/3762)
+
 
 ### ❌ Removed
 
