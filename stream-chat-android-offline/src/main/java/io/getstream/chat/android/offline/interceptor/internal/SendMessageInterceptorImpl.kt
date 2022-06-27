@@ -90,7 +90,7 @@ internal class SendMessageInterceptorImpl(
      *
      * @return [Result] with a prepared message.
      */
-    suspend fun prepareNewMessageWithAttachments(
+    private suspend fun prepareNewMessageWithAttachments(
         message: Message,
         channelType: String,
         channelId: String,
@@ -112,13 +112,13 @@ internal class SendMessageInterceptorImpl(
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
     private suspend fun prepareNewMessage(message: Message, channelType: String, channelId: String): Message {
-        val channel = logic.channel(channelType, channelId)
+        val channelLogic = logic.channel(channelType, channelId)
         val newMessage = message.copy().apply {
             if (id.isEmpty()) {
                 id = generateMessageId()
             }
             if (cid.isEmpty()) {
-                enrichWithCid(channel.cid)
+                enrichWithCid(channelLogic.cid)
             }
             user = requireNotNull(globalState.user.value)
 
@@ -142,10 +142,8 @@ internal class SendMessageInterceptorImpl(
             }
         }
         // Update flow in channel controller
-        channel.upsertMessage(newMessage)
+        channelLogic.upsertMessage(newMessage)
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(newMessage)
         channelRepository.updateLastMessageForChannel(newMessage.cid, newMessage)
