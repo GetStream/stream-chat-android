@@ -51,13 +51,27 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.BlockUser
+import io.getstream.chat.android.common.state.Copy
+import io.getstream.chat.android.common.state.CustomAction
+import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
+import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
+import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
@@ -81,6 +95,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownl
 import io.getstream.chat.android.ui.message.list.MessageListView.BottomEndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.CustomActionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
@@ -119,8 +134,8 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
-import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -217,6 +232,9 @@ public class MessageListView : ConstraintLayout {
     }
     private var userBlockHandler = UserBlockHandler { _, _ ->
         throw IllegalStateException("onBlockUserHandler must be set.")
+    }
+    private var customActionHandler = CustomActionHandler { _, _ ->
+        throw IllegalStateException("onCustomActionHandler must be set.")
     }
     private var messageReplyHandler = MessageReplyHandler { _, _ ->
         throw IllegalStateException("onReplyMessageHandler must be set")
@@ -339,50 +357,33 @@ public class MessageListView : ConstraintLayout {
                 val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
                 val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
 
+                val messageOptionItems = messageOptionItemsFactory.createMessageOptionItems(
+                    selectedMessage = message,
+                    currentUser = ChatUI.currentUserProvider.getCurrentUser(),
+                    isInThread = adapter.isThread || message.isInThread(),
+                    ownCapabilities = ownCapabilities,
+                    style = viewStyle
+                )
+
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
-                        message,
-                        MessageOptionsView.Configuration(
-                            viewStyle = viewStyle,
-                            channelConfig = channel.config,
-                            hasTextToCopy = message.text.isNotBlank(),
-                            suppressThreads = adapter.isThread || message.isInThread(),
-                            ownCapabilities = ownCapabilities
-                        ),
-                        viewStyle,
-                        messageListItemViewHolderFactory,
-                        messageBackgroundFactory,
-                        attachmentFactoryManager,
-                        showAvatarPredicate
+                        message = message,
+                        reactionsEnabled = style.reactionsEnabled,
+                        style = viewStyle,
+                        messageViewHolderFactory = messageListItemViewHolderFactory,
+                        messageBackgroundFactory = messageBackgroundFactory,
+                        attachmentFactoryManager = attachmentFactoryManager,
+                        showAvatarPredicate = showAvatarPredicate,
+                        messageOptionItems = messageOptionItems,
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
                         }
-                        setConfirmDeleteMessageClickHandler { message, callback ->
-                            confirmDeleteMessageHandler.onConfirmDeleteMessage(
-                                message,
-                                callback::onConfirmDeleteMessage
-                            )
+
+                        setMessageActionClickHandler { messageAction ->
+                            handleMessageAction(messageAction)
                         }
-                        setConfirmFlagMessageClickHandler { message, callback ->
-                            confirmFlagMessageHandler.onConfirmFlagMessage(message, callback)
-                        }
-                        setMessageOptionsHandlers(
-                            MessageOptionsDialogFragment.MessageOptionsHandlers(
-                                threadReplyHandler = threadStartHandler,
-                                retryHandler = messageRetryHandler,
-                                editClickHandler = messageEditHandler,
-                                flagClickHandler = messageFlagHandler,
-                                pinClickHandler = messagePinHandler,
-                                unpinClickHandler = messageUnpinHandler,
-                                muteClickHandler = userMuteHandler,
-                                unmuteClickHandler = userUnmuteHandler,
-                                blockClickHandler = userBlockHandler,
-                                deleteClickHandler = messageDeleteHandler,
-                                replyClickHandler = messageReplyHandler,
-                            )
-                        )
                     }
                     .show(fragmentManager, MessageOptionsDialogFragment.TAG)
             }
@@ -471,13 +472,7 @@ public class MessageListView : ConstraintLayout {
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
-                    MessageOptionsView.Configuration(
-                        viewStyle = requireStyle(),
-                        channelConfig = channel.config,
-                        hasTextToCopy = false, // No effect when displaying reactions
-                        suppressThreads = false, // No effect when displaying reactions
-                        ownCapabilities = ownCapabilities
-                    ),
+                    reactionsEnabled = requireStyle().reactionsEnabled,
                     requireStyle(),
                     messageListItemViewHolderFactory,
                     messageBackgroundFactory,
@@ -528,6 +523,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentFactoryManager: AttachmentFactoryManager
     private lateinit var messageBackgroundFactory: MessageBackgroundFactory
+    private lateinit var messageOptionItemsFactory: MessageOptionItemsFactory
 
     public constructor(context: Context) : this(context, null, 0)
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -743,6 +739,10 @@ public class MessageListView : ConstraintLayout {
 
         if (::messageBackgroundFactory.isInitialized.not()) {
             messageBackgroundFactory = MessageBackgroundFactoryImpl(requireStyle().itemStyle)
+        }
+
+        if (::messageOptionItemsFactory.isInitialized.not()) {
+            messageOptionItemsFactory = MessageOptionItemsFactory.defaultFactory(context)
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -1406,6 +1406,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Set the handler used when the custom action is going to be executed.
+     *
+     * @param customActionHandler The handler to use.
+     */
+    public fun setCustomActionHandler(customActionHandler: CustomActionHandler) {
+        this.customActionHandler = customActionHandler
+    }
+
+    /**
      * Sets the handler used when the message is going to be replied in the channel.
      *
      * @param messageReplyHandler The handler to use.
@@ -1506,6 +1515,62 @@ public class MessageListView : ConstraintLayout {
         this.deletedMessageVisibility = deletedMessageVisibility
     }
     //endregion
+
+    /**
+     * Handles the selected [messageAction].
+     *
+     * @param messageAction The newly selected action.
+     */
+    private fun handleMessageAction(messageAction: MessageAction) {
+        val message = messageAction.message
+        val style = requireStyle()
+
+        when (messageAction) {
+            is Resend -> messageRetryHandler.onMessageRetry(message)
+            is Reply -> messageReplyHandler.onMessageReply(message.cid, message)
+            is ThreadReply -> threadStartHandler.onStartThread(message)
+            is Copy -> context.copyToClipboard(message.text)
+            is Edit -> messageEditHandler.onMessageEdit(message)
+            is Pin -> {
+                if (message.pinned) {
+                    messageUnpinHandler.onMessageUnpin(message)
+                } else {
+                    messagePinHandler.onMessagePin(message)
+                }
+            }
+            is Delete -> {
+                if (style.deleteConfirmationEnabled) {
+                    confirmDeleteMessageHandler.onConfirmDeleteMessage(message) {
+                        messageDeleteHandler.onMessageDelete(message)
+                    }
+                } else {
+                    messageDeleteHandler.onMessageDelete(message)
+                }
+            }
+            is io.getstream.chat.android.common.state.Flag -> {
+                if (style.flagMessageConfirmationEnabled) {
+                    confirmFlagMessageHandler?.onConfirmFlagMessage(message) {
+                        messageFlagHandler.onMessageFlag(message)
+                    }
+                } else {
+                    messageFlagHandler.onMessageFlag(message)
+                }
+            }
+            is MuteUser -> {
+                val isUserMuted = ChatClient.instance().globalState.muted.value.any { it.target.id == message.user.id }
+                if (isUserMuted) {
+                    userUnmuteHandler.onUserUnmute(message.user)
+                } else {
+                    userMuteHandler.onUserMute(message.user)
+                }
+            }
+            is BlockUser -> userBlockHandler.onUserBlock(message.user, channel.cid)
+            is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
+            is React -> {
+                // Handled by a separate handler.
+            }
+        }
+    }
 
     //region Listener declarations
     public fun interface EnterThreadListener {
@@ -1646,6 +1711,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface UserBlockHandler {
         public fun onUserBlock(user: User, cid: String)
+    }
+
+    public fun interface CustomActionHandler {
+        public fun onCustomAction(message: Message, extraProperties: Map<String, Any>)
     }
 
     public fun interface AttachmentDownloadHandler {

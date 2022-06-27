@@ -847,6 +847,10 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/common/state/BlockUser : io/getstream/chat/android/common/state/MessageAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }

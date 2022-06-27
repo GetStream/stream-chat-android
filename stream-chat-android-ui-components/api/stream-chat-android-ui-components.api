@@ -1692,6 +1692,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
+	public final fun setCustomActionHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$CustomActionHandler;)V
 	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
@@ -1773,6 +1774,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler {
 	public abstract fun onConfirmFlagMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function0;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$CustomActionHandler {
+	public abstract fun onCustomAction (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$EndRegionReachedHandler {
@@ -2355,6 +2360,38 @@ public final class io/getstream/chat/android/ui/message/list/header/viewmodel/Me
 
 public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModelBinding {
 	public static final fun bind (Lio/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel;Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public class io/getstream/chat/android/ui/message/list/options/message/DefaultMessageOptionItemsFactory : io/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory {
+	public fun <init> (Landroid/content/Context;)V
+	public fun createMessageOptionItems (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLjava/util/Set;Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionItem {
+	public fun <init> (Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/common/state/MessageAction;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/common/state/MessageAction;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()Lio/getstream/chat/android/common/state/MessageAction;
+	public final fun component4 ()Z
+	public final fun copy (Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/common/state/MessageAction;Z)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItem;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/common/state/MessageAction;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageAction ()Lio/getstream/chat/android/common/state/MessageAction;
+	public final fun getOptionIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getOptionText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isWarningItem ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory$Companion;
+	public abstract fun createMessageOptionItems (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLjava/util/Set;Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory$Companion {
+	public final fun defaultFactory (Landroid/content/Context;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory;
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/reactions/ReactionClickListener {
