@@ -217,7 +217,7 @@ internal class QueryChannelsLogic(
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
+    private fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
         return mutableState._currentRequest.value?.isFirstPage?.let { isFirstPage ->
             if (isFirstPage) mutableState._loading else mutableState._loadingMore
         } ?: mutableState._loading
@@ -235,7 +235,7 @@ internal class QueryChannelsLogic(
     ) {
         val existingChannels = mutableState._channels.value
         if (isFirstPage && !existingChannels.isNullOrEmpty()) {
-            (existingChannels - channels.map { it.cid }).values
+            (existingChannels - channels.map { it.cid }.toSet()).values
                 .map(Channel::cid)
                 .filterNot { cid -> channelFilter(cid, mutableState.filter) }
                 .let { removeChannels(it, repos) }
@@ -245,7 +245,7 @@ internal class QueryChannelsLogic(
         addChannels(channels, repos)
     }
 
-    internal suspend fun removeChannel(cid: String) =
+    private suspend fun removeChannel(cid: String) =
         removeChannels(listOf(cid), repos)
 
     private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
@@ -254,9 +254,9 @@ internal class QueryChannelsLogic(
             logger.logW("Skipping remove channels as they are not loaded yet.")
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList
+        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList.toSet()
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = existingChannels - cidList
+        mutableState._channels.value = existingChannels - cidList.toSet()
     }
 
     /**
@@ -321,8 +321,9 @@ internal class QueryChannelsLogic(
             logger.logW("Aborting refresh as channels are not available yet.")
             return
         }
+
         mutableState._channels.value = existingChannels + mutableState.queryChannelsSpec.cids
-            .intersect(cidList)
+            .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
                 stateRegistry.isActiveChannel(
@@ -336,6 +337,10 @@ internal class QueryChannelsLogic(
                     channelType = channelType,
                     channelId = channelId,
                 ).toChannel()
+            }.filterValues { channel ->
+                channel.name.isNotEmpty() &&
+                    channel.image.isNotEmpty() &&
+                    channel.messages.isNotEmpty()
             }
     }
 
