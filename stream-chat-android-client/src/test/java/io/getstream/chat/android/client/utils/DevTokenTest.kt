@@ -16,56 +16,22 @@
 
 package io.getstream.chat.android.client.utils
 
-import androidx.lifecycle.testing.TestLifecycleOwner
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.clientstate.SocketStateService
-import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
-import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
-import io.getstream.chat.android.test.TestCoroutineExtension
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
-
-    val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
-    private val socketStateService = SocketStateService()
-    private val userStateService: UserStateService = UserStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
-    private val client = ChatClient(
-        config = mock(),
-        api = mock(),
-        socket = mock(),
-        notifications = mock(),
-        tokenManager = FakeTokenManager(""),
-        socketStateService = socketStateService,
-        queryChannelsPostponeHelper = queryChannelsPostponeHelper,
-        userCredentialStorage = mock(),
-        userStateService = userStateService,
-        scope = testCoroutines.scope,
-        retryPolicy = NoRetryPolicy(),
-        appSettingsManager = mock(),
-        chatSocketExperimental = mock(),
-        lifecycle = lifecycleOwner.lifecycle,
-    )
-
+    
     @Test
     fun `Should return valid dev token`() {
-        client.devToken(userId) `should be equal to` expectedToken
+        TokenUtils.devToken(userId) `should be equal to` expectedToken
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{index}: {0} => {1}")
