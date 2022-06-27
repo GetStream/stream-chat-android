@@ -94,8 +94,9 @@ public fun Messages(
     val density = LocalDensity.current
 
     /** Marks the bottom most item as read every time it changes. **/
-    OnLastVisibleItemChanged(lazyListState) {
-        val message = messagesState.messageItems[it]
+    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
+        val message = messagesState.messageItems[messageIndex]
+
         if (message is MessageItemState) {
             onLastVisibleMessageChanged(message.message)
         }
