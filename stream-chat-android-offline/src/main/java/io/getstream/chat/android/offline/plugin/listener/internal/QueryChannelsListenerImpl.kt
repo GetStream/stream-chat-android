@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import android.util.Log
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
@@ -58,10 +59,10 @@ internal class QueryChannelsListenerImpl(
     private fun updateStateChannelData(channels: List<Channel>) {
         channels.forEach { channel ->
             val (type, id) = channel.cid.cidToTypeAndId()
-            stateRegistry.channel(type, id)
-                .toMutableState()
-                ._channelData
-                .value = ChannelData(channel, emptySet())
+            val mutableState = stateRegistry.channel(type, id).toMutableState()
+
+            mutableState._channelData.value = ChannelData(channel, emptySet())
+            mutableState._members.value = channel.members.associateBy { it.user.id }
         }
     }
 
