@@ -46,6 +46,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
+- Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
 
 ### ⬆️ Improved
 
