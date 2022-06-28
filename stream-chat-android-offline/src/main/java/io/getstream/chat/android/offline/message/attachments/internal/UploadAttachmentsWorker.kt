@@ -26,11 +26,9 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 
-@InternalStreamChatApi
-public class UploadAttachmentsWorker(
+internal class UploadAttachmentsWorker(
     private val channelType: String,
     private val channelId: String,
     private val stateLogic: ChannelStateLogic?,
@@ -40,7 +38,7 @@ public class UploadAttachmentsWorker(
 ) {
 
     @Suppress("TooGenericExceptionCaught")
-    public suspend fun uploadAttachmentsForMessage(
+    suspend fun uploadAttachmentsForMessage(
         messageId: String,
     ): Result<Unit> {
         val message = messageRepository.selectMessage(messageId)

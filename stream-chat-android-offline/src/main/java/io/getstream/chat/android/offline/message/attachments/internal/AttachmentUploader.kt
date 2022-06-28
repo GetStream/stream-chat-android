@@ -25,11 +25,11 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
-public class AttachmentUploader(
+internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
-    public suspend fun uploadAttachment(
+    internal suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,

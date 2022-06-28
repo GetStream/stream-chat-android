@@ -125,14 +125,6 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static synthetic fun watchChannelAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 }
 
-public final class io/getstream/chat/android/offline/message/attachments/internal/AttachmentUploader {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun uploadAttachment (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/utils/ProgressCallback;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun uploadAttachment$default (Lio/getstream/chat/android/offline/message/attachments/internal/AttachmentUploader;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/utils/ProgressCallback;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
