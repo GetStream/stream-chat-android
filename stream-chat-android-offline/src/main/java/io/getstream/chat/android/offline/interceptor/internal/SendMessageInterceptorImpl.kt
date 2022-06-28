@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.extensions.internal.hasPendingAttachment
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
@@ -62,7 +61,6 @@ internal class SendMessageInterceptorImpl(
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
 
-    private val logger = ChatLogger.get("MessageSendingService")
     override suspend fun interceptMessage(
         channelType: String,
         channelId: String,
@@ -96,7 +94,11 @@ internal class SendMessageInterceptorImpl(
         channelId: String,
     ): Result<Message> {
         val preparedMessage = prepareNewMessage(message, channelType, channelId)
-        return uploadAttachments(preparedMessage, channelType, channelId)
+        return if (preparedMessage.hasPendingAttachments()) {
+            uploadAttachments(preparedMessage, channelType, channelId)
+        } else {
+            Result.success(preparedMessage)
+        }
     }
 
     /**
@@ -172,22 +174,11 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return when {
-            globalState.isOnline() && message.hasPendingAttachments() ->
-                waitForAttachmentsToBeSent(message, channelType, channelId)
-
-            !globalState.isOnline() && message.hasPendingAttachments() -> {
-                // We enqueue attachments upload here if user is offline but an error is returned so message is not sent right away.
-                enqueueAttachmentUpload(message, channelType, channelId)
-                Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
-            }
-
-            !message.hasPendingAttachments() -> Result.success(message.copy(type = Message.TYPE_REGULAR))
-
-            else -> {
-                logger.logI("Chat is offline and there is no pending attachments to upload in message with ${message.id} and text ${message.text}")
-                Result(ChatError("Chat is offline, there is no pending attachments to upload in message with id ${message.id} and text ${message.text}"))
-            }
+        return if (globalState.isOnline()) {
+            waitForAttachmentsToBeSent(message, channelType, channelId)
+        } else {
+            enqueueAttachmentUpload(message, channelType, channelId)
+            Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
         }
     }
 
