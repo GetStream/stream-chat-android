@@ -29,36 +29,36 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
 @Suppress("VariableNaming")
-public interface ChannelMutableState : ChannelState {
+internal interface ChannelMutableState : ChannelState {
 
-    public val _messages: MutableStateFlow<Map<String, Message>>
-    public val _watcherCount: MutableStateFlow<Int>
-    public val _typing: MutableStateFlow<Map<String, ChatEvent>>
-    public val _reads: MutableStateFlow<Map<String, ChannelUserRead>>
-    public val _read: MutableStateFlow<ChannelUserRead?>
-    public val _endOfNewerMessages: MutableStateFlow<Boolean>
-    public val _endOfOlderMessages: MutableStateFlow<Boolean>
-    public val _loading: MutableStateFlow<Boolean>
-    public val _hidden: MutableStateFlow<Boolean>
-    public val _muted: MutableStateFlow<Boolean>
-    public val _watchers: MutableStateFlow<Map<String, User>>
-    public val _members: MutableStateFlow<Map<String, Member>>
-    public val _loadingOlderMessages: MutableStateFlow<Boolean>
-    public val _loadingNewerMessages: MutableStateFlow<Boolean>
-    public val _channelData: MutableStateFlow<ChannelData?>
-    public val _oldMessages: MutableStateFlow<Map<String, Message>>
-    public val lastMessageAt: MutableStateFlow<Date?>
-    public val _repliedMessage: MutableStateFlow<Message?>
-    public val _unreadCount: MutableStateFlow<Int>
-    public val _membersCount: MutableStateFlow<Int>
-    public val _insideSearch: MutableStateFlow<Boolean>
+    val _messages: MutableStateFlow<Map<String, Message>>
+    val _watcherCount: MutableStateFlow<Int>
+    val _typing: MutableStateFlow<Map<String, ChatEvent>>
+    val _reads: MutableStateFlow<Map<String, ChannelUserRead>>
+    val _read: MutableStateFlow<ChannelUserRead?>
+    val _endOfNewerMessages: MutableStateFlow<Boolean>
+    val _endOfOlderMessages: MutableStateFlow<Boolean>
+    val _loading: MutableStateFlow<Boolean>
+    val _hidden: MutableStateFlow<Boolean>
+    val _muted: MutableStateFlow<Boolean>
+    val _watchers: MutableStateFlow<Map<String, User>>
+    val _members: MutableStateFlow<Map<String, Member>>
+    val _loadingOlderMessages: MutableStateFlow<Boolean>
+    val _loadingNewerMessages: MutableStateFlow<Boolean>
+    val _channelData: MutableStateFlow<ChannelData?>
+    val _oldMessages: MutableStateFlow<Map<String, Message>>
+    val lastMessageAt: MutableStateFlow<Date?>
+    val _repliedMessage: MutableStateFlow<Message?>
+    val _unreadCount: MutableStateFlow<Int>
+    val _membersCount: MutableStateFlow<Int>
+    val _insideSearch: MutableStateFlow<Boolean>
 
     /** Channel config data. */
-    public val _channelConfig: MutableStateFlow<Config>
+    val _channelConfig: MutableStateFlow<Config>
 
-    public var hideMessagesBefore: Date?
+    var hideMessagesBefore: Date?
 
-    public val messageList: StateFlow<List<Message>>
+    val messageList: StateFlow<List<Message>>
 
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean
