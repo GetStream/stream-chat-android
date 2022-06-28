@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Covered an edge case inside `DefaultTypingUpdatesBuffer`. It will now always call `onTypingStopped()` when you call `DefaultTypingUpdatesBuffer.clear()`. [#3782](https://github.com/GetStream/stream-chat-android/pull/3782)
 
 ### ✅ Added
 
