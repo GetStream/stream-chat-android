@@ -33,7 +33,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
-import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
