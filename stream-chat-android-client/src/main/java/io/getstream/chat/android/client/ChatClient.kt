@@ -20,7 +20,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -158,7 +157,6 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.Executor
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 /**
@@ -2363,7 +2361,6 @@ internal constructor(
         private var cdnUrl: String = baseUrl
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
-        private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: NotificationHandler? = null
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
@@ -2496,12 +2493,6 @@ internal constructor(
             return this
         }
 
-        @InternalStreamChatApi
-        @VisibleForTesting
-        public fun callbackExecutor(callbackExecutor: Executor): Builder = apply {
-            this.callbackExecutor = callbackExecutor
-        }
-
         /**
          * Adds a plugin factory to be used by the client.
          * @see [PluginFactory]
@@ -2607,7 +2598,6 @@ internal constructor(
                     notificationConfig,
                     fileUploader,
                     tokenManager,
-                    callbackExecutor,
                     customOkHttpClient,
                     lifecycle,
                 )

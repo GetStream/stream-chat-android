@@ -1,4 +1,5 @@
 public abstract interface class io/getstream/chat/android/client/call/Call {
+	public static final field Companion Lio/getstream/chat/android/client/call/Call$Companion;
 	public abstract fun cancel ()V
 	public abstract fun enqueue ()V
 	public abstract fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V

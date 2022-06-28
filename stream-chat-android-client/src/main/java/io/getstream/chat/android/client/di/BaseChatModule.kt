@@ -70,7 +70,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
@@ -82,7 +81,6 @@ internal open class BaseChatModule(
     private val notificationConfig: NotificationConfig,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val callbackExecutor: Executor?,
     private val customOkHttpClient: OkHttpClient? = null,
     private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
@@ -151,7 +149,7 @@ internal open class BaseChatModule(
             .baseUrl(endpoint)
             .client(okHttpClient)
             .also(parser::configRetrofit)
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, callbackExecutor))
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, networkScope))
             .build()
     }
 

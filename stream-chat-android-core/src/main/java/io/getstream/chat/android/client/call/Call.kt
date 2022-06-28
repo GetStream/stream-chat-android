@@ -66,6 +66,12 @@ public interface Call<T : Any> {
     public fun interface Callback<T : Any> {
         public fun onResult(result: Result<T>)
     }
+
+    @InternalStreamChatApi
+    public companion object {
+        public fun <T : Any> callCanceledError(): Result<T> =
+            Result.error(ChatError("The call was canceled before complete its execution"))
+    }
 }
 
 /**
@@ -88,7 +94,6 @@ public suspend fun <T : Any> Call<T>.await(): Result<T> {
         }
     }
 }
-
 /**
  * Runs a call using coroutines scope
  */

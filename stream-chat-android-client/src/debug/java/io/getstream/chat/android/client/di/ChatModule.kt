@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
-import java.util.concurrent.Executor
 
 /**
  * Debug implementation of [BaseChatModule].
@@ -40,7 +39,6 @@ internal class ChatModule(
     notificationConfig: NotificationConfig,
     uploader: FileUploader?,
     tokenManager: TokenManager,
-    callbackExecutor: Executor?,
     customOkHttpClient: OkHttpClient?,
     lifecycle: Lifecycle,
 ) : BaseChatModule(
@@ -50,7 +48,6 @@ internal class ChatModule(
     notificationConfig,
     uploader,
     tokenManager,
-    callbackExecutor,
     customOkHttpClient,
     lifecycle,
 ) {
