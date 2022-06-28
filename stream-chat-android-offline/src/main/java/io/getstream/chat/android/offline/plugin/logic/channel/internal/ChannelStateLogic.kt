@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -37,13 +39,13 @@ public interface ChannelStateLogic {
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    public fun listenForChannelState(): io.getstream.chat.android.offline.plugin.state.ChannelState
+    public fun listenForChannelState(): ChannelState
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    public fun writeChannelState(): io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+    public fun writeChannelState(): ChannelMutableState
 
     /**
      * Increments the unread count of the Channel if necessary.
