@@ -45,12 +45,14 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed a bug which made the unread count disappear on certain devices when it went over double digits. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ❌ Removed
 
