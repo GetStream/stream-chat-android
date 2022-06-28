@@ -260,6 +260,10 @@ internal constructor(
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
     }
 
+    /**
+     * Either entirely extracts current user from the event
+     * or merges the one from the event into the existing current user.
+     */
     private fun ChatEvent.extractCurrentUser(): User? {
         return when (this) {
             is HasOwnUser -> me
@@ -1442,7 +1446,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
+        queryChannelsPostponeHelper.postponeCall { api.queryChannels(request) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1465,20 +1469,21 @@ internal constructor(
 
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
-        return api.queryChannel(channelType, channelId, request)
-            .doOnStart(scope) {
-                relevantPlugins.forEach { plugin ->
-                    logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
-                    plugin.onQueryChannelRequest(channelType, channelId, request)
-                }
+        return queryChannelsPostponeHelper.postponeCall {
+            api.queryChannel(channelType, channelId, request)
+        }.doOnStart(scope) {
+            relevantPlugins.forEach { plugin ->
+                logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
+                plugin.onQueryChannelRequest(channelType, channelId, request)
             }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin ->
-                    logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
-                    plugin.onQueryChannelResult(result, channelType, channelId, request)
-                }
+        }.doOnResult(scope) { result ->
+            relevantPlugins.forEach { plugin ->
+                logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
+                plugin.onQueryChannelResult(result, channelType, channelId, request)
             }
-            .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
+        }.precondition(relevantPlugins) {
+            onQueryChannelPrecondition(channelType, channelId, request)
+        }
     }
 
     /**
@@ -1498,7 +1503,7 @@ internal constructor(
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
-        return queryChannelsPostponeHelper.postponeQueryChannels {
+        return queryChannelsPostponeHelper.postponeCall {
             api.queryChannels(request)
         }.doOnStart(scope) {
             relevantPluginsLazy().forEach { listener ->

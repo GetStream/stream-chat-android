@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.DELAY_DURATION
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -50,15 +49,17 @@ internal class QueryChannelsPostponeHelper(
 ) {
 
     /**
-     * Postpones query channels call.
+     * Postpones call.
      *
-     * @param queryChannelsCall A query channels call to be run when the socket connection is established.
+     * @param call A call to be run when the socket connection is established.
      *
      * @return Executable async [Call] responsible for querying channels
      */
-    internal fun postponeQueryChannels(queryChannelsCall: () -> Call<List<Channel>>): Call<List<Channel>> {
+    internal fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
         return CoroutineCall(coroutineScope) {
-            doSafeJob { queryChannelsCall() }.await()
+            doSafeJob {
+                call()
+            }.await()
         }
     }
 

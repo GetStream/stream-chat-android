@@ -18,10 +18,12 @@ package io.getstream.chat.android.client.chatclient
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatClientTest
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -81,7 +83,9 @@ internal open class BaseChatClientTest {
             notifications = mock(),
             tokenManager = tokenManager,
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = mock(),
+            queryChannelsPostponeHelper = QueryChannelsPostponeHelper(
+                socketStateService, ChatClientTest.testCoroutines.scope
+            ),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,

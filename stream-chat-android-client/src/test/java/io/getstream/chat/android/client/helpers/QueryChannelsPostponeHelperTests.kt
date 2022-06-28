@@ -63,7 +63,7 @@ internal class QueryChannelsPostponeHelperTests {
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
         whenever(socketStateService.state) doReturn SocketState.Connected(Mother.randomString())
 
-        val result = sut.postponeQueryChannels(queryChannelsCallMock).await().data()
+        val result = sut.postponeCall(queryChannelsCallMock).await().data()
 
         verify(queryChannelsCallMock).invoke()
         result shouldBeEqualTo expectedResult
@@ -75,7 +75,8 @@ internal class QueryChannelsPostponeHelperTests {
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(socketStateService.state) doReturn SocketState.Idle
 
-        val result = sut.postponeQueryChannels(mock()).await().error()
+        val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
+        val result = sut.postponeCall(queryChannelsCallMock).await().error()
         result.message `should be` expectedErrorResult
     }
 
@@ -85,7 +86,8 @@ internal class QueryChannelsPostponeHelperTests {
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(socketStateService.state) doReturn SocketState.Pending
 
-        val result = sut.postponeQueryChannels(mock()).await().error()
+        val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
+        val result = sut.postponeCall(queryChannelsCallMock).await().error()
         result.message `should be` expectedErrorResult
     }
 
@@ -98,7 +100,7 @@ internal class QueryChannelsPostponeHelperTests {
             .thenReturn(SocketState.Pending)
             .thenReturn(SocketState.Connected(Mother.randomString()))
 
-        val result = sut.postponeQueryChannels(queryChannelsCallMock).await().data()
+        val result = sut.postponeCall(queryChannelsCallMock).await().data()
 
         verify(queryChannelsCallMock).invoke()
         result shouldBeEqualTo expectedResult
