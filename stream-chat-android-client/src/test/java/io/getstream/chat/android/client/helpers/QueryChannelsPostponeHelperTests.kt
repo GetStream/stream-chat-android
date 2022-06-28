@@ -18,12 +18,14 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomInt
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
@@ -55,40 +57,40 @@ internal class QueryChannelsPostponeHelperTests {
     }
 
     @Test
-    fun `Given connected state When query channels Should return channels from api`() {
+    fun `Given connected state When query channels Should return channels from api`() = runTest {
         val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
         whenever(socketStateService.state) doReturn SocketState.Connected(Mother.randomString())
 
-        val result = sut.postponeQueryChannels(queryChannelsCallMock).execute().data()
+        val result = sut.postponeQueryChannels(queryChannelsCallMock).await().data()
 
         verify(queryChannelsCallMock).invoke()
         result shouldBeEqualTo expectedResult
     }
 
     @Test
-    fun `Given idle connection state When query channel Should return a Error Call`() {
+    fun `Given idle connection state When query channel Should return a Error Call`() = runTest {
         val expectedErrorResult =
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(socketStateService.state) doReturn SocketState.Idle
 
-        val result = sut.postponeQueryChannels(mock()).execute().error()
+        val result = sut.postponeQueryChannels(mock()).await().error()
         result.message `should be` expectedErrorResult
     }
 
     @Test
-    fun `Given long pending socket state When query channel Should return a Error Call`() {
+    fun `Given long pending socket state When query channel Should return a Error Call`() = runTest {
         val expectedErrorResult =
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(socketStateService.state) doReturn SocketState.Pending
 
-        val result = sut.postponeQueryChannels(mock()).execute().error()
+        val result = sut.postponeQueryChannels(mock()).await().error()
         result.message `should be` expectedErrorResult
     }
 
     @Test
-    fun `Given pending state and connected then When query channel Should query to api and return result`() {
+    fun `Given pending state and connected then When query channel Should query to api and return result`() = runTest {
         val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
@@ -96,7 +98,7 @@ internal class QueryChannelsPostponeHelperTests {
             .thenReturn(SocketState.Pending)
             .thenReturn(SocketState.Connected(Mother.randomString()))
 
-        val result = sut.postponeQueryChannels(queryChannelsCallMock).execute().data()
+        val result = sut.postponeQueryChannels(queryChannelsCallMock).await().data()
 
         verify(queryChannelsCallMock).invoke()
         result shouldBeEqualTo expectedResult

@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
+import androidx.appcompat.content.res.AppCompatResources
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
@@ -31,6 +32,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
  * Style for [ChannelListView].
@@ -82,7 +84,7 @@ public data class ChannelListViewStyle(
     @LayoutRes public val emptyStateView: Int,
     @LayoutRes public val loadingMoreView: Int,
     @ColorInt public val edgeEffectColor: Int?,
-    public val showChannelDeliveryStatusIndicator: Boolean
+    public val showChannelDeliveryStatusIndicator: Boolean,
 ) {
 
     internal companion object {
@@ -193,8 +195,8 @@ public data class ChannelListViewStyle(
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double)!!
 
                 val indicatorPendingSyncIcon =
-                    a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorPendingSyncIcon)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clock)!!
+                    a.getDrawableCompat(context, R.styleable.ChannelListView_streamUiIndicatorPendingSyncIcon)
+                        ?: AppCompatResources.getDrawable(context, R.drawable.stream_ui_ic_clock)!!
 
                 val foregroundLayoutColor = a.getColor(
                     R.styleable.ChannelListView_streamUiForegroundLayoutColor,

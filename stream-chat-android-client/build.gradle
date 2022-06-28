@@ -82,6 +82,7 @@ dependencies {
     // Tests
     testImplementation project(':stream-chat-android-test')
     testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.androidxLifecycleTesting
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine

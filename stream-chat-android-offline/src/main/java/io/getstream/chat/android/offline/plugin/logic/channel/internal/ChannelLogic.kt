@@ -89,6 +89,7 @@ import io.getstream.chat.android.offline.model.querychannels.pagination.internal
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 /**
@@ -120,6 +121,10 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
+        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
+        StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
+        mutableState._muted.value = isChannelMuted
+
         /* It is not possible to guarantee that the next page of newer messages is the same of backend,
          * so we force the backend usage */
         if (!request.isFilteringNewerMessages()) {
@@ -134,6 +139,7 @@ internal class ChannelLogic(
         request: QueryChannelRequest,
     ) {
         result.onSuccessSuspend { channel ->
+            StreamLog.v(TAG) { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
@@ -491,6 +497,7 @@ internal class ChannelLogic(
      * Responsible for synchronizing [ChannelMutableStateImpl].
      */
     internal fun handleEvent(event: ChatEvent) {
+        StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
                 if (!mutableState.insideSearch.value) {
@@ -631,5 +638,9 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         channelStateLogic.replyMessage(repliedMessage)
+    }
+
+    private companion object {
+        private const val TAG = "Channel-Logic"
     }
 }

@@ -25,3 +25,6 @@
 -keepnames class * extends java.io.Serializable
 
 -keep class io.getstream.chat.ui.sample.feature.chat.info.UserData  { *; }
+
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile

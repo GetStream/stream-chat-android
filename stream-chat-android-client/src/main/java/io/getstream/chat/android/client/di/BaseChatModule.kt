@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -34,15 +35,15 @@ import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
-import io.getstream.chat.android.client.api2.ChannelApi
-import io.getstream.chat.android.client.api2.ConfigApi
-import io.getstream.chat.android.client.api2.DeviceApi
-import io.getstream.chat.android.client.api2.GeneralApi
-import io.getstream.chat.android.client.api2.GuestApi
-import io.getstream.chat.android.client.api2.MessageApi
-import io.getstream.chat.android.client.api2.ModerationApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.api2.UserApi
+import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ConfigApi
+import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.GeneralApi
+import io.getstream.chat.android.client.api2.endpoint.GuestApi
+import io.getstream.chat.android.client.api2.endpoint.MessageApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
@@ -72,7 +73,6 @@ import retrofit2.Retrofit
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
-import io.getstream.chat.android.client.experimental.socket.SocketFactory as SocketFactoryExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
@@ -84,6 +84,7 @@ internal open class BaseChatModule(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
     private val customOkHttpClient: OkHttpClient? = null,
+    private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
@@ -230,11 +231,11 @@ internal open class BaseChatModule(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
-        SocketFactoryExperimental(parser, tokenManager),
+        SocketFactory(parser, tokenManager),
         networkScope,
         parser,
         listOf(
-            StreamLifecyclePublisher(),
+            StreamLifecyclePublisher(lifecycle),
             NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
         ),
     )

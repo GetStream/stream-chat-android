@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.foundation.background

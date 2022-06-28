@@ -33,7 +33,7 @@ import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
@@ -96,7 +96,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             whenever(uploader!!.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
 
             val attachments = randomAttachmentsWithFile().map {
@@ -117,7 +117,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
                 .doAnswer { invocation ->
                     val attachment = invocation.arguments[2] as Attachment

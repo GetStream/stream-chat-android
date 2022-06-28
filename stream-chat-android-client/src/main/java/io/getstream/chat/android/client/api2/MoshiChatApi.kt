@@ -25,6 +25,14 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ConfigApi
+import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.GeneralApi
+import io.getstream.chat.android.client.api2.endpoint.GuestApi
+import io.getstream.chat.android.client.api2.endpoint.MessageApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto

@@ -19,9 +19,7 @@ package io.getstream.chat.android.client.parser2.adapters
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredMemberProperties
 
 /**
  * Base class for implementing Moshi adapters that support our API's dynamic
@@ -39,7 +37,7 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
      * [parseWithExtraData].
      */
     private val memberNames: List<String> by lazy {
-        kClass.declaredMemberProperties.map(KCallable<*>::name).minus(EXTRA_DATA)
+        kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
     }
 
     /**
