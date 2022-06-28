@@ -106,6 +106,7 @@ public class DefaultTypingUpdatesBuffer(
         if (isTyping) {
             isTyping = false
         }
+        onTypingStopped()
         coroutineScope.cancel()
     }
 
