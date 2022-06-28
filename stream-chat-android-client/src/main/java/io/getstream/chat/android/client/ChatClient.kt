@@ -2297,6 +2297,11 @@ internal constructor(
 
     private fun isUserSet() = userStateService.state !is UserState.NotSet
 
+    /**
+     * Generate a developer token that can be used to connect users while the app is using a development environment.
+     *
+     * @param userId the desired id of the user to be connected.
+     */
     public fun devToken(userId: String): String = tokenUtils.devToken(userId)
 
     internal fun <R, T : Any> Call<T>.precondition(
