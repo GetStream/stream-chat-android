@@ -228,7 +228,7 @@ public class StreamOfflinePluginFactory(
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         return OfflinePlugin(
-            queryChannelsListener = QueryChannelsListenerImpl(logic, stateRegistry),
+            queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),

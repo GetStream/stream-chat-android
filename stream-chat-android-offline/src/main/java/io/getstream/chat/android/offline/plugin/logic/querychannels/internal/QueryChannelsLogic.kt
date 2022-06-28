@@ -127,7 +127,6 @@ internal class QueryChannelsLogic(
      */
     private suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel), repos)
-        logicRegistry.channel(channel.type, channel.id).updateDataFromChannel(channel)
     }
 
     /**
@@ -148,6 +147,7 @@ internal class QueryChannelsLogic(
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
         val existingChannels = mutableState._channels.value ?: emptyMap()
         mutableState._channels.value = existingChannels + channels.map { it.cid to it }
+        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -241,7 +241,6 @@ internal class QueryChannelsLogic(
                 .let { removeChannels(it, repos) }
         }
         mutableState.channelsOffset.value += channels.size
-        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
         addChannels(channels, repos)
     }
 
