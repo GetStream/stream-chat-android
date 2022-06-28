@@ -75,29 +75,15 @@ internal class SendMessageInterceptorImpl(
         }
 
         return if (!isRetrying) {
-            prepareNewMessageWithAttachments(message, channelType, channelId)
+            val preparedMessage = prepareNewMessage(message, channelType, channelId)
+
+            if (preparedMessage.hasPendingAttachments()) {
+                uploadAttachments(preparedMessage, channelType, channelId)
+            } else {
+                Result.success(preparedMessage)
+            }
         } else {
             retryMessage(message, channelType, channelId)
-        }
-    }
-
-    /**
-     * Prepares message and upload its attachments if it has any.
-     *
-     * @param message [Message] to be sent.
-     *
-     * @return [Result] with a prepared message.
-     */
-    private suspend fun prepareNewMessageWithAttachments(
-        message: Message,
-        channelType: String,
-        channelId: String,
-    ): Result<Message> {
-        val preparedMessage = prepareNewMessage(message, channelType, channelId)
-        return if (preparedMessage.hasPendingAttachments()) {
-            uploadAttachments(preparedMessage, channelType, channelId)
-        } else {
-            Result.success(preparedMessage)
         }
     }
 
