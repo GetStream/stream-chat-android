@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(

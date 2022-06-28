@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
-import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
+import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
@@ -140,9 +140,7 @@ internal class ChannelStateLogicImplTest {
     @Test
     fun `new messages should increment the unread count`() {
         val createdAt = randomDate()
-        val createdLocallyAt = randomDateBefore(createdAt.time)
-        val updatedAt = randomDateAfter(createdAt.time)
-        val oldUpdatedAt = randomDateBefore(updatedAt.time)
+        val oldCreatedAt = randomDateBefore(createdAt.time)
 
         whenever(mutableState._read) doReturn MutableStateFlow(
             ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE))
@@ -151,19 +149,15 @@ internal class ChannelStateLogicImplTest {
         val recentMessage = randomMessage(
             user = User(id = "otherUserId"),
             createdAt = createdAt,
-            createdLocallyAt = createdLocallyAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
+            createdLocallyAt = createdAt,
             deletedAt = null,
             silent = false,
             showInChannel = true
         )
         val oldMessage = randomMessage(
             user = User(id = "otherUserId"),
-            createdAt = createdAt,
-            createdLocallyAt = createdLocallyAt,
-            updatedAt = oldUpdatedAt,
-            updatedLocallyAt = oldUpdatedAt,
+            createdAt = oldCreatedAt,
+            createdLocallyAt = oldCreatedAt,
             deletedAt = null,
             silent = false,
             showInChannel = true

@@ -17,12 +17,12 @@
 package io.getstream.chat.android.offline.plugin.state
 
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date

@@ -17,10 +17,7 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.plugin.state.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -28,7 +25,10 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall

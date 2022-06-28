@@ -21,20 +21,13 @@ import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomInt
 import org.mockito.kotlin.mock
-import java.util.Date
 import java.util.UUID
 
 internal object Mother {
