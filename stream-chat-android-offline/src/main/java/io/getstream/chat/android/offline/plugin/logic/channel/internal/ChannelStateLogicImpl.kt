@@ -378,31 +378,31 @@ internal class ChannelStateLogicImpl(
     /**
      * Updates data from channel.
      *
-     * @param c [Channel]
+     * @param channel [Channel]
      * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
      */
-    override fun updateDataFromChannel(c: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
+    override fun updateDataFromChannel(channel: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
-        updateChannelData(c)
-        setWatcherCount(c.watcherCount)
+        updateChannelData(channel)
+        setWatcherCount(channel.watcherCount)
 
-        mutableState._read.value?.lastMessageSeenDate = c.lastMessageAt
-        mutableState._membersCount.value = c.memberCount
+        mutableState._read.value?.lastMessageSeenDate = channel.lastMessageAt
+        mutableState._membersCount.value = channel.memberCount
 
-        updateReads(c.read)
+        updateReads(channel.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
-        setMembers(c.members)
-        setWatchers(c.watchers)
+        setMembers(channel.members)
+        setWatchers(channel.watchers)
 
         if (!mutableState.insideSearch.value || scrollUpdate) {
-            upsertMessages(c.messages, shouldRefreshMessages)
+            upsertMessages(channel.messages, shouldRefreshMessages)
         }
-        mutableState.lastMessageAt.value = c.lastMessageAt
-        mutableState._channelConfig.value = c.config
+        mutableState.lastMessageAt.value = channel.lastMessageAt
+        mutableState._channelConfig.value = channel.config
     }
 
     /**

@@ -213,13 +213,13 @@ internal interface ChannelStateLogic {
     /**
      * Updates data from channel.
      *
-     * @param c [Channel]
+     * @param channel [Channel]
      * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
      */
     fun updateDataFromChannel(
-        c: Channel,
+        channel: Channel,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
     )

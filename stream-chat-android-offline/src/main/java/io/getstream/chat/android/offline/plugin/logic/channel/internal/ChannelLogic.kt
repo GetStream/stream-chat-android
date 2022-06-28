@@ -270,11 +270,11 @@ internal class ChannelLogic(
     }
 
     internal fun updateDataFromChannel(
-        c: Channel,
+        channel: Channel,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(c, shouldRefreshMessages, scrollUpdate)
+        channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
     }
 
     /**
