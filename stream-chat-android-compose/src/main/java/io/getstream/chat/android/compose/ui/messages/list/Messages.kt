@@ -95,7 +95,7 @@ public fun Messages(
 
     /** Marks the bottom most item as read every time it changes. **/
     OnLastVisibleItemChanged(lazyListState) { messageIndex ->
-        val message = messagesState.messageItems[messageIndex]
+        val message = messagesState.messageItems.getOrNull(messageIndex)
 
         if (message is MessageItemState) {
             onLastVisibleMessageChanged(message.message)
