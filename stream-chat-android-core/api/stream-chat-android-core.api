@@ -20,6 +20,7 @@ public final class io/getstream/chat/android/client/call/CallKt {
 
 public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/getstream/chat/android/client/call/Call {
 	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function2;)V
+	public final fun await (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun cancel ()V
 	public fun enqueue ()V
 	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V

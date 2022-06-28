@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -24,6 +25,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
@@ -35,27 +38,42 @@ public class ReturnOnErrorCall<T : Any>(
 ) : Call<T> {
 
     private var job: Job? = null
+    private val canceled = AtomicBoolean(false)
 
-    override fun execute(): Result<T> = runBlocking {
-        originalCall.execute().let {
-            if (it.isSuccess) it
-            else onErrorReturn(it.error())
-        }
-    }
+    override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        originalCall.enqueue { originalResult ->
-            if (originalResult.isSuccess) callback.onResult(originalResult)
-            else job = scope.launch {
-                val result = onErrorReturn(originalResult.error())
-                withContext(DispatcherProvider.Main) {
-                    callback.onResult(result)
+        scope.launch {
+            originalCall.enqueue { originalResult ->
+                job = scope.launch {
+                    val finalResult = originalResult
+                        .takeUnless { canceled.get() }
+                        ?.let { map(it) }
+                    yield()
+                    withContext(DispatcherProvider.Main) {
+                        finalResult?.let(callback::onResult)
+                    }
                 }
             }
         }
     }
 
     override fun cancel() {
+        canceled.set(true)
+        originalCall.cancel()
         job?.cancel()
+    }
+
+    public suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+        map(
+            originalCall.await()
+                .takeUnless { canceled.get() }
+                ?: callCanceledError()
+        )
+    }
+
+    private suspend fun map(result: Result<T>): Result<T> = when (result.isSuccess) {
+        true -> result
+        else -> onErrorReturn(result.error())
     }
 }
