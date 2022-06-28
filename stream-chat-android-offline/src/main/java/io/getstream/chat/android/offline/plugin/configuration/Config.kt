@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.configuration
 
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
 
 /**
  * Provides a configuration for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].

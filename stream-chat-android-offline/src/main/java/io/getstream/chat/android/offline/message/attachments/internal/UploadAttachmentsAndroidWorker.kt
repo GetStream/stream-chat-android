@@ -25,7 +25,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi

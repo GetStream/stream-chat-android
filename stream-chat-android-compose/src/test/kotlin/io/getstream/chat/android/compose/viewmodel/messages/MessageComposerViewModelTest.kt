@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member

@@ -18,9 +18,9 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.plugin.state.ChannelState
-import io.getstream.chat.android.client.channel.state.MessagesState
+import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction

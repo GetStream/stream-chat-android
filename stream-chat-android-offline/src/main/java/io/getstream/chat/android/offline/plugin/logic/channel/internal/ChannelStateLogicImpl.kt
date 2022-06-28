@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository

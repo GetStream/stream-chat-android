@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member

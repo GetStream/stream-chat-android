@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.offline.plugin.state.ChannelState
-import io.getstream.chat.android.client.channel.state.MessagesState
+import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger

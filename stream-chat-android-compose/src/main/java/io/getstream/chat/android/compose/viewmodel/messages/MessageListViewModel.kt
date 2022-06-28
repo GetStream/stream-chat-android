@@ -269,15 +269,15 @@ public class MessageListViewModel(
             channelState.filterNotNull().collectLatest { channelState ->
                 combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
                     when (state) {
-                        is io.getstream.chat.android.client.channel.state.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.client.channel.state.MessagesState.Loading,
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.client.channel.state.MessagesState.OfflineNoResults ->
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = emptyList(),
                             )
-                        is io.getstream.chat.android.client.channel.state.MessagesState.Result -> {
+                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
