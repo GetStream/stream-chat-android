@@ -46,7 +46,7 @@ public data class MessagesState(
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
     val startOfMessages: Boolean = false,
-    val scrollingToStartState: ScrollToStartState = ScrollToStartState.IDLE
+    val scrollingToStartState: ScrollToPositionState = ScrollToPositionState.IDLE,
 ) {
 
     /**
@@ -71,7 +71,7 @@ public data class MessagesState(
     }
 }
 
-public enum class ScrollToStartState {
+public enum class ScrollToPositionState {
     LOADING_DATA,
     SCROLLING,
     IDLE

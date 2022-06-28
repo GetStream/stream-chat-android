@@ -95,7 +95,7 @@ private object MessageListHandlingActionsSnippet {
                         onReactionsClick = { message -> },
                         onMessagesStartReached = { },
                         onLastVisibleMessageChanged = { message -> },
-                        onScrolledToBottom = { },
+                        onScrollToBottom = { },
                         onGiphyActionClick = { giphyAction -> },
                         onImagePreviewResult = { imagePreviewResult -> },
                     )

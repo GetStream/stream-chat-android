@@ -45,7 +45,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.ScrollToStartState
+import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -103,6 +103,9 @@ public fun Messages(
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
 
+    val isThereAFocusedMessage =
+        messagesState.messageItems.any { (it as? MessageItemState)?.focusState == MessageFocused }
+
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -156,7 +159,8 @@ public fun Messages(
                     if (!endOfMessages &&
                         index == messages.lastIndex &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
+                        lazyListState.isScrollInProgress &&
+                        !isThereAFocusedMessage
                     ) {
                         onMessagesStartReached()
                     }
@@ -165,7 +169,8 @@ public fun Messages(
                     if (!startOfMessages &&
                         index == 0 &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
+                        lazyListState.isScrollInProgress &&
+                        !isThereAFocusedMessage
                     ) {
                         newestMessageItem?.message?.id?.let(onMessagesEndReached)
                     }
@@ -212,26 +217,27 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         offset.value,
         scrollToStartState
     ) {
-        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress && scrollToStartState != ScrollToStartState.SCROLLING) {
+        if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress && scrollToStartState == ScrollToPositionState.IDLE) {
             coroutineScope.launch {
                 lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
             }
         }
 
-        if (scrollToStartState == ScrollToStartState.SCROLLING) {
-            println("scroll to bottom")
+        if (scrollToStartState == ScrollToPositionState.SCROLLING) {
             lazyListState.scrollToItem(0)
         }
 
         when {
             focusedItemIndex == -1 &&
                 !lazyListState.isScrollInProgress && newMessageState == Other &&
+                messagesState.scrollingToStartState == ScrollToPositionState.IDLE &&
                 firstVisibleItemIndex < 3 -> coroutineScope.launch {
                 lazyListState.animateScrollToItem(0)
             }
 
             focusedItemIndex == -1 &&
-                !lazyListState.isScrollInProgress && newMessageState == MyOwn -> coroutineScope.launch {
+                !lazyListState.isScrollInProgress && newMessageState == MyOwn &&
+                messagesState.scrollingToStartState == ScrollToPositionState.IDLE -> coroutineScope.launch {
                 if (firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)
                 }
@@ -246,14 +252,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             modifier = Modifier.align(Alignment.BottomEnd),
             onClick = {
                 coroutineScope.launch {
-                    if (messagesState.startOfMessages) {
-                        if (firstVisibleItemIndex > 5) {
-                            lazyListState.scrollToItem(5)
-                        }
-                        lazyListState.animateScrollToItem(0)
-                    } else {
-                        scrollToBottom()
-                    }
+                    scrollToBottom()
                 }
             }
         )

@@ -393,24 +393,15 @@ public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int): Call<C
 }
 
 @CheckResult
-private suspend fun ChatClient.loadNewestMessagesInternal(
+internal suspend fun ChatClient.loadNewestMessagesInternal(
     cid: String,
     messageLimit: Int
 ): Result<Channel> {
     val cidValidationResult = validateCidWithResult(cid)
-
     if (!cidValidationResult.isSuccess) {
         return cidValidationResult.error().toResultError()
     }
 
     val (channelType, channelId) = cid.cidToTypeAndId()
-    val result = logic.channel(channelType = channelType, channelId = channelId).run {
-        loadNewestMessages(messageLimit)
-    }
-
-    return if (result.isSuccess) {
-        result
-    } else {
-        Result(ChatError("Error while fetching newest messages from backend."))
-    }
+    return logic.channel(channelType = channelType, channelId = channelId).loadNewestMessages(messageLimit)
 }

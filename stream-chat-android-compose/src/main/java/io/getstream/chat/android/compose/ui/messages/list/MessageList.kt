@@ -58,7 +58,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
- * @param onScrolledToBottom Handler when the user reaches the bottom.
+ * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -84,8 +84,8 @@ public fun MessageList(
     onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onMessageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
-    onScrolledToBottom: () -> Unit = { viewModel.clearNewMessageState() },
-    onScrollToBottom: () -> Unit = { viewModel.scrollToBottom() },
+    onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onScrollToBottomClicked: () -> Unit = { viewModel.scrollToBottom() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
@@ -99,7 +99,7 @@ public fun MessageList(
         DefaultMessagesHelperContent(
             messagesState = viewModel.currentMessagesState,
             lazyListState = lazyListState,
-            scrollToBottom = onScrollToBottom
+            scrollToBottom = onScrollToBottomClicked
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -124,7 +124,7 @@ public fun MessageList(
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
-        onScrolledToBottom = onScrolledToBottom,
+        onScrolledToBottom = onScrollToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         helperContent = helperContent,
@@ -133,7 +133,7 @@ public fun MessageList(
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
         onMessageEndReached = onMessageEndReached,
-        onScrollToBottom = onScrollToBottom
+        onScrollToBottom = onScrollToBottomClicked
     )
 }
 

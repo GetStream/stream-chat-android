@@ -93,6 +93,10 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return keys.contains(Pagination.AROUND_ID.toString())
     }
 
+    public fun isFilteringMessages(): Boolean {
+        return messages.keys.any { key -> Pagination.values().map { it.toString() }.contains(key) }
+    }
+
     /**
      * Returns offset of watchers for a requested channel.
      */

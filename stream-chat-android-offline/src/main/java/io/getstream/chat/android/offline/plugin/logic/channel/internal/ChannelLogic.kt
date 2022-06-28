@@ -167,19 +167,57 @@ internal class ChannelLogic(
                 searchLogic.handleMessageBounds(request, noMoreMessages)
                 mutableState.recoveryNeeded = false
 
-                // TODO see with Leo to sort out state, now it can be true when on a jumped message, probably connected
-                //  to the fact i call Pagination.aroundId to refresh the messages
-                if (noMoreMessages) {
-                    if (request.isFilteringNewerMessages()) {
-                        mutableState._endOfNewerMessages.value = true
-                    } else {
-                        mutableState._endOfOlderMessages.value = true
-                    }
-                }
+                // TODO
+                // if (noMoreMessages) {
+                //     when {
+                //         // If we are not filtering the messages in any direction and not providing any message id then
+                //         // we are requesting the newest messages
+                //         !request.isFilteringMessages() -> {
+                //             println("messages are not being filtered")
+                //             mutableState._endOfOlderMessages.value = false
+                //             mutableState._endOfNewerMessages.value = true
+                //         }
+                //         // If we are filtering around a specific message we are loading both newer and older messages
+                //         // and can't be sure if there are no older or newer messages left
+                //         request.isFilteringAroundIdMessages() -> {
+                //             println("filtering messages around id")
+                //             mutableState._endOfNewerMessages.value = false
+                //             mutableState._endOfOlderMessages.value = false
+                //         }
+                //         else -> if (request.isFilteringNewerMessages()) {
+                //             println("filtering newer messages")
+                //             mutableState._endOfNewerMessages.value = true
+                //         } else {
+                //             println("filtering older messages")
+                //             mutableState._endOfOlderMessages.value = true
+                //         }
+                //     }
+                // } else {
+                //     if (!request.isFilteringMessages()) {
+                //         // If we are not filtering messages we are requesting the newest messages and can assume that
+                //         // we have reached the end fo newer messages
+                //         println("not at the end and not filtering messages")
+                //         mutableState._endOfOlderMessages.value = false
+                //         mutableState._endOfNewerMessages.value = true
+                //     } else {
+                //         println("not at the end and filtering messages")
+                //         mutableState._endOfOlderMessages.value = false
+                //         mutableState._endOfNewerMessages.value = false
+                //     }
+                // }
+
+                mutableState._endOfOlderMessages.value = noMoreMessages &&
+                    (request.isFilteringMessages() ||
+                        !request.isFilteringAroundIdMessages() ||
+                        !request.isFilteringNewerMessages())
+
+                mutableState._endOfNewerMessages.value =
+                    (noMoreMessages && (!request.isFilteringNewerMessages() || request.isFilteringNewerMessages())) ||
+                        (!noMoreMessages && !request.isFilteringMessages())
 
                 updateDataFromChannel(
                     channel,
-                    shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+                    shouldRefreshMessages = request.isFilteringAroundIdMessages() || !request.isFilteringMessages(),
                     scrollUpdate = true
                 )
                 loadingStateByRequest(request).value = false
@@ -260,14 +298,8 @@ internal class ChannelLogic(
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
-    // TODO see with Leo if this is to hacky, called so that the request.isFilteringAroundIdMessage()
-    //  and the messages would get refreshed, maybe something else can be called
     internal suspend fun loadNewestMessages(limit: Int): Result<Channel> {
-        return runChannelQuery(
-            QueryChannelPaginationRequest(limit).apply {
-                messageFilterDirection = Pagination.AROUND_ID
-            }.toWatchChannelRequest(userPresence)
-        )
+        return runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {

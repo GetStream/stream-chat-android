@@ -49,7 +49,7 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.ScrollToStartState
+import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -171,7 +171,6 @@ public class MessageListViewModel(
      * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
      */
     public var messageMode: MessageMode by mutableStateOf(MessageMode.Normal)
-        private set
 
     /**
      * The information for the current [Channel].
@@ -283,10 +282,10 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
 
                             // TODO
-                            val scrollingState: ScrollToStartState = when (messagesState.scrollingToStartState) {
-                                ScrollToStartState.LOADING_DATA -> ScrollToStartState.SCROLLING
-                                ScrollToStartState.SCROLLING -> ScrollToStartState.SCROLLING
-                                else -> ScrollToStartState.IDLE
+                            val scrollingState: ScrollToPositionState = when (messagesState.scrollingToStartState) {
+                                ScrollToPositionState.LOADING_DATA -> if (channelState.endOfNewerMessages.value) ScrollToPositionState.SCROLLING else ScrollToPositionState.LOADING_DATA
+                                ScrollToPositionState.SCROLLING -> ScrollToPositionState.SCROLLING
+                                else -> ScrollToPositionState.IDLE
                             }
                             println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}")
 
@@ -329,10 +328,12 @@ public class MessageListViewModel(
                             newState
                         }
 
-                        messagesState.messageItems.firstOrNull {
-                            it is MessageItemState && it.message.id == scrollToMessage?.id
-                        }?.let {
-                            focusMessage((it as MessageItemState).message.id)
+                        if (messagesState.scrollingToStartState == ScrollToPositionState.IDLE) {
+                            messagesState.messageItems.firstOrNull {
+                                it is MessageItemState && it.message.id == scrollToMessage?.id
+                            }?.let {
+                                focusMessage((it as MessageItemState).message.id)
+                            }
                         }
 
                         lastLoadedMessage = newLastMessage
@@ -570,10 +571,7 @@ public class MessageListViewModel(
      * @param message The selected message we wish to scroll to.
      */
     private fun loadMessage(message: Message) {
-        val cid = channelState.value?.cid
-        if (cid == null || chatClient.globalState.isOffline()) return
-
-        chatClient.loadMessageById(cid, message.id).enqueue()
+        chatClient.loadMessageById(channelId, message.id).enqueue()
     }
 
     /**
@@ -988,8 +986,18 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
     public fun clearNewMessageState() {
-        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
-        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
+        threadMessagesState = threadMessagesState.copy(
+            newMessageState = null,
+            unreadCount = 0,
+            scrollingToStartState = ScrollToPositionState.IDLE
+        )
+
+        messagesState =
+            messagesState.copy(
+                newMessageState = null,
+                unreadCount = 0,
+                scrollingToStartState = ScrollToPositionState.IDLE
+            )
     }
 
     /**
@@ -1042,9 +1050,11 @@ public class MessageListViewModel(
      */
     private fun updateMessages(messages: List<MessageListItemState>) {
         if (isInThread) {
-            this.threadMessagesState = threadMessagesState.copy(messageItems = messages)
+            this.threadMessagesState =
+                threadMessagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
         } else {
-            this.messagesState = messagesState.copy(messageItems = messages)
+            this.messagesState =
+                messagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
         }
     }
 
@@ -1097,20 +1107,18 @@ public class MessageListViewModel(
      * TODO
      */
     public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit) {
-        val cid = channelState.value?.cid
-        if (cid == null || chatClient.globalState.isOffline()) return
-
-        val nextState = if (messagesState.startOfMessages) ScrollToStartState.SCROLLING else ScrollToStartState.LOADING_DATA
-
-        println("scroll to bottom with state: $nextState")
+        val areNewestMessagesLoaded = currentMessagesState.startOfMessages
+        val scrollToStartState =
+            if (areNewestMessagesLoaded) ScrollToPositionState.SCROLLING else ScrollToPositionState.LOADING_DATA
 
         if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(scrollingToStartState = nextState)
+            threadMessagesState =
+                threadMessagesState.copy(scrollingToStartState = scrollToStartState)
         } else {
-            messagesState = messagesState.copy(scrollingToStartState = nextState)
+            messagesState =
+                messagesState.copy(scrollingToStartState = scrollToStartState)
         }
-
-        chatClient.loadNewestMessages(cid, messageLimit).enqueue()
+        if (!areNewestMessagesLoaded) chatClient.loadNewestMessages(channelId, messageLimit).enqueue()
     }
 
     internal companion object {
