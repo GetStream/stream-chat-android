@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 
@@ -34,7 +33,7 @@ internal interface SynchronizedCoroutineTest {
     fun getTestScope(): TestScope
 
     /** Helper function that synchronize test scope and run your test in another scope blocking. */
-    fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runBlocking {
+    fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runTest {
         getTestScope().launch(block = block).join()
     }
 }
