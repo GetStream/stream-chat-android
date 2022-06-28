@@ -253,9 +253,12 @@ internal class QueryChannelsLogic(
             logger.logW("Skipping remove channels as they are not loaded yet.")
             return
         }
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidList.toSet()
+
+        val cidSet = cidList.toSet()
+
+        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = existingChannels - cidList.toSet()
+        mutableState._channels.value = existingChannels - cidSet
     }
 
     /**
