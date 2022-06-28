@@ -17,10 +17,9 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.attachments.AttachmentUrlValidator
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
-import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.channel.state.ChannelStateLogic
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER

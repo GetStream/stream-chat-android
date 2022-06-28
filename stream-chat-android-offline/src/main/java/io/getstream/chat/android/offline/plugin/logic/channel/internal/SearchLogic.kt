@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
 
 internal class SearchLogic(private val mutableState: ChannelMutableState) {
 

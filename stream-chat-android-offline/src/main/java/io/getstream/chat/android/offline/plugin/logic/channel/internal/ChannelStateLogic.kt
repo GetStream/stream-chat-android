@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.channel.state
+package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
@@ -37,13 +37,13 @@ public interface ChannelStateLogic {
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    public fun listenForChannelState(): ChannelState
+    public fun listenForChannelState(): io.getstream.chat.android.offline.plugin.state.ChannelState
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    public fun writeChannelState(): ChannelMutableState
+    public fun writeChannelState(): io.getstream.chat.android.offline.plugin.state.ChannelMutableState
 
     /**
      * Increments the unread count of the Channel if necessary.

@@ -26,7 +26,7 @@ import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment

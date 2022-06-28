@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.attachments
+package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
-import io.getstream.chat.android.client.channel.state.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -129,7 +128,7 @@ public class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: ChannelMutableState,
+        private val mutableState: io.getstream.chat.android.offline.plugin.state.ChannelMutableState,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {

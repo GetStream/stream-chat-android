@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters

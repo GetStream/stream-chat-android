@@ -24,7 +24,7 @@ import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.thread.internal
 
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfterOrAt
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState

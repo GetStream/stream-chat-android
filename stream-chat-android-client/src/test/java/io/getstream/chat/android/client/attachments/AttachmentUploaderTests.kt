@@ -214,8 +214,8 @@ internal class AttachmentUploaderTests {
             }
         }
 
-        fun get(): AttachmentUploader {
-            return AttachmentUploader(clientMock)
+        fun get(): io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader {
+            return io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader(clientMock)
         }
     }
 }

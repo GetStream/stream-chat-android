@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.interceptor.internal
 
 import android.content.Context
-import io.getstream.chat.android.client.attachments.UploadAttachmentsAndroidWorker
+import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments

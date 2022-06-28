@@ -19,9 +19,9 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.attachments.AttachmentUploader
-import io.getstream.chat.android.client.attachments.UploadAttachmentsWorker
-import io.getstream.chat.android.client.channel.state.ChannelStateLogic
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
+import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result

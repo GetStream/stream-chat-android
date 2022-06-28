@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelData

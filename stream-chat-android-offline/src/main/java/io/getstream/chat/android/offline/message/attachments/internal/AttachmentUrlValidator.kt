@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.attachments
+package io.getstream.chat.android.offline.message.attachments.internal
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.models.Attachment

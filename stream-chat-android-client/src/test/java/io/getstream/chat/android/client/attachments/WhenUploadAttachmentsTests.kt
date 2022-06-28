@@ -19,8 +19,8 @@ package io.getstream.chat.android.client.attachments
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother.randomAttachment
 import io.getstream.chat.android.client.Mother.randomMessage
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
-import io.getstream.chat.android.client.channel.state.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -126,7 +126,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `Given exception when upload Should insert message with failed sync status to repo`() = runTest {
-        val attachmentUploader = mock<AttachmentUploader> {
+        val attachmentUploader = mock<io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader> {
             on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
         }
         val repository = mock<MessageRepository>()
@@ -156,7 +156,7 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
+            val attachmentUploader = mock<io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader> {
                 on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
             }
             val repository = mock<MessageRepository>()
@@ -196,7 +196,7 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
+            val attachmentUploader = mock<io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader> {
                 on(
                     it.uploadAttachment(
                         any(),
@@ -243,7 +243,7 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And upload succeed Should insert message with 2 uploaded attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
+            val attachmentUploader = mock<io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader> {
                 on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
                     val attachment = invocation.arguments[2] as Attachment
                     Result(attachment.copy(uploadState = Attachment.UploadState.Success))
@@ -286,11 +286,11 @@ internal class WhenUploadAttachmentsTests {
     private class Fixture {
         private val channelType = "channelType"
         private val channelId = "channelId"
-        private var uploader: AttachmentUploader = mock()
+        private var uploader: io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
-        private val channelMutableState: ChannelMutableState = mock()
+        private val channelMutableState: io.getstream.chat.android.offline.plugin.state.ChannelMutableState = mock()
 
-        private val channelStateLogic: ChannelStateLogic = mock {
+        private val channelStateLogic: io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic = mock {
             on(it.writeChannelState()) doReturn channelMutableState
         }
 
@@ -299,7 +299,7 @@ internal class WhenUploadAttachmentsTests {
             whenever(it.containsStoredCredentials()) doReturn true
         }
 
-        fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) = apply {
+        fun givenAttachmentUploader(attachmentUploader: io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader) = apply {
             uploader = attachmentUploader
         }
 
@@ -315,8 +315,8 @@ internal class WhenUploadAttachmentsTests {
             whenever(chatClient.containsStoredCredentials()) doReturn false
         }
 
-        fun get(): UploadAttachmentsWorker {
-            return UploadAttachmentsWorker(
+        fun get(): io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker {
+            return io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker(
                 channelType, channelId,
                 stateLogic = channelStateLogic,
                 messageRepository = messageRepository,

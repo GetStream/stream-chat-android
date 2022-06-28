@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.channel.state
+package io.getstream.chat.android.offline.plugin.logic.internal
+
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 
 public interface ChannelStateLogicProvider {
 

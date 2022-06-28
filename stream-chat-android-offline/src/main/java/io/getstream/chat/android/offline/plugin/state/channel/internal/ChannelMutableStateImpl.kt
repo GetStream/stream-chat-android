@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
-import io.getstream.chat.android.client.channel.state.ChannelMutableState
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.ChannelState
 import io.getstream.chat.android.client.channel.state.MessagesState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent

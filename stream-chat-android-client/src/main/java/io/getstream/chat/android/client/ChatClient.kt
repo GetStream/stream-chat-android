@@ -45,7 +45,6 @@ import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -208,19 +207,6 @@ internal constructor(
     internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
-
-    private var _channelStateLogicProvider: ChannelStateLogicProvider? = null
-
-    /**
-     * Provider to channel state logic.
-     */
-    public var channelStateLogicProvider: ChannelStateLogicProvider?
-        get() {
-            return _channelStateLogicProvider
-        }
-        set(value) {
-            _channelStateLogicProvider = value
-        }
 
     /**
      * Error handlers for API calls.
