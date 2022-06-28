@@ -25,14 +25,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.model.message.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.UUID
 
-@InternalStreamChatApi
-public class UploadAttachmentsAndroidWorker(
+internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -48,7 +47,7 @@ public class UploadAttachmentsAndroidWorker(
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
-            stateLogic = chatClient.channelStateLogicProvider?.stateLogic(channelType, channelId),
+            stateLogic = LogicRegistry.get().stateLogic(channelType, channelId),
             messageRepository = repositoryProvider.get(MessageRepository::class.java),
             chatClient = chatClient
         ).uploadAttachmentsForMessage(

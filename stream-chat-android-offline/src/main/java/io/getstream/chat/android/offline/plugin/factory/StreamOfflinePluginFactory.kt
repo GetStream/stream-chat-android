@@ -150,8 +150,6 @@ public class StreamOfflinePluginFactory(
         val stateRegistry = StateRegistry.create(job, scope, globalState.user, repos, repos.observeLatestUsers())
         val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
 
-        chatClient.channelStateLogicProvider = logic
-
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
             logic = logic,

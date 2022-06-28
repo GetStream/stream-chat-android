@@ -56,7 +56,7 @@ public class StateRegistry private constructor(
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableStateImpl> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
     /**

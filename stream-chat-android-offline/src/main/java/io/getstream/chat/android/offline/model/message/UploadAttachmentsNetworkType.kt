@@ -43,7 +43,7 @@ public enum class UploadAttachmentsNetworkType {
      */
     METERED;
 
-    public fun toNetworkType(): NetworkType = when (this) {
+    internal fun toNetworkType(): NetworkType = when (this) {
         CONNECTED -> NetworkType.CONNECTED
         UNMETERED -> NetworkType.UNMETERED
         NOT_ROAMING -> NetworkType.NOT_ROAMING

@@ -121,9 +121,9 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
-        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
-        StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
-        mutableState._muted.value = isChannelMuted
+        // val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
+        // StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
+        // mutableState._muted.value = isChannelMuted
 
         /* It is not possible to guarantee that the next page of newer messages is the same of backend,
          * so we force the backend usage */

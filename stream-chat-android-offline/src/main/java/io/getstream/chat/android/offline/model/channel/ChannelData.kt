@@ -71,7 +71,7 @@ public data class ChannelData(
      * @param channel The [Channel] object to convert.
      * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
      */
-    public constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
+    internal constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
         channelId = channel.id,
         name = channel.name,
@@ -101,7 +101,7 @@ public data class ChannelData(
      *
      * @return A [Channel] object.
      */
-    public fun toChannel(
+    internal fun toChannel(
         messages: List<Message>,
         members: List<Member>,
         reads: List<ChannelUserRead>,
