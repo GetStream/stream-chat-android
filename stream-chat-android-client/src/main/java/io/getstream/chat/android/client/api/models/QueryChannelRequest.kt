@@ -102,6 +102,10 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return keys.contains(Pagination.AROUND_ID.toString())
     }
 
+    public fun isFilteringMessages(): Boolean {
+        return messages.keys.any { key -> Pagination.values().map { it.toString() }.contains(key) }
+    }
+
     /**
      * @return Whether the request contains any of [Pagination] values or not. If it does the messages are being
      * filtered.

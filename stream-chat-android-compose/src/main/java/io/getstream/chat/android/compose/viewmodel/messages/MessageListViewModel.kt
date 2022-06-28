@@ -176,7 +176,6 @@ public class MessageListViewModel(
      * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
      */
     public var messageMode: MessageMode by mutableStateOf(MessageMode.Normal)
-        private set
 
     /**
      * The information for the current [Channel].
@@ -300,10 +299,10 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
 
                             // TODO
-                            val scrollingState: ScrollToStartState = when (messagesState.scrollingToStartState) {
-                                ScrollToStartState.LOADING_DATA -> ScrollToStartState.SCROLLING
-                                ScrollToStartState.SCROLLING -> ScrollToStartState.SCROLLING
-                                else -> ScrollToStartState.IDLE
+                            val scrollingState: ScrollToPositionState = when (messagesState.scrollingToStartState) {
+                                ScrollToPositionState.LOADING_DATA -> if (channelState.endOfNewerMessages.value) ScrollToPositionState.SCROLLING else ScrollToPositionState.LOADING_DATA
+                                ScrollToPositionState.SCROLLING -> ScrollToPositionState.SCROLLING
+                                else -> ScrollToPositionState.IDLE
                             }
                             println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}")
 
@@ -1191,10 +1190,18 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
     public fun clearNewMessageState() {
-        if (!messagesState.startOfMessages) return
-        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
+        if (!messagesState.startOfMessages) returnthreadMessagesState = threadMessagesState.copy(
+            newMessageState = null,
+            unreadCount = 0,
+            scrollingToStartState = ScrollToPositionState.IDLE
+        )
 
-        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0, scrollingToStartState = ScrollToStartState.IDLE)
+        messagesState =
+            messagesState.copy(
+                newMessageState = null,
+                unreadCount = 0,
+                scrollingToStartState = ScrollToPositionState.IDLE
+            )
     }
 
     /**
@@ -1248,10 +1255,10 @@ public class MessageListViewModel(
     private fun updateMessages(messages: List<MessageListItemState>) {
         if (isInThread) {
             this.threadMessagesState =
-                threadMessagesState.copy(messageItems = messages)
+                threadMessagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
         } else {
             this.messagesState =
-                messagesState.copy(messageItems = messages)
+                messagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
         }
     }
 

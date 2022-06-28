@@ -126,6 +126,9 @@ public fun Messages(
     var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
 
+    val isThereAFocusedMessage =
+        messagesState.messageItems.any { (it as? MessageItemState)?.focusState == MessageFocused }
+
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -179,7 +182,8 @@ public fun Messages(
                     if (!endOfMessages &&
                         index == messages.lastIndex &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
+                        lazyListState.isScrollInProgress &&
+                        !isThereAFocusedMessage
                     ) {
                         onMessagesStartReached()
                     }
@@ -188,7 +192,8 @@ public fun Messages(
                     if (!startOfMessages &&
                         index == 0 &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
+                        lazyListState.isScrollInProgress &&
+                        !isThereAFocusedMessage
                     ) {
                         newestMessageItem?.message?.id?.let(onMessagesEndReached)
                     }

@@ -79,7 +79,7 @@ public data class MessagesState(
     }
 }
 
-public enum class ScrollToStartState {
+public enum class ScrollToPositionState {
     LOADING_DATA,
     SCROLLING,
     IDLE
