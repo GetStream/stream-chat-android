@@ -39,6 +39,7 @@ public fun interface MessagePreviewFormatter {
     /**
      * Generates a preview text for the given message.
      *
+     * @param channel The channel containing the message.
      * @param message The message whose data is used to generate the preview text.
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
@@ -58,17 +59,29 @@ public fun interface MessagePreviewFormatter {
          *
          * @see [DefaultMessagePreviewFormatter]
          */
-        public fun defaultFormatter(context: Context,): MessagePreviewFormatter {
-            return DefaultMessagePreviewFormatter(
-                context = context,
-            )
+        public fun defaultFormatter(context: Context): MessagePreviewFormatter {
+            return DefaultMessagePreviewFormatter(context = context)
         }
     }
 }
 
+/**
+ * The default implementation of [MessagePreviewFormatter] that allows to generate a preview text for
+ * a message with the following spans: sender name, message text, attachments preview text.
+ *
+ * @param context The context to load string resources.
+ */
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
 ) : MessagePreviewFormatter {
+    /**
+     * Generates a preview text for the given message.
+     *
+     * @param channel The channel containing the message.
+     * @param message The message whose data is used to generate the preview text.
+     * @param currentUser The currently logged in user.
+     * @return The formatted text representation for the given message.
+     */
     override fun formatMessagePreview(
         channel: Channel,
         message: Message,
