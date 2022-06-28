@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.experimental.socket.lifecycle
 
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
@@ -31,7 +31,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePublisher {
+internal class StreamLifecyclePublisher(
+    private val lifecycle: Lifecycle,
+) : DefaultLifecycleObserver, LifecyclePublisher {
     private val logger = ChatLogger.get("StreamLifecycle")
 
     @Volatile
@@ -46,9 +48,7 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
         if (isObserving.not()) {
             isObserving = true
             withContext(DispatcherProvider.Main) {
-                ProcessLifecycleOwner.get()
-                    .lifecycle
-                    .addObserver(this@StreamLifecyclePublisher)
+                lifecycle.addObserver(this@StreamLifecyclePublisher)
             }
         }
     }
@@ -56,9 +56,7 @@ internal class StreamLifecyclePublisher : DefaultLifecycleObserver, LifecyclePub
     override suspend fun dispose() {
         if (isObserving) {
             withContext(DispatcherProvider.Main) {
-                ProcessLifecycleOwner.get()
-                    .lifecycle
-                    .removeObserver(this@StreamLifecyclePublisher)
+                lifecycle.removeObserver(this@StreamLifecyclePublisher)
             }
         }
         isObserving = false

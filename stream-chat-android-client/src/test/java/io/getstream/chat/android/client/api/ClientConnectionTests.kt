@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
@@ -92,6 +93,7 @@ internal class ClientConnectionTests {
 
     @BeforeEach
     fun before() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
@@ -123,7 +125,8 @@ internal class ClientConnectionTests {
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock()
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         )
     }
 

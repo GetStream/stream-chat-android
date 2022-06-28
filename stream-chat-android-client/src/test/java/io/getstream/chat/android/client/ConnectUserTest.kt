@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.call.await
@@ -62,6 +63,7 @@ internal class ConnectUserTest {
 
     @Before
     fun setup() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.testDispatcher)
         socket = FakeSocket()
         chatApi = mock()
         userStateService = UserStateService()
@@ -79,7 +81,8 @@ internal class ConnectUserTest {
             scope = testCoroutines.scope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock()
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         )
     }
 
