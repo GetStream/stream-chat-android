@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.chatclient
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -69,6 +70,7 @@ internal open class BaseChatClientTest {
 
     @BeforeEach
     fun before() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = coroutineRule.testDispatcher)
         MockitoAnnotations.openMocks(this)
         plugins = mutableListOf()
         chatClient = ChatClient(
@@ -86,7 +88,8 @@ internal open class BaseChatClientTest {
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
-            chatSocketExperimental = mock()
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         )
         Mockito.reset(
             socketStateService,

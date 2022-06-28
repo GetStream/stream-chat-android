@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.utils
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -35,6 +36,7 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
 
+    val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
     private val socketStateService = SocketStateService()
     private val userStateService: UserStateService = UserStateService()
     private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
@@ -51,7 +53,8 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         scope = testCoroutines.scope,
         retryPolicy = NoRetryPolicy(),
         appSettingsManager = mock(),
-        chatSocketExperimental = mock()
+        chatSocketExperimental = mock(),
+        lifecycle = lifecycleOwner.lifecycle,
     )
 
     @Test

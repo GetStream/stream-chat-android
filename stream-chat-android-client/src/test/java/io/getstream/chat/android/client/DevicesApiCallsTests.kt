@@ -41,7 +41,7 @@ internal class DevicesApiCallsTests {
 
     @BeforeEach
     fun before() {
-        mock = MockClientBuilder(testCoroutines.scope)
+        mock = MockClientBuilder(testCoroutines)
         client = mock.build()
     }
 
