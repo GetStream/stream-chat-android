@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.internal.utils
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
@@ -37,18 +37,4 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     setChannelMutes(me.channelMutes)
     setTotalUnreadCount(me.totalUnreadCount)
     setChannelUnreadCount(me.unreadChannels)
-}
-
-/**
- * Partially merges [that] user data into [this] user data.
- */
-private fun User.mergePartially(that: User): User {
-    this.role = that.role
-    this.createdAt = that.createdAt
-    this.updatedAt = that.updatedAt
-    this.lastActive = that.lastActive
-    this.banned = that.banned
-    this.name = that.name
-    this.image = that.image
-    return this
 }

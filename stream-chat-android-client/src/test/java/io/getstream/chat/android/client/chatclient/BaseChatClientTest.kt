@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.chatclient
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -28,19 +29,20 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
-import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 
-@ExtendWith(value = [TestCoroutineExtension::class])
 internal open class BaseChatClientTest {
-    @get:Rule
-    val coroutineRule = TestCoroutineRule()
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Mock
     protected lateinit var socketStateService: SocketStateService
@@ -69,6 +71,7 @@ internal open class BaseChatClientTest {
 
     @BeforeEach
     fun before() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         MockitoAnnotations.openMocks(this)
         plugins = mutableListOf()
         chatClient = ChatClient(
@@ -82,11 +85,12 @@ internal open class BaseChatClientTest {
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            scope = coroutineRule.scope,
+            scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
-            chatSocketExperimental = mock()
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         )
         Mockito.reset(
             socketStateService,
