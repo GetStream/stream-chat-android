@@ -103,11 +103,11 @@ public class DefaultTypingUpdatesBuffer(
      * Should be called before an instance of this class is removed.
      */
     override fun clear() {
+        coroutineScope.cancel()
         if (isTyping) {
             isTyping = false
         }
         onTypingStopped()
-        coroutineScope.cancel()
     }
 
     /**
