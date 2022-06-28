@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
-    
+
     @Test
     fun `Should return valid dev token`() {
         TokenUtils.devToken(userId) `should be equal to` expectedToken
