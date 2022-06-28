@@ -22,7 +22,10 @@ import io.getstream.chat.android.client.models.Message
 
 internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
 
-    internal fun updateValidAttachmentsUrl(newMessages: List<Message>, oldMessages: Map<String, Message>): List<Message> {
+    internal fun updateValidAttachmentsUrl(
+        newMessages: List<Message>,
+        oldMessages: Map<String, Message>,
+    ): List<Message> {
         if (oldMessages.isEmpty()) {
             return newMessages
         }
@@ -44,7 +47,7 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
 
     private fun updateValidAttachmentsUrl(
         newAttachments: List<Attachment>,
-        oldAttachments: List<Attachment>
+        oldAttachments: List<Attachment>,
     ): List<Attachment> {
         return newAttachments.map { newAttachment ->
             updateValidAttachmentUrl(
