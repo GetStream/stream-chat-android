@@ -68,7 +68,7 @@ internal class CallPostponeHelper(
         try {
             doJob(attemptsCount, job)
         } catch (e: Exception) {
-            ErrorCall(ChatError(e.message, e))
+            ErrorCall(coroutineScope, ChatError(e.message, e))
         }
 
     private tailrec suspend fun <T> doJob(attemptCount: Int = attemptsCount, job: () -> T): T {

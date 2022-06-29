@@ -1058,7 +1058,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(scope, ChatError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1691,6 +1691,7 @@ internal constructor(
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
             ErrorCall(
+                scope,
                 ChatError(
                     "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
                 )
@@ -1806,7 +1807,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.logE(errorMessage)
-            return ErrorCall(ChatError(errorMessage))
+            return ErrorCall(scope, ChatError(errorMessage))
         }
 
         return api.partialUpdateUser(

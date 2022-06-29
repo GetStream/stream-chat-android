@@ -255,7 +255,7 @@ internal open class BaseChatModule(
             chatConfig.distinctApiCalls
         }
     }.let { originalApi ->
-        ExtraDataValidator(originalApi)
+        ExtraDataValidator(networkScope, originalApi)
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {
