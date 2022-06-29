@@ -60,6 +60,8 @@ internal interface ChannelMutableState : ChannelState {
 
     val messageList: StateFlow<List<Message>>
 
+    var lastStartTypingEvent: Date?
+
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean
 }
