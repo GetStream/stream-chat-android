@@ -32,7 +32,7 @@ import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
@@ -82,7 +82,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()
@@ -101,7 +101,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()

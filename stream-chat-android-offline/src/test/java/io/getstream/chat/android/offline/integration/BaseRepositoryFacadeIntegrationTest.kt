@@ -49,7 +49,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     @Before
     @CallSuper
     open fun setup() {
-        chatDatabase = createRoomDB(testCoroutines.ioDispatcher)
+        chatDatabase = createRoomDB()
         repositoryFacade = createRepositoryFacade()
     }
 
