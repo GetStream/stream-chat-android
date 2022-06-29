@@ -49,6 +49,7 @@
 - Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 
 ### ⬆️ Improved
+- `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
 
 ### ✅ Added
 
