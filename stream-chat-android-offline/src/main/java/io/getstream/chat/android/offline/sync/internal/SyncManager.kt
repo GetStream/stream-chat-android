@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
@@ -280,7 +279,6 @@ internal class SyncManager(
 
                 foundChannels.forEach { channel ->
                     val channelLogic = logicRegistry.channel(channel.type, channel.id)
-                    addTypingChannel(channelLogic)
                     channelLogic.updateDataFromChannel(channel)
                 }
                 storeStateForChannels(foundChannels)
@@ -425,10 +423,5 @@ internal class SyncManager(
                 "${users.size} users " +
                 "and ${messages.size} messages"
         }
-    }
-
-    private fun addTypingChannel(channelLogic: ChannelLogic) {
-        logger.d { "[addTypingChannel] channelLogic.cid: ${channelLogic.cid}" }
-        globalState.tryEmitTypingEvent(channelLogic.state().typing.value)
     }
 }

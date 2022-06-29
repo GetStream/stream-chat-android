@@ -82,10 +82,23 @@ public interface GlobalState {
      */
     public val banned: StateFlow<Boolean>
 
+    @Deprecated(
+        message = "Use typingChannels instead",
+        replaceWith = ReplaceWith("typingChannels"),
+        level = DeprecationLevel.WARNING,
+    )
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingUpdates: StateFlow<TypingEvent>
+
+    /**
+     * Map of typing users in all active channel.
+     * Use [io.getstream.chat.android.client.models.Channel.cid] to access events for a particular channel.
+     *
+     * @see [TypingEvent]
+     */
+    public val typingChannels: StateFlow<Map<String, TypingEvent>>
 
     /**
      * If the user is online or not.

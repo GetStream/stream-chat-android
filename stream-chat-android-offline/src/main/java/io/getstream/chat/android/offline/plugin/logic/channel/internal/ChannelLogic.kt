@@ -81,6 +81,7 @@ import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -751,15 +752,32 @@ internal class ChannelLogic(
         }
     }
 
-    private fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = mutableState._typing.value.toMutableMap()
-        if (event == null) {
-            copy.remove(userId)
-        } else {
-            copy[userId] = event
+    /**
+     * Updates the list of typing users.
+     * The method is responsible for adding/removing typing users, sorting the list and updating both
+     * [ChannelState] and [MutableGlobalState].
+     *
+     * @param userId The id of the user that receives update.
+     * @param event The start typing event or null if user stops typing.
+     */
+    private fun setTyping(userId: String, event: TypingStartEvent?) {
+        val typingEventsCopy = mutableState.typingEvents.value.toMutableMap()
+        when {
+            event == null -> {
+                typingEventsCopy.remove(userId)
+            }
+            userId != globalMutableState.user.value?.id -> {
+                typingEventsCopy[userId] = event
+            }
         }
-        globalMutableState.user.value?.id.let(copy::remove)
-        mutableState._typing.value = copy.toMap()
+
+        val typingEvent = typingEventsCopy.values
+            .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
+            .map { typingStartEvent -> typingStartEvent.user }
+            .let { sortedUsers -> TypingEvent(channelId = mutableState.channelId, users = sortedUsers) }
+
+        mutableState.updateTypingEvents(eventsMap = typingEventsCopy, typingEvent = typingEvent)
+        globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
     /**
