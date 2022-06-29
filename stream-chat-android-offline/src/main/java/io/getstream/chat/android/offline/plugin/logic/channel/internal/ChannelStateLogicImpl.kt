@@ -103,7 +103,7 @@ internal class ChannelStateLogicImpl(
             if (shouldIncrementUnreadCount) {
                 logger.logD(
                     "It is necessary to increment the unread count for channel: " +
-                        "${mutableState.channelData.value?.channelId}. The last seen message was " +
+                        "${mutableState.channelData.value.channelId}. The last seen message was " +
                         "at: $lastMessageSeenDate. " +
                         "New unread count: ${unreadCount + 1}"
                 )
