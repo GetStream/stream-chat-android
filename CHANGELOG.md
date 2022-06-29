@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix the channel screen being stuck with an infinite loading [3791](https://github.com/GetStream/stream-chat-android/pull/3791)
 
 ### ⬆️ Improved
 
@@ -23,6 +24,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug of empty channels while sending messages. [3776](https://github.com/GetStream/stream-chat-android/pull/3776)
+- Fixed populating mentions when sending a message with attachments. [3801](https://github.com/GetStream/stream-chat-android/pull/3801)
 
 ### ⬆️ Improved
 
@@ -46,11 +49,14 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
+- Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
 - Fixed a bug which made the unread count disappear on certain devices when it went over double digits. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ⬆️ Improved
+- `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
 
 ### ✅ Added
+- Added `MessagePreviewFormatter` field to the `ChatUI` class, to allow for message preview text format customization across the app. [3788](https://github.com/GetStream/stream-chat-android/pull/3788).
 
 ### ⚠️ Changed
 - The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
@@ -59,8 +65,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Channels will now be marked as read only when the latest message is reached. Previously they were marked read whenever an unread message was read, regardless of its position in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
 
 ### ⬆️ Improved
+- Improved `Messages` recomposition when marking messages as read. It will now avoid going into a recomposition loop in certain situations such as when you have two or more failed messages visible in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
 
 ### ✅ Added
 
