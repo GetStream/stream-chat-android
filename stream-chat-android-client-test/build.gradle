@@ -50,8 +50,6 @@ dependencies {
     testImplementation Dependencies.roomTesting
     testImplementation Dependencies.workTesting
 
-
-
     testImplementation Dependencies.robolectric
 
     testImplementation Dependencies.kluent
