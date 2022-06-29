@@ -1,12 +1,13 @@
 name: Download translations from Localazy
 
 on:
-  workflow_dispatch:
+  schedule:
+    # Every midnight
+    - cron: "0 0 * * *"
 
 jobs:
   localazy-download:
     name: Download strings from Localazy
-    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,11 +15,14 @@ jobs:
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
           write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
+      - name: Add license headers
+        run: ./gradlew spotlessApply
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
             commit-message: Update translations
             title: Update translations
+            delete-branch: true
             body: |
               - Translations downloaded from Localazy
 
