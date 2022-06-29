@@ -31,7 +31,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +38,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
@@ -48,8 +46,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class SendReactionsTests {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField

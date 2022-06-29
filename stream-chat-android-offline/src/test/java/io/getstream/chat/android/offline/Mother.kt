@@ -74,7 +74,7 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import java.util.Date
 import java.util.concurrent.Executors
@@ -782,13 +782,13 @@ internal fun randomQueryChannelsEntity(
     cids: List<String> = emptyList(),
 ): QueryChannelsEntity = QueryChannelsEntity(id, filter, querySort, cids)
 
-internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
+internal fun createRoomDB(): ChatDatabase =
     Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)
         .allowMainThreadQueries()
         // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
         // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
         .setTransactionExecutor(Executors.newSingleThreadExecutor())
-        .setQueryExecutor(dispatcher.asExecutor())
+        .setQueryExecutor(Dispatchers.IO.asExecutor())
         .build()
 
 internal fun randomNotificationAddedToChannelEvent(

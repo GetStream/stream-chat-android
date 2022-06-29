@@ -42,7 +42,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -52,6 +52,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
+@ExtendWith(TestCoroutineExtension::class)
 internal class MessageComposerViewModelTest {
 
     @Test
@@ -390,9 +391,6 @@ internal class MessageComposerViewModelTest {
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         val user1 = User(
             id = "Jc",

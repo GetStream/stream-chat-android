@@ -29,17 +29,14 @@ import io.getstream.chat.android.offline.randomMember
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.check
@@ -52,8 +49,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
@@ -73,8 +68,8 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         }
 
     @Test
-    fun `Given request more than last message When select channels Should return channels from DB with messages`() =
-        runBlocking {
+    fun `Given request more than last message When select channels Should return channels from DB with messages`(): Unit =
+        runTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
