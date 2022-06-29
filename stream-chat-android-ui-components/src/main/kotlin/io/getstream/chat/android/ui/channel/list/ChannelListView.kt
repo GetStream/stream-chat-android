@@ -26,6 +26,7 @@ import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
@@ -77,6 +78,11 @@ public class ChannelListView : FrameLayout {
 
     private lateinit var style: ChannelListViewStyle
     private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
+
+    /**
+     * A listener that will be notified once the channel list is updated with the new data set.
+     */
+    private var channelListUpdateListener: ChannelListUpdateListener? = null
 
     /**
      * The pending scroll state that we need to restore.
@@ -131,6 +137,24 @@ public class ChannelListView : FrameLayout {
         }
 
         configureDefaultMoreOptionsListener(context)
+    }
+
+    /**
+     * Returns the inner [RecyclerView] that is used to display a list of channel list items.
+     *
+     * @return The inner [RecyclerView] with channels.
+     */
+    public fun getRecyclerView(): RecyclerView {
+        return simpleChannelListView
+    }
+
+    /**
+     * Returns [LinearLayoutManager] associated with the inner [RecyclerView].
+     *
+     * @return [LinearLayoutManager] associated with the inner [RecyclerView]
+     */
+    public fun getLayoutManager(): LinearLayoutManager? {
+        return layoutManager as? LinearLayoutManager
     }
 
     override fun onSaveInstanceState(): Parcelable {
@@ -295,6 +319,15 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
+     * Allow a client to set a listener to be notified when the updated channel list is about to be displayed.
+     *
+     * @param listener The callback to be invoked when the new channel list that is about to be displayed.
+     */
+    public fun setChannelListUpdateListener(listener: ChannelListUpdateListener) {
+        channelListUpdateListener = listener
+    }
+
+    /**
      * Allows a client to set a ChannelListItemPredicate to filter ChannelListItems before they are drawn.
      *
      * @param channelListItemPredicate Predicate used to filter the list of ChannelListItem.
@@ -321,9 +354,10 @@ public class ChannelListView : FrameLayout {
             hideEmptyStateView()
         }
 
-        simpleChannelListView.setChannels(filteredChannels)
-
-        restoreLayoutManagerState()
+        simpleChannelListView.setChannels(filteredChannels) {
+            restoreLayoutManagerState()
+            channelListUpdateListener?.onChannelListUpdate(filteredChannels)
+        }
     }
 
     public fun hideLoadingView() {
@@ -444,6 +478,18 @@ public class ChannelListView : FrameLayout {
 
     public fun interface EndReachedListener {
         public fun onEndReached()
+    }
+
+    /**
+     * Called when the updated list is about to be displayed in the channels [RecyclerView].
+     */
+    public fun interface ChannelListUpdateListener {
+        /**
+         * Called when the updated list is about to be displayed in the channels [RecyclerView].
+         *
+         * @param channels The new channel list that is about to be displayed.
+         */
+        public fun onChannelListUpdate(channels: List<ChannelListItem>)
     }
 
     /**
