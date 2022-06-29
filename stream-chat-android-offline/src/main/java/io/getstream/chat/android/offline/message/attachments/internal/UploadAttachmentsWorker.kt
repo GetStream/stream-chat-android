@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 
 internal class UploadAttachmentsWorker(
     private val channelType: String,
@@ -44,7 +45,9 @@ internal class UploadAttachmentsWorker(
         val message = messageRepository.selectMessage(messageId)
 
         return try {
-            message?.let { sendAttachments(it) } ?: Result.success(Unit)
+            message?.let { sendAttachments(it) } ?: Result.error(
+                ChatError("The message with id $messageId could not be found.")
+            )
         } catch (e: Exception) {
             message?.let { updateMessages(it) }
             Result.error(e)
@@ -126,7 +129,7 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: io.getstream.chat.android.offline.plugin.state.ChannelMutableState,
+        private val mutableState: ChannelMutableState,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
