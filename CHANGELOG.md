@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug of empty channels while sending messages. [#3776](https://github.com/GetStream/stream-chat-android/pull/3776)
 
 ### ⬆️ Improved
 
@@ -45,6 +46,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 
 ### ⬆️ Improved
 

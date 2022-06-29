@@ -24,13 +24,11 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
@@ -38,9 +36,6 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class TypingEventsTest {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
-
     companion object {
         @JvmField
         @RegisterExtension
