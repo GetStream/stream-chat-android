@@ -112,7 +112,7 @@ internal class ChannelMutableStateImpl(
     internal var lastStartTypingEvent: Date? = null
     internal var keystrokeParentMessageId: String? = null
 
-    override val sortedMessages: StateFlow<List<Message>> = messageList.map {
+    val sortedMessages: StateFlow<List<Message>> = messageList.map {
         it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
             .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
