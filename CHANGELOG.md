@@ -55,6 +55,7 @@
 - `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
 
 ### ✅ Added
+- Added `MessagePreviewFormatter` field to the `ChatUI` class, to allow for message preview text format customization across the app. [3788](https://github.com/GetStream/stream-chat-android/pull/3788).
 
 ### ⚠️ Changed
 

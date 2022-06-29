@@ -14,6 +14,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
+	public final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 	public final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
@@ -27,6 +28,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
+	public final fun setMessagePreviewFormatter (Lio/getstream/chat/android/ui/MessagePreviewFormatter;)V
 	public final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
@@ -37,6 +39,15 @@ public final class io/getstream/chat/android/ui/ChatUI {
 
 public final class io/getstream/chat/android/ui/CurrentUserProvider$Companion {
 	public final fun defaultCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
+}
+
+public abstract interface class io/getstream/chat/android/ui/MessagePreviewFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/MessagePreviewFormatter$Companion;
+	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;)Ljava/lang/CharSequence;
+}
+
+public final class io/getstream/chat/android/ui/MessagePreviewFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
