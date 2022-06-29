@@ -57,12 +57,12 @@ internal class UploadAttachmentsAndroidWorker(
         }
     }
 
-     internal companion object {
+    internal companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-         internal fun start(
+        internal fun start(
             context: Context,
             channelType: String,
             channelId: String,
@@ -94,7 +94,7 @@ internal class UploadAttachmentsAndroidWorker(
          * @param context Context of the application.
          * @param workId UUID of the enqueued work.
          */
-         internal fun stop(context: Context, workId: UUID) {
+        internal fun stop(context: Context, workId: UUID) {
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
