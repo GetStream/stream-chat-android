@@ -309,6 +309,8 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getLayoutManager ()Landroidx/recyclerview/widget/LinearLayoutManager;
+	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun hasChannels ()Z
 	public final fun hideLoadingMore ()V
 	public final fun hideLoadingView ()V
@@ -318,6 +320,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelListItemPredicate (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate;)V
+	public final fun setChannelListUpdateListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
@@ -352,6 +355,10 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Cha
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate {
 	public abstract fun predicate (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener {
+	public abstract fun onChannelListUpdate (Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener {

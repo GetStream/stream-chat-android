@@ -52,6 +52,7 @@
 - Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
 
 ### ⬆️ Improved
+- `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
 
 ### ✅ Added
 
