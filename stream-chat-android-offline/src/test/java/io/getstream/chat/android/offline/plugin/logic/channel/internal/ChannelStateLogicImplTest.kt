@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.plugin.state.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
