@@ -28,30 +28,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
-@Suppress("VariableNaming")
+@Suppress("VariableNaming", "TooManyFunctions")
 internal interface ChannelMutableState : ChannelState {
 
     val _messages: MutableStateFlow<Map<String, Message>>
-    val _watcherCount: MutableStateFlow<Int>
     val _typing: MutableStateFlow<Map<String, ChatEvent>>
     val _reads: MutableStateFlow<Map<String, ChannelUserRead>>
-    val _read: MutableStateFlow<ChannelUserRead?>
-    val _endOfNewerMessages: MutableStateFlow<Boolean>
-    val _endOfOlderMessages: MutableStateFlow<Boolean>
-    val _loading: MutableStateFlow<Boolean>
-    val _hidden: MutableStateFlow<Boolean>
-    val _muted: MutableStateFlow<Boolean>
     val _watchers: MutableStateFlow<Map<String, User>>
     val _members: MutableStateFlow<Map<String, Member>>
-    val _loadingOlderMessages: MutableStateFlow<Boolean>
-    val _loadingNewerMessages: MutableStateFlow<Boolean>
-    val _channelData: MutableStateFlow<ChannelData?>
     val _oldMessages: MutableStateFlow<Map<String, Message>>
     val lastMessageAt: MutableStateFlow<Date?>
-    val _repliedMessage: MutableStateFlow<Message?>
-    val _unreadCount: MutableStateFlow<Int>
-    val _membersCount: MutableStateFlow<Int>
-    val _insideSearch: MutableStateFlow<Boolean>
+
+    fun setLoadingOlderMessages(isLoading: Boolean)
+    fun setLoadingNewerMessages(isLoading: Boolean)
+    fun setWatcherCount(count: Int)
+    fun setRead(channelUserRead: ChannelUserRead?)
+    fun setEndOfNewerMessages(isEnd: Boolean)
+    fun setEndOfOlderMessages(isEnd: Boolean)
+    fun setLoading(isLoading: Boolean)
+    fun setHidden(isHidden: Boolean)
+    fun setMuted(isMuted: Boolean)
+    fun setChannelData(channelData: ChannelData)
+    fun setLastMessageAt(date: Date?)
+    fun setRepliedMessage(repliedMessage: Message?)
+    fun setUnreadCount(count: Int)
+    fun setMembersCount(count: Int)
+    fun setInsideSearch(isInsideSearch: Boolean)
 
     /** Channel config data. */
     val _channelConfig: MutableStateFlow<Config>

@@ -89,7 +89,7 @@ internal class ChannelStateLogicImpl(
          * same time, one increment can be lost.
          */
         synchronized(this) {
-            val readState = mutableState._read.value?.copy() ?: ChannelUserRead(user)
+            val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
@@ -103,20 +103,22 @@ internal class ChannelStateLogicImpl(
             if (shouldIncrementUnreadCount) {
                 logger.logD(
                     "It is necessary to increment the unread count for channel: " +
-                        "${mutableState._channelData.value?.channelId}. The last seen message was " +
+                        "${mutableState.channelData.value?.channelId}. The last seen message was " +
                         "at: $lastMessageSeenDate. " +
                         "New unread count: ${unreadCount + 1}"
                 )
 
-                mutableState._read.value = readState.apply {
-                    this.unreadMessages = unreadCount + 1
-                    this.lastMessageSeenDate = message.createdAt
-                }
+                mutableState.setRead(
+                    readState.apply {
+                        this.unreadMessages = unreadCount + 1
+                        this.lastMessageSeenDate = message.createdAt
+                    }
+                )
                 mutableState._reads.value = mutableState._reads.value.apply {
                     this[currentUserId]?.lastMessageSeenDate = message.createdAt
                     this[currentUserId]?.unreadMessages = unreadCount + 1
                 }
-                mutableState._unreadCount.value = unreadCount + 1
+                mutableState.setUnreadCount(unreadCount + 1)
             }
         }
     }
@@ -127,8 +129,8 @@ internal class ChannelStateLogicImpl(
      * @param channel the data of [Channel] to be updated.
      */
     override fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState._channelData.value?.ownCapabilities ?: emptySet()
-        mutableState._channelData.value = ChannelData(channel, currentOwnCapabilities)
+        val currentOwnCapabilities = mutableState.channelData.value?.ownCapabilities ?: emptySet()
+        mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
     }
 
     /**
@@ -148,11 +150,11 @@ internal class ChannelStateLogicImpl(
              * to show in the channel list.
              */
             incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
-                incomingUserRead.lastMessageSeenDate = mutableState._read.value?.lastMessageSeenDate
+                incomingUserRead.lastMessageSeenDate = mutableState.read.value?.lastMessageSeenDate
 
                 // the previous last Read date that is most current
                 val previousLastRead =
-                    mutableState._read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+                    mutableState.read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
 
                 // Use AFTER to determine if the incoming read is more current.
                 // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
@@ -162,8 +164,8 @@ internal class ChannelStateLogicImpl(
                 ) == true
 
                 if (shouldUpdateByIncoming) {
-                    mutableState._read.value = incomingUserRead
-                    mutableState._unreadCount.value = incomingUserRead.unreadMessages
+                    mutableState.setRead(incomingUserRead)
+                    mutableState.setUnreadCount(incomingUserRead.unreadMessages)
                 } else {
                     // if the previous Read was more current, replace the item in the update map
                     incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
@@ -205,8 +207,8 @@ internal class ChannelStateLogicImpl(
      * @param watcherCount the count of watchers.
      */
     override fun setWatcherCount(watcherCount: Int) {
-        if (watcherCount != mutableState._watcherCount.value) {
-            mutableState._watcherCount.value = watcherCount
+        if (watcherCount != mutableState.watcherCount.value) {
+            mutableState.setWatcherCount(watcherCount)
         }
     }
 
@@ -299,7 +301,7 @@ internal class ChannelStateLogicImpl(
      */
     override fun upsertMembers(members: List<Member>) {
         mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
-        mutableState._membersCount.value = mutableState._members.value.size
+        mutableState.setMembersCount(mutableState._members.value.size)
     }
 
     /**
@@ -318,7 +320,8 @@ internal class ChannelStateLogicImpl(
      */
     override fun deleteMember(userId: String) {
         mutableState._members.value = mutableState._members.value - userId
-        mutableState._membersCount.value -= 1
+
+        mutableState.setMembersCount(mutableState.membersCount.value - 1)
     }
 
     /**
@@ -327,7 +330,7 @@ internal class ChannelStateLogicImpl(
      * @param deleteDate The date when the channel was deleted.
      */
     override fun deleteChannel(deleteDate: Date) {
-        mutableState._channelData.value = mutableState._channelData.value?.copy(deletedAt = deleteDate)
+        mutableState.setChannelData(mutableState.channelData.value?.copy(deletedAt = deleteDate))
     }
 
     /**
@@ -354,7 +357,7 @@ internal class ChannelStateLogicImpl(
      * @param hidden Boolean.
      */
     override fun setHidden(hidden: Boolean) {
-        mutableState._hidden.value = hidden
+        mutableState.setHidden(hidden)
     }
 
     /**
@@ -363,7 +366,7 @@ internal class ChannelStateLogicImpl(
      * @param repliedMessage The message that contains the reply.
      */
     override fun replyMessage(repliedMessage: Message?) {
-        mutableState._repliedMessage.value = repliedMessage
+        mutableState.setRepliedMessage(repliedMessage)
     }
 
     /**
@@ -372,7 +375,7 @@ internal class ChannelStateLogicImpl(
      * @param isMuted
      */
     override fun updateMute(isMuted: Boolean) {
-        mutableState._muted.value = isMuted
+        mutableState.setMuted(isMuted)
     }
 
     /**
@@ -388,8 +391,8 @@ internal class ChannelStateLogicImpl(
         updateChannelData(channel)
         setWatcherCount(channel.watcherCount)
 
-        mutableState._read.value?.lastMessageSeenDate = channel.lastMessageAt
-        mutableState._membersCount.value = channel.memberCount
+        mutableState.setRead(mutableState.read.value)
+        mutableState.setMembersCount(channel.memberCount)
 
         updateReads(channel.read)
 
@@ -401,7 +404,8 @@ internal class ChannelStateLogicImpl(
         if (!mutableState.insideSearch.value || scrollUpdate) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
-        mutableState.lastMessageAt.value = channel.lastMessageAt
+
+        mutableState.setLastMessageAt(channel.lastMessageAt)
         mutableState._channelConfig.value = channel.config
     }
 
@@ -417,7 +421,7 @@ internal class ChannelStateLogicImpl(
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
-        mutableState._membersCount.value = c.memberCount
+        mutableState.setMembersCount(c.memberCount)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
@@ -440,9 +444,9 @@ internal class ChannelStateLogicImpl(
 
         if (noMoreMessages) {
             if (request.isFilteringNewerMessages()) {
-                mutableState._endOfNewerMessages.value = true
+                mutableState.setEndOfNewerMessages(true)
             } else {
-                mutableState._endOfOlderMessages.value = true
+                mutableState.setEndOfOlderMessages(true)
             }
         }
 

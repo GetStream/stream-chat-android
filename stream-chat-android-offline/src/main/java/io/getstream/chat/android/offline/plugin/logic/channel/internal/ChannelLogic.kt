@@ -182,7 +182,7 @@ internal class ChannelLogic(
      */
     internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
-        if (mutableState._loading.value) {
+        if (mutableState.loading.value) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
             return
         }
@@ -444,7 +444,7 @@ internal class ChannelLogic(
         upsertUserPresence(user)
         // channels have users
         val userId = user.id
-        val channelData = mutableState._channelData.value
+        val channelData = mutableState.channelData.value
         if (channelData != null) {
             if (channelData.createdBy.id == userId) {
                 channelData.createdBy = user

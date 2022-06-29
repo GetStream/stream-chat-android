@@ -51,27 +51,29 @@ internal class ChannelMutableStateImpl(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
+    private val _watcherCount = MutableStateFlow(0)
+    private val _read = MutableStateFlow<ChannelUserRead?>(null)
+    private val _endOfNewerMessages = MutableStateFlow(false)
+    private val _endOfOlderMessages = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
+    private val _hidden = MutableStateFlow(false)
+    private val _muted = MutableStateFlow(false)
+    private val _channelData = MutableStateFlow<ChannelData?>(null)
+    private val _repliedMessage = MutableStateFlow<Message?>(null)
+    private val _unreadCount = MutableStateFlow(0)
+    private val _membersCount = MutableStateFlow(0)
+    private val _insideSearch = MutableStateFlow(false)
+    private val _loadingOlderMessages = MutableStateFlow(false)
+    private val _loadingNewerMessages = MutableStateFlow(false)
+
+    override val lastMessageAt = MutableStateFlow<Date?>(null)
+
     override val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    override val _watcherCount = MutableStateFlow(0)
     override val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
     override val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
-    override val _read = MutableStateFlow<ChannelUserRead?>(null)
-    override val _endOfNewerMessages = MutableStateFlow(false)
-    override val _endOfOlderMessages = MutableStateFlow(false)
-    override val _loading = MutableStateFlow(false)
-    override val _hidden = MutableStateFlow(false)
-    override val _muted = MutableStateFlow(false)
     override val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
     override val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
-    override val _loadingOlderMessages = MutableStateFlow(false)
-    override val _loadingNewerMessages = MutableStateFlow(false)
-    override val _channelData = MutableStateFlow<ChannelData?>(null)
     override val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    override val lastMessageAt = MutableStateFlow<Date?>(null)
-    override val _repliedMessage = MutableStateFlow<Message?>(null)
-    override val _unreadCount = MutableStateFlow(0)
-    override val _membersCount = MutableStateFlow(0)
-    override val _insideSearch = MutableStateFlow<Boolean>(false)
 
     /** Channel config data. */
     override val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -201,6 +203,66 @@ internal class ChannelMutableStateImpl(
         channel.hidden = _hidden.value
 
         return channel
+    }
+
+    override fun setLoadingOlderMessages(isLoading: Boolean) {
+        _loadingOlderMessages.value = isLoading
+    }
+
+    override fun setLoadingNewerMessages(isLoading: Boolean) {
+        _loadingNewerMessages.value = isLoading
+    }
+
+    override fun setWatcherCount(count: Int) {
+        _watcherCount.value = count
+    }
+
+    override fun setRead(channelUserRead: ChannelUserRead?) {
+        _read.value = channelUserRead
+    }
+
+    override fun setEndOfNewerMessages(isEnd: Boolean) {
+        _endOfNewerMessages.value = isEnd
+    }
+
+    override fun setEndOfOlderMessages(isEnd: Boolean) {
+        _endOfOlderMessages.value = isEnd
+    }
+
+    override fun setLoading(isLoading: Boolean) {
+        _loading.value = isLoading
+    }
+
+    override fun setHidden(isHidden: Boolean) {
+        _hidden.value = isHidden
+    }
+
+    override fun setMuted(isMuted: Boolean) {
+        _muted.value = isMuted
+    }
+
+    override fun setChannelData(channelData: ChannelData) {
+        _channelData.value = channelData
+    }
+
+    override fun setLastMessageAt(date: Date?) {
+        lastMessageAt.value = date
+    }
+
+    override fun setRepliedMessage(repliedMessage: Message?) {
+        _repliedMessage.value = repliedMessage
+    }
+
+    override fun setUnreadCount(count: Int) {
+        _unreadCount.value = count
+    }
+
+    override fun setMembersCount(count: Int) {
+        _membersCount.value = count
+    }
+
+    override fun setInsideSearch(isInsideSearch: Boolean) {
+        _insideSearch.value = isInsideSearch
     }
 }
 
