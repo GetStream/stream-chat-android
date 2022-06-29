@@ -20,5 +20,5 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 
 internal interface ChannelStateLogicProvider {
 
-    fun stateLogic(channelType: String, channelId: String): ChannelStateLogic
+    fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic
 }

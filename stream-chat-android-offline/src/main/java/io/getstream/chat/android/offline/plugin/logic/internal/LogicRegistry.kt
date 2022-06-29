@@ -90,7 +90,7 @@ internal class LogicRegistry internal constructor(
         }
     }
 
-    override fun stateLogic(channelType: String, channelId: String): ChannelStateLogic {
+    override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
         return channel(channelType, channelId).stateLogic()
     }
 

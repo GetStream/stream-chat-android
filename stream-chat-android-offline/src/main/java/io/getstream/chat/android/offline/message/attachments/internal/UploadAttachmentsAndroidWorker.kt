@@ -47,7 +47,7 @@ internal class UploadAttachmentsAndroidWorker(
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
-            stateLogic = LogicRegistry.get().stateLogic(channelType, channelId),
+            stateLogic = LogicRegistry.get().channelStateLogic(channelType, channelId),
             messageRepository = repositoryProvider.get(MessageRepository::class.java),
             chatClient = chatClient
         ).uploadAttachmentsForMessage(
