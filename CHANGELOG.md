@@ -23,7 +23,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed bug of empty channels while sending messages. [#3776](https://github.com/GetStream/stream-chat-android/pull/3776)
+- Fixed bug of empty channels while sending messages. [3776](https://github.com/GetStream/stream-chat-android/pull/3776)
+- Fixed populating mentions when sending a message with attachments. [3801](https://github.com/GetStream/stream-chat-android/pull/3801)
 
 ### ⬆️ Improved
 
