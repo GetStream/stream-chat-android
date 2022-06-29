@@ -30,11 +30,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -120,14 +117,14 @@ public fun Messages(
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
-    val (_, isLoadingMore, endOfMessages, messages) = messagesState
+    val messages = messagesState.messageItems
+    val endOfMessages = messagesState.endOfMessages
     val startOfMessages = messagesState.startOfMessages
+    val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
+    val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
 
-    var parentSize by remember { mutableStateOf(IntSize(0, 0)) }
+    var parentSize = remember { IntSize(0, 0) }
     val density = LocalDensity.current
-
-    val isThereAFocusedMessage =
-        messagesState.messageItems.any { (it as? MessageItemState)?.focusState == MessageFocused }
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -152,17 +149,24 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding
         ) {
+
+            if (isLoadingMoreNewMessages) {
+                item {
+                    loadingMoreContent()
+                }
+            }
+
             itemsIndexed(
                 messages,
                 key = { _, item ->
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
+                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused &&
+                    messagesState.scrollToPositionState == ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE
+                ) {
                     Modifier.onGloballyPositioned {
-                        if (messagesState.focusedMessageOffset.value == null) {
-                            messagesState.calculateMessageOffset(parentSize, it.size)
-                        }
+                        messagesState.calculateMessageOffset(parentSize, it.size)
                     }
                 } else {
                     Modifier
@@ -182,8 +186,7 @@ public fun Messages(
                     if (!endOfMessages &&
                         index == messages.lastIndex &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress &&
-                        !isThereAFocusedMessage
+                        lazyListState.isScrollInProgress
                     ) {
                         onMessagesStartReached()
                     }
@@ -192,15 +195,14 @@ public fun Messages(
                     if (!startOfMessages &&
                         index == 0 &&
                         messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress &&
-                        !isThereAFocusedMessage
+                        lazyListState.isScrollInProgress
                     ) {
                         newestMessageItem?.message?.id?.let(onMessagesEndReached)
                     }
                 }
             }
 
-            if (isLoadingMore) {
+            if (isLoadingMoreOldMessages) {
                 item {
                     loadingMoreContent()
                 }
@@ -417,6 +419,59 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         }
     }
+
+    LaunchedEffect(focusedItemIndex, offset.value) {
+        if (focusedItemIndex != -1 &&
+            !lazyListState.isScrollInProgress &&
+            scrollToStartState == ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE
+        ) {
+            coroutineScope.launch {
+                lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
+            }
+        }
+    }
+
+    LaunchedEffect(scrollToStartState) {
+        if (scrollToStartState == ScrollToPositionState.SCROLL_TO_BOTTOM) {
+            lazyListState.scrollToItem(0)
+        }
+    }
+
+    // LaunchedEffect(
+    //     newMessageState,
+    //     firstVisibleItemIndex,
+    //     focusedItemIndex,
+    //     offset.value,
+    //     scrollToStartState
+    // ) {
+    //     if (focusedItemIndex != -1 && !lazyListState.isScrollInProgress && scrollToStartState == ScrollToPositionState.IDLE) {
+    //         coroutineScope.launch {
+    //             lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
+    //         }
+    //     }
+    //
+    //     if (scrollToStartState == ScrollToPositionState.SCROLLING) {
+    //         lazyListState.scrollToItem(0)
+    //     }
+    //
+    //     when {
+    //         focusedItemIndex == -1 &&
+    //             !lazyListState.isScrollInProgress && newMessageState == Other &&
+    //             messagesState.scrollToStartState == ScrollToPositionState.IDLE &&
+    //             firstVisibleItemIndex < 3 -> coroutineScope.launch {
+    //             lazyListState.animateScrollToItem(0)
+    //         }
+    //
+    //         focusedItemIndex == -1 &&
+    //             !lazyListState.isScrollInProgress && newMessageState == MyOwn &&
+    //             messagesState.scrollToStartState == ScrollToPositionState.IDLE -> coroutineScope.launch {
+    //             if (firstVisibleItemIndex > 5) {
+    //                 lazyListState.scrollToItem(5)
+    //             }
+    //             lazyListState.animateScrollToItem(0)
+    //         }
+    //     }
+    // }
 
     if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex, areNewestMessagesLoaded)) {
         MessagesScrollingOption(

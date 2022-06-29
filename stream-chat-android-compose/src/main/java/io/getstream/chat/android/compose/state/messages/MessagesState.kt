@@ -71,7 +71,7 @@ public data class MessagesState(
 
         val sizeDiff = parentSize.height - focusedMessageSize.height
         val offset = if (sizeDiff > 0) {
-            -sizeDiff / 2
+           -sizeDiff / 2
         } else {
             -sizeDiff
         }
@@ -80,7 +80,9 @@ public data class MessagesState(
 }
 
 public enum class ScrollToPositionState {
-    LOADING_DATA,
-    SCROLLING,
+    LOAD_FOCUSED_MESSAGE_DATA,
+    SCROLL_TO_FOCUSED_MESSAGE,
+    LOAD_SCROLL_TO_BOTTOM_DATA,
+    SCROLL_TO_BOTTOM,
     IDLE
 }

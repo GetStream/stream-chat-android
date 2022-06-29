@@ -299,12 +299,20 @@ public class MessageListViewModel(
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
 
                             // TODO
-                            val scrollingState: ScrollToPositionState = when (messagesState.scrollingToStartState) {
-                                ScrollToPositionState.LOADING_DATA -> if (channelState.endOfNewerMessages.value) ScrollToPositionState.SCROLLING else ScrollToPositionState.LOADING_DATA
-                                ScrollToPositionState.SCROLLING -> ScrollToPositionState.SCROLLING
-                                else -> ScrollToPositionState.IDLE
+                            val scrollingState: ScrollToPositionState = when (messagesState.scrollToPositionState) {
+                                ScrollToPositionState.LOAD_SCROLL_TO_BOTTOM_DATA -> if (channelState.endOfNewerMessages.value) {
+                                    ScrollToPositionState.SCROLL_TO_BOTTOM
+                                } else {
+                                    ScrollToPositionState.LOAD_SCROLL_TO_BOTTOM_DATA
+                                }
+                                ScrollToPositionState.SCROLL_TO_BOTTOM -> ScrollToPositionState.SCROLL_TO_BOTTOM
+                                else -> messagesState.scrollToPositionState
                             }
-                            println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}")
+                            // if (scrollingState != ScrollToPositionState.LOADING_FOCUSED_MESSAGE_DATA ||
+                            //     scrollingState != ScrollToPositionState.SCROLLING_TO_FOCUSED_MESSAGE ||
+                            //     scrollingState != ScrollToPositionState.IDLE) { scrollToMessage = null }
+
+                            println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}, is end of older messages: ${channelState.endOfOlderMessages.value}")
 
                             messagesState.copy(
                                 isLoading = false,
@@ -349,7 +357,10 @@ public class MessageListViewModel(
                         if (scrollToMessage != null) {
                             messagesState.messageItems.firstOrNull {
                                 it is MessageItemState && it.message.id == scrollToMessage?.id
-                            }?.let { focusMessage((it as MessageItemState).message.id) }
+                            }?.let {
+                                println("focus message")
+                                focusMessage((it as MessageItemState).message.id)
+                            }
                         }
 
                         lastLoadedMessage = newLastMessage
@@ -600,26 +611,28 @@ public class MessageListViewModel(
         }
     }
 
+    // TODO
     public fun loadNewerMessages(messageId: String) {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
             threadLoadMore(messageMode)
         } else {
-            messagesState = messagesState.copy(isLoadingMore = true)
+            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
             chatClient.loadNewerMessages(channelId, messageId, messageLimit).enqueue()
         }
     }
 
+    // TODO
     public fun loadOlderMessages() {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.globalState.isOffline() || messagesState.endOfMessages) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
             threadLoadMore(messageMode)
         } else {
-            messagesState = messagesState.copy(isLoadingMore = true)
+            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
         }
     }
@@ -1193,14 +1206,14 @@ public class MessageListViewModel(
         if (!messagesState.startOfMessages) returnthreadMessagesState = threadMessagesState.copy(
             newMessageState = null,
             unreadCount = 0,
-            scrollingToStartState = ScrollToPositionState.IDLE
+            scrollToPositionState = ScrollToPositionState.IDLE
         )
 
         messagesState =
             messagesState.copy(
                 newMessageState = null,
                 unreadCount = 0,
-                scrollingToStartState = ScrollToPositionState.IDLE
+                scrollToPositionState = ScrollToPositionState.IDLE
             )
     }
 
@@ -1220,8 +1233,9 @@ public class MessageListViewModel(
         }
 
         viewModelScope.launch {
-            updateMessages(messages)
+            updateMessages(messages, true)
             delay(RemoveMessageFocusDelay)
+            println("remove message focus in focus message")
             removeMessageFocus(messageId)
         }
     }
@@ -1231,10 +1245,10 @@ public class MessageListViewModel(
      *
      * @param messageId The ID of the message.
      */
-    private fun removeMessageFocus(messageId: String) {
+    private fun removeMessageFocus(messageId: String, isDueToScrollToEnd: Boolean = false) {
         val messages = currentMessagesState.messageItems.map {
             if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(focusState = MessageFocusRemoved)
+                it.copy(focusState = if (isDueToScrollToEnd) null else MessageFocusRemoved)
             } else {
                 it
             }
@@ -1244,7 +1258,7 @@ public class MessageListViewModel(
             scrollToMessage = null
         }
 
-        updateMessages(messages)
+        updateMessages(messages, false)
     }
 
     /**
@@ -1252,13 +1266,15 @@ public class MessageListViewModel(
      *
      * @param messages The list of new message items.
      * */
-    private fun updateMessages(messages: List<MessageListItemState>) {
+    private fun updateMessages(messages: List<MessageListItemState>, isThereAFocusedItem: Boolean) {
         if (isInThread) {
             this.threadMessagesState =
-                threadMessagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
+                threadMessagesState.copy(messageItems = messages,
+                    scrollToPositionState = if (isThereAFocusedItem) ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE else threadMessagesState.scrollToPositionState)
         } else {
             this.messagesState =
-                messagesState.copy(messageItems = messages, scrollingToStartState = ScrollToPositionState.IDLE)
+                messagesState.copy(messageItems = messages,
+                    scrollToPositionState = if (isThereAFocusedItem) ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE else messagesState.scrollToPositionState)
         }
     }
 
