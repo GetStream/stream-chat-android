@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -24,6 +25,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
+import java.util.concurrent.atomic.AtomicBoolean
 
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
@@ -32,24 +35,23 @@ public class CoroutineCall<T : Any>(
 ) : Call<T> {
 
     private var job: Job? = null
+    private val canceled = AtomicBoolean(false)
 
-    internal suspend fun awaitImpl(): Result<T> {
-        return withContext(scope.coroutineContext) {
-            suspendingTask()
-        }
+    override fun execute(): Result<T> = runBlocking { await() }
+    internal suspend fun awaitImpl(): Result<T> = withContext(scope.coroutineContext) {
+        suspendingTask().takeUnless { canceled.get() } ?: callCanceledError()
     }
 
     override fun cancel() {
+        canceled.set(true)
         job?.cancel()
     }
 
-    override fun execute(): Result<T> {
-        return runBlocking(block = suspendingTask)
-    }
-
     override fun enqueue(callback: Call.Callback<T>) {
+        println("[JcLog] CoroutineCall::enqueue")
         job = scope.launch {
-            val result = suspendingTask()
+            val result = await()
+            yield()
             withContext(DispatcherProvider.Main) {
                 callback.onResult(result)
             }
