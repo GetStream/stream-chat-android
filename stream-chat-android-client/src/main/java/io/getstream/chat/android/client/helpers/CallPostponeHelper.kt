@@ -23,8 +23,8 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.DELAY_DURATION
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
+import io.getstream.chat.android.client.helpers.CallPostponeHelper.Companion.DELAY_DURATION
+import io.getstream.chat.android.client.helpers.CallPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 /**
- * Class responsible for postponing query channels request until the socket connection is established.
+ * Class responsible for postponing call until the socket connection is established.
  * The request will be retried [attemptsCount] times with a [delayDuration] ms delay between each request.
  *
  * @param socketStateService Service responsible for providing current socket state
@@ -40,7 +40,7 @@ import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSo
  * @param delayDuration The delay duration between each query channels request. Default: [DELAY_DURATION].
  * @param attemptsCount Maximum number of attempts to be performed. Default: [MAX_ATTEMPTS_COUNT].
  */
-internal class QueryChannelsPostponeHelper(
+internal class CallPostponeHelper(
     private val socketStateService: SocketStateService,
     private val coroutineScope: CoroutineScope,
     private val delayDuration: Long = DELAY_DURATION,

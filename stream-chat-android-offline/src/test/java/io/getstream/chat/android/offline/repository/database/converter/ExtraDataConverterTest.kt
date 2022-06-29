@@ -40,4 +40,17 @@ internal class ExtraDataConverterTest {
         val converted = converter.stringToMap(output)
         converted shouldBeEqualTo data.extraData1
     }
+
+    @Test
+    fun test() {
+        val converter = ExtraDataConverter()
+        val map = mapOf(
+            "string" to 1,
+            "string" to 2,
+        )
+        val output = converter.mapToString(map)
+        println(output)
+        // val converted = converter.stringToMap(output)
+        // converted shouldBeEqualTo data.extraData1
+    }
 }

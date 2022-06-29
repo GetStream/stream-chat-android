@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -99,7 +99,7 @@ internal class ChatClientTest {
         socket = FakeSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = api,
@@ -107,7 +107,7 @@ internal class ChatClientTest {
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
