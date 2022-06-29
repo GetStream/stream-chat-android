@@ -17,12 +17,16 @@
 package io.getstream.chat.android.ui.channel.list
 
 import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
 import io.getstream.chat.android.client.models.Channel
@@ -74,6 +78,21 @@ public class ChannelListView : FrameLayout {
     private lateinit var style: ChannelListViewStyle
     private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
 
+    /**
+     * The pending scroll state that we need to restore.
+     */
+    private var layoutManagerState: Parcelable? = null
+
+    /**
+     * The layout manager of the inner RecyclerView.
+     */
+    private val layoutManager: RecyclerView.LayoutManager?
+        get() = if (::simpleChannelListView.isInitialized) {
+            simpleChannelListView.layoutManager
+        } else {
+            null
+        }
+
     public constructor(context: Context) : this(context, null, 0)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -112,6 +131,33 @@ public class ChannelListView : FrameLayout {
         }
 
         configureDefaultMoreOptionsListener(context)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        return bundleOf(
+            KEY_SUPER_STATE to super.onSaveInstanceState(),
+            KEY_SCROLL_STATE to layoutManager?.onSaveInstanceState()
+        )
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state !is Bundle) {
+            super.onRestoreInstanceState(state)
+            return
+        }
+
+        layoutManagerState = state.getParcelable(KEY_SCROLL_STATE)
+        super.onRestoreInstanceState(state.getParcelable(KEY_SUPER_STATE))
+    }
+
+    /**
+     * Restores the scroll state based on the persisted
+     */
+    private fun restoreLayoutManagerState() {
+        if (layoutManagerState != null) {
+            layoutManager?.onRestoreInstanceState(layoutManagerState)
+            layoutManagerState = null
+        }
     }
 
     /**
@@ -276,6 +322,8 @@ public class ChannelListView : FrameLayout {
         }
 
         simpleChannelListView.setChannels(filteredChannels)
+
+        restoreLayoutManagerState()
     }
 
     public fun hideLoadingView() {
@@ -319,6 +367,9 @@ public class ChannelListView : FrameLayout {
                 Gravity.CENTER
             )
         }
+
+        private const val KEY_SUPER_STATE = "super_state"
+        private const val KEY_SCROLL_STATE = "scroll_state"
     }
 
     private fun configureDefaultMoreOptionsListener(context: Context) {
