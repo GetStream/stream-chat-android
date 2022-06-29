@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -81,7 +82,9 @@ internal open class BaseChatClientTest {
             notifications = mock(),
             tokenManager = tokenManager,
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = mock(),
+            callPostponeHelper = CallPostponeHelper(
+                socketStateService, testCoroutines.scope
+            ),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,

@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix the channel screen being stuck with an infinite loading [3791](https://github.com/GetStream/stream-chat-android/pull/3791)
 
 ### ⬆️ Improved
 
