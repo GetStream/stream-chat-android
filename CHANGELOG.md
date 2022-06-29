@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug of empty channels while sending messages. [#3776](https://github.com/GetStream/stream-chat-android/pull/3776)
 
 ### ⬆️ Improved
 
@@ -58,8 +59,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Channels will now be marked as read only when the latest message is reached. Previously they were marked read whenever an unread message was read, regardless of its position in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
 
 ### ⬆️ Improved
+- Improved `Messages` recomposition when marking messages as read. It will now avoid going into a recomposition loop in certain situations such as when you have two or more failed messages visible in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
 
 ### ✅ Added
 
