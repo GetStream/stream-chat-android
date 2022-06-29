@@ -19,7 +19,6 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError

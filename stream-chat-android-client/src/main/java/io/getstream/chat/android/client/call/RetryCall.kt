@@ -64,7 +64,7 @@ internal class RetryCall<T : Any>(
         job?.cancel()
     }
 
-    public suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         callRetryService.runAndRetry {
             originalCall
                 .takeUnless { canceled.get() }

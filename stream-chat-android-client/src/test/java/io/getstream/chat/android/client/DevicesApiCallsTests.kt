@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.Mother.randomDevice
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess

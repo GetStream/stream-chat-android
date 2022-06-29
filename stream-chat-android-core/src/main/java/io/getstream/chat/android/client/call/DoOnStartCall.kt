@@ -57,7 +57,7 @@ internal class DoOnStartCall<T : Any>(
         job?.cancel()
     }
 
-    suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         sideEffect()
         originalCall
             .takeUnless { canceled.get() }

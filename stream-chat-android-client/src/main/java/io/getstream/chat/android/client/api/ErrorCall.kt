@@ -42,7 +42,7 @@ internal class ErrorCall<T : Any>(
         }
     }
 
-    public suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         Result(e)
     }
 }

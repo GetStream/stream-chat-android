@@ -46,7 +46,7 @@ internal class MapCall<T : Any, K : Any>(
         }
     }
 
-    public suspend fun await(): Result<K> = withContext(DispatcherProvider.IO) {
+    override suspend fun await(): Result<K> = withContext(DispatcherProvider.IO) {
         call.await()
             .takeUnless { canceled.get() }
             ?.map(mapper)

@@ -22,8 +22,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 /**
  * A pending operation waiting to be ran.
@@ -57,9 +55,15 @@ public interface Call<T : Any> {
     public fun enqueue(): Unit = enqueue {}
 
     /**
-     * Cancels the execution of the call, if cancellation is supported for the operation.
+     * Awaits the result of [this] Call in a suspending way, asynchronously.
+     * Safe to call from any CoroutineContext.
      *
-     * Note that calls can not be cancelled when running them with [execute].
+     * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
+     */
+    public suspend fun await(): Result<T>
+
+    /**
+     * Cancels the execution of the call, if cancellation is supported for the operation.
      */
     public fun cancel()
 
@@ -74,26 +78,6 @@ public interface Call<T : Any> {
     }
 }
 
-/**
- * Awaits the result of [this] Call in a suspending way, asynchronously.
- * Safe to call from any CoroutineContext.
- *
- * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
- */
-public suspend fun <T : Any> Call<T>.await(): Result<T> {
-    if (this is CoroutineCall<T>) {
-        return this.awaitImpl()
-    }
-    return suspendCancellableCoroutine { continuation ->
-        this.enqueue { result ->
-            continuation.resume(result)
-        }
-
-        continuation.invokeOnCancellation {
-            this.cancel()
-        }
-    }
-}
 /**
  * Runs a call using coroutines scope
  */

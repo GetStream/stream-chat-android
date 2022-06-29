@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User

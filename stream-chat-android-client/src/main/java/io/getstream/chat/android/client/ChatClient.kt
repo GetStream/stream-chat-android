@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map

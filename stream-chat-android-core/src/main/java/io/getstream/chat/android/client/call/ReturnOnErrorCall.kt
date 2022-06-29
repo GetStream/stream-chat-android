@@ -64,7 +64,7 @@ public class ReturnOnErrorCall<T : Any>(
         job?.cancel()
     }
 
-    public suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         map(
             originalCall.await()
                 .takeUnless { canceled.get() }

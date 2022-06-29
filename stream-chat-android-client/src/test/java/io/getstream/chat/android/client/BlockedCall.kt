@@ -54,7 +54,9 @@ public class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
     public fun isStarted(): Boolean = started.get()
     public fun isCompleted(): Boolean = completed.get()
     public fun isCanceled(): Boolean = cancelled.get()
+
     override fun execute(): Result<T> = runBlocking { getResult() }
+    override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) { getResult() }
 
     override fun enqueue(callback: Call.Callback<T>) {
         CoroutineScope(DispatcherProvider.IO).launch {

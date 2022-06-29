@@ -78,7 +78,7 @@ internal class RetrofitCall<T : Any>(
             )
         }
 
-    suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         call.getResult().takeUnless { canceled.get() } ?: callCanceledError()
     }
 

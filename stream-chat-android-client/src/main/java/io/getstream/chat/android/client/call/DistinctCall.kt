@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
@@ -104,5 +106,9 @@ internal class DistinctCall<T : Any>(
 
     private companion object {
         private const val TAG = "Chat:DistinctCall"
+    }
+
+    override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
+        execute()
     }
 }

@@ -65,7 +65,7 @@ internal class ZipCall<A : Any, B : Any>(
     private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> =
         Result(Pair(this.data(), result.data()))
 
-    public suspend fun await(): Result<Pair<A, B>> = withContext(DispatcherProvider.IO) {
+    override suspend fun await(): Result<Pair<A, B>> = withContext(DispatcherProvider.IO) {
         val deferredA = async { callA.await() }
         val deferredB = async { callB.await() }
 

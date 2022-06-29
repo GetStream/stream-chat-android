@@ -23,7 +23,6 @@ import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
@@ -123,7 +122,6 @@ internal class MapCallTest {
     }
 
     @Test
-    @Disabled("Until implement Call::await")
     fun `Canceled Call should be executed asynchronous and return a cancel error`() = runTest {
         val blockedCall = BlockedCall(validResult)
         val call = blockedCall.map(mapper)

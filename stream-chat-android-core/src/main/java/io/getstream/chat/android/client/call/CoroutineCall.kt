@@ -38,7 +38,7 @@ public class CoroutineCall<T : Any>(
     private val canceled = AtomicBoolean(false)
 
     override fun execute(): Result<T> = runBlocking { await() }
-    internal suspend fun awaitImpl(): Result<T> = withContext(scope.coroutineContext) {
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
         suspendingTask().takeUnless { canceled.get() } ?: callCanceledError()
     }
 

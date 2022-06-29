@@ -23,7 +23,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
@@ -127,7 +126,6 @@ internal class DoOnResultCallTest {
     }
 
     @Test
-    @Disabled("Until `Call::await is implemented")
     fun `Canceled Call should be executed asynchronous and return a cancel error`() = runTest {
         val blockedCall = BlockedCall(validResult)
         val call = blockedCall.doOnResult(testCoroutines.scope, consumer)
