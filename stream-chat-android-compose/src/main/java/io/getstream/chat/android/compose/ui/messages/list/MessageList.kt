@@ -99,7 +99,7 @@ public fun MessageList(
         DefaultMessagesHelperContent(
             messagesState = viewModel.currentMessagesState,
             lazyListState = lazyListState,
-            scrollToBottom = onScrollToBottomClicked
+            scrollToBottom = onScrollToBottomClicked,
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -133,7 +133,7 @@ public fun MessageList(
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
         onMessageEndReached = onMessageEndReached,
-        onScrollToBottom = onScrollToBottomClicked
+        onScrollToBottom = onScrollToBottomClicked,
     )
 }
 
@@ -277,7 +277,7 @@ public fun MessageList(
             loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
             onMessagesEndReached = onMessageEndReached,
-            onScrollToBottom = onScrollToBottom
+            onScrollToBottom = onScrollToBottom,
         )
         else -> emptyContent()
     }
