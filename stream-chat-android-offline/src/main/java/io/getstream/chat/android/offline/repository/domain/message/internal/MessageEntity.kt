@@ -66,7 +66,7 @@ internal data class MessageInnerEntity(
     /** when the message was deleted */
     val deletedAt: Date? = null,
     /** the users mentioned in this message */
-    val mentionedUsers: List<String> = emptyList(),
+    val remoteMentionedUserIds: List<String> = emptyList(),
     /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
