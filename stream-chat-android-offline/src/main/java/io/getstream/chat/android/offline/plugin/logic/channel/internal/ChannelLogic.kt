@@ -278,8 +278,7 @@ internal class ChannelLogic(
     }
 
     internal fun deleteMessage(message: Message) {
-        mutableState._messages.value -= message.id
-        updateLastMessageAtByNewMessages(mutableState._messages.value.values)
+        channelStateLogic.deleteMessage(message)
     }
 
     /**

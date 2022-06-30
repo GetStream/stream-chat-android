@@ -190,6 +190,13 @@ internal interface ChannelStateLogic {
     fun deleteWatcher(user: User)
 
     /**
+     * Deletes a message for the channel
+     *
+     * @param message [Message]
+     */
+    fun deleteMessage(message: Message)
+
+    /**
      * Sets channel as hidden.
      *
      * @param hidden Boolean.

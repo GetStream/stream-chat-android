@@ -250,6 +250,11 @@ internal class ChannelStateLogicImpl(
         mutableState.rawMessages = newMessages
     }
 
+    override fun deleteMessage(message: Message) {
+        mutableState.rawMessages -= message.id
+        updateLastMessageAtByNewMessages(mutableState.messages.value)
+    }
+
     /**
      * Removes messages before a certain date
      *
