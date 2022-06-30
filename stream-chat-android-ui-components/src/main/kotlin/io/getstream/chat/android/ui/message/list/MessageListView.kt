@@ -591,6 +591,7 @@ public class MessageListView : ConstraintLayout {
         scrollHelper = MessageListScrollHelper(
             recyclerView = binding.chatMessagesRV,
             scrollButtonView = binding.scrollToBottomButton,
+            disableScrollWhenShowingDialog = messageListViewStyle?.disableScrollWhenShowingDialog ?: true
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }

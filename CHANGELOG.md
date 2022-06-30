@@ -57,6 +57,7 @@
 
 ### ✅ Added
 - Added `MessagePreviewFormatter` field to the `ChatUI` class, to allow for message preview text format customization across the app. [3788](https://github.com/GetStream/stream-chat-android/pull/3788).
+- Added `streamUiDisableScrollWhenShowingDialog` attribute to `MessageListView` that allows to enable/disable message list scroll while a dialog is shown over the message list. [#3809](https://github.com/GetStream/stream-chat-android/pull/3809)
 
 ### ⚠️ Changed
 - The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
