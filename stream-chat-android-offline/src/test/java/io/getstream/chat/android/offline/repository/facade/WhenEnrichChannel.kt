@@ -18,8 +18,8 @@ package io.getstream.chat.android.offline.repository.facade
 
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

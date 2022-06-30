@@ -16,12 +16,10 @@
 
 package io.getstream.chat.android.offline.repository.facade
 
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -33,8 +31,6 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     @Test
     fun `Given no channel in DB Should not do insert`() = runTest {

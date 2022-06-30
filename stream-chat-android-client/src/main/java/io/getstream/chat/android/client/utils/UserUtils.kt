@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.extensions
+package io.getstream.chat.android.client.utils
 
-internal fun <T1 : Any, T2 : Any, T3 : Any, R : Any> safeLet(
-    p1: T1?,
-    p2: T2?,
-    p3: T3?,
-    block: (T1, T2, T3) -> R?
-): R? {
-    return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
-}
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2) -> R?): R? {
-    return if (p1 != null && p2 != null) block(p1, p2) else null
+/**
+ * Partially merges [that] user data into [this] user data.
+ */
+@InternalStreamChatApi
+public fun User.mergePartially(that: User): User {
+    this.role = that.role
+    this.createdAt = that.createdAt
+    this.updatedAt = that.updatedAt
+    this.lastActive = that.lastActive
+    this.banned = that.banned
+    this.name = that.name
+    this.image = that.image
+    this.extraData = that.extraData
+    return this
 }

@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.Test
@@ -29,7 +29,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     private val helper by lazy { repos }
 
     @Test
-    fun `inserting a channel and reading it should be equal`(): Unit = runBlocking {
+    fun `inserting a channel and reading it should be equal`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1))
         helper.clearChannelCache()
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
@@ -39,7 +39,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `deleting a channel should work`(): Unit = runBlocking {
+    fun `deleting a channel should work`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1))
         helper.deleteChannel(data.channel1.cid)
         val entity = helper.selectChannelWithoutMessages(data.channel1.cid)
@@ -48,7 +48,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `updating a channel should work as intended`(): Unit = runBlocking {
+    fun `updating a channel should work as intended`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1, data.channel1Updated))
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
 

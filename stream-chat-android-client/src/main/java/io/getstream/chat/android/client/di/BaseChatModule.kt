@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -47,7 +48,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -83,6 +84,7 @@ internal open class BaseChatModule(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
     private val customOkHttpClient: OkHttpClient? = null,
+    private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
@@ -105,8 +107,8 @@ internal open class BaseChatModule(
     val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
-    val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
-        QueryChannelsPostponeHelper(
+    val callPostponeHelper: CallPostponeHelper by lazy {
+        CallPostponeHelper(
             socketStateService = socketStateService,
             coroutineScope = networkScope,
             chatSocketExperimental = chatSocketExperimental
@@ -233,7 +235,7 @@ internal open class BaseChatModule(
         networkScope,
         parser,
         listOf(
-            StreamLifecyclePublisher(),
+            StreamLifecyclePublisher(lifecycle),
             NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
         ),
     )

@@ -508,7 +508,14 @@ public class MessageListViewModel(
         }
 
         val (channelType, id) = channelId.cidToTypeAndId()
-        chatClient.markRead(channelType, id).enqueue()
+
+        val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
+            messageItem is MessageItemState
+        } as? MessageItemState
+
+        if (currentMessage.id == latestMessage?.message?.id) {
+            chatClient.markRead(channelType, id).enqueue()
+        }
     }
 
     /**
