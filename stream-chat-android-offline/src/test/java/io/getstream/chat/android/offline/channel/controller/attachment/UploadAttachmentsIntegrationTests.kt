@@ -21,6 +21,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
@@ -28,7 +29,6 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLo
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
