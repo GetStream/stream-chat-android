@@ -620,7 +620,6 @@ public class MessageListViewModel(
      */
     public fun loadNewerMessages(messageId: String) {
         if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
-        val messageMode = messageMode
 
         if (messageMode is MessageMode.Normal) {
             messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
