@@ -49,7 +49,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `streamUiDisableScrollWhenShowingDialog` attribute to `MessageListView` that allows to enable/disable message list scroll while a dialog is shown over the message list. [#3809](https://github.com/GetStream/stream-chat-android/pull/3809)
 
 ### ⚠️ Changed
 
@@ -109,6 +108,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 30th, 2022 - 4.30.3
+## stream-chat-android-ui-components
+### ✅ Added
+- Added `streamUiDisableScrollWhenShowingDialog` attribute to `MessageListView` that allows to enable/disable message list scroll while a dialog is shown over the message list. [#3809](https://github.com/GetStream/stream-chat-android/pull/3809)
 
 # May 13th, 2022 - 4.30.2
 ## stream-chat-android-client
