@@ -1086,11 +1086,6 @@ public class MessageInputView : ConstraintLayout {
         inputMode = InputMode.Normal
     }
 
-    private fun editModeratedMessage(oldMessage: Message) {
-        sendMessageHandler.editMessage(oldMessage, getTrimmedMessageText())
-        inputMode = InputMode.Normal
-    }
-
     /**
      * Set a collection of attachments in [MessageInputView].
      *

@@ -236,8 +236,7 @@ public class MessageComposerController(
     public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
-     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply]
-     * or [EditModeratedMessage] action.
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply].
      */
     public val lastActiveAction: Flow<MessageAction?>
         get() = messageActions.map { actions ->
@@ -245,7 +244,7 @@ public class MessageComposerController(
         }
 
     /**
-     * Gets the active [Edit], [Reply] or [EditModeratedMessage] action, whichever is last, to show on the UI.
+     * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
     private val activeAction: MessageAction?
         get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
