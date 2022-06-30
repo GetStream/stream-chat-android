@@ -43,8 +43,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `loadNewestMessages` method to `ChatClient`. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
+- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ❌ Removed
 
@@ -76,11 +78,13 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added `ScrollToPositionState` which notifies the list when data is loading and when to scroll the list either to bottom or to the focused item. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 
