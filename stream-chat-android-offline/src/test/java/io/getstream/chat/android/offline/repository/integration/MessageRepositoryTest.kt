@@ -18,9 +18,9 @@ package io.getstream.chat.android.offline.repository.integration
 
 import android.database.sqlite.SQLiteException
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.test.randomAttachment
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
-import io.getstream.chat.android.offline.randomAttachment
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
