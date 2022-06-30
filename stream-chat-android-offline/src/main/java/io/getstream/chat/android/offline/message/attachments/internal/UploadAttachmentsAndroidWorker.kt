@@ -47,7 +47,6 @@ internal class UploadAttachmentsAndroidWorker(
         val chatClient = ChatClient.instance()
         val repositoryProvider = RepositoryProvider.get()
 
-
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
