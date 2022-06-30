@@ -32,7 +32,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMu
 internal class UploadAttachmentsWorker(
     private val channelType: String,
     private val channelId: String,
-    private val stateLogic: ChannelStateLogic?,
+    private val channelStateLogic: ChannelStateLogic,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
@@ -89,7 +89,7 @@ internal class UploadAttachmentsWorker(
         return try {
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
-                    val progressCallback = stateLogic?.writeChannelState()?.let { channelMutableState ->
+                    val progressCallback = channelStateLogic.writeChannelState()?.let { channelMutableState ->
                         ProgressCallbackImpl(message.id, attachment.uploadId!!, channelMutableState)
                     }
 
@@ -120,7 +120,7 @@ internal class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
-        stateLogic?.upsertMessage(message)
+        channelStateLogic.upsertMessage(message)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
         messageRepository.insertMessage(message)
