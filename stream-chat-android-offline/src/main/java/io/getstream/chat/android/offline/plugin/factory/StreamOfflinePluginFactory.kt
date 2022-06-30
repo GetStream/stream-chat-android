@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptorFactory
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
@@ -33,7 +34,6 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -160,9 +160,8 @@ public class StreamOfflinePluginFactory(
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType
         )
-        val defaultInterceptor = DefaultInterceptor(
-            sendMessageInterceptor = sendMessageInterceptor
-        )
+
+        val prepareMessageInterceptor = PrepareMessageInterceptorFactory().create(appContext)
 
         val channelMarkReadHelper = ChannelMarkReadHelper(
             chatClient = chatClient,
@@ -172,7 +171,8 @@ public class StreamOfflinePluginFactory(
         )
 
         chatClient.apply {
-            addInterceptor(defaultInterceptor)
+            addInterceptor(sendMessageInterceptor)
+            addInterceptor(prepareMessageInterceptor)
             addErrorHandlers(
                 OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories()
                     .map { factory -> factory.create() }

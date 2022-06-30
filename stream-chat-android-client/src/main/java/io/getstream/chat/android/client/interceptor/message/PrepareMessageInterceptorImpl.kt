@@ -4,16 +4,15 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
 import java.util.Date
+import java.util.UUID
 
-internal class PrepareMessageInterceptorImpl: PrepareMessageInterceptor {
-
-    override fun prepareMessage(message: Message): Message {
-
-    }
-
+internal class PrepareMessageInterceptorImpl(
+    private val networkStateProvider: NetworkStateProvider,
+) : PrepareMessageInterceptor {
 
     /**
      * Prepares the message and its attachments but doesn't upload attachments.
@@ -27,15 +26,14 @@ internal class PrepareMessageInterceptorImpl: PrepareMessageInterceptor {
      *
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
-    private suspend fun prepareNewMessage(message: Message, channelType: String, channelId: String): Message {
-        val newMessage = message.copy().apply {
+    override fun prepareMessage(message: Message, channelId: String, channelType: String, userId: String): Message {
+        return message.copy().apply {
             if (id.isEmpty()) {
-                id = generateMessageId()
+                id = generateMessageId(userId)
             }
             if (cid.isEmpty()) {
-                enrichWithCid(channelId)
+                enrichWithCid("$channelType:$channelId")
             }
-            user = requireNotNull(globalState.user.value)
 
             val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
             attachmentsToUpload.forEach { attachment ->
@@ -52,11 +50,20 @@ internal class PrepareMessageInterceptorImpl: PrepareMessageInterceptor {
             createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
             syncStatus = when {
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                globalState.isOnline() -> SyncStatus.IN_PROGRESS
+                networkStateProvider.isConnected() -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
+    }
 
-        return newMessage
+    /**
+     * Returns a unique message id prefixed with user id.
+     */
+    private fun generateMessageId(userid: String): String {
+        return "$userid-${UUID.randomUUID()}"
+    }
+
+    private fun generateUploadId(): String {
+        return "upload_id_${UUID.randomUUID()}"
     }
 }
