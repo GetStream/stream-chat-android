@@ -415,8 +415,11 @@ internal class ChannelLogic(
     }
 
     internal fun upsertMessage(message: Message) {
-        /* Do not upsert message if the newest messages are not loaded to avoid breaking pagination. */
-        if (mutableState._endOfNewerMessages.value) {
+        /* Do not upsert message if the newest messages are not loaded to avoid breaking pagination. If the message
+        * is inside the list and was updated in some kind of way, update it in the list. */
+        if (mutableState._endOfNewerMessages.value ||
+            mutableState.sortedMessages.value.firstOrNull { it.id == message.id } != null
+        ) {
             upsertMessages(listOf(message))
         }
     }
@@ -680,7 +683,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        upsertMessages(listOf(message))
+        upsertMessage(message)
     }
 
     /**
@@ -812,11 +815,8 @@ internal class ChannelLogic(
         when (event) {
             is NewMessageEvent -> {
                 /* If we are inside a search, ignore new messages, because the last message is not available in the
-                 * screen. Also if the last message isn't the currently newest message ignore to avoid breaking
-                 * pagination */
-                if (!mutableState.insideSearch.value && !mutableState._endOfNewerMessages.value) {
-                    upsertEventMessage(event.message)
-                }
+                 * screen. */
+                upsertEventMessage(event.message)
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
             }
