@@ -46,13 +46,13 @@ public data class MessagesState(
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
     val startOfMessages: Boolean = false,
-    val scrollToPositionState: ScrollToPositionState = ScrollToPositionState.IDLE,
+    val scrollToPositionState: ScrollToPositionState = Idle,
     val isLoadingMoreOldMessages: Boolean = false,
     val isLoadingMoreNewMessages: Boolean = false,
-    private val _focusedMessageOffset: MutableStateFlow<Int?> = MutableStateFlow(null)
+    private val focusedMessageOffsetState: MutableStateFlow<Int?> = MutableStateFlow(null)
 ) {
 
-    val focusedMessageOffset: StateFlow<Int?> = _focusedMessageOffset
+    val focusedMessageOffset: StateFlow<Int?> = focusedMessageOffsetState
 
     /**
      * Calculates the message offset needed for the message to center inside the list on scroll.
@@ -61,23 +61,14 @@ public data class MessagesState(
      * @param focusedMessageSize The size of the message item we wish to bring to the center and focus.
      */
     public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
-        if (parentSize.height == 0 || parentSize.width == 0 ||
-            focusedMessageSize.height == 0 || focusedMessageSize.width == 0) return
+        if (parentSize.height == 0 || focusedMessageSize.height == 0) return
 
         val sizeDiff = parentSize.height - focusedMessageSize.height
         val offset = if (sizeDiff > 0) {
-           -sizeDiff / 2
+            -sizeDiff / 2
         } else {
             -sizeDiff
         }
-        if (offset != _focusedMessageOffset.value) _focusedMessageOffset.value = offset
+        if (offset != focusedMessageOffsetState.value) focusedMessageOffsetState.value = offset
     }
-}
-
-public enum class ScrollToPositionState {
-    LOAD_FOCUSED_MESSAGE_DATA,
-    SCROLL_TO_FOCUSED_MESSAGE,
-    LOAD_SCROLL_TO_BOTTOM_DATA,
-    SCROLL_TO_BOTTOM,
-    IDLE
 }

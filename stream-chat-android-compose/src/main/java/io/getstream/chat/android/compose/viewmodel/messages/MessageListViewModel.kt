@@ -45,10 +45,15 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
+import io.getstream.chat.android.compose.state.messages.Idle
+import io.getstream.chat.android.compose.state.messages.LoadFocusedMessageData
+import io.getstream.chat.android.compose.state.messages.LoadNewestMessages
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
+import io.getstream.chat.android.compose.state.messages.ScrollToNewestMessages
 import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
@@ -281,21 +286,7 @@ public class MessageListViewModel(
                             )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
 
-                            // TODO
-                            val scrollingState: ScrollToPositionState = when (messagesState.scrollToPositionState) {
-                                ScrollToPositionState.LOAD_SCROLL_TO_BOTTOM_DATA -> if (channelState.endOfNewerMessages.value) {
-                                    ScrollToPositionState.SCROLL_TO_BOTTOM
-                                } else {
-                                    ScrollToPositionState.LOAD_SCROLL_TO_BOTTOM_DATA
-                                }
-                                ScrollToPositionState.SCROLL_TO_BOTTOM -> ScrollToPositionState.SCROLL_TO_BOTTOM
-                                else -> messagesState.scrollToPositionState
-                            }
-                            // if (scrollingState != ScrollToPositionState.LOADING_FOCUSED_MESSAGE_DATA ||
-                            //     scrollingState != ScrollToPositionState.SCROLLING_TO_FOCUSED_MESSAGE ||
-                            //     scrollingState != ScrollToPositionState.IDLE) { scrollToMessage = null }
-
-                            println("scrolling state is: $scrollingState, is end of newer messages: ${channelState.endOfNewerMessages.value}, is end of older messages: ${channelState.endOfOlderMessages.value}")
+                            val scrollingState = shouldScrollToBottom(channelState.endOfNewerMessages.value)
 
                             messagesState.copy(
                                 isLoading = false,
@@ -338,15 +329,10 @@ public class MessageListViewModel(
                             newState
                         }
 
-                        println("scroll to message is: $scrollToMessage")
-                        if (messagesState.scrollToPositionState == ScrollToPositionState.LOAD_FOCUSED_MESSAGE_DATA && scrollToMessage != null) {
-                            println("try to focus message")
+                        if (messagesState.scrollToPositionState == LoadFocusedMessageData && scrollToMessage != null) {
                             messagesState.messageItems.firstOrNull {
                                 it is MessageItemState && it.message.id == scrollToMessage?.id
-                            }?.let {
-                                println("focus message")
-                                focusMessage((it as MessageItemState).message.id)
-                            }
+                            }?.let { focusMessage((it as MessageItemState).message.id) }
                         }
 
                         lastLoadedMessage = newLastMessage
@@ -359,6 +345,19 @@ public class MessageListViewModel(
                         }
                     }
             }
+        }
+    }
+
+    /**
+     * Determines if the list should scroll to the bottom of the list when new data arrives or keep the current state.
+     *
+     * @return The next [ScrollToPositionState] the list should be in.
+     */
+    private fun shouldScrollToBottom(isEndOfNewMessages: Boolean): ScrollToPositionState {
+        return if (messagesState.scrollToPositionState == LoadNewestMessages && isEndOfNewMessages) {
+            ScrollToNewestMessages
+        } else {
+            messagesState.scrollToPositionState
         }
     }
 
@@ -523,6 +522,14 @@ public class MessageListViewModel(
     /**
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
+    @Deprecated(
+        message = "Deprecated after implementing bi directional pagination.",
+        replaceWith = ReplaceWith(
+            "loadNewerMessages(messageId: String)",
+            "io.getstream.chat.android.compose.viewmodel.messages"
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun loadMore() {
         if (chatClient.globalState.isOffline()) return
         val messageMode = messageMode
@@ -535,20 +542,26 @@ public class MessageListViewModel(
         }
     }
 
-    // TODO
+    /**
+     * Loads newer messages of a channel following the currently newest loaded message. In case of threads this will
+     * do nothing.
+     *
+     * @param messageId The id of the most new [Message] inside the messages list.
+     */
     public fun loadNewerMessages(messageId: String) {
         if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
         val messageMode = messageMode
 
-        if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
-        } else {
+        if (messageMode is MessageMode.Normal) {
             messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
             chatClient.loadNewerMessages(channelId, messageId, messageLimit).enqueue()
         }
     }
 
-    // TODO
+    /**
+     * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
+     * of a thread.
+     */
     public fun loadOlderMessages() {
         if (chatClient.globalState.isOffline() || messagesState.endOfMessages) return
         val messageMode = messageMode
@@ -1006,14 +1019,14 @@ public class MessageListViewModel(
         threadMessagesState = threadMessagesState.copy(
             newMessageState = null,
             unreadCount = 0,
-            scrollToPositionState = ScrollToPositionState.IDLE
+            scrollToPositionState = Idle
         )
 
         messagesState =
             messagesState.copy(
                 newMessageState = null,
                 unreadCount = 0,
-                scrollToPositionState = ScrollToPositionState.IDLE
+                scrollToPositionState = Idle
             )
     }
 
@@ -1035,7 +1048,6 @@ public class MessageListViewModel(
         viewModelScope.launch {
             updateMessages(messages, true)
             delay(RemoveMessageFocusDelay)
-            println("remove message focus in focus message")
             removeMessageFocus(messageId)
         }
     }
@@ -1069,12 +1081,24 @@ public class MessageListViewModel(
     private fun updateMessages(messages: List<MessageListItemState>, isThereAFocusedItem: Boolean) {
         if (isInThread) {
             this.threadMessagesState =
-                threadMessagesState.copy(messageItems = messages,
-                    scrollToPositionState = if (isThereAFocusedItem) ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE else threadMessagesState.scrollToPositionState)
+                threadMessagesState.copy(
+                    messageItems = messages,
+                    scrollToPositionState = if (isThereAFocusedItem) {
+                        ScrollToFocusedMessage
+                    } else {
+                        threadMessagesState.scrollToPositionState
+                    }
+                )
         } else {
             this.messagesState =
-                messagesState.copy(messageItems = messages,
-                    scrollToPositionState = if (isThereAFocusedItem) ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE else messagesState.scrollToPositionState)
+                messagesState.copy(
+                    messageItems = messages,
+                    scrollToPositionState = if (isThereAFocusedItem) {
+                        ScrollToFocusedMessage
+                    } else {
+                        messagesState.scrollToPositionState
+                    }
+                )
         }
     }
 
@@ -1106,11 +1130,13 @@ public class MessageListViewModel(
     }
 
     /**
-     * Scrolls to message if in list otherwise get the message from backend.
+     * Scrolls to message if in list otherwise get the message from backend. Does not work for threads.
      *
      * @param message The message we wish to scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
+        if (isInThread) return
+
         val isMessageInList = currentMessagesState.messageItems.firstOrNull {
             it is MessageItemState && it.message.id == message.id
         } != null
@@ -1119,37 +1145,29 @@ public class MessageListViewModel(
         if (isMessageInList) {
             focusMessage(message.id)
         } else {
-            if (isInThread) {
-                threadMessagesState = threadMessagesState.copy(scrollToPositionState = ScrollToPositionState.LOAD_FOCUSED_MESSAGE_DATA)
-            } else {
-                messagesState = messagesState.copy(scrollToPositionState = ScrollToPositionState.LOAD_FOCUSED_MESSAGE_DATA)
-            }
+            messagesState = messagesState.copy(scrollToPositionState = LoadFocusedMessageData)
             loadMessage(message = message)
         }
     }
 
     /**
-     * TODO
+     * Requests that the list scrolls to the bottom to the newest messages. If the newest messages are loaded will set
+     * scroll the list to the bottom. If they are not loaded will request the newest data and once loaded will scroll
+     * to the bottom of the list.
+     *
+     * @param messageLimit The message count we wish to load from the API when loading new messages.
      */
     public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit) {
-        val areNewestMessagesLoaded = currentMessagesState.startOfMessages
-        val scrollToStartState =
-            if (areNewestMessagesLoaded) ScrollToPositionState.SCROLL_TO_BOTTOM else ScrollToPositionState.LOAD_SCROLL_TO_BOTTOM_DATA
-
-        if (scrollToStartState == ScrollToPositionState.SCROLL_TO_BOTTOM) {
-            scrollToMessage?.id?.let {
-                removeMessageFocus(it, true)
-            }
-        }
-
         if (isInThread) {
             threadMessagesState =
-                threadMessagesState.copy(scrollToPositionState = scrollToStartState)
+                threadMessagesState.copy(scrollToPositionState = ScrollToNewestMessages)
         } else {
-            messagesState =
-                messagesState.copy(scrollToPositionState = scrollToStartState)
+            val areNewestMessagesLoaded = currentMessagesState.startOfMessages
+            val scrollToStartState = if (areNewestMessagesLoaded) ScrollToNewestMessages else LoadNewestMessages
+
+            messagesState = messagesState.copy(scrollToPositionState = scrollToStartState)
+            if (!areNewestMessagesLoaded) chatClient.loadNewestMessages(channelId, messageLimit).enqueue()
         }
-        if (!areNewestMessagesLoaded) chatClient.loadNewestMessages(channelId, messageLimit).enqueue()
     }
 
     internal companion object {

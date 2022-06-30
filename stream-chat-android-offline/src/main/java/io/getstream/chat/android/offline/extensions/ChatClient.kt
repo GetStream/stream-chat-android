@@ -385,7 +385,14 @@ private suspend fun ChatClient.loadMessageByIdInternal(
     }
 }
 
-// TODO docs
+/**
+ * Loads the newest messages of a channel.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageLimit The number of messages to be loaded.
+ *
+ * @return Executable async [Call] responsible for loading the newest messages.
+ */
 public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int): Call<Channel> {
     return CoroutineCall(state.scope) {
         loadNewestMessagesInternal(cid, messageLimit)
