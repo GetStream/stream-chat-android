@@ -78,6 +78,7 @@ import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -445,7 +446,7 @@ internal constructor(
             setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.logV(
                     "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -521,7 +522,7 @@ internal constructor(
             ).also { result ->
                 logger.logV(
                     "[connectAnonymousUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 )
             }
@@ -549,7 +550,7 @@ internal constructor(
                 .also { result ->
                     logger.logV(
                         "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     )
                 }
@@ -1309,12 +1310,19 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
-        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
-        return CoroutineCall(scope) {
+        val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
+        val prepareMessageInterceptor = interceptors.find { interceptor ->
+            interceptor is PrepareMessageInterceptor
+        } as? PrepareMessageInterceptor
 
+        val newMessage = getCurrentUser()?.let { user ->
+            prepareMessageInterceptor?.prepareMessage(message, channelId, channelType, user.id)
+        } ?: message
+
+        return CoroutineCall(scope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+            sendMessageInterceptors.fold(Result.success(newMessage)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
