@@ -51,6 +51,7 @@
 - Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 - Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
 - Fixed a bug which made the unread count disappear on certain devices when it went over double digits. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
+- Fixed a bug where typing items in MessageList weren't properly set on all data changes. [#3790](https://github.com/GetStream/stream-chat-android/pull/3790)
 
 ### ⬆️ Improved
 - `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
