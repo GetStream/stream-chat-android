@@ -68,6 +68,8 @@ import kotlin.math.abs
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
+ * @param onMessagesEndReached Handler for pagination, when the user reaches the end of messages.
+ * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -80,17 +82,17 @@ public fun Messages(
     messagesState: MessagesState,
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
-    onMessagesEndReached: (String) -> Unit,
-    onScrollToBottom: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
+    onMessagesEndReached: (String) -> Unit,
+    onScrollToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(
-            messagesState,
-            lazyListState,
-            onScrollToBottom
+            messagesState = messagesState,
+            lazyListState = lazyListState,
+            scrollToBottom = onScrollToBottom
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -101,6 +103,7 @@ public fun Messages(
     val startOfMessages = messagesState.startOfMessages
     val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
+    val scrollToPositionState = messagesState.scrollToPositionState
 
     var parentSize = remember { IntSize(0, 0) }
     val density = LocalDensity.current
@@ -151,10 +154,10 @@ public fun Messages(
                 }
             ) { index, item ->
                 val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused &&
-                    messagesState.scrollToPositionState == ScrollToFocusedMessage
+                    scrollToPositionState is ScrollToFocusedMessage
                 ) {
                     Modifier.onGloballyPositioned {
-                        messagesState.calculateMessageOffset(parentSize, it.size)
+                        scrollToPositionState.calculateMessageOffset(parentSize, it.size)
                     }
                 } else {
                     Modifier
@@ -211,6 +214,7 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
+ * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
@@ -234,7 +238,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
         if (focusedItemIndex != -1 &&
             !lazyListState.isScrollInProgress &&
-            scrollToStartState == ScrollToFocusedMessage
+            scrollToStartState is ScrollToFocusedMessage
         ) {
             coroutineScope.launch {
                 lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
@@ -249,7 +253,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             focusedItemIndex == -1 &&
                 !lazyListState.isScrollInProgress &&
                 newMessageState == Other &&
-                messagesState.scrollToPositionState == Idle &&
+                scrollToStartState is Idle &&
                 areNewestMessagesLoaded &&
                 firstVisibleItemIndex < 3 -> {
                 coroutineScope.launch {
@@ -261,7 +265,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                 !lazyListState.isScrollInProgress &&
                 newMessageState == MyOwn &&
                 areNewestMessagesLoaded &&
-                messagesState.scrollToPositionState == Idle -> {
+                scrollToStartState is Idle -> {
                 coroutineScope.launch {
                     if (firstVisibleItemIndex > 5) {
                         lazyListState.scrollToItem(5)

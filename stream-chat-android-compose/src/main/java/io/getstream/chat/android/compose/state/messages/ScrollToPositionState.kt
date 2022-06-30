@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.compose.state.messages
 
+import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
 /**
  * Determines if the list is loading data to prepare for scroll to a certain part of the list or is currently scrolling
  * to it.
@@ -29,8 +33,33 @@ public object LoadFocusedMessageData : ScrollToPositionState()
 
 /**
  * State when the focused message is inside the list and it should scroll to the focused message.
+ *
+ * @param scrollOffset The offset the list needs to apply so that the focused item is centered inside the screen
  */
-public object ScrollToFocusedMessage : ScrollToPositionState()
+public data class ScrollToFocusedMessage(
+    private val scrollOffset: MutableStateFlow<Int?> = MutableStateFlow(null)
+) : ScrollToPositionState() {
+
+    public val focusedMessageOffset: StateFlow<Int?> = scrollOffset
+
+    /**
+     * Calculates the message offset needed for the message to center inside the list on scroll.
+     *
+     * @param parentSize The size of the list which contains the message.
+     * @param focusedMessageSize The size of the message item we wish to bring to the center and focus.
+     */
+    public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
+        if (parentSize.height == 0 || focusedMessageSize.height == 0) return
+
+        val sizeDiff = parentSize.height - focusedMessageSize.height
+        val offset = if (sizeDiff > 0) {
+            -sizeDiff / 2
+        } else {
+            -sizeDiff
+        }
+        if (offset != scrollOffset.value) scrollOffset.value = offset
+    }
+}
 
 /**
  * State when the loaded data does not contain the newest messages and it is loading data for it.
