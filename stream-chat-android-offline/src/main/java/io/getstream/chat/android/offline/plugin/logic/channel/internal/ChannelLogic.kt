@@ -194,39 +194,23 @@ internal class ChannelLogic(
     }
 
     private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
-        if (noMoreMessages) {
-            when {
-                /* If we are not filtering the messages in any direction and not providing any message id then
-                * we are requesting the newest messages */
-                !request.isFilteringMessages() -> {
-                    mutableState._endOfOlderMessages.value = false
-                    mutableState._endOfNewerMessages.value = true
-                }
-                /* If we are filtering around a specific message we are loading both newer and older messages
-                * and can't be sure if there are no older or newer messages left */
-                request.isFilteringAroundIdMessages() -> {
-                    mutableState._endOfNewerMessages.value = false
-                    mutableState._endOfOlderMessages.value = false
-                }
-                else -> if (request.isFilteringNewerMessages()) {
-                    mutableState._endOfNewerMessages.value = true
-                } else {
-                    mutableState._endOfOlderMessages.value = true
-                }
-            }
-        } else {
-            if (!request.isFilteringMessages()) {
-                /* If we are not filtering messages we are requesting the newest messages and can assume that
-                * we have reached the end fo newer messages */
+        when {
+            /* If we are not filtering the messages in any direction and not providing any message id then
+            * we are requesting the newest messages */
+            !request.isFilteringMessages() -> {
                 mutableState._endOfOlderMessages.value = false
                 mutableState._endOfNewerMessages.value = true
+            }
+            /* If we are filtering around a specific message we are loading both newer and older messages
+            * and can't be sure if there are no older or newer messages left */
+            request.isFilteringAroundIdMessages() -> {
+                mutableState._endOfNewerMessages.value = false
+                mutableState._endOfOlderMessages.value = false
+            }
+            noMoreMessages -> if (request.isFilteringNewerMessages()) {
+                mutableState._endOfNewerMessages.value = true
             } else {
-                /* If we are filtering around a certain message we can be sure which way the pagination has
-                * ended so it will be handled on the next call when pagination in either side */
-                if (request.isFilteringAroundIdMessages()) {
-                    mutableState._endOfOlderMessages.value = false
-                    mutableState._endOfNewerMessages.value = false
-                }
+                mutableState._endOfOlderMessages.value = true
             }
         }
     }
