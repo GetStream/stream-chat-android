@@ -408,5 +408,8 @@
         <attr name="streamUiMessageMaxWidthFactorMine" format="fraction" />
         <!-- Fraction used to compute max width for message sent by other user. Should be in [75% - 100%] range. -->
         <attr name="streamUiMessageMaxWidthFactorTheirs" format="fraction" />
+
+        <!-- Prevent scroll while a dialog is shown over the message list -->
+        <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean"/>
     </declare-styleable>
 </resources>

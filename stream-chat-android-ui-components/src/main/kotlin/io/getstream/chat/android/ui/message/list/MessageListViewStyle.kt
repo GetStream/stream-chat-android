@@ -58,6 +58,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property optionsOverlayDimColor Overlay dim color. Default value is [R.color.stream_ui_literal_transparent].
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
+ * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -101,6 +102,7 @@ public data class MessageListViewStyle(
     @LayoutRes public val loadingView: Int,
     public val messagesStart: Int,
     public val threadMessagesStart: Int,
+    public val disableScrollWhenShowingDialog: Boolean,
 ) {
 
     internal companion object {
@@ -373,6 +375,11 @@ public data class MessageListViewStyle(
                     MessageListView.MessagesStart.BOTTOM.value,
                 )
 
+                val disableScrollWhenShowingDialog = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiDisableScrollWhenShowingDialog,
+                    true
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -415,6 +422,7 @@ public data class MessageListViewStyle(
                     loadingView = loadingView,
                     messagesStart = messagesStart,
                     threadMessagesStart = threadMessagesStart,
+                    disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
