@@ -270,11 +270,6 @@ public final class io/getstream/chat/android/compose/state/messages/Other : io/g
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/Other;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/SelectedMessageFailedModerationState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
-}
-
 public final class io/getstream/chat/android/compose/state/messages/ScrollToFocusedMessage : io/getstream/chat/android/compose/state/messages/ScrollToPositionState {
 	public static final field $stable I
 	public fun <init> ()V
@@ -296,6 +291,11 @@ public final class io/getstream/chat/android/compose/state/messages/ScrollToNewe
 
 public abstract class io/getstream/chat/android/compose/state/messages/ScrollToPositionState {
 	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/compose/state/messages/SelectedMessageFailedModerationState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
 }
 
 public final class io/getstream/chat/android/compose/state/messages/SelectedMessageOptionsState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
