@@ -23,9 +23,11 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.MessageSyncContent
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
@@ -61,11 +63,19 @@ internal class ChannelExtensionsTest {
                     override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
                 }
             )
+            .add(
+                MessageSyncContent::class.java,
+                object : JsonAdapter<MessageSyncContent>() {
+                    // Dummy adapter because reflective serialization can't deal with sealed classes
+                    override fun fromJson(reader: JsonReader): MessageSyncContent? = null
+                    override fun toJson(writer: JsonWriter, value: MessageSyncContent?) = TODO("Not implemented")
+                }
+            )
             .add(KotlinJsonAdapterFactory())
             .build()
         val adapter = moshi.adapter<List<Channel>>()
         val channels = requireNotNull(adapter.fromJson(JsonReader.of(channelsFile.source().buffer())))
-        val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
+        val sort = QuerySortByField<Channel>().desc(fieldName = "lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,

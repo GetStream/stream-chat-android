@@ -270,6 +270,11 @@ public final class io/getstream/chat/android/compose/state/messages/Other : io/g
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/Other;
 }
 
+public final class io/getstream/chat/android/compose/state/messages/SelectedMessageFailedModerationState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/Set;)V
+}
+
 public final class io/getstream/chat/android/compose/state/messages/ScrollToFocusedMessage : io/getstream/chat/android/compose/state/messages/ScrollToPositionState {
 	public static final field $stable I
 	public fun <init> ()V
@@ -1156,6 +1161,27 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Thre
 
 public final class io/getstream/chat/android/compose/ui/components/messages/UploadingFooterKt {
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ComposableSingletons$ModeratedMessageDialogKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/moderatedmessage/ComposableSingletons$ModeratedMessageDialogKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ModeratedMessageDialogKt {
+	public static final fun ModeratedMessageDialog (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ModeratedMessageDialogOptionsKt {
+	public static final fun ModeratedMessageDialogOptions (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ModeratedMessageOptionItemKt {
+	public static final fun ModeratedMessageOptionItem (Lio/getstream/chat/android/common/model/ModeratedMessageOption;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ExtendedReactionsOptionsKt {
