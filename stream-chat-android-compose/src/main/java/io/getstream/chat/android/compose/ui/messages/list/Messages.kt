@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.compose.state.messages.Idle
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
@@ -150,7 +151,7 @@ public fun Messages(
             contentPadding = contentPadding
         ) {
 
-            if (isLoadingMoreNewMessages) {
+            if (isLoadingMoreNewMessages && !startOfMessages) {
                 item {
                     loadingMoreContent()
                 }
@@ -163,7 +164,7 @@ public fun Messages(
                 }
             ) { index, item ->
                 val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused &&
-                    messagesState.scrollToPositionState == ScrollToPositionState.SCROLL_TO_FOCUSED_MESSAGE
+                    messagesState.scrollToPositionState == ScrollToFocusedMessage
                 ) {
                     Modifier.onGloballyPositioned {
                         messagesState.calculateMessageOffset(parentSize, it.size)
@@ -202,7 +203,7 @@ public fun Messages(
                 }
             }
 
-            if (isLoadingMoreOldMessages) {
+            if (isLoadingMoreOldMessages && !endOfMessages) {
                 item {
                     loadingMoreContent()
                 }
