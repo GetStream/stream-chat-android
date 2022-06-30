@@ -17,8 +17,8 @@
 package io.getstream.chat.android.offline.internal.extensions
 
 import io.getstream.chat.android.client.extensions.internal.updateUsers
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.client.test.randomMember
+import io.getstream.chat.android.client.test.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 

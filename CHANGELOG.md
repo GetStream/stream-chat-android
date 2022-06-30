@@ -52,6 +52,7 @@
 ### 🐞 Fixed
 - Fixed reply messages inside notification. [#3756](https://github.com/GetStream/stream-chat-android/pull/3756)
 - Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
+- Fixed a bug which made the unread count disappear on certain devices when it went over double digits. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ⬆️ Improved
 - `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
@@ -60,6 +61,7 @@
 - Added `MessagePreviewFormatter` field to the `ChatUI` class, to allow for message preview text format customization across the app. [3788](https://github.com/GetStream/stream-chat-android/pull/3788).
 
 ### ⚠️ Changed
+- The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ❌ Removed
 
