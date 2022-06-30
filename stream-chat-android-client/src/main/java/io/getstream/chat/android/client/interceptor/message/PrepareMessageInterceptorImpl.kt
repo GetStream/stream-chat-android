@@ -63,8 +63,8 @@ internal class PrepareMessageInterceptorImpl(
     /**
      * Returns a unique message id prefixed with user id.
      */
-    private fun generateMessageId(userid: String): String {
-        return "$userid-${UUID.randomUUID()}"
+    private fun generateMessageId(userId: String): String {
+        return "$userId-${UUID.randomUUID()}"
     }
 
     private fun generateUploadId(): String {
