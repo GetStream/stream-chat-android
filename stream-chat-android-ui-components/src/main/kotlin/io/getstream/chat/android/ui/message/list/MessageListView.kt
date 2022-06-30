@@ -52,9 +52,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
