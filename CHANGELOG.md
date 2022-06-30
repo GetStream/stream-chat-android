@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `isFilteringMessages` check on request. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 
@@ -30,8 +31,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `loadNewestMessages` method to `ChatClient`. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
+- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ❌ Removed
 
@@ -68,12 +71,14 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Channels will now be marked as read only when the latest message is reached. Previously they were marked read whenever an unread message was read, regardless of its position in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
+- Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⬆️ Improved
 - Improved `Messages` recomposition when marking messages as read. It will now avoid going into a recomposition loop in certain situations such as when you have two or more failed messages visible in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
 
 ### ✅ Added
 - Added the preview of moderation bounced messages and the ability to take actions upon those messages like edit, delete and send anyway. [#3625](https://github.com/GetStream/stream-chat-android/pull/3625)
+- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added `ScrollToPositionState` which notifies the list when data is loading and when to scroll the list either to bottom or to the focused item. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 
