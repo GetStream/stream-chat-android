@@ -1251,10 +1251,10 @@ public class MessageListViewModel(
      *
      * @param messageId The ID of the message.
      */
-    private fun removeMessageFocus(messageId: String, isDueToScrollToEnd: Boolean = false) {
+    private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
             if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(focusState = if (isDueToScrollToEnd) null else MessageFocusRemoved)
+                it.copy(focusState = MessageFocusRemoved)
             } else {
                 it
             }
@@ -1271,6 +1271,7 @@ public class MessageListViewModel(
      * Updates the current message state with new messages.
      *
      * @param messages The list of new message items.
+     * @param isThereAFocusedItem Whether there is a focused message inside the messages list or not.
      * */
     private fun updateMessages(messages: List<MessageListItemState>, isThereAFocusedItem: Boolean) {
         if (isInThread) {
@@ -1278,7 +1279,7 @@ public class MessageListViewModel(
                 threadMessagesState.copy(
                     messageItems = messages,
                     scrollToPositionState = if (isThereAFocusedItem) {
-                        ScrollToFocusedMessage
+                        ScrollToFocusedMessage()
                     } else {
                         threadMessagesState.scrollToPositionState
                     }
@@ -1288,7 +1289,7 @@ public class MessageListViewModel(
                 messagesState.copy(
                     messageItems = messages,
                     scrollToPositionState = if (isThereAFocusedItem) {
-                        ScrollToFocusedMessage
+                        ScrollToFocusedMessage()
                     } else {
                         messagesState.scrollToPositionState
                     }

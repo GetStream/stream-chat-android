@@ -66,6 +66,8 @@ import kotlin.math.abs
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
+ * @param onMessagesEndReached Handler for pagination, when the user reaches the end of messages.
+ * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -99,8 +101,6 @@ public fun Messages(
     messagesState: MessagesState,
     lazyListState: LazyListState,
     onMessagesStartReached: () -> Unit,
-    onMessagesEndReached: (String) -> Unit,
-    onScrollToBottom: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
@@ -264,6 +264,7 @@ public fun Messages(
     val startOfMessages = messagesState.startOfMessages
     val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
+    val scrollToPositionState = messagesState.scrollToPositionState
 
     var parentSize = remember { IntSize(0, 0) }
     val density = LocalDensity.current
@@ -315,7 +316,7 @@ public fun Messages(
             ) { index, item ->
                 val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
                     Modifier.onGloballyPositioned {
-                        messagesState.calculateMessageOffset(parentSize, it.size)
+                        scrollToPositionState.calculateMessageOffset(parentSize, it.size)
                     }
                 } else {
                     Modifier

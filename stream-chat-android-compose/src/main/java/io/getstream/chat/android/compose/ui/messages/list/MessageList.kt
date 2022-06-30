@@ -86,7 +86,6 @@ public fun MessageList(
     onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
-    onScrollToBottomClicked: () -> Unit = { viewModel.scrollToBottom() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
@@ -238,9 +237,7 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
-    onMessageEndReached: (String) -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
-    onScrollToBottom: () -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
