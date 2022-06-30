@@ -17,8 +17,8 @@
 package io.getstream.chat.android.test
 
 /**
- * A collection that maps keys to values, similar to {@link Map}, but in which each key may be
- * associated with <i>multiple</i> values.
+ * A collection that maps keys to values, similar to [Map], but in which each key may be
+ * associated with multiple values.
  *
  * For testing purposes only.
  */
