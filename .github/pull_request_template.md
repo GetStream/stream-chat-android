@@ -18,6 +18,19 @@ _Add relevant screenshots_
 
 _Explain how this change can be tested (or why it can't be tested)_
 
+_Provide a patch below if it is necessary for testing_
+
+<details>
+
+<summary>Provide the patch summary here</summary>
+
+```
+Provide the patch code here
+```
+
+</details>
+
+
 ### ☑️Contributor Checklist
 
 #### General

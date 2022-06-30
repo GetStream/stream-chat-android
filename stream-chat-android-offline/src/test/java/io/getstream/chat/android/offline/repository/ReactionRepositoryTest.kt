@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.toE
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.`should be equal to`
@@ -52,7 +51,7 @@ internal class ReactionRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        runBlocking {
+        runTest {
             currentUser = randomUser()
             reactionDao = mock()
             reactionRepo = DatabaseReactionRepository(reactionDao) { currentUser }

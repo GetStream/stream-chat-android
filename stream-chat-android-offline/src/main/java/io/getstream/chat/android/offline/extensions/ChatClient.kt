@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -233,6 +234,24 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
     }
 }
 
+public fun ChatClient.loadNewerMessages(
+    channelCid: String,
+    baseMessageId: String,
+    messageLimit: Int,
+): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult(channelCid)
+
+        if (cidValidationResult.isSuccess) {
+            val (channelType, channelId) = channelCid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+        } else {
+            cidValidationResult.error().toResultError()
+        }
+    }
+}
+
 /**
  * Cancels the message of "ephemeral" type.
  * Removes the message from local storage and state.
@@ -276,7 +295,10 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  *
  * @return Executable async [Call] responsible for loading a message.
  */
-@CheckResult
+@Deprecated(
+    "Use the version without offsets, as it uses less requests to backend.",
+    level = DeprecationLevel.WARNING,
+)
 public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
@@ -313,5 +335,52 @@ public fun ChatClient.loadMessageById(
         } else {
             cidValidationResult.error().toResultError()
         }
+    }
+}
+
+/**
+ * Loads message for a given message id and channel id.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageId The id of the message.
+ *
+ * @return Executable async [Call] responsible for loading a message.
+ */
+@CheckResult
+public fun ChatClient.loadMessageById(
+    cid: String,
+    messageId: String,
+): Call<Message> {
+    return CoroutineCall(state.scope) {
+        loadMessageByIdInternal(cid, messageId)
+    }
+}
+
+private suspend fun ChatClient.loadMessageByIdInternal(
+    cid: String,
+    messageId: String,
+): Result<Message> {
+    val cidValidationResult = validateCidWithResult(cid)
+
+    if (!cidValidationResult.isSuccess) {
+        return cidValidationResult.error().toResultError()
+    }
+
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    val result = logic.channel(channelType = channelType, channelId = channelId)
+        .loadMessagesAroundId(messageId)
+
+    return if (result.isSuccess) {
+        val message = result.data().messages.firstOrNull { message ->
+            message.id == messageId
+        }
+
+        if (message != null) {
+            result.map { message }
+        } else {
+            Result.error(ChatError("The message could not be found."))
+        }
+    } else {
+        Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
     }
 }

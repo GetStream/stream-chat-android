@@ -824,10 +824,20 @@
     </style>
 
     <style name="StreamUi.AttachmentGallery.Options">
+        <item name="streamUiAttachmentOptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiAttachmentOptionTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiAttachmentOptionTextFont">@font/stream_roboto_medium</item>
+        <item name="streamUiAttachmentOptionTextStyle">normal</item>
+        <item name="streamUiAttachmentOptionsBackgroundColor">@color/stream_ui_white_snow</item>
         <item name="streamUiAttachmentReplyEnabled">true</item>
+        <item name="streamUiReplyIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
         <item name="streamUiShowInChatEnabled">true</item>
+        <item name="streamUiShowInChatIcon">@drawable/stream_ui_ic_show_in_chat</item>
         <item name="streamUiSaveImageEnabled">true</item>
+        <item name="streamUiSaveImageIcon">@drawable/stream_ui_ic_download</item>
         <item name="streamUiDeleteEnabled">true</item>
+        <item name="streamUiDeleteIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiDeleteTextTint">@color/stream_ui_accent_red</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">

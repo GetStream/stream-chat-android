@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.ui.sample.feature.chat
 
 import android.os.Bundle
@@ -34,12 +32,12 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
@@ -80,7 +78,6 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
-        binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
         initChatViewModel()
         initMessagesViewModel()
         initMessageInputViewModel()
@@ -159,6 +156,9 @@ class ChatFragment : Fragment() {
     private fun initMessagesViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
+            messageListViewModel.setDeletedMessageVisibility(
+                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {

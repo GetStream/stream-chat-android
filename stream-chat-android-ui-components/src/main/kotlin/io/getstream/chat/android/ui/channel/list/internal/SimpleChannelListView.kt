@@ -163,8 +163,8 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
-    fun setChannels(channels: List<ChannelListItem>) {
-        requireAdapter().submitList(channels)
+    fun setChannels(channels: List<ChannelListItem>, commitCallback: () -> Unit) {
+        requireAdapter().submitList(channels, commitCallback)
     }
 
     fun showLoadingMore(show: Boolean) {

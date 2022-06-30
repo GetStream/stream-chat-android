@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.ui
 
 import android.content.Context
@@ -100,6 +98,13 @@ public object ChatUI {
      */
     public var channelNameFormatter: ChannelNameFormatter by lazyVar {
         ChannelNameFormatter.defaultFormatter(appContext)
+    }
+
+    /**
+     *  Allows to generate a preview text for the given message.
+     */
+    public var messagePreviewFormatter: MessagePreviewFormatter by lazyVar {
+        MessagePreviewFormatter.defaultFormatter(appContext)
     }
 
     /**

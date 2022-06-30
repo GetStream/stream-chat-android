@@ -62,7 +62,7 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
         expression = "MessageText(message: Message, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit)",
         imports = ["io.getstream.chat.android.compose.ui.components.messages.MessageText"]
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 @Composable
 public fun MessageText(

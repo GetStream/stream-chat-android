@@ -14,6 +14,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
+	public final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 	public final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
@@ -27,6 +28,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setDateFormatter (Lcom/getstream/sdk/chat/utils/DateFormatter;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
+	public final fun setMessagePreviewFormatter (Lio/getstream/chat/android/ui/MessagePreviewFormatter;)V
 	public final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
@@ -37,6 +39,15 @@ public final class io/getstream/chat/android/ui/ChatUI {
 
 public final class io/getstream/chat/android/ui/CurrentUserProvider$Companion {
 	public final fun defaultCurrentUserProvider ()Lio/getstream/chat/android/ui/CurrentUserProvider;
+}
+
+public abstract interface class io/getstream/chat/android/ui/MessagePreviewFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/MessagePreviewFormatter$Companion;
+	public abstract fun formatMessagePreview (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;)Ljava/lang/CharSequence;
+}
+
+public final class io/getstream/chat/android/ui/MessagePreviewFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
@@ -76,6 +87,7 @@ public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawa
 
 public final class io/getstream/chat/android/ui/TransformStyle {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/TransformStyle;
+	public final fun getAttachmentGalleryOptionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -98,6 +110,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun setAttachmentGalleryOptionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -307,6 +320,8 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getLayoutManager ()Landroidx/recyclerview/widget/LinearLayoutManager;
+	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun hasChannels ()Z
 	public final fun hideLoadingMore ()V
 	public final fun hideLoadingView ()V
@@ -316,6 +331,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelListItemPredicate (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate;)V
+	public final fun setChannelListUpdateListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
@@ -350,6 +366,10 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Cha
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate {
 	public abstract fun predicate (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener {
+	public abstract fun onChannelListUpdate (Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener {
@@ -591,6 +611,7 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public final fun leaveChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun markAllRead ()V
 	public final fun onAction (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action;)V
+	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 }
 
 public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
@@ -964,6 +985,37 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle {
+	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component10 ()Landroid/graphics/drawable/Drawable;
+	public final fun component11 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Z
+	public final fun component4 ()Landroid/graphics/drawable/Drawable;
+	public final fun component5 ()Z
+	public final fun component6 ()Landroid/graphics/drawable/Drawable;
+	public final fun component7 ()Z
+	public final fun component8 ()Landroid/graphics/drawable/Drawable;
+	public final fun component9 ()Z
+	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;I)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;IILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public final fun getDeleteOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getDeleteOptionEnabled ()Z
+	public final fun getDeleteOptionTextColor ()I
+	public final fun getOptionTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getReplyOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getReplyOptionEnabled ()Z
+	public final fun getSaveImageOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSaveImageOptionEnabled ()Z
+	public final fun getShowInChatOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getShowInChatOptionEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {
@@ -1484,24 +1536,6 @@ public final class io/getstream/chat/android/ui/message/list/DefaultQuotedAttach
 	public final fun getQuotedImageRadius ()I
 }
 
-public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
-}
-
-public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$NotVisibleToAnyone : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$NotVisibleToAnyone;
-	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
-}
-
-public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToAuthorOnly : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToAuthorOnly;
-	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
-}
-
-public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToEveryone : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToEveryone;
-	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
-}
-
 public final class io/getstream/chat/android/ui/message/list/FileAttachmentViewStyle {
 	public fun <init> (IIIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()I
@@ -1672,13 +1706,13 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setAttachmentReplyOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler;)V
 	public final fun setAttachmentShowInChatOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentShowInChatOptionHandler;)V
 	public final fun setBlockUserEnabled (Z)V
+	public final fun setBottomEndRegionReachedHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler;)V
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
 	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
-	public final fun setDeletedMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
 	public final fun setEditMessageEnabled (Z)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
@@ -1731,6 +1765,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
 	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
+	public final fun shouldRequestMessagesAtBottom (Z)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 	public final fun showLoadingView ()V
@@ -1746,6 +1781,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentDownloadHandler {
 	public abstract fun onAttachmentDownload (Lkotlin/jvm/functions/Function0;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$BottomEndRegionReachedHandler {
+	public abstract fun onBottomEndRegionReached (Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler {

@@ -17,9 +17,42 @@
 package com.getstream.sdk.chat.utils.extensions
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.view.LayoutInflater
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public inline val Context.inflater: LayoutInflater
     get() = LayoutInflater.from(this)
+
+@InternalStreamChatApi
+public fun Context.openSystemSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    startActivity(intent)
+}
+
+/**
+ * @param permission The permission we want to check if it was requested before.
+ *
+ * @return If the permission was requested before or not.
+ */
+public fun Context.wasPermissionRequested(permission: String): Boolean {
+    return getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE).getBoolean(permission, false)
+}
+
+/**
+ * Saves to shared prefs that a permission has been requested.
+ *
+ * @param permission The permission in question.
+ */
+public fun Context.onPermissionRequested(permission: String) {
+    return getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE).edit().putBoolean(permission, true).apply()
+}
+
+private const val PERMISSIONS_PREFS = "stream_permissions"

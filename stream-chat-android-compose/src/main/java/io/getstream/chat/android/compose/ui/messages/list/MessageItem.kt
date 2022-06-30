@@ -49,6 +49,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -176,12 +178,14 @@ public fun MessageItem(
     ).value else backgroundColor
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+    val description = stringResource(id = R.string.stream_compose_cd_message_item)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = color),
+            .background(color = color)
+            .semantics { contentDescription = description },
         contentAlignment = messageAlignment.itemAlignment
     ) {
         Row(

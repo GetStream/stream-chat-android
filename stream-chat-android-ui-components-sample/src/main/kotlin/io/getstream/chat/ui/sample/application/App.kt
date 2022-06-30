@@ -17,13 +17,9 @@
 package io.getstream.chat.ui.sample.application
 
 import android.app.Application
-import android.os.Build
-import coil.Coil
-import coil.ImageLoader
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
@@ -35,22 +31,11 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initializeToggleService()
         chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
-        Coil.setImageLoader(
-            ImageLoader.Builder(this).components {
-                // duplicated as we can not extend component
-                // registry of existing image loader builder
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
-                } else {
-                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
-                }
-            }.build()
-        )
         ApplicationConfigurator.configureApp(this)
-        initializeToggleService()
     }
 
     private fun getApiKey(): String {
@@ -64,7 +49,7 @@ class App : Application() {
 
     @OptIn(InternalStreamChatApi::class)
     private fun initializeToggleService() {
-        ToggleService.init(applicationContext, emptyMap())
+        ToggleService.init(applicationContext, mapOf(ToggleService.TOGGLE_KEY_SOCKET_REFACTOR to BuildConfig.DEBUG))
     }
 
     companion object {

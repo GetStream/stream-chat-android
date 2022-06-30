@@ -27,7 +27,6 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -53,6 +52,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
@@ -66,7 +67,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
 import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
@@ -81,6 +81,7 @@ import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialog
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.BottomEndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
@@ -171,6 +172,9 @@ public class MessageListView : ConstraintLayout {
 
     private var endRegionReachedHandler = EndRegionReachedHandler {
         throw IllegalStateException("endRegionReachedHandler must be set.")
+    }
+    private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
+        throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
     }
     private var lastMessageReadHandler = LastMessageReadHandler {
         throw IllegalStateException("lastMessageReadHandler must be set.")
@@ -305,12 +309,7 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
-    @Suppress("DEPRECATION_ERROR")
-    private var deletedMessageListItemPredicate: MessageListItemPredicate =
-        DeletedMessageListItemPredicate.VisibleToEveryone
-
-    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
-        MutableLiveData(null)
+    private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
 
     private lateinit var loadMoreListener: EndlessMessageListScrollListener
 
@@ -635,9 +634,21 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
+                val loadMoreAtTop = {
                     endRegionReachedHandler.onEndRegionReached()
                 }
+                val loadMoreAtBottom = {
+                    val lastId = adapter.currentList
+                        .asSequence()
+                        .filterIsInstance<MessageListItem.MessageItem>()
+                        .lastOrNull()
+                        ?.message
+                        ?.id
+
+                    bottomEndRegionReachedHandler.onBottomEndRegionReached(lastId)
+                }
+
+                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold, loadMoreAtTop, loadMoreAtBottom)
             }
 
             val style = requireStyle()
@@ -766,8 +777,8 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            messageBackgroundFactory,
-            deletedMessageListItemPredicate,
+            messageBackgroundFactory = messageBackgroundFactory,
+            deletedMessageVisibility = deletedMessageVisibility,
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
@@ -818,6 +829,14 @@ public class MessageListView : ConstraintLayout {
      */
     public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
+    }
+
+    /**
+     * Enables fetch for messages at the bottom.
+     */
+    public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
+        loadMoreListener.fetchAtBottom(shouldRequest)
+        scrollHelper.unreadCountEnabled = !shouldRequest
     }
 
     /**
@@ -1047,29 +1066,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Used to specify visibility of the deleted [MessageListItem.MessageItem] elements.
-     *
-     * @param deletedMessageListItemPredicate An instance of [MessageListItemPredicate]. You can pass one of the following objects:
-     * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
-     * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
-     */
-    @Deprecated(
-        message = "Filtering deleted messages should be performed in the ViewModel.",
-        replaceWith = ReplaceWith(
-            "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
-            "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
-        ),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
-        check(isAdapterInitialized().not()) {
-            "Adapter was already initialized, please set MessageListItemPredicate first"
-        }
-        this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
-        this.deletedMessageListItemPredicateLiveData.value = this.deletedMessageListItemPredicate
-    }
-
-    /**
      * Allows clients to set an instance of [AttachmentFactoryManager] that holds
      * a list of custom attachment factories. Use this method to create a custom
      * content view for the message attachments.
@@ -1104,13 +1100,7 @@ public class MessageListView : ConstraintLayout {
         CoroutineScope(DispatcherProvider.IO).launch {
             val filteredList = listItem.items
                 .filter(messageListItemPredicate::predicate)
-                .filter { item ->
-                    if (item is MessageListItem.MessageItem && item.message.isDeleted()) {
-                        deletedMessageListItemPredicate.predicate(item)
-                    } else {
-                        true
-                    }
-                }.let(messageListItemTransformer::transform)
+                .let(messageListItemTransformer::transform)
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
@@ -1309,6 +1299,20 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setEndRegionReachedHandler(endRegionReachedHandler: EndRegionReachedHandler) {
         this.endRegionReachedHandler = endRegionReachedHandler
+    }
+
+    /**
+     * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
+     * view becomes non linear and it will be called until it becomes linear again.
+     *
+     * @param bottomEndRegionReachedHandler The handler to use.
+     */
+    public fun setBottomEndRegionReachedHandler(bottomEndRegionReachedHandler: BottomEndRegionReachedHandler) {
+        this.bottomEndRegionReachedHandler = bottomEndRegionReachedHandler
+    }
+
+    public fun interface BottomEndRegionReachedHandler {
+        public fun onBottomEndRegionReached(messageId: String?)
     }
 
     /**
@@ -1516,6 +1520,26 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
         this.errorEventHandler = handler
+    }
+
+    /**
+     * Sets the value used to filter deleted messages.
+     *
+     * Use this only if you are using your own ViewModel, if you are using our [MessageListViewModel]
+     * setting this is a part of the binding process and re-setting it manually will introduce
+     * bugs.
+     * @see DeletedMessageVisibility
+     *
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     */
+    @InternalStreamChatApi
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        check(!isAdapterInitialized()) {
+            "Adapter was already initialized, please set DeletedMessageVisibility first. " +
+                "If you are using MessageListViewModel, please set the visibility before binding " +
+                "it to MessageListView."
+        }
+        this.deletedMessageVisibility = deletedMessageVisibility
     }
 
     /**

@@ -77,16 +77,21 @@ object ChatHelper {
         onSuccess: () -> Unit = {},
         onError: (ChatError) -> Unit = {},
     ) {
-
-        ChatClient.instance().connectUser(userCredentials.user, userCredentials.token)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
-                    onSuccess()
-                } else {
-                    onError(result.error())
-                }
+        ChatClient.instance().run {
+            if (getCurrentUser() == null) {
+                connectUser(userCredentials.user, userCredentials.token)
+                    .enqueue { result ->
+                        if (result.isSuccess) {
+                            ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
+                            onSuccess()
+                        } else {
+                            onError(result.error())
+                        }
+                    }
+            } else {
+                onSuccess()
             }
+        }
     }
 
     /**
