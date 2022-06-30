@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -49,6 +50,7 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -553,10 +555,18 @@ public class MessageListViewModel(
     public fun selectMessage(message: Message?) {
         if (message != null) {
             changeSelectMessageState(
-                SelectedMessageOptionsState(
-                    message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
+                if (message.isModerationFailed(chatClient)) {
+                    SelectedMessageFailedModerationState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                } else {
+                    SelectedMessageOptionsState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                }
+
             )
         }
     }

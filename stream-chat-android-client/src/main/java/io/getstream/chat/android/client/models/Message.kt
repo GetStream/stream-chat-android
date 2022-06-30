@@ -89,6 +89,11 @@ public data class Message(
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     /**
+     * Contains details related to [syncStatus].
+     */
+    var syncDescription: MessageSyncDescription? = null,
+
+    /**
      * Contains type of the message. Can be one of the following: regular, ephemeral,
      * error, reply, system, deleted.
      */
