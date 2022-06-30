@@ -44,3 +44,9 @@ public class SelectedMessageReactionsState(message: Message, ownCapabilities: Se
  */
 public class SelectedMessageReactionsPickerState(message: Message, ownCapabilities: Set<String>) :
     SelectedMessageState(message, ownCapabilities)
+
+/**
+ * Represents a state when the moderated message was selected.
+ */
+public class SelectedMessageFailedModerationState(message: Message, ownCapabilities: Set<String>) :
+    SelectedMessageState(message, ownCapabilities)

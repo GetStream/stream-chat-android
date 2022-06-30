@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -52,6 +52,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
+@ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
 
     @Test
@@ -335,9 +336,6 @@ internal class ChannelListViewModelTest {
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         private val queryFilter = Filters.and(
             Filters.eq("type", "messaging"),

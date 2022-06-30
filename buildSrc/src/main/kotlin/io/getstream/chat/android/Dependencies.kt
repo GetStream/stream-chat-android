@@ -98,6 +98,7 @@ object Dependencies {
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
     const val androidxTest = "androidx.test:core:${Versions.ANDROIDX_TEST}"
     const val androidxTestKtx = "androidx.test:core-ktx:${Versions.ANDROIDX_TEST}"
+    const val androidxLifecycleTesting = "androidx.lifecycle:lifecycle-runtime-testing:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxTestJunit = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxTestJunitKtx = "androidx.test.ext:junit-ktx:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxViewPager2 = "androidx.viewpager2:viewpager2:${Versions.ANDROIDX_VIEW_PAGER_2}"
@@ -172,6 +173,7 @@ object Dependencies {
     const val moshi = "com.squareup.moshi:moshi:${Versions.MOSHI}"
     const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
     const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
+    const val moshiAdapters = "com.squareup.moshi:moshi-adapters:${Versions.MOSHI}"
     const val navigationFragmentKTX = "androidx.navigation:navigation-fragment-ktx:${Versions.NAVIGATION}"
     const val navigationSafeArgsGradlePlugin =
         "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}"
