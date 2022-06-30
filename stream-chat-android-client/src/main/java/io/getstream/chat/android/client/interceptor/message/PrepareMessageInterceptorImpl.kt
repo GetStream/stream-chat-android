@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
@@ -27,15 +28,17 @@ internal class PrepareMessageInterceptorImpl(
      *
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
-    override fun prepareMessage(message: Message, channelId: String, channelType: String, userId: String): Message {
+    override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
         Log.d("PrepareMessageInter", "preparing messages...")
         return message.copy().apply {
             if (id.isEmpty()) {
-                id = generateMessageId(userId)
+                id = generateMessageId(user.id)
             }
             if (cid.isEmpty()) {
                 enrichWithCid("$channelType:$channelId")
             }
+
+            this.user = user
 
             val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
             attachmentsToUpload.forEach { attachment ->

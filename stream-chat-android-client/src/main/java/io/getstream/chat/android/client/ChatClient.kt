@@ -1316,7 +1316,7 @@ internal constructor(
         } as? PrepareMessageInterceptor
 
         val preparedMessage = getCurrentUser()?.let { user ->
-            prepareMessageInterceptor?.prepareMessage(message, channelId, channelType, user.id)
+            prepareMessageInterceptor?.prepareMessage(message, channelId, channelType, user)
         } ?: message
 
         return CoroutineCall(scope) {
