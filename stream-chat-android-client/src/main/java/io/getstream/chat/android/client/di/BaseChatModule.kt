@@ -48,7 +48,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -107,8 +107,8 @@ internal open class BaseChatModule(
     val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
-    val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
-        QueryChannelsPostponeHelper(
+    val callPostponeHelper: CallPostponeHelper by lazy {
+        CallPostponeHelper(
             socketStateService = socketStateService,
             coroutineScope = networkScope,
             chatSocketExperimental = chatSocketExperimental

@@ -101,6 +101,13 @@ public object ChatUI {
     }
 
     /**
+     *  Allows to generate a preview text for the given message.
+     */
+    public var messagePreviewFormatter: MessagePreviewFormatter by lazyVar {
+        MessagePreviewFormatter.defaultFormatter(appContext)
+    }
+
+    /**
      * Allows formatting date-time objects as strings.
      */
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
