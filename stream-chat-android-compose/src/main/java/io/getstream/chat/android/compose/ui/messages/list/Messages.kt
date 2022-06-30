@@ -276,7 +276,8 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
     }
 
-    if (abs(firstVisibleItemIndex) >= 3 || !areNewestMessagesLoaded) {
+    if ((messagesState.parentMessageId != null && abs(firstVisibleItemIndex) >= 3) ||
+        (messagesState.parentMessageId == null && (abs(firstVisibleItemIndex) >= 3 || !areNewestMessagesLoaded))) {
         MessagesScrollingOption(
             unreadCount = messagesState.unreadCount,
             modifier = Modifier.align(Alignment.BottomEnd),
