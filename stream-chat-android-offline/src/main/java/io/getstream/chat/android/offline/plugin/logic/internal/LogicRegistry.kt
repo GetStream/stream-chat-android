@@ -90,6 +90,12 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    /**
+     * Provides [ChannelStateLogic] for the channelType and channelId
+     *
+     * @param channelType String
+     * @param channelId String
+     */
     override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
         return channel(channelType, channelId).stateLogic()
     }
