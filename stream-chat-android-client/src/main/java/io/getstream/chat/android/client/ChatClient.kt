@@ -1315,14 +1315,14 @@ internal constructor(
             interceptor is PrepareMessageInterceptor
         } as? PrepareMessageInterceptor
 
-        val newMessage = getCurrentUser()?.let { user ->
+        val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageInterceptor?.prepareMessage(message, channelId, channelType, user.id)
         } ?: message
 
         return CoroutineCall(scope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            sendMessageInterceptors.fold(Result.success(newMessage)) { message, interceptor ->
+            sendMessageInterceptors.fold(Result.success(preparedMessage)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message

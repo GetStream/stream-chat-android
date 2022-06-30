@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.interceptor.internal
 
 import android.content.Context
+import android.util.Log
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.populateMentions
@@ -62,6 +63,16 @@ internal class SendMessageInterceptorImpl(
         isRetrying: Boolean,
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
+
+        // Update flow in channel controller
+        channel.upsertMessage(message)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update flow for currently running queries
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
+        // we insert early to ensure we don't lose messages
+        messageRepository.insertMessage(message)
+        channelRepository.updateLastMessageForChannel(message.cid, message)
+
         message.populateMentions(channel.toChannel())
 
         if (message.replyMessageId != null) {
@@ -70,6 +81,7 @@ internal class SendMessageInterceptorImpl(
 
         return if (!isRetrying) {
             if (message.hasPendingAttachments()) {
+                Log.d("SendMessageInter", "sending attachments")
                 uploadAttachments(message, channelType, channelId)
             } else {
                 Result.success(message)
@@ -120,6 +132,8 @@ internal class SendMessageInterceptorImpl(
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
         var messageToBeSent = newMessage
+
+        Log.d("SendMessageInter", "sending attachments")
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
                 attachmentRepository.observeAttachmentsForMessage(newMessage.id)
@@ -144,8 +158,10 @@ internal class SendMessageInterceptorImpl(
         enqueueAttachmentUpload(newMessage, channelType, channelId)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
+            Log.d("SendMessageInter", "Messages sent")
             Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
+            Log.d("SendMessageInter", "Could not upload attachments")
             Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
         }.also {
             uploadIds.remove(newMessage.id)
@@ -156,6 +172,7 @@ internal class SendMessageInterceptorImpl(
      * Enqueues attachment upload work.
      */
     private fun enqueueAttachmentUpload(message: Message, channelType: String, channelId: String) {
+        Log.d("SendMessageInter", "Waiting for attachments to upload")
         val workId = UploadAttachmentsAndroidWorker.start(context, channelType, channelId, message.id, networkType)
         uploadIds[message.id] = workId
     }
@@ -166,12 +183,5 @@ internal class SendMessageInterceptorImpl(
     fun cancelJobs() {
         jobsMap.values.forEach { it.cancel() }
         uploadIds.values.forEach { UploadAttachmentsAndroidWorker.stop(context, it) }
-    }
-
-    /**
-     * Returns a unique message id prefixed with user id.
-     */
-    private fun generateMessageId(): String {
-        return globalState.user.value!!.id + "-" + UUID.randomUUID().toString()
     }
 }

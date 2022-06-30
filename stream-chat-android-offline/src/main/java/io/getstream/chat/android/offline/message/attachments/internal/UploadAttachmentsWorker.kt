@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.message.attachments.internal
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
@@ -46,6 +47,7 @@ internal class UploadAttachmentsWorker(
     ): Result<Unit> {
         val message = messageRepository.selectMessage(messageId)
 
+        Log.d("UploadAttachmentsWorker", "uploadAttachmentsForMessage running...")
         return try {
             chatClient.apply {
                 if (getCurrentUser() == null) {
@@ -58,6 +60,7 @@ internal class UploadAttachmentsWorker(
             }
 
             if (message == null) {
+                Log.d("UploadAttachmentsWorker", "Message null")
                 Result.success(Unit)
             } else {
                 val hasPendingAttachment = message.attachments.any { attachment ->
@@ -66,6 +69,7 @@ internal class UploadAttachmentsWorker(
                 }
 
                 if (!hasPendingAttachment) {
+                    Log.d("UploadAttachmentsWorker", "has no pending attachments")
                     return Result.success(Unit)
                 }
 

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.message.attachments.internal
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -38,12 +39,14 @@ internal class UploadAttachmentsAndroidWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        Log.d("UploadAttachmentsWorker", "Starting worker...")
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
         val chatClient = ChatClient.instance()
         val repositoryProvider = RepositoryProvider.get()
+
 
         return UploadAttachmentsWorker(
             channelType = channelType,
@@ -82,6 +85,7 @@ internal class UploadAttachmentsAndroidWorker(
                 )
                 .build()
 
+            Log.d("UploadAttachmentsWorker", "Starting worker")
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
