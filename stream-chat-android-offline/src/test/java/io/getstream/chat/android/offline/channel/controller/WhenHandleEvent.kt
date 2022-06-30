@@ -19,23 +19,23 @@ package io.getstream.chat.android.offline.channel.controller
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.SynchronizedCoroutineTest
+import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
+import io.getstream.chat.android.client.test.randomChannelDeletedEvent
+import io.getstream.chat.android.client.test.randomMember
+import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomMessageReadEvent
+import io.getstream.chat.android.client.test.randomMessageUpdateEvent
+import io.getstream.chat.android.client.test.randomNewMessageEvent
+import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
+import io.getstream.chat.android.client.test.randomReactionNewEvent
+import io.getstream.chat.android.client.test.randomTypingStartEvent
+import io.getstream.chat.android.client.test.randomTypingStopEvent
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
-import io.getstream.chat.android.offline.randomChannelDeletedEvent
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomMemberAddedEvent
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomMessageReadEvent
-import io.getstream.chat.android.offline.randomMessageUpdateEvent
-import io.getstream.chat.android.offline.randomNewMessageEvent
-import io.getstream.chat.android.offline.randomNotificationMarkReadEvent
-import io.getstream.chat.android.offline.randomReactionNewEvent
-import io.getstream.chat.android.offline.randomTypingStartEvent
-import io.getstream.chat.android.offline.randomTypingStopEvent
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -133,7 +133,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         verify(channelStateLogic).upsertMessages(listOf(message))
     }
 
-// Member added event
+    // Member added event
     @Test
     fun `when member is added, it should be propagated`(): Unit = runTest {
         val user = randomUser()

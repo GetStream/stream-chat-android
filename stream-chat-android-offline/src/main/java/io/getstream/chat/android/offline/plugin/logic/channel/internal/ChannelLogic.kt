@@ -277,6 +277,11 @@ internal class ChannelLogic(
         channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
     }
 
+    internal fun deleteMessage(message: Message) {
+        mutableState._messages.value -= message.id
+        updateLastMessageAtByNewMessages(mutableState._messages.value.values)
+    }
+
     /**
      * Updates the messages locally and saves it at database.
      *

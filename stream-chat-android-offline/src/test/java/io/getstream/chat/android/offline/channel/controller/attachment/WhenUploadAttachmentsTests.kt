@@ -21,14 +21,14 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.test.randomAttachment
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.randomAttachment
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

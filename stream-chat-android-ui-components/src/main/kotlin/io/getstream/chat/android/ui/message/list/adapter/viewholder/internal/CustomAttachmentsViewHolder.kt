@@ -97,12 +97,13 @@ internal class CustomAttachmentsViewHolder(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        this.innerAttachmentViewHolder = attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
-            .also { attachmentViewHolder ->
-                attachmentViewHolder.onBindViewHolder(data.message)
-                binding.attachmentsContainer.removeAllViews()
-                binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
-            }
+        this.innerAttachmentViewHolder =
+            attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
+                .also { attachmentViewHolder ->
+                    attachmentViewHolder.onBindViewHolder(data.message)
+                    binding.attachmentsContainer.removeAllViews()
+                    binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
+                }
     }
 
     /**

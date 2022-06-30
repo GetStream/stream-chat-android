@@ -56,8 +56,11 @@
     <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
     <ID>MaxLineLength:ChannelDao.kt$ChannelDao$@Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")</ID>
+    <ID>MaxLineLength:ChannelData.kt$ChannelData$*</ID>
     <ID>MaxLineLength:ChannelEntity.kt$ChannelEntity$*</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$*</ID>
+    <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")</ID>
+    <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$logger.logW("Temporary failure calling channel.watch for channel ${mutableState.cid}. Marking the channel as needing recovery. Error was $error")</ID>
     <ID>MaxLineLength:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$channelState.lastMarkReadEvent == null || lastMessageDate?.after(channelState.lastMarkReadEvent) == true</ID>
     <ID>MaxLineLength:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$logger.logI("Last message date [$lastMessageDate] is not after last read event [${channelState.lastMarkReadEvent}]; no need to update.")</ID>
     <ID>MaxLineLength:ChannelsStateData.kt$ChannelsStateData.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
@@ -92,7 +95,7 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
-    <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
+    <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
     <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$*</ID>
@@ -104,13 +107,12 @@
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$* Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
     <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
     <ID>MaxLineLength:ThreadMutableState.kt$ThreadMutableState$channelMutableState.messageList.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$*</ID>
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$else</ID>
+    <ID>MaxLineLength:UploadAttachmentsNetworkType.kt$UploadAttachmentsNetworkType$* An enumeration of various network types used as a constraint in [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
@@ -118,12 +120,18 @@
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateSyncManager(batchEvent: BatchEvent)</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
+    <ID>NestedBlockDepth:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( messageId: String, ): Result&lt;Unit></ID>
+    <ID>PrintStackTrace:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e</ID>
     <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
+    <ID>ReturnCount:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$suspend fun uploadAttachmentsForMessage( messageId: String, ): Result&lt;Unit></ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
+    <ID>UnusedImports:ChannelLogic.kt$import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState</ID>
+    <ID>UnusedPrivateMember:EditMessageListenerImpl.kt$EditMessageListenerImpl$val isMessageModerationFailed = chatError is ChatNetworkError &amp;&amp; chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>
