@@ -24,20 +24,28 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
 @Suppress("VariableNaming", "TooManyFunctions")
 internal interface ChannelMutableState : ChannelState {
 
-    val _messages: MutableStateFlow<Map<String, Message>>
-    val _typing: MutableStateFlow<Map<String, ChatEvent>>
-    val _reads: MutableStateFlow<Map<String, ChannelUserRead>>
-    val _watchers: MutableStateFlow<Map<String, User>>
-    val _members: MutableStateFlow<Map<String, Member>>
-    val _oldMessages: MutableStateFlow<Map<String, Message>>
-    val lastMessageAt: MutableStateFlow<Date?>
+    val sortedMessages: StateFlow<List<Message>>
+    val messageList: StateFlow<List<Message>>
+
+    var rawMessages: Map<String, Message>
+    var rawReads: Map<String, ChannelUserRead>
+    var rawMembers: Map<String, Member>
+    var rawOldMessages: Map<String, Message>
+    var rawWatchers: Map<String, User>
+    var rawTyping: Map<String, ChatEvent>
+
+    var lastMessageAt: Date?
+    var hideMessagesBefore: Date?
+    var lastStartTypingEvent: Date?
+
+    /** If we need to recover state when connection established again. */
+    override var recoveryNeeded: Boolean
 
     fun setLoadingOlderMessages(isLoading: Boolean)
     fun setLoadingNewerMessages(isLoading: Boolean)
@@ -49,21 +57,9 @@ internal interface ChannelMutableState : ChannelState {
     fun setHidden(isHidden: Boolean)
     fun setMuted(isMuted: Boolean)
     fun setChannelData(channelData: ChannelData)
-    fun setLastMessageAt(date: Date?)
     fun setRepliedMessage(repliedMessage: Message?)
     fun setUnreadCount(count: Int)
     fun setMembersCount(count: Int)
     fun setInsideSearch(isInsideSearch: Boolean)
-
-    /** Channel config data. */
-    val _channelConfig: MutableStateFlow<Config>
-
-    var hideMessagesBefore: Date?
-
-    val messageList: StateFlow<List<Message>>
-
-    var lastStartTypingEvent: Date?
-
-    /** If we need to recover state when connection established again. */
-    override var recoveryNeeded: Boolean
+    fun setChannelConfig(channelConfig: Config)
 }

@@ -49,38 +49,43 @@ import java.util.Date
 internal class ChannelStateLogicImplTest {
 
     private val user = randomUser()
-    private val _messages: MutableStateFlow<Map<String, Message>> = MutableStateFlow(emptyMap())
+    private var _messages: Map<String, Message> = emptyMap()
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
-    private val lastMessageAt: MutableStateFlow<Date?> = MutableStateFlow(null)
+    private var _lastMessageAt: Date? = null
     private val unreadCount = randomInt()
     private val _read: MutableStateFlow<ChannelUserRead> = MutableStateFlow(
         ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
     )
     private val _channelData: MutableStateFlow<ChannelData> =
         MutableStateFlow(ChannelData(randomChannel(), emptySet()))
-    private val _reads: MutableStateFlow<Map<String, ChannelUserRead>> = MutableStateFlow(emptyMap())
+    private var _reads: Map<String, ChannelUserRead> = emptyMap()
     private val _insideSearch = MutableStateFlow(false)
-    private val _watchers: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    private var _watchers: Map<String, User> = emptyMap()
     private val _watcherCount = MutableStateFlow(0)
     private val _membersCount = MutableStateFlow(0)
-    private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
+    private var _members: Map<String, Member> = emptyMap()
     private val _channelConfig = MutableStateFlow(Config())
 
-    private val mutableState: ChannelMutableState = mock {
-        on(it._messages) doReturn _messages
-        on(it.unreadCount) doReturn _unreadCount
-        on(it.lastMessageAt) doReturn lastMessageAt
-        on(it.read) doReturn _read
-        on(it.cid) doReturn randomCID()
-        on(it.channelData) doReturn _channelData
-        on(it._reads) doReturn _reads
-        on(it.insideSearch) doReturn _insideSearch
-        on(it.insideSearch) doReturn _insideSearch
-        on(it._watchers) doReturn _watchers
-        on(it.watcherCount) doReturn _watcherCount
-        on(it._members) doReturn _members
-        on(it.membersCount) doReturn _membersCount
-        on(it._channelConfig) doReturn _channelConfig
+    @Suppress("UNCHECKED_CAST")
+    private val mutableState: ChannelMutableState = mock { mock ->
+        on(mock::rawMessages.get()) doAnswer { _messages }
+        on(mock::rawMessages.set(any())) doAnswer { _messages = it.arguments[0] as Map<String, Message> }
+        on(mock.unreadCount) doReturn _unreadCount
+        on(mock::lastMessageAt.get()) doAnswer { _lastMessageAt }
+        on(mock::lastMessageAt.set(any())) doAnswer { _lastMessageAt = it.arguments[0] as Date }
+        on(mock.read) doReturn _read
+        on(mock.cid) doReturn randomCID()
+        on(mock.channelData) doReturn _channelData
+        on(mock::rawReads.get()) doAnswer { _reads }
+        on(mock::rawReads.set(any())) doAnswer { _reads = it.arguments[0] as Map<String, ChannelUserRead> }
+        on(mock.insideSearch) doReturn _insideSearch
+        on(mock::rawWatchers.get()) doAnswer { _watchers }
+        on(mock::rawWatchers.set(any())) doAnswer { _watchers = it.arguments[0] as Map<String, User> }
+        on(mock.watcherCount) doReturn _watcherCount
+        on(mock::rawMembers.get()) doAnswer { _members }
+        on(mock::rawMembers.set(any())) doAnswer { _members = it.arguments[0] as Map<String, Member> }
+        on(mock.membersCount) doReturn _membersCount
+        on(mock.channelConfig) doReturn _channelConfig
     }
     private val globalMutableState: MutableGlobalState = mock {
         on(it.user) doReturn MutableStateFlow(user)
@@ -93,12 +98,12 @@ internal class ChannelStateLogicImplTest {
 
     @BeforeEach
     fun setUp() {
-        _messages.value = emptyMap()
+        _messages = emptyMap()
         _unreadCount.value = 0
-        lastMessageAt.value = null
+        _lastMessageAt = null
         _read.value = ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
         _channelData.value = ChannelData(randomChannel(), emptySet())
-        _reads.value = emptyMap()
+        _reads = emptyMap()
         _insideSearch.value = false
         _watcherCount.value = 0
         _watcherCount.value = 0
@@ -139,7 +144,7 @@ internal class ChannelStateLogicImplTest {
         channelStateLogicImpl.upsertMessage(oldMessage)
 
         // Only the new message is available
-        _messages.value `should not be equal to` mapOf(recentMessage.id to recentMessage)
+        _messages `should not be equal to` mapOf(recentMessage.id to recentMessage)
     }
 
     @Test
@@ -211,10 +216,10 @@ internal class ChannelStateLogicImplTest {
         )
 
         channelStateLogicImpl.upsertMessage(oldMessage)
-        lastMessageAt.value `should be equal to` oldCreatedAt
+        _lastMessageAt `should be equal to` oldCreatedAt
 
         channelStateLogicImpl.upsertMessage(recentMessage)
-        lastMessageAt.value `should be equal to` createdAt
+        _lastMessageAt `should be equal to` createdAt
     }
 
     @Test
@@ -245,10 +250,10 @@ internal class ChannelStateLogicImplTest {
         )
 
         channelStateLogicImpl.upsertMessage(recentMessage)
-        lastMessageAt.value `should be equal to` createdAt
+        _lastMessageAt `should be equal to` createdAt
 
         channelStateLogicImpl.upsertMessage(oldMessage)
-        lastMessageAt.value `should be equal to` createdAt
+        _lastMessageAt `should be equal to` createdAt
     }
 
     @Test
@@ -263,7 +268,7 @@ internal class ChannelStateLogicImplTest {
             scrollUpdate = false
         )
 
-        _messages.value `should be equal to` emptyMap()
+        _messages `should be equal to` emptyMap()
     }
 
     @Test
@@ -278,7 +283,7 @@ internal class ChannelStateLogicImplTest {
             scrollUpdate = true
         )
 
-        _messages.value `should be equal to` mapOf(message.id to message)
+        _messages `should be equal to` mapOf(message.id to message)
     }
 
     @Test
@@ -298,6 +303,6 @@ internal class ChannelStateLogicImplTest {
             scrollUpdate = true
         )
 
-        _messages.value `should be equal to` mapOf(message2.id to message2)
+        _messages `should be equal to` mapOf(message2.id to message2)
     }
 }

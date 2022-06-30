@@ -105,7 +105,7 @@ internal class DeleteReactionsTests {
 
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelState = stateRegistry.channel(channelType = channelType, channelId = channelId).toMutableState()
-        val result = channelState._messages.first()[message.id]
+        val result = channelState.rawMessages[message.id]
         result!!.ownReactions.size `should be equal to` myReactions.size - 1
         result.ownReactions.contains(deletedReaction) `should be equal to` false
         result.latestReactions.contains(deletedReaction) `should be equal to` false

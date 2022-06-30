@@ -114,7 +114,7 @@ internal class ChannelStateLogicImpl(
                         this.lastMessageSeenDate = message.createdAt
                     }
                 )
-                mutableState._reads.value = mutableState._reads.value.apply {
+                mutableState.rawReads = mutableState.rawReads.apply {
                     this[currentUserId]?.lastMessageSeenDate = message.createdAt
                     this[currentUserId]?.unreadMessages = unreadCount + 1
                 }
@@ -141,7 +141,7 @@ internal class ChannelStateLogicImpl(
     override fun updateReads(reads: List<ChannelUserRead>) {
         globalMutableState.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
-            val previousUserIdToReadMap = mutableState._reads.value
+            val previousUserIdToReadMap = mutableState.rawReads
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
             /**
@@ -173,7 +173,7 @@ internal class ChannelStateLogicImpl(
             }
 
             // always post the newly updated map
-            mutableState._reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+            mutableState.rawReads = (previousUserIdToReadMap + incomingUserIdToReadMap)
         }
     }
 
@@ -191,14 +191,14 @@ internal class ChannelStateLogicImpl(
      * @param event the event of typing.
      */
     override fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = mutableState._typing.value.toMutableMap()
+        val copy = mutableState.rawTyping.toMutableMap()
         if (event == null) {
             copy.remove(userId)
         } else {
             copy[userId] = event
         }
         globalMutableState.user.value?.id.let(copy::remove)
-        mutableState._typing.value = copy.toMap()
+        mutableState.rawTyping = copy.toMap()
     }
 
     /**
@@ -216,7 +216,7 @@ internal class ChannelStateLogicImpl(
      * Sets the members of the channel.
      */
     override fun setMembers(members: List<Member>) {
-        mutableState._members.value = (mutableState._members.value + members.associateBy(Member::getUserId))
+        mutableState.rawMembers = (mutableState.rawMembers + members.associateBy(Member::getUserId))
     }
 
     /**
@@ -225,7 +225,7 @@ internal class ChannelStateLogicImpl(
      * @param watchers the [User] to be added or updated
      */
     override fun setWatchers(watchers: List<User>) {
-        mutableState._watchers.value = (mutableState._watchers.value + watchers.associateBy { it.id })
+        mutableState.rawWatchers = (mutableState.rawWatchers + watchers.associateBy { it.id })
     }
 
     /**
@@ -247,7 +247,7 @@ internal class ChannelStateLogicImpl(
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val newMessages = parseMessages(messages, shouldRefreshMessages)
         updateLastMessageAtByNewMessages(newMessages.values)
-        mutableState._messages.value = newMessages
+        mutableState.rawMessages = newMessages
     }
 
     /**
@@ -257,12 +257,12 @@ internal class ChannelStateLogicImpl(
      * @param systemMessage the system message to be added to inform the user.
      */
     override fun removeMessagesBefore(date: Date, systemMessage: Message?) {
-        val messages = mutableState._messages.value.filter { it.value.wasCreatedAfter(date) }
+        val messages = mutableState.rawMessages.filter { it.value.wasCreatedAfter(date) }
 
         if (systemMessage == null) {
-            mutableState._messages.value = messages
+            mutableState.rawMessages = messages
         } else {
-            mutableState._messages.value = messages + listOf(systemMessage).associateBy(Message::id)
+            mutableState.rawMessages = messages + listOf(systemMessage).associateBy(Message::id)
             updateLastMessageAtByNewMessages(listOf(systemMessage))
         }
     }
@@ -273,7 +273,7 @@ internal class ChannelStateLogicImpl(
      * @param message The [Message] to be deleted.
      */
     override fun removeLocalMessage(message: Message) {
-        mutableState._messages.value = mutableState._messages.value - message.id
+        mutableState.rawMessages = mutableState.rawMessages - message.id
     }
 
     /**
@@ -300,8 +300,8 @@ internal class ChannelStateLogicImpl(
      * @param members list of members to be upserted.
      */
     override fun upsertMembers(members: List<Member>) {
-        mutableState._members.value = mutableState._members.value + members.associateBy { it.user.id }
-        mutableState.setMembersCount(mutableState._members.value.size)
+        mutableState.rawMembers = mutableState.rawMembers + members.associateBy { it.user.id }
+        mutableState.setMembersCount(mutableState.rawMembers.size)
     }
 
     /**
@@ -310,7 +310,7 @@ internal class ChannelStateLogicImpl(
      * @param messages The list of messages to be upserted.
      */
     override fun upsertOldMessages(messages: List<Message>) {
-        mutableState._oldMessages.value = parseMessages(messages)
+        mutableState.rawOldMessages = parseMessages(messages)
     }
 
     /**
@@ -319,7 +319,7 @@ internal class ChannelStateLogicImpl(
      * @param userId Id of the user.
      */
     override fun deleteMember(userId: String) {
-        mutableState._members.value = mutableState._members.value - userId
+        mutableState.rawMembers = mutableState.rawMembers - userId
 
         mutableState.setMembersCount(mutableState.membersCount.value - 1)
     }
@@ -339,7 +339,7 @@ internal class ChannelStateLogicImpl(
      * @param user [User]
      */
     override fun upsertWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value + mapOf(user.id to user)
+        mutableState.rawWatchers = mutableState.rawWatchers + mapOf(user.id to user)
     }
 
     /**
@@ -348,7 +348,7 @@ internal class ChannelStateLogicImpl(
      * @param user [User]
      */
     override fun deleteWatcher(user: User) {
-        mutableState._watchers.value = mutableState._watchers.value - user.id
+        mutableState.rawWatchers = mutableState.rawWatchers - user.id
     }
 
     /**
@@ -405,8 +405,8 @@ internal class ChannelStateLogicImpl(
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
-        mutableState.setLastMessageAt(channel.lastMessageAt)
-        mutableState._channelConfig.value = channel.config
+        mutableState.lastMessageAt = channel.lastMessageAt
+        mutableState.setChannelConfig(channel.config)
     }
 
     /**
@@ -476,13 +476,13 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableState._messages] with new messages.
+     * Updates [ChannelMutableState._rawMessages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.
      */
     private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
-        val currentMessages = if (shouldRefresh) emptyMap() else mutableState._messages.value
+        val currentMessages = if (shouldRefresh) emptyMap() else mutableState.rawMessages
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
@@ -518,7 +518,7 @@ internal class ChannelStateLogicImpl(
         }
         val newLastMessageAt =
             newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOfOrNull(Date::getTime) ?: return
-        mutableState.lastMessageAt.value = when (val currentLastMessageAt = mutableState.lastMessageAt.value) {
+        mutableState.lastMessageAt = when (val currentLastMessageAt = mutableState.lastMessageAt) {
             null -> Date(newLastMessageAt)
             else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
         }

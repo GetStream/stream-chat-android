@@ -267,7 +267,6 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/c
 	public abstract fun getReads ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getRepliedMessage ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getSortedMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTyping ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getWatcherCount ()Lkotlinx/coroutines/flow/StateFlow;

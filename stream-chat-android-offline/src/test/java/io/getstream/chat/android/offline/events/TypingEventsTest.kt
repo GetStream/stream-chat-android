@@ -179,16 +179,20 @@ internal class TypingEventsTest {
 
         fun givenTypingEventsDisabled(channelType: String, channelId: String): Fixture {
             val channelState = stateRegistry.channel(channelType, channelId).toMutableState()
-            channelState._channelConfig.value = channelState._channelConfig.value.copy(
-                typingEventsEnabled = false
+            channelState.setChannelConfig(
+                channelState.channelConfig.value.copy(
+                    typingEventsEnabled = false
+                )
             )
             return this
         }
 
         fun givenTypingEventsEnabled(channelType: String, channelId: String): Fixture {
             val channelState = stateRegistry.channel(channelType, channelId).toMutableState()
-            channelState._channelConfig.value = channelState._channelConfig.value.copy(
-                typingEventsEnabled = true
+            channelState.setChannelConfig(
+                channelState.channelConfig.value.copy(
+                    typingEventsEnabled = true
+                )
             )
             return this
         }
