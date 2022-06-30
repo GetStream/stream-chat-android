@@ -29,9 +29,9 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.MessageSyncContent
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.offline.randomChannel
 import okio.buffer
 import okio.source
 import org.amshove.kluent.shouldBeEqualTo
