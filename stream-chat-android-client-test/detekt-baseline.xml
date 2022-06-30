@@ -1,10 +1,3 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$public val apiKey: String = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$public val reaction1: Reaction = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }</ID>
-  </CurrentIssues>
 </SmellBaseline>

@@ -68,9 +68,12 @@ public class TestDataHelper {
         ignoreIfMissing = true
     }
 
-    public val apiKey: String = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }
-    public val logLevel: String =
-        checkNotNull(dotenv["STREAM_LOG_LEVEL"]) { "Be sure to specify the STREAM_LOG_LEVEL environment variable" }
+    public val apiKey: String = checkNotNull(dotenv["STREAM_API_KEY"]) {
+        "Be sure to specify the STREAM_API_KEY environment variable"
+    }
+    public val logLevel: String = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) {
+        "Be sure to specify the STREAM_LOG_LEVEL environment variable"
+    }
 
     public val connection1: String = "test-connection"
     public val user1: User = User("broad-lake-3")
@@ -79,8 +82,9 @@ public class TestDataHelper {
     public val mute1: Mute = Mute(user1, userEvil, Date(), Date(), null)
     public val me1: User = User("broad-lake-3").apply { mutes = listOf(mute1) }
 
-    public val user1Token: String =
-        checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
+    public val user1Token: String = checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) {
+        "Be sure to specify the STREAM_USER_1_TOKEN environment variable"
+    }
 
     public val user2: User = User("test-user-2")
     public val userMap: MutableMap<String, User> = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)
@@ -193,8 +197,12 @@ public class TestDataHelper {
         config = config1
     }
 
-    public val reaction1: Reaction = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }
-    public val reaction2: Reaction = Reaction("message-1", "like", 1).apply { user = user2 }
+    public val reaction1: Reaction = Reaction("message-1", "like", 1).apply {
+        user = user1; userId = user1.id; score = 10
+    }
+    public val reaction2: Reaction = Reaction("message-1", "like", 1).apply {
+        user = user2
+    }
 
     public val message1: Message = Message().apply {
         cid = channel1.cid; text = "hi there"; id = "message-1"; user =
@@ -398,10 +406,12 @@ public class TestDataHelper {
         parentMessageId
     )
 
-    public val channelHiddenEvent: ChannelHiddenEvent =
-        ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false)
-    public val channelVisibleEvent: ChannelVisibleEvent =
-        ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1)
+    public val channelHiddenEvent: ChannelHiddenEvent = ChannelHiddenEvent(
+        EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false
+    )
+    public val channelVisibleEvent: ChannelVisibleEvent = ChannelVisibleEvent(
+        EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1
+    )
 
     public val user2TypingStarted: TypingStartEvent = TypingStartEvent(
         EventType.TYPING_START,
@@ -412,8 +422,9 @@ public class TestDataHelper {
         channel2.id,
         parentMessageId
     )
-    public val user1TypingStop: TypingStopEvent =
-        TypingStopEvent(EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id, parentMessageId)
+    public val user1TypingStop: TypingStopEvent = TypingStopEvent(
+        EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id, parentMessageId
+    )
     public val readEvent: MessageReadEvent = MessageReadEvent(
         EventType.MESSAGE_READ, Date(), user1, channel1.cid, channel1.type, channel1.id
     )
@@ -422,10 +433,12 @@ public class TestDataHelper {
         EventType.NOTIFICATION_MUTES_UPDATED, Date(), me1
     )
 
-    public val user1Banned: ChannelUserBannedEvent =
-        ChannelUserBannedEvent(EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null)
-    public val user1Unbanned: ChannelUserUnbannedEvent =
-        ChannelUserUnbannedEvent(EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id)
+    public val user1Banned: ChannelUserBannedEvent = ChannelUserBannedEvent(
+        EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null
+    )
+    public val user1Unbanned: ChannelUserUnbannedEvent = ChannelUserUnbannedEvent(
+        EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id
+    )
 
     public val user1ReadNotification: NotificationMarkReadEvent = NotificationMarkReadEvent(
         EventType.NOTIFICATION_MARK_READ,
@@ -451,8 +464,9 @@ public class TestDataHelper {
     )
 
     // member removed doesn't have a cid
-    public val memberRemovedFromChannel: MemberRemovedEvent =
-        MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)
+    public val memberRemovedFromChannel: MemberRemovedEvent = MemberRemovedEvent(
+        EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1
+    )
 
     public val notificationRemovedFromChannel: NotificationRemovedFromChannelEvent =
         NotificationRemovedFromChannelEvent(
@@ -524,8 +538,9 @@ public class TestDataHelper {
         channel1.id,
         channel1
     )
-    public val channelDeletedEvent: ChannelDeletedEvent =
-        ChannelDeletedEvent(EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null)
+    public val channelDeletedEvent: ChannelDeletedEvent = ChannelDeletedEvent(
+        EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null
+    )
 }
 
 public fun calendar(
