@@ -144,7 +144,7 @@ public fun MessageText(
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit,
+    onLongItemClick: (Message) -> Unit
 ) {
     val context = LocalContext.current
 

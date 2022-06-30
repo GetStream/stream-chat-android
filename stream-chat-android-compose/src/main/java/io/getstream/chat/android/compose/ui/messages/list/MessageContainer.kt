@@ -83,7 +83,7 @@ public fun MessageContainer(
             onThreadClick = onThreadClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     },
 ) {

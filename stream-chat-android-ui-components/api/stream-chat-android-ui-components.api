@@ -1746,6 +1746,8 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;)V
 	public final fun setMessageUnpinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageUnpinHandler;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
+	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageOptionHandler;)V
+	public final fun setModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
@@ -1882,6 +1884,14 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$Mes
 	public static final field TOP Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/list/MessageListView$MessagesStart;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener {
+	public abstract fun onModeratedMessageLongClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageOptionHandler {
+	public abstract fun onModeratedMessageOptionSelected (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/common/model/ModeratedMessageOption;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour : java/lang/Enum {
