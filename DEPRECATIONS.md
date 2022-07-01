@@ -44,6 +44,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `GlobalState::errorEvents` | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | 2022.09.13<br/>5.10.0 | This method is no longer used.|
 | `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | Use `GlobalState::typingChannels` instead. |
 | `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
+| `MesageListViewModel.loadMore` | 2022.07.08<br/>5.4.1 | 2022.08.02 ⌛ | 2022.09.06 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
 | `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use QuerySortByReflection. |
 | `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use the version without offsets, as it uses less requests to backend. |
 | `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
