@@ -416,11 +416,11 @@ internal class ChannelLogic(
     internal fun upsertMessage(message: Message) {
         /* Do not upsert message if the newest messages are not loaded to avoid breaking pagination. If the message
         * is inside the list and was updated in some kind of way, update it in the list. */
-        // if (mutableState._endOfNewerMessages.value ||
-        //     mutableState._messages.value.containsKey(message.id)
-        // ) {
-        upsertMessages(listOf(message))
-        // }
+        if (mutableState._endOfNewerMessages.value ||
+            mutableState._messages.value.containsKey(message.id)
+        ) {
+            upsertMessages(listOf(message))
+        }
     }
 
     private fun setWatcherCount(watcherCount: Int) {
