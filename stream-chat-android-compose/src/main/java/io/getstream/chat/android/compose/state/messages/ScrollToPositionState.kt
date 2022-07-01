@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 public sealed class ScrollToPositionState
 
 /**
- * State when the focused message is not in the current list and that the data is being loaded form the API.
+ * State when the focused message is not in the current list and the data is being loaded from the API.
  */
 public object LoadFocusedMessageData : ScrollToPositionState()
 
