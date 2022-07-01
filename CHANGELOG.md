@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Add ordered substitution arguments in `ja` and `ko` translated strings files [#3778](https://github.com/GetStream/stream-chat-android/pull/3778)
 
 ### ⬆️ Improved
 
