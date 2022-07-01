@@ -19,13 +19,13 @@ package io.getstream.chat.android.offline.event
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.event.model.EventHandlerType
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger

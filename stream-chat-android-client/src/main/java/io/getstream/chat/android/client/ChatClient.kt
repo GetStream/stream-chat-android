@@ -1280,6 +1280,9 @@ internal constructor(
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
+            .precondition(relevantPlugins) {
+                onMessageDeletePrecondition(messageId)
+            }
     }
 
     @CheckResult
@@ -1319,6 +1322,7 @@ internal constructor(
                 api.sendMessage(channelType, channelId, newMessage)
                     .retry(scope, retryPolicy)
                     .doOnResult(scope) { result ->
+                        logger.logI("[sendMessage] result: ${result.stringify { it.toString() }}")
                         relevantPlugins.forEach { listener ->
                             logger.logD("Applying ${listener::class.qualifiedName}.onMessageSendResult")
                             listener.onMessageSendResult(

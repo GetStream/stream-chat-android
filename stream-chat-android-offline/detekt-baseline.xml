@@ -95,7 +95,6 @@
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
     <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
-    <ID>MaxLineLength:MessageEntity.kt$MessageInnerEntity$@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])</ID>
     <ID>MaxLineLength:MessagesState.kt$MessagesState.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
@@ -108,8 +107,6 @@
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$* Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1)</ID>
-    <ID>MaxLineLength:TestDataHelper.kt$TestDataHelper$checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }</ID>
     <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
     <ID>MaxLineLength:ThreadMutableState.kt$ThreadMutableState$channelMutableState.messageList.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
@@ -134,6 +131,7 @@
     <ID>TooGenericExceptionCaught:UploadAttachmentsWorker.kt$UploadAttachmentsWorker$e: Exception</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedImports:ChannelLogic.kt$import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState</ID>
+    <ID>UnusedPrivateMember:EditMessageListenerImpl.kt$EditMessageListenerImpl$val isMessageModerationFailed = chatError is ChatNetworkError &amp;&amp; chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>

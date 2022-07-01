@@ -29,6 +29,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
+import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -164,6 +167,17 @@ public open class MessageListFragment : Fragment() {
                     } else {
                         backPressListener?.onBackPress()
                     }
+                }
+            }
+        }
+
+        binding.messageListView.setModeratedMessageHandler { message, action ->
+            when (action) {
+                DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                else -> {
+                    // custom actions
                 }
             }
         }

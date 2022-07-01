@@ -1248,6 +1248,7 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
+
         public fun dismissReply()
     }
 
