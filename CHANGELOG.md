@@ -33,6 +33,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `GlobalState::typingUpdates` in favor of `GlobalState::typingChannels`.
+  You can now access typing users from all active channels [3806](https://github.com/GetStream/stream-chat-android/pull/3806)
 
 ### ❌ Removed
 
