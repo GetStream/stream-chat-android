@@ -34,6 +34,7 @@ import kotlin.properties.Delegates
 internal class MessageListScrollHelper(
     private val recyclerView: RecyclerView,
     private val scrollButtonView: ScrollButtonView,
+    private val disableScrollWhenShowingDialog: Boolean,
     private val callback: MessageReadListener,
 ) {
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
@@ -86,7 +87,9 @@ internal class MessageListScrollHelper(
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
 
-                    stopScrollIfPopupShown(recyclerView)
+                    if (disableScrollWhenShowingDialog) {
+                        stopScrollIfPopupShown(recyclerView)
+                    }
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

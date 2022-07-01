@@ -17,13 +17,13 @@
 package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomChannelVisibleEvent
+import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
+import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
+import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomChannelVisibleEvent
-import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
-import io.getstream.chat.android.offline.randomNotificationMessageNewEvent
-import io.getstream.chat.android.offline.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
