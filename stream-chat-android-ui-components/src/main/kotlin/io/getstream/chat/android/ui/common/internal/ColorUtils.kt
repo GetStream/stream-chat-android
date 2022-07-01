@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.internal
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import androidx.annotation.ColorInt
 import kotlin.math.roundToInt
 
 internal fun adjustColorLBrightness(color: Int, factor: Float): Int {
@@ -33,7 +34,11 @@ internal fun adjustColorLBrightness(color: Int, factor: Float): Int {
     )
 }
 
-internal fun getColorList(normalColor: Int, selectedColor: Int, disabledColor: Int) = ColorStateList(
+internal fun getColorList(
+    @ColorInt normalColor: Int,
+    @ColorInt selectedColor: Int,
+    @ColorInt disabledColor: Int,
+) = ColorStateList(
     arrayOf(
         intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_selected),
         intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected),
