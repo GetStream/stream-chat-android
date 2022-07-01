@@ -20,9 +20,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
-import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
-import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMessage
@@ -36,21 +34,15 @@ import io.getstream.chat.android.client.test.randomTypingStopEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineRule
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomDateAfter
-import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEmpty
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -58,6 +50,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -76,9 +69,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
-    private lateinit var channelMutableState: ChannelMutableState
-    private val globalMutableState = mock<MutableGlobalState> {
-        on(it.user) doReturn userFlow
+    private val channelMutableState: ChannelMutableStateImpl = ChannelMutableStateImpl(
+        "type1", channelId, testCoroutines.scope, userFlow,
+        MutableStateFlow(
+            mapOf(currentUser.id to currentUser)
+        )
+    )
+    private val channelStateLogic: ChannelStateLogic = mock {
+        on(it.writeChannelState()) doReturn channelMutableState
     }
 
     @BeforeEach
@@ -87,25 +85,16 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelMutableState = ChannelMutableState(
-            "type1", channelId, testCoroutines.scope, userFlow,
-            MutableStateFlow(
-                mapOf(currentUser.id to currentUser)
-            )
-        )
-
         channelLogic = ChannelLogic(
-            channelMutableState,
-            globalMutableState,
             repos,
             false,
-            attachmentUrlValidator
+            channelStateLogic,
         )
     }
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should be updated`() = runTest {
+    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() = runTest {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(
@@ -121,54 +110,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(userStartWatchingEvent)
 
-        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo newDate
-    }
-
-    // New message event
-    @Test
-    fun `when new message event arrives, messages should be propagated correctly`(): Unit = runTest {
-        val user = User(id = CURRENT_USER_ID)
-        val message = randomMessage(
-            createdAt = Date(1000L),
-            user = user,
-            silent = false,
-            showInChannel = true
-        )
-        val newMessageEvent = randomNewMessageEvent(user = user, message = message)
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
-
-        channelLogic.handleEvent(newMessageEvent)
-
-        // Message is propagated
-        channelMutableState.messages.value shouldBeEqualTo listOf(message)
-        // Unread count should not be propagated, because it is a message form the same user
-        channelMutableState.unreadCount.value shouldBeEqualTo 0
-        // Last message is updated
-        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
-    }
-
-    @Test
-    fun `when new message event arrives from other user, unread number should be updated`() = runTest {
-        val createdAt = Date()
-        val message = randomMessage(
-            createdAt = createdAt,
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true
-        )
-
-        val newMessageEvent = randomNewMessageEvent(message = message)
-
-        channelLogic.handleEvent(newMessageEvent)
-
-        // Message is propagated
-        channelMutableState.messages.value shouldBeEqualTo listOf(message)
-
-        // Unread count should be propagated, because it is a message form another user
-        channelMutableState.unreadCount.value shouldBeEqualTo 1
-
-        // Last message is updated
-        channelMutableState.toChannel().lastMessageAt shouldBeEqualTo createdAt
+        verify(channelStateLogic).upsertMessages(listOf(newMessage))
+        verify(channelStateLogic).incrementUnreadCountIfNecessary(newMessage)
+        verify(channelStateLogic).setHidden(false)
     }
 
     // Message update
@@ -186,45 +130,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        channelMutableState.messages.value.first() shouldBeEqualTo message
-    }
-
-    @Test
-    fun `when a message update event is outdated, it should be ignored`() = runTest {
-        val messageId = randomString()
-        val createdAt = randomDate()
-        val createdLocallyAt = randomDateBefore(createdAt.time)
-        val updatedAt = randomDateAfter(createdAt.time)
-        val oldUpdatedAt = randomDateBefore(updatedAt.time)
-        val recentMessage = randomMessage(
-            id = messageId,
-            user = User(id = "otherUserId"),
-            createdAt = createdAt,
-            createdLocallyAt = createdLocallyAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-        val oldMessage = randomMessage(
-            id = messageId,
-            user = User(id = "otherUserId"),
-            createdAt = createdAt,
-            createdLocallyAt = createdLocallyAt,
-            updatedAt = oldUpdatedAt,
-            updatedLocallyAt = oldUpdatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-        channelLogic.upsertMessages(listOf(recentMessage))
-        val messageUpdateEvent = randomMessageUpdateEvent(message = oldMessage)
-
-        channelLogic.handleEvent(messageUpdateEvent)
-
-        channelMutableState.messages.value shouldBeEqualTo listOf(recentMessage)
-        channelMutableState.messages.value shouldNotBeEqualTo listOf(oldMessage)
+        verify(channelStateLogic).upsertMessages(listOf(message))
     }
 
     // Member added event
@@ -236,7 +142,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(memberAddedEvent)
 
-        channelMutableState.members.value shouldBeEqualTo listOf(member)
+        verify(channelStateLogic).upsertMember(member)
     }
 
     // Typing events
@@ -246,18 +152,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         val user2 = randomUser()
 
         val typingStartEvent1 = randomTypingStartEvent(user = user1, channelId = channelId)
-        val typingStartEvent2 = randomTypingStartEvent(user = user2, channelId = channelId)
         val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId)
 
         channelLogic.run {
             handleEvent(typingStartEvent1)
-            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1)
-
-            handleEvent(typingStartEvent2)
-            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1, user2)
+            verify(channelStateLogic).setTyping(user1.id, typingStartEvent1)
 
             handleEvent(typingStopEvent)
-            channelMutableState.typing.value.users shouldBeEqualTo listOf(user1)
+            verify(channelStateLogic).setTyping(user2.id, null)
         }
     }
 
@@ -268,7 +170,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        channelMutableState.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
+        verify(channelStateLogic).updateRead(ChannelUserRead(currentUser, readEvent.createdAt))
     }
 
     // Read event notification
@@ -278,7 +180,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        channelMutableState.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
+        verify(channelStateLogic).updateRead(ChannelUserRead(currentUser, readEvent.createdAt))
     }
 
     // Reaction event
@@ -294,7 +196,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(reactionEvent)
 
         // Message is propagated
-        channelMutableState.messages.value shouldBeEqualTo listOf(message)
+        verify(channelStateLogic).upsertMessages(listOf(message))
     }
 
     // Channel deleted event
@@ -304,21 +206,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(deleteChannelEvent)
 
-        channelMutableState.messages.value.shouldBeEmpty()
-    }
-
-    @Test
-    fun `when channel is deleted, the status is updated`() = runTest {
-        val channel = randomChannel()
-        val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
-        val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
-
-        channelLogic.handleEvent(updateChannelEvent)
-        channelLogic.handleEvent(deleteChannelEvent)
-
-        val channelFlowValue = channelMutableState.channelData.value
-        channelFlowValue.channelId shouldBeEqualTo channel.id
-        channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
+        verify(channelStateLogic).removeMessagesBefore(deleteChannelEvent.createdAt)
+        verify(channelStateLogic).deleteChannel(deleteChannelEvent.createdAt)
     }
 
     private companion object {

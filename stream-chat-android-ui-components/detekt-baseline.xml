@@ -19,8 +19,8 @@
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
     <ID>LargeClass:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
-    <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AttachmentGalleryOptionsViewStyle.kt$AttachmentGalleryOptionsViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle</ID>
+    <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
@@ -96,7 +96,6 @@
     <ID>MaxLineLength:ChannelListViewStyle.kt$ChannelListViewStyle$*</ID>
     <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
-    <ID>MaxLineLength:CustomAttachmentsViewHolder.kt$CustomAttachmentsViewHolder$this.innerAttachmentViewHolder</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:DefaultStreamTransliterator.kt$DefaultStreamTransliterator$logger.logD("This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. User a custom StreamTransliterator to add transliteration.")</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
@@ -113,7 +112,6 @@
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MentionListViewModel.kt$MentionListViewModel$logger.logD("Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})")</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
-    <ID>MaxLineLength:MessageComposerView.kt$MessageComposerView$*</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
@@ -147,8 +145,6 @@
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorTheirs in 0.75..1.0) { "messageMaxWidthFactorTheirs cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorTheirs" }</ID>
     <ID>MaxLineLength:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$*</ID>
     <ID>MaxLineLength:MessageListListenerContainerImpl.kt$MessageListListenerContainerImpl$attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM)</ID>
-    <ID>MaxLineLength:MessageListListenerContainerImpl.kt$MessageListListenerContainerImpl$moderatedMessageLongClickListener: ModeratedMessageLongClickListener = ModeratedMessageLongClickListener(EmptyFunctions.ONE_PARAM)</ID>
-    <ID>MaxLineLength:MessageListView.kt$MessageListView$*</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView$public</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.MessagesStart.Companion$?:</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.NewMessagesBehaviour.Companion$?:</ID>
@@ -203,7 +199,6 @@
     <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder</ID>
     <ID>UnusedImports:MessageListViewStyle.kt$import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
-    <ID>UnusedPrivateMember:MessageInputView.kt$MessageInputView$private fun editModeratedMessage(oldMessage: Message)</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputHintTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputHintTextColor, context.getColorCompat(R.color.stream_ui_text_color_hint) )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputTextColor = a.getColor( R.styleable.MessageInputView_streamUiMessageInputTextColor, context.getColorCompat(R.color.stream_ui_text_color_primary) )</ID>
     <ID>UnusedPrivateMember:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$val messageInputTextSize = a.getDimensionPixelSize( R.styleable.MessageInputView_streamUiMessageInputTextSize, context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input) ).toFloat()</ID>

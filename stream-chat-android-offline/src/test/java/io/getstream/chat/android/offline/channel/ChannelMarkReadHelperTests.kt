@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -57,7 +57,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn false
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
         }
         val sut = Fixture()
@@ -75,7 +75,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(emptyList())
         }
@@ -95,7 +95,7 @@ internal class ChannelMarkReadHelperTests {
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
         val now = Date()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage(createdAt = now)))
             on { it.lastMarkReadEvent } doReturn Date(now.time + 1000)
@@ -115,7 +115,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -134,7 +134,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -154,7 +154,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -177,7 +177,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableState> {
+        val channelMutableState = mock<ChannelMutableStateImpl> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -201,7 +201,7 @@ internal class ChannelMarkReadHelperTests {
         private val state = mock<StateRegistry>()
         private val globalState = mock<GlobalState>()
 
-        fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableState) = apply {
+        fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableStateImpl) = apply {
             whenever(state.channel(channelType = channelType, channelId = channelId)) doReturn channelState
         }
 

@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -48,8 +47,7 @@ internal class UploadAttachmentsAndroidWorker(
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
-            channelLogic = LogicRegistry.get().channel(channelType, channelId),
-            channelState = StateRegistry.get().channel(channelType, channelId),
+            channelStateLogic = LogicRegistry.get().channelStateLogic(channelType, channelId),
             messageRepository = repositoryProvider.get(MessageRepository::class.java),
             chatClient = chatClient
         ).uploadAttachmentsForMessage(
@@ -59,12 +57,12 @@ internal class UploadAttachmentsAndroidWorker(
         }
     }
 
-    companion object {
+    internal companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-        fun start(
+        internal fun start(
             context: Context,
             channelType: String,
             channelId: String,
@@ -96,7 +94,7 @@ internal class UploadAttachmentsAndroidWorker(
          * @param context Context of the application.
          * @param workId UUID of the enqueued work.
          */
-        fun stop(context: Context, workId: UUID) {
+        internal fun stop(context: Context, workId: UUID) {
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }

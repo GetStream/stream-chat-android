@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.channel.controller
+package io.getstream.chat.android.offline.channel.controller.attachment
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.uploadId
@@ -27,9 +27,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -72,7 +71,7 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `when there's no attachment with pending status, there's no need to try to send attachments`() =
         runTest {
-            val repositoryFacade = mock<RepositoryFacade> {
+            val repositoryFacade = mock<MessageRepository> {
                 on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
                 on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
             }
@@ -87,7 +86,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when there's a pending attachment, it should be uploaded`() = runTest {
-        val repositoryFacade = mock<RepositoryFacade> {
+        val repositoryFacade = mock<MessageRepository> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
@@ -102,7 +101,7 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when not all attachments have state as success, it should return error`() = runTest {
-        val repositoryFacade = mock<RepositoryFacade> {
+        val repositoryFacade = mock<MessageRepository> {
             on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
             on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
@@ -116,7 +115,10 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `when user can not be set, it should return an error`() = runTest {
-        val result = Fixture().givenChatClientNoStoredCredentials().get()
+        val result = Fixture()
+            .givenChatClientNoStoredCredentials()
+            .givenMessage(randomMessage())
+            .get()
             .uploadAttachmentsForMessage(
                 defaultMessagePendingAttachments.id,
             )
@@ -126,10 +128,11 @@ internal class WhenUploadAttachmentsTests {
 
     @Test
     fun `Given exception when upload Should insert message with failed sync status to repo`() = runTest {
-        val attachmentUploader = mock<AttachmentUploader> {
-            on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
-        }
-        val repository = mock<RepositoryFacade>()
+        val attachmentUploader =
+            mock<AttachmentUploader> {
+                on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+            }
+        val repository = mock<MessageRepository>()
         val message = randomMessage(
             id = "messageId123",
             attachments = mutableListOf(
@@ -156,10 +159,11 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
-                on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
-            }
-            val repository = mock<RepositoryFacade>()
+            val attachmentUploader =
+                mock<AttachmentUploader> {
+                    on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+                }
+            val repository = mock<MessageRepository>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -196,17 +200,18 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
-                on(
-                    it.uploadAttachment(
-                        any(),
-                        any(),
-                        any(),
-                        any()
-                    )
-                ) doReturn Result.error(IllegalArgumentException("Error:-)"))
-            }
-            val repository = mock<RepositoryFacade>()
+            val attachmentUploader =
+                mock<AttachmentUploader> {
+                    on(
+                        it.uploadAttachment(
+                            any(),
+                            any(),
+                            any(),
+                            any()
+                        )
+                    ) doReturn Result.error(IllegalArgumentException("Error:-)"))
+                }
+            val repository = mock<MessageRepository>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -243,13 +248,14 @@ internal class WhenUploadAttachmentsTests {
     @Test
     fun `Given uploaded and not uploaded attachments And upload succeed Should insert message with 2 uploaded attachments`() =
         runTest {
-            val attachmentUploader = mock<AttachmentUploader> {
-                on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
-                    val attachment = invocation.arguments[2] as Attachment
-                    Result(attachment.copy(uploadState = Attachment.UploadState.Success))
+            val attachmentUploader =
+                mock<AttachmentUploader> {
+                    on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
+                        val attachment = invocation.arguments[2] as Attachment
+                        Result(attachment.copy(uploadState = Attachment.UploadState.Success))
+                    }
                 }
-            }
-            val repository = mock<RepositoryFacade>()
+            val repository = mock<MessageRepository>()
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
@@ -288,20 +294,24 @@ internal class WhenUploadAttachmentsTests {
         private val channelId = "channelId"
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
+        private val channelMutableState: ChannelMutableState = mock()
 
-        private val channelLogic: ChannelLogic = mock()
-        private val channelState: ChannelMutableState = mock()
+        private val channelStateLogic: ChannelStateLogic =
+            mock {
+                on(it.writeChannelState()) doReturn channelMutableState
+            }
 
         private val chatClient = mock<ChatClient> {
             whenever(it.channel(any())) doReturn mock()
             whenever(it.containsStoredCredentials()) doReturn true
         }
 
-        fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) = apply {
-            uploader = attachmentUploader
-        }
+        fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) =
+            apply {
+                uploader = attachmentUploader
+            }
 
-        fun givenMessageRepository(repository: RepositoryFacade) = apply {
+        fun givenMessageRepository(repository: MessageRepository) = apply {
             messageRepository = repository
         }
 
@@ -316,8 +326,7 @@ internal class WhenUploadAttachmentsTests {
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
                 channelType, channelId,
-                channelLogic = channelLogic,
-                channelState = channelState,
+                channelStateLogic = channelStateLogic,
                 messageRepository = messageRepository,
                 chatClient = chatClient,
                 attachmentUploader = uploader
