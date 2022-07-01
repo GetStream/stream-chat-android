@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -38,9 +36,6 @@ internal class TokenUtilsTest(
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         @Suppress("MaxLineLength")
         @JvmStatic

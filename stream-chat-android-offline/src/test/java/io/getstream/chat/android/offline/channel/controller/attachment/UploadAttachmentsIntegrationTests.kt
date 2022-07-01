@@ -21,6 +21,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsWorker
@@ -28,11 +29,10 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLo
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
@@ -82,7 +82,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()
@@ -101,7 +101,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
-        runBlocking {
+        runTest {
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
             }.toMutableList()

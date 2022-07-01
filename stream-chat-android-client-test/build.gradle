@@ -1,0 +1,67 @@
+import io.getstream.chat.android.Dependencies
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+apply from: "${rootDir}/scripts/android.gradle"
+apply from: "${rootDir}/scripts/detekt-test.gradle"
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+        ]
+    }
+}
+
+
+dependencies {
+    api project(":stream-chat-android-client")
+    implementation project(":stream-chat-android-test")
+
+    // Kotlin
+    implementation Dependencies.kotlinReflect
+    implementation Dependencies.coroutinesCore
+    implementation Dependencies.coroutinesTest
+    implementation Dependencies.kfixture
+
+    // Google libs
+    implementation Dependencies.androidxActivityKtx
+    implementation Dependencies.androidxAnnotations
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.workRuntimeKtx
+
+    implementation Dependencies.dotenv
+
+    // Tests
+    testImplementation Dependencies.moshiKotlin
+
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.androidxTest
+    testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.androidxArchCoreTest
+    testImplementation Dependencies.androidxRecyclerview // for performance test
+    testImplementation Dependencies.roomTesting
+    testImplementation Dependencies.workTesting
+
+    testImplementation Dependencies.robolectric
+
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.turbine
+
+    // Instrumentation tests
+    androidTestImplementation Dependencies.androidxTestJunit
+    androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.junit4
+    androidTestImplementation Dependencies.kluent
+    androidTestImplementation Dependencies.mockito
+    androidTestImplementation Dependencies.mockitoKotlin
+}

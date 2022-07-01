@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageSyncDescription
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
@@ -51,10 +52,12 @@ internal suspend fun MessageEntity.toModel(
         reactionCounts = reactionCounts.toMutableMap(),
         reactionScores = reactionScores.toMutableMap(),
         syncStatus = syncStatus,
+        syncDescription = buildMessageSyncDescription(),
         shadowed = shadowed,
         latestReactions = (latestReactions.map { it.toModel(getUser) }).toMutableList(),
         ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
-        mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
+        mentionedUsers = remoteMentionedUserIds.map { getUser(it) }.toMutableList(),
+        mentionedUsersIds = mentionedUsersId.toMutableList(),
         replyTo = replyToId?.let { getMessage(it) },
         replyMessageId = replyToId,
         threadParticipants = threadParticipantsIds.map { getUser(it) },
@@ -76,6 +79,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         text = text,
         html = html,
         syncStatus = syncStatus,
+        syncType = syncDescription?.type,
+        syncContent = syncDescription?.content?.toEntity(),
         type = type,
         replyCount = replyCount,
         createdAt = createdAt,
@@ -89,7 +94,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         reactionCounts = reactionCounts,
         reactionScores = reactionScores,
         shadowed = shadowed,
-        mentionedUsersId = mentionedUsers.map(User::id),
+        remoteMentionedUserIds = mentionedUsers.map(User::id),
+        mentionedUsersId = mentionedUsersIds,
         replyToId = replyTo?.id ?: replyMessageId,
         threadParticipantsIds = threadParticipants.map(User::id),
         showInChannel = showInChannel,
@@ -104,3 +110,12 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
 )
+
+private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription? = with(messageInnerEntity) {
+    if (syncType == null || syncContent == null) {
+        return null
+    }
+    return MessageSyncDescription(
+        syncType, syncContent.toModel()
+    )
+}

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline
+package io.getstream.chat.android.client.test
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 
@@ -28,13 +27,13 @@ import kotlinx.coroutines.test.runTest
  * possible.
  */
 @ExperimentalCoroutinesApi
-internal interface SynchronizedCoroutineTest {
+public interface SynchronizedCoroutineTest {
 
     /** Returns test scope. */
-    fun getTestScope(): TestScope
+    public fun getTestScope(): TestScope
 
     /** Helper function that synchronize test scope and run your test in another scope blocking. */
-    fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runBlocking {
+    public fun coroutineTest(block: suspend CoroutineScope.() -> Unit): Unit = runTest {
         getTestScope().launch(block = block).join()
     }
 }

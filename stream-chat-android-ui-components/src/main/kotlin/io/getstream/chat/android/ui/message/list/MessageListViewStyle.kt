@@ -83,6 +83,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
  * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
  * @property scrollButtonEndMargin Defines the end margin of the scroll button.
+ * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -129,6 +130,7 @@ public data class MessageListViewStyle(
     public val messageOptionsUserReactionAlignment: Int,
     public val scrollButtonBottomMargin: Int,
     public val scrollButtonEndMargin: Int,
+    public val disableScrollWhenShowingDialog: Boolean,
 ) {
 
     internal companion object {
@@ -434,6 +436,11 @@ public data class MessageListViewStyle(
                     MessageOptionsUserReactionAlignment.BY_USER.value
                 )
 
+                val disableScrollWhenShowingDialog = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiDisableScrollWhenShowingDialog,
+                    true
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -479,6 +486,7 @@ public data class MessageListViewStyle(
                     messagesStart = messagesStart,
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
+                    disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

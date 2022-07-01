@@ -22,6 +22,7 @@ The full list of `ChatUI` properties you can override include:
 * `navigator`: Allows intercepting and modifying default navigation between SDKs components (e.g. redirection from `MessageListView` to `AttachmentGalleryActivity`).
 * `messageTextTransformer`: Allows customizing the message text's format or style. For example, you can use it to provide markdown support or highlight specific messages by making them bold.
 * `channelNameFormatter`: Allows customizing the way channel names are formatted.
+* `messagePreviewFormatter`: Allows to generate a preview text for the given message.
 * `dateFormatter`: Allows changing the way dates are formatted.
 
 :::note
@@ -255,6 +256,16 @@ You can customize the way channel names are formatted by overriding the default 
 ```kotlin
 ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
     channel.name
+}
+```
+
+### Customizing MessagePreviewFormatter
+
+You can change the way the last messages are formatted in the channel list by overriding the default `MessagePreviewFormatter`:
+
+```kotlin
+ChatUI.messagePreviewFormatter = MessagePreviewFormatter { channel, message, currentUser ->
+    message.text
 }
 ```
 
