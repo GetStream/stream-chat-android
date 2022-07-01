@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
@@ -190,9 +189,7 @@ internal class LifecyclePublisherTest {
     @Test
     fun `given any stopAndAbort should emit first stopAndAbort event`(): Unit = runTest {
         lifecyclePublisher3.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.WithReason(cause = DisconnectCause.ConnectionReleased))
-        delay(1000)
         lifecyclePublisher2.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.AndAborted(cause = DisconnectCause.NetworkNotAvailable))
-        delay(1000)
         lifecyclePublisher1.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.WithReason(cause = DisconnectCause.Error(null)))
 
         combinedLifecycleEvents.size `should be equal to` 1
@@ -205,9 +202,7 @@ internal class LifecyclePublisherTest {
     @Test
     fun `given any stopWithReason and none stopAndAbort should emit first stopWithReason`(): Unit = runTest {
         lifecyclePublisher3.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.WithReason(cause = DisconnectCause.ConnectionReleased))
-        delay(1000)
         lifecyclePublisher1.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.WithReason(cause = DisconnectCause.NetworkNotAvailable))
-        delay(1000)
         lifecyclePublisher2.sendLifecycleStoppedEvent(Event.Lifecycle.Stopped.WithReason(cause = DisconnectCause.Error(null)))
 
         combinedLifecycleEvents.size `should be equal to` 1

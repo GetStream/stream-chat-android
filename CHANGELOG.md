@@ -27,6 +27,7 @@
 ### 🐞 Fixed
 - Fixed bug of empty channels while sending messages. [3776](https://github.com/GetStream/stream-chat-android/pull/3776)
 - Fixed populating mentions when sending a message with attachments. [3801](https://github.com/GetStream/stream-chat-android/pull/3801)
+- Fixed crash at ExtraDataConverter.stringToMap. [3816](https://github.com/GetStream/stream-chat-android/pull/3816)
 
 ### ⬆️ Improved
 

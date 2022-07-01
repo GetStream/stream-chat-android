@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.experimental.socket.Timed
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import java.util.concurrent.atomic.AtomicLong
 
 internal class FakeLifecyclePublisher : LifecyclePublisher {
     private val _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
@@ -38,11 +39,11 @@ internal class FakeLifecyclePublisher : LifecyclePublisher {
     }
 
     fun sendLifecycleStartedEvent() {
-        _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, System.currentTimeMillis()))
+        _lifecycleEvents.tryEmit(Timed(Event.Lifecycle.Started, fakeNextMillisecond()))
     }
 
     fun sendLifecycleStoppedEvent(event: Event.Lifecycle.Stopped? = null) {
-        _lifecycleEvents.tryEmit(Timed(event ?: randomLifecycleStoppedEvent(), System.currentTimeMillis()))
+        _lifecycleEvents.tryEmit(Timed(event ?: randomLifecycleStoppedEvent(), fakeNextMillisecond()))
     }
 
     private fun randomLifecycleStoppedEvent(): Event.Lifecycle.Stopped {
@@ -57,5 +58,11 @@ internal class FakeLifecyclePublisher : LifecyclePublisher {
             Event.Lifecycle.Stopped.WithReason(cause = randomCause),
             Event.Lifecycle.Stopped.AndAborted(cause = randomCause)
         ).random()
+    }
+
+    companion object {
+        private val fakeTimeMilliseconds = AtomicLong(0)
+
+        private fun fakeNextMillisecond(): Long = fakeTimeMilliseconds.incrementAndGet()
     }
 }
