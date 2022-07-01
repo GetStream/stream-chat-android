@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @param newMessageState The state that represents any new messages.
  * @param parentMessageId The id of the parent message - if we're in a thread.
  * @param unreadCount The count of messages we haven't read yet.
+ * @param startOfMessages If we're ate the start of messages (to stop pagination).
  * @param scrollToPositionState The current scroll state of the list. Indicates whether the list is scrolling or loading
  * data for the current state or is idling.
  * @param isLoadingMoreOldMessages If we're loading older messages.

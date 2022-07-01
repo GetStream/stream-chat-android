@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,9 +43,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.Idle
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
 import io.getstream.chat.android.compose.state.messages.ScrollToNewestMessages
+import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -224,61 +226,53 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 ) {
     val messages = messagesState.messageItems
     val newMessageState = messagesState.newMessageState
-    val scrollToStartState = messagesState.scrollToPositionState
+    val scrollState = messagesState.scrollToPositionState
     val areNewestMessagesLoaded = messagesState.startOfMessages
+    val isMessageInThread = messagesState.parentMessageId != null
+
     val coroutineScope = rememberCoroutineScope()
 
     val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-    val offset = messagesState.focusedMessageOffset.collectAsState()
+    val offset by messagesState.focusedMessageOffset.collectAsState()
 
-    LaunchedEffect(newMessageState, focusedItemIndex, offset.value, scrollToStartState) {
+    LaunchedEffect(newMessageState, focusedItemIndex, offset, scrollState) {
 
         if (focusedItemIndex != -1 &&
             !lazyListState.isScrollInProgress &&
-            scrollToStartState is ScrollToFocusedMessage
+            scrollState is ScrollToFocusedMessage
         ) {
             coroutineScope.launch {
-                lazyListState.scrollToItem(focusedItemIndex, offset.value ?: 0)
+                lazyListState.scrollToItem(focusedItemIndex, offset ?: 0)
             }
         }
 
-        if (scrollToStartState == ScrollToNewestMessages) {
+        if (scrollState == ScrollToNewestMessages) {
             lazyListState.scrollToItem(0)
         }
 
-        when {
-            focusedItemIndex == -1 &&
-                !lazyListState.isScrollInProgress &&
-                newMessageState == Other &&
-                scrollToStartState is Idle &&
-                areNewestMessagesLoaded &&
-                firstVisibleItemIndex < 3 -> {
-                coroutineScope.launch {
-                    lazyListState.animateScrollToItem(0)
-                }
-            }
+        val shouldScrollToBottomOnNewMessage = shouldScrollToBottomOnNewMessage(
+            focusedItemIndex,
+            firstVisibleItemIndex,
+            newMessageState,
+            scrollState,
+            areNewestMessagesLoaded,
+            lazyListState.isScrollInProgress
+        )
 
-            focusedItemIndex == -1 &&
-                !lazyListState.isScrollInProgress &&
-                newMessageState == MyOwn &&
-                areNewestMessagesLoaded &&
-                scrollToStartState is Idle -> {
-                coroutineScope.launch {
-                    if (firstVisibleItemIndex > 5) {
-                        lazyListState.scrollToItem(5)
-                    }
-                    lazyListState.animateScrollToItem(0)
+        if (shouldScrollToBottomOnNewMessage) {
+            coroutineScope.launch {
+                if (newMessageState == MyOwn && firstVisibleItemIndex > 5) {
+                    lazyListState.scrollToItem(5)
                 }
+                lazyListState.animateScrollToItem(0)
             }
         }
     }
 
-    if ((messagesState.parentMessageId == null && (abs(firstVisibleItemIndex) >= 3 || !areNewestMessagesLoaded)) ||
-        (messagesState.parentMessageId != null && abs(firstVisibleItemIndex) >= 3)
-    ) {
+    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex, areNewestMessagesLoaded)) {
         MessagesScrollingOption(
             unreadCount = messagesState.unreadCount,
             modifier = Modifier.align(Alignment.BottomEnd),
@@ -289,6 +283,90 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         )
     }
+}
+
+/**
+ * Determines if the list should scroll to the bottom when a new message arrives.
+ *
+ * @param focusedItemIndex The index of the currently focused item.
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param newMessageState The [NewMessageState] if a new message has arrived.
+ * @param scrollToPositionState The [ScrollToPositionState] which tells the list if it should scroll to a position.
+ * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
+ * @param isScrollInProgress If the list is currently scrolling or not.
+ *
+ * @return Whether the list should scroll to the bottom when a new message arrives or not.
+ */
+private fun shouldScrollToBottomOnNewMessage(
+    focusedItemIndex: Int,
+    firstVisibleItemIndex: Int,
+    newMessageState: NewMessageState?,
+    scrollToPositionState: ScrollToPositionState,
+    areNewestMessagesLoaded: Boolean,
+    isScrollInProgress: Boolean,
+): Boolean {
+    newMessageState ?: return false
+
+    return focusedItemIndex == -1 &&
+        isScrollInProgress &&
+        scrollToPositionState is Idle &&
+        areNewestMessagesLoaded &&
+        firstVisibleItemIndex < 3
+}
+
+/**
+ * Determines whether the scroll to the bottom button should be visible or not.
+ *
+ * @param isInThread If we are currently in a thread or not.
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
+ *
+ * @return Whether the scroll to bottom button should be visible or not.
+ */
+private fun isScrollToBottomButtonVisible(
+    isInThread: Boolean,
+    firstVisibleItemIndex: Int,
+    areNewestMessagesLoaded: Boolean,
+): Boolean {
+    return if (isInThread) isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex) else
+        isScrollToBottomButtonVisibleInMessageList(firstVisibleItemIndex, areNewestMessagesLoaded)
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible if thread is currently showing.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ *
+ * @return Whether the scroll to bottom button should be visible inside a thread.
+ */
+private fun isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex: Int): Boolean {
+    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex)
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible if messages list is currently showing.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param areNewestMessagesLoaded Whether the newest messages are currently loaded inside the messages list or not.
+ *
+ * @return Whether the scroll to bottom button should be visible inside messages list or not.
+ */
+private fun isScrollToBottomButtonVisibleInMessageList(
+    firstVisibleItemIndex: Int,
+    areNewestMessagesLoaded: Boolean,
+): Boolean {
+    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || areNewestMessagesLoaded
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible given the first visible index.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ *
+ * @return Whether the scroll to bottom button should be visible given the first visible item index.
+ */
+private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean {
+    return abs(firstVisibleItemIndex) >= 3
 }
 
 /**

@@ -781,7 +781,6 @@ internal class ChannelLogic(
         if (changedMessages.isNotEmpty()) {
             upsertMessages(changedMessages)
         }
-        mutableState._loading
     }
 
     private fun setTyping(userId: String, event: ChatEvent?) {
