@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.errors
+package io.getstream.chat.android.offline.repository.database.converter.internal
 
-internal class ChatParsingError : Exception {
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+import androidx.room.TypeConverter
+import io.getstream.chat.android.client.models.MessageSyncType
+
+internal class MessageSyncTypeConverter {
+    @TypeConverter
+    fun stringToMessageSyncType(data: Int): MessageSyncType {
+        return MessageSyncType.fromInt(data) ?: error("unexpected MessageSyncType: $data")
+    }
+
+    @TypeConverter
+    fun messageSyncTypeToString(type: MessageSyncType): Int {
+        return type.type
+    }
 }

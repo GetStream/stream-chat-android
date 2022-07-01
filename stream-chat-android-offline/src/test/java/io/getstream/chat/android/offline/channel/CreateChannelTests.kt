@@ -19,20 +19,18 @@ package io.getstream.chat.android.offline.channel
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMember
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -41,11 +39,6 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class CreateChannelTests {
-    companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
-    }
 
     @Test
     fun `Given offline user When creating channel Should mark it with sync needed and store in database`(): Unit =

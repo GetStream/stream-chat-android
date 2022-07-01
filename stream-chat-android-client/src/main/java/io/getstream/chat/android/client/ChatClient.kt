@@ -18,13 +18,13 @@ package io.getstream.chat.android.client
 
 import android.content.Context
 import android.os.Build
-import android.util.Base64
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -75,7 +75,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -156,7 +156,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
@@ -175,7 +174,7 @@ internal constructor(
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
-    private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -184,11 +183,13 @@ internal constructor(
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
+    lifecycle: Lifecycle,
 ) {
     private val logger = ChatLogger.get("Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
     private val lifecycleObserver = StreamLifecycleObserver(
+        lifecycle,
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
             override fun stopped() {
@@ -259,6 +260,10 @@ internal constructor(
         logger.logI("Initialised: ${buildSdkTrackingHeaders()}")
     }
 
+    /**
+     * Either entirely extracts current user from the event
+     * or merges the one from the event into the existing current user.
+     */
     private fun ChatEvent.extractCurrentUser(): User? {
         return when (this) {
             is HasOwnUser -> me
@@ -1275,6 +1280,9 @@ internal constructor(
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
+            .precondition(relevantPlugins) {
+                onMessageDeletePrecondition(messageId)
+            }
     }
 
     @CheckResult
@@ -1314,6 +1322,7 @@ internal constructor(
                 api.sendMessage(channelType, channelId, newMessage)
                     .retry(scope, retryPolicy)
                     .doOnResult(scope) { result ->
+                        logger.logI("[sendMessage] result: ${result.stringify { it.toString() }}")
                         relevantPlugins.forEach { listener ->
                             logger.logD("Applying ${listener::class.qualifiedName}.onMessageSendResult")
                             listener.onMessageSendResult(
@@ -1441,7 +1450,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        queryChannelsPostponeHelper.postponeQueryChannels { api.queryChannels(request) }
+        callPostponeHelper.postponeCall { api.queryChannels(request) }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1454,6 +1463,16 @@ internal constructor(
         return api.queryChannel(channelType, channelId, request)
     }
 
+    /**
+     * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
+     * The call requires active socket connection and will be automatically postponed and retried until
+     * the connection is established or the maximum number of attempts is reached.
+     * @see [CallPostponeHelper]
+     *
+     * @param request The request's parameters combined into [QueryChannelRequest] class.
+     *
+     * @return Executable async [Call] responsible for querying channels.
+     */
     @CheckResult
     public fun queryChannel(
         channelType: String,
@@ -1464,27 +1483,28 @@ internal constructor(
 
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
-        return api.queryChannel(channelType, channelId, request)
-            .doOnStart(scope) {
-                relevantPlugins.forEach { plugin ->
-                    logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
-                    plugin.onQueryChannelRequest(channelType, channelId, request)
-                }
+        return callPostponeHelper.postponeCall {
+            api.queryChannel(channelType, channelId, request)
+        }.doOnStart(scope) {
+            relevantPlugins.forEach { plugin ->
+                logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
+                plugin.onQueryChannelRequest(channelType, channelId, request)
             }
-            .doOnResult(scope) { result ->
-                relevantPlugins.forEach { plugin ->
-                    logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
-                    plugin.onQueryChannelResult(result, channelType, channelId, request)
-                }
+        }.doOnResult(scope) { result ->
+            relevantPlugins.forEach { plugin ->
+                logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
+                plugin.onQueryChannelResult(result, channelType, channelId, request)
             }
-            .precondition(relevantPlugins) { onQueryChannelPrecondition(channelType, channelId, request) }
+        }.precondition(relevantPlugins) {
+            onQueryChannelPrecondition(channelType, channelId, request)
+        }
     }
 
     /**
      * Gets the channels from the server based on parameters from [QueryChannelsRequest].
      * The call requires active socket connection and will be automatically postponed and retried until
      * the connection is established or the maximum number of attempts is reached.
-     * @see [QueryChannelsPostponeHelper]
+     * @see [CallPostponeHelper]
      *
      * @param request The request's parameters combined into [QueryChannelsRequest] class.
      *
@@ -1497,7 +1517,7 @@ internal constructor(
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
-        return queryChannelsPostponeHelper.postponeQueryChannels {
+        return callPostponeHelper.postponeCall {
             api.queryChannels(request)
         }.doOnStart(scope) {
             relevantPluginsLazy().forEach { listener ->
@@ -2296,14 +2316,12 @@ internal constructor(
 
     private fun isUserSet() = userStateService.state !is UserState.NotSet
 
-    public fun devToken(userId: String): String {
-        require(userId.isNotEmpty()) { "User id must not be empty" }
-        val header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
-        val devSignature = "devtoken"
-        val payload: String =
-            Base64.encodeToString("{\"user_id\":\"$userId\"}".toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
-        return "$header.$payload.$devSignature"
-    }
+    /**
+     * Generate a developer token that can be used to connect users while the app is using a development environment.
+     *
+     * @param userId the desired id of the user to be connected.
+     */
+    public fun devToken(userId: String): String = tokenUtils.devToken(userId)
 
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
@@ -2557,6 +2575,7 @@ internal constructor(
             val isLocalHost = baseUrl.contains("localhost")
             val httpProtocol = if (isLocalHost) "http" else "https"
             val wsProtocol = if (isLocalHost) "ws" else "wss"
+            val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
             val config = ChatClientConfig(
                 apiKey = apiKey,
@@ -2583,6 +2602,7 @@ internal constructor(
                     tokenManager,
                     callbackExecutor,
                     customOkHttpClient,
+                    lifecycle,
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
@@ -2594,13 +2614,14 @@ internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.socketStateService,
-                module.queryChannelsPostponeHelper,
+                module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
-                chatSocketExperimental = module.experimentalSocket()
+                chatSocketExperimental = module.experimentalSocket(),
+                lifecycle = lifecycle
             ).also {
                 configureInitializer(it)
             }

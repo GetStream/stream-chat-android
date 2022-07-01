@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.database.converter
 
+import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.repository.database.converter.internal.ExtraDataConverter
-import io.getstream.chat.android.offline.utils.TestDataHelper
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 

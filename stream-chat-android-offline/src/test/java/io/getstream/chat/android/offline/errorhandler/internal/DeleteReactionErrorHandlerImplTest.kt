@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.errorhandler.internal
 
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import org.junit.jupiter.api.Test

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.client.models
 
-internal fun <ElementT> Collection<ElementT>.firstOrDefault(default: ElementT): ElementT =
-    firstOrNull() ?: default
+import io.getstream.chat.android.client.utils.SyncStatus
 
-internal fun <ElementT> Collection<ElementT>.firstOrDefault(
-    element: ElementT,
-    predicate: (ElementT) -> Boolean
-): ElementT = firstOrNull(predicate) ?: element
+/**
+ * An addition to [SyncStatus] to cover message related statuses in detail.
+ *
+ * @param type Represents the type of message sync description.
+ * @param content May contain a detailed information for the specified [type].
+ */
+public data class MessageSyncDescription(
+    val type: MessageSyncType,
+    val content: MessageSyncContent
+)

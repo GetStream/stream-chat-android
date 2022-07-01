@@ -21,11 +21,11 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMember
+import io.getstream.chat.android.client.test.randomSyncStatus
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomSyncStatus
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.utils.internal.filter
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomInt
