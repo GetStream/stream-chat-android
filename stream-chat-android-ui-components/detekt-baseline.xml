@@ -6,13 +6,17 @@
     <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
     <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
+    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
+    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.editMessageEnabled &amp;&amp; ((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; selectedMessage.command != ModelType.attach_giphy</ID>
+    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canReplyToMessage</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ComplexMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
     <ID>ComplexMethod:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$ public open fun createViewHolder( parentView: ViewGroup, viewType: Int, ): BaseMessageItemViewHolder&lt;out MessageListItem></ID>
-    <ID>ComplexMethod:MessageOptionsView.kt$MessageOptionsView$internal fun configure( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
+    <ID>ComplexMethod:MessageListView.kt$MessageListView$ private fun handleMessageAction(messageAction: MessageAction)</ID>
+    <ID>ComplexMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$ override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
     <ID>ComplexMethod:MessageReplyView.kt$MessageReplyView$ private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?)</ID>
     <ID>EmptyFunctionBlock:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener${}</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
@@ -33,8 +37,7 @@
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
     <ID>LongMethod:MessageListViewModelBinding.kt$ @JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, enforceUniqueReactions: Boolean = true, )</ID>
     <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
-    <ID>LongMethod:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$private fun setupOptionsClickListeners( messageOptionsHandlers: MessageOptionsHandlers, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
-    <ID>LongMethod:MessageOptionsView.kt$MessageOptionsView$internal fun configure( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
+    <ID>LongMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$ override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
     <ID>LongMethod:MessageReplyStyle.kt$MessageReplyStyle.Companion$operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle</ID>
     <ID>LongMethod:PinnedMessageListViewStyle.kt$PinnedMessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): PinnedMessageListViewStyle</ID>
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
@@ -42,10 +45,9 @@
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
     <ID>LongParameterList:ChannelViewHolder.kt$ChannelViewHolder$( parent: ViewGroup, private val channelClickListener: ChannelListView.ChannelClickListener, private val channelLongClickListener: ChannelListView.ChannelLongClickListener, private val channelDeleteListener: ChannelListView.ChannelClickListener, private val channelMoreOptionsListener: ChannelListView.ChannelClickListener, private val userClickListener: ChannelListView.UserClickListener, private val swipeListener: ChannelListView.SwipeListener, private val style: ChannelListViewStyle, private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate( parent.streamThemeInflater, parent, false ), private val globalState: GlobalState = ChatClient.instance().globalState, )</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, configuration: MessageOptionsView.Configuration, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, configuration: MessageOptionsView.Configuration, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.MessageOptionsHandlers$( val threadReplyHandler: MessageListView.ThreadStartHandler, val retryHandler: MessageListView.MessageRetryHandler, val editClickHandler: MessageListView.MessageEditHandler, val flagClickHandler: MessageListView.MessageFlagHandler, val pinClickHandler: MessageListView.MessagePinHandler, val unpinClickHandler: MessageListView.MessageUnpinHandler, val muteClickHandler: MessageListView.UserMuteHandler, val unmuteClickHandler: MessageListView.UserUnmuteHandler, val blockClickHandler: MessageListView.UserBlockHandler, val deleteClickHandler: MessageListView.MessageDeleteHandler, val replyClickHandler: MessageListView.MessageReplyHandler, )</ID>
-    <ID>LongParameterList:MessageOptionsView.kt$MessageOptionsView$( configuration: Configuration, style: MessageListViewStyle, isMessageTheirs: Boolean, syncStatus: SyncStatus, isMessageAuthorMuted: Boolean, isMessagePinned: Boolean, )</ID>
+    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
+    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
+    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
     <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>
@@ -150,8 +152,6 @@
     <ID>MaxLineLength:MessageListView.kt$MessageListView.NewMessagesBehaviour.Companion$?:</ID>
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
-    <ID>MaxLineLength:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$return ChatClient.instance().globalState.user.value?.mutes?.any { mute -> mute.target.id == message.user.id } == true</ID>
-    <ID>MaxLineLength:MessageOptionsView.kt$MessageOptionsView.Configuration.Companion$reactionsEnabled</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
     <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
     <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)</ID>
@@ -178,8 +178,6 @@
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
     <ID>ReturnCount:DefaultUserLookupHandler.kt$private fun levenshtein(search: CharSequence, target: CharSequence): Int</ID>
-    <ID>SerialVersionUIDInSerializableClass:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment$MessageOptionsHandlers : Serializable</ID>
-    <ID>SerialVersionUIDInSerializableClass:MessageOptionsView.kt$MessageOptionsView$Configuration : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
