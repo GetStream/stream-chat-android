@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -98,12 +99,12 @@ public class DefaultTypingUpdatesBuffer(
     }
 
     /**
-     * Sets [isTyping] to false and cancels [coroutineScope].
+     * Cancels all currently running coroutines and sets [isTyping] to false.
      *
      * Should be called before an instance of this class is removed.
      */
     override fun clear() {
-        coroutineScope.cancel()
+        coroutineScope.coroutineContext.cancelChildren()
         if (isTyping) {
             isTyping = false
         }
