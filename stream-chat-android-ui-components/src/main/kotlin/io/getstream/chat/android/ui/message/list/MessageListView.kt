@@ -1450,7 +1450,9 @@ public class MessageListView : ConstraintLayout {
      * @param userBlockHandler The handler to use.
      */
     @Deprecated(
-        message = "The block action has been removed.",
+        message = "The block action has been removed. Use MessageOptionItemsFactory.setMessageOptionItemsFactory() " +
+            "in conjunction with MessageOptionItemsFactory.setCustomActionHandler() to add support for custom block " +
+            "action.",
         level = DeprecationLevel.ERROR
     )
     public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
