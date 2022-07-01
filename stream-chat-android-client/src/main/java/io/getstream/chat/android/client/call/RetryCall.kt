@@ -49,10 +49,10 @@ internal class RetryCall<T : Any>(
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        scope.launch {
+        job = scope.launch {
             val result = await()
-            yield()
             withContext(DispatcherProvider.Main) {
+                yield()
                 callback.onResult(result)
             }
         }
