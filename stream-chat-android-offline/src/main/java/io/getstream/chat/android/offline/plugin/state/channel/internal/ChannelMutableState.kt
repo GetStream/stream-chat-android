@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -54,7 +53,6 @@ internal class ChannelMutableState(
 
     internal val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     internal val _watcherCount = MutableStateFlow(0)
-    internal val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
     internal val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
     internal val _read = MutableStateFlow<ChannelUserRead?>(null)
     internal val _endOfNewerMessages = MutableStateFlow(false)
@@ -108,6 +106,10 @@ internal class ChannelMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     }
 
+    private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
+    private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
+    internal val typingEvents: StateFlow<Map<String, TypingStartEvent>> = _typingChatEvents
+
     internal var lastMarkReadEvent: Date? = null
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
@@ -134,19 +136,6 @@ internal class ChannelMutableState(
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val typing: StateFlow<TypingEvent> = _typing
-        .map { typingMap ->
-            val userList = typingMap.values
-                .sortedBy(ChatEvent::createdAt)
-                .mapNotNull { event ->
-                    when (event) {
-                        is TypingStartEvent -> event.user
-                        else -> null
-                    }
-                }
-
-            TypingEvent(channelId, userList)
-        }
-        .stateIn(scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
 
     override val reads: StateFlow<List<ChannelUserRead>> = _reads
         .map { it.values.sortedBy(ChannelUserRead::lastRead) }
@@ -202,6 +191,14 @@ internal class ChannelMutableState(
         channel.hidden = _hidden.value
 
         return channel
+    }
+
+    /**
+     * Updates StateFlows related to typing updates.
+     */
+    internal fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent) {
+        _typingChatEvents.value = eventsMap
+        _typing.value = typingEvent
     }
 }
 
