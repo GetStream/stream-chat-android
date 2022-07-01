@@ -32,8 +32,8 @@ internal class MultiMapJsonAdapter<K, V>(
     valueType: Type,
 ) : JsonAdapter<Map<K?, V?>>() {
 
-    private val keyAdapter: JsonAdapter<K> = moshi.adapter(keyType)
-    private val valueAdapter: JsonAdapter<V> = moshi.adapter(valueType)
+    private val keyAdapter: JsonAdapter<K?> = moshi.adapter(keyType)
+    private val valueAdapter: JsonAdapter<V?> = moshi.adapter(valueType)
 
     @Throws(IOException::class)
     override fun toJson(writer: JsonWriter, map: Map<K?, V?>?) {
