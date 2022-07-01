@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `GlobalState::typingUpdates` | 2022.07.04 <br/>5.4.1 | 2022.07.18 ⌛ | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
 | `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use QuerySortByReflection. |
 | `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the version without offsets, as it uses less requests to backend. |
 | `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |

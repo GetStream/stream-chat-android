@@ -49,5 +49,11 @@ internal interface MutableGlobalState : GlobalState {
 
     fun setMutedUsers(mutedUsers: List<Mute>)
 
-    fun tryEmitTypingEvent(typingEvent: TypingEvent)
+    /**
+     * Tries emit typing event for a particular channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     * @param typingEvent [TypingEvent] with information about typing users. Current user is excluded.
+     */
+    fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent)
 }

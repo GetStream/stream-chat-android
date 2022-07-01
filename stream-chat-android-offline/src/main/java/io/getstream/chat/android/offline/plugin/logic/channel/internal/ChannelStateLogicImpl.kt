@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
@@ -183,20 +184,31 @@ internal class ChannelStateLogicImpl(
     override fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
     /**
-     * Sets the typing status for a user in the channel.
+     * Updates the list of typing users.
+     * The method is responsible for adding/removing typing users, sorting the list and updating both
+     * [ChannelState] and [MutableGlobalState].
      *
-     * @param userId the id of the user
-     * @param event the event of typing.
+     * @param userId The id of the user that receives update.
+     * @param event The start typing event or null if user stops typing.
      */
-    override fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = mutableState.rawTyping.toMutableMap()
-        if (event == null) {
-            copy.remove(userId)
-        } else {
-            copy[userId] = event
+    override fun setTyping(userId: String, event: TypingStartEvent?) {
+        val typingEventsCopy = mutableState.rawTyping.toMutableMap()
+        when {
+            event == null -> {
+                typingEventsCopy.remove(userId)
+            }
+            userId != globalMutableState.user.value?.id -> {
+                typingEventsCopy[userId] = event
+            }
         }
-        globalMutableState.user.value?.id.let(copy::remove)
-        mutableState.rawTyping = copy.toMap()
+
+        val typingEvent = typingEventsCopy.values
+            .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
+            .map { typingStartEvent -> typingStartEvent.user }
+            .let { sortedUsers -> TypingEvent(channelId = mutableState.channelId, users = sortedUsers) }
+
+        mutableState.updateTypingEvents(eventsMap = typingEventsCopy, typingEvent = typingEvent)
+        globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
     /**

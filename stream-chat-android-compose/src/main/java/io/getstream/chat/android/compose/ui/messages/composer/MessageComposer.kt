@@ -333,7 +333,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
+        if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }

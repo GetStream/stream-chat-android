@@ -18,7 +18,7 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -81,7 +81,7 @@ internal interface ChannelStateLogic {
      * @param userId the id of the user
      * @param event the event of typing.
      */
-    fun setTyping(userId: String, event: ChatEvent?)
+    fun setTyping(userId: String, event: TypingStartEvent?)
 
     /**
      * Sets the watcher count for the channel.

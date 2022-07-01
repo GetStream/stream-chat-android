@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
-import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -53,7 +54,7 @@ internal interface ChannelMutableState : ChannelState {
     var rawWatchers: Map<String, User>
 
     /** raw version of typing. */
-    var rawTyping: Map<String, ChatEvent>
+    var rawTyping: Map<String, TypingStartEvent>
 
     /** the date of the last message */
     var lastMessageAt: Date?
@@ -163,4 +164,9 @@ internal interface ChannelMutableState : ChannelState {
      * @param channelConfig [Config]
      */
     fun setChannelConfig(channelConfig: Config)
+
+    /**
+     * Updates StateFlows related to typing updates.
+     */
+    fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent)
 }

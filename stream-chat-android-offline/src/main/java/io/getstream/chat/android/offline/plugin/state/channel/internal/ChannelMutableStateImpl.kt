@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -52,7 +51,8 @@ internal class ChannelMutableStateImpl(
     override val cid: String = "%s:%s".format(channelType, channelId)
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    private val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
+    private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
+    private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
     private val _rawReads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
     private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
@@ -99,9 +99,9 @@ internal class ChannelMutableStateImpl(
         set(value) { _watchers.value = value }
 
     /** raw version of typing. */
-    override var rawTyping: Map<String, ChatEvent>
-        get() = _typing.value
-        set(value) { _typing.value = value }
+    override var rawTyping: Map<String, TypingStartEvent>
+        get() = _typingChatEvents.value
+        set(value) { _typingChatEvents.value = value }
 
     /** the date of the last message */
     override var lastMessageAt: Date?
@@ -170,19 +170,6 @@ internal class ChannelMutableStateImpl(
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val typing: StateFlow<TypingEvent> = _typing
-        .map { typingMap ->
-            val userList = typingMap.values
-                .sortedBy(ChatEvent::createdAt)
-                .mapNotNull { event ->
-                    when (event) {
-                        is TypingStartEvent -> event.user
-                        else -> null
-                    }
-                }
-
-            TypingEvent(channelId, userList)
-        }
-        .stateIn(scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
 
     override val reads: StateFlow<List<ChannelUserRead>> = _rawReads
         .map { it.values.sortedBy(ChannelUserRead::lastRead) }
@@ -298,6 +285,11 @@ internal class ChannelMutableStateImpl(
 
     override fun setChannelConfig(channelConfig: Config) {
         _channelConfig.value = channelConfig
+    }
+
+    override fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent) {
+        _typingChatEvents.value = eventsMap
+        _typing.value = typingEvent
     }
 }
 

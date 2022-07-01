@@ -35,7 +35,7 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="0dp"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+        app:layout_constraintBottom_toTopOf="@+id/messageComposerContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
@@ -44,14 +44,30 @@
         app:streamUiPinMessageEnabled="true"
         />
 
-    <io.getstream.chat.android.ui.message.input.MessageInputView
-        android:id="@+id/messageInputView"
+    <FrameLayout
+        android:id="@+id/messageComposerContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageListView"
-        />
+        >
+
+        <io.getstream.chat.android.ui.message.composer.MessageComposerView
+            android:id="@+id/messageComposerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+
+        <io.getstream.chat.android.ui.message.input.MessageInputView
+            android:id="@+id/messageInputView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
