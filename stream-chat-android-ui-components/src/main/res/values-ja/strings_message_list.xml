@@ -30,8 +30,8 @@
   <string name="stream_ui_message_list_attachment_load_failed">"不明なエラーが原因でロードに失敗しました"</string>
   <string name="stream_ui_message_list_attachment_more_count">"+%d"</string>
   <string name="stream_ui_message_list_attachment_upload_complete">"アップロードが完了し、処理中。。。"</string>
-  <string name="stream_ui_message_list_attachment_upload_progress">"%s / %s"</string>
-  <string name="stream_ui_message_list_attachment_uploading">"%d / %dmbのアップロード中。。。"</string>
+  <string name="stream_ui_message_list_attachment_upload_progress">"%1$s / %2$s"</string>
+  <string name="stream_ui_message_list_attachment_uploading">"%1$d / %2$dmbのアップロード中。。。"</string>
   <string name="stream_ui_message_list_block_user">"ユーザをブロックする"</string>
   <string name="stream_ui_message_list_copy_message">"メッセージをコピーする"</string>
   <string name="stream_ui_message_list_delete_confirmation_message">"このメッセージを完全に削除してもよろしいですか？"</string>
