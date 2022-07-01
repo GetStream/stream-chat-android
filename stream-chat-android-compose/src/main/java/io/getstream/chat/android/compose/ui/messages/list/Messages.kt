@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -564,6 +565,90 @@ private fun isScrollToBottomButtonVisibleInMessageList(
     areNewestMessagesLoaded: Boolean,
 ): Boolean {
     return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || !areNewestMessagesLoaded
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible given the first visible index.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ *
+ * @return Whether the scroll to bottom button should be visible given the first visible item index.
+ */
+private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean {
+    return abs(firstVisibleItemIndex) >= 3
+}
+
+/**
+ * Determines if the list should scroll to the bottom when a new message arrives.
+ *
+ * @param focusedItemIndex The index of the currently focused item.
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param newMessageState The [NewMessageState] if a new message has arrived.
+ * @param scrollToPositionState The [ScrollToPositionState] which tells the list if it should scroll to a position.
+ * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
+ * @param isScrollInProgress If the list is currently scrolling or not.
+ *
+ * @return Whether the list should scroll to the bottom when a new message arrives or not.
+ */
+private fun shouldScrollToBottomOnNewMessage(
+    focusedItemIndex: Int,
+    firstVisibleItemIndex: Int,
+    newMessageState: NewMessageState?,
+    scrollToPositionState: ScrollToPositionState,
+    areNewestMessagesLoaded: Boolean,
+    isScrollInProgress: Boolean,
+): Boolean {
+    newMessageState ?: return false
+
+    return focusedItemIndex == -1 &&
+        isScrollInProgress &&
+        scrollToPositionState is Idle &&
+        areNewestMessagesLoaded &&
+        firstVisibleItemIndex < 3
+}
+
+/**
+ * Determines whether the scroll to the bottom button should be visible or not.
+ *
+ * @param isInThread If we are currently in a thread or not.
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
+ *
+ * @return Whether the scroll to bottom button should be visible or not.
+ */
+private fun isScrollToBottomButtonVisible(
+    isInThread: Boolean,
+    firstVisibleItemIndex: Int,
+    areNewestMessagesLoaded: Boolean,
+): Boolean {
+    return if (isInThread) isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex) else
+        isScrollToBottomButtonVisibleInMessageList(firstVisibleItemIndex, areNewestMessagesLoaded)
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible if thread is currently showing.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ *
+ * @return Whether the scroll to bottom button should be visible inside a thread.
+ */
+private fun isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex: Int): Boolean {
+    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex)
+}
+
+/**
+ * Determines whether the scroll to bottom button should be visible if messages list is currently showing.
+ *
+ * @param firstVisibleItemIndex The index of the first visible item in the messages list.
+ * @param areNewestMessagesLoaded Whether the newest messages are currently loaded inside the messages list or not.
+ *
+ * @return Whether the scroll to bottom button should be visible inside messages list or not.
+ */
+private fun isScrollToBottomButtonVisibleInMessageList(
+    firstVisibleItemIndex: Int,
+    areNewestMessagesLoaded: Boolean,
+): Boolean {
+    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || areNewestMessagesLoaded
 }
 
 /**

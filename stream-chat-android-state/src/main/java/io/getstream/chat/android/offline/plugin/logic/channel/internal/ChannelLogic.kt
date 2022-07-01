@@ -491,7 +491,6 @@ internal class ChannelLogic(
         if (changedMessages.isNotEmpty()) {
             channelStateLogic.upsertMessages(changedMessages)
         }
-        mutableState._loading
     }
 
     /**
