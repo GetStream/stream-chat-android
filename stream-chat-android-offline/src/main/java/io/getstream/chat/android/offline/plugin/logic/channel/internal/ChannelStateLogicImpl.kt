@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
@@ -39,6 +38,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
+import io.getstream.logging.StreamLog
 import java.util.Date
 import kotlin.math.max
 
@@ -57,8 +57,6 @@ internal class ChannelStateLogicImpl(
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelStateLogic {
-
-    private val logger = ChatLogger.get("ChannelStateLogic")
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
@@ -101,12 +99,12 @@ internal class ChannelStateLogicImpl(
                 )
 
             if (shouldIncrementUnreadCount) {
-                logger.logD(
+                StreamLog.d(TAG) {
                     "It is necessary to increment the unread count for channel: " +
                         "${mutableState.channelData.value.channelId}. The last seen message was " +
                         "at: $lastMessageSeenDate. " +
                         "New unread count: ${unreadCount + 1}"
-                )
+                }
 
                 mutableState.setRead(
                     readState.apply {
@@ -469,15 +467,27 @@ internal class ChannelStateLogicImpl(
      */
     override fun propagateQueryError(error: ChatError) {
         if (error.isPermanent()) {
-            logger.logW("Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error")
+            StreamLog.d(TAG) {
+                "Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error"
+            }
         } else {
-            logger.logW(
+            StreamLog.d(TAG) {
                 "Temporary failure calling channel.watch for channel ${mutableState.cid}. " +
                     "Marking the channel as needing recovery. Error was $error"
-            )
+            }
             mutableState.recoveryNeeded = true
         }
         globalMutableState.setErrorEvent(Event(error))
+    }
+
+    /**
+     * Refreshes the mute state for the channel
+     */
+    override fun refreshMuteState() {
+        val cid = mutableState.cid
+        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
+        StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
+        updateMute(isChannelMuted)
     }
 
     /**
@@ -531,5 +541,6 @@ internal class ChannelStateLogicImpl(
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
+        private const val TAG = "ChannelStateLogicImpl"
     }
 }

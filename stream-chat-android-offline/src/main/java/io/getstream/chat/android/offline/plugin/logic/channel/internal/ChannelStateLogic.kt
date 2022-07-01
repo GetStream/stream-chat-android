@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -252,4 +253,9 @@ internal interface ChannelStateLogic {
      * @param error [ChatError]
      */
     fun propagateQueryError(error: ChatError)
+
+    /**
+     * Refreshes the mute state for the channel
+     */
+    fun refreshMuteState()
 }
