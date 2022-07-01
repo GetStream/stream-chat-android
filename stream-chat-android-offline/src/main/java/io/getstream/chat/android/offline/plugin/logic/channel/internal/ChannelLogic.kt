@@ -418,7 +418,7 @@ internal class ChannelLogic(
         /* Do not upsert message if the newest messages are not loaded to avoid breaking pagination. If the message
         * is inside the list and was updated in some kind of way, update it in the list. */
         if (mutableState._endOfNewerMessages.value ||
-            mutableState.sortedMessages.value.firstOrNull { it.id == message.id } != null
+            mutableState._messages.value.containsKey(message.id)
         ) {
             upsertMessages(listOf(message))
         }
