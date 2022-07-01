@@ -379,7 +379,6 @@ public class MessageListView : ConstraintLayout {
                     MessageOptionsDialogFragment
                         .newMessageOptionsInstance(
                             message = message,
-                            reactionsEnabled = style.reactionsEnabled,
                             style = viewStyle,
                             messageViewHolderFactory = messageListItemViewHolderFactory,
                             messageBackgroundFactory = messageBackgroundFactory,
@@ -500,7 +499,6 @@ public class MessageListView : ConstraintLayout {
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
-                    reactionsEnabled = requireStyle().reactionsEnabled,
                     requireStyle(),
                     messageListItemViewHolderFactory,
                     messageBackgroundFactory,
@@ -1608,7 +1606,7 @@ public class MessageListView : ConstraintLayout {
             }
             is FlagAction -> {
                 if (style.flagMessageConfirmationEnabled) {
-                    confirmFlagMessageHandler?.onConfirmFlagMessage(message) {
+                    confirmFlagMessageHandler.onConfirmFlagMessage(message) {
                         messageFlagHandler.onMessageFlag(message)
                     }
                 } else {

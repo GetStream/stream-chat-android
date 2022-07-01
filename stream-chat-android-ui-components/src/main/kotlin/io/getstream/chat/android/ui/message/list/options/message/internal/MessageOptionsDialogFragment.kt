@@ -62,9 +62,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
-    private val reactionsEnabled: Boolean by lazy {
-        requireArguments().getBoolean(ARG_REACTIONS_ENABLED)
-    }
 
     private val style by lazy { messageListViewStyle!! }
 
@@ -163,7 +160,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
             applyStyle(style.itemStyle.editReactionsViewStyle)
-            if (reactionsEnabled) {
+            if (style.reactionsEnabled) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
                     reactionClickHandler?.onReactionClick(message, it)
@@ -284,7 +281,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         const val TAG = "MessageOptionsDialogFragment"
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
-        private const val ARG_REACTIONS_ENABLED = "reactionsEnabled"
 
         internal var messageListViewStyle: MessageListViewStyle? = null
 
@@ -296,7 +292,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         fun newReactionOptionsInstance(
             message: Message,
-            reactionsEnabled: Boolean,
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
@@ -306,7 +301,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             return newInstance(
                 OptionsMode.REACTION_OPTIONS,
                 message,
-                reactionsEnabled,
                 style,
                 messageViewHolderFactory,
                 messageBackgroundFactory,
@@ -318,7 +312,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         fun newMessageOptionsInstance(
             message: Message,
-            reactionsEnabled: Boolean,
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
@@ -329,7 +322,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             return newInstance(
                 OptionsMode.MESSAGE_OPTIONS,
                 message,
-                reactionsEnabled,
                 style,
                 messageViewHolderFactory,
                 messageBackgroundFactory,
@@ -342,7 +334,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
-            reactionsEnabled: Boolean,
             style: MessageListViewStyle,
             messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
@@ -363,7 +354,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_REACTIONS_ENABLED to reactionsEnabled,
                 )
                 // pass message via static field
                 messageArg = message
