@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -243,13 +244,15 @@ internal class ChannelLogic(
      * @param messagesLimit The limit of messages inside the channel that should be requested.
      * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
      */
-    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState._loading.value) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
-            return
+            return Result.error(
+                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+            )
         }
-        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
+        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**
@@ -278,10 +281,6 @@ internal class ChannelLogic(
 
     internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
-    }
-
-    internal suspend fun loadNewestMessages(limit: Int): Result<Channel> {
-        return runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence))
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
@@ -417,11 +416,11 @@ internal class ChannelLogic(
     internal fun upsertMessage(message: Message) {
         /* Do not upsert message if the newest messages are not loaded to avoid breaking pagination. If the message
         * is inside the list and was updated in some kind of way, update it in the list. */
-        if (mutableState._endOfNewerMessages.value ||
-            mutableState._messages.value.containsKey(message.id)
-        ) {
-            upsertMessages(listOf(message))
-        }
+        // if (mutableState._endOfNewerMessages.value ||
+        //     mutableState._messages.value.containsKey(message.id)
+        // ) {
+        upsertMessages(listOf(message))
+        // }
     }
 
     private fun setWatcherCount(watcherCount: Int) {
@@ -782,6 +781,7 @@ internal class ChannelLogic(
         if (changedMessages.isNotEmpty()) {
             upsertMessages(changedMessages)
         }
+        mutableState._loading
     }
 
     private fun setTyping(userId: String, event: ChatEvent?) {

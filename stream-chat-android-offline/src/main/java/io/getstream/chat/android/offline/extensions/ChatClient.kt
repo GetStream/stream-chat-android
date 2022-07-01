@@ -390,19 +390,22 @@ private suspend fun ChatClient.loadMessageByIdInternal(
  *
  * @param cid The full channel id i. e. messaging:123.
  * @param messageLimit The number of messages to be loaded.
+ * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events.
+ * Used by the SDK to indicate if the user is online or not.
  *
  * @return Executable async [Call] responsible for loading the newest messages.
  */
-public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int): Call<Channel> {
+public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int, userPresence: Boolean = true): Call<Channel> {
     return CoroutineCall(state.scope) {
-        loadNewestMessagesInternal(cid, messageLimit)
+        loadNewestMessagesInternal(cid, messageLimit, userPresence)
     }
 }
 
 @CheckResult
 internal suspend fun ChatClient.loadNewestMessagesInternal(
     cid: String,
-    messageLimit: Int
+    messageLimit: Int,
+    userPresence: Boolean
 ): Result<Channel> {
     val cidValidationResult = validateCidWithResult(cid)
     if (!cidValidationResult.isSuccess) {
@@ -410,5 +413,5 @@ internal suspend fun ChatClient.loadNewestMessagesInternal(
     }
 
     val (channelType, channelId) = cid.cidToTypeAndId()
-    return logic.channel(channelType = channelType, channelId = channelId).loadNewestMessages(messageLimit)
+    return logic.channel(channelType = channelType, channelId = channelId).watch(messageLimit, userPresence)
 }
