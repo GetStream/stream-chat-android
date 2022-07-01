@@ -537,7 +537,7 @@ public class MessageListViewModel(
     @Deprecated(
         message = "Deprecated after implementing bi directional pagination.",
         replaceWith = ReplaceWith(
-            "loadNewerMessages(messageId: String)",
+            "loadOlderMessages(messageId: String)",
             "io.getstream.chat.android.compose.viewmodel.messages"
         ),
         level = DeprecationLevel.WARNING
