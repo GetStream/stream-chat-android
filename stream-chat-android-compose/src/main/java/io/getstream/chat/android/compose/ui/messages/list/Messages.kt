@@ -31,8 +31,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -579,7 +581,10 @@ private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: In
 }
 
 /**
- * Determines if the list should scroll to the bottom when a new message arrives.
+ * Determines if the list should scroll to the bottom when a new message arrives. If we are focusing on an item we do
+ * not wish to take the user off of it, if the newest messages are not loaded then the list will not scroll since the
+ * new message will not be in the list and if the user has scrolled further in search of a certain part of messages
+ * history we should not break that flow.
  *
  * @param focusedItemIndex The index of the currently focused item.
  * @param firstVisibleItemIndex The index of the first visible item in the messages list.

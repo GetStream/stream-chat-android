@@ -40,6 +40,9 @@ public data class ScrollToFocusedMessage(
     private val scrollOffset: MutableStateFlow<Int?> = MutableStateFlow(null)
 ) : ScrollToPositionState() {
 
+    /**
+     * The offset the list needs to apply so that the focused item is centered inside the screen.
+     */
     public val focusedMessageOffset: StateFlow<Int?> = scrollOffset
 
     /**
