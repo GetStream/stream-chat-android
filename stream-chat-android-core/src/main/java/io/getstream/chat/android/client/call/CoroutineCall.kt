@@ -51,8 +51,8 @@ public class CoroutineCall<T : Any>(
         println("[JcLog] CoroutineCall::enqueue")
         job = scope.launch {
             val result = await()
-            yield()
             withContext(DispatcherProvider.Main) {
+                yield()
                 callback.onResult(result)
             }
         }
