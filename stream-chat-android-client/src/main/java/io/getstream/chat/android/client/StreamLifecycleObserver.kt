@@ -17,14 +17,17 @@
 package io.getstream.chat.android.client
 
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : DefaultLifecycleObserver {
+internal class StreamLifecycleObserver(
+    private val lifecycle: Lifecycle,
+    private val handler: LifecycleHandler,
+) : DefaultLifecycleObserver {
     private var recurringResumeEvent = false
 
     @Volatile
@@ -35,9 +38,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
             isObserving = true
             @OptIn(DelicateCoroutinesApi::class)
             GlobalScope.launch(DispatcherProvider.Main) {
-                ProcessLifecycleOwner.get()
-                    .lifecycle
-                    .addObserver(this@StreamLifecycleObserver)
+                lifecycle.addObserver(this@StreamLifecycleObserver)
             }
         }
     }
@@ -46,9 +47,7 @@ internal class StreamLifecycleObserver(private val handler: LifecycleHandler) : 
         if (isObserving) {
             @OptIn(DelicateCoroutinesApi::class)
             GlobalScope.launch(DispatcherProvider.Main) {
-                ProcessLifecycleOwner.get()
-                    .lifecycle
-                    .removeObserver(this@StreamLifecycleObserver)
+                lifecycle.addObserver(this@StreamLifecycleObserver)
             }
         }
         isObserving = false

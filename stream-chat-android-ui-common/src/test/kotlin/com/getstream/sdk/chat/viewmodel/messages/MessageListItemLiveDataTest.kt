@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -35,6 +36,7 @@ import io.getstream.chat.android.test.getOrAwaitValue
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotBeEmpty
 import org.junit.Rule
 import org.junit.Test
@@ -251,5 +253,30 @@ internal class MessageListItemLiveDataTest {
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
         verify(testObserver, times(4)).onChanged(any())
+    }
+
+    @Test
+    fun `Given regular message followed by system message When grouping messages Should add bottom position to the regular message`() {
+        val user = randomUser()
+        val messages = listOf(
+            createMessage(
+                user = user,
+                type = ModelType.message_regular,
+                createdAt = createDate(year = 2020, month = 11, date = 1, seconds = 1)
+            ),
+            createMessage(
+                user = user,
+                type = ModelType.message_system,
+                createdAt = createDate(year = 2020, month = 11, date = 1, seconds = 2)
+            )
+        )
+
+        val messageListItems = emptyMessages().messagesChanged(messages, currentUser.value!!.id).items
+
+        messageListItems[0].shouldBeInstanceOf<MessageListItem.DateSeparatorItem>()
+        val regularMessageItem = messageListItems[1]
+        regularMessageItem.shouldBeInstanceOf<MessageListItem.MessageItem>()
+        regularMessageItem as MessageListItem.MessageItem
+        regularMessageItem.positions shouldContain MessageListItem.Position.BOTTOM
     }
 }

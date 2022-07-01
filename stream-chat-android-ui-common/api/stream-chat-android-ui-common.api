@@ -311,6 +311,8 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/StringKt {
@@ -845,6 +847,32 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun getValidationErrors ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/model/CustomModerationOption : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public fun <init> (ILjava/util/Map;)V
+	public synthetic fun <init> (ILjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getExtraData ()Ljava/util/Map;
+}
+
+public final class io/getstream/chat/android/common/model/DeleteMessage : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/DeleteMessage;
+}
+
+public final class io/getstream/chat/android/common/model/EditMessage : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/EditMessage;
+}
+
+public abstract class io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getText ()I
+}
+
+public final class io/getstream/chat/android/common/model/ModeratedMessageOptionKt {
+}
+
+public final class io/getstream/chat/android/common/model/SendAnyway : io/getstream/chat/android/common/model/ModeratedMessageOption {
+	public static final field INSTANCE Lio/getstream/chat/android/common/model/SendAnyway;
 }
 
 public final class io/getstream/chat/android/common/state/BlockUser : io/getstream/chat/android/common/state/MessageAction {

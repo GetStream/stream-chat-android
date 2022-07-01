@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.errors
+package io.getstream.chat.android.client.models
 
-internal class ChatParsingError : Exception {
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-}
+import io.getstream.chat.android.client.utils.SyncStatus
+
+/**
+ * An addition to [SyncStatus] to cover message related statuses in detail.
+ *
+ * @param type Represents the type of message sync description.
+ * @param content May contain a detailed information for the specified [type].
+ */
+public data class MessageSyncDescription(
+    val type: MessageSyncType,
+    val content: MessageSyncContent
+)

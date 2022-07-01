@@ -18,11 +18,11 @@ package io.getstream.chat.android.offline.repository.integration
 
 import android.database.sqlite.SQLiteException
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.test.randomAttachment
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
-import io.getstream.chat.android.offline.randomAttachment
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldNotThrow
@@ -34,7 +34,7 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `Given message with 3 attachments When update it in DB Should keep only 3 newer attachments`(): Unit =
-        runBlocking {
+        runTest {
             val attachment1 = randomAttachment { url = "url1" }
             val attachment2 = randomAttachment { url = "url2" }
             val attachment3 = randomAttachment { url = "url3" }
@@ -56,12 +56,12 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
         }
 
     @Test
-    fun `When selecting more than 999 messages Should not throw SQLiteException`(): Unit = runBlocking {
+    fun `When selecting more than 999 messages Should not throw SQLiteException`(): Unit = runTest {
         coInvoking { repos.selectMessages(List(1000) { randomString() }) } shouldNotThrow (SQLiteException::class)
     }
 
     @Test
-    fun `When inserting more than 999 messages Should not throw SQLiteException`(): Unit = runBlocking {
+    fun `When inserting more than 999 messages Should not throw SQLiteException`(): Unit = runTest {
         coInvoking { repos.insertMessages(List(1000) { randomMessage() }) } shouldNotThrow (SQLiteException::class)
     }
 }

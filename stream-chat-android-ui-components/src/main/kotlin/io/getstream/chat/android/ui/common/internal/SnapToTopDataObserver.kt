@@ -51,6 +51,8 @@ internal class SnapToTopDataObserver(
             return
         }
 
-        layoutManager.scrollToPosition(0)
+        if (layoutManager.findFirstVisibleItemPosition() == 0) {
+            layoutManager.scrollToPosition(0)
+        }
     }
 }

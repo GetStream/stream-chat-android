@@ -139,7 +139,7 @@ public fun MessageItem(
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
             onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -157,16 +157,8 @@ public fun MessageItem(
         Modifier.combinedClickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = {
-                if (message.hasThread()) {
-                    onThreadClick(message)
-                }
-            },
-            onLongClick = {
-                if (!message.isUploading()) {
-                    onLongItemClick(message)
-                }
-            }
+            onClick = { if (message.hasThread()) onThreadClick(message) },
+            onLongClick = { if (!message.isUploading()) onLongItemClick(message) }
         )
     }
 
@@ -467,7 +459,7 @@ internal fun EmojiMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                tint = ChatTheme.colors.errorAccent
             )
         }
     }
@@ -547,7 +539,7 @@ internal fun RegularMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                tint = ChatTheme.colors.errorAccent
             )
         }
     }

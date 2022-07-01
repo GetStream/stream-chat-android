@@ -26,13 +26,20 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 internal open class BaseRepositoryFacadeTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     protected lateinit var users: UserRepository
     protected lateinit var configs: ChannelConfigRepository
@@ -42,8 +49,6 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var reactions: ReactionRepository
     protected lateinit var syncState: SyncStateRepository
     protected lateinit var attachmentRepository: AttachmentRepository
-
-    protected val scope = TestScope()
 
     protected lateinit var sut: RepositoryFacade
 
@@ -68,7 +73,7 @@ internal open class BaseRepositoryFacadeTest {
             reactionsRepository = reactions,
             syncStateRepository = syncState,
             attachmentRepository = attachmentRepository,
-            scope = scope,
+            scope = testCoroutines.scope,
             defaultConfig = mock(),
         )
     }

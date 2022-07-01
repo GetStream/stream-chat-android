@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.chat.NonMemberChatEventHandler
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMemberAddedEvent
-import io.getstream.chat.android.offline.randomMemberRemovedEvent
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi

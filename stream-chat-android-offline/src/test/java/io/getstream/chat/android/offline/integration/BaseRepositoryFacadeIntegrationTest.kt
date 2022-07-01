@@ -20,8 +20,8 @@ import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
@@ -49,7 +49,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     @Before
     @CallSuper
     open fun setup() {
-        chatDatabase = createRoomDB(testCoroutines.ioDispatcher)
+        chatDatabase = createRoomDB()
         repositoryFacade = createRepositoryFacade()
     }
 
