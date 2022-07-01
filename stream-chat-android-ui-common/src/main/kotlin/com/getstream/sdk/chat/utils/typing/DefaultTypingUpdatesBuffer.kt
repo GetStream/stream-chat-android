@@ -17,10 +17,11 @@
 package com.getstream.sdk.chat.utils.typing
 
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,7 @@ public class DefaultTypingUpdatesBuffer(
      * The coroutine scope used for running the timer and
      * sending updates.
      */
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
 
     /**
      * Holds the currently running job.
@@ -98,15 +99,16 @@ public class DefaultTypingUpdatesBuffer(
     }
 
     /**
-     * Sets [isTyping] to false and cancels [coroutineScope].
+     * Cancels all currently running coroutines and sets [isTyping] to false.
      *
      * Should be called before an instance of this class is removed.
      */
     override fun clear() {
+        coroutineScope.coroutineContext.cancelChildren()
         if (isTyping) {
             isTyping = false
         }
-        coroutineScope.cancel()
+        onTypingStopped()
     }
 
     /**
