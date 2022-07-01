@@ -64,6 +64,8 @@ internal class SendMessageInterceptorImpl(
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
 
+        message.populateMentions(channel.toChannel())
+
         // Update flow in channel controller
         channel.upsertMessage(message)
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
@@ -73,7 +75,6 @@ internal class SendMessageInterceptorImpl(
         messageRepository.insertMessage(message)
         channelRepository.updateLastMessageForChannel(message.cid, message)
 
-        message.populateMentions(channel.toChannel())
 
         if (message.replyMessageId != null) {
             channel.replyMessage(null)
