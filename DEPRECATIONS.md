@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `Messages` | 2022.07.08<br/>5.4.1 | 2022.08.02 ⌛ | 2022.09.06 ⌛ | Use new implementation of `Messages` composable. |
 | `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use QuerySortByReflection. |
 | `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the version without offsets, as it uses less requests to backend. |
 | `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
