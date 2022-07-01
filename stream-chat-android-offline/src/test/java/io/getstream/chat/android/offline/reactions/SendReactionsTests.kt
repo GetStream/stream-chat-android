@@ -89,7 +89,7 @@ internal class SendReactionsTests {
 
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelState = stateRegistry.channel(channelType = channelType, channelId = channelId).toMutableState()
-        val result = channelState._messages.first()[message.id]
+        val result = channelState.rawMessages[message.id]
         result!!.ownReactions.size `should be equal to` myReactions.size + 1
         result.ownReactions.contains(reactionToAdd) `should be equal to` true
         result.latestReactions.size `should be equal to` myReactions.size + 1
@@ -119,7 +119,7 @@ internal class SendReactionsTests {
 
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelState = stateRegistry.channel(channelType = channelType, channelId = channelId).toMutableState()
-        val result = channelState._messages.first()[message.id]
+        val result = channelState.rawMessages[message.id]
         result!!.ownReactions.size `should be equal to` 1
         result.ownReactions.first() `should be equal to` reactionToAdd
         result.latestReactions.size `should be equal to` 1
@@ -145,7 +145,7 @@ internal class SendReactionsTests {
 
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelState = stateRegistry.channel(channelType = channelType, channelId = channelId).toMutableState()
-        val result = channelState._messages.first()[message.id]
+        val result = channelState.rawMessages[message.id]
         result!!.reactionCounts[newReaction.type] `should be equal to` 1
     }
 
@@ -168,7 +168,7 @@ internal class SendReactionsTests {
 
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelState = stateRegistry.channel(channelType = channelType, channelId = channelId).toMutableState()
-        val result = channelState._messages.first()[message.id]
+        val result = channelState.rawMessages[message.id]
         result!!.reactionScores[newReaction.type] `should be equal to` newReaction.score
     }
 

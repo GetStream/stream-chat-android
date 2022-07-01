@@ -26,81 +26,74 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
 internal class UploadAttachmentsWorker(
     private val channelType: String,
     private val channelId: String,
-    private val channelLogic: ChannelLogic,
-    private val channelState: ChannelState,
+    private val channelStateLogic: ChannelStateLogic,
     private val messageRepository: MessageRepository,
     private val chatClient: ChatClient,
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
 
+    @Suppress("TooGenericExceptionCaught")
     suspend fun uploadAttachmentsForMessage(
         messageId: String,
     ): Result<Unit> {
         val message = messageRepository.selectMessage(messageId)
 
         return try {
-            chatClient.apply {
-                if (getCurrentUser() == null) {
-                    if (!chatClient.containsStoredCredentials()) {
-                        return Result.error(ChatError("Could not set user"))
-                    }
-
-                    chatClient.setUserWithoutConnectingIfNeeded()
-                }
-            }
-
-            if (message == null) {
-                Result.success(Unit)
-            } else {
-                val hasPendingAttachment = message.attachments.any { attachment ->
-                    attachment.uploadState is Attachment.UploadState.InProgress ||
-                        attachment.uploadState is Attachment.UploadState.Idle
-                }
-
-                if (!hasPendingAttachment) {
-                    return Result.success(Unit)
-                }
-
-                val attachments = uploadAttachments(message)
-
-                updateMessages(message)
-
-                if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
-                    Result.success(Unit)
-                } else {
-                    Result.error(ChatError())
-                }
-            }
+            message?.let { sendAttachments(it) } ?: Result.error(
+                ChatError("The message with id $messageId could not be found.")
+            )
         } catch (e: Exception) {
             message?.let { updateMessages(it) }
             Result.error(e)
         }
     }
 
+    private suspend fun sendAttachments(message: Message): Result<Unit> {
+        if (chatClient.getCurrentUser() == null) {
+            if (!chatClient.containsStoredCredentials()) {
+                return Result.error(ChatError("Could not set user"))
+            }
+
+            chatClient.setUserWithoutConnectingIfNeeded()
+        }
+
+        val hasPendingAttachment = message.attachments.any { attachment ->
+            attachment.uploadState is Attachment.UploadState.InProgress ||
+                attachment.uploadState is Attachment.UploadState.Idle
+        }
+
+        return if (!hasPendingAttachment) {
+            Result.success(Unit)
+        } else {
+            val attachments = uploadAttachments(message)
+            updateMessages(message)
+
+            if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
+                Result.success(Unit)
+            } else {
+                Result.error(ChatError())
+            }
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(
         message: Message,
     ): List<Attachment> {
         return try {
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
-                    attachmentUploader.uploadAttachment(
-                        channelType,
-                        channelId,
-                        attachment,
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            channelState.toMutableState()
-                        )
-                    )
+                    val progressCallback = channelStateLogic.writeChannelState()?.let { channelMutableState ->
+                        ProgressCallbackImpl(message.id, attachment.uploadId!!, channelMutableState)
+                    }
+
+                    attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
                 } else {
@@ -108,7 +101,6 @@ internal class UploadAttachmentsWorker(
                 }
             }.toMutableList()
         } catch (e: Exception) {
-            e.printStackTrace()
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
@@ -128,7 +120,7 @@ internal class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
-        channelLogic.upsertMessage(message)
+        channelStateLogic.upsertMessage(message)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(message)
         messageRepository.insertMessage(message)
@@ -137,7 +129,7 @@ internal class UploadAttachmentsWorker(
     private class ProgressCallbackImpl(
         private val messageId: String,
         private val uploadId: String,
-        private val mutableState: ChannelMutableState
+        private val mutableState: ChannelMutableState,
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
@@ -169,7 +161,7 @@ internal class UploadAttachmentsWorker(
                 val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
                 val newMessages =
                     mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-                mutableState._messages.value = newMessages
+                mutableState.rawMessages = newMessages
             }
         }
     }

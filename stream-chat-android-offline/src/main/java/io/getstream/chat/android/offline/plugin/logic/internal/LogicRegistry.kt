@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -49,7 +52,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
-) {
+) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
@@ -76,13 +79,25 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
+            val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
+            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, SearchLogic(mutableState))
+
             ChannelLogic(
-                mutableState = stateRegistry.channel(channelType, channelId).toMutableState(),
-                globalMutableState = globalState,
                 repos = repos,
-                userPresence = userPresence
+                userPresence = userPresence,
+                channelStateLogic = stateLogic,
             )
         }
+    }
+
+    /**
+     * Provides [ChannelStateLogic] for the channelType and channelId
+     *
+     * @param channelType String
+     * @param channelId String
+     */
+    override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
+        return channel(channelType, channelId).stateLogic()
     }
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
