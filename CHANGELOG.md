@@ -75,6 +75,7 @@
 
 ### ⬆️ Improved
 - Improved `Messages` recomposition when marking messages as read. It will now avoid going into a recomposition loop in certain situations such as when you have two or more failed messages visible in the list. [#3772](https://github.com/GetStream/stream-chat-android/pull/3772)
+- Covered an edge case inside `DefaultTypingUpdatesBuffer`. It will now always call `onTypingStopped()` when you call `DefaultTypingUpdatesBuffer.clear()`. [#3782](https://github.com/GetStream/stream-chat-android/pull/3782)
 
 ### ✅ Added
 - Added the preview of moderation bounced messages and the ability to take actions upon those messages like edit, delete and send anyway. [#3625](https://github.com/GetStream/stream-chat-android/pull/3625)
