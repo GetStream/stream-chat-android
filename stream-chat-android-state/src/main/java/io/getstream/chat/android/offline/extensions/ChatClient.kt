@@ -362,5 +362,5 @@ internal suspend fun ChatClient.loadNewestMessagesInternal(
 
     val (channelType, channelId) = cid.cidToTypeAndId()
     return logic.channel(channelType = channelType, channelId = channelId)
-        .loadNewestMessages(messageLimit, userPresence)
+        .watch(messageLimit, userPresence)
 }

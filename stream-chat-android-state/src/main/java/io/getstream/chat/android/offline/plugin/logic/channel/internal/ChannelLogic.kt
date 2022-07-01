@@ -233,10 +233,6 @@ internal class ChannelLogic(
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
-    internal suspend fun loadNewestMessages(limit: Int): Result<Channel> {
-        return runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence))
-    }
-
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
@@ -495,6 +491,7 @@ internal class ChannelLogic(
         if (changedMessages.isNotEmpty()) {
             channelStateLogic.upsertMessages(changedMessages)
         }
+        mutableState._loading
     }
 
     /**

@@ -103,7 +103,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     public fun isFilteringMessages(): Boolean {
-        return messages.keys.any { key -> Pagination.values().map { it.toString() }.contains(key) }
+        return Pagination.values().map { it.toString() }.intersect(messages.keys).isNotEmpty()
     }
 
     /**
