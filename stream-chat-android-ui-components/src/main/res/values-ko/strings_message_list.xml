@@ -30,8 +30,8 @@
   <string name="stream_ui_message_list_attachment_load_failed">"알 수 없는 오류로 인해 로드에 실패했습니다"</string>
   <string name="stream_ui_message_list_attachment_more_count">"+%d"</string>
   <string name="stream_ui_message_list_attachment_upload_complete">"업로드 완료, 처리 중…"</string>
-  <string name="stream_ui_message_list_attachment_upload_progress">"%s / %s"</string>
-  <string name="stream_ui_message_list_attachment_uploading">"%d / %dmb개 업로드 중…"</string>
+  <string name="stream_ui_message_list_attachment_upload_progress">"%1$s / %2$s"</string>
+  <string name="stream_ui_message_list_attachment_uploading">"%1$d / %2$dmb개 업로드 중…"</string>
   <string name="stream_ui_message_list_block_user">"사용자 차단"</string>
   <string name="stream_ui_message_list_copy_message">"메세지 복사"</string>
   <string name="stream_ui_message_list_delete_confirmation_message">"이 메시지를 삭제하시겠습니까?"</string>
