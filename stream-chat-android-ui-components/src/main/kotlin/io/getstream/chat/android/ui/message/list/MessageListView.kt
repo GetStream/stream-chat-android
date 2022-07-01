@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.model.ModeratedMessageOption
-import io.getstream.chat.android.common.state.BlockUser
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction
 import io.getstream.chat.android.common.state.Delete
@@ -1450,6 +1449,10 @@ public class MessageListView : ConstraintLayout {
      *
      * @param userBlockHandler The handler to use.
      */
+    @Deprecated(
+        message = "The block action has been removed.",
+        level = DeprecationLevel.ERROR
+    )
     public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
         this.userBlockHandler = userBlockHandler
     }
@@ -1621,7 +1624,6 @@ public class MessageListView : ConstraintLayout {
                     userMuteHandler.onUserMute(message.user)
                 }
             }
-            is BlockUser -> userBlockHandler.onUserBlock(message.user, channel.cid)
             is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
             is React -> {
                 // Handled by a separate handler.

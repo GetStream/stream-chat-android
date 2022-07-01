@@ -68,6 +68,7 @@
 - The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 
 ### ❌ Removed
+- 🚨 Breaking change: The block action has been removed from message options. [3768](https://github.com/GetStream/stream-chat-android/pull/3768)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
