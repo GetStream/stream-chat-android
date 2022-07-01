@@ -143,6 +143,7 @@ import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import io.getstream.chat.android.common.state.Flag as FlagAction
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -1605,7 +1606,7 @@ public class MessageListView : ConstraintLayout {
                     messageDeleteHandler.onMessageDelete(message)
                 }
             }
-            is io.getstream.chat.android.common.state.Flag -> {
+            is FlagAction -> {
                 if (style.flagMessageConfirmationEnabled) {
                     confirmFlagMessageHandler?.onConfirmFlagMessage(message) {
                         messageFlagHandler.onMessageFlag(message)
