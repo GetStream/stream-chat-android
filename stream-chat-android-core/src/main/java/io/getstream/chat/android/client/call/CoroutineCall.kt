@@ -48,7 +48,6 @@ public class CoroutineCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        println("[JcLog] CoroutineCall::enqueue")
         job = scope.launch {
             val result = await()
             withContext(DispatcherProvider.Main) {

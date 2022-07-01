@@ -39,7 +39,6 @@ internal class DoOnStartCall<T : Any>(
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        println("[JcLog] DoOnStartCall::enqueue")
         job = scope.launch {
             sideEffect()
             yield()
