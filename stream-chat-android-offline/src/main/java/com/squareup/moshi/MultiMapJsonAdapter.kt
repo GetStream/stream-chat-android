@@ -61,7 +61,7 @@ internal class MultiMapJsonAdapter<K, V>(
 
     @Throws(IOException::class)
     override fun fromJson(reader: JsonReader): Map<K?, V?> {
-        val result = hashMapOf<K?, V?>()
+        val result = linkedMapOf<K?, V?>()
         reader.beginObject()
         while (reader.hasNext()) {
             reader.promoteNameToValue()
