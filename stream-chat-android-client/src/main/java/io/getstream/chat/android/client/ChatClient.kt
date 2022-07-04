@@ -1480,8 +1480,10 @@ internal constructor(
         request: QueryChannelRequest,
     ): Call<Channel> {
         val isConnectionRequired = request.watch || request.presence
-        logger.logD("[queryChannel] channelType: $channelType, channelId: $channelId, " +
-            "isConnectionRequired: $isConnectionRequired")
+        logger.logD(
+            "[queryChannel] channelType: $channelType, channelId: $channelId, " +
+                "isConnectionRequired: $isConnectionRequired"
+        )
 
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
