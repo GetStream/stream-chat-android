@@ -96,7 +96,15 @@ internal class ImageAttachmentView : ConstraintLayout {
      * images the message contains in case they don't all fit in the preview.
      */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
+        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl
+
+        if (url == null) {
+            // The image is uploading
+            binding.imageView.setImageDrawable(style.placeholderIcon)
+            showLoading(true)
+            return
+        }
+
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
