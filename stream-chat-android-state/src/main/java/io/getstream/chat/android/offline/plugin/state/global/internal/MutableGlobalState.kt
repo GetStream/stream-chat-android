@@ -22,12 +22,12 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.connection.ConnectionState
-import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
 
 /**
- * Mutable global state of [OfflinePlugin].
+ * Mutable global state of [StatePlugin].
  */
 internal interface MutableGlobalState : GlobalState {
 
