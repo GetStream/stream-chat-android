@@ -1099,7 +1099,7 @@ public class MessageListViewModel(
      * @param focusedItemExists Whether there is a focused message inside the messages list or not.
      * */
     private fun updateMessages(messages: List<MessageListItemState>, focusedItemExists: Boolean) {
-        if (!isInThread) {
+        if (isInThread) {
             this.threadMessagesState =
                 threadMessagesState.copy(
                     messageItems = messages,
