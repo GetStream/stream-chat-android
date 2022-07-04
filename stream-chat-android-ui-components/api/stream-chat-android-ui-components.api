@@ -754,11 +754,6 @@ public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 }
 
-public final class io/getstream/chat/android/ui/common/extensions/MemberKt {
-	public static final fun isCurrentUserOwnerOrAdmin (Ljava/util/List;)Z
-	public static final fun isOwnerOrAdmin (Lio/getstream/chat/android/client/models/Member;)Z
-}
-
 public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
