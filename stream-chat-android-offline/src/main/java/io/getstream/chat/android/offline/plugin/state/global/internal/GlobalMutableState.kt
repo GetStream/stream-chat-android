@@ -43,7 +43,8 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
 
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    private val _typingChannels = MutableStateFlow(TypingEvent("", emptyList()))
+    private val _typingChannelsOld = MutableStateFlow(TypingEvent("", emptyList()))
+    private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
 
     private val _user = MutableStateFlow<User?>(null)
 
@@ -65,7 +66,9 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
 
     override val banned: StateFlow<Boolean> = _banned
 
-    override val typingUpdates: StateFlow<TypingEvent> = _typingChannels
+    override val typingUpdates: StateFlow<TypingEvent> = _typingChannelsOld
+
+    override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
     override fun isOnline(): Boolean = _connectionState.value == ConnectionState.CONNECTED
 
@@ -156,8 +159,11 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
         _mutedUsers.value = mutedUsers
     }
 
-    override fun tryEmitTypingEvent(typingEvent: TypingEvent) {
-        _typingChannels.tryEmit(typingEvent)
+    override fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent) {
+        _typingChannelsOld.tryEmit(typingEvent)
+        val typingChannelsCopy = _typingChannels.value.toMutableMap()
+        typingChannelsCopy[cid] = typingEvent
+        _typingChannels.tryEmit(typingChannelsCopy)
     }
 }
 

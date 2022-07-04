@@ -174,15 +174,13 @@ internal class MessageListItemLiveData(
     internal fun messagesChanged(messages: List<Message>, currentUserId: String): MessageListItemWrapper {
         messageItemsBase = groupMessages(messages, currentUserId)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value, currentUserId)
-        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        return wrapMessages(out, hasNewMessages)
+        return wrapMessages(buildItemsList(), hasNewMessages)
     }
 
     @UiThread
     internal fun readsChanged(reads: List<ChannelUserRead>, currentUserId: String): MessageListItemWrapper {
         messageItemsWithReads = addReads(messageItemsBase, reads, currentUserId)
-        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        return wrapMessages(out)
+        return wrapMessages(buildItemsList())
     }
 
     /**
@@ -193,7 +191,7 @@ internal class MessageListItemLiveData(
     internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
         typingUsers = newTypingUsers
         typingItems = usersAsTypingItems(newTypingUsers)
-        return wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
+        return wrapMessages(buildItemsList())
     }
 
     /**
@@ -206,8 +204,20 @@ internal class MessageListItemLiveData(
         messageItemsWithReads = messageItemsWithReads.filter {
             it !is MessageListItem.LoadingMoreIndicatorItem
         }
-        val out = getLoadingMoreItems() + messageItemsWithReads
-        value = wrapMessages(out)
+
+        value = wrapMessages(buildItemsList())
+    }
+
+    /**
+     * Builds a list of items we show in the View, based on the current state.
+     *
+     * We add the loading item at the top, if we're currently loading more data and the typing item at the bottom, if
+     * there are users who are typing.
+     *
+     * @return Full list of [MessageListItem] to represent the state.
+     */
+    private fun buildItemsList(): List<MessageListItem> {
+        return getLoadingMoreItems() + messageItemsWithReads + typingItems
     }
 
     private fun getLoadingMoreItems() = if (loadingMoreInProgress) {

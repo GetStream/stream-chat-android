@@ -172,7 +172,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
             state.channel(channelType = channelType, channelId = channelId).toMutableState().run {
-                _repliedMessage.value = message
+                setRepliedMessage(message)
             }
             Result(Unit)
         } else {

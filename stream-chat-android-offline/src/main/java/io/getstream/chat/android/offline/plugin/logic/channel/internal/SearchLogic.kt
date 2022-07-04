@@ -37,6 +37,6 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
 
     private fun updateSearchState(isInsideSearch: Boolean) {
         this.isInsideSearch = isInsideSearch
-        mutableState._insideSearch.value = isInsideSearch
+        mutableState.setInsideSearch(isInsideSearch)
     }
 }
