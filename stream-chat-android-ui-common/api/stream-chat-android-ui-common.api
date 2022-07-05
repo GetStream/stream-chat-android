@@ -392,15 +392,17 @@ public class com/getstream/sdk/chat/view/activity/AttachmentDocumentActivity : a
 
 public final class com/getstream/sdk/chat/view/messages/MessageListItemWrapper {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/List;ZZZ)V
-	public synthetic fun <init> (Ljava/util/List;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;ZZZZ)V
+	public synthetic fun <init> (Ljava/util/List;ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
-	public final fun copy (Ljava/util/List;ZZZ)Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;Ljava/util/List;ZZZILjava/lang/Object;)Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/util/List;ZZZZ)Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;Ljava/util/List;ZZZZILjava/lang/Object;)Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAreNewestMessagesLoaded ()Z
 	public final fun getHasNewMessages ()Z
 	public final fun getItems ()Ljava/util/List;
 	public fun hashCode ()I
@@ -458,6 +460,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V
+	public final fun scrollToBottom (Lkotlin/jvm/functions/Function0;)V
 	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
 	public final fun setDeletedMessageVisibility (Lio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public final fun setMessageFooterVisibility (Lio/getstream/chat/android/common/state/MessageFooterVisibility;)V

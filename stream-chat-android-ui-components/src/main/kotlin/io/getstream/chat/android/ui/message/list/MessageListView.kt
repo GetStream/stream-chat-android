@@ -1144,7 +1144,9 @@ public class MessageListView : ConstraintLayout {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
-                        isInitialList = isOldListEmpty && filteredList.isNotEmpty()
+                        isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
+
                     )
 
                     buffer.active()

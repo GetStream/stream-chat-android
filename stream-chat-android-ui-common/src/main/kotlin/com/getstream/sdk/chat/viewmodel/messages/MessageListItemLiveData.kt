@@ -119,6 +119,9 @@ internal class MessageListItemLiveData(
             .combineWith(messageFooterVisibility) { user, _ ->
                 user
             }
+            .combineWith(endOfNewMessages) { user, _ ->
+                user
+            }
             .changeOnUserLoaded(messages) { changedMessages, currentUser ->
                 if (currentUser != null) {
                     messagesChanged(
