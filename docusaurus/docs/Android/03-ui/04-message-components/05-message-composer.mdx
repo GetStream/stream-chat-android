@@ -13,7 +13,6 @@ Let's see how to integrate the new `MessageComposerView` in your UI.
 To use `MessageComposerView`, include it in your XML layout.
 
 ```xml
-
 <io.getstream.chat.android.ui.message.composer.MessageComposerView
     android:id="@+id/messageComposerView"
     android:layout_width="match_parent"
@@ -206,12 +205,26 @@ The transformer should be set before the View is rendered to make sure that the 
 
 ## Overriding Content Views
 
-* **Leading content**:
-* **Center content**:
-* **Trailing content**:
-* **Header content**:
-* **Footer content**:
-* **Command suggestions content**:
+* `modifier`: Modifier for root component styling. This is useful to set the composer alignment, size, padding and more.
+* `headerContent`: Slot that's shown as the header. By default `MessageInputOptions` that show when a message is being edited, or we're replying to another message.
+* `footerContent`: Slot that's shown as the footer. Present in the Thread mode and allows the user to also send messages from threads to channels.
+* `mentionPopupContent`: Slot that acts as a popup. By default it shows the `MentionSuggestionList` when the user starts the mention action.
+* `commandPopupContent`: Slot that acts as a popup. By default it shows the `CommandSuggestionList` when the user starts a slash command action.
+* `integrations`: By default, we show the attachment picker and slash command integrations in our composer. You can override this to support custom integrations.
+* `label`: Slot that represents the hint, or the label, where there is no user input.
+* `input`: Slot that represents the core part of the composer, where the user can write new messages. It also displays pending attachments if the user chooses attachments for upload.
+* `trailingContent`: Slot that represents the send button. The user can tap to send a new message, with or without attachments.
+
+An example of customizing the `MessageComposer` component is the following:
+
+
+
+* **Leading content**: The content shown at the start of part with the integration buttons.
+* **Center content**:  The center part with the text input.
+* **Trailing content**: The right part with the send button.
+* **Header content**: The top part with the message mode.
+* **Footer content**: The bottom part with the "also send to channel" checkbox.
+* **Command suggestions content**: The content
 * **Mention suggestions content**:
 
 ```kotlin

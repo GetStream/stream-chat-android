@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added documentation for [`MessageComposerView`](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer). [#3845](https://github.com/GetStream/stream-chat-android/pull/3845)
 
 ### ⚠️ Changed
 
