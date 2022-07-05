@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.interceptor.internal
 
 import android.content.Context
-import android.util.Log
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.populateMentions
@@ -81,7 +80,6 @@ internal class SendMessageInterceptorImpl(
 
         return if (!isRetrying) {
             if (message.hasPendingAttachments()) {
-                Log.d("SendMessageInter", "sending attachments")
                 uploadAttachments(message, channelType, channelId)
             } else {
                 Result.success(message)
@@ -133,7 +131,6 @@ internal class SendMessageInterceptorImpl(
         var allAttachmentsUploaded = false
         var messageToBeSent = newMessage
 
-        Log.d("SendMessageInter", "sending attachments")
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
                 attachmentRepository.observeAttachmentsForMessage(newMessage.id)
@@ -158,10 +155,8 @@ internal class SendMessageInterceptorImpl(
         enqueueAttachmentUpload(newMessage, channelType, channelId)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
-            Log.d("SendMessageInter", "Messages sent")
             Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
-            Log.d("SendMessageInter", "Could not upload attachments")
             Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
         }.also {
             uploadIds.remove(newMessage.id)
@@ -172,7 +167,6 @@ internal class SendMessageInterceptorImpl(
      * Enqueues attachment upload work.
      */
     private fun enqueueAttachmentUpload(message: Message, channelType: String, channelId: String) {
-        Log.d("SendMessageInter", "Waiting for attachments to upload")
         val workId = UploadAttachmentsAndroidWorker.start(context, channelType, channelId, message.id, networkType)
         uploadIds[message.id] = workId
     }

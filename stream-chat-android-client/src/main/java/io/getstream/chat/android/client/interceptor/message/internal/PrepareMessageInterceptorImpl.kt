@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.interceptor.message
+package io.getstream.chat.android.client.interceptor.message.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptor
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -45,7 +45,6 @@ internal class PrepareMessageInterceptorImpl(
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
     override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
-        Log.d("PrepareMessageInter", "preparing messages...")
         return message.copy().apply {
             if (id.isEmpty()) {
                 id = generateMessageId(user.id)
@@ -57,6 +56,7 @@ internal class PrepareMessageInterceptorImpl(
             this.user = user
 
             val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
+
             attachmentsToUpload.forEach { attachment ->
                 if (attachment.uploadId == null) {
                     attachment.uploadId = generateUploadId()
@@ -74,8 +74,6 @@ internal class PrepareMessageInterceptorImpl(
                 networkStateProvider.isConnected() -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
-
-            Log.d("PrepareMessageInter", "message prepared. sync status: $syncStatus")
         }
     }
 
