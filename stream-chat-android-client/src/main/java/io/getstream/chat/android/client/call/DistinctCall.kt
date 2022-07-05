@@ -38,6 +38,7 @@ internal class DistinctCall<T : Any>(
     private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean(false)
     private val subscribers = arrayListOf<Call.Callback<T>>()
+    private val calculatedResult = AtomicReference<Result<T>>()
 
     override fun execute(): Result<T> = runBlocking { await() }
 
@@ -78,6 +79,7 @@ internal class DistinctCall<T : Any>(
     }
 
     private suspend fun notifyResult(result: Result<T>) = withContext(DispatcherProvider.Main) {
+        calculatedResult.set(result)
         synchronized(subscribers) {
             subscribers.forEach { it.onResult(result) }
         }
@@ -85,11 +87,14 @@ internal class DistinctCall<T : Any>(
     }
 
     private suspend fun tryToRun(command: suspend Call<T>.() -> Result<T>): Result<T>? =
-        if (!isRunning.getAndSet(true)) {
-            initCall().command().also { notifyResult(it) }
-        } else {
-            null
-        }
+        (
+            calculatedResult.get()
+                ?: if (!isRunning.getAndSet(true)) {
+                    initCall().command()
+                } else {
+                    null
+                }
+            )?.also { notifyResult(it) }
 
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
         tryToRun { this.await() }
