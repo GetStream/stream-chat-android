@@ -75,7 +75,6 @@ internal class SendMessageInterceptorImpl(
         messageRepository.insertMessage(message)
         channelRepository.updateLastMessageForChannel(message.cid, message)
 
-
         if (message.replyMessageId != null) {
             channel.replyMessage(null)
         }

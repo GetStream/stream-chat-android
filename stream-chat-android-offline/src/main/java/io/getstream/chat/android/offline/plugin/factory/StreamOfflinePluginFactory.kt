@@ -111,8 +111,6 @@ public class StreamOfflinePluginFactory(
 
         val statePlugin = statePluginFactory.createStatePlugin(user, scope, repositoryFactory)
 
-
-
         return OfflinePlugin(
             queryChannelsListener = statePlugin,
             queryChannelListener = statePlugin,
