@@ -20,11 +20,15 @@ import android.content.Context
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 
-internal class RepositoryFacadeBuilder {
-    companion object {
-        operator fun invoke(builderAction: RepositoryFacadeBuilder.() -> Unit): RepositoryFacadeBuilder {
+@InternalStreamChatApi
+public class RepositoryFacadeBuilder {
+    @InternalStreamChatApi
+    public companion object {
+        @InternalStreamChatApi
+        public operator fun invoke(builderAction: RepositoryFacadeBuilder.() -> Unit): RepositoryFacadeBuilder {
             return RepositoryFacadeBuilder().apply(builderAction)
         }
     }
@@ -35,15 +39,21 @@ internal class RepositoryFacadeBuilder {
     private var defaultConfig: Config? = null
     private var repositoryFactory: RepositoryFactory? = null
 
-    fun context(context: Context): RepositoryFacadeBuilder = apply { this.context = context }
-    fun currentUser(user: User): RepositoryFacadeBuilder = apply { this.currentUser = user }
-    fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
-    fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
-    fun repositoryFactory(repositoryFactory: RepositoryFactory): RepositoryFacadeBuilder = apply {
+    @InternalStreamChatApi
+    public fun context(context: Context): RepositoryFacadeBuilder = apply { this.context = context }
+    @InternalStreamChatApi
+    public fun currentUser(user: User): RepositoryFacadeBuilder = apply { this.currentUser = user }
+    @InternalStreamChatApi
+    public fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
+    @InternalStreamChatApi
+    public fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
+    @InternalStreamChatApi
+    public fun repositoryFactory(repositoryFactory: RepositoryFactory): RepositoryFacadeBuilder = apply {
         this.repositoryFactory = repositoryFactory
     }
 
-    fun build(): RepositoryFacade {
+    @InternalStreamChatApi
+    public fun build(): RepositoryFacade {
         val config = requireNotNull(defaultConfig)
         val scope = requireNotNull(coroutineScope)
         val factory = requireNotNull(repositoryFactory)

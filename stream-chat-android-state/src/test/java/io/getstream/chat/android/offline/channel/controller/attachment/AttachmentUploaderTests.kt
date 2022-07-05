@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomFile
@@ -214,8 +215,8 @@ internal class AttachmentUploaderTests {
             }
         }
 
-        fun get(): io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader {
-            return io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader(clientMock)
+        fun get(): AttachmentUploader {
+            return AttachmentUploader(clientMock)
         }
     }
 }

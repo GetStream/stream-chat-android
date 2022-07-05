@@ -35,7 +35,6 @@ import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
