@@ -1487,13 +1487,20 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        logger.logD("[queryChannel] channelType: $channelType, channelId: $channelId")
+        val isConnectionRequired = request.watch || request.presence
+        logger.logD(
+            "[queryChannel] channelType: $channelType, channelId: $channelId, " +
+                "isConnectionRequired: $isConnectionRequired"
+        )
 
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
-        return callPostponeHelper.postponeCall {
-            api.queryChannel(channelType, channelId, request)
-        }.doOnStart(scope) {
+        val callBuilder = { api.queryChannel(channelType, channelId, request) }
+        val queryChannelCall = when (isConnectionRequired) {
+            true -> callPostponeHelper.postponeCall(callBuilder)
+            else -> callBuilder.invoke()
+        }
+        return queryChannelCall.doOnStart(scope) {
             relevantPlugins.forEach { plugin ->
                 logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
                 plugin.onQueryChannelRequest(channelType, channelId, request)
