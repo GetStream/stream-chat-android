@@ -823,6 +823,11 @@ public class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
+    // TODO
+    public fun scrollToBottom() {
+        scrollHelper.scrollToBottom()
+    }
+
     /**
      * Scrolls the message list to the bottom.sl
      */
@@ -1627,6 +1632,10 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setModeratedMessageHandler(handler: ModeratedMessageOptionHandler) {
         this.moderatedMessageOptionHandler = handler
+    }
+
+    public fun setOnScrollToBottomHandler(handler: OnScrollToBottomHandler) {
+        this.scrollHelper.setScrollToBottomHandler(handler)
     }
 
     /**

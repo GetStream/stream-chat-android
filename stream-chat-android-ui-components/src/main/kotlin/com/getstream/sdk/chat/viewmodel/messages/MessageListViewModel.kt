@@ -353,7 +353,7 @@ public class MessageListViewModel(
                     MessagesState.Loading,
                     MessagesState.NoQueryActive,
                     -> value = State.Loading
-                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
+                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper(areNewestMessagesLoaded = false))
                     is MessagesState.Result -> {
                         removeSource(messagesStateLiveData)
                         onNormalModeEntered()
@@ -378,7 +378,7 @@ public class MessageListViewModel(
      *
      * @param threadMessages The messages that belong to the thread.
      */
-    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
+    private fun setThreadMessages(threadMessages: LiveData<List<Message>>, endOfOlderMessages: LiveData<Boolean>) {
         threadListData = MessageListItemLiveData(
             currentUser = user,
             messages = threadMessages,
@@ -718,6 +718,30 @@ public class MessageListViewModel(
     }
 
     /**
+     * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
+     * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
+     * list.
+     */
+    public fun scrollToBottom(scrollToBottom: () -> Unit) {
+        if (_mode.value is Mode.Thread) {
+            scrollToBottom()
+        }else {
+            if (messageListData?.value?.areNewestMessagesLoaded == true) {
+                scrollToBottom()
+            }else {
+                chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
+                    if (result.isSuccess) {
+                        scrollToBottom()
+                    } else {
+                        val error = result.error()
+                        logger.logE("Could not load newest messages. Cause: ${error.cause?.message}")
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *
@@ -876,7 +900,7 @@ public class MessageListViewModel(
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         currentMode = Mode.Thread(parentMessage, state)
-        setThreadMessages(state.messages.asLiveData())
+        setThreadMessages(state.messages.asLiveData(), state.endOfOlderMessages.asLiveData())
     }
 
     /**
@@ -1184,6 +1208,7 @@ public class MessageListViewModel(
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
+
     }
 
     /**
