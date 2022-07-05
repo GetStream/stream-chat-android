@@ -239,7 +239,7 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
      * @param message The message to be added or updated.
      */
@@ -248,9 +248,9 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
-     * @param messages the list of [Message] to be upserted
+     * @param messages the list of [Message] to be upserted.
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
@@ -457,19 +457,35 @@ internal class ChannelStateLogicImpl(
         searchLogic.handleMessageBounds(request, noMoreMessages)
         mutableState.recoveryNeeded = false
 
-        if (noMoreMessages) {
-            if (request.isFilteringNewerMessages()) {
+        determinePaginationEnd(request, noMoreMessages)
+
+        updateDataFromChannel(
+            channel,
+            shouldRefreshMessages = request.isFilteringAroundIdMessages() || !request.isFilteringMessages(),
+            scrollUpdate = true
+        )
+    }
+
+    private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
+        when {
+            /* If we are not filtering the messages in any direction and not providing any message id then
+            * we are requesting the newest messages */
+            !request.isFilteringMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(true)
+            }
+            /* If we are filtering around a specific message we are loading both newer and older messages
+            * and can't be sure if there are no older or newer messages left */
+            request.isFilteringAroundIdMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(false)
+            }
+            noMoreMessages -> if (request.isFilteringNewerMessages()) {
                 mutableState.setEndOfNewerMessages(true)
             } else {
                 mutableState.setEndOfOlderMessages(true)
             }
         }
-
-        updateDataFromChannel(
-            channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-            scrollUpdate = true
-        )
     }
 
     /**

@@ -147,28 +147,6 @@ internal class ChannelLogic(
             .onError(channelStateLogic::propagateQueryError)
     }
 
-    private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
-        when {
-            /* If we are not filtering the messages in any direction and not providing any message id then
-            * we are requesting the newest messages */
-            !request.isFilteringMessages() -> {
-                mutableState._endOfOlderMessages.value = false
-                mutableState._endOfNewerMessages.value = true
-            }
-            /* If we are filtering around a specific message we are loading both newer and older messages
-            * and can't be sure if there are no older or newer messages left */
-            request.isFilteringAroundIdMessages() -> {
-                mutableState._endOfNewerMessages.value = false
-                mutableState._endOfOlderMessages.value = false
-            }
-            noMoreMessages -> if (request.isFilteringNewerMessages()) {
-                mutableState._endOfNewerMessages.value = true
-            } else {
-                mutableState._endOfOlderMessages.value = true
-            }
-        }
-    }
-
     private suspend fun storeStateForChannel(channel: Channel) {
         val users = channel.users().associateBy { it.id }.toMutableMap()
         val configs: MutableCollection<ChannelConfig> = mutableSetOf(ChannelConfig(channel.type, channel.config))
@@ -424,7 +402,9 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessages(listOf(message))
+        if (mutableState.rawMessages.containsKey(message.id) || mutableState.endOfNewerMessages.value) {
+            channelStateLogic.upsertMessage(message)
+        }
     }
 
     /**
@@ -556,13 +536,13 @@ internal class ChannelLogic(
                 channelStateLogic.setHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 channelStateLogic.deleteMember(event.user.id)
