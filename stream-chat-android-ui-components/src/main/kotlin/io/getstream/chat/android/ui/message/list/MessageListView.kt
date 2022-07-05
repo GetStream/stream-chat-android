@@ -1561,12 +1561,14 @@ public class MessageListView : ConstraintLayout {
      */
     @InternalStreamChatApi
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        check(!isAdapterInitialized()) {
-            "Adapter was already initialized, please set DeletedMessageVisibility first. " +
-                "If you are using MessageListViewModel, please set the visibility before binding " +
-                "it to MessageListView."
+        if(this.deletedMessageVisibility != deletedMessageVisibility) {
+            check(!isAdapterInitialized()) {
+                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
+                    "If you are using MessageListViewModel, please set the visibility before binding " +
+                    "it to MessageListView."
+            }
+            this.deletedMessageVisibility = deletedMessageVisibility
         }
-        this.deletedMessageVisibility = deletedMessageVisibility
     }
 
     /**
