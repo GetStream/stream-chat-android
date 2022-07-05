@@ -1,27 +1,11 @@
-# UNRELEASED CHANGELOG
+# July 05th, 2022 - 5.5.0
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - Add ordered substitution arguments in `ja` and `ko` translated strings files [#3778](https://github.com/GetStream/stream-chat-android/pull/3778)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix the channel screen being stuck with an infinite loading [3791](https://github.com/GetStream/stream-chat-android/pull/3791)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -29,26 +13,8 @@
 - Fixed populating mentions when sending a message with attachments. [3801](https://github.com/GetStream/stream-chat-android/pull/3801)
 - Fixed crash at ExtraDataConverter.stringToMap. [3816](https://github.com/GetStream/stream-chat-android/pull/3816)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Deprecated `GlobalState::typingUpdates` in favor of `GlobalState::typingChannels`.
-  You can now access typing users from all active channels [3806](https://github.com/GetStream/stream-chat-android/pull/3806)
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -83,54 +49,6 @@
 
 ### ✅ Added
 - Added the preview of moderation bounced messages and the ability to take actions upon those messages like edit, delete and send anyway. [#3625](https://github.com/GetStream/stream-chat-android/pull/3625)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # June 27th, 2022 - 5.4.0
 ## Common changes for all artifacts
