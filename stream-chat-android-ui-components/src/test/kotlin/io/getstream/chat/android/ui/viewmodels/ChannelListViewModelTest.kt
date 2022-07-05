@@ -73,7 +73,7 @@ internal class ChannelListViewModelTest {
             val mockObserver: Observer<ChannelListViewModel.State> = mock()
             channelsState.observeForever(mockObserver)
 
-            mockObserver.onChanged(
+            verify(mockObserver, times(3)).onChanged(
                 ChannelListViewModel.State(
                     channels = listOf(),
                     isLoading = isLoading
@@ -102,7 +102,7 @@ internal class ChannelListViewModelTest {
             val mockObserver: Observer<ChannelListViewModel.State> = mock()
             channelsState.observeForever(mockObserver)
 
-            mockObserver.onChanged(
+            verify(mockObserver, times(2)).onChanged(
                 ChannelListViewModel.State(
                     channels = listOf(channel1, channel2),
                     isLoading = isLoading
@@ -209,7 +209,6 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            verify(mockObserver, times(2))
 
             captor.firstValue.offset `should be equal to` 0
             captor.secondValue.offset `should be equal to` 30
@@ -237,7 +236,6 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(1)).queryChannels(captor.capture())
-            verify(mockObserver, times(1))
 
             captor.firstValue.offset `should be equal to` 0
         }
