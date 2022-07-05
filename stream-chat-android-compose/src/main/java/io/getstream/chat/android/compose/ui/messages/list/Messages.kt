@@ -653,7 +653,7 @@ private fun isScrollToBottomButtonVisibleInMessageList(
     firstVisibleItemIndex: Int,
     areNewestMessagesLoaded: Boolean,
 ): Boolean {
-    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || areNewestMessagesLoaded
+    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || !areNewestMessagesLoaded
 }
 
 /**
