@@ -36,7 +36,7 @@ internal class MessageListScrollHelper(
     private val recyclerView: RecyclerView,
     private val scrollButtonView: ScrollButtonView,
     private val disableScrollWhenShowingDialog: Boolean,
-    private val callback: MessageReadListener
+    private val callback: MessageReadListener,
 ) {
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
     internal var scrollToBottomButtonEnabled: Boolean by Delegates.notNull()

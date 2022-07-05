@@ -353,7 +353,7 @@ public class MessageListViewModel(
                     MessagesState.Loading,
                     MessagesState.NoQueryActive,
                     -> value = State.Loading
-                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper(areNewestMessagesLoaded = false))
+                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
                     is MessagesState.Result -> {
                         removeSource(messagesStateLiveData)
                         onNormalModeEntered()
@@ -725,10 +725,10 @@ public class MessageListViewModel(
     public fun scrollToBottom(scrollToBottom: () -> Unit) {
         if (_mode.value is Mode.Thread) {
             scrollToBottom()
-        }else {
+        } else {
             if (messageListData?.value?.areNewestMessagesLoaded == true) {
                 scrollToBottom()
-            }else {
+            } else {
                 chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
                     if (result.isSuccess) {
                         scrollToBottom()
@@ -1208,7 +1208,6 @@ public class MessageListViewModel(
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
-
     }
 
     /**
