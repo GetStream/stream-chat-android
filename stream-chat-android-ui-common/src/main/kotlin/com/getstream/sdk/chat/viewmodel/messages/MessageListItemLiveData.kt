@@ -87,6 +87,8 @@ internal class MessageListItemLiveData(
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
+    private val endOfOldMessages: LiveData<Boolean>,
+    private val endOfNewMessages: LiveData<Boolean>
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -429,6 +431,7 @@ internal class MessageListItemLiveData(
             isThread = isThread,
             isTyping = typingUsers.isNotEmpty(),
             hasNewMessages = hasNewMessages,
+            areNewestMessagesLoaded = endOfNewMessages.value == true
         )
     }
 

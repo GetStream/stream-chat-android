@@ -793,6 +793,11 @@ public class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
+    // TODO
+    public fun scrollToBottom() {
+        scrollHelper.scrollToBottom()
+    }
+
     /**
      * Set a custom layout manager for MessageListView. This can be used to change orientation of messages.
      *
@@ -1578,6 +1583,10 @@ public class MessageListView : ConstraintLayout {
         this.moderatedMessageOptionHandler = handler
     }
 
+    public fun setOnScrollToBottomHandler(handler: OnScrollToBottomHandler) {
+        this.scrollHelper.setScrollToBottomHandler(handler)
+    }
+
     /**
      * Handles the selected [messageAction].
      *
@@ -1793,6 +1802,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ModeratedMessageOptionHandler {
         public fun onModeratedMessageOptionSelected(message: Message, moderatedMessageOption: ModeratedMessageOption)
+    }
+
+    public fun interface OnScrollToBottomHandler {
+        public fun onScrollToBottom()
     }
     //endregion
 
