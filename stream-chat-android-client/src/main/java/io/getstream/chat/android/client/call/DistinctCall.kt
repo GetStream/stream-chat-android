@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.logging.StreamLog
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
@@ -31,13 +30,8 @@ import kotlin.coroutines.suspendCoroutine
  */
 internal class DistinctCall<T : Any>(
     internal val callBuilder: () -> Call<T>,
-    private val uniqueKey: Int,
     private val onFinished: () -> Unit,
 ) : Call<T> {
-
-    init {
-        StreamLog.i(TAG) { "<init> uniqueKey: $uniqueKey" }
-    }
 
     private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean()
@@ -45,10 +39,8 @@ internal class DistinctCall<T : Any>(
 
     override fun execute(): Result<T> {
         return runBlocking {
-            StreamLog.d(TAG) { "[execute] uniqueKey: $uniqueKey" }
             suspendCoroutine { continuation ->
                 enqueue { result ->
-                    StreamLog.v(TAG) { "[execute] completed($uniqueKey)" }
                     continuation.resume(result)
                 }
             }
@@ -56,7 +48,6 @@ internal class DistinctCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        StreamLog.d(TAG) { "[enqueue] callback($$uniqueKey): $callback" }
         synchronized(subscribers) {
             subscribers.add(callback)
         }
@@ -66,7 +57,6 @@ internal class DistinctCall<T : Any>(
                     enqueue { result ->
                         try {
                             synchronized(subscribers) {
-                                StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
                                 subscribers.onResultCatching(result)
                             }
                         } finally {
@@ -80,7 +70,6 @@ internal class DistinctCall<T : Any>(
 
     override fun cancel() {
         try {
-            StreamLog.d(TAG) { "[cancel] uniqueKey: $uniqueKey" }
             delegate.get()?.cancel()
         } finally {
             doFinally()
@@ -102,10 +91,6 @@ internal class DistinctCall<T : Any>(
         } catch (_: Throwable) {
             /* no-op */
         }
-    }
-
-    private companion object {
-        private const val TAG = "Chat:DistinctCall"
     }
 
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
