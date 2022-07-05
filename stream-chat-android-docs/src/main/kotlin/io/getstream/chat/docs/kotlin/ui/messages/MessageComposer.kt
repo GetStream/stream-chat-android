@@ -38,7 +38,7 @@ private object MessageComposerUsageSnippet : Fragment() {
 
         private lateinit var messageComposerView: MessageComposerView
 
-        // Create MessageComposerViewModel a the given channel
+        // Create MessageComposerViewModel for a given channel
         val factory = MessageListViewModelFactory(cid = "channelType:channelId")
         val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 

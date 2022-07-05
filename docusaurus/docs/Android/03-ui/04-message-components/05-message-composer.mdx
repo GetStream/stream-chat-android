@@ -4,7 +4,7 @@
 extensibility, maintainability, etc. Just like the original view, the revamped component allows
 users to participate in the chat by sending messages and attachments.
 
-![Message Composer View](../../assets/big_attachment.png)
+![Message Composer](../../assets/message_composer.png)
 
 Let's see how to integrate the new `MessageComposerView` in your UI.
 
@@ -28,7 +28,7 @@ listeners and data handling.
 class ChatFragment : Fragment() {
     lateinit var messageComposerView: MessageComposerView
 
-    // Create MessageComposerViewModel for the given channel
+    // Create MessageComposerViewModel for a given channel
     val factory = MessageListViewModelFactory(cid = "channelType:channelId")
     val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
