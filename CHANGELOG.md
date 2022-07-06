@@ -87,7 +87,7 @@
 
 ### ✅ Added
 - Added the preview of moderation bounced messages and the ability to take actions upon those messages like edit, delete and send anyway. [#3625](https://github.com/GetStream/stream-chat-android/pull/3625)
-- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added `ScrollToPositionState` which notifies the list when data is loading and when to scroll the list either to bottom or to the focused item. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
+- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 
