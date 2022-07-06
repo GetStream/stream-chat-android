@@ -129,7 +129,7 @@ public class ChannelListViewModel(
     /**
      * The state of the currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.globalState.user
+    public val user: StateFlow<User?> = chatClient.clientState.user
 
     /**
      * Gives us the information about the list of channels mutes by the current user.
@@ -140,7 +140,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**

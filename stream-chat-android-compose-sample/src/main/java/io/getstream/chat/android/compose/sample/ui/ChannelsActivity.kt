@@ -62,7 +62,7 @@ import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.clientState
 
 class ChannelsActivity : BaseConnectedActivity() {
 
@@ -113,7 +113,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      */
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatClient.instance().globalState.user.collectAsState()
+        val user by ChatClient.instance().clientState.user.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),

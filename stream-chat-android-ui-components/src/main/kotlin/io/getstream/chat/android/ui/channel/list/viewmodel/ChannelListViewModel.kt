@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
@@ -162,7 +163,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**

@@ -137,7 +137,7 @@ public class StreamStatePluginFactory(
     public fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory
+        repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
         val globalState = GlobalMutableState.getOrCreate().apply {
@@ -161,9 +161,10 @@ public class StreamStatePluginFactory(
         }.build()
 
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, globalState.user, repos, repos.observeLatestUsers()
+            scope.coroutineContext.job, scope, clientState.user, repos, repos.observeLatestUsers()
         )
-        val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
+        val logic =
+            LogicRegistry.create(stateRegistry, globalState, clientState, config.userPresence, repos, chatClient)
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
@@ -213,6 +214,7 @@ public class StreamStatePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
+            clientMutableState = clientState,
             repos = repos,
             syncManager = syncManager,
         ).also { eventHandler ->
@@ -270,8 +272,9 @@ public class StreamStatePluginFactory(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
+        clientMutableState: ClientMutableState,
         repos: RepositoryFacade,
-        syncManager: SyncManager
+        syncManager: SyncManager,
     ): EventHandler {
         return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
@@ -291,6 +294,7 @@ public class StreamStatePluginFactory(
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
+                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = syncManager,
             )
