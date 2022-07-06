@@ -4,17 +4,21 @@ package io.getstream.chat.docs.kotlin.ui.messages
 
 import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.View
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCommandSuggestionsContent
@@ -23,6 +27,7 @@ import io.getstream.chat.android.ui.message.composer.content.DefaultMessageCompo
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.ui.message.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -273,5 +278,31 @@ private object MessageComposerCustomizationSnippet {
                 it.mentionSelectionListener = { user -> messageComposerViewModel.selectMention(user) }
             }
         )
+    }
+
+    fun contentCustomizationSnippet3() {
+        messageComposerView.setLeadingContent(CustomMessageComposerLeadingContent(context))
+    }
+
+    private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+
+        constructor(context: Context) : this(context, null)
+
+        constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+        constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+            context,
+            attrs,
+            defStyleAttr
+        )
+
+        override fun attachContext(messageComposerContext: MessageComposerContext) {
+            // Access the style if necessary
+            val style = messageComposerContext.style
+        }
+
+        override fun renderState(state: MessageComposerState) {
+            // Render the state of the component
+        }
     }
 }
