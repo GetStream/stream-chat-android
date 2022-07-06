@@ -167,7 +167,6 @@ internal object ChannelDtoTestData {
         members = listOf(
             DownstreamMemberDto(
                 user = UserDtoTestData.downstreamUser,
-                role = "owner",
                 created_at = Date(1591787071000),
                 updated_at = Date(1591787071588),
                 invited = true,
@@ -194,7 +193,6 @@ internal object ChannelDtoTestData {
         own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
         membership = DownstreamMemberDto(
             user = UserDtoTestData.downstreamUser,
-            role = "owner",
             created_at = Date(1591787071000),
             updated_at = Date(1591787071588),
             invited = true,
@@ -345,7 +343,6 @@ internal object ChannelDtoTestData {
         members = listOf(
             UpstreamMemberDto(
                 user = UserDtoTestData.upstreamUser,
-                role = "owner",
                 created_at = Date(1591787071000),
                 updated_at = Date(1591787071588),
                 invited = true,
