@@ -378,7 +378,7 @@ public class MessageListViewModel(
      *
      * @param threadMessages The messages that belong to the thread.
      */
-    private fun setThreadMessages(threadMessages: LiveData<List<Message>>, endOfOlderMessages: LiveData<Boolean>) {
+    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
             currentUser = user,
             messages = threadMessages,
@@ -900,7 +900,7 @@ public class MessageListViewModel(
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         currentMode = Mode.Thread(parentMessage, state)
-        setThreadMessages(state.messages.asLiveData(), state.endOfOlderMessages.asLiveData())
+        setThreadMessages(state.messages.asLiveData())
     }
 
     /**

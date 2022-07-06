@@ -1636,6 +1636,11 @@ public class MessageListView : ConstraintLayout {
         this.moderatedMessageOptionHandler = handler
     }
 
+    /**
+     * Sets the handler used when the user interacts with [ScrollButtonView].
+     *
+     * @param handler The handler to use.
+     */
     public fun setOnScrollToBottomHandler(handler: OnScrollToBottomHandler) {
         this.scrollHelper.setScrollToBottomHandler(handler)
     }
