@@ -190,13 +190,12 @@ internal fun createCommand(
 
 internal fun createMember(
     user: User = createUser(),
-    role: String = randomString(),
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     isInvited: Boolean = randomBoolean(),
     inviteAcceptedAt: Date? = randomDate(),
     inviteRejectedAt: Date? = randomDate()
-): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+): Member = Member(user, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
 internal fun createMembers(
     size: Int = positiveRandomInt(10),
