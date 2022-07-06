@@ -3583,6 +3583,8 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 public final class io/getstream/chat/android/client/setup/state/ClientMutableState$Companion {
 	public final fun create ()Lio/getstream/chat/android/client/setup/state/ClientMutableState;
 	public final fun get ()Lio/getstream/chat/android/client/setup/state/ClientMutableState;
+	public final fun getInstance ()Lio/getstream/chat/android/client/setup/state/ClientMutableState;
+	public final fun setInstance (Lio/getstream/chat/android/client/setup/state/ClientMutableState;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
