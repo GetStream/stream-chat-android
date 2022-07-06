@@ -2622,6 +2622,14 @@ public final class io/getstream/chat/android/client/models/ConnectionData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/models/ConnectionState : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field CONNECTING Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field OFFLINE Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun values ()[Lio/getstream/chat/android/client/models/ConnectionState;
+}
+
 public final class io/getstream/chat/android/client/models/ContentUtils {
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
@@ -3562,6 +3570,44 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
 	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
+}
+
+public abstract interface class io/getstream/chat/android/client/setup/state/ClientMutableState : io/getstream/chat/android/client/setup/state/ClientState {
+	public static final field Companion Lio/getstream/chat/android/client/setup/state/ClientMutableState$Companion;
+	public abstract fun clearState ()V
+	public abstract fun setConnectionState (Lio/getstream/chat/android/client/models/ConnectionState;)V
+	public abstract fun setInitialized (Z)V
+	public abstract fun setUser (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public final class io/getstream/chat/android/client/setup/state/ClientMutableState$Companion {
+	public final fun create ()Lio/getstream/chat/android/client/setup/state/ClientMutableState;
+	public final fun get ()Lio/getstream/chat/android/client/setup/state/ClientMutableState;
+}
+
+public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
+	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun isConnecting ()Z
+	public abstract fun isInitialized ()Z
+	public abstract fun isOffline ()Z
+	public abstract fun isOnline ()Z
+}
+
+public final class io/getstream/chat/android/client/setup/state/internal/ClientStateImpl : io/getstream/chat/android/client/setup/state/ClientMutableState {
+	public fun <init> ()V
+	public fun clearState ()V
+	public fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun isConnecting ()Z
+	public fun isInitialized ()Z
+	public fun isOffline ()Z
+	public fun isOnline ()Z
+	public fun setConnectionState (Lio/getstream/chat/android/client/models/ConnectionState;)V
+	public fun setInitialized (Z)V
+	public fun setUser (Lio/getstream/chat/android/client/models/User;)V
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
