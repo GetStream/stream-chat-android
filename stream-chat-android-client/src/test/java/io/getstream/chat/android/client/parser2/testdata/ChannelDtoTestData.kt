@@ -300,7 +300,6 @@ internal object ChannelDtoTestData {
           "members": [
            {
             "user": ${UserDtoTestData.upstreamJson},
-            "role": "owner",
             "created_at": "2020-06-10T11:04:31.000Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
