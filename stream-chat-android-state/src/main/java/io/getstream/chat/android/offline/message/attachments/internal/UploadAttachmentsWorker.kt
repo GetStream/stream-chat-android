@@ -89,9 +89,10 @@ internal class UploadAttachmentsWorker(
         return try {
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
-                    val progressCallback = channelStateLogic.writeChannelState()?.let { channelMutableState ->
-                        ProgressCallbackImpl(message.id, attachment.uploadId!!, channelMutableState)
-                    }
+                    val progressCallback = ProgressCallbackImpl(
+                        message.id, attachment.uploadId!!,
+                        channelStateLogic.writeChannelState()
+                    )
 
                     attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
