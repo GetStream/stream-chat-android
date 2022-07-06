@@ -23,10 +23,25 @@ import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 
 public interface ClientMutableState : ClientState {
 
+    /**
+     * Sets the [User]
+     *
+     * @param user [User]
+     */
     public fun setUser(user: User)
 
+    /**
+     * Sets the [ConnectionState]
+     *
+     * @param connectionState [ConnectionState]
+     */
     public fun setConnectionState(connectionState: ConnectionState)
 
+    /**
+     * Sets initialized
+     *
+     * @param initialized Boolean
+     */
     public fun setInitialized(initialized: Boolean)
 
     /**
