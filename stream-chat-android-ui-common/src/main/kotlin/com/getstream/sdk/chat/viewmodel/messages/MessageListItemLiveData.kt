@@ -74,7 +74,7 @@ import io.getstream.chat.android.common.state.MessageFooterVisibility
  *
  * @param deletedMessageVisibility Controls when deleted messages are shown.
  * @param messageFooterVisibility Controls when the message footer is shown.
- *
+ * @param endOfNewMessages Notifies when we have reached the end of new messages.
  */
 
 @Suppress("LongParameterList", "TooManyFunctions")
@@ -87,13 +87,12 @@ internal class MessageListItemLiveData(
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
-    private val endOfOldMessages: LiveData<Boolean>,
     private val endOfNewMessages: LiveData<Boolean>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
-    private var loadingMoreOldItems: Boolean = false
-    private var loadingMoreNewItems: Boolean = false
+    private var loadingMoreOlderItems: Boolean = false
+    private var loadingMoreNewerItems: Boolean = false
     private var messageItemsBase = listOf<MessageListItem>()
     private var messageItemsWithReads = listOf<MessageListItem>()
     private var typingUsers = listOf<User>()
@@ -206,9 +205,9 @@ internal class MessageListItemLiveData(
      */
     @UiThread
     internal fun loadingMoreNewMessagesChanged(loadingMoreInProgress: Boolean) {
-        if (loadingMoreNewItems == loadingMoreInProgress) return
+        if (loadingMoreNewerItems == loadingMoreInProgress) return
 
-        loadingMoreNewItems = loadingMoreInProgress
+        loadingMoreNewerItems = loadingMoreInProgress
         onLoadingMoreChanged()
     }
 
@@ -218,9 +217,9 @@ internal class MessageListItemLiveData(
      */
     @UiThread
     internal fun loadingMoreOldMessagesChanged(loadingMoreInProgress: Boolean) {
-        if (loadingMoreOldItems == loadingMoreInProgress) return
+        if (loadingMoreOlderItems == loadingMoreInProgress) return
 
-        loadingMoreOldItems = loadingMoreInProgress
+        loadingMoreOlderItems = loadingMoreInProgress
         onLoadingMoreChanged()
     }
 
@@ -246,14 +245,14 @@ internal class MessageListItemLiveData(
      * @return Full list of [MessageListItem] to represent the state.
      */
     private fun buildItemsList(): List<MessageListItem> {
-        return if (loadingMoreOldItems) {
+        return if (loadingMoreOlderItems) {
             getLoadingMoreItems() + messageItemsWithReads + typingItems
         } else {
             messageItemsWithReads + typingItems + getLoadingMoreItems()
         }
     }
 
-    private fun getLoadingMoreItems() = if (loadingMoreOldItems || loadingMoreNewItems) {
+    private fun getLoadingMoreItems() = if (loadingMoreOlderItems || loadingMoreNewerItems) {
         listOf<MessageListItem>(MessageListItem.LoadingMoreIndicatorItem)
     } else {
         emptyList()

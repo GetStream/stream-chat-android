@@ -330,7 +330,6 @@ public class MessageListViewModel(
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             endOfNewMessages = channelState.endOfNewerMessages.asLiveData(),
-            endOfOldMessages = channelState.endOfOlderMessages.asLiveData()
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -368,7 +367,7 @@ public class MessageListViewModel(
      *
      * @param threadMessages The messages that belong to the thread.
      */
-    private fun setThreadMessages(threadMessages: LiveData<List<Message>>, endOfOlderMessages: LiveData<Boolean>) {
+    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
             user,
             threadMessages,
@@ -378,7 +377,6 @@ public class MessageListViewModel(
             threadDateSeparatorHandler,
             deletedMessageVisibility,
             messageFooterVisibility,
-            endOfOlderMessages,
             MutableLiveData(true)
         )
         threadListData?.let { tld ->
@@ -789,7 +787,7 @@ public class MessageListViewModel(
     private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         currentMode = Mode.Thread(parentMessage, state)
-        setThreadMessages(state.messages.asLiveData(), state.endOfOlderMessages.asLiveData())
+        setThreadMessages(state.messages.asLiveData())
     }
 
     /**
