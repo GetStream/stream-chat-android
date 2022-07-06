@@ -90,7 +90,8 @@ internal class UploadAttachmentsWorker(
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
                     val progressCallback = ProgressCallbackImpl(
-                        message.id, attachment.uploadId!!,
+                        message.id,
+                        attachment.uploadId!!,
                         channelStateLogic.writeChannelState()
                     )
 
