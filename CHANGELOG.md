@@ -59,6 +59,7 @@
 - Fixed the display of avatars before system messages. [#3799](https://github.com/GetStream/stream-chat-android/pull/3799)
 - Fixed a bug which made the unread count disappear on certain devices when it went over double digits. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
 - Fixed a bug where typing items in MessageList weren't properly set on all data changes. [#3790](https://github.com/GetStream/stream-chat-android/pull/3790)
+- Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⬆️ Improved
 - `ChannelListView` can now restore the previously saved scroll state. [3804](https://github.com/GetStream/stream-chat-android/pull/3804)
@@ -69,6 +70,7 @@
 - Added the preview of moderation bounced messages and the ability to take actions upon those messages like edit, delete and send anyway. [#3625](https://github.com/GetStream/stream-chat-android/pull/3625)
 - Added experimental implementation of `MessageComposerView` and `MessageComposerViewModel` which are supposed to replace `MessageInputView` in the future. [3019](https://github.com/GetStream/stream-chat-android/pull/3019)
 - Added `MessageListView::setMessageOptionItemsFactory` and `MessageListView::setCustomActionHandler` methods to add and handle custom actions in `MessageListView`. [3768](https://github.com/GetStream/stream-chat-android/pull/3768)
+- Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
 - The layout width of the unread count view is now set to `wrap_content` instead of being a fixed size dictated by the dimen `stream_ui_scroll_button_unread_badge_size`. [#3798](https://github.com/GetStream/stream-chat-android/pull/3798)
