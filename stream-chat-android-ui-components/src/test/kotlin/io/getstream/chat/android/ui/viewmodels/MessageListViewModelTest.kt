@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.viewmodels
 
-import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
@@ -34,17 +33,18 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.MockChatClientBuilder
 import io.getstream.chat.android.ui.utils.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -64,12 +64,9 @@ internal class MessageListViewModelTest {
             .givenNotifications()
             .get()
 
-        val mockObserver: Observer<MessageListViewModel.State> = mock()
-        viewModel.state.observeForever(mockObserver)
+        val state = viewModel.state.observeAll()
 
-        verify(mockObserver, times(1)).onChanged(
-            MessageListViewModel.State.Loading
-        )
+        state.last() shouldBeEqualTo MessageListViewModel.State.Loading
     }
 
     @Test
@@ -86,25 +83,24 @@ internal class MessageListViewModelTest {
             .givenNotifications()
             .get()
 
-        val mockObserver: Observer<MessageListViewModel.State> = mock()
-        viewModel.state.observeForever(mockObserver)
+        val state = viewModel.state.observeAll()
 
-        verify(mockObserver, times(1)).onChanged(
-            MessageListViewModel.State.Result(
-                messageListItem = MessageListItemWrapper(
-                    items = listOf(
-                        MessageListItem.DateSeparatorItem(messageStartDate),
-                    ) + messageItems,
-                    hasNewMessages = false,
-                    isTyping = false,
-                    isThread = false
-                )
+        val expectedState = MessageListViewModel.State.Result(
+            messageListItem = MessageListItemWrapper(
+                items = listOf(
+                    MessageListItem.DateSeparatorItem(messageStartDate),
+                ) + messageItems,
+                hasNewMessages = false,
+                isTyping = false,
+                isThread = false
             )
         )
+
+        state.last() shouldBeEqualTo expectedState
     }
 
     @Test
-    fun `Given populated message list When hard deleting a message Should hard delete message`() {
+    fun `Given populated message list When hard deleting a message Should hard delete message`() = runTest {
         val messageToDelete = message1
         val messages = listOf(messageToDelete, message2)
         val messageState = MessagesState.Result(messages)
@@ -124,7 +120,7 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given populated message list When deleting a message Should soft delete message`() {
+    fun `Given populated message list When deleting a message Should soft delete message`() = runTest {
         val messageToDelete = message1
         val messages = listOf(messageToDelete, message2)
         val messageState = MessagesState.Result(messages)
@@ -144,7 +140,7 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given populated message list When flagging a message Should flag message`() {
+    fun `Given populated message list When flagging a message Should flag message`() = runTest {
         val messageToFlag = message1
         val messages = listOf(messageToFlag, message2)
         val messageState = MessagesState.Result(messages)
@@ -164,7 +160,7 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given no previous own reactions on a message When leaving a reaction Should leave reaction`() {
+    fun `Given no previous own reactions on a message When leaving a reaction Should leave reaction`() = runTest {
         val messages = listOf(message1, message2)
         val messageState = MessagesState.Result(messages)
         val chatClient = MockChatClientBuilder().build()
@@ -189,8 +185,8 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() {
-        val messageWithOwnReaction = message1.apply { ownReactions = mutableListOf(reaction1) }
+    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() = runTest {
+        val messageWithOwnReaction = message1.copy().apply { ownReactions = mutableListOf(reaction1) }
         val messages = listOf(message1, message2)
         val messageState = MessagesState.Result(messages)
         val chatClient = MockChatClientBuilder().build()

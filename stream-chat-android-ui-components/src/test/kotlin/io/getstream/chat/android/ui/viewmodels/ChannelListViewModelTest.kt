@@ -32,12 +32,14 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStat
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.utils.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -68,16 +70,11 @@ internal class ChannelListViewModelTest {
                 .givenChannelMutes()
                 .get()
 
-            val channelsState = viewModel.state
+            val state = viewModel.state.observeAll()
 
-            val mockObserver: Observer<ChannelListViewModel.State> = mock()
-            channelsState.observeForever(mockObserver)
-
-            verify(mockObserver, times(3)).onChanged(
-                ChannelListViewModel.State(
-                    channels = listOf(),
-                    isLoading = isLoading
-                )
+            state.last() shouldBeEqualTo ChannelListViewModel.State(
+                channels = listOf(),
+                isLoading = isLoading
             )
         }
 
@@ -97,16 +94,11 @@ internal class ChannelListViewModelTest {
                 .givenChannelMutes()
                 .get()
 
-            val channelsState = viewModel.state
+            val state = viewModel.state.observeAll()
 
-            val mockObserver: Observer<ChannelListViewModel.State> = mock()
-            channelsState.observeForever(mockObserver)
-
-            verify(mockObserver, times(2)).onChanged(
-                ChannelListViewModel.State(
-                    channels = listOf(channel1, channel2),
-                    isLoading = isLoading
-                )
+            state.last() shouldBeEqualTo ChannelListViewModel.State(
+                channels = listOf(channel1, channel2),
+                isLoading = isLoading
             )
         }
 
