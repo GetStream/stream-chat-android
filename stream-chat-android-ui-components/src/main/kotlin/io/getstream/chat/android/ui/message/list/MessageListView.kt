@@ -793,7 +793,9 @@ public class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
-    // TODO
+    /**
+     * Scrolls the message list to the bottom.sl
+     */
     public fun scrollToBottom() {
         scrollHelper.scrollToBottom()
     }

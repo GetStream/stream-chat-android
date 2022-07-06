@@ -707,9 +707,9 @@ public class MessageListViewModel(
         currentMode.run {
             when (this) {
                 is Mode.Normal -> {
-                    messageListData?.loadingMoreChanged(true)
+                    messageListData?.loadingMoreOldMessagesChanged(true)
                     chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
-                        messageListData?.loadingMoreChanged(false)
+                        messageListData?.loadingMoreOldMessagesChanged(false)
                     }
                 }
                 is Mode.Thread -> threadLoadMore(this)
@@ -722,10 +722,10 @@ public class MessageListViewModel(
      */
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
-            messageListData?.loadingMoreChanged(true)
+            messageListData?.loadingMoreNewMessagesChanged(true)
             chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
                 .enqueue { result ->
-                    messageListData?.loadingMoreChanged(false)
+                    messageListData?.loadingMoreNewMessagesChanged(false)
                 }
         } else {
             logger.logE("There's no base message to request more message at bottom of limit")
@@ -738,17 +738,17 @@ public class MessageListViewModel(
      * @param threadMode Current thread mode.
      */
     private fun threadLoadMore(threadMode: Mode.Thread) {
-        threadListData?.loadingMoreChanged(true)
+        threadListData?.loadingMoreOldMessagesChanged(true)
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
             ).enqueue {
-                threadListData?.loadingMoreChanged(false)
+                threadListData?.loadingMoreOldMessagesChanged(false)
             }
         } else {
-            threadListData?.loadingMoreChanged(false)
+            threadListData?.loadingMoreOldMessagesChanged(false)
             logger.logW("Thread state must be not null for offline plugin thread load more!")
         }
     }

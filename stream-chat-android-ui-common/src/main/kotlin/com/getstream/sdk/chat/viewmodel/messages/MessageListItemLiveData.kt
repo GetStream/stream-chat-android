@@ -88,11 +88,12 @@ internal class MessageListItemLiveData(
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
     private val endOfOldMessages: LiveData<Boolean>,
-    private val endOfNewMessages: LiveData<Boolean>
+    private val endOfNewMessages: LiveData<Boolean>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
-    private var loadingMoreInProgress: Boolean = false
+    private var loadingMoreOldItems: Boolean = false
+    private var loadingMoreNewItems: Boolean = false
     private var messageItemsBase = listOf<MessageListItem>()
     private var messageItemsWithReads = listOf<MessageListItem>()
     private var typingUsers = listOf<User>()
@@ -200,12 +201,35 @@ internal class MessageListItemLiveData(
     }
 
     /**
+     * Loading more indicator item should be added at the end of the items to indicate
+     * a pending request for the next page of messages.
+     */
+    @UiThread
+    internal fun loadingMoreNewMessagesChanged(loadingMoreInProgress: Boolean) {
+        if (loadingMoreNewItems == loadingMoreInProgress) return
+
+        loadingMoreNewItems = loadingMoreInProgress
+        onLoadingMoreChanged()
+    }
+
+    /**
      * Loading more indicator item should be added at the beginning of the items to indicate
      * a pending request for the next page of messages.
      */
     @UiThread
-    internal fun loadingMoreChanged(loadingMoreInProgress: Boolean) {
-        this.loadingMoreInProgress = loadingMoreInProgress
+    internal fun loadingMoreOldMessagesChanged(loadingMoreInProgress: Boolean) {
+        if (loadingMoreOldItems == loadingMoreInProgress) return
+
+        loadingMoreOldItems = loadingMoreInProgress
+        onLoadingMoreChanged()
+    }
+
+    /**
+     * Filters the messages that are not the loading indicator and appends the loading indicator it the list is
+     * loading.
+     */
+    @UiThread
+    private fun onLoadingMoreChanged() {
         messageItemsWithReads = messageItemsWithReads.filter {
             it !is MessageListItem.LoadingMoreIndicatorItem
         }
@@ -222,10 +246,14 @@ internal class MessageListItemLiveData(
      * @return Full list of [MessageListItem] to represent the state.
      */
     private fun buildItemsList(): List<MessageListItem> {
-        return getLoadingMoreItems() + messageItemsWithReads + typingItems
+        return if (loadingMoreOldItems) {
+            getLoadingMoreItems() + messageItemsWithReads + typingItems
+        } else {
+            messageItemsWithReads + typingItems + getLoadingMoreItems()
+        }
     }
 
-    private fun getLoadingMoreItems() = if (loadingMoreInProgress) {
+    private fun getLoadingMoreItems() = if (loadingMoreOldItems || loadingMoreNewItems) {
         listOf<MessageListItem>(MessageListItem.LoadingMoreIndicatorItem)
     } else {
         emptyList()
