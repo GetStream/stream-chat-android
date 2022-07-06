@@ -301,7 +301,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
 
     internal fun upsertMessages(messages: List<Message>) {
         channelStateLogic.upsertMessages(messages)
@@ -402,9 +402,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        if (mutableState.rawMessages.containsKey(message.id) || mutableState.endOfNewerMessages.value) {
-            channelStateLogic.upsertMessage(message)
-        }
+        channelStateLogic.upsertMessage(message)
     }
 
     /**
