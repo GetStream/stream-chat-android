@@ -47,6 +47,7 @@ import java.util.UUID
  * Implementation of [SendMessageInterceptor] that upload attachments, update original message
  * with new attachments and return updated message.
  */
+@Suppress("LongParameterList")
 internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,

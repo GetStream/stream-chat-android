@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
@@ -52,7 +51,7 @@ import kotlin.math.max
  *
  * @property mutableState [ChannelMutableState]
  * @property globalMutableState [MutableGlobalState]
- * @property clientState [ClientMutableState]
+ * @property clientState [ClientState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogicImpl(

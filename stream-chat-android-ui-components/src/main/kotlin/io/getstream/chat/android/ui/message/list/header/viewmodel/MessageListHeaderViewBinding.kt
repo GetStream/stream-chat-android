@@ -21,10 +21,9 @@ package io.getstream.chat.android.ui.message.list.header.viewmodel
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

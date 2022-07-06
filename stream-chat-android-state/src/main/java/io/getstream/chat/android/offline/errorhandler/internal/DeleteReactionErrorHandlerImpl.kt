@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 
 /**

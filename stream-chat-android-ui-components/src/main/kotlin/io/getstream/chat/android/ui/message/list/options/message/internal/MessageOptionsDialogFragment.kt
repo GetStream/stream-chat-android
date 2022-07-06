@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.offline.extensions.clientState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment

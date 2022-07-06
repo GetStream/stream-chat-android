@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.clientState
-import io.getstream.chat.android.offline.extensions.globalState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID

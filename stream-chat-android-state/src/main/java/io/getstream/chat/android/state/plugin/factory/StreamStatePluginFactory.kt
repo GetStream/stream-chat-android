@@ -265,6 +265,7 @@ public class StreamStatePluginFactory(
         )
     }
 
+    @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
         useSequentialEventHandler: Boolean,
         scope: CoroutineScope,

@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBindi
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import kotlin.math.absoluteValue
 
+@Suppress("LongParameterList")
 internal class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,

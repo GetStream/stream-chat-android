@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.utils.message.latestOrNull
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog

@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.extensions.clientState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 
 /**

@@ -166,6 +166,7 @@ internal class LogicRegistry internal constructor(
          *
          * @throws IllegalStateException if instance is not null.
          */
+        @Suppress("LongParameterList")
         internal fun create(
             stateRegistry: StateRegistry,
             globalState: MutableGlobalState,
@@ -180,9 +181,17 @@ internal class LogicRegistry internal constructor(
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
                 )
             }
-            return LogicRegistry(stateRegistry, globalState, clientState, userPresence, repos, client).also { logicRegistry ->
-                instance = logicRegistry
-            }
+            return LogicRegistry(
+                stateRegistry,
+                globalState,
+                clientState,
+                userPresence,
+                repos,
+                client
+            )
+                .also { logicRegistry ->
+                    instance = logicRegistry
+                }
         }
 
         /**

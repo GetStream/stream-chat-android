@@ -20,9 +20,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.extensions.clientState
 
@@ -31,8 +30,8 @@ import io.getstream.chat.android.offline.extensions.clientState
  * Responsible for updating current user information.
  * Can be bound to the view using [ChannelListHeaderViewModel.bindView] function.
  *
- * @param globalState Global state of OfflinePlugin. Contains information
- * such as the current user, connection state, unread counts etc.
+ * @param clientState Global state of the SDK. Contains information
+ * such as the current user, connection state...
  */
 public class ChannelListHeaderViewModel @JvmOverloads constructor(
     clientState: ClientState = ChatClient.instance().clientState,

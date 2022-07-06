@@ -109,6 +109,7 @@ import kotlin.random.Random
 
 private const val TAG = "Chat:EventHandlerOld"
 
+@Suppress("LongParameterList")
 internal class EventHandlerImpl(
     private val scope: CoroutineScope,
     private val recoveryEnabled: Boolean,

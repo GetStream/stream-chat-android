@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -71,13 +72,12 @@ import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job

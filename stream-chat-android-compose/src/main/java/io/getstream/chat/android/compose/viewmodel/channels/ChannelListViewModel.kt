@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
@@ -37,10 +38,9 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.logging.StreamLog

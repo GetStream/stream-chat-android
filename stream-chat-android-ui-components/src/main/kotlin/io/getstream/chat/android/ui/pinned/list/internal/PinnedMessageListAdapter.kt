@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.extensions.clientState
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
