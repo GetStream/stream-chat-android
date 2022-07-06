@@ -34,16 +34,19 @@ public interface GlobalState {
     /**
      * The current user in the OfflinePlugin state.
      */
+    @Deprecated("Use ClientState.user")
     public val user: StateFlow<User?>
 
     /**
      * If the client connection has been initialized.
      */
+    @Deprecated("Use ClientState.initialized")
     public val initialized: StateFlow<Boolean>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
      */
+    @Deprecated("Use ClientState.connectionState")
     public val connectionState: StateFlow<ConnectionState>
 
     /**
@@ -105,6 +108,7 @@ public interface GlobalState {
      *
      * @return True if the user is online otherwise False.
      */
+    @Deprecated("Use ClientState.isOnline()")
     public fun isOnline(): Boolean
 
     /**
@@ -112,6 +116,7 @@ public interface GlobalState {
      *
      * @return True if the user is offline otherwise False.
      */
+    @Deprecated("Use ClientState.isOffline()")
     public fun isOffline(): Boolean
 
     /**
@@ -119,6 +124,7 @@ public interface GlobalState {
      *
      * @return True if the connection is in connecting state.
      */
+    @Deprecated("Use ClientState.isConnecting()")
     public fun isConnecting(): Boolean
 
     /**
@@ -126,10 +132,12 @@ public interface GlobalState {
      *
      * @return True if initialized otherwise False.
      */
+    @Deprecated("Use ClientState.isInitialized()")
     public fun isInitialized(): Boolean
 
     /**
      * Clears the state of [GlobalState].
      */
+    @Deprecated("Use ClientMutableState.setInitialized()")
     public fun clearState()
 }
