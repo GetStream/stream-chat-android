@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -69,7 +68,8 @@ internal class MessageListViewModelTest {
         viewModel.state.observeForever(mockObserver)
 
         verify(mockObserver, times(1)).onChanged(
-            MessageListViewModel.State.Loading)
+            MessageListViewModel.State.Loading
+        )
     }
 
     @Test
@@ -181,7 +181,8 @@ internal class MessageListViewModelTest {
             MessageListViewModel.Event.MessageReaction(
                 message = message1,
                 reactionType = reaction1.type,
-                enforceUnique = true)
+                enforceUnique = true
+            )
         )
 
         verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, CID)
@@ -206,7 +207,8 @@ internal class MessageListViewModelTest {
             MessageListViewModel.Event.MessageReaction(
                 message = message1,
                 reactionType = reaction1.type,
-                enforceUnique = true)
+                enforceUnique = true
+            )
         )
 
         verify(chatClient).deleteReaction(
