@@ -116,6 +116,7 @@ private const val EVENTS_BUFFER = 100
  * Processes events sequentially. That means a new event will not be processed
  * until the previous event processing is not completed.
  */
+@Suppress("LongParameterList")
 internal class EventHandlerSequential(
     scope: CoroutineScope,
     private val recoveryEnabled: Boolean,
@@ -129,6 +130,7 @@ internal class EventHandlerSequential(
 ) : EventHandler {
 
     @VisibleForTesting
+    @Suppress("LongParameterList")
     constructor(
         scope: CoroutineScope,
         recoveryEnabled: Boolean,
