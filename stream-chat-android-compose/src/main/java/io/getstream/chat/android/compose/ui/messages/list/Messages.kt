@@ -42,7 +42,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.messages.Idle
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
@@ -267,7 +266,6 @@ public fun Messages(
     val startOfMessages = messagesState.startOfMessages
     val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
-    val scrollToPositionState = messagesState.scrollToPositionState
 
     var parentSize = remember { IntSize(0, 0) }
     val density = LocalDensity.current
@@ -319,7 +317,7 @@ public fun Messages(
             ) { index, item ->
                 val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
                     Modifier.onGloballyPositioned {
-                        scrollToPositionState.calculateMessageOffset(parentSize, it.size)
+                        messagesState.calculateMessageOffset(parentSize, it.size)
                     }
                 } else {
                     Modifier
@@ -589,7 +587,6 @@ private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: In
  * @param focusedItemIndex The index of the currently focused item.
  * @param firstVisibleItemIndex The index of the first visible item in the messages list.
  * @param newMessageState The [NewMessageState] if a new message has arrived.
- * @param scrollToPositionState The [ScrollToPositionState] which tells the list if it should scroll to a position.
  * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
  * @param isScrollInProgress If the list is currently scrolling or not.
  *
@@ -599,7 +596,6 @@ private fun shouldScrollToBottomOnNewMessage(
     focusedItemIndex: Int,
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
-    scrollToPositionState: ScrollToPositionState,
     areNewestMessagesLoaded: Boolean,
     isScrollInProgress: Boolean,
 ): Boolean {
@@ -607,7 +603,6 @@ private fun shouldScrollToBottomOnNewMessage(
 
     return focusedItemIndex == -1 &&
         isScrollInProgress &&
-        scrollToPositionState is Idle &&
         areNewestMessagesLoaded &&
         firstVisibleItemIndex < 3
 }
