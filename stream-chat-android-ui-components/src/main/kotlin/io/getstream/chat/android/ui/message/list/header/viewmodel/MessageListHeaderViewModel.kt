@@ -27,10 +27,10 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -40,13 +40,13 @@ import kotlinx.coroutines.flow.map
 /**
  * @param cid The CID of the current channel.
  * @param chatClient An instance of the low level chat client.
- * @param globalState Global state of OfflinePlugin. Contains information
- * such as the current user, connection state, unread counts etc.
+ * @param clientState Global state of the SDK. Contains information
+ * such as the current user, connection state...
  */
 public class MessageListHeaderViewModel(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
-    globalState: GlobalState = chatClient.globalState,
+    clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -92,7 +92,7 @@ public class MessageListHeaderViewModel(
     /**
      * Current user's online status.
      */
-    public val online: LiveData<ConnectionState> = globalState.connectionState.asLiveData()
+    public val online: LiveData<ConnectionState> = clientState.connectionState.asLiveData()
 
     /**
      * Signals that we are currently in thread mode if the value is non-null.
