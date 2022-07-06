@@ -18,53 +18,37 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
 internal class DistinctCall<T : Any>(
+    private val scope: CoroutineScope,
     internal val callBuilder: () -> Call<T>,
     private val onFinished: () -> Unit,
 ) : Call<T> {
 
     private val delegate = AtomicReference<Call<T>>()
-    private val isRunning = AtomicBoolean()
+    private val isRunning = AtomicBoolean(false)
     private val subscribers = arrayListOf<Call.Callback<T>>()
 
-    override fun execute(): Result<T> {
-        return runBlocking {
-            suspendCoroutine { continuation ->
-                enqueue { result ->
-                    continuation.resume(result)
-                }
-            }
-        }
-    }
+    override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        synchronized(subscribers) {
-            subscribers.add(callback)
-        }
-        if (isRunning.compareAndSet(false, true)) {
-            delegate.set(
-                callBuilder().apply {
-                    enqueue { result ->
-                        try {
-                            synchronized(subscribers) {
-                                subscribers.onResultCatching(result)
-                            }
-                        } finally {
-                            doFinally()
-                        }
-                    }
+        subscribeCallback(callback)
+        scope.launch {
+            tryToRun {
+                suspendCoroutine { continuation ->
+                    this.enqueue { continuation.resume(it) }
                 }
-            )
+            }
         }
     }
 
@@ -85,15 +69,32 @@ internal class DistinctCall<T : Any>(
         onFinished()
     }
 
-    private fun Collection<Call.Callback<T>>.onResultCatching(result: Result<T>) = forEach { callback ->
-        try {
-            callback.onResult(result)
-        } catch (_: Throwable) {
-            /* no-op */
+    private fun initCall(): Call<T> = callBuilder().also { delegate.set(it) }
+
+    private fun subscribeCallback(callback: Call.Callback<T>) {
+        synchronized(subscribers) {
+            subscribers.add(callback)
         }
     }
 
+    private suspend fun notifyResult(result: Result<T>) = withContext(DispatcherProvider.Main) {
+        synchronized(subscribers) {
+            subscribers.forEach { it.onResult(result) }
+        }
+        withContext(DispatcherProvider.IO) { doFinally() }
+    }
+
+    private suspend fun tryToRun(command: suspend Call<T>.() -> Result<T>): Result<T>? =
+        if (!isRunning.getAndSet(true)) {
+            initCall().command().also { notifyResult(it) }
+        } else {
+            null
+        }
+
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
-        execute()
+        tryToRun { this.await() }
+            ?: suspendCoroutine { continuation ->
+                subscribeCallback { continuation.resume(it) }
+            }
     }
 }
