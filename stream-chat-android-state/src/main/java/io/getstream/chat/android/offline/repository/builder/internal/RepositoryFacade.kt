@@ -36,13 +36,14 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
-import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.util.Date
 
-internal class RepositoryFacade(
+@InternalStreamChatApi
+public class RepositoryFacade(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -154,7 +155,8 @@ internal class RepositoryFacade(
         insertMessages(messages, cacheForMessages)
     }
 
-    internal companion object {
+    @InternalStreamChatApi
+    public companion object {
 
         private var instance: RepositoryFacade? = null
 
@@ -162,12 +164,13 @@ internal class RepositoryFacade(
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
          *
-         * @param factory [DatabaseRepositoryFactory]
+         * @param factory [RepositoryFacade]
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
         @VisibleForTesting
-        internal fun create(
+        @InternalStreamChatApi
+        public fun create(
             factory: RepositoryFactory,
             scope: CoroutineScope,
             defaultConfig: Config,
