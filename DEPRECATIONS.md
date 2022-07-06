@@ -4,6 +4,18 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `MutableGlobalState::setInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setInitialized` instead.|
+| `MutableGlobalState::setConnectionState` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setConnectionState` instead.|
+| `MutableGlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
+| `GlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
+| `GlobalState::clearState` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState: clearState` instead.|
+| `GlobalState::isInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
+| `GlobalState::isConnecting` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
+| `GlobalState::isOffline` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOffline` instead.|
+| `GlobalState::isOnline` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOnline` instead.|
+| `GlobalState::connectionState` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:connectionState` instead.|
+| `GlobalState::initialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:initialized` instead.|
+| `GlobalState::user` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState::user` instead.|
 | `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.18 ⌛ | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
 | `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.18 ⌛ | 2022.08.01 ⌛ | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
 | `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use QuerySortByReflection. |
