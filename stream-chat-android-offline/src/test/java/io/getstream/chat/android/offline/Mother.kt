@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
@@ -43,13 +42,14 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import java.util.Date
+import java.util.UUID
 import java.util.concurrent.Executors
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Attachment = {
         Attachment(upload = randomFile()).apply {
-            uploadId = generateUploadId()
+            uploadId = "upload_id_${UUID.randomUUID()}"
         }
     },
 ): List<Attachment> = (1..size).map(creationFunction)
