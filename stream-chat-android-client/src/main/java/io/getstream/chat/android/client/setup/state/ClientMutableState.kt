@@ -35,7 +35,9 @@ public interface ClientMutableState : ClientState {
     public fun clearState()
 
     public companion object {
-        private var instance: ClientMutableState? = null
+
+        @VisibleForTesting
+        public var instance: ClientMutableState? = null
 
         public fun get(): ClientMutableState =
             instance ?: create().also { clientState ->
