@@ -242,7 +242,7 @@ public class StreamStatePluginFactory(
             }
         }
 
-        globalState.setUser(user)
+        clientState.setUser(user)
 
         return StatePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
@@ -285,6 +285,7 @@ public class StreamStatePluginFactory(
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
+                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = syncManager,
             )

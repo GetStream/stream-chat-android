@@ -78,6 +78,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -122,6 +123,7 @@ internal class EventHandlerSequential(
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
+    private val clientMutableState: ClientMutableState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -134,6 +136,7 @@ internal class EventHandlerSequential(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: MutableGlobalState,
+        clientMutableState: ClientMutableState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
         currentUserId: UserId
@@ -144,6 +147,7 @@ internal class EventHandlerSequential(
         logicRegistry = logicRegistry,
         stateRegistry = stateRegistry,
         mutableGlobalState = mutableGlobalState,
+        clientMutableState = clientMutableState,
         repos = repos,
         syncManager = syncManager
     ) {
@@ -318,16 +322,16 @@ internal class EventHandlerSequential(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is DisconnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
+                    clientMutableState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
-                    mutableGlobalState.setInitialized(true)
+                    clientMutableState.setConnectionState(ConnectionState.CONNECTED)
+                    clientMutableState.setInitialized(true)
                 }
                 is ConnectingEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
+                    clientMutableState.setConnectionState(ConnectionState.CONNECTING)
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId

@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
@@ -67,6 +68,7 @@ internal class EventHandlerImplTest {
     private lateinit var logicRegistry: LogicRegistry
     private lateinit var stateRegistry: StateRegistry
     private lateinit var globalState: GlobalMutableState
+    private lateinit var clientState: ClientMutableState
     private lateinit var repositoryFacade: RepositoryFacade
     private lateinit var syncManager: SyncManager
     private lateinit var user: User
@@ -83,6 +85,7 @@ internal class EventHandlerImplTest {
         logicRegistry = mock()
         stateRegistry = mock()
         globalState = GlobalMutableState.create()
+        clientState = ClientMutableState.create()
         repositoryFacade = mock()
         syncManager = mock()
         user = randomUser()
@@ -187,6 +190,7 @@ internal class EventHandlerImplTest {
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = globalState,
+                clientMutableState = clientState,
                 repos = repositoryFacade,
                 syncManager = syncManager,
                 currentUserId = user.id
@@ -198,6 +202,7 @@ internal class EventHandlerImplTest {
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = globalState,
+                clientMutableState = clientState,
                 repos = repositoryFacade,
                 syncManager = syncManager,
             )

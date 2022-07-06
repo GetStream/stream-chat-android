@@ -33,10 +33,13 @@ internal interface MutableGlobalState : GlobalState {
 
     fun setErrorEvent(errorEvent: Event<ChatError>)
 
+    @Deprecated("Use ClientMutableState.setUser instead")
     fun setUser(user: User)
 
+    @Deprecated("Use ClientMutableState.setConnectionState instead")
     fun setConnectionState(connectionState: ConnectionState)
 
+    @Deprecated("Use ClientMutableState.setInitialized instead")
     fun setInitialized(initialized: Boolean)
 
     fun setTotalUnreadCount(totalUnreadCount: Int)

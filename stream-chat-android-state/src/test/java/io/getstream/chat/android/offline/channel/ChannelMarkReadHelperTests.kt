@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
@@ -199,7 +199,7 @@ internal class ChannelMarkReadHelperTests {
         private val chatClient = mock<ChatClient>()
         private val logic = mock<LogicRegistry>()
         private val state = mock<StateRegistry>()
-        private val globalState = mock<GlobalState>()
+        private val clientState = mock<ClientState>()
 
         fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableStateImpl) = apply {
             whenever(state.channel(channelType = channelType, channelId = channelId)) doReturn channelState
@@ -214,9 +214,9 @@ internal class ChannelMarkReadHelperTests {
         }
 
         fun givenOnlineUser() = apply {
-            whenever(globalState.isOnline()) doReturn true
+            whenever(clientState.isOnline()) doReturn true
         }
 
-        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state, globalState)
+        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state, clientState)
     }
 }

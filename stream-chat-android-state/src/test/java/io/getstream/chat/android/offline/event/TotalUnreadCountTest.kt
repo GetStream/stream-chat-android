@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.event
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
@@ -54,6 +55,7 @@ internal class TotalUnreadCountTest {
 
     private lateinit var data: TestDataHelper
     private lateinit var globalMutableState: GlobalMutableState
+    private lateinit var clientMutableState: ClientMutableState
 
     @BeforeAll
     fun beforeAll() {
@@ -72,10 +74,10 @@ internal class TotalUnreadCountTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `When new message event is received for channel with read capability Should properly update total unread counts`(
-        eventHandlerType: EventHandlerType
+        eventHandlerType: EventHandlerType,
     ) = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -95,10 +97,10 @@ internal class TotalUnreadCountTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
-        eventHandlerType: EventHandlerType
+        eventHandlerType: EventHandlerType,
     ) = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -117,9 +119,9 @@ internal class TotalUnreadCountTest {
     @ParameterizedTest
     @EnumSource(EventHandlerType::class)
     fun `when connected event is received, current user should be updated`(
-        eventHandlerType: EventHandlerType
+        eventHandlerType: EventHandlerType,
     ) = runTest {
-        val sut = Fixture(globalMutableState, eventHandlerType, data.user1)
+        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
             .givenMockedRepositories()
             .get()
 
@@ -134,8 +136,9 @@ internal class TotalUnreadCountTest {
 
     private class Fixture(
         globalMutableState: GlobalMutableState,
+        clientMutableState: ClientMutableState,
         eventHandlerType: EventHandlerType,
-        currentUser: User
+        currentUser: User,
     ) {
         private val repos: RepositoryFacade = mock()
         private val eventHandler = when (eventHandlerType) {
@@ -146,6 +149,7 @@ internal class TotalUnreadCountTest {
                 logicRegistry = mock(),
                 stateRegistry = mock(),
                 mutableGlobalState = globalMutableState,
+                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = mock(),
                 currentUserId = currentUser.id
@@ -157,6 +161,7 @@ internal class TotalUnreadCountTest {
                 logic = mock(),
                 state = mock(),
                 mutableGlobalState = globalMutableState,
+                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = mock(),
             )

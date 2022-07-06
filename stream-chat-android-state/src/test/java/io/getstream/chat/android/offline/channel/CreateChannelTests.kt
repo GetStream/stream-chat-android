@@ -19,13 +19,13 @@ package io.getstream.chat.android.offline.channel
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -270,15 +270,15 @@ internal class CreateChannelTests {
 
     private inner class Fixture {
 
-        private val globalState = mock<GlobalState>()
+        private val clientState = mock<ClientState>()
         private var repositoryFacade = mock<RepositoryFacade>()
 
         fun givenOnlineState() = apply {
-            whenever(globalState.isOnline()) doReturn true
+            whenever(clientState.isOnline()) doReturn true
         }
 
         fun givenOfflineState() = apply {
-            whenever(globalState.isOnline()) doReturn false
+            whenever(clientState.isOnline()) doReturn false
         }
 
         fun givenMockedRepos(repos: RepositoryFacade) = apply {
@@ -286,7 +286,7 @@ internal class CreateChannelTests {
         }
 
         fun get(): CreateChannelListenerImpl {
-            return CreateChannelListenerImpl(globalState, repositoryFacade)
+            return CreateChannelListenerImpl(clientState, repositoryFacade)
         }
     }
 }
