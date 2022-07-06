@@ -197,6 +197,18 @@ The transformer should be set before the View is rendered to make sure that the 
 
 ## Overriding Content Views
 
+With the new `MessageComposerView` you can replace certain parts of the layout with custom content views.
+
+* **Leading content**: Represents the left part with integration buttons.
+* **Center content**: Represents the center part with the text input. 
+* **Trailing content**: Represents the right part with the send button.
+* **Header content**: Represents the top part action mode title.
+* **Footer content**: Represents the bottom part with the "also send to channel" checkbox.
+* **Command suggestions content**: Represents the content inside the command suggestions popup.
+* **Mention suggestions content**: Represents the context inside the mention suggestions popup.
+
+The available methods with the default content view implementations are listed below:
+
 ```kotlin
 messageComposerView.setLeadingContent(
     DefaultMessageComposerLeadingContent(context).also {
@@ -268,8 +280,8 @@ private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposer
 
 Notice that you need to implement 2 methods from the `MessageComposerContent` interface:
 
-- **attachContext()** Called only once when the View has been attached to the hierarchy.
-- **renderState()** Invoked when the state has changed and the UI needs to be updated accordingly.
+- `attachContext()` Called only once when the View has been attached to the hierarchy.
+- `renderState()` Invoked when the state has changed and the UI needs to be updated accordingly.
 
 Finally, you need to pass the created content view to the `MessageComposerView`:
 
