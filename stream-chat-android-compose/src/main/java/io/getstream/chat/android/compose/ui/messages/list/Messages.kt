@@ -42,13 +42,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.messages.Idle
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
-import io.getstream.chat.android.compose.state.messages.ScrollToNewestMessages
-import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -81,7 +77,7 @@ import kotlin.math.abs
  */
 @Deprecated(
     message = "Deprecated in favor of new Messages composable implementation which adds support for bidirectional" +
-        "pagination and imporved scroll to bottom implementation",
+        "pagination and improved scroll to bottom implementation",
     replaceWith = ReplaceWith(
         expression = "public fun Messages(" +
             "    messagesState: MessagesState," +
@@ -229,7 +225,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (Message) -> Unit,
     onScrolledToBottom: () -> Unit,
     onMessagesEndReached: (String) -> Unit,
-    onScrollToBottom: () -> Unit,
+    onScrollToBottom: (() -> Unit) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -247,7 +243,6 @@ public fun Messages(
     val startOfMessages = messagesState.startOfMessages
     val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
-    val scrollToPositionState = messagesState.scrollToPositionState
 
     var parentSize = remember { IntSize(0, 0) }
     val density = LocalDensity.current
@@ -297,11 +292,9 @@ public fun Messages(
                     if (item is MessageItemState) item.message.id else item.toString()
                 }
             ) { index, item ->
-                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused &&
-                    scrollToPositionState is ScrollToFocusedMessage
-                ) {
+                val messageItemModifier = if (item is MessageItemState && item.focusState == MessageFocused) {
                     Modifier.onGloballyPositioned {
-                        scrollToPositionState.calculateMessageOffset(parentSize, it.size)
+                        messagesState.calculateMessageOffset(parentSize, it.size)
                     }
                 } else {
                     Modifier
@@ -364,11 +357,10 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
     lazyListState: LazyListState,
-    scrollToBottom: () -> Unit,
+    scrollToBottom: (() -> Unit) -> Unit,
 ) {
     val messages = messagesState.messageItems
     val newMessageState = messagesState.newMessageState
-    val scrollState = messagesState.scrollToPositionState
     val areNewestMessagesLoaded = messagesState.startOfMessages
     val isMessageInThread = messagesState.parentMessageId != null
 
@@ -380,26 +372,20 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val offset by messagesState.focusedMessageOffset.collectAsState()
 
-    LaunchedEffect(newMessageState, focusedItemIndex, offset, scrollState) {
+    LaunchedEffect(newMessageState, focusedItemIndex, offset) {
 
         if (focusedItemIndex != -1 &&
-            !lazyListState.isScrollInProgress &&
-            scrollState is ScrollToFocusedMessage
+            !lazyListState.isScrollInProgress
         ) {
             coroutineScope.launch {
                 lazyListState.scrollToItem(focusedItemIndex, offset ?: 0)
             }
         }
 
-        if (scrollState == ScrollToNewestMessages) {
-            lazyListState.scrollToItem(0)
-        }
-
         val shouldScrollToBottomOnNewMessage = shouldScrollToBottomOnNewMessage(
             focusedItemIndex,
             firstVisibleItemIndex,
             newMessageState,
-            scrollState,
             areNewestMessagesLoaded,
             lazyListState.isScrollInProgress
         )
@@ -419,8 +405,10 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             unreadCount = messagesState.unreadCount,
             modifier = Modifier.align(Alignment.BottomEnd),
             onClick = {
-                coroutineScope.launch {
-                    scrollToBottom()
+                scrollToBottom {
+                    coroutineScope.launch {
+                        lazyListState.scrollToItem(0)
+                    }
                 }
             }
         )
@@ -436,7 +424,6 @@ internal fun BoxScope.DefaultMessagesHelperContent(
  * @param focusedItemIndex The index of the currently focused item.
  * @param firstVisibleItemIndex The index of the first visible item in the messages list.
  * @param newMessageState The [NewMessageState] if a new message has arrived.
- * @param scrollToPositionState The [ScrollToPositionState] which tells the list if it should scroll to a position.
  * @param areNewestMessagesLoaded Whether the newest messages are loaded inside the list or not.
  * @param isScrollInProgress If the list is currently scrolling or not.
  *
@@ -446,7 +433,6 @@ private fun shouldScrollToBottomOnNewMessage(
     focusedItemIndex: Int,
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
-    scrollToPositionState: ScrollToPositionState,
     areNewestMessagesLoaded: Boolean,
     isScrollInProgress: Boolean,
 ): Boolean {
@@ -454,7 +440,6 @@ private fun shouldScrollToBottomOnNewMessage(
 
     return focusedItemIndex == -1 &&
         isScrollInProgress &&
-        scrollToPositionState is Idle &&
         areNewestMessagesLoaded &&
         firstVisibleItemIndex < 3
 }

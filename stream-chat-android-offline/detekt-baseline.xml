@@ -121,10 +121,6 @@
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
-    <ID>UnusedImports:ChannelLogic.kt$import io.getstream.chat.android.client.models.TypingEvent</ID>
-    <ID>UnusedImports:ChannelMutableState.kt$import io.getstream.chat.android.client.events.ChatEvent</ID>
-    <ID>UnusedImports:ChannelStateLogic.kt$import io.getstream.chat.android.client.events.ChatEvent</ID>
-    <ID>UnusedImports:ChannelStateLogicImpl.kt$import io.getstream.chat.android.client.events.ChatEvent</ID>
     <ID>UnusedPrivateMember:EditMessageListenerImpl.kt$EditMessageListenerImpl$val isMessageModerationFailed = chatError is ChatNetworkError &amp;&amp; chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>

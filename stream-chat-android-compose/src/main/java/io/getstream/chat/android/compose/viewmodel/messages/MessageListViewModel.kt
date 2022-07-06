@@ -46,16 +46,10 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
-import io.getstream.chat.android.compose.state.messages.Idle
-import io.getstream.chat.android.compose.state.messages.LoadFocusedMessageData
-import io.getstream.chat.android.compose.state.messages.LoadNewestMessages
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
-import io.getstream.chat.android.compose.state.messages.ScrollToNewestMessages
-import io.getstream.chat.android.compose.state.messages.ScrollToPositionState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
@@ -289,8 +283,6 @@ public class MessageListViewModel(
                             )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
 
-                            val scrollingState = getScrollingStateAfterDataUpdate(channelState.endOfNewerMessages.value)
-
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
@@ -302,7 +294,6 @@ public class MessageListViewModel(
                                 endOfMessages = channelState.endOfOlderMessages.value,
                                 startOfMessages = channelState.endOfNewerMessages.value,
                                 currentUser = user,
-                                scrollToPositionState = scrollingState,
                                 isLoadingMoreNewMessages = false,
                                 isLoadingMoreOldMessages = false
                             )
@@ -332,7 +323,7 @@ public class MessageListViewModel(
                             newState
                         }
 
-                        if (messagesState.scrollToPositionState == LoadFocusedMessageData && scrollToMessage != null) {
+                        if (scrollToMessage != null) {
                             messagesState.messageItems.firstOrNull {
                                 it is MessageItemState && it.message.id == scrollToMessage?.id
                             }?.let { focusMessage((it as MessageItemState).message.id) }
@@ -348,21 +339,6 @@ public class MessageListViewModel(
                         }
                     }
             }
-        }
-    }
-
-    /**
-     * Determines if the list should scroll to the bottom of the list when new data arrives or keep the current state.
-     *
-     * @param isEndOfNewMessages If there are no more newer messages to paginate.
-     *
-     * @return The next [ScrollToPositionState] the list should be in.
-     */
-    private fun getScrollingStateAfterDataUpdate(isEndOfNewMessages: Boolean): ScrollToPositionState {
-        return if (messagesState.scrollToPositionState == LoadNewestMessages && isEndOfNewMessages) {
-            ScrollToNewestMessages
-        } else {
-            messagesState.scrollToPositionState
         }
     }
 
@@ -1035,18 +1011,9 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
     public fun clearNewMessageState() {
-        threadMessagesState = threadMessagesState.copy(
-            newMessageState = null,
-            unreadCount = 0,
-            scrollToPositionState = Idle
-        )
+        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
 
-        messagesState =
-            messagesState.copy(
-                newMessageState = null,
-                unreadCount = 0,
-                scrollToPositionState = Idle
-            )
+        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
     }
 
     /**
@@ -1065,7 +1032,7 @@ public class MessageListViewModel(
         }
 
         viewModelScope.launch {
-            updateMessages(messages, true)
+            updateMessages(messages)
             delay(RemoveMessageFocusDelay)
             removeMessageFocus(messageId)
         }
@@ -1089,36 +1056,21 @@ public class MessageListViewModel(
             scrollToMessage = null
         }
 
-        updateMessages(messages, false)
+        updateMessages(messages)
     }
 
     /**
      * Updates the current message state with new messages.
      *
      * @param messages The list of new message items.
-     * @param focusedItemExists Whether there is a focused message inside the messages list or not.
      * */
-    private fun updateMessages(messages: List<MessageListItemState>, focusedItemExists: Boolean) {
+    private fun updateMessages(messages: List<MessageListItemState>) {
         if (isInThread) {
             this.threadMessagesState =
-                threadMessagesState.copy(
-                    messageItems = messages,
-                    scrollToPositionState = if (focusedItemExists) {
-                        ScrollToFocusedMessage()
-                    } else {
-                        threadMessagesState.scrollToPositionState
-                    }
-                )
+                threadMessagesState.copy(messageItems = messages)
         } else {
             this.messagesState =
-                messagesState.copy(
-                    messageItems = messages,
-                    scrollToPositionState = if (focusedItemExists) {
-                        ScrollToFocusedMessage()
-                    } else {
-                        messagesState.scrollToPositionState
-                    }
-                )
+                messagesState.copy(messageItems = messages)
         }
     }
 
@@ -1165,7 +1117,6 @@ public class MessageListViewModel(
         if (isMessageInList) {
             focusMessage(message.id)
         } else {
-            messagesState = messagesState.copy(scrollToPositionState = LoadFocusedMessageData)
             loadMessage(message = message)
         }
     }
@@ -1176,17 +1127,22 @@ public class MessageListViewModel(
      * to the bottom of the list.
      *
      * @param messageLimit The message count we wish to load from the API when loading new messages.
+     * @param scrollToBottom Notifies the ui to scroll to the bottom if the newest messages are in the list or have been
+     * loaded from the API.
      */
-    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit) {
+    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
         if (isInThread) {
-            threadMessagesState =
-                threadMessagesState.copy(scrollToPositionState = ScrollToNewestMessages)
+            scrollToBottom()
         } else {
-            val areNewestMessagesLoaded = currentMessagesState.startOfMessages
-            val scrollToStartState = if (areNewestMessagesLoaded) ScrollToNewestMessages else LoadNewestMessages
-
-            messagesState = messagesState.copy(scrollToPositionState = scrollToStartState)
-            if (!areNewestMessagesLoaded) chatClient.loadNewestMessages(channelId, messageLimit).enqueue()
+            if (currentMessagesState.startOfMessages) {
+                scrollToBottom()
+                return
+            }
+            chatClient.loadNewestMessages(channelId, messageLimit).enqueue {
+                if (it.isSuccess) {
+                    scrollToBottom()
+                }
+            }
         }
     }
 

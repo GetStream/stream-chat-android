@@ -94,7 +94,7 @@ public fun MessageList(
         }
     },
     onMessagesEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
-    onScrollToBottomClicked: () -> Unit = { viewModel.scrollToBottom() },
+    onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -246,7 +246,7 @@ public fun MessageList(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesEndReached: (String) -> Unit = {},
-    onScrollToBottom: () -> Unit = {},
+    onScrollToBottom: (() -> Unit) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
