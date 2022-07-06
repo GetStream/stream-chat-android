@@ -20,16 +20,9 @@ import io.getstream.chat.android.client.Mother.randomAttachment
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.ChannelInfo
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -37,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.util.Date
 
 internal class PrepareMessageInterceptorImplTest {
 
@@ -135,91 +127,3 @@ internal class PrepareMessageInterceptorImplTest {
         attachment.uploadId `should not be equal to` null
     }
 }
-
-public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
-    (SyncStatus.values().asList() - exclude.toSet() - SyncStatus.AWAITING_ATTACHMENTS).random()
-
-public fun randomChannelInfo(
-    cid: String? = randomString(),
-    id: String? = randomString(),
-    type: String = randomString(),
-    memberCount: Int = randomInt(),
-    name: String? = randomString(),
-): ChannelInfo = ChannelInfo(
-    cid = cid,
-    id = id,
-    type = type,
-    memberCount = memberCount,
-    name = name
-)
-
-public fun randomMessage(
-    id: String = randomString(),
-    cid: String = randomCID(),
-    text: String = randomString(),
-    html: String = randomString(),
-    parentId: String? = randomString(),
-    command: String? = randomString(),
-    attachments: MutableList<Attachment> = mutableListOf(),
-    mentionedUsers: MutableList<User> = mutableListOf(),
-    replyCount: Int = randomInt(),
-    reactionCounts: MutableMap<String, Int> = mutableMapOf(),
-    reactionScores: MutableMap<String, Int> = mutableMapOf(),
-    syncStatus: SyncStatus = randomSyncStatus(),
-    type: String = randomString(),
-    latestReactions: MutableList<Reaction> = mutableListOf(),
-    ownReactions: MutableList<Reaction> = mutableListOf(),
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    updatedLocallyAt: Date? = randomDate(),
-    createdLocallyAt: Date? = randomDate(),
-    user: User = randomUser(),
-    extraData: MutableMap<String, Any> = mutableMapOf(),
-    silent: Boolean = randomBoolean(),
-    replyTo: Message? = null,
-    showInChannel: Boolean = randomBoolean(),
-    shadowed: Boolean = false,
-    channelInfo: ChannelInfo? = randomChannelInfo(),
-    replyMessageId: String? = randomString(),
-    pinned: Boolean = randomBoolean(),
-    pinnedAt: Date? = randomDate(),
-    pinExpires: Date? = randomDate(),
-    pinnedBy: User? = randomUser(),
-    threadParticipants: List<User> = emptyList(),
-): Message = Message(
-    id = id,
-    cid = cid,
-    text = text,
-    html = html,
-    parentId = parentId,
-    command = command,
-    attachments = attachments,
-    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
-    mentionedUsers = mentionedUsers,
-    replyCount = replyCount,
-    reactionCounts = reactionCounts,
-    reactionScores = reactionScores,
-    syncStatus = syncStatus,
-    type = type,
-    latestReactions = latestReactions,
-    ownReactions = ownReactions,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    deletedAt = deletedAt,
-    updatedLocallyAt = updatedLocallyAt,
-    createdLocallyAt = createdLocallyAt,
-    user = user,
-    extraData = extraData,
-    silent = silent,
-    replyTo = replyTo,
-    showInChannel = showInChannel,
-    shadowed = shadowed,
-    channelInfo = channelInfo,
-    replyMessageId = replyMessageId,
-    pinned = pinned,
-    pinnedAt = pinnedAt,
-    pinExpires = pinExpires,
-    pinnedBy = pinnedBy,
-    threadParticipants = threadParticipants,
-)
