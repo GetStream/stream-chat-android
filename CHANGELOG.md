@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ClientState` and `ClientMutableState` to track state of the SDK. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
 
 ### ⚠️ Changed
 
