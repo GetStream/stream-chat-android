@@ -28,10 +28,12 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -39,7 +41,6 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
@@ -63,6 +64,7 @@ private const val QUERIES_TO_RETRY = 3
 internal class SyncManager(
     private val chatClient: ChatClient,
     private val globalState: MutableGlobalState,
+    private val clientState: ClientMutableState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -106,10 +108,13 @@ internal class SyncManager(
         globalState.run {
             setTotalUnreadCount(0)
             setChannelUnreadCount(0)
-            setInitialized(false)
-            setConnectionState(ConnectionState.OFFLINE)
             setBanned(false)
             setMutedUsers(emptyList())
+        }
+
+        clientState.run {
+            setInitialized(false)
+            setConnectionState(ConnectionState.OFFLINE)
         }
     }
 
@@ -185,7 +190,7 @@ internal class SyncManager(
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
         logger.d { "[connectionRecovered] recoverAll: $recoverAll" }
         // 0. ensure load is complete
-        val online = globalState.isOnline()
+        val online = clientState.isOnline()
 
         // 1. Retry any failed requests first (synchronous)
         logger.v { "[connectionRecovered] online: $online" }

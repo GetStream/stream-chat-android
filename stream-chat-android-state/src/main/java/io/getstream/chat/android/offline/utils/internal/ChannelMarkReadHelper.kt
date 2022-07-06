@@ -19,10 +19,10 @@ package io.getstream.chat.android.offline.utils.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 
 /**
  * Checks if the channel can be marked as read and marks it locally if needed.
@@ -30,13 +30,13 @@ import io.getstream.chat.android.offline.plugin.state.global.GlobalState
  * @param chatClient [ChatClient]
  * @param logic [LogicRegistry]
  * @param state [StateRegistry]
- * @param globalState [GlobalState]
+ * @param clientState [ClientState]
  */
 internal class ChannelMarkReadHelper(
     private val chatClient: ChatClient,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
 ) {
 
     private val logger = ChatLogger.get("ChannelMarkReadHelper")
@@ -83,7 +83,7 @@ internal class ChannelMarkReadHelper(
                     return false
                 }
 
-                if (!globalState.isOnline()) {
+                if (!clientState.isOnline()) {
                     logger.logI("Cannot mark read because user is offline!")
                     return false
                 }

@@ -92,7 +92,7 @@ import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
-import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState

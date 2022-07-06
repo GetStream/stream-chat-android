@@ -39,7 +39,8 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.logging.StreamLog
@@ -313,7 +314,7 @@ public class ChannelListViewModel(
     public fun loadMore() {
         logger.d { "Loading more channels" }
 
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline()) return
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,
             querySort = querySortFlow.value

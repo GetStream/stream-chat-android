@@ -24,8 +24,8 @@ import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.internal.generateChannelIdIfNeeded
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,12 +35,12 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @param scope [CoroutineScope]
  * @param channelRepository [ChannelRepository]
- * @param globalState [GlobalState]
+ * @param clientState [ClientState]
  */
 internal class CreateChannelErrorHandlerImpl(
     private val scope: CoroutineScope,
     private val channelRepository: ChannelRepository,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
 ) : CreateChannelErrorHandler {
 
     /**
@@ -64,7 +64,7 @@ internal class CreateChannelErrorHandlerImpl(
         extraData: Map<String, Any>,
     ): ReturnOnErrorCall<Channel> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (globalState.isOnline()) {
+            if (clientState.isOnline()) {
                 Result.error(originalError)
             } else {
                 val generatedCid =

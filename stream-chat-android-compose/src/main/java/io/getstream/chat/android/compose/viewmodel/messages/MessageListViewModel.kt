@@ -76,7 +76,8 @@ import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
+import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job
@@ -206,19 +207,19 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.globalState::connectionState
+    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
 
     /**
      * Gives us information about the online state of the device.
      */
     public val isOnline: Flow<Boolean>
-        get() = chatClient.globalState.connectionState.map { it == ConnectionState.CONNECTED }
+        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatClient.globalState.user
+        get() = chatClient.clientState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -505,7 +506,7 @@ public class MessageListViewModel(
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     public fun loadMore() {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline()) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -542,7 +543,7 @@ public class MessageListViewModel(
      */
     private fun loadMessage(message: Message) {
         val cid = channelState.value?.cid
-        if (cid == null || chatClient.globalState.isOffline()) return
+        if (cid == null || chatClient.clientState.isOffline()) return
 
         chatClient.loadMessageById(cid, message.id).enqueue()
     }

@@ -26,8 +26,8 @@ import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -37,12 +37,12 @@ import kotlinx.coroutines.CoroutineScope
  * Checks if the change was done offline and can be synced.
  *
  * @param scope [CoroutineScope]
- * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * @param repos [RepositoryFacade] to access datasource.
  */
 internal class QueryMembersErrorHandlerImpl(
     private val scope: CoroutineScope,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
     private val channelRepository: ChannelRepository,
 ) : QueryMembersErrorHandler {
 
@@ -64,7 +64,7 @@ internal class QueryMembersErrorHandlerImpl(
                     "Error message: ${originalError.message}. Full error: $originalCall"
             }
 
-            if (globalState.isOnline()) {
+            if (clientState.isOnline()) {
                 Result.error(originalError)
             } else {
                 // retrieve from database

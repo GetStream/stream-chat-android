@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
@@ -35,7 +36,6 @@ import io.getstream.chat.android.offline.message.attachments.internal.UploadAtta
 import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -50,7 +50,7 @@ import java.util.UUID
 internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
     private val channelRepository: ChannelRepository,
     private val messageRepository: MessageRepository,
     private val attachmentRepository: AttachmentRepository,
@@ -108,7 +108,7 @@ internal class SendMessageInterceptorImpl(
             if (cid.isEmpty()) {
                 enrichWithCid(channel.cid)
             }
-            user = requireNotNull(globalState.user.value)
+            user = requireNotNull(clientState.user.value)
 
             val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
             attachmentsToUpload.forEach { attachment ->
@@ -125,7 +125,7 @@ internal class SendMessageInterceptorImpl(
             createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
             syncStatus = when {
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                globalState.isOnline() -> SyncStatus.IN_PROGRESS
+                clientState.isOnline() -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
@@ -160,7 +160,7 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return if (globalState.isOnline()) {
+        return if (clientState.isOnline()) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
@@ -233,6 +233,6 @@ internal class SendMessageInterceptorImpl(
      * Returns a unique message id prefixed with user id.
      */
     private fun generateMessageId(): String {
-        return globalState.user.value!!.id + "-" + UUID.randomUUID().toString()
+        return clientState.user.value!!.id + "-" + UUID.randomUUID().toString()
     }
 }

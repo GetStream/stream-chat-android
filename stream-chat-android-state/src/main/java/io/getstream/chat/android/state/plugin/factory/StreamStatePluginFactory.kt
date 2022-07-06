@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -142,6 +143,9 @@ public class StreamStatePluginFactory(
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
+        val clientState = ClientMutableState.get().apply {
+            clearState()
+        }
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -164,7 +168,7 @@ public class StreamStatePluginFactory(
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
             logic = logic,
-            globalState = globalState,
+            clientState = clientState,
             channelRepository = repos,
             messageRepository = repos,
             attachmentRepository = repos,
@@ -179,7 +183,7 @@ public class StreamStatePluginFactory(
             chatClient = chatClient,
             logic = logic,
             state = stateRegistry,
-            globalState = globalState,
+            clientState = clientState,
         )
 
         chatClient.apply {
@@ -193,6 +197,7 @@ public class StreamStatePluginFactory(
         val syncManager = SyncManager(
             chatClient = chatClient,
             globalState = globalState,
+            clientState = clientState,
             repos = repos,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
@@ -221,6 +226,7 @@ public class StreamStatePluginFactory(
                 chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
+                clientState.clearState()
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
@@ -241,18 +247,18 @@ public class StreamStatePluginFactory(
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
-            editMessageListener = EditMessageListenerImpl(logic, globalState),
+            editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repos),
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
-            deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
-            sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
-            deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
+            deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repos),
+            sendReactionListener = SendReactionListenerImpl(logic, clientState, repos),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, clientState, repos),
             sendMessageListener = SendMessageListenerImpl(logic, repos),
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repos),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
-            createChannelListener = CreateChannelListenerImpl(globalState, repos),
+            createChannelListener = CreateChannelListenerImpl(clientState, repos),
             activeUser = user
         )
     }

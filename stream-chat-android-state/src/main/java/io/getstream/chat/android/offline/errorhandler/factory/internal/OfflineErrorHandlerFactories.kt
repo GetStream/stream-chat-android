@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.QueryMembersErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.SendReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 
 /**
  * Provides all offline support related error handler factories.
@@ -55,7 +55,7 @@ private class DeleteReactionErrorHandlerFactory : ErrorHandlerFactory {
         return DeleteReactionErrorHandlerImpl(
             scope = StateRegistry.get().scope,
             logic = LogicRegistry.get(),
-            globalState = GlobalMutableState.getOrCreate(),
+            clientState = ClientMutableState.get(),
         )
     }
 }
@@ -67,7 +67,7 @@ private class SendReactionErrorHandlerFactory : ErrorHandlerFactory {
     override fun create(): ErrorHandler {
         return SendReactionErrorHandlerImpl(
             scope = StateRegistry.get().scope,
-            globalState = GlobalMutableState.getOrCreate(),
+            clientState = ClientMutableState.get(),
         )
     }
 }
@@ -82,7 +82,7 @@ private class QueryMembersErrorHandlerFactory : ErrorHandlerFactory {
 
         return QueryMembersErrorHandlerImpl(
             scope = StateRegistry.get().scope,
-            globalState = GlobalMutableState.getOrCreate(),
+            clientState = ClientMutableState.get(),
             channelRepository = repositoryProvider.get(ChannelRepository::class.java)
         )
     }
@@ -98,7 +98,7 @@ private class CreateChannelErrorHandlerFactory : ErrorHandlerFactory {
 
         return CreateChannelErrorHandlerImpl(
             scope = StateRegistry.get().scope,
-            globalState = GlobalMutableState.getOrCreate(),
+            clientState = ClientMutableState.get(),
             channelRepository = repositoryProvider.get(ChannelRepository::class.java)
         )
     }
