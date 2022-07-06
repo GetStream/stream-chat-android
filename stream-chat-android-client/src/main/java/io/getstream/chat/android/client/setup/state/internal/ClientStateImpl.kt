@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.setup.state.ClientMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-public class ClientStateImpl : ClientMutableState {
+internal class ClientStateImpl : ClientMutableState {
 
     private val _initialized = MutableStateFlow(false)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)

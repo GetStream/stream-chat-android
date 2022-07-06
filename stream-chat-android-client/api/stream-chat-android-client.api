@@ -3597,21 +3597,6 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 	public abstract fun isOnline ()Z
 }
 
-public final class io/getstream/chat/android/client/setup/state/internal/ClientStateImpl : io/getstream/chat/android/client/setup/state/ClientMutableState {
-	public fun <init> ()V
-	public fun clearState ()V
-	public fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
-	public fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
-	public fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public fun isConnecting ()Z
-	public fun isInitialized ()Z
-	public fun isOffline ()Z
-	public fun isOnline ()Z
-	public fun setConnectionState (Lio/getstream/chat/android/client/models/ConnectionState;)V
-	public fun setInitialized (Z)V
-	public fun setUser (Lio/getstream/chat/android/client/models/User;)V
-}
-
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
 	public fun <init> (ILjava/util/List;)V
 	public final fun component1 ()I
