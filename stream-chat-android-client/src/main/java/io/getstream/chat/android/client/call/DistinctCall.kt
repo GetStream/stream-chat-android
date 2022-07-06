@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
@@ -37,13 +39,17 @@ internal class DistinctCall<T : Any>(
 
     private val delegate = AtomicReference<Call<T>>()
     private val isRunning = AtomicBoolean(false)
-    private val subscribers = arrayListOf<Call.Callback<T>>()
+    private val isCancel = AtomicBoolean(false)
+    private val subscribers = mapOf<Boolean, MutableList<Call.Callback<T>>>(
+        true to mutableListOf(),
+        false to mutableListOf()
+    )
     private val calculatedResult = AtomicReference<Result<T>>()
 
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        subscribeCallback(callback)
+        subscribeCallback(false, callback)
         scope.launch {
             tryToRun {
                 suspendCoroutine { continuation ->
@@ -54,50 +60,56 @@ internal class DistinctCall<T : Any>(
     }
 
     override fun cancel() {
-        try {
-            delegate.get()?.cancel()
-        } finally {
-            doFinally()
-        }
+        isCancel.set(true)
+        delegate.get()?.cancel()
+        notifyCancel()
     }
 
     private fun doFinally() {
         synchronized(subscribers) {
-            subscribers.clear()
+            subscribers.forEach { it.value.clear() }
         }
         isRunning.set(false)
         delegate.set(null)
         onFinished()
     }
+    private fun originalCall(): Call<T> = callBuilder().also { delegate.set(it) }
 
-    private fun initCall(): Call<T> = callBuilder().also { delegate.set(it) }
-
-    private fun subscribeCallback(callback: Call.Callback<T>) {
+    private fun subscribeCallback(notifyEventOnCancel: Boolean = true, callback: Call.Callback<T>) {
         synchronized(subscribers) {
-            subscribers.add(callback)
+            subscribers[notifyEventOnCancel]?.add(callback)
         }
     }
 
-    private suspend fun notifyResult(result: Result<T>) = withContext(DispatcherProvider.Main) {
-        calculatedResult.set(result)
-        synchronized(subscribers) {
-            subscribers.forEach { it.onResult(result) }
+    private fun notifyCancel() {
+        scope.launch {
+            val cachedResult = calculatedResult.get()
+            notifyResult(cachedResult ?: callCanceledError(), cachedResult == null)
         }
-        withContext(DispatcherProvider.IO) { doFinally() }
     }
+
+    private suspend fun notifyResult(result: Result<T>, wasCanceled: Boolean = false) =
+        withContext(DispatcherProvider.Main) {
+            calculatedResult.set(result)
+            synchronized(subscribers) {
+                subscribers.flatMap { it.takeIf { it.key or wasCanceled.not() }?.value ?: emptyList() }
+                    .forEach { it.onResult(result) }
+            }
+            withContext(DispatcherProvider.IO) { doFinally() }
+        }
 
     private suspend fun tryToRun(command: suspend Call<T>.() -> Result<T>): Result<T>? =
         (
             calculatedResult.get()
                 ?: if (!isRunning.getAndSet(true)) {
-                    initCall().command()
+                    originalCall().command()
                 } else {
                     null
                 }
             )?.also { notifyResult(it) }
 
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
-        tryToRun { this.await() }
+        tryToRun { this.await().takeUnless { isCancel.get() } ?: callCanceledError() }
             ?: suspendCoroutine { continuation ->
                 subscribeCallback { continuation.resume(it) }
             }
