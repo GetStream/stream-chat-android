@@ -24,19 +24,19 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class BlockedTask<T : Any>(private val result: Result<T>) {
+internal class BlockedTask<T : Any>(private val result: Result<T>) {
 
     private val isBlocked = AtomicBoolean(true)
     private val started = AtomicBoolean(false)
     private val completed = AtomicBoolean(false)
 
-    public fun unblock() {
+    fun unblock() {
         isBlocked.set(false)
     }
 
-    public fun getSyncTask(): () -> Result<T> = { runBlocking { getResult() } }
+    fun getSyncTask(): () -> Result<T> = { runBlocking { getResult() } }
 
-    public fun getSuspendTask(): suspend CoroutineScope.() -> Result<T> = { getResult() }
+    fun getSuspendTask(): suspend CoroutineScope.() -> Result<T> = { getResult() }
 
     private suspend fun getResult() = withContext(DispatcherProvider.IO) {
         started.set(true)
@@ -47,6 +47,6 @@ public class BlockedTask<T : Any>(private val result: Result<T>) {
         result
     }
 
-    public fun isStarted(): Boolean = started.get()
-    public fun isCompleted(): Boolean = completed.get()
+    fun isStarted(): Boolean = started.get()
+    fun isCompleted(): Boolean = completed.get()
 }

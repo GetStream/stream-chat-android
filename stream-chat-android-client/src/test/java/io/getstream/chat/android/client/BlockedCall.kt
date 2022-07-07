@@ -26,14 +26,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
+internal class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
 
     private val isBlocked = AtomicBoolean(true)
     private val started = AtomicBoolean(false)
     private val completed = AtomicBoolean(false)
     private val cancelled = AtomicBoolean(false)
 
-    public fun unblock() {
+    fun unblock() {
         isBlocked.set(false)
     }
 
@@ -51,9 +51,9 @@ public class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
         result
     }
 
-    public fun isStarted(): Boolean = started.get()
-    public fun isCompleted(): Boolean = completed.get()
-    public fun isCanceled(): Boolean = cancelled.get()
+    fun isStarted(): Boolean = started.get()
+    fun isCompleted(): Boolean = completed.get()
+    fun isCanceled(): Boolean = cancelled.get()
 
     override fun execute(): Result<T> = runBlocking { getResult() }
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) { getResult() }

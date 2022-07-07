@@ -31,7 +31,7 @@ import retrofit2.Response
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class BlockedRetrofit2Call<T>(
+internal class BlockedRetrofit2Call<T>(
     private val scope: CoroutineScope,
     private val value: T? = null,
     private val error: IOException? = null,
@@ -52,7 +52,7 @@ public class BlockedRetrofit2Call<T>(
     private val completed = AtomicBoolean(false)
     private val cancelled = AtomicBoolean(false)
 
-    public fun unblock() {
+    fun unblock() {
         isBlocked.set(false)
     }
 
@@ -64,8 +64,8 @@ public class BlockedRetrofit2Call<T>(
         if (!cancelled.get()) completed.set(true)
     }
 
-    public fun isStarted(): Boolean = started.get()
-    public fun isCompleted(): Boolean = completed.get()
+    fun isStarted(): Boolean = started.get()
+    fun isCompleted(): Boolean = completed.get()
     override fun enqueue(callback: Callback<T>) {
         scope.launch {
             run()
