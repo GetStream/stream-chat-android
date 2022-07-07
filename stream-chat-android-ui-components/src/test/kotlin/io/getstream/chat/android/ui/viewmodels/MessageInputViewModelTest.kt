@@ -18,10 +18,10 @@ package io.getstream.chat.android.ui.viewmodels
 
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -39,10 +39,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.File
 import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -81,6 +83,83 @@ internal class MessageInputViewModelTest {
         )
     }
 
+    @Test
+    fun `Given message text contains @ followed by a text that is not a selected mention When sending the message Should not contain mentions`() =
+        runTest {
+            val chatClient = MockChatClientBuilder().build()
+            val message = Message(cid = CID, text = "Text with an @sign that should not be treated as a mention")
+
+            val viewModel = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenSendMessage()
+                .givenStopTyping()
+                .get()
+
+            viewModel.sendMessage(messageText = message.text)
+
+            verify(chatClient).sendMessage(
+                message = message,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID
+            )
+        }
+
+    @Test
+    fun `Given a selected mention When sending the message Should not contain mention`() =
+        runTest {
+            val chatClient = MockChatClientBuilder().build()
+            val mentionedUser = User(id = "user")
+            val message = Message(cid = CID, text = "Hey @user", mentionedUsersIds = mutableListOf("user"))
+
+            val viewModel = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenSendMessage()
+                .givenStopTyping()
+                .get()
+
+            viewModel.selectMention(mentionedUser)
+            viewModel.sendMessage(messageText = message.text)
+
+            verify(chatClient).sendMessage(
+                message = message,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID
+            )
+        }
+
+    @Test
+    fun `Given attachments have been selected When sending the message Should contain attachments`() = runTest {
+        val chatClient = MockChatClientBuilder().build()
+        val file = File("testPathname")
+        val mimeType = "testMimeType"
+
+        val attachment = Attachment(mimeType = mimeType, upload = file)
+        val newMessage = Message(text = "Hey.", cid = CID, attachments = mutableListOf(attachment))
+
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .givenStopTyping()
+            .givenSendMessage()
+            .get()
+
+        viewModel.sendMessageWithAttachments(
+            messageText = newMessage.text,
+            attachmentsWithMimeTypes = listOf(Pair(file, mimeType)
+            ))
+
+        verify(chatClient).sendMessage(
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            message = newMessage
+        )
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = MockChatClientBuilder().build(),
         private val channelId: String = CID,
@@ -107,7 +186,7 @@ internal class MessageInputViewModelTest {
         }
 
         fun givenStopTyping() = apply {
-            whenever(chatClient.stopTyping(any(), any(), any())) doReturn mock()
+            whenever(chatClient.stopTyping(any(), any(), anyOrNull())) doReturn mock()
         }
 
         fun givenChannelState(
@@ -164,6 +243,5 @@ internal class MessageInputViewModelTest {
 
         private val message1 = Message(id = "message-id-1", createdAt = Date())
         private val message2 = Message(id = "message-id-2", createdAt = Date())
-        private val reaction1 = Reaction("message-id-1", "like", 1)
     }
 }
