@@ -79,6 +79,9 @@ public val ChatClient.state: StateRegistry
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
 
+/**
+ * [ClientState] instance that contains information about the current user, connection state, initialization state, etc.
+ */
 public val ChatClient.clientState: ClientState
     get() = ClientMutableState.get()
 

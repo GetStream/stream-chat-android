@@ -60,7 +60,7 @@ internal class DeleteReactionErrorHandlerImpl(
         messageId: String,
     ): ReturnOnErrorCall<Message> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (cid == null || clientState.isOnline()) {
+            if (cid == null || clientState.isOnline ) {
                 Result.error(originalError)
             } else {
                 val (channelType, channelId) = cid.cidToTypeAndId()

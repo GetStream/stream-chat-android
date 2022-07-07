@@ -191,7 +191,7 @@ internal class SyncManager(
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
         logger.d { "[connectionRecovered] recoverAll: $recoverAll" }
         // 0. ensure load is complete
-        val online = clientState.isOnline()
+        val online = clientState.isOnline
 
         // 1. Retry any failed requests first (synchronous)
         logger.v { "[connectionRecovered] online: $online" }

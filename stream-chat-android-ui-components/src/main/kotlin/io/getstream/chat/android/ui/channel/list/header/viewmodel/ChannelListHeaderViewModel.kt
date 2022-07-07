@@ -30,7 +30,7 @@ import io.getstream.chat.android.offline.extensions.clientState
  * Responsible for updating current user information.
  * Can be bound to the view using [ChannelListHeaderViewModel.bindView] function.
  *
- * @param clientState Global state of the SDK. Contains information
+ * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state...
  */
 public class ChannelListHeaderViewModel @JvmOverloads constructor(

@@ -46,7 +46,7 @@ internal class EditMessageListenerImpl(
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
-        val isOnline = clientState.isOnline()
+        val isOnline = clientState.isOnline
         val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
         channelLogic.updateAndSaveMessages(messagesToEdit)

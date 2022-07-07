@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.map
 /**
  * @param cid The CID of the current channel.
  * @param chatClient An instance of the low level chat client.
- * @param clientState Global state of the SDK. Contains information
+ * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state...
  */
 public class MessageListHeaderViewModel(

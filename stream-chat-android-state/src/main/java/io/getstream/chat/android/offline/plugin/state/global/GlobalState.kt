@@ -34,19 +34,46 @@ public interface GlobalState {
     /**
      * The current user in the OfflinePlugin state.
      */
-    @Deprecated("Use ClientState.user")
+    @Deprecated(
+        message = "Use ClientState.user instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.user",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public val user: StateFlow<User?>
 
     /**
      * If the client connection has been initialized.
      */
-    @Deprecated("Use ClientState.initialized")
+    @Deprecated(
+        message = "Use ClientState.initialized instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.initialized",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public val initialized: StateFlow<Boolean>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
      */
-    @Deprecated("Use ClientState.connectionState")
+    @Deprecated(
+        message = "Use ClientState.connectionState instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.connectionState",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public val connectionState: StateFlow<ConnectionState>
 
     /**
@@ -108,7 +135,16 @@ public interface GlobalState {
      *
      * @return True if the user is online otherwise False.
      */
-    @Deprecated("Use ClientState.isOnline()")
+    @Deprecated(
+        message = "Use ClientState.isOnline() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isOnline",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public fun isOnline(): Boolean
 
     /**
@@ -116,7 +152,16 @@ public interface GlobalState {
      *
      * @return True if the user is offline otherwise False.
      */
-    @Deprecated("Use ClientState.isOffline()")
+    @Deprecated(
+        message = "Use ClientState.isOffline() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isOffline",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public fun isOffline(): Boolean
 
     /**
@@ -124,7 +169,16 @@ public interface GlobalState {
      *
      * @return True if the connection is in connecting state.
      */
-    @Deprecated("Use ClientState.isConnecting()")
+    @Deprecated(
+        message = "Use ClientState.isConnecting() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isConnecting",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public fun isConnecting(): Boolean
 
     /**
@@ -132,12 +186,31 @@ public interface GlobalState {
      *
      * @return True if initialized otherwise False.
      */
-    @Deprecated("Use ClientState.isInitialized()")
+    @Deprecated(
+        message = "Use ClientState.isInitialized() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isInitialized",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+            ]
+        )
+    )
     public fun isInitialized(): Boolean
 
     /**
      * Clears the state of [GlobalState].
      */
-    @Deprecated("Use ClientMutableState.setInitialized()")
+    @Deprecated(
+        message = "Use ClientMutableState.clearState()",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.toMutableState()?.clearState()",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState",
+                "io.getstream.chat.android.client.setup.state.internal.toMutableState",
+            ]
+        )
+    )
     public fun clearState()
 }

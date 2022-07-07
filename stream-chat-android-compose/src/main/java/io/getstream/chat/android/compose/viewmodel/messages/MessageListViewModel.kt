@@ -506,7 +506,7 @@ public class MessageListViewModel(
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     public fun loadMore() {
-        if (chatClient.clientState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -543,7 +543,7 @@ public class MessageListViewModel(
      */
     private fun loadMessage(message: Message) {
         val cid = channelState.value?.cid
-        if (cid == null || chatClient.clientState.isOffline()) return
+        if (cid == null || chatClient.clientState.isOffline) return
 
         chatClient.loadMessageById(cid, message.id).enqueue()
     }

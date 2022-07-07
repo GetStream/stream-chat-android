@@ -59,13 +59,13 @@ internal class SendReactionErrorHandlerImpl(
         currentUser: User,
     ): ReturnOnErrorCall<Reaction> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (clientState.isOnline()) {
+            if (clientState.isOnline) {
                 Result.error(originalError)
             } else {
                 Result.success(
                     reaction.enrichWithDataBeforeSending(
                         currentUser = currentUser,
-                        isOnline = clientState.isOnline(),
+                        isOnline = clientState.isOnline,
                         enforceUnique = enforceUnique,
                     ),
                 )

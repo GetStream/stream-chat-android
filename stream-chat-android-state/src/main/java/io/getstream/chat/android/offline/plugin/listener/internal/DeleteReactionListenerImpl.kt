@@ -66,7 +66,7 @@ internal class DeleteReactionListenerImpl(
             type = reactionType,
             user = currentUser,
             userId = currentUser.id,
-            syncStatus = if (clientState.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
             deletedAt = Date(),
         )
 

@@ -20,7 +20,13 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+/**
+ * Mutable version of [ClientState]. The class makes possible to change state of the SDK. Should only be used
+ * internally by the SDK.
+ */
+@InternalStreamChatApi
 public interface ClientMutableState : ClientState {
 
     /**
@@ -52,14 +58,17 @@ public interface ClientMutableState : ClientState {
     public companion object {
 
         @VisibleForTesting
+        @InternalStreamChatApi
         public var instance: ClientMutableState? = null
 
+        @InternalStreamChatApi
         public fun get(): ClientMutableState =
             instance ?: create().also { clientState ->
                 instance = clientState
             }
 
         @VisibleForTesting
+        @InternalStreamChatApi
         public fun create(): ClientMutableState = ClientStateImpl()
     }
 }

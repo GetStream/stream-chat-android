@@ -314,7 +314,7 @@ public class ChannelListViewModel(
     public fun loadMore() {
         logger.d { "Loading more channels" }
 
-        if (chatClient.clientState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,
             querySort = querySortFlow.value

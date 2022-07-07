@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.setup.state.internal
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -30,17 +32,21 @@ internal class ClientStateImpl : ClientMutableState {
 
     override val user: StateFlow<User?> = _user
 
+    override val isOnline: Boolean
+        get() = _connectionState.value == ConnectionState.CONNECTED
+
+    override val isOffline: Boolean
+        get() = _connectionState.value == ConnectionState.OFFLINE
+
+    override val isConnecting: Boolean
+        get() = _connectionState.value == ConnectionState.CONNECTING
+
+    override val isInitialized: Boolean
+        get() = _initialized.value
+
     override val initialized: StateFlow<Boolean> = _initialized
 
     override val connectionState: StateFlow<ConnectionState> = _connectionState
-
-    override fun isOnline(): Boolean = _connectionState.value == ConnectionState.CONNECTED
-
-    override fun isOffline(): Boolean = _connectionState.value == ConnectionState.OFFLINE
-
-    override fun isConnecting(): Boolean = _connectionState.value == ConnectionState.CONNECTING
-
-    override fun isInitialized(): Boolean = _initialized.value
 
     override fun clearState() {
         _initialized.value = false
@@ -60,3 +66,6 @@ internal class ClientStateImpl : ClientMutableState {
         _initialized.value = initialized
     }
 }
+
+@InternalStreamChatApi
+public fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState

@@ -63,7 +63,7 @@ internal class SendReactionListenerImpl(
     ) {
         val reactionToSend = reaction.enrichWithDataBeforeSending(
             currentUser = currentUser,
-            isOnline = clientState.isOnline(),
+            isOnline = clientState.isOnline,
             enforceUnique = enforceUnique,
         )
 

@@ -75,7 +75,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  *
  * @param cid The full channel id, i.e. "messaging:123"
  * @param chatClient Entry point for all low-level operations.
- * @param clientState Global state of SDK. Contains information
+ * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
  */
 @Suppress("TooManyFunctions")

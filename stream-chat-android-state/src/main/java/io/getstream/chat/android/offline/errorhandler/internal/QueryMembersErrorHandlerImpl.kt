@@ -64,7 +64,7 @@ internal class QueryMembersErrorHandlerImpl(
                     "Error message: ${originalError.message}. Full error: $originalCall"
             }
 
-            if (clientState.isOnline()) {
+            if (clientState.isOnline) {
                 Result.error(originalError)
             } else {
                 // retrieve from database

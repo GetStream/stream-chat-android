@@ -74,7 +74,7 @@ internal class DeleteMessageListenerImpl(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            val isOnline = clientState.isOnline()
+            val isOnline = clientState.isOnline
 
             val (channelType, channelId) = message.cid.cidToTypeAndId()
             val channelLogic = logic.channel(channelType, channelId)

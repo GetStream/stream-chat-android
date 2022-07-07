@@ -64,7 +64,7 @@ internal class CreateChannelErrorHandlerImpl(
         extraData: Map<String, Any>,
     ): ReturnOnErrorCall<Channel> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (clientState.isOnline()) {
+            if (clientState.isOnline) {
                 Result.error(originalError)
             } else {
                 val generatedCid =

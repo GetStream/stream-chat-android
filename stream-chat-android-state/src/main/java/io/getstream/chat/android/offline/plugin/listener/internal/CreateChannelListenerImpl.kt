@@ -69,7 +69,7 @@ internal class CreateChannelListenerImpl(
             extraData = extraData.toMutableMap(),
             createdAt = Date(),
             createdBy = currentUser,
-            syncStatus = if (clientState.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
         ).apply {
             name = getExtraValue("name", "")
             image = getExtraValue("image", "")

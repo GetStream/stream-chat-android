@@ -20,6 +20,10 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * The current state of the SDK. With this class you can get the current user, the connection state, initialization
+ * state...
+ */
 public interface ClientState {
 
     /**
@@ -42,26 +46,26 @@ public interface ClientState {
      *
      * @return True if the user is online otherwise False.
      */
-    public fun isOnline(): Boolean
+    public val isOnline: Boolean
 
     /**
      * If the user is offline or not.
      *
      * @return True if the user is offline otherwise False.
      */
-    public fun isOffline(): Boolean
+    public val isOffline: Boolean
 
     /**
      * If connection is in connecting state.
      *
      * @return True if the connection is in connecting state.
      */
-    public fun isConnecting(): Boolean
+    public val isConnecting: Boolean
 
     /**
      * If domain state is initialized or not.
      *
      * @return True if initialized otherwise False.
      */
-    public fun isInitialized(): Boolean
+    public val isInitialized: Boolean
 }
