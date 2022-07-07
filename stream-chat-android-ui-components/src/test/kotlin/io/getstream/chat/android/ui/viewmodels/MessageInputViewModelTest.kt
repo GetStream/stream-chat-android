@@ -150,8 +150,10 @@ internal class MessageInputViewModelTest {
 
         viewModel.sendMessageWithAttachments(
             messageText = newMessage.text,
-            attachmentsWithMimeTypes = listOf(Pair(file, mimeType)
-            ))
+            attachmentsWithMimeTypes = listOf(
+                Pair(file, mimeType)
+            )
+        )
 
         verify(chatClient).sendMessage(
             channelType = CHANNEL_TYPE,
