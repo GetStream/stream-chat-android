@@ -94,9 +94,6 @@ class MessageListViewSnippets : Fragment() {
         messageListView.setUserUnmuteHandler { user: User ->
             // Handle when a user is going to be unmuted
         }
-        messageListView.setUserBlockHandler { user: User, cid: String ->
-            // Handle when a user is going to be blocked in the channel with cid
-        }
         messageListView.setMessageReplyHandler { cid: String, message: Message ->
             // Handle when message is going to be replied in the channel with cid
         }

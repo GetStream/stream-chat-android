@@ -18,6 +18,7 @@ package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.extensions.containsLinks
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
@@ -235,10 +236,12 @@ public class MessageComposerController(
     public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
-     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply].
      */
     public val lastActiveAction: Flow<MessageAction?>
-        get() = messageActions.map { actions -> actions.lastOrNull { it is Edit || it is Reply } }
+        get() = messageActions.map { actions ->
+            actions.lastOrNull { it is Edit || it is Reply }
+        }
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
@@ -461,19 +464,24 @@ public class MessageComposerController(
     }
 
     /**
-     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using [ChatClient].
+     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing message, or we
+     * send a new message, using [ChatClient]. In case the message is a moderated message the old one is deleted before
+     * the replacing one is sent.
      *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
-        val sendMessageCall = if (isInEditMode) {
+        val activeMessage = activeAction?.message ?: message
+
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
+            if (activeMessage.isModerationFailed(chatClient))
+                chatClient.deleteMessage(activeMessage.id, true).enqueue()
             chatClient.sendMessage(channelType, channelId, message)
         }
 
@@ -502,12 +510,12 @@ public class MessageComposerController(
         val activeAction = activeAction
 
         val trimmedMessage = message.trim()
-        val actionMessage = activeAction?.message ?: Message()
+        val activeMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode) {
-            actionMessage.copy(
+        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+            activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions
@@ -640,6 +648,14 @@ public class MessageComposerController(
     }
 
     /**
+     * Dismisses the suggestions popup above the message composer.
+     */
+    public fun dismissSuggestionsPopup() {
+        mentionSuggestions.value = emptyList()
+        commandSuggestions.value = emptyList()
+    }
+
+    /**
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
@@ -658,7 +674,7 @@ public class MessageComposerController(
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
 
-        commandSuggestions.value = if (containsCommand) {
+        commandSuggestions.value = if (containsCommand && selectedAttachments.value.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {

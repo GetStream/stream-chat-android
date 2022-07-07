@@ -15,8 +15,8 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_attachment_gallery_count">"%d / %d"</string>
-  <string name="stream_ui_attachment_gallery_date">"%sの%s に送信しました"</string>
+  <string name="stream_ui_attachment_gallery_count">"%1$d / %2$d"</string>
+  <string name="stream_ui_attachment_gallery_date">"%1$sの%2$s に送信しました"</string>
   <string name="stream_ui_attachment_gallery_delete">"削除"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"写真"</string>
   <string name="stream_ui_attachment_gallery_reply">"返信"</string>

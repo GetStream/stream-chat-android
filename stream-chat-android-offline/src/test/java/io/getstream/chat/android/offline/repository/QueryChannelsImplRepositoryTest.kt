@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.api.models.ContainsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.test.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
-import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
 import io.getstream.chat.android.test.TestCoroutineRule

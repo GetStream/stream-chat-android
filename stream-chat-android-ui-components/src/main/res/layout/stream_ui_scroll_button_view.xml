@@ -40,7 +40,7 @@
 
     <TextView
         android:id="@+id/unreadCountTextView"
-        android:layout_width="@dimen/stream_ui_scroll_button_unread_badge_size"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/stream_ui_scroll_button_unread_badge_size"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/stream_ui_shape_scroll_button_badge"
