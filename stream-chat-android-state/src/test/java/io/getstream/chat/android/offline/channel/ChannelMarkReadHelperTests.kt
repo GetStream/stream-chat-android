@@ -214,7 +214,7 @@ internal class ChannelMarkReadHelperTests {
         }
 
         fun givenOnlineUser() = apply {
-            whenever(clientState.isOnline()) doReturn true
+            whenever(clientState.isOnline) doReturn true
         }
 
         fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state, clientState)

@@ -291,7 +291,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenIsOffline(isOffline: Boolean = false) = apply {
-            whenever(clientState.isOffline()) doReturn isOffline
+            whenever(clientState.isOffline) doReturn isOffline
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {

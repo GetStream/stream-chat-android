@@ -274,11 +274,11 @@ internal class CreateChannelTests {
         private var repositoryFacade = mock<RepositoryFacade>()
 
         fun givenOnlineState() = apply {
-            whenever(clientState.isOnline()) doReturn true
+            whenever(clientState.isOnline) doReturn true
         }
 
         fun givenOfflineState() = apply {
-            whenever(clientState.isOnline()) doReturn false
+            whenever(clientState.isOnline) doReturn false
         }
 
         fun givenMockedRepos(repos: RepositoryFacade) = apply {
