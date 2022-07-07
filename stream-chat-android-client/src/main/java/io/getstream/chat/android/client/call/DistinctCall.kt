@@ -66,6 +66,7 @@ internal class DistinctCall<T : Any>(
         synchronized(subscribers) {
             subscribers.forEach { it.value.clear() }
         }
+        isCancel.set(false)
         isRunning.set(false)
         delegate.set(null)
         onFinished()
@@ -89,7 +90,6 @@ internal class DistinctCall<T : Any>(
 
     private suspend fun tryToRun(command: suspend Call<T>.() -> Result<T>): Result<T>? =
         if (!isRunning.getAndSet(true)) {
-            isCancel.set(false)
             originalCall().command()
         } else {
             null
