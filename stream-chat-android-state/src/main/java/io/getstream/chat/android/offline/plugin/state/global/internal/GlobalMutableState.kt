@@ -78,7 +78,8 @@ public class GlobalMutableState private constructor(
             imports = [
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState"
-            ])
+            ]
+        )
     )
     override val connectionState: StateFlow<ConnectionState> = clientState.connectionState
 
