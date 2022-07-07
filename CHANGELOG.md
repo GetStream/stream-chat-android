@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
 
 ### ⚠️ Changed
 
