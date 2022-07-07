@@ -37,17 +37,20 @@ internal class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
         isBlocked.set(false)
     }
 
+    public fun block() {
+        isBlocked.set(true)
+    }
+
     private suspend fun getResult() = withContext(DispatcherProvider.IO) {
         started.set(true)
         while (isBlocked.get()) {
             delay(10)
         }
 
-        if (cancelled.get()) {
-            cancel()
-        } else {
+        if (!cancelled.get()) {
             completed.set(true)
         }
+
         result
     }
 
