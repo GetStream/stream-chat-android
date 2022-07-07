@@ -44,8 +44,6 @@ internal class DistinctCall<T : Any>(
         true to mutableListOf(),
         false to mutableListOf()
     )
-    private val calculatedResult = AtomicReference<Result<T>>()
-
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
@@ -62,13 +60,13 @@ internal class DistinctCall<T : Any>(
     override fun cancel() {
         isCancel.set(true)
         delegate.get()?.cancel()
-        notifyCancel()
     }
 
     private fun doFinally() {
         synchronized(subscribers) {
             subscribers.forEach { it.value.clear() }
         }
+        isCancel.set(false)
         isRunning.set(false)
         delegate.set(null)
         onFinished()
@@ -81,35 +79,24 @@ internal class DistinctCall<T : Any>(
         }
     }
 
-    private fun notifyCancel() {
-        scope.launch {
-            val cachedResult = calculatedResult.get()
-            notifyResult(cachedResult ?: callCanceledError(), cachedResult == null)
-        }
-    }
-
-    private suspend fun notifyResult(result: Result<T>, wasCanceled: Boolean = false) =
+    private suspend fun notifyResult(result: Result<T>) =
         withContext(DispatcherProvider.Main) {
-            calculatedResult.set(result)
             synchronized(subscribers) {
-                subscribers.flatMap { it.takeIf { it.key or wasCanceled.not() }?.value ?: emptyList() }
+                subscribers.flatMap { it.takeIf { it.key or isCancel.get().not() }?.value ?: emptyList() }
                     .forEach { it.onResult(result) }
             }
             withContext(DispatcherProvider.IO) { doFinally() }
         }
 
     private suspend fun tryToRun(command: suspend Call<T>.() -> Result<T>): Result<T>? =
-        (
-            calculatedResult.get()
-                ?: if (!isRunning.getAndSet(true)) {
-                    originalCall().command()
-                } else {
-                    null
-                }
-            )?.also { notifyResult(it) }
+        if (!isRunning.getAndSet(true)) {
+            originalCall().command()
+        } else {
+            null
+        }?.also { notifyResult(it.takeUnless { isCancel.get() } ?: callCanceledError()) }
 
     override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) {
-        tryToRun { this.await().takeUnless { isCancel.get() } ?: callCanceledError() }
+        tryToRun { this.await() }
             ?: suspendCoroutine { continuation ->
                 subscribeCallback { continuation.resume(it) }
             }

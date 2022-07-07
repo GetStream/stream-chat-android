@@ -23,6 +23,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -69,31 +70,7 @@ internal class DistinctCallTest {
     }
 
     @Test
-    fun `Call should be executed asynchronous only once and return a valid result even if it was already completed`() = runTest {
-        val blockedCall = BlockedCall(validResult).apply { unblock() }
-        val spyCallBuilder = SpyCallBuilder(blockedCall)
-        val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
-
-        val result = call.execute()
-        val deferredResults = call.asyncRun { this.await() }
-        callbacks.forEach(call::enqueue)
-
-        result `should be equal to` validResult
-        deferredResults.forEach {
-            it.await() `should be equal to` validResult
-        }
-        callbacks.forEach {
-            verify(it, times(1)).onResult(eq(validResult))
-        }
-        spyCallBuilder.`should be invoked once`()
-        blockedCall.isStarted() `should be equal to` true
-        blockedCall.isCompleted() `should be equal to` true
-        blockedCall.isCanceled() `should be equal to` false
-    }
-
-    @Test
-    fun `Call should store previous result even if it is canceled later`() = runTest {
+    fun `Call should invoke the inner call after being completed or canceled`() = runTest {
         val blockedCall = BlockedCall(validResult).apply { unblock() }
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
@@ -101,6 +78,7 @@ internal class DistinctCallTest {
 
         val result = call.execute()
         call.cancel()
+        delay(10)
         val deferredResults = call.asyncRun { this.await() }
         callbacks.forEach(call::enqueue)
 
@@ -111,7 +89,6 @@ internal class DistinctCallTest {
         callbacks.forEach {
             verify(it, times(1)).onResult(eq(validResult))
         }
-        spyCallBuilder.`should be invoked once`()
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` true
         blockedCall.isCanceled() `should be equal to` false
@@ -119,6 +96,7 @@ internal class DistinctCallTest {
 
     @Test
     fun `Canceled Call should only notify sync methods`() = runTest {
+
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
@@ -126,11 +104,9 @@ internal class DistinctCallTest {
 
         callbacks.forEach(call::enqueue)
         val deferredResults = call.asyncRun { this.await() }
-        val deferredResult = async { call.execute() }
         call.cancel()
         blockedCall.unblock()
 
-        deferredResult.await() `should be equal to` Call.callCanceledError()
         deferredResults.forEach {
             it.await() `should be equal to` Call.callCanceledError()
         }
@@ -141,31 +117,6 @@ internal class DistinctCallTest {
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` false
         blockedCall.isCanceled() `should be equal to` true
-    }
-
-    @Test
-    fun `Canceled Call should not invoke inner call`() = runTest {
-        val blockedCall = BlockedCall(validResult)
-        val spyCallBuilder = SpyCallBuilder(blockedCall)
-        val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
-        call.cancel()
-
-        callbacks.forEach(call::enqueue)
-        val deferredResults = call.asyncRun { this.await() }
-        val result = call.execute()
-
-        result `should be equal to` Call.callCanceledError()
-        deferredResults.forEach {
-            it.await() `should be equal to` Call.callCanceledError()
-        }
-        callbacks.forEach {
-            verify(it, times(1)).onResult(eq(Call.callCanceledError()))
-        }
-        spyCallBuilder.`should not be invoked`()
-        blockedCall.isStarted() `should be equal to` false
-        blockedCall.isCompleted() `should be equal to` false
-        blockedCall.isCanceled() `should be equal to` false
     }
 
     private fun <T : Any, R> DistinctCall<T>.asyncRun(function: suspend DistinctCall<T>.() -> R): List<Deferred<R>> =

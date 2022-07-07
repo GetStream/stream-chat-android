@@ -43,11 +43,10 @@ public class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
             delay(10)
         }
 
-        if (cancelled.get()) {
-            cancel()
-        } else {
+        if (!cancelled.get()) {
             completed.set(true)
         }
+
         result
     }
 
