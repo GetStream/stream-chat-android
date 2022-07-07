@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
@@ -88,8 +86,6 @@ internal class EditMessageListenerImpl(
      * @param chatError [ChatError].
      */
     private fun Message.updateFailedMessage(chatError: ChatError): Message {
-        val isMessageModerationFailed = chatError is ChatNetworkError &&
-            chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
         return this.copy(
             syncStatus = if (chatError.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY

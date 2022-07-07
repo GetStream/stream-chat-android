@@ -229,6 +229,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             onDismiss = { listViewModel.removeOverlay() }
                         )
                     }
+                    else -> Unit
                 }
             }
         }

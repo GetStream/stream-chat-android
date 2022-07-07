@@ -538,8 +538,6 @@ internal class EventHandlerImpl(
                 is DisconnectedEvent,
                 is ErrorEvent,
                 is UnknownEvent,
-                is ChannelUserBannedEvent,
-                is ChannelUserUnbannedEvent,
                 is UserDeletedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
