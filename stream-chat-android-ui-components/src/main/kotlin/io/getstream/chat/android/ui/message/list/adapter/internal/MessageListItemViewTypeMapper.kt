@@ -18,6 +18,8 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isImage
@@ -93,7 +95,17 @@ internal object MessageListItemViewTypeMapper {
     private fun Message.isImageAttachment(): Boolean {
         return attachments.isNotEmpty() &&
             attachments.any { it.isImage() } &&
-            attachments.all { it.isImage() || it.hasLink() }
+            attachments.all { it.isImage() || it.hasLink() } &&
+            attachments.none { it.isUploading() }
+    }
+
+    /**
+     * @return If the attachment is currently being uploaded to the server.
+     */
+    private fun Attachment.isUploading(): Boolean {
+        return (uploadState is Attachment.UploadState.InProgress || uploadState is Attachment.UploadState.Idle) &&
+            upload != null &&
+            uploadId != null
     }
 
     /**
