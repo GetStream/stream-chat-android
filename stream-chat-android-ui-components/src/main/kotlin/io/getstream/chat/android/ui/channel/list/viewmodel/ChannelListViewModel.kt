@@ -328,7 +328,7 @@ public class ChannelListViewModel(
      * Called when scrolling to the end of the list.
      */
     private fun requestMoreChannels() {
-        filterLiveData.value?.let { filter ->
+        filterLiveData.value?.let {
             val queryChannelsState = queryChannelsState.value ?: return
 
             queryChannelsState.nextPageRequest.value?.let {
