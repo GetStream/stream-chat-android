@@ -138,16 +138,23 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             ::messageListItemViewHolderFactory.isInitialized && ::attachmentFactoryManager.isInitialized &&
             ::messageOptionItems.isInitialized
         if (savedInstanceState == null && isInitialized) {
-            setupDismissibleArea()
-            setupEditReactionsView()
-            setupMessageView()
-            anchorReactionsViewToMessageView()
-            when (optionsMode) {
-                OptionsMode.MESSAGE_OPTIONS -> setupMessageOptions()
-                OptionsMode.REACTION_OPTIONS -> setupUserReactionsView()
-            }
+            setupDialog()
         } else {
             dismiss()
+        }
+    }
+
+    /**
+     * Initializes the dialog.
+     */
+    private fun setupDialog() {
+        setupDismissibleArea()
+        setupEditReactionsView()
+        setupMessageView()
+        anchorReactionsViewToMessageView()
+        when (optionsMode) {
+            OptionsMode.MESSAGE_OPTIONS -> setupMessageOptions()
+            OptionsMode.REACTION_OPTIONS -> setupUserReactionsView()
         }
     }
 
