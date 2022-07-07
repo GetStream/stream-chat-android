@@ -70,8 +70,6 @@
     <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
-    <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$*</ID>
-    <ID>MaxLineLength:QueryChannelsLogic.kt$QueryChannelsLogic$logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>
@@ -93,7 +91,6 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
-    <ID>UnusedPrivateMember:EditMessageListenerImpl.kt$EditMessageListenerImpl$val isMessageModerationFailed = chatError is ChatNetworkError &amp;&amp; chatError.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:StreamStatePluginFactory.kt$StreamStatePluginFactory$context: Context</ID>

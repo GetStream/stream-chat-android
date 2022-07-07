@@ -50,10 +50,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
-private const val MESSAGE_LIMIT = 30
-private const val MEMBER_LIMIT = 30
-private const val INITIAL_CHANNEL_OFFSET = 0
-private const val CHANNEL_LIMIT = 30
 private const val QUERIES_TO_RETRY = 3
 
 /**
@@ -217,18 +213,8 @@ internal class SyncManager(
 
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
-            val request = QueryChannelsRequest(
-                filter = queryLogic.state().filter,
-                offset = INITIAL_CHANNEL_OFFSET,
-                limit = CHANNEL_LIMIT,
-                querySort = queryLogic.state().sort,
-                messageLimit = MESSAGE_LIMIT,
-                memberLimit = MEMBER_LIMIT,
-            )
-            logger.v { "[updateActiveQueryChannels] request: $request" }
-            chatClient.queryChannelsInternal(request)
-                .await()
-                .also { queryLogic.onQueryChannelsResult(it, request) }
+            logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.state().filter}" }
+            queryLogic.runQueryOnline()
                 .onError {
                     logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
                 }
@@ -236,7 +222,6 @@ internal class SyncManager(
                     logger.v {
                         "[updateActiveQueryChannels] request completed; foundChannels.size: ${foundChannels.size}"
                     }
-                    queryLogic.updateOnlineChannels(foundChannels, true)
                     updatedCids.addAll(foundChannels.map { it.cid })
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }

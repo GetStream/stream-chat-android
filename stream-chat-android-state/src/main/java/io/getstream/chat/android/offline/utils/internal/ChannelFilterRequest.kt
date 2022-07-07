@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.utils.Result
 * @param filter - the filter to be included with the cid.
 */
 internal object ChannelFilterRequest {
-    suspend fun filter(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
+    suspend fun filterByCid(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
         client.queryChannelsInternal(
             QueryChannelsRequest(
                 filter = Filters.and(
@@ -44,4 +44,24 @@ internal object ChannelFilterRequest {
                 memberLimit = 0,
             )
         ).await()
+
+    suspend fun ChatClient.filterWithOffset(
+        filter: FilterObject,
+        offset: Int,
+        limit: Int
+    ): List<Channel> {
+        val request = QueryChannelsRequest(
+            filter = filter,
+            offset = offset,
+            limit = limit,
+            messageLimit = 0,
+            memberLimit = 0,
+        )
+        return queryChannelsInternal(request).await().let {
+            when (it.isSuccess) {
+                true -> it.data()
+                else -> emptyList()
+            }
+        }
+    }
 }
