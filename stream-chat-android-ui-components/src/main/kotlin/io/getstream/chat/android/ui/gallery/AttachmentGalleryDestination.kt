@@ -91,10 +91,10 @@ private class AttachmentGalleryResultContract :
         return AttachmentGalleryActivity.createIntent(context, input.attachmentIndex)
     }
 
-    override fun parseResult(resultCode: Int, result: Intent?): AttachmentGalleryActivity.AttachmentOptionResult? {
+    override fun parseResult(resultCode: Int, intent: Intent?): AttachmentGalleryActivity.AttachmentOptionResult? {
         if (resultCode != Activity.RESULT_OK) {
             return null
         }
-        return result?.getParcelableExtra(AttachmentGalleryActivity.EXTRA_ATTACHMENT_OPTION_RESULT)
+        return intent?.getParcelableExtra(AttachmentGalleryActivity.EXTRA_ATTACHMENT_OPTION_RESULT)
     }
 }

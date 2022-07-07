@@ -259,6 +259,7 @@ class ChatFragment : Fragment() {
                     DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
                     EditMessage -> messageInputViewModel.postMessageToEdit(message)
                     SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
                 }
             }
         }

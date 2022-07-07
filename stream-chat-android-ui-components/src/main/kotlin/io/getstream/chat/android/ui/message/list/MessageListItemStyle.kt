@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
@@ -84,6 +85,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property showMessageDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
  * @property iconFailedMessage Icon for message failed status. Default value is [R.drawable.stream_ui_ic_warning].
  * @property iconBannedMessage Icon for message when the current user is banned. Default value is [R.drawable.stream_ui_ic_warning].
+ * @property systemMessageAlignment Changes the alignment of system messages.
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -128,6 +130,7 @@ public data class MessageListItemStyle(
     public val showMessageDeliveryStatusIndicator: Boolean,
     public val iconFailedMessage: Drawable,
     public val iconBannedMessage: Drawable,
+    public val systemMessageAlignment: Int,
 ) {
 
     @ColorInt
@@ -190,6 +193,8 @@ public data class MessageListItemStyle(
 
         private var linkDescriptionMaxLines: Int = 5
 
+        private var systemMessageGravity: Int = Gravity.CENTER
+
         fun messageBackgroundColorMine(
             @StyleableRes messageBackgroundColorMineStyleableId: Int,
             @ColorInt defaultValue: Int = VALUE_NOT_SET,
@@ -230,6 +235,13 @@ public data class MessageListItemStyle(
             defaultValue: Int = 5,
         ) = apply {
             this.linkDescriptionMaxLines = attributes.getInt(maxLines, defaultValue)
+        }
+
+        fun systemMessageGravity(
+            @StyleableRes systemMessageGravity: Int,
+            defaultGravity: Int = Gravity.CENTER,
+        ) = apply {
+            this.systemMessageGravity = attributes.getInt(systemMessageGravity, defaultGravity)
         }
 
         fun build(): MessageListItemStyle {
@@ -626,6 +638,7 @@ public data class MessageListItemStyle(
                 showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator,
                 iconFailedMessage = iconFailedMessage,
                 iconBannedMessage = iconBannedMessage,
+                systemMessageAlignment = systemMessageGravity
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }
