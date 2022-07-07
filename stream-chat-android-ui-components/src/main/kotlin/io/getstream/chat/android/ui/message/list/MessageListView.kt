@@ -319,7 +319,7 @@ public class MessageListView : ConstraintLayout {
         }.let(::showToast)
     }
 
-    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { action, message ->
+    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { _, _ ->
         throw IllegalStateException("onModeratedMessageOptionSelected must be set")
     }
 
@@ -360,7 +360,7 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed()) {
+                if (message.isModerationFailed(ChatClient.instance())) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()

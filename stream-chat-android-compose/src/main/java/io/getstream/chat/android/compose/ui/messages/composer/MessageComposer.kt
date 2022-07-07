@@ -288,7 +288,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
