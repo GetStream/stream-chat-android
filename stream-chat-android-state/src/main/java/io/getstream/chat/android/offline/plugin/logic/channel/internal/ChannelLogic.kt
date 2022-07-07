@@ -216,11 +216,12 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
-        val offlineChannel = runChannelQueryOffline(request)
+        val offlineChannel = if (!request.isFilteringNewerMessages()) runChannelQueryOffline(request) else null
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
-                .await().also { result ->
+                .await()
+                .also { result ->
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }
 
