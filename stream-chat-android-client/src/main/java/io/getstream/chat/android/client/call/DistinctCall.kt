@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.concurrency.SynchronizedReference
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -29,7 +30,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
@@ -42,7 +42,7 @@ internal class DistinctCall<T : Any>(
 ) : Call<T> {
 
     private val distinctScope = scope + SupervisorJob(scope.coroutineContext.job)
-    private val deferredRef = AtomicReference<Deferred<Result<T>>>()
+    private val deferred = SynchronizedReference<Deferred<Result<T>>>()
 
     internal fun originCall(): Call<T> = callBuilder()
 
@@ -57,10 +57,13 @@ internal class DistinctCall<T : Any>(
     }
 
     override suspend fun await(): Result<T> = try {
-        val deferred = deferredRef.get() ?: callBuilder().awaitAsync().also {
-            deferredRef.set(it)
-        }
-        deferred.await()
+        deferred.getOrCreate {
+            distinctScope.async {
+                withTimeout(timeoutInMillis) {
+                    callBuilder().await()
+                }
+            }
+        }.await()
     } catch (e: Throwable) {
         Result.error(e.mapCancellation())
     } finally {
@@ -76,14 +79,8 @@ internal class DistinctCall<T : Any>(
     }
 
     private fun doFinally() {
-        deferredRef.set(null)
+        deferred.reset()
         onFinished()
-    }
-
-    private fun Call<T>.awaitAsync(): Deferred<Result<T>> = distinctScope.async {
-        withTimeout(timeoutInMillis) {
-            await()
-        }
     }
 
     private fun Throwable.mapCancellation(): Throwable = when (this) {
