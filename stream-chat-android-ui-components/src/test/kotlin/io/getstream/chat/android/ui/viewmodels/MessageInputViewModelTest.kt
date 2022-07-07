@@ -221,7 +221,7 @@ internal class MessageInputViewModelTest {
                 )
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
-            whenever(stateRegistry.scope) doReturn MessageListViewModelTest.testCoroutines.scope
+            whenever(stateRegistry.scope) doReturn testCoroutines.scope
         }
 
         fun get(): MessageInputViewModel {
