@@ -159,8 +159,11 @@ internal class QueryChannelsLogic(
         loading.value = false
     }
 
-    internal suspend fun runQueryOnline(): Result<List<Channel>> {
-        logger.d { "[runQueryOnline] no args" }
+    /**
+     * Runs [QueryChannelsRequest] which is querying the first page.
+     */
+    internal suspend fun queryFirstPage(): Result<List<Channel>> {
+        logger.d { "[queryFirstPage] no args" }
         val state = mutableState
         val request = QueryChannelsRequest(
             filter = state.filter,
@@ -281,6 +284,15 @@ internal class QueryChannelsLogic(
         addChannels(channels, repos)
     }
 
+    /**
+     * Returns the channel cids using specified filter.
+     * Might produce a several requests until it reaches [thresholdCount].
+     *
+     * @param filter Filter to be used in [QueryChannelsRequest].
+     * @param initialOffset An initial offset to be used in [QueryChannelsRequest].
+     * @param step The offset change on each iteration of [QueryChannelsRequest] being fired.
+     * @param thresholdCount The threshold channels number where no more requests will be fired.
+     */
     private suspend fun getRemoteCids(
         filter: FilterObject,
         initialOffset: Int,

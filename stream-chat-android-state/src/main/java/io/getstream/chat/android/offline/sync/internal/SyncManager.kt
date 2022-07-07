@@ -214,7 +214,7 @@ internal class SyncManager(
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
             logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.state().filter}" }
-            queryLogic.runQueryOnline()
+            queryLogic.queryFirstPage()
                 .onError {
                     logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
                 }
