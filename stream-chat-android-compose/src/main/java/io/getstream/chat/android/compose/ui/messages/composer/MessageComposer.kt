@@ -288,7 +288,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
@@ -333,7 +333,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
+        if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }

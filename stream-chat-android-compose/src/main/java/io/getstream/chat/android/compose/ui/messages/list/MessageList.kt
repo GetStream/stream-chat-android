@@ -108,7 +108,7 @@ public fun MessageList(
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     },
 ) {
@@ -160,7 +160,7 @@ internal fun DefaultMessageContainer(
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onImagePreviewResult = onImagePreviewResult,
-        onQuotedMessageClick = onQuotedMessageClick
+        onQuotedMessageClick = onQuotedMessageClick,
     )
 }
 
@@ -250,7 +250,7 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     },
 ) {

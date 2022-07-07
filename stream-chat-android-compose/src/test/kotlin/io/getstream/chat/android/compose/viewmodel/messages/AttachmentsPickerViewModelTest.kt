@@ -25,7 +25,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -34,6 +34,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
+@ExtendWith(TestCoroutineExtension::class)
 internal class AttachmentsPickerViewModelTest {
 
     @Test
@@ -126,9 +127,6 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         private val imageAttachment1 = AttachmentMetaData(
             mimeType = "image/jpeg",

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client
 
 import androidx.lifecycle.testing.TestLifecycleOwner
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -29,41 +28,50 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
-import io.getstream.chat.android.test.runTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import org.robolectric.annotation.Config
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(AndroidJUnit4::class)
-@Config(manifest = Config.NONE)
 internal class ConnectUserTest {
 
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private lateinit var socket: FakeSocket
     private lateinit var chatApi: ChatApi
     private lateinit var userStateService: UserStateService
     private lateinit var socketStateService: SocketStateService
     private lateinit var client: ChatClient
+    private val tokenUtils: TokenUtils = mock()
+    private val userId = randomString()
+    private val jwt = randomString()
+    private val anonjwt = randomString()
+    private val user = User(id = userId)
+    private val anonId = "!anon"
+    private val anonUser = User(id = anonId)
 
-    @Before
+    @BeforeEach
     fun setup() {
-        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.testDispatcher)
+        whenever(tokenUtils.devToken(eq(anonId))) doReturn anonjwt
+        whenever(tokenUtils.getUserId(jwt)) doReturn userId
+        whenever(tokenUtils.getUserId(anonjwt)) doReturn anonId
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         socket = FakeSocket()
         chatApi = mock()
         userStateService = UserStateService()
@@ -75,9 +83,10 @@ internal class ConnectUserTest {
             notifications = mock(),
             tokenManager = mock(),
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = mock(),
+            callPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,
+            tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
@@ -87,11 +96,10 @@ internal class ConnectUserTest {
     }
 
     @Test
-    fun `Connect an user with a different userId than the one into the JWT should return an error`() {
-        val user = User(id = "asdf")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Connect an user with a different userId than the one into the JWT should return an error`() = runTest {
+        whenever(tokenUtils.getUserId(eq(jwt))) doReturn randomString()
 
-        val result = client.connectUser(user, jwt).execute()
+        val result = client.connectUser(user, jwt).await()
 
         result.isError `should be equal to` true
         result.error().message `should be equal to`
@@ -99,172 +107,125 @@ internal class ConnectUserTest {
     }
 
     @Test
-    fun `Connect an user when alive connection exists with the same user should return a success`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Connect an user when alive connection exists with the same user should return a success`() = runTest {
         val connectionId = randomString()
         prepareAliveConnection(user, connectionId)
 
-        /* When */
         val result = client.connectUser(user, jwt).await()
 
-        /* Then */
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
-    fun `Connect an user when no previous connection was performed should return a success`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Connect an user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
         val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
 
-        /* When */
-        val deferred = async { client.connectUser(user, jwt).await() }
+        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
         socket.verifyUserToConnect(user)
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
-    fun `Where there is a connection error connecting an user, it should be propagated`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Where there is a connection error connecting an user, it should be propagated`() = runTest {
         val messageError = randomString()
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
-        /* When */
-        val deferred = async { client.connectUser(user, jwt).await() }
+        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` messageError
     }
 
     @Test
-    fun `Where there is an ongoing connection with the same user, an error should be propagated`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
+    fun `When there is an ongoing connection with the same user, an error should be propagated`() = runTest {
         userStateService.onSetUser(user, false)
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
 
-        /* When */
         val result = client.connectUser(user, jwt).await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
     }
 
     @Test
-    fun `When connection take more time than expected an error should be propagated`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `When connection take more time than expected an error should be propagated`() = runTest {
 
-        /* When */
         val result = client.connectUser(user, jwt, 1).await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` "Connection wasn't established in 1ms"
     }
 
     @Test
-    fun `When there is an user connected and try to connect a different user, an error should be propagated`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
+    fun `When there is an user connected and try to connect a different user, an error should be propagated`() = runTest {
         userStateService.onSetUser(user, false)
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
 
-        /* When */
         val result = client.connectUser(user, jwt).await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
     }
 
     @Test
-    fun `Connect a guest user when no previous connection was performed should return a success`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc", name = "Jc M")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Connect a guest user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
         val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
 
-        /* When */
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
-        val deferred = async { client.connectGuestUser(user.id, user.name).await() }
+        val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
         socket.verifyUserToConnect(user)
         result.isSuccess `should be equal to` true
         result.data() `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
-    fun `Where there is a connection error connecting a guest user, it should be propagated`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "jc")
-        val jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
+    fun `Where there is a connection error connecting a guest user, it should be propagated`() = runTest {
         val messageError = randomString()
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
-        /* When */
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
-        val deferred = async { client.connectGuestUser(user.id, user.name).await() }
+        val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` messageError
     }
 
     @Test
-    fun `Connect an anonymous user when no previous connection was performed should return a success`() = testCoroutines.runTest {
-        /* Given */
-        val user = User(id = "!anon")
+    fun `Connect an anonymous user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), anonUser, connectionId)
 
-        /* When */
-        val deferred = async { client.connectAnonymousUser().await() }
+        val deferred = testCoroutines.scope.async { client.connectAnonymousUser().await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
-        socket.verifyUserToConnect(user)
+        socket.verifyUserToConnect(anonUser)
         result.isSuccess `should be equal to` true
-        result.data() `should be equal to` ConnectionData(user, connectionId)
-        userStateService.state.userOrError() `should be equal to` user
+        result.data() `should be equal to` ConnectionData(anonUser, connectionId)
+        userStateService.state.userOrError() `should be equal to` anonUser
     }
 
     @Test
-    fun `Where there is a connection error connecting an anonymous user, it should be propagated`() = testCoroutines.runTest {
-        /* Given */
+    fun `Where there is a connection error connecting an anonymous user, it should be propagated`() = runTest {
         val messageError = randomString()
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
-        /* When */
-        val deferred = async { client.connectAnonymousUser().await() }
+        val deferred = testCoroutines.scope.async { client.connectAnonymousUser().await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
-        /* Then */
         result.isError `should be equal to` true
         result.error().message `should be equal to` messageError
     }
