@@ -187,7 +187,7 @@ internal class MessageListViewModelTest {
     @Test
     fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() = runTest {
         val messageWithOwnReaction = message1.copy().apply { ownReactions = mutableListOf(reaction1) }
-        val messages = listOf(message1, message2)
+        val messages = listOf(messageWithOwnReaction, message2)
         val messageState = MessagesState.Result(messages)
         val chatClient = MockChatClientBuilder().build()
 
@@ -201,7 +201,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(
             MessageListViewModel.Event.MessageReaction(
-                message = message1,
+                message = messageWithOwnReaction,
                 reactionType = reaction1.type,
                 enforceUnique = true
             )
