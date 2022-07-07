@@ -19,6 +19,7 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,29 +42,34 @@ internal class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
         isBlocked.set(true)
     }
 
-    private suspend fun getResult() = withContext(DispatcherProvider.IO) {
-        started.set(true)
-        while (isBlocked.get()) {
-            delay(10)
+    private suspend fun awaitResult() = withContext(DispatcherProvider.IO) {
+        try {
+            started.set(true)
+            while (isBlocked.get()) {
+                delay(10)
+            }
+            if (!cancelled.get()) {
+                completed.set(true)
+            }
+            result
+        } catch (e: Throwable) {
+            if (e is CancellationException) {
+                cancelled.set(true)
+            }
+            throw e
         }
-
-        if (!cancelled.get()) {
-            completed.set(true)
-        }
-
-        result
     }
 
     fun isStarted(): Boolean = started.get()
     fun isCompleted(): Boolean = completed.get()
     fun isCanceled(): Boolean = cancelled.get()
 
-    override fun execute(): Result<T> = runBlocking { getResult() }
-    override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) { getResult() }
+    override fun execute(): Result<T> = runBlocking { awaitResult() }
+    override suspend fun await(): Result<T> = withContext(DispatcherProvider.IO) { awaitResult() }
 
     override fun enqueue(callback: Call.Callback<T>) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            callback.onResult(getResult())
+            callback.onResult(awaitResult())
         }
     }
 

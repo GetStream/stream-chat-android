@@ -182,7 +182,7 @@ internal class DistinctChatApi(
         callBuilder: () -> Call<T>,
     ): Call<T> {
         return distinctCalls[uniqueKey] as? DistinctCall<T>
-            ?: DistinctCall(scope, callBuilder) {
+            ?: DistinctCall(scope = scope, callBuilder = callBuilder) {
                 distinctCalls.remove(uniqueKey)
             }.also {
                 distinctCalls[uniqueKey] = it

@@ -74,9 +74,15 @@ public interface Call<T : Any> {
     @InternalStreamChatApi
     public companion object {
         public fun <T : Any> callCanceledError(): Result<T> =
-            Result.error(ChatError("The call was canceled before complete its execution"))
+            Result.error(CallCanceledException())
     }
 }
+
+@InternalStreamChatApi
+public open class CallCanceledException(
+    message: String = "The call was canceled before complete its execution"
+) : Exception(message)
+public class CallTimeoutException : CallCanceledException("The call was canceled due to timeout")
 
 /**
  * Runs a call using coroutines scope

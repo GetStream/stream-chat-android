@@ -51,7 +51,7 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
 
         val deferredResults = call.asyncRun { this.await() }
         callbacks.forEach(call::enqueue)
@@ -74,7 +74,7 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult).apply { unblock() }
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
 
         val result = call.execute()
         call.cancel()
@@ -100,7 +100,7 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
 
         callbacks.forEach(call::enqueue)
         val deferredResults = call.asyncRun { this.await() }

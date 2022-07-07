@@ -40,7 +40,7 @@ internal fun <T : Any> Call<T>.retry(scope: CoroutineScope, retryPolicy: RetryPo
  */
 public fun <T : Any> Call<T>.forceNewRequest(): Call<T> {
     return if (this is DistinctCall) {
-        this.callBuilder()
+        this.originCall()
     } else {
         this
     }
