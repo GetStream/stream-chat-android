@@ -67,7 +67,6 @@ public interface ClientMutableState : ClientState {
                 instance = clientState
             }
 
-        @VisibleForTesting
         @InternalStreamChatApi
         public fun create(): ClientMutableState = ClientStateImpl()
     }
