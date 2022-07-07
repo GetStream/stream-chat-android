@@ -29,14 +29,34 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentOption
  * the currently selected image.
  */
 internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment() {
+
     private var _binding: StreamUiFragmentAttachmentOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private var showInChatHandler: AttachmentOptionHandler? = null
-    private var deleteHandler: AttachmentOptionHandler? = null
-    private var replyHandler: AttachmentOptionHandler? = null
-    private var saveImageHandler: AttachmentOptionHandler? = null
-    private var isMine: Boolean = false
+    /**
+     * A callback for the "show in chat" option.
+     */
+    private var showInChatOptionHandler: AttachmentOptionHandler? = null
+
+    /**
+     * A callback for the "reply" option.
+     */
+    private var replyOptionHandler: AttachmentOptionHandler? = null
+
+    /**
+     * A callback for the "delete" option.
+     */
+    private var deleteOptionHandler: AttachmentOptionHandler? = null
+
+    /**
+     * A callback for the "save image" option.
+     */
+    private var saveImageOptionHandler: AttachmentOptionHandler? = null
+
+    /**
+     * If the message belongs to the current user.
+     */
+    private var isMineMessage: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return StreamUiFragmentAttachmentOptionsBinding.inflate(requireContext().streamThemeInflater, container, false)
@@ -45,23 +65,38 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val isInitialized = showInChatOptionHandler != null && replyOptionHandler != null &&
+            deleteOptionHandler != null && saveImageOptionHandler != null
+        if (savedInstanceState == null && isInitialized) {
+            setupDialog()
+        } else {
+            // The process has been killed
+            dismiss()
+        }
+    }
+
+    /**
+     * Initializes the dialog.
+     */
+    private fun setupDialog() {
         binding.attachmentOptionsMenu.setReplyClickListener {
-            replyHandler?.onClick()
+            replyOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
         binding.attachmentOptionsMenu.setDeleteClickListener {
-            deleteHandler?.onClick()
+            deleteOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
         binding.attachmentOptionsMenu.setShowInChatClickListener {
-            showInChatHandler?.onClick()
+            showInChatOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
         binding.attachmentOptionsMenu.setSaveImageClickListener {
-            saveImageHandler?.onClick()
+            saveImageOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
-        binding.attachmentOptionsMenu.setIsMine(isMine)
+        binding.attachmentOptionsMenu.setIsMine(isMineMessage)
 
         binding.root.setOnClickListener { dismiss() }
     }
@@ -71,33 +106,49 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
         _binding = null
     }
 
-    companion object {
-        const val TAG = "AttachmentOptionsDialogFragment"
+    /**
+     * Sets a callback for the "show in chat" option.
+     *
+     * @param showInChatOptionHandler The handler to set.
+     */
+    fun setShowInChatOptionHandler(showInChatOptionHandler: AttachmentOptionHandler) {
+        this.showInChatOptionHandler = showInChatOptionHandler
+    }
 
-        /**
-         * Creates instances of [AttachmentGalleryOptionsDialogFragment].
-         *
-         * @param showInChatHandler A callback for the "show in chat" option.
-         * @param replyHandler A callback for the "reply" option.
-         * @param deleteHandler A callback for the "delete" option.
-         * @param saveImageHandler A callback for the "save image" option.
-         * @param isMine If the message belongs to the current user.
-         */
-        fun newInstance(
-            showInChatHandler: AttachmentOptionHandler,
-            replyHandler: AttachmentOptionHandler,
-            deleteHandler: AttachmentOptionHandler,
-            saveImageHandler: AttachmentOptionHandler,
-            isMine: Boolean,
-        ): AttachmentGalleryOptionsDialogFragment {
-            return AttachmentGalleryOptionsDialogFragment().apply {
-                this.showInChatHandler = showInChatHandler
-                this.deleteHandler = deleteHandler
-                this.replyHandler = replyHandler
-                this.saveImageHandler = saveImageHandler
-                this.isMine = isMine
-            }
-        }
+    /**
+     * Sets a callback for the "reply" option.
+     *
+     * @param replyOptionHandler The handler to set.
+     */
+    fun setReplyOptionHandler(replyOptionHandler: AttachmentOptionHandler) {
+        this.replyOptionHandler = replyOptionHandler
+    }
+
+    /**
+     * Sets a callback for the "delete" option.
+     *
+     * @param deleteOptionHandler The handler to set.
+     */
+    fun setDeleteOptionHandler(deleteOptionHandler: AttachmentOptionHandler) {
+        this.deleteOptionHandler = deleteOptionHandler
+    }
+
+    /**
+     * Sets a callback for the "save image" option.
+     *
+     * @param saveImageOptionHandler The handler to set.
+     */
+    fun setSaveImageOptionHandler(saveImageOptionHandler: AttachmentOptionHandler) {
+        this.saveImageOptionHandler = saveImageOptionHandler
+    }
+
+    /**
+     * Set the message ownership.
+     *
+     * @param isMineMessage If the message belongs to the current user.
+     */
+    fun setIsMineMessage(isMineMessage: Boolean) {
+        this.isMineMessage = isMineMessage
     }
 
     /**
@@ -107,6 +158,35 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
         /**
          * Called when an option has been clicked.
          */
-        fun onClick()
+        fun onAttachmentOptionClick()
+    }
+
+    companion object {
+        const val TAG = "AttachmentOptionsDialogFragment"
+
+        /**
+         * Creates a new instance of [AttachmentGalleryOptionsDialogFragment].
+         *
+         * @param showInChatOptionHandler A callback for the "show in chat" option.
+         * @param replyOptionHandler A callback for the "reply" option.
+         * @param deleteOptionHandler A callback for the "delete" option.
+         * @param saveImageOptionHandler A callback for the "save image" option.
+         * @param isMineMessage If the message belongs to the current user.
+         */
+        fun newInstance(
+            showInChatOptionHandler: AttachmentOptionHandler,
+            replyOptionHandler: AttachmentOptionHandler,
+            deleteOptionHandler: AttachmentOptionHandler,
+            saveImageOptionHandler: AttachmentOptionHandler,
+            isMineMessage: Boolean,
+        ): AttachmentGalleryOptionsDialogFragment {
+            return AttachmentGalleryOptionsDialogFragment().apply {
+                setShowInChatOptionHandler(showInChatOptionHandler)
+                setReplyOptionHandler(replyOptionHandler)
+                setDeleteOptionHandler(deleteOptionHandler)
+                setSaveImageOptionHandler(saveImageOptionHandler)
+                setIsMineMessage(isMineMessage)
+            }
+        }
     }
 }
