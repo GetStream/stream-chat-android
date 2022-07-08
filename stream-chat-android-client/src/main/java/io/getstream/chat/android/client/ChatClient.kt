@@ -126,7 +126,6 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
 import io.getstream.chat.android.client.socket.ChatSocket
