@@ -319,7 +319,7 @@ public class MessageListView : ConstraintLayout {
         }.let(::showToast)
     }
 
-    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { action, message ->
+    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { _, _ ->
         throw IllegalStateException("onModeratedMessageOptionSelected must be set")
     }
 
@@ -360,7 +360,7 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed()) {
+                if (message.isModerationFailed(ChatClient.instance())) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()
@@ -1561,12 +1561,14 @@ public class MessageListView : ConstraintLayout {
      */
     @InternalStreamChatApi
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        check(!isAdapterInitialized()) {
-            "Adapter was already initialized, please set DeletedMessageVisibility first. " +
-                "If you are using MessageListViewModel, please set the visibility before binding " +
-                "it to MessageListView."
+        if (this.deletedMessageVisibility != deletedMessageVisibility) {
+            check(!isAdapterInitialized()) {
+                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
+                    "If you are using MessageListViewModel, please set the visibility before binding " +
+                    "it to MessageListView."
+            }
+            this.deletedMessageVisibility = deletedMessageVisibility
         }
-        this.deletedMessageVisibility = deletedMessageVisibility
     }
 
     /**

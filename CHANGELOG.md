@@ -48,8 +48,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `MessageListView` now allows multiple re-bindings of `MessageListViewModel` provided that `MessageListViewModel.deletedMessageVisibility` has not been changed since `MessageListView` was first initialized. [#3843](https://github.com/GetStream/stream-chat-android/pull/3843)
 
 ### ✅ Added
+- Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
 
 ### ⚠️ Changed
 
@@ -63,6 +65,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
 
 ### ❌ Removed
 
