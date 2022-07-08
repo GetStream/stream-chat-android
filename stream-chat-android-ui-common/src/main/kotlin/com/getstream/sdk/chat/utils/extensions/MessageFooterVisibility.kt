@@ -41,17 +41,37 @@ public fun MessageFooterVisibility.shouldShowMessageFooter(
         MessageFooterVisibility.Always -> true
         MessageFooterVisibility.LastInGroup -> isLastMessageInGroup
         MessageFooterVisibility.Never -> false
-        is MessageFooterVisibility.WithTimeDifference -> {
-            when {
-                isLastMessageInGroup -> true
-                message.isDeleted() -> false
-                message.user != nextMessage?.user ||
-                    nextMessage.isDeleted() ||
-                    (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
-                    (message.getCreatedAtOrNull()?.time ?: 0) >
-                    timeDifferenceMillis -> true
-                else -> false
-            }
-        }
+        is MessageFooterVisibility.WithTimeDifference -> isFooterVisibleWithTimeDifference(
+            message = message,
+            nextMessage = nextMessage,
+            isLastMessageInGroup = isLastMessageInGroup,
+            timeDifferenceMillis = timeDifferenceMillis
+        )
+    }
+}
+
+/**
+ * @param message The current [Message].
+ * @param nextMessage The next [Message] in the list if there is one.
+ * @param isLastMessageInGroup If the message is the last in group of messages.
+ * @param timeDifferenceMillis The time difference between next and current message.
+ *
+ * @return Whether the footer should be visible or not.
+ */
+private fun isFooterVisibleWithTimeDifference(
+    message: Message,
+    nextMessage: Message?,
+    isLastMessageInGroup: Boolean,
+    timeDifferenceMillis: Long
+): Boolean {
+    return when {
+        isLastMessageInGroup -> true
+        message.isDeleted() -> false
+        message.user != nextMessage?.user ||
+            nextMessage.isDeleted() ||
+            (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
+            (message.getCreatedAtOrNull()?.time ?: 0) >
+            timeDifferenceMillis -> true
+        else -> false
     }
 }
