@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -51,21 +52,6 @@ internal class CoroutineCallTest {
         val result = call.execute()
 
         result `should be equal to` validResult
-        blockedTask.isStarted() `should be equal to` true
-        blockedTask.isCompleted() `should be equal to` true
-    }
-
-    @Test
-    fun `Canceled Call should be executed and return a cancel error`() = runTest {
-        val blockedTask = BlockedTask(validResult)
-        val call = CoroutineCall(testCoroutines.scope, blockedTask.getSuspendTask())
-
-        val deferedResult = async { call.execute() }
-        call.cancel()
-        blockedTask.unblock()
-        val result = deferedResult.await()
-
-        result `should be equal to` Call.callCanceledError()
         blockedTask.isStarted() `should be equal to` true
         blockedTask.isCompleted() `should be equal to` true
     }
@@ -120,12 +106,13 @@ internal class CoroutineCallTest {
         val call = CoroutineCall(testCoroutines.scope, blockedTask.getSuspendTask())
 
         val deferedResult = async { call.await() }
+        delay(10)
         call.cancel()
         blockedTask.unblock()
         val result = deferedResult.await()
 
         result `should be equal to` Call.callCanceledError()
         blockedTask.isStarted() `should be equal to` true
-        blockedTask.isCompleted() `should be equal to` true
+        blockedTask.isCompleted() `should be equal to` false
     }
 }

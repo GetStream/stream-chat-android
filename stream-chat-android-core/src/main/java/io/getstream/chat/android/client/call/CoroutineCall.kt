@@ -16,42 +16,40 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
-import java.util.concurrent.atomic.AtomicBoolean
 
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
-    private var job: Job? = null
-    private val canceled = AtomicBoolean(false)
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
     override fun execute(): Result<T> = runBlocking { await() }
-    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
-        suspendingTask().takeUnless { canceled.get() } ?: callCanceledError()
+    override suspend fun await(): Result<T> = Call.runCatching {
+        withContext(callScope.coroutineContext) { suspendingTask() }
     }
 
     override fun cancel() {
-        canceled.set(true)
-        job?.cancel()
+        callScope.coroutineContext.cancelChildren()
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        job = scope.launch {
+        callScope.launch {
             val result = await()
             withContext(DispatcherProvider.Main) {
-                yield()
                 callback.onResult(result)
             }
         }
