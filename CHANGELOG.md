@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 
 ### ⬆️ Improved
 
