@@ -216,7 +216,7 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
-        val offlineChannel = if (!request.isFilteringNewerMessages()) runChannelQueryOffline(request) else null
+        val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
@@ -233,6 +233,8 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+        if (request.isFilteringNewerMessages()) return null
+
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
             if (request.filteringOlderMessages()) {
