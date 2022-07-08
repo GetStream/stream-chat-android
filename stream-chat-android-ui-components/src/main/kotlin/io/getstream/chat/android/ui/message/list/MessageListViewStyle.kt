@@ -247,6 +247,7 @@ public data class MessageListViewStyle(
                     .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                     .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
+                    .systemMessageGravity(R.styleable.MessageListView_streamUiSystemMessageAlignment)
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)

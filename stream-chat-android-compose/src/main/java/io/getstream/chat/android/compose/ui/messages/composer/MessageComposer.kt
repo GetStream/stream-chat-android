@@ -288,7 +288,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
@@ -658,7 +658,9 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
 
         val context = LocalContext.current
         LaunchedEffect(validationErrors.size) {
-            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
+            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed ||
+                firstValidationError is ValidationError.AttachmentSizeExceeded
+            ) {
                 snackbarHostState.showSnackbar(
                     message = errorMessage,
                     actionLabel = context.getString(R.string.stream_compose_ok),

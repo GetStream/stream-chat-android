@@ -25,13 +25,13 @@
         <attr name="streamUiScrollButtonIcon" format="reference" />
         <attr name="streamUiScrollButtonElevation" format="dimension|reference" />
         <!-- Sets the bottom margin of the scroll button inside MessageListView -->
-        <attr name="streamUiScrollButtonBottomMargin" format="dimension|reference"/>
+        <attr name="streamUiScrollButtonBottomMargin" format="dimension|reference" />
         <!-- Sets the end margin of the scroll button inside MessageListView -->
-        <attr name="streamUiScrollButtonEndMargin" format="dimension|reference"/>
+        <attr name="streamUiScrollButtonEndMargin" format="dimension|reference" />
         <!-- Controls the internal margins of the scroll button with respect to its parent.
 
          You should use this one if you want to adjust the distance of the unread count badge to the scroll button.-->
-        <attr name="streamUIScrollButtonInternalMargin" format="dimension|reference"/>
+        <attr name="streamUIScrollButtonInternalMargin" format="dimension|reference" />
         <attr name="streamUiScrollButtonBadgeTextSize" format="dimension|reference" />
         <attr name="streamUiScrollButtonBadgeTextColor" format="color|reference" />
         <attr name="streamUiScrollButtonBadgeTextFont" format="reference" />
@@ -289,7 +289,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- System message text style -->
+        <!-- System message style -->
         <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
         <attr name="streamUiSystemMessageTextColor" format="color" />
         <attr name="streamUiSystemMessageTextFont" format="reference" />
@@ -299,6 +299,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- System message alignment -->
+        <attr name="streamUiSystemMessageAlignment">
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="left" value="0x03" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="right" value="0x05" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x11" />
+            <!-- Push object to the beginning of its container, not changing its size. -->
+            <flag name="start" value="0x00800003" />
+            <!-- Push object to the end of its container, not changing its size. -->
+            <flag name="end" value="0x00800005" />
+        </attr>
+
 
         <!-- Error message text style -->
         <attr name="streamUiErrorMessageTextSize" format="dimension|reference" />
@@ -485,6 +499,6 @@
         <attr name="streamUiMessageMaxWidthFactorTheirs" format="fraction" />
 
         <!-- Prevent scroll while a dialog is shown over the message list -->
-        <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean"/>
+        <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean" />
     </declare-styleable>
 </resources>

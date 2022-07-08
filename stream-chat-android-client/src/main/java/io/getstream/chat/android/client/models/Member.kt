@@ -29,15 +29,6 @@ public data class Member(
     override var user: User,
 
     /**
-     * The user's role.
-     */
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use channelRole instead."
-    )
-    var role: String? = null,
-
-    /**
      * When the user became a member.
      */
     var createdAt: Date? = null,
