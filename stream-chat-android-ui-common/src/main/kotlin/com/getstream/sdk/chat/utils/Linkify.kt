@@ -151,6 +151,7 @@ public object Linkify {
         return transformedUrl
     }
 
+    @Suppress("LongParameterList")
     private fun gatherLinks(
         links: MutableList<LinkSpec>,
         s: Spannable,
@@ -171,6 +172,7 @@ public object Linkify {
         }
     }
 
+    @Suppress("NestedBlockDepth")
     private fun pruneOverlaps(links: MutableList<LinkSpec>, text: Spannable) {
         // Append spans added by Markwon to remove any overlap.
         val urlSpans: Array<URLSpan> = text.getSpans(0, text.length, URLSpan::class.java)
