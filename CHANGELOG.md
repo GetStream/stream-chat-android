@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 
 ### ⬆️ Improved
 - `MessageListView` now allows multiple re-bindings of `MessageListViewModel` provided that `MessageListViewModel.deletedMessageVisibility` has not been changed since `MessageListView` was first initialized. [#3843](https://github.com/GetStream/stream-chat-android/pull/3843)
