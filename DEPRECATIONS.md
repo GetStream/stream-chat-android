@@ -17,7 +17,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageText` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use the new implementation of `MessageText`. |
 | `DeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `DeletedMessageVisibility` in conjunction with `MessageListViewModel.setDeletedMessagesVisibility` instead. |
 | `MessageListView.setDeletedMessageListItemPredicate` | 2022.05.03<br/>5.1.0 | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | Use `MessageListViewModel.setDeletedMessagesVisibility` instead. |
-| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.07.18 ⌛ | Use `Member.channelRole` instead. |
+| `Member.role` | 2022.01.11<br/>4.26.0 | 2022.03.23<br/>5.0.0 | 2022.07.18 ⌛ | Use `Member.channelRole`in conjunction with `Member.user.role` and `Channel.createdBy` instead. |
 | `ChannelController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `ChannelState` instead |
 | `QueryChannelsController` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `QueryChannelsState` instead |
 | `ChatDomain` | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | 2022.03.23<br/>5.0.0 | Use `OfflinePlugin` instead |
