@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
@@ -27,6 +30,7 @@ import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -36,6 +40,7 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
@@ -48,6 +53,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -232,5 +238,30 @@ internal class ChannelStateLogicTest {
 
         verify(mutableState, times(0)).updateTypingEvents(any(), any())
         verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
+    }
+
+    @Test
+    fun `given a non scroll messages come while inside search, messages should not be added`() {
+        _insideSearch.value = true
+
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val nonFilteringRequest = QueryChannelRequest()
+
+        channelStateLogicImpl.propagateChannelQuery(channel, nonFilteringRequest)
+        verify(mutableState, never()).rawMessages = any()
+    }
+
+    @Test
+    fun `given a scroll messages come while inside search, messages should be added`() {
+        _insideSearch.value = true
+
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val filteringRequest = QueryChannelPaginationRequest(1)
+            .withMessages(Pagination.GREATER_THAN, randomString(), 1)
+
+        channelStateLogicImpl.propagateChannelQuery(channel, filteringRequest)
+        verify(mutableState).rawMessages = any()
     }
 }
