@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.setup.state
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
@@ -79,9 +78,7 @@ public interface ClientState {
 
     public companion object {
 
-        @VisibleForTesting
-        @InternalStreamChatApi
-        public var instance: ClientState? = null
+        private var instance: ClientState? = null
 
         @InternalStreamChatApi
         public fun get(): ClientState =

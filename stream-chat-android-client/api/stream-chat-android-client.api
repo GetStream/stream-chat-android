@@ -3570,10 +3570,9 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
 }
 
-public final class io/getstream/chat/android/client/setup/state/ClientMutableState$Companion {
-}
-
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
+	public static final field Companion Lio/getstream/chat/android/client/setup/state/ClientState$Companion;
+	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
@@ -3581,6 +3580,12 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 	public abstract fun isInitialized ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
+}
+
+public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
+}
+
+public final class io/getstream/chat/android/client/setup/state/internal/ClientStateImplKt {
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
