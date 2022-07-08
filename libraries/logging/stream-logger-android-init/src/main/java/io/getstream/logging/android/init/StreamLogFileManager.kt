@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.logging.android.file
+package io.getstream.logging.android.init
 
-import io.getstream.logging.android.file.StreamLogFileManager.ClearManager
-import io.getstream.logging.android.file.StreamLogFileManager.ShareManager
+import io.getstream.logging.android.init.StreamLogFileManager.ClearManager
+import io.getstream.logging.android.init.StreamLogFileManager.ShareManager
 
 /**
  * An entry point to share/clear a log file.

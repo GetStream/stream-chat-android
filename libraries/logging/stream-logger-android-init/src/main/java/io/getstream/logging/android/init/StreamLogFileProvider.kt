@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.logging.android.file
+package io.getstream.logging.android.init
 
 import android.app.Application
 import android.content.Context
@@ -25,7 +25,7 @@ import androidx.core.content.FileProvider
 import io.getstream.logging.CompositeStreamLogger
 import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
-import io.getstream.logging.android.file.impl.LifecycleAwareLogFileManager
+import io.getstream.logging.android.init.impl.LifecycleAwareLogFileManager
 import io.getstream.logging.file.FileStreamLogger
 
 /**
