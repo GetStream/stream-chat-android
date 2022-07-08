@@ -141,7 +141,6 @@ internal object EventArguments {
 
     private val member = Member(
         user,
-        role = "user",
         createdAt = date,
         updatedAt = date
     )

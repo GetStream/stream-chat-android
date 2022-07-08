@@ -20,6 +20,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- 🚨 Breaking change: Removed the `Member.role` field. [3851](https://github.com/GetStream/stream-chat-android/pull/3851)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
