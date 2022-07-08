@@ -22,21 +22,18 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
 internal class DistinctCall<T : Any>(
     scope: CoroutineScope,
-    private val timeoutInMillis: Long = TIMEOUT,
     private val callBuilder: () -> Call<T>,
     private val onFinished: () -> Unit,
 ) : Call<T> {
@@ -59,13 +56,11 @@ internal class DistinctCall<T : Any>(
     override suspend fun await(): Result<T> = try {
         deferred.getOrCreate {
             distinctScope.async {
-                withTimeout(timeoutInMillis) {
-                    callBuilder().await()
-                }
+                callBuilder().await()
             }
         }.await()
     } catch (e: Throwable) {
-        Result.error(e.mapCancellation())
+        e.toResult()
     } finally {
         doFinally()
     }
@@ -83,15 +78,10 @@ internal class DistinctCall<T : Any>(
         onFinished()
     }
 
-    private fun Throwable.mapCancellation(): Throwable = when (this) {
-        is TimeoutCancellationException -> CallTimeoutException()
-        is CancellationException -> CallCanceledException()
-        else -> this
+    private fun Throwable.toResult(): Result<T> = when (this) {
+        is CancellationException -> Call.callCanceledError()
+        else -> Result.error(this)
     }
 
-    private val Result<T>.isCanceled get() = isError && error().cause is CallCanceledException
-
-    private companion object {
-        private const val TIMEOUT = 60_000L
-    }
+    private val Result<T>.isCanceled get() = this == Call.callCanceledError<T>()
 }
