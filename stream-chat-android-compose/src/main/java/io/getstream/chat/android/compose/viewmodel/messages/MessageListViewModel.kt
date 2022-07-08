@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -74,15 +75,14 @@ import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
+import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadNewerMessages
-import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
@@ -90,7 +90,6 @@ import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -98,7 +97,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -128,16 +126,13 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val messageListController: MessageListController = MessageListController(channelId, chatClient),
 ) : ViewModel() {
 
     /**
      * Holds information about the current state of the [Channel].
      */
-    private val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
-        cid = channelId,
-        messageLimit = messageLimit,
-        coroutineScope = viewModelScope
-    )
+    private val channelState: StateFlow<ChannelState?> = messageListController.channelState
 
     /**
      * Holds information about the abilities the current user
@@ -146,15 +141,7 @@ public class MessageListViewModel(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
-    private val ownCapabilities: StateFlow<Set<String>> =
-        channelState.filterNotNull()
-            .flatMapLatest { it.channelData }
-            .map { it.ownCapabilities }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly,
-                initialValue = setOf()
-            )
+    private val ownCapabilities: StateFlow<Set<String>> = messageListController.ownCapabilities
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -177,8 +164,7 @@ public class MessageListViewModel(
     /**
      * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
      */
-    public var messageMode: MessageMode by mutableStateOf(MessageMode.Normal)
-        private set
+    public val messageMode: MessageMode by messageListController.mode.asState(viewModelScope)
 
     /**
      * The information for the current [Channel].
@@ -203,7 +189,7 @@ public class MessageListViewModel(
      * Gives us information if we're currently in the [Thread] message mode.
      */
     public val isInThread: Boolean
-        get() = messageMode is MessageMode.MessageThread
+        get() = messageListController.isInThread
 
     /**
      * Gives us information if we have selected a message.
@@ -602,11 +588,9 @@ public class MessageListViewModel(
      * @param messageId The id of the most new [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String) {
-        if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
-
-        if (messageMode is MessageMode.Normal) {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
-            chatClient.loadNewerMessages(channelId, messageId, messageLimit).enqueue()
+        val isLoading = messageListController.loadNewerMessages(messageId)
+        if (isLoading) {
+            messagesState = messagesState.copy(isLoadingMore = isLoading, isLoadingMoreNewMessages = isLoading)
         }
     }
 
@@ -614,17 +598,7 @@ public class MessageListViewModel(
      * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
      * of a thread.
      */
-    public fun loadOlderMessages() {
-        if (chatClient.globalState.isOffline() || messagesState.endOfMessages) return
-        val messageMode = messageMode
-
-        if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
-        } else {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
-            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
-        }
-    }
+    public fun loadOlderMessages(): Unit = messageListController.loadOlderMessages(DefaultMessageLimit)
 
     /**
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
@@ -787,16 +761,15 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val threadState = chatClient.getRepliesAsState(parentMessage.id, DefaultMessageLimit)
         val channelState = channelState.value ?: return
-
-        messageMode = MessageMode.MessageThread(parentMessage, threadState)
-        observeThreadMessages(
-            threadId = threadState.parentId,
-            messages = threadState.messages,
-            endOfOlderMessages = threadState.endOfOlderMessages,
-            reads = channelState.reads
-        )
+        messageListController.enterThreadMode(parentMessage) { threadState ->
+            observeThreadMessages(
+                threadId = threadState.parentId,
+                messages = threadState.messages,
+                endOfOlderMessages = threadState.endOfOlderMessages,
+                reads = channelState.reads
+            )
+        }
     }
 
     /**
@@ -1172,7 +1145,7 @@ public class MessageListViewModel(
      * It also cancels the [threadJob] to clean up resources.
      */
     public fun leaveThread() {
-        messageMode = MessageMode.Normal
+        messageListController.enterNormalMode()
         messagesState = messagesState.copy(selectedMessageState = null)
         threadMessagesState = MessagesState()
         lastSeenThreadMessage = null
@@ -1311,21 +1284,8 @@ public class MessageListViewModel(
      * @param scrollToBottom Notifies the ui to scroll to the bottom if the newest messages are in the list or have been
      * loaded from the API.
      */
-    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
-        if (isInThread) {
-            scrollToBottom()
-        } else {
-            if (currentMessagesState.startOfMessages) {
-                scrollToBottom()
-                return
-            }
-            chatClient.loadNewestMessages(channelId, messageLimit).enqueue {
-                if (it.isSuccess) {
-                    scrollToBottom()
-                }
-            }
-        }
-    }
+    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit): Unit =
+        messageListController.scrollToBottom(messageLimit, scrollToBottom)
 
     internal companion object {
         /**
