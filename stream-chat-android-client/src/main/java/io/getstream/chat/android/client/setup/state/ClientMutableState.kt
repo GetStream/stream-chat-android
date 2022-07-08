@@ -25,7 +25,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * internally by the SDK.
  */
 @InternalStreamChatApi
-internal interface ClientMutableState : ClientState {
+public interface ClientMutableState : ClientState {
 
     /**
      * Sets the [User]

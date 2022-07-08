@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.internal.utils
 
+import io.getstream.chat.android.client.setup.state.internal.toMutableState
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
@@ -31,7 +32,7 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
         is SelfUserPart -> user.value?.mergePartially(self.me) ?: self.me
     }
 
-    // clientState.setUser(me)
+    clientState.toMutableState()?.setUser(me)
     setBanned(me.banned)
     setBanned(me.banned)
     setMutedUsers(me.mutes)

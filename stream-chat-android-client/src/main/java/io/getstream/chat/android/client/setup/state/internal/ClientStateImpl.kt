@@ -68,4 +68,4 @@ internal class ClientStateImpl : ClientMutableState {
 }
 
 @InternalStreamChatApi
-internal fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState
+public fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState
