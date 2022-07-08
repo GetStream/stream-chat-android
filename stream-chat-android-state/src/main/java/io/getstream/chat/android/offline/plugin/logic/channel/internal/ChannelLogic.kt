@@ -123,11 +123,7 @@ internal class ChannelLogic(
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
         channelStateLogic.refreshMuteState()
 
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
-         * so we force the backend usage */
-        if (!request.isFilteringNewerMessages()) {
-            runChannelQueryOffline(request)
-        }
+        runChannelQueryOffline(request)
     }
 
     override suspend fun onQueryChannelResult(
@@ -233,6 +229,8 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
         if (request.isFilteringNewerMessages()) return null
 
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
