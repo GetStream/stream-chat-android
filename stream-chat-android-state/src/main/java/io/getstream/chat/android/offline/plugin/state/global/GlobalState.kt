@@ -95,6 +95,7 @@ public interface GlobalState {
      *       // create a toast
      *   }
      */
+    @Deprecated("This property is no longer used.")
     public val errorEvents: StateFlow<Event<ChatError>>
 
     /**
@@ -198,19 +199,5 @@ public interface GlobalState {
     )
     public fun isInitialized(): Boolean
 
-    /**
-     * Clears the state of [GlobalState].
-     */
-    @Deprecated(
-        message = "Use ClientMutableState.clearState()",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().clientState.toMutableState()?.clearState()",
-            imports = [
-                "io.getstream.chat.android.client.ChatClient",
-                "io.getstream.chat.android.offline.extensions.clientState",
-                "io.getstream.chat.android.client.setup.state.internal.toMutableState",
-            ]
-        )
-    )
     public fun clearState()
 }
