@@ -204,7 +204,7 @@ internal constructor(
     )
 
     public val clientState: ClientState
-        get() = ClientMutableState.get()
+        get() = ClientState.get()
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -351,7 +351,7 @@ internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
 
-        ClientMutableState.get().setUser(user)
+        ClientState.get().toMutableState()?.setUser(user)
 
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {

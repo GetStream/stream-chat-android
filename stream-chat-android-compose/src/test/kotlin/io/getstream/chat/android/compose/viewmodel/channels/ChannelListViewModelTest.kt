@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -270,7 +270,7 @@ internal class ChannelListViewModelTest {
         private val initialFilters: FilterObject? = queryFilter,
     ) {
         private val globalState: GlobalMutableState = mock()
-        private val clientState: ClientMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {

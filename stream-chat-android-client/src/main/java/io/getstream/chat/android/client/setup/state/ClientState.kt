@@ -16,8 +16,11 @@
 
 package io.getstream.chat.android.client.setup.state
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -68,4 +71,25 @@ public interface ClientState {
      * @return True if initialized otherwise False.
      */
     public val isInitialized: Boolean
+
+    /**
+     * Clears the state of [ClientState].
+     */
+    public fun clearState()
+
+    public companion object {
+
+        @VisibleForTesting
+        @InternalStreamChatApi
+        public var instance: ClientState? = null
+
+        @InternalStreamChatApi
+        public fun get(): ClientState =
+            instance ?: create().also { clientState ->
+                instance = clientState
+            }
+
+        @InternalStreamChatApi
+        public fun create(): ClientState = ClientStateImpl()
+    }
 }

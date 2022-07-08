@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -114,7 +114,7 @@ internal class MessageListViewModelTest {
         private val channelId: String = CID,
     ) {
         private val globalState: GlobalMutableState = mock()
-        private val clientState: ClientMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {

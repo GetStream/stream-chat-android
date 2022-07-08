@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
 public class GlobalMutableState private constructor(
-    override val clientState: ClientMutableState,
+    override val clientState: ClientState,
 ) : MutableGlobalState {
 
     private val _totalUnreadCount = MutableStateFlow(0)
@@ -157,7 +157,7 @@ public class GlobalMutableState private constructor(
          */
         @InternalStreamChatApi
         public fun getOrCreate(): GlobalMutableState {
-            return instance ?: GlobalMutableState(ClientMutableState.get()).also { globalState ->
+            return instance ?: GlobalMutableState(ClientState.get()).also { globalState ->
                 instance = globalState
             }
         }
@@ -177,7 +177,7 @@ public class GlobalMutableState private constructor(
          */
         @VisibleForTesting
         internal fun create(): GlobalMutableState =
-            GlobalMutableState(ClientMutableState.create())
+            GlobalMutableState(ClientState.create())
     }
 
     @Deprecated(
@@ -192,8 +192,6 @@ public class GlobalMutableState private constructor(
         )
     )
     override fun clearState() {
-        clientState.clearState()
-
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
         _banned.value = false

@@ -16,10 +16,8 @@
 
 package io.getstream.chat.android.client.setup.state
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -27,7 +25,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * internally by the SDK.
  */
 @InternalStreamChatApi
-public interface ClientMutableState : ClientState {
+internal interface ClientMutableState : ClientState {
 
     /**
      * Sets the [User]
@@ -49,25 +47,4 @@ public interface ClientMutableState : ClientState {
      * @param initialized Boolean
      */
     public fun setInitialized(initialized: Boolean)
-
-    /**
-     * Clears the state of [ClientState].
-     */
-    public fun clearState()
-
-    public companion object {
-
-        @VisibleForTesting
-        @InternalStreamChatApi
-        public var instance: ClientMutableState? = null
-
-        @InternalStreamChatApi
-        public fun get(): ClientMutableState =
-            instance ?: create().also { clientState ->
-                instance = clientState
-            }
-
-        @InternalStreamChatApi
-        public fun create(): ClientMutableState = ClientStateImpl()
-    }
 }
