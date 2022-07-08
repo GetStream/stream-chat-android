@@ -204,6 +204,8 @@ internal class ChannelListViewModelTest {
 
             captor.firstValue.offset `should be equal to` 0
             captor.secondValue.offset `should be equal to` 30
+
+            viewModel.state.removeObserver(mockObserver)
         }
 
     @Test
@@ -230,6 +232,8 @@ internal class ChannelListViewModelTest {
             verify(chatClient, times(1)).queryChannels(captor.capture())
 
             captor.firstValue.offset `should be equal to` 0
+
+            viewModel.state.removeObserver(mockObserver)
         }
 
     private class Fixture(
