@@ -20,8 +20,10 @@ import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 /**
  * A pending operation waiting to be ran.
@@ -75,6 +77,17 @@ public interface Call<T : Any> {
     public companion object {
         public fun <T : Any> callCanceledError(): Result<T> =
             Result.error(ChatError("The call was canceled before complete its execution."))
+
+        public suspend fun <T : Any> runCatching(block: suspend () -> Result<T>): Result<T> = try {
+            block().also { yield() }
+        } catch (t: Throwable) {
+            t.toResult()
+        }
+
+        private fun <T : Any> Throwable.toResult(): Result<T> = when (this) {
+            is CancellationException -> callCanceledError()
+            else -> Result.error(this)
+        }
     }
 }
 
