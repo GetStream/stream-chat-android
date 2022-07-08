@@ -92,7 +92,7 @@ internal class EventHandlerImplTest {
         syncManager = mock()
         user = randomUser()
 
-        globalState.setUser(user)
+        clientState.setUser(user)
     }
 
     @ParameterizedTest
@@ -113,8 +113,8 @@ internal class EventHandlerImplTest {
 
         eventHandler.handleEvents(connectedEvent)
 
-        globalState.connectionState.value `should be` ConnectionState.CONNECTED
-        globalState.initialized.value `should be` true
+        clientState.connectionState.value `should be` ConnectionState.CONNECTED
+        clientState.initialized.value `should be` true
     }
 
     @ParameterizedTest
@@ -141,7 +141,7 @@ internal class EventHandlerImplTest {
         eventHandler.handleEvents(connectedEvent) // To make sure that we are not asserting the initial state
         eventHandler.handleEvents(disconnectedEvent)
 
-        globalState.connectionState.value `should be` ConnectionState.OFFLINE
+        clientState.connectionState.value `should be` ConnectionState.OFFLINE
     }
 
     @ParameterizedTest
@@ -160,7 +160,7 @@ internal class EventHandlerImplTest {
 
         eventHandler.handleEvents(connectingEvent)
 
-        globalState.connectionState.value `should be` ConnectionState.CONNECTING
+        clientState.connectionState.value `should be` ConnectionState.CONNECTING
     }
 
     @ParameterizedTest

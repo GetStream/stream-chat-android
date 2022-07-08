@@ -242,8 +242,6 @@ public class StreamStatePluginFactory(
             }
         }
 
-        clientState.setUser(user)
-
         return StatePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),

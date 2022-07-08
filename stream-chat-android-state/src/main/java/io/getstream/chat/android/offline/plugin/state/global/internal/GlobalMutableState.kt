@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
 public class GlobalMutableState private constructor(
-    private val clientState: ClientMutableState,
+    override val clientState: ClientMutableState,
 ) : MutableGlobalState {
 
     private val _totalUnreadCount = MutableStateFlow(0)
@@ -204,51 +204,6 @@ public class GlobalMutableState private constructor(
 
     override fun setErrorEvent(errorEvent: Event<ChatError>) {
         _errorEvent.value = errorEvent
-    }
-
-    @Deprecated(
-        message = "Use ClientMutableState.setUser instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().clientState.toMutableState()?.setUser()",
-            imports = [
-                "io.getstream.chat.android.client.ChatClient",
-                "io.getstream.chat.android.offline.extensions.clientState",
-                "io.getstream.chat.android.client.setup.state.internal.toMutableState"
-            ]
-        )
-    )
-    override fun setUser(user: User) {
-        clientState.setUser(user)
-    }
-
-    @Deprecated(
-        message = "Use ClientMutableState.setConnectionState instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().clientState.toMutableState()?.setConnectionState()",
-            imports = [
-                "io.getstream.chat.android.client.ChatClient",
-                "io.getstream.chat.android.offline.extensions.clientState",
-                "io.getstream.chat.android.client.setup.state.internal.toMutableState"
-            ]
-        )
-    )
-    override fun setConnectionState(connectionState: ConnectionState) {
-        clientState.setConnectionState(connectionState)
-    }
-
-    @Deprecated(
-        message = "Use ClientMutableState.setInitialized instead",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().clientState.toMutableState()?.setInitialized()",
-            imports = [
-                "io.getstream.chat.android.client.ChatClient",
-                "io.getstream.chat.android.offline.extensions.clientState",
-                "io.getstream.chat.android.client.setup.state.internal.toMutableState"
-            ]
-        )
-    )
-    override fun setInitialized(initialized: Boolean) {
-        clientState.setInitialized(initialized)
     }
 
     override fun setTotalUnreadCount(totalUnreadCount: Int) {

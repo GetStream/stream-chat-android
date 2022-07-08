@@ -30,7 +30,8 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
         is SelfUserFull -> self.me
         is SelfUserPart -> user.value?.mergePartially(self.me) ?: self.me
     }
-    setUser(me)
+
+    clientState.setUser(me)
     setBanned(me.banned)
     setBanned(me.banned)
     setMutedUsers(me.mutes)

@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.client.utils.Result
@@ -207,7 +208,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         ).enqueue()
 
         // manually configure the user since client is mocked
-        GlobalMutableState.getOrCreate().setUser(data.user1)
+        ClientMutableState.get().setUser(data.user1)
 
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         repos.insertUsers(data.userMap.values.toList())

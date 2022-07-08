@@ -68,9 +68,10 @@ internal class TotalUnreadCountTest {
     @BeforeEach
     fun setUp() {
         data = TestDataHelper()
-        globalMutableState = GlobalMutableState.create().apply {
+        clientMutableState = ClientMutableState.get().apply {
             setUser(data.user1)
         }
+        globalMutableState = GlobalMutableState.getOrCreate()
     }
 
     @ParameterizedTest
@@ -133,7 +134,7 @@ internal class TotalUnreadCountTest {
         sut.handleEvents(connectedEvent)
 
         // unread count are updated internally when a user is updated
-        globalMutableState.user.value `should be equal to` userWithUnread
+        clientMutableState.user.value `should be equal to` userWithUnread
     }
 
     private class Fixture(

@@ -18,10 +18,9 @@ package io.getstream.chat.android.offline.plugin.state.global.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -31,16 +30,9 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
  */
 internal interface MutableGlobalState : GlobalState {
 
+    val clientState: ClientMutableState
+
     fun setErrorEvent(errorEvent: Event<ChatError>)
-
-    @Deprecated("Use ClientMutableState.setUser instead")
-    fun setUser(user: User)
-
-    @Deprecated("Use ClientMutableState.setConnectionState instead")
-    fun setConnectionState(connectionState: ConnectionState)
-
-    @Deprecated("Use ClientMutableState.setInitialized instead")
-    fun setInitialized(initialized: Boolean)
 
     fun setTotalUnreadCount(totalUnreadCount: Int)
 
