@@ -64,6 +64,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
 
 ### ❌ Removed
 
