@@ -53,6 +53,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
             setAttachmentDownloadClickListener {}
             setReactionViewClickListener {}
             setUserClickListener {}
+            setModeratedMessageLongClickListener {}
 
             init(Channel())
             displayNewMessages(MessageListItemWrapper(getItems()))

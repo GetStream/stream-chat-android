@@ -21,6 +21,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
@@ -173,15 +174,13 @@ internal class MessageListItemLiveData(
     internal fun messagesChanged(messages: List<Message>, currentUserId: String): MessageListItemWrapper {
         messageItemsBase = groupMessages(messages, currentUserId)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value, currentUserId)
-        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        return wrapMessages(out, hasNewMessages)
+        return wrapMessages(buildItemsList(), hasNewMessages)
     }
 
     @UiThread
     internal fun readsChanged(reads: List<ChannelUserRead>, currentUserId: String): MessageListItemWrapper {
         messageItemsWithReads = addReads(messageItemsBase, reads, currentUserId)
-        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        return wrapMessages(out)
+        return wrapMessages(buildItemsList())
     }
 
     /**
@@ -192,7 +191,7 @@ internal class MessageListItemLiveData(
     internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
         typingUsers = newTypingUsers
         typingItems = usersAsTypingItems(newTypingUsers)
-        return wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
+        return wrapMessages(buildItemsList())
     }
 
     /**
@@ -205,8 +204,20 @@ internal class MessageListItemLiveData(
         messageItemsWithReads = messageItemsWithReads.filter {
             it !is MessageListItem.LoadingMoreIndicatorItem
         }
-        val out = getLoadingMoreItems() + messageItemsWithReads
-        value = wrapMessages(out)
+
+        value = wrapMessages(buildItemsList())
+    }
+
+    /**
+     * Builds a list of items we show in the View, based on the current state.
+     *
+     * We add the loading item at the top, if we're currently loading more data and the typing item at the bottom, if
+     * there are users who are typing.
+     *
+     * @return Full list of [MessageListItem] to represent the state.
+     */
+    private fun buildItemsList(): List<MessageListItem> {
+        return getLoadingMoreItems() + messageItemsWithReads + typingItems
     }
 
     private fun getLoadingMoreItems() = if (loadingMoreInProgress) {
@@ -273,19 +284,7 @@ internal class MessageListItemLiveData(
             }
 
             // determine the position (top, middle, bottom)
-            val user = message.user
-            val positions = mutableListOf<MessageListItem.Position>()
-            if (previousMessage == null || previousMessage.user != user || shouldAddDateSeparator) {
-                positions.add(MessageListItem.Position.TOP)
-            }
-            if (nextMessage == null || nextMessage.user != user) {
-                positions.add(MessageListItem.Position.BOTTOM)
-            }
-            if (previousMessage != null && nextMessage != null) {
-                if (previousMessage.user == user && nextMessage.user == user) {
-                    positions.add(MessageListItem.Position.MIDDLE)
-                }
-            }
+            val positions = determineMessagePosition(previousMessage, message, nextMessage, shouldAddDateSeparator)
 
             // determine if footer is shown or not
             val shouldShowMessageFooter = messageFooterVisibility.value?.shouldShowMessageFooter(
@@ -312,6 +311,57 @@ internal class MessageListItemLiveData(
         }
 
         return items.toList()
+    }
+
+    /**
+     * @param previousMessage The previous [Message] in the list.
+     * @param message The current [Message].
+     * @param nextMessage The next [Message] in the list.
+     * @param shouldAddDateSeparator Whether we should add the date separator or not.
+     *
+     * @return Position of the message inside the group.
+     */
+    private fun determineMessagePosition(
+        previousMessage: Message?,
+        message: Message,
+        nextMessage: Message?,
+        shouldAddDateSeparator: Boolean,
+    ): List<MessageListItem.Position> {
+        val user = message.user
+        val positions = mutableListOf<MessageListItem.Position>()
+        if (isMessageTopPosition(previousMessage, shouldAddDateSeparator, user)) {
+            positions.add(MessageListItem.Position.TOP)
+        }
+        if (nextMessage == null || nextMessage.user != user || nextMessage.isServerMessage()) {
+            positions.add(MessageListItem.Position.BOTTOM)
+        }
+        if (previousMessage != null && nextMessage != null) {
+            if (previousMessage.user == user && nextMessage.user == user) {
+                positions.add(MessageListItem.Position.MIDDLE)
+            }
+        }
+        return positions
+    }
+
+    /**
+     * @param previousMessage The previous [Message] in the list.
+     * @param shouldAddDateSeparator Whether the date separator should be added or not.
+     * @param user The [User] that sent the current message.
+     *
+     * @return Whether the message is at a top position or not.
+     */
+    private fun isMessageTopPosition(previousMessage: Message?, shouldAddDateSeparator: Boolean, user: User): Boolean {
+        return previousMessage == null || previousMessage.user != user || shouldAddDateSeparator ||
+            previousMessage.isServerMessage()
+    }
+
+    /**
+     * If the message is just an informational message generated by the backend.
+     *
+     * @return If the message was generated by the backend.
+     */
+    private fun Message.isServerMessage(): Boolean {
+        return type == ModelType.message_system || type == ModelType.message_error
     }
 
     /**

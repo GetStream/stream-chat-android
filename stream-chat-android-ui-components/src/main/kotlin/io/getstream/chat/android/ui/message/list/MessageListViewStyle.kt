@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
@@ -80,6 +81,9 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
+ * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
+ * @property scrollButtonEndMargin Defines the end margin of the scroll button.
+ * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -124,11 +128,17 @@ public data class MessageListViewStyle(
     public val messagesStart: Int,
     public val threadMessagesStart: Int,
     public val messageOptionsUserReactionAlignment: Int,
+    public val scrollButtonBottomMargin: Int,
+    public val scrollButtonEndMargin: Int,
+    public val disableScrollWhenShowingDialog: Boolean,
 ) {
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
         private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
+        private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
+        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
+        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
 
         private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
             return TextStyle.Builder(typedArray)
@@ -160,32 +170,45 @@ public data class MessageListViewStyle(
             ).use { attributes ->
                 val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
                     .scrollButtonEnabled(
-                        R.styleable.MessageListView_streamUiScrollButtonEnabled,
-                        true
+                        scrollButtonEnabledStyleableId = R.styleable.MessageListView_streamUiScrollButtonEnabled,
+                        defaultValue = true
                     )
                     .scrollButtonUnreadEnabled(
+                        scrollButtonUnreadEnabledStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
-                        true
+                        defaultValue = true
                     )
                     .scrollButtonColor(
-                        R.styleable.MessageListView_streamUiScrollButtonColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        scrollButtonColorStyleableId = R.styleable.MessageListView_streamUiScrollButtonColor,
+                        defaultValue = context.getColorCompat(R.color.stream_ui_white)
                     )
                     .scrollButtonRippleColor(
+                        scrollButtonRippleColorStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonRippleColor,
-                        context.getColorCompat(R.color.stream_ui_white_smoke)
+                        defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke)
                     )
                     .scrollButtonBadgeColor(
                         R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
-                        context.getColorCompat(R.color.stream_ui_accent_blue)
                     )
                     .scrollButtonElevation(
-                        R.styleable.MessageListView_streamUiScrollButtonElevation,
-                        DEFAULT_SCROLL_BUTTON_ELEVATION
+                        scrollButtonElevation = R.styleable.MessageListView_streamUiScrollButtonElevation,
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_ELEVATION
                     )
                     .scrollButtonIcon(
-                        R.styleable.MessageListView_streamUiScrollButtonIcon,
-                        context.getDrawableCompat(R.drawable.stream_ui_ic_down)
+                        scrollButtonIconStyleableId = R.styleable.MessageListView_streamUiScrollButtonIcon,
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_down)
+                    ).scrollButtonBadgeGravity(
+                        scrollButtonBadgeGravity = R.styleable.MessageListView_streamUiScrollButtonBadgeGravity,
+                        defaultGravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+                    ).scrollButtonBadgeIcon(
+                        scrollButtonBadgeIcon = R.styleable.MessageListView_streamUiScrollButtonBadgeIcon,
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_shape_scroll_button_badge)
+                    ).scrollButtonBadgeElevation(
+                        scrollButtonBadgeElevation = R.styleable.MessageListView_streamUiScrollButtonBadgeElevation,
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION
+                    ).scrollButtonBadgeInternalMargin(
+                        scrollButtonInternalMargin = R.styleable.MessageListView_streamUIScrollButtonInternalMargin,
+                        defaultMargin = DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN
                     ).build()
 
                 val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
@@ -194,6 +217,18 @@ public data class MessageListViewStyle(
                         MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value
                     )
                 )
+
+                val scrollButtonMarginBottom =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiScrollButtonBottomMargin,
+                        DEFAULT_SCROLL_BUTTON_MARGIN
+                    )
+
+                val scrollButtonMarginEnd =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiScrollButtonEndMargin,
+                        DEFAULT_SCROLL_BUTTON_MARGIN
+                    )
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
@@ -212,6 +247,7 @@ public data class MessageListViewStyle(
                     .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                     .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
+                    .systemMessageGravity(R.styleable.MessageListView_streamUiSystemMessageAlignment)
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
@@ -401,9 +437,16 @@ public data class MessageListViewStyle(
                     MessageOptionsUserReactionAlignment.BY_USER.value
                 )
 
+                val disableScrollWhenShowingDialog = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiDisableScrollWhenShowingDialog,
+                    true
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
+                    scrollButtonBottomMargin = scrollButtonMarginBottom,
+                    scrollButtonEndMargin = scrollButtonMarginEnd,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
@@ -444,6 +487,7 @@ public data class MessageListViewStyle(
                     messagesStart = messagesStart,
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
+                    disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

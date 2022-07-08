@@ -55,6 +55,8 @@ val offlinePluginFactory = StreamOfflinePluginFactory(
         persistenceEnabled = true,
         // An enumeration of various network types used as a constraint inside upload attachments worker.
         uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        // Whether the SDK will use a new sequential event handling mechanism.
+        useSequentialEventHandler = false,
     ),
     appContext = context,
 )
@@ -90,6 +92,10 @@ To learn about how to create a token and different user types, see [Tokens & Aut
 :::
 
 If the `connectUser` call was successful, you are now ready to use the SDK! 🎉
+
+:::warning
+You shouldn't call `connectUser` if the user is already set! You can use `ChatClient.instance().getCurrentUser()` to verify if the user is already connected.
+:::
 
 The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
 

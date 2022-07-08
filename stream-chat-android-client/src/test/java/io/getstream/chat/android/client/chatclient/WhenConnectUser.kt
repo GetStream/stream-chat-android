@@ -64,7 +64,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(listener)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
+        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test
@@ -92,7 +92,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(user, "token").enqueue()
 
-        verify(userStateService).onSetUser(user)
+        verify(userStateService).onSetUser(user, false)
     }
 
     @Test
@@ -184,11 +184,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
-        }
-
-        fun givenAnonymousPendingState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.Pending
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(Mother.randomUser())
         }
 
         fun givenUserNotSetState() = apply {

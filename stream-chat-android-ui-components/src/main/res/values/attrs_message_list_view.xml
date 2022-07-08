@@ -24,6 +24,14 @@
         <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
         <attr name="streamUiScrollButtonIcon" format="reference" />
         <attr name="streamUiScrollButtonElevation" format="dimension|reference" />
+        <!-- Sets the bottom margin of the scroll button inside MessageListView -->
+        <attr name="streamUiScrollButtonBottomMargin" format="dimension|reference" />
+        <!-- Sets the end margin of the scroll button inside MessageListView -->
+        <attr name="streamUiScrollButtonEndMargin" format="dimension|reference" />
+        <!-- Controls the internal margins of the scroll button with respect to its parent.
+
+         You should use this one if you want to adjust the distance of the unread count badge to the scroll button.-->
+        <attr name="streamUIScrollButtonInternalMargin" format="dimension|reference" />
         <attr name="streamUiScrollButtonBadgeTextSize" format="dimension|reference" />
         <attr name="streamUiScrollButtonBadgeTextColor" format="color|reference" />
         <attr name="streamUiScrollButtonBadgeTextFont" format="reference" />
@@ -32,6 +40,49 @@
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
+        </attr>
+        <!-- Sets the background drawable of the unread count badge -->
+        <attr name="streamUiScrollButtonBadgeIcon" format="reference" />
+        <!-- Sets the elevation of the unread count badge -->
+        <attr name="streamUiScrollButtonBadgeElevation" format="dimension|reference" />
+        <!-- Adjusts the gravity of the scroll button badge.
+
+        These values are the same as standard Android values. -->
+        <attr name="streamUiScrollButtonBadgeGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x30" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x50" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="left" value="0x03" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="right" value="0x05" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Grow the vertical size of the object if needed so it completely fills its container. -->
+            <flag name="fill_vertical" value="0x70" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x01" />
+            <!-- Grow the horizontal size of the object if needed so it completely fills its container. -->
+            <flag name="fill_horizontal" value="0x07" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x11" />
+            <!-- Grow the horizontal and vertical size of the object if needed so it completely fills its container. -->
+            <flag name="fill" value="0x77" />
+            <!-- Additional option that can be set to have the top and/or bottom edges of
+                 the child clipped to its container's bounds.
+                 The clip will be based on the vertical gravity: a top gravity will clip the bottom
+                 edge, a bottom gravity will clip the top edge, and neither will clip both edges. -->
+            <flag name="clip_vertical" value="0x80" />
+            <!-- Additional option that can be set to have the left and/or right edges of
+                 the child clipped to its container's bounds.
+                 The clip will be based on the horizontal gravity: a left gravity will clip the right
+                 edge, a right gravity will clip the left edge, and neither will clip both edges. -->
+            <flag name="clip_horizontal" value="0x08" />
+            <!-- Push object to the beginning of its container, not changing its size. -->
+            <flag name="start" value="0x00800003" />
+            <!-- Push object to the end of its container, not changing its size. -->
+            <flag name="end" value="0x00800005" />
         </attr>
 
         <attr name="streamUiLoadMoreThreshold" format="integer" />
@@ -238,7 +289,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- System message text style -->
+        <!-- System message style -->
         <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
         <attr name="streamUiSystemMessageTextColor" format="color" />
         <attr name="streamUiSystemMessageTextFont" format="reference" />
@@ -248,6 +299,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- System message alignment -->
+        <attr name="streamUiSystemMessageAlignment">
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="left" value="0x03" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="right" value="0x05" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x11" />
+            <!-- Push object to the beginning of its container, not changing its size. -->
+            <flag name="start" value="0x00800003" />
+            <!-- Push object to the end of its container, not changing its size. -->
+            <flag name="end" value="0x00800005" />
+        </attr>
+
 
         <!-- Error message text style -->
         <attr name="streamUiErrorMessageTextSize" format="dimension|reference" />
@@ -432,5 +497,8 @@
         <attr name="streamUiMessageMaxWidthFactorMine" format="fraction" />
         <!-- Fraction used to compute max width for message sent by other user. Should be in [75% - 100%] range. -->
         <attr name="streamUiMessageMaxWidthFactorTheirs" format="fraction" />
+
+        <!-- Prevent scroll while a dialog is shown over the message list -->
+        <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean" />
     </declare-styleable>
 </resources>

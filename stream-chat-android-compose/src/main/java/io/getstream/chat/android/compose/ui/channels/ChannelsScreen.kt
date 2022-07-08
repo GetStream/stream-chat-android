@@ -45,7 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
@@ -84,9 +85,10 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
+@Suppress("LongMethod")
 public fun ChannelsScreen(
     filters: FilterObject? = null,
-    querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
+    querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,
@@ -171,9 +173,9 @@ public fun ChannelsScreen(
             }
         }
 
-        val selectedChannel = selectedChannel ?: Channel()
+        val channel = selectedChannel ?: Channel()
         AnimatedVisibility(
-            visible = selectedChannel.cid.isNotEmpty(),
+            visible = channel.cid.isNotEmpty(),
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
@@ -190,9 +192,9 @@ public fun ChannelsScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                selectedChannel = selectedChannel,
+                selectedChannel = channel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                isMuted = listViewModel.isChannelMuted(channel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)

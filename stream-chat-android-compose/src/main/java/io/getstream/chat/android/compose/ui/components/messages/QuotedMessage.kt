@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -32,70 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-
-/**
- * Wraps the quoted message into a special component, that doesn't show some information, like
- * the timestamp, thread participants and similar.
- *
- * @param message Message to show.
- * @param modifier Modifier for styling.
- * @param onLongItemClick Handler when the item is long clicked.
- */
-@Deprecated(
-    message = "Deprecated in favor of new QuotedMessage implementation that expands on the current one and" +
-        "changes how the quoted message is displayed.",
-    replaceWith = ReplaceWith(
-        expression =
-        "QuotedMessage(message: Message," +
-            "modifier: Modifier = Modifier" +
-            "onLongItemClick: (Message) -> Unit," +
-            "onQuotedMessageClick: (Message) -> Unit)",
-        imports = ["io.getstream.chat.android.compose.ui.components.messages.QuotedMessage"]
-    ),
-    level = DeprecationLevel.WARNING
-)
-@Composable
-public fun QuotedMessage(
-    message: Message,
-    modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit,
-) {
-    val user = message.user
-
-    Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
-        Avatar(
-            modifier = Modifier.size(24.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            textStyle = ChatTheme.typography.captionBold,
-        )
-
-        Spacer(modifier = Modifier.size(8.dp))
-
-        MessageBubble(
-            shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
-            content = {
-                Column {
-                    MessageAttachmentsContent(
-                        message = message,
-                        onLongItemClick = {}
-                    )
-
-                    if (message.text.isNotEmpty()) {
-                        MessageText(
-                            isQuote = true,
-                            message = message,
-                            onLongItemClick = onLongItemClick
-                        )
-                    }
-                }
-            }
-        )
-    }
-}
 
 /**
  * Wraps the quoted message into a component that shows only the sender avatar, text and single attachment preview.

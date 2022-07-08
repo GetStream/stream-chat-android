@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
@@ -45,6 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param contentDescription The content description of the avatar.
  * @param showOnlineIndicator If we show online indicator or not.
  * @param onlineIndicatorAlignment The alignment of online indicator.
+ * @param initialsAvatarOffset The initials offset to apply to the avatar.
  * @param onlineIndicator Custom composable that allows to replace the default online indicator.
  * @param onClick The handler when the user clicks on the avatar.
  */
@@ -57,6 +59,7 @@ public fun UserAvatar(
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onlineIndicator: @Composable BoxScope.() -> Unit = {
         DefaultOnlineIndicator(onlineIndicatorAlignment)
     },
@@ -70,7 +73,8 @@ public fun UserAvatar(
             textStyle = textStyle,
             shape = shape,
             contentDescription = contentDescription,
-            onClick = onClick
+            onClick = onClick,
+            initialsAvatarOffset = initialsAvatarOffset
         )
 
         if (showOnlineIndicator && user.online) {

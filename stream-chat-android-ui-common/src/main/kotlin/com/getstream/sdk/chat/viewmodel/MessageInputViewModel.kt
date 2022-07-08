@@ -22,6 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -36,6 +39,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
@@ -53,6 +57,7 @@ import java.io.File
  * @param chatClient Entry point for most of the chat SDK
  * such as the current user, connection state, unread counts etc.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
@@ -112,6 +117,16 @@ public class MessageInputViewModel @JvmOverloads constructor(
             started = SharingStarted.Eagerly,
             initialValue = setOf()
         ).asLiveData()
+
+    /**
+     * Buffers typing updates.
+     *
+     * @see [DefaultTypingUpdatesBuffer]
+     */
+    public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
+        onTypingStarted = ::keystroke,
+        onTypingStopped = ::stopTyping
+    )
 
     /**
      * Holds the message the user is currently replying to,
@@ -292,21 +307,49 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Updates the message in the channel with the new data.
+     * Updates the message in the channel with the new data. If the edited message was moderated message will delete the
+     * old message and send a new one.
      *
      * @param message The Message updated with the new information, that we need to send.
      */
     public fun editMessage(message: Message) {
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
-        chatClient.updateMessage(updatedMessage).enqueue(
-            onError = { chatError ->
-                logger.logE(
-                    "Could not edit message with cid: ${updatedMessage.cid}. " +
-                        "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
-                )
+
+        if (message.isModerationFailed(chatClient)) {
+            onEditModeratedMessage(message)
+        } else {
+            chatClient.updateMessage(updatedMessage).enqueue(
+                onError = { chatError ->
+                    logger.logE(
+                        "Could not edit message with cid: ${updatedMessage.cid}. " +
+                            "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
+                    )
+                }
+            )
+        }
+    }
+
+    /**
+     * If the edited message was a moderated message then we delete the old one from the local cache/database and send
+     * a new message to the API.
+     *
+     * @param message The [Message] updated with the new information that we need to send.
+     */
+    @OptIn(ExperimentalStreamChatApi::class)
+    private fun onEditModeratedMessage(message: Message) {
+        chatClient.deleteMessage(message.id, true).enqueue()
+        if (message.attachments.isNotEmpty()) {
+            // Works for both custom and default attachments, reason being that it doesn't do any parsing of the
+            // attachments
+            sendMessageWithCustomAttachments(message.text, message.attachments) {
+                parentId = message.parentId
             }
-        )
+        } else {
+            sendMessage(message.text) {
+                parentId = message.parentId
+            }
+        }
     }
 
     /**
@@ -359,6 +402,15 @@ public class MessageInputViewModel @JvmOverloads constructor(
         if (repliedMessage.value != null) {
             ChatClient.instance().setMessageForReply(cid, null).enqueue()
         }
+    }
+
+    /**
+     * Performs hygiene events such as clearing typing updates
+     * when the used leaves the messages screen.
+     */
+    override fun onCleared() {
+        super.onCleared()
+        typingUpdatesBuffer.clear()
     }
 
     private companion object {

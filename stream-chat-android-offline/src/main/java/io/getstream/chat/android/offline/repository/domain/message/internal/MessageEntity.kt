@@ -21,6 +21,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
@@ -39,7 +40,15 @@ internal data class MessageEntity(
     val latestReactions: List<ReactionEntity> = emptyList(),
 )
 
-@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
+@Entity(
+    tableName = "stream_chat_message",
+    indices = [
+        Index(value = ["cid", "createdAt"]),
+        Index(value = ["syncStatus"]),
+        Index(value = ["syncType"]),
+        Index(value = ["syncStatus", "syncType"])
+    ]
+)
 internal data class MessageInnerEntity(
     @PrimaryKey
     val id: String,
@@ -53,6 +62,11 @@ internal data class MessageInnerEntity(
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
+
+    val syncType: MessageSyncType? = null,
+
+    val syncContent: MessageSyncContentEntity? = null,
+
     /** the number of replies */
     val replyCount: Int = 0,
     /** when the message was created */
@@ -66,6 +80,8 @@ internal data class MessageInnerEntity(
     /** when the message was deleted */
     val deletedAt: Date? = null,
     /** the users mentioned in this message */
+    val remoteMentionedUserIds: List<String> = emptyList(),
+    /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
     val reactionCounts: Map<String, Int> = emptyMap(),
@@ -97,4 +113,9 @@ internal data class MessageInnerEntity(
     val pinnedByUserId: String?,
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
+)
+
+internal data class MessageSyncDescriptionEntity(
+    val type: MessageSyncType,
+    val content: String,
 )

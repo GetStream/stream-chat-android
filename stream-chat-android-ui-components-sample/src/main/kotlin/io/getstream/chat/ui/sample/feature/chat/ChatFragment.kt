@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.ui.sample.feature.chat
 
 import android.os.Bundle
@@ -23,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -34,9 +33,20 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
+import io.getstream.chat.android.common.model.SendAnyway
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
+import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
@@ -47,6 +57,7 @@ import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import java.util.Calendar
 
+@OptIn(ExperimentalStreamChatApi::class)
 class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
@@ -56,6 +67,7 @@ class ChatFragment : Fragment() {
     private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+    private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
 
     private var _binding: FragmentChatBinding? = null
@@ -75,13 +87,18 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 
+    @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
-        binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
         initChatViewModel()
         initMessagesViewModel()
-        initMessageInputViewModel()
         configureBackButtonHandling()
+
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER)) {
+            initMessageComposerViewModel()
+        } else {
+            initMessageInputViewModel()
+        }
     }
 
     override fun onResume() {
@@ -135,6 +152,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun initMessageInputViewModel() {
+        binding.messageInputView.isVisible = true
         messageInputViewModel.apply {
             bindView(binding.messageInputView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {
@@ -153,9 +171,50 @@ class ChatFragment : Fragment() {
         }
     }
 
+    private fun initMessageComposerViewModel() {
+        binding.messageComposerView.isVisible = true
+        messageComposerViewModel.apply {
+            bindView(binding.messageComposerView, viewLifecycleOwner)
+            messageListViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        headerViewModel.setActiveThread(it.parentMessage)
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        headerViewModel.resetThread()
+                        messageComposerViewModel.leaveThread()
+                    }
+                }
+            }
+            binding.messageListView.setMessageReplyHandler { _, message ->
+                messageComposerViewModel.performMessageAction(Reply(message))
+            }
+            binding.messageListView.setMessageEditHandler { message ->
+                messageComposerViewModel.performMessageAction(Edit(message))
+            }
+            binding.messageListView.setModeratedMessageHandler { message, action ->
+                when (action) {
+                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
+                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
+                }
+            }
+            binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
+                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+                    messageComposerViewModel.performMessageAction(Reply(message))
+                }
+            }
+        }
+    }
+
     private fun initMessagesViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
+            messageListViewModel.setDeletedMessageVisibility(
+                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+            )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {
@@ -205,6 +264,15 @@ class ChatFragment : Fragment() {
                 if (result.isSuccess || result.isAlreadyExistsError()) {
                     ConfirmationDialogFragment.newMessageFlaggedInstance(requireContext())
                         .show(parentFragmentManager, null)
+                }
+            }
+
+            setModeratedMessageHandler { message, action ->
+                when (action) {
+                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                    EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
                 }
             }
         }

@@ -49,6 +49,7 @@ import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -126,8 +127,13 @@ public class MessageListViewModel(
     /**
      * Regulates the visibility of deleted messages.
      */
-    private var deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
+    private var _deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
         MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
+
+    /**
+     * Regulates the visibility of deleted messages.
+     */
+    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> = _deletedMessageVisibility
 
     /**
      * Regulates the message footer visibility.
@@ -264,6 +270,16 @@ public class MessageListViewModel(
      */
     private var initialJob: Job? = null
 
+    /**
+     * Emits the status of searching situation. True when inside a search and false otherwise.
+     */
+    private val _insideSearch = MediatorLiveData<Boolean>()
+
+    /**
+     * Emits the status of searching situation. True when inside a search and false otherwise.
+     */
+    public val insideSearch: LiveData<Boolean> = _insideSearch
+
     init {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
@@ -315,6 +331,7 @@ public class MessageListViewModel(
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
+        _insideSearch.addSource(channelState.insideSearch.asLiveData()) { _insideSearch.value = it }
 
         stateMerger.apply {
             val messagesStateLiveData = channelState.messagesState.asLiveData()
@@ -393,6 +410,11 @@ public class MessageListViewModel(
             is Event.EndRegionReached -> {
                 onEndRegionReached()
             }
+
+            is Event.BottomEndRegionReached -> {
+                onBottomEndRegionReached(event.messageId)
+            }
+
             is Event.LastMessageRead -> {
                 cid.cidToTypeAndId().let { (channelType, channelId) ->
                     chatClient.markRead(channelType, channelId).enqueue(
@@ -529,9 +551,7 @@ public class MessageListViewModel(
                 } else {
                     chatClient.loadMessageById(
                         cid,
-                        event.messageId,
-                        DEFAULT_MESSAGES_LIMIT,
-                        DEFAULT_MESSAGES_LIMIT
+                        event.messageId
                     ).enqueue { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()
@@ -592,6 +612,20 @@ public class MessageListViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Returns a message with the given ID from the [messageListData].
+     *
+     * @param messageId The ID of the selected message.
+     * @return The [Message] with the ID, if it exists.
+     */
+    public fun getMessageWithId(messageId: String): Message? {
+        val messageItem = messageListData?.value?.items?.firstOrNull {
+            it is MessageListItem.MessageItem && it.message.id == messageId
+        }
+
+        return (messageItem as? MessageListItem.MessageItem)?.message
     }
 
     /**
@@ -669,6 +703,21 @@ public class MessageListViewModel(
                 }
                 is Mode.Thread -> threadLoadMore(this)
             }
+        }
+    }
+
+    /**
+     * Loads more messages if we have reached the newest messages currently loaded and we are handling search.
+     */
+    private fun onBottomEndRegionReached(baseMessageId: String?) {
+        if (baseMessageId != null) {
+            messageListData?.loadingMoreChanged(true)
+            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
+                .enqueue { result ->
+                    messageListData?.loadingMoreChanged(false)
+                }
+        } else {
+            logger.logE("There's no base message to request more message at bottom of limit")
         }
     }
 
@@ -789,7 +838,7 @@ public class MessageListViewModel(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this.deletedMessageVisibility.value = deletedMessageVisibility
+        this._deletedMessageVisibility.value = deletedMessageVisibility
     }
 
     /**
@@ -839,6 +888,11 @@ public class MessageListViewModel(
          * When the oldest loaded message in the list has been reached.
          */
         public object EndRegionReached : Event()
+
+        /**
+         * When the newest loaded message in the list has been reached and there's still newer messages to be loaded.
+         */
+        public data class BottomEndRegionReached(val messageId: String?) : Event()
 
         /**
          * When the newest message in the channel has been read.

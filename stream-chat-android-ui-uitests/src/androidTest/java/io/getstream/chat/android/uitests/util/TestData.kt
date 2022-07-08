@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import org.threeten.bp.LocalDateTime
@@ -65,31 +66,26 @@ object TestData {
 
     fun member1() = Member(
         user = user1(),
-        role = "user",
         isInvited = false
     )
 
     fun member2() = Member(
         user = user2(),
-        role = "user",
         isInvited = false
     )
 
     fun member3() = Member(
         user = user3(),
-        role = "user",
         isInvited = false
     )
 
     fun member4() = Member(
         user = user4(),
-        role = "user",
         isInvited = false
     )
 
     fun member5() = Member(
         user = user5(),
-        role = "user",
         isInvited = false
     )
 
@@ -160,6 +156,26 @@ object TestData {
     fun date3() = LocalDateTime.of(2020, 12, 9, 9, 0).toDate()
 
     fun date4() = LocalDateTime.of(2020, 12, 10, 9, 0).toDate()
+
+    fun reaction1(): Reaction = Reaction(
+        type = "like",
+        user = user1()
+    )
+
+    fun reaction2(): Reaction = Reaction(
+        type = "love",
+        user = user2()
+    )
+
+    fun reaction3(): Reaction = Reaction(
+        type = "wow",
+        user = user3()
+    )
+
+    fun reaction4(): Reaction = Reaction(
+        type = "sad",
+        user = user4()
+    )
 
     private fun LocalDateTime.toDate(): Date {
         return Date(

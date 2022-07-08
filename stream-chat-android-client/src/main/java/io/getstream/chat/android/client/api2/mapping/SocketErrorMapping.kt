@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
+import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 
@@ -33,8 +34,17 @@ internal fun SocketErrorResponse.ErrorResponse.toDomain(): ErrorResponse {
         message = dto.message,
         statusCode = dto.StatusCode,
         exceptionFields = dto.exception_fields,
-        moreInfo = dto.more_info
+        moreInfo = dto.more_info,
+        details = dto.details.map { it.toDomain() },
     ).apply {
         duration = dto.duration
     }
+}
+
+internal fun SocketErrorResponse.ErrorResponse.ErrorDetail.toDomain(): ErrorDetail {
+    val dto = this
+    return ErrorDetail(
+        code = dto.code,
+        messages = dto.messages
+    )
 }

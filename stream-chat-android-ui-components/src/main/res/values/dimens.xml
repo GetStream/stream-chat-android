@@ -137,7 +137,7 @@
     <!--ScrollButtonView-->
     <dimen name="stream_ui_scroll_button_size">40dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_size">20dp</dimen>
-    <dimen name="stream_ui_scroll_button_unread_badge_padding_horizontal">4dp</dimen>
+    <dimen name="stream_ui_scroll_button_unread_badge_padding_horizontal">5dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_text_size">11sp</dimen>
 
     <!--MessageInputFieldView-->
@@ -176,4 +176,16 @@
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_options_menu_corner_radius">16dp</dimen>
+
+    <!-- Message Composer View -->
+    <dimen name="stream_ui_message_composer_attachment_height">72dp</dimen>
+    <dimen name="stream_ui_message_composer_image_attachment_width">72dp</dimen>
+    <dimen name="stream_ui_message_composer_file_attachment_width">200dp</dimen>
+    <dimen name="stream_ui_message_composer_attachment_corner_radius">12dp</dimen>
+    <dimen name="stream_ui_message_composer_header_content_height">48dp</dimen>
+    <dimen name="stream_ui_message_composer_leading_content_horizontal_padding">4dp</dimen>
+    <dimen name="stream_ui_message_composer_leading_content_vertical_padding">12dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_horizontal_padding">4dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_vertical_padding">12dp</dimen>
+
 </resources>

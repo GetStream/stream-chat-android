@@ -18,9 +18,9 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -71,7 +71,7 @@ internal class ChannelRepositoryImplTest {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
-        whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
+        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
 
         channelRepository.updateLastMessageForChannel("cid", newLastMessage)
 
@@ -92,7 +92,7 @@ internal class ChannelRepositoryImplTest {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
-        whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
+        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
 
         channelRepository.updateLastMessageForChannel("cid", outdatedMessage)
 

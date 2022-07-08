@@ -28,17 +28,15 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.common.extensions.isOwnerOrAdmin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GroupChatInfoViewModel(
@@ -71,21 +69,11 @@ class GroupChatInfoViewModel(
         _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
 
         _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
-            _state.value = _state.value?.copy(channelName = channelData.name)
-        }
-
-        channelState.onEach { state ->
-            getOwnerOrAdmin(state.members.value)?.let { member ->
-                _state.value = _state.value?.copy(
-                    isCurrentUserOwnerOrAdmin = globalState.user.value?.id == member.getUserId()
-                )
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun getOwnerOrAdmin(members: List<Member>?): Member? {
-        return members?.firstOrNull { member ->
-            member.isOwnerOrAdmin
+            _state.value = _state.value?.copy(
+                channelName = channelData.name,
+                ownCapabilities = channelData.ownCapabilities,
+                createdBy = channelData.createdBy,
+            )
         }
     }
 
@@ -161,11 +149,12 @@ class GroupChatInfoViewModel(
 
     data class State(
         val members: List<Member>,
+        val createdBy: User,
         val channelName: String,
         val channelMuted: Boolean,
         val shouldExpandMembers: Boolean?,
         val membersToShowCount: Int,
-        val isCurrentUserOwnerOrAdmin: Boolean,
+        val ownCapabilities: Set<String>,
     )
 
     sealed class Action {
@@ -193,11 +182,12 @@ class GroupChatInfoViewModel(
 
         private val INITIAL_STATE = State(
             members = emptyList(),
+            createdBy = User(),
             channelName = "",
             channelMuted = false,
             shouldExpandMembers = null,
             membersToShowCount = 0,
-            false,
+            emptySet(),
         )
 
         /**

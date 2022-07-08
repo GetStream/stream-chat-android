@@ -52,6 +52,7 @@ public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
      * @param miPushCommandMessage A [MiPushCommandMessage] that contains inifo about the device.
      */
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
+        logger.logD("onReceiveRegisterResult(): $miPushCommandMessage")
         try {
             XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
         } catch (exception: IllegalStateException) {

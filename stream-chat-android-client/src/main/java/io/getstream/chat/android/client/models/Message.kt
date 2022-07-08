@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
@@ -86,6 +87,11 @@ public data class Message(
      * If the message has been synced to the servers, default is synced
      */
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
+
+    /**
+     * Contains details related to [syncStatus].
+     */
+    var syncDescription: MessageSyncDescription? = null,
 
     /**
      * Contains type of the message. Can be one of the following: regular, ephemeral,
@@ -196,9 +202,33 @@ public data class Message(
      * The list of users who participate in thread
      */
     var threadParticipants: List<User> = emptyList(),
-) : CustomObject {
+) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
         public const val TYPE_EPHEMERAL: String = "ephemeral"
     }
+
+    @Suppress("ComplexMethod")
+    override fun getComparableField(fieldName: String): Comparable<*>? =
+        when (fieldName) {
+            "id" -> id
+            "cid" -> cid
+            "text" -> text
+            "html" -> html
+            "parentId" -> parentId
+            "command" -> command
+            "replyCount" -> replyCount
+            "type" -> type
+            "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
+            "deletedAt" -> deletedAt
+            "updatedLocallyAt" -> updatedLocallyAt
+            "createdLocallyAt" -> createdLocallyAt
+            "silent" -> silent
+            "shadowed" -> shadowed
+            "pinned" -> pinned
+            "pinnedAt" -> pinnedAt
+            "pinExpires" -> pinExpires
+            else -> extraData[fieldName] as? Comparable<*>
+        }
 }

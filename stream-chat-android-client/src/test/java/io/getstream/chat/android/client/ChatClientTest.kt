@@ -16,30 +16,41 @@
 
 package io.getstream.chat.android.client
 
+import androidx.lifecycle.testing.TestLifecycleOwner
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -61,6 +72,7 @@ internal class ChatClientTest {
         val eventF = UnknownEvent("f", Date(), null, emptyMap<Any, Any>())
     }
 
+    lateinit var api: ChatApi
     lateinit var socket: FakeSocket
     lateinit var client: ChatClient
     lateinit var result: MutableList<ChatEvent>
@@ -71,6 +83,7 @@ internal class ChatClientTest {
 
     @BeforeEach
     fun setUp() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val config = ChatClientConfig(
             "api-key",
             "hello.http",
@@ -82,24 +95,27 @@ internal class ChatClientTest {
             false
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
+        api = mock()
         socket = FakeSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
-            api = mock(),
+            api = api,
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         ).apply {
             connectUser(user, token).enqueue()
         }
@@ -107,7 +123,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Simple subscribe for one event`() {
+    fun `Simple subscribe for one event`() = runTest {
         client.subscribe {
             result.add(it)
         }
@@ -118,7 +134,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Simple subscribe for multiple events`() {
+    fun `Simple subscribe for multiple events`() = runTest {
         client.subscribe {
             result.add(it)
         }
@@ -146,7 +162,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Subscribe for Java Class event types`() {
+    fun `Subscribe for Java Class event types`() = runTest {
         client.subscribeFor(eventA::class.java, eventC::class.java) {
             result.add(it)
         }
@@ -159,7 +175,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Subscribe for KClass event types`() {
+    fun `Subscribe for KClass event types`() = runTest {
         client.subscribeFor(eventA::class, eventC::class) {
             result.add(it)
         }
@@ -172,7 +188,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Subscribe for event types with type parameter`() {
+    fun `Subscribe for event types with type parameter`() = runTest {
         client.subscribeFor<ConnectedEvent> {
             result.add(it)
         }
@@ -185,7 +201,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Subscribe for single event, with event type as type parameter`() {
+    fun `Subscribe for single event, with event type as type parameter`() = runTest {
         client.subscribeForSingle<ConnectedEvent> {
             result.add(it)
         }
@@ -198,7 +214,7 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Unsubscribe from events`() {
+    fun `Unsubscribe from events`() = runTest {
         val disposable = client.subscribe {
             result.add(it)
         }
@@ -214,11 +230,63 @@ internal class ChatClientTest {
     }
 
     @Test
-    fun `Given connected user When handle event with updated user Should updated user value`() {
+    fun `Given connected user When handle event with updated user Should updated user value`() = runTest {
         val updateUser = user.copy(extraData = mutableMapOf()).apply { name = "updateUserName" }
 
         socket.sendEvent(Mother.randomUserPresenceChangedEvent(updateUser))
 
         client.getCurrentUser() shouldBeEqualTo updateUser
+    }
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun `Sync with empty cids`() = runTest {
+        /* Given */
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+            Result.error(
+                ChatNetworkError.create(
+                    statusCode = 400,
+                    streamCode = 4,
+                    description = "channel_cids must contain at least 1 item"
+                )
+            )
+        )
+
+        /* When */
+        val result = client.getSyncHistory(emptyList(), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id."))
+    }
+
+    @Test
+    fun `Sync with nonempty cids`() = runTest {
+        /* Given */
+        val date = Date()
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+            Result.success(
+                listOf(
+                    HealthEvent(
+                        type = "type",
+                        createdAt = date,
+                        connectionId = "12345"
+                    )
+                )
+            )
+        )
+
+        /* When */
+        val result = client.getSyncHistory(listOf("test"), Date()).await()
+
+        /* Then */
+        result shouldBeEqualTo Result.success(
+            listOf(
+                HealthEvent(
+                    type = "type",
+                    createdAt = date,
+                    connectionId = "12345"
+                )
+            )
+        )
     }
 }

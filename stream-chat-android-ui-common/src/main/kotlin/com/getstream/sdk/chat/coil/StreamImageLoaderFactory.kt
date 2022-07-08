@@ -22,19 +22,24 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.util.CoilUtils
+import coil.decode.VideoFrameDecoder
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
+private const val DEFAULT_DISK_CACHE_PERCENTAGE = 0.02
+private const val DISK_CACHE_DIRECTORY = "image_cache"
+
 public class StreamImageLoaderFactory(
     private val context: Context,
-    private val builder: ImageLoader.Builder.() -> Unit = {}
+    private val builder: ImageLoader.Builder.() -> Unit = {},
 ) : ImageLoaderFactory {
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(context)
-            .availableMemoryPercentage(DEFAULT_MEMORY_PERCENTAGE)
+            .memoryCache { MemoryCache.Builder(context).maxSizePercent(DEFAULT_MEMORY_PERCENTAGE).build() }
             .allowHardware(false)
             .crossfade(true)
             .okHttpClient {
@@ -48,17 +53,23 @@ public class StreamImageLoaderFactory(
                 val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
 
                 OkHttpClient.Builder()
-                    .cache(CoilUtils.createDefaultCache(context))
                     .dispatcher(dispatcher)
                     .addNetworkInterceptor(cacheControlInterceptor)
                     .build()
             }
-            .componentRegistry {
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY))
+                    .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
+                    .build()
+            }
+            .components {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(context, enforceMinimumFrameDelay = true))
+                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder(enforceMinimumFrameDelay = true))
+                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
+                add(VideoFrameDecoder.Factory())
             }
             .apply(builder)
             .build()

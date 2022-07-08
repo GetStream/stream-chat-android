@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.di
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
@@ -41,6 +42,7 @@ internal class ChatModule(
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
     customOkHttpClient: OkHttpClient?,
+    lifecycle: Lifecycle,
 ) : BaseChatModule(
     appContext,
     config,
@@ -50,6 +52,7 @@ internal class ChatModule(
     tokenManager,
     callbackExecutor,
     customOkHttpClient,
+    lifecycle,
 ) {
 
     override fun clientBuilder(

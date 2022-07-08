@@ -41,7 +41,6 @@ import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.getLastMessagePreviewText
 import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
@@ -252,7 +251,11 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
         lastMessage ?: return
 
-        lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
+        lastMessageLabel.text = ChatUI.messagePreviewFormatter.formatMessagePreview(
+            channel = channel,
+            message = lastMessage,
+            currentUser = ChatUI.currentUserProvider.getCurrentUser()
+        )
         lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 

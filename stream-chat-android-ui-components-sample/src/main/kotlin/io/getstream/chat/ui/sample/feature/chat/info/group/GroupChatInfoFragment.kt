@@ -110,7 +110,7 @@ class GroupChatInfoFragment : Fragment() {
                             args.cid,
                             it.channelName,
                             it.member.user,
-                            viewModel.state.value?.isCurrentUserOwnerOrAdmin == true
+                            viewModel.state.value!!.ownCapabilities
                         )
                             .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
@@ -122,10 +122,10 @@ class GroupChatInfoFragment : Fragment() {
         )
         viewModel.state.observe(viewLifecycleOwner) { state ->
             val members = if (state.shouldExpandMembers != false) {
-                state.members.map { ChatInfoItem.MemberItem(it) }
+                state.members.map { ChatInfoItem.MemberItem(it, state.createdBy) }
             } else {
                 state.members.take(GroupChatInfoViewModel.COLLAPSED_MEMBERS_COUNT)
-                    .map { ChatInfoItem.MemberItem(it) } + ChatInfoItem.MembersSeparator(state.membersToShowCount)
+                    .map { ChatInfoItem.MemberItem(it, state.createdBy) } + ChatInfoItem.MembersSeparator(state.membersToShowCount)
             }
             adapter.submitList(
                 members +

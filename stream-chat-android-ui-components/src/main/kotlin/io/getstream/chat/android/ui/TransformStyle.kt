@@ -19,7 +19,10 @@ package io.getstream.chat.android.ui
 import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
+import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
+import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
@@ -62,6 +65,9 @@ public object TransformStyle {
     public var typingIndicatorViewStyleTransformer: StyleTransformer<TypingIndicatorViewStyle> = noopTransformer()
     public var pinnedMessageListViewStyleTransformer: StyleTransformer<PinnedMessageListViewStyle> = noopTransformer()
     public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer<DefaultQuotedAttachmentViewStyle> = noopTransformer()
+    public var attachmentGalleryOptionsStyleTransformer: StyleTransformer<AttachmentGalleryOptionsViewStyle> = noopTransformer()
+    public var messageComposerStyleTransformer: StyleTransformer<MessageComposerViewStyle> = noopTransformer()
+    public var attachmentsPickerStyleTransformer: StyleTransformer<AttachmentsPickerDialogStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

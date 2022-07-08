@@ -286,7 +286,10 @@
         <item name="streamUiScrollButtonUnreadEnabled">true</item>
         <item name="streamUiScrollButtonColor">@color/stream_ui_white</item>
         <item name="streamUiScrollButtonRippleColor">@color/stream_ui_white_smoke</item>
-        <item name="streamUiScrollButtonBadgeColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiScrollButtonBadgeElevation">3dp</item>
+        <item name="streamUIScrollButtonInternalMargin">2dp</item>
+        <item name="streamUiScrollButtonEndMargin">6dp</item>
+        <item name="streamUiScrollButtonBottomMargin">6dp</item>
         <item name="streamUiScrollButtonIcon">@drawable/stream_ui_ic_down</item>
         <item name="streamUiScrollButtonElevation">3dp</item>
         <item name="streamUiScrollButtonBadgeTextSize">@dimen/stream_ui_scroll_button_unread_badge_text_size</item>
@@ -821,10 +824,20 @@
     </style>
 
     <style name="StreamUi.AttachmentGallery.Options">
+        <item name="streamUiAttachmentOptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiAttachmentOptionTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiAttachmentOptionTextFont">@font/stream_roboto_medium</item>
+        <item name="streamUiAttachmentOptionTextStyle">normal</item>
+        <item name="streamUiAttachmentOptionsBackgroundColor">@color/stream_ui_white_snow</item>
         <item name="streamUiAttachmentReplyEnabled">true</item>
+        <item name="streamUiReplyIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
         <item name="streamUiShowInChatEnabled">true</item>
+        <item name="streamUiShowInChatIcon">@drawable/stream_ui_ic_show_in_chat</item>
         <item name="streamUiSaveImageEnabled">true</item>
+        <item name="streamUiSaveImageIcon">@drawable/stream_ui_ic_download</item>
         <item name="streamUiDeleteEnabled">true</item>
+        <item name="streamUiDeleteIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiDeleteTextTint">@color/stream_ui_accent_red</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -1066,4 +1079,117 @@
         <item name="streamUiMessageOptionsUserReactionOrientation">by_user</item>
     </style>
 
+    <style name="StreamUi.MessageComposerView" parent="StreamUi">
+        <item name="streamUiMessageComposerDividerBackgroundDrawable">@drawable/stream_ui_divider</item>
+        <item name="streamUiMessageComposerIconDrawableTintColor">@null</item>
+
+        <!-- Command suggestions content -->
+        <item name="streamUiMessageComposerCommandSuggestionsTitleText">@string/stream_ui_message_composer_instant_commands</item>
+        <item name="streamUiMessageComposerCommandSuggestionsTitleTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerCommandSuggestionsTitleTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable">@drawable/stream_ui_ic_command_blue</item>
+        <item name="streamUiMessageComposerCommandSuggestionsBackgroundColor">@color/stream_ui_white</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionText">@string/stream_ui_message_composer_command_template</item>
+        <item name="streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor">@color/stream_ui_text_color_primary</item>
+
+        <!-- Mention suggestions content -->
+        <item name="streamUiMessageComposerMentionSuggestionsBackgroundColor">@color/stream_ui_white</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemIconDrawable">@drawable/stream_ui_ic_mention</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemMentionText">@string/stream_ui_message_composer_mention_template</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemMentionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemMentionTextColor">@color/stream_ui_text_color_secondary</item>
+
+        <!-- Center content -->
+        <item name="streamUiMessageComposerCommandsHandlingEnabled">true</item>
+        <item name="streamUiMessageComposerMentionsHandlingEnabled">true</item>
+        <item name="streamUiMessageComposerMessageInputTextSize">@dimen/stream_ui_text_size_input</item>
+        <item name="streamUiMessageComposerMessageInputTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerMessageInputHintColor">@color/stream_ui_text_color_hint</item>
+        <item name="streamUiMessageComposerMessageInputHintText">@string/stream_ui_message_composer_hint_normal</item>
+        <item name="streamUiMessageComposerMessageInputBackgroundDrawable">@drawable/stream_ui_shape_edit_text_round</item>
+        <item name="streamUiMessageComposerMessageInputCursorDrawable">@null</item>
+        <item name="streamUiMessageComposerScrollbarEnabled">false</item>
+        <item name="streamUiMessageComposerScrollbarFadingEnabled">false</item>
+        <item name="streamUiMessageComposerMessageInputMaxLines">7</item>
+        <item name="streamUiMessageComposerMessageInputCannotSendHintText">@string/stream_ui_message_composer_hint_cannot_send_message</item>
+
+        <!-- Leading content -->
+        <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
+        <item name="streamUiMessageComposerAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_attach</item>
+        <item name="streamUiMessageComposerAttachmentsButtonRippleColor">@null</item>
+        <item name="streamUiMessageComposerCommandsButtonVisible">true</item>
+        <item name="streamUiMessageComposerCommandsButtonIconDrawable">@drawable/stream_ui_ic_command</item>
+        <item name="streamUiMessageComposerCommandsButtonRippleColor">@null</item>
+
+        <!-- Footer content -->
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxVisible">true</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxDrawable">@null</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxText">@null</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageComposerAlsoSendToChannelCheckboxTextColor">@color/stream_ui_text_color_secondary</item>
+
+        <!-- Header content -->
+        <item name="streamUiMessageComposerEditModeText">@string/stream_ui_message_composer_mode_edit</item>
+        <item name="streamUiMessageComposerEditModeIconDrawable">@drawable/stream_ui_ic_edit</item>
+        <item name="streamUiMessageComposerReplyModeText">@string/stream_ui_message_composer_mode_reply</item>
+        <item name="streamUiMessageComposerReplyModeIconDrawable">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
+        <item name="streamUiMessageComposerDismissModeIconDrawable">@drawable/stream_ui_ic_clear</item>
+
+        <!-- Trailing content -->
+        <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>
+        <item name="streamUiMessageComposerSendMessageButtonIconDrawable">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
+    </style>
+
+    <style name="StreamUi.AttachmentsPickerDialog" parent="StreamUi">
+        <item name="streamUiAttachmentsPickerBackgroundColor">@color/stream_ui_white_smoke</item>
+        <item name="streamUiAttachmentsPickerAllowAccessButtonTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiAttachmentsPickerAllowAccessButtonTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiAttachmentsPickerSubmitAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiAttachmentsPickerAttachmentTabToggleButtonStateList">@color/stream_ui_attachment_tab_button</item>
+
+        <!-- Media attachments tab -->
+        <item name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToMediaButtonText">@string/stream_ui_message_composer_gallery_access</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiAttachmentsPickerVideoLengthTextVisible">true</item>
+        <item name="streamUiAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_white</item>
+        <item name="streamUiAttachmentsPickerVideoIconVisible">true</item>
+        <item name="streamUiAttachmentsPickerVideoIconDrawable">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaText">@string/stream_ui_message_composer_no_files</item>
+        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>
+
+        <!-- File attachments tab -->
+        <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToFilesButtonText">@string/stream_ui_message_composer_files_access</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToFilesIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiAttachmentsPickerRecentFilesText">@string/stream_ui_message_composer_recent_files</item>
+        <item name="streamUiAttachmentsPickerRecentFilesTextSize">@dimen/stream_ui_spacing_medium</item>
+        <item name="streamUiAttachmentsPickerRecentFilesTextColor">@color/stream_ui_black</item>
+        <item name="streamUiAttachmentsPickerFileManagerIconDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesText">@string/stream_ui_message_composer_no_files</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemNameTextColor">@color/stream_ui_black</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemSizeTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemSizeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxTextColor">@color/stream_ui_literal_white</item>
+
+        <!-- Camera attachments tab -->
+        <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToCameraButtonText">@string/stream_ui_message_composer_camera_access</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
+    </style>
 </resources>
