@@ -3,6 +3,7 @@ import io.getstream.chat.android.Dependencies
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'de.mannodermaus.android-junit5'
 }
 
 
