@@ -26,25 +26,11 @@ import io.getstream.chat.android.client.utils.Result
 
 /* Default filter to include FilterObject in a channel by its cid
 *
-* @param client - ChatClient to perform the filter
-* @param cid - The cid of the channel of the filter
-* @param filter - the filter to be included with the cid.
+* @param filter - the filter to be included.
+* @param offset - the offset to be included with the filter.
+* @param limit - the filter to be included with the filter.
 */
 internal object ChannelFilterRequest {
-    suspend fun filterByCid(client: ChatClient, cid: String, filter: FilterObject): Result<List<Channel>> =
-        client.queryChannelsInternal(
-            QueryChannelsRequest(
-                filter = Filters.and(
-                    filter,
-                    Filters.eq("cid", cid)
-                ),
-                offset = 0,
-                limit = 1,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-        ).await()
-
     suspend fun ChatClient.filterWithOffset(
         filter: FilterObject,
         offset: Int,
