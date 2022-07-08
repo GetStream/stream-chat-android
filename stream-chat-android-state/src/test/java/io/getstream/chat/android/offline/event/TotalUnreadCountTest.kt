@@ -152,7 +152,6 @@ internal class TotalUnreadCountTest {
                 logicRegistry = mock(),
                 stateRegistry = mock(),
                 mutableGlobalState = globalMutableState,
-                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = mock(),
                 currentUserId = currentUser.id

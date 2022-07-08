@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.clientState
 import kotlinx.coroutines.flow.StateFlow
 
 /**

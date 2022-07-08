@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.extensions.clientState
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView].

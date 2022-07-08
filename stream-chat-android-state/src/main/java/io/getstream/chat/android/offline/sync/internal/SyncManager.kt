@@ -28,12 +28,11 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -61,7 +60,7 @@ private const val QUERIES_TO_RETRY = 3
 internal class SyncManager(
     private val chatClient: ChatClient,
     private val globalState: MutableGlobalState,
-    private val clientState: ClientMutableState,
+    private val clientState: ClientState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -107,11 +106,6 @@ internal class SyncManager(
             setChannelUnreadCount(0)
             setBanned(false)
             setMutedUsers(emptyList())
-        }
-
-        clientState.run {
-            setInitialized(false)
-            setConnectionState(ConnectionState.OFFLINE)
         }
     }
 

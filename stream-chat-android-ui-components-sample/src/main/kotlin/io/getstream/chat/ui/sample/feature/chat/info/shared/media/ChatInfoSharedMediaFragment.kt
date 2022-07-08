@@ -27,7 +27,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.extensions.clientState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem

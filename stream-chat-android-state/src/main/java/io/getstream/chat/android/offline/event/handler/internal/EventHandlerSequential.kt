@@ -29,8 +29,6 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasOwnUser
@@ -74,11 +72,9 @@ import io.getstream.chat.android.client.extensions.internal.updateMembershipBann
 import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -124,7 +120,6 @@ internal class EventHandlerSequential(
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
-    private val clientMutableState: ClientMutableState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -138,7 +133,6 @@ internal class EventHandlerSequential(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: MutableGlobalState,
-        clientMutableState: ClientMutableState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
         currentUserId: UserId
@@ -149,7 +143,6 @@ internal class EventHandlerSequential(
         logicRegistry = logicRegistry,
         stateRegistry = stateRegistry,
         mutableGlobalState = mutableGlobalState,
-        clientMutableState = clientMutableState,
         repos = repos,
         syncManager = syncManager
     ) {
@@ -323,17 +316,9 @@ internal class EventHandlerSequential(
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
-                is DisconnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    clientMutableState.setConnectionState(ConnectionState.OFFLINE)
-                }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
-                    clientMutableState.setConnectionState(ConnectionState.CONNECTED)
-                    clientMutableState.setInitialized(true)
-                }
-                is ConnectingEvent -> if (batchEvent.isFromSocketConnection) {
-                    clientMutableState.setConnectionState(ConnectionState.CONNECTING)
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId

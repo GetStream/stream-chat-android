@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -143,9 +143,7 @@ public class StreamStatePluginFactory(
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
-        val clientState = ClientMutableState.get().apply {
-            clearState()
-        }
+        val clientState = ChatClient.instance().clientState
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -228,7 +226,6 @@ public class StreamStatePluginFactory(
                 chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
-                clientState.clearState()
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
@@ -271,7 +268,7 @@ public class StreamStatePluginFactory(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
-        clientMutableState: ClientMutableState,
+        clientMutableState: ClientState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
     ): EventHandler {
@@ -283,7 +280,6 @@ public class StreamStatePluginFactory(
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
-                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = syncManager,
             )

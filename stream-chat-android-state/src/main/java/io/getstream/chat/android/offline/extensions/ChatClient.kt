@@ -37,8 +37,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
-import io.getstream.chat.android.client.setup.state.ClientMutableState
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
@@ -78,12 +76,6 @@ public val ChatClient.state: StateRegistry
  */
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.getOrCreate()
-
-/**
- * [ClientState] instance that contains information about the current user, connection state, initialization state, etc.
- */
-public val ChatClient.clientState: ClientState
-    get() = ClientMutableState.get()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.

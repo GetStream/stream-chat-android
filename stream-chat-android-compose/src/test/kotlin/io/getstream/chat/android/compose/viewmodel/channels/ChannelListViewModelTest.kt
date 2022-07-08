@@ -276,10 +276,10 @@ internal class ChannelListViewModelTest {
         init {
             StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
-            ClientMutableState.instance = clientState
 
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {

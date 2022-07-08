@@ -82,10 +82,9 @@ import io.getstream.chat.android.client.extensions.internal.updateMembershipBann
 import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
@@ -117,7 +116,7 @@ internal class EventHandlerImpl(
     private val logic: LogicRegistry,
     private val state: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
-    private val clientMutableState: ClientMutableState,
+    private val clientMutableState: ClientState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -217,14 +216,10 @@ internal class EventHandlerImpl(
             when (event) {
                 is DisconnectedEvent -> {
                     logger.i { "[handleConnectEvents] received DisconnectedEvent" }
-                    clientMutableState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
                     updateCurrentUser(SelfUserFull(event.me))
-
-                    clientMutableState.setConnectionState(ConnectionState.CONNECTED)
-                    clientMutableState.setInitialized(true)
 
                     if (recoveryEnabled) {
                         syncManager.connectionRecovered()
@@ -241,7 +236,6 @@ internal class EventHandlerImpl(
 
                 is ConnectingEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectingEvent" }
-                    clientMutableState.setConnectionState(ConnectionState.CONNECTING)
                 }
 
                 else -> Unit // Ignore other events

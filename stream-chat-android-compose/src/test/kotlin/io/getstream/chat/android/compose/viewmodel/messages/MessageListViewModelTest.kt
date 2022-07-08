@@ -120,7 +120,8 @@ internal class MessageListViewModelTest {
         init {
             StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
-            ClientMutableState.instance = clientState
+
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {

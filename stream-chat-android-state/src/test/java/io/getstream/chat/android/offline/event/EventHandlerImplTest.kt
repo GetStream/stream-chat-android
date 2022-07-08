@@ -17,13 +17,10 @@
 package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
@@ -41,8 +38,8 @@ import io.getstream.chat.android.test.randomString
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
@@ -70,10 +67,12 @@ internal class EventHandlerImplTest {
     private lateinit var logicRegistry: LogicRegistry
     private lateinit var stateRegistry: StateRegistry
     private lateinit var globalState: GlobalMutableState
-    private lateinit var clientState: ClientMutableState
+    private lateinit var clientState: ClientState
     private lateinit var repositoryFacade: RepositoryFacade
     private lateinit var syncManager: SyncManager
     private lateinit var user: User
+
+    private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
 
     @BeforeAll
     fun beforeAll() {
@@ -83,84 +82,17 @@ internal class EventHandlerImplTest {
 
     @BeforeEach
     fun setUp() {
+        user = randomUser()
         chatClient = mock()
         logicRegistry = mock()
         stateRegistry = mock()
         globalState = GlobalMutableState.create()
-        clientState = ClientMutableState.create()
+        clientState = mock {
+            on(it.user) doReturn MutableStateFlow(user)
+            on(it.connectionState) doReturn connectionState
+        }
         repositoryFacade = mock()
         syncManager = mock()
-        user = randomUser()
-
-        clientState.setUser(user)
-    }
-
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `when connected event arrives, user should be updated and state should be propagated`(
-        type: EventHandlerType,
-    ) = runTest {
-        val eventHandler = buildEventHandler(type)
-        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
-
-        val connectedEvent = ConnectedEvent(
-            type = "type",
-            createdAt = Date(),
-            me = user,
-            connectionId = randomString()
-        )
-
-        eventHandler.handleEvents(connectedEvent)
-
-        clientState.connectionState.value `should be` ConnectionState.CONNECTED
-        clientState.initialized.value `should be` true
-    }
-
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `when disconnected event arrives, state should be propagated`(
-        type: EventHandlerType,
-    ) = runTest {
-        val eventHandler = buildEventHandler(type)
-        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
-
-        val connectedEvent = ConnectedEvent(
-            type = "type",
-            createdAt = Date(),
-            me = user,
-            connectionId = randomString()
-        )
-
-        val disconnectedEvent = DisconnectedEvent(
-            type = "type",
-            createdAt = Date(),
-        )
-
-        eventHandler.handleEvents(connectedEvent) // To make sure that we are not asserting the initial state
-        eventHandler.handleEvents(disconnectedEvent)
-
-        clientState.connectionState.value `should be` ConnectionState.OFFLINE
-    }
-
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `when connecting event arrives, state should be propagated`(
-        type: EventHandlerType,
-    ) = runTest {
-        val eventHandler = buildEventHandler(type)
-        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
-
-        val connectingEvent = ConnectingEvent(
-            type = "type",
-            createdAt = Date(),
-        )
-
-        eventHandler.handleEvents(connectingEvent)
-
-        clientState.connectionState.value `should be` ConnectionState.CONNECTING
     }
 
     @ParameterizedTest
@@ -192,7 +124,6 @@ internal class EventHandlerImplTest {
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = globalState,
-                clientMutableState = clientState,
                 repos = repositoryFacade,
                 syncManager = syncManager,
                 currentUserId = user.id

@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.errorhandler.onReactionError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -87,6 +88,7 @@ import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionData
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
@@ -125,6 +127,8 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.toMutableState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -199,6 +203,9 @@ internal constructor(
         }
     )
 
+    public val clientState: ClientState
+        get() = ClientMutableState.get()
+
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
@@ -228,6 +235,12 @@ internal constructor(
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
+
+                    clientState.toMutableState()?.run {
+                        setConnectionState(ConnectionState.CONNECTED)
+                        setInitialized(true)
+                        setUser(user)
+                    }
                 }
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
@@ -240,11 +253,15 @@ internal constructor(
                             if (ToggleService.isSocketExperimental().not()) {
                                 socketStateService.onSocketUnrecoverableError()
                             }
+                            clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                         }
                     }
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
+                }
+                is ConnectingEvent -> {
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
                 }
                 else -> Unit // Ignore other events
             }
@@ -999,6 +1016,7 @@ internal constructor(
         logger.logI("[disconnect] no args")
         notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
+        clientState.toMutableState()?.clearState()
         getCurrentUser().let(initializationCoordinator::userDisconnected)
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
