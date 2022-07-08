@@ -124,6 +124,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -332,6 +333,9 @@ internal constructor(
         val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
+
+        ClientMutableState.get().setUser(user)
+
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
                 logger.logE(
