@@ -500,7 +500,6 @@ public fun randomChannel(
 
 public fun randomMember(
     user: User = randomUser(),
-    role: String? = randomString(),
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     isInvited: Boolean? = randomBoolean(),
@@ -509,7 +508,6 @@ public fun randomMember(
     shadowBanned: Boolean = randomBoolean(),
 ): Member = Member(
     user = user,
-    role = role,
     createdAt = createdAt,
     updatedAt = updatedAt,
     isInvited = isInvited,
