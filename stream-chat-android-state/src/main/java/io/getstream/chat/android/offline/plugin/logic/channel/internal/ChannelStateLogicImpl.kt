@@ -419,7 +419,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (!mutableState.insideSearch.value || scrollUpdate) {
+        if (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
@@ -471,7 +471,7 @@ internal class ChannelStateLogicImpl(
         updateDataFromChannel(
             channel,
             shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-            scrollUpdate = true
+            scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
         )
     }
 
