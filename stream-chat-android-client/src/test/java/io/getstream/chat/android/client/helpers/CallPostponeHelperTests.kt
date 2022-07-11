@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.models.Channel

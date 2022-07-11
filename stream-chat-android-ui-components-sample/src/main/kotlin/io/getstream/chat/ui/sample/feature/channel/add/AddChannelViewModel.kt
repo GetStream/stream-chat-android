@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
