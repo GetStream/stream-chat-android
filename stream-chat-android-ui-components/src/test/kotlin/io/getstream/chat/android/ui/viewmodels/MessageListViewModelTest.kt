@@ -31,11 +31,11 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.MockChatClientBuilder
-import io.getstream.chat.android.ui.utils.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -54,7 +54,7 @@ internal class MessageListViewModelTest {
 
     @JvmField
     @RegisterExtension
-    val instantExecutorExtension: InstantExecutorExtension = InstantExecutorExtension()
+    val instantExecutorExtension: InstantTaskExecutorExtension = InstantTaskExecutorExtension()
 
     @Test
     fun `Given initial state remains unchanged Should be in loading state`() = runTest {

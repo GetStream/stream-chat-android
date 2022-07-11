@@ -30,11 +30,11 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
-import io.getstream.chat.android.ui.utils.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -55,7 +55,7 @@ internal class ChannelListViewModelTest {
 
     @JvmField
     @RegisterExtension
-    val instantExecutorExtension: InstantExecutorExtension = InstantExecutorExtension()
+    val instantExecutorExtension: InstantTaskExecutorExtension = InstantTaskExecutorExtension()
 
     @Test
     fun `Given channel list in loading state When showing the channel list Should show loading state`() =
