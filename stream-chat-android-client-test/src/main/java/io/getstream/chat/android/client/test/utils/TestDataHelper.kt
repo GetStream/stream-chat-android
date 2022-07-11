@@ -102,9 +102,9 @@ public class TestDataHelper {
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
 
     public val watcher1: User = user1
-    public val member1: Member = Member(user = user1, role = "user", isInvited = false)
-    public val member2: Member = Member(user = user2, role = "user", isInvited = false)
-    public val member3: Member = Member(user = user3, role = "user", isInvited = false)
+    public val member1: Member = Member(user = user1, isInvited = false)
+    public val member2: Member = Member(user = user2, isInvited = false)
+    public val member3: Member = Member(user = user3, isInvited = false)
 
     public val parentMessageId: String = "parentMessageId"
 

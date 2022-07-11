@@ -124,11 +124,7 @@ internal class ChannelLogic(
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
         channelStateLogic.refreshMuteState()
 
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
-         * so we force the backend usage */
-        if (!request.isFilteringNewerMessages()) {
-            runChannelQueryOffline(request)
-        }
+        runChannelQueryOffline(request)
     }
 
     override suspend fun onQueryChannelResult(
@@ -223,7 +219,8 @@ internal class ChannelLogic(
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
-                .await().also { result ->
+                .await()
+                .also { result ->
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }
 
@@ -235,6 +232,10 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (request.isFilteringNewerMessages()) return null
+
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
             if (request.filteringOlderMessages()) {
@@ -301,7 +302,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
 
     internal fun upsertMessages(messages: List<Message>) {
         channelStateLogic.upsertMessages(messages)
@@ -402,9 +403,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        if (mutableState.rawMessages.containsKey(message.id) || mutableState.endOfNewerMessages.value) {
-            channelStateLogic.upsertMessage(message)
-        }
+        channelStateLogic.upsertMessage(message)
     }
 
     /**

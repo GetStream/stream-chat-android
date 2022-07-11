@@ -614,6 +614,20 @@ public class MessageListViewModel(
     }
 
     /**
+     * Returns a message with the given ID from the [messageListData].
+     *
+     * @param messageId The ID of the selected message.
+     * @return The [Message] with the ID, if it exists.
+     */
+    public fun getMessageWithId(messageId: String): Message? {
+        val messageItem = messageListData?.value?.items?.firstOrNull {
+            it is MessageListItem.MessageItem && it.message.id == messageId
+        }
+
+        return (messageItem as? MessageListItem.MessageItem)?.message
+    }
+
+    /**
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
      * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
      * list.

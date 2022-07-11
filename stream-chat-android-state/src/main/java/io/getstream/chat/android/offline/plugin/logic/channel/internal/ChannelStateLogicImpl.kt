@@ -244,7 +244,9 @@ internal class ChannelStateLogicImpl(
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message) {
-        upsertMessages(listOf(message))
+        if (mutableState.rawMessages.containsKey(message.id) || mutableState.endOfNewerMessages.value) {
+            upsertMessages(listOf(message))
+        }
     }
 
     /**
@@ -416,7 +418,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (!mutableState.insideSearch.value || scrollUpdate) {
+        if (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
@@ -461,8 +463,8 @@ internal class ChannelStateLogicImpl(
 
         updateDataFromChannel(
             channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages() || !request.isFilteringMessages(),
-            scrollUpdate = true
+            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+            scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
         )
     }
 

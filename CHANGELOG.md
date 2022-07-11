@@ -21,6 +21,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- 🚨 Breaking change: Removed the `Member.role` field. [3851](https://github.com/GetStream/stream-chat-android/pull/3851)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -49,10 +50,14 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
+- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
+- The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 
 ### ⬆️ Improved
+- `MessageListView` now allows multiple re-bindings of `MessageListViewModel` provided that `MessageListViewModel.deletedMessageVisibility` has not been changed since `MessageListView` was first initialized. [#3843](https://github.com/GetStream/stream-chat-android/pull/3843)
 
 ### ✅ Added
+- Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
 - Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
@@ -69,6 +74,7 @@
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
+- Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
 
 ### ❌ Removed
 
