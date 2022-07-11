@@ -31,13 +31,15 @@ public class SynchronizedReference<T : Any>(
         }
     }
 
-    public fun reset() {
-        set(null)
+    public fun reset(): Boolean {
+        return set(null) != null
     }
 
-    public fun set(value: T?) {
+    public fun set(value: T?): T? {
         synchronized(this) {
+            val currentValue = this.value
             this.value = value
+            return currentValue
         }
     }
 }

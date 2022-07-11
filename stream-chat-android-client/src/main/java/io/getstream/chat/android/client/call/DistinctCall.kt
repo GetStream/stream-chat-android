@@ -44,7 +44,7 @@ internal class DistinctCall<T : Any>(
     private val deferred = SynchronizedReference<Deferred<Result<T>>>()
     private val delegateCall = AtomicReference<Call<T>>()
 
-    internal fun originCall(): Call<T> = callBuilder().also { delegateCall.set(it) }
+    internal fun originCall(): Call<T> = callBuilder()
 
     override fun execute(): Result<T> = runBlocking { await() }
 
@@ -62,7 +62,10 @@ internal class DistinctCall<T : Any>(
     override suspend fun await(): Result<T> = Call.runCatching {
         deferred.getOrCreate {
             distinctScope.async {
-                callBuilder().await().also { doFinally() }
+                callBuilder()
+                    .also { delegateCall.set(it) }
+                    .await()
+                    .also { doFinally() }
             }
         }.await()
     }
@@ -74,8 +77,9 @@ internal class DistinctCall<T : Any>(
     }
 
     private fun doFinally() {
-        deferred.reset()
-        onFinished()
+        if (deferred.reset()) {
+            onFinished()
+        }
     }
 
     private val Result<T>.isCanceled get() = this == Call.callCanceledError<T>()
