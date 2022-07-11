@@ -488,12 +488,6 @@ internal class ChannelStateLogicImpl(
                 mutableState.setEndOfOlderMessages(true)
             }
         }
-
-        updateDataFromChannel(
-            channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-            scrollUpdate = true
-        )
     }
 
     /**
