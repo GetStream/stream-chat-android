@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- The class `io.getstream.chat.android.offline.model.connection.ConnectionState` was moved to `io.getstream.chat.android.client.models.ConnectionState`. Please update your imports to be able to compile code using this class. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852).
+
 
 ### ❌ Removed
 
@@ -16,7 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ClientState` and `ClientMutableState` to track state of the SDK. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
+- Base state of the SDK can be check using `io.getstream.chat.android.client.setup.state.ClientState` interface. Use this interface to receive the state of the SDK as StateFlows. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
 
 ### ⚠️ Changed
 -. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)
