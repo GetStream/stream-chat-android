@@ -615,6 +615,20 @@ public class MessageListViewModel(
     }
 
     /**
+     * Returns a message with the given ID from the [messageListData].
+     *
+     * @param messageId The ID of the selected message.
+     * @return The [Message] with the ID, if it exists.
+     */
+    public fun getMessageWithId(messageId: String): Message? {
+        val messageItem = messageListData?.value?.items?.firstOrNull {
+            it is MessageListItem.MessageItem && it.message.id == messageId
+        }
+
+        return (messageItem as? MessageListItem.MessageItem)?.message
+    }
+
+    /**
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *

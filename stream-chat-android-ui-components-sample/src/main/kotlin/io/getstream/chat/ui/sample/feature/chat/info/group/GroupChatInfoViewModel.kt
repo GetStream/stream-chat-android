@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -69,7 +70,8 @@ class GroupChatInfoViewModel(
         _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
             _state.value = _state.value?.copy(
                 channelName = channelData.name,
-                ownCapabilities = channelData.ownCapabilities
+                ownCapabilities = channelData.ownCapabilities,
+                createdBy = channelData.createdBy,
             )
         }
     }
@@ -146,6 +148,7 @@ class GroupChatInfoViewModel(
 
     data class State(
         val members: List<Member>,
+        val createdBy: User,
         val channelName: String,
         val channelMuted: Boolean,
         val shouldExpandMembers: Boolean?,
@@ -178,6 +181,7 @@ class GroupChatInfoViewModel(
 
         private val INITIAL_STATE = State(
             members = emptyList(),
+            createdBy = User(),
             channelName = "",
             channelMuted = false,
             shouldExpandMembers = null,

@@ -66,31 +66,26 @@ object TestData {
 
     fun member1() = Member(
         user = user1(),
-        role = "user",
         isInvited = false
     )
 
     fun member2() = Member(
         user = user2(),
-        role = "user",
         isInvited = false
     )
 
     fun member3() = Member(
         user = user3(),
-        role = "user",
         isInvited = false
     )
 
     fun member4() = Member(
         user = user4(),
-        role = "user",
         isInvited = false
     )
 
     fun member5() = Member(
         user = user5(),
-        role = "user",
         isInvited = false
     )
 

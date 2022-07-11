@@ -101,7 +101,7 @@ class ChatInfoFragment : Fragment() {
     private fun buildChatInfoItems(state: ChatInfoViewModel.State): List<ChatInfoItem> {
         return mutableListOf<ChatInfoItem>().apply {
             if (state.member != null) {
-                add(ChatInfoItem.MemberItem(state.member))
+                add(ChatInfoItem.MemberItem(state.member, state.createdBy))
                 add(ChatInfoItem.Separator)
             }
 
