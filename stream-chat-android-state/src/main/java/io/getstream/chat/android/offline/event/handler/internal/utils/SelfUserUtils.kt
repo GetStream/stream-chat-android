@@ -16,7 +16,8 @@
 
 package io.getstream.chat.android.offline.event.handler.internal.utils
 
-import io.getstream.chat.android.client.setup.state.internal.toMutableState
+import io.getstream.chat.android.client.setup.state.ClientMutableState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
@@ -40,3 +41,5 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     setTotalUnreadCount(me.totalUnreadCount)
     setChannelUnreadCount(me.unreadChannels)
 }
+
+private fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState
