@@ -53,6 +53,7 @@ internal class DistinctCall<T : Any>(
         }
     }
 
+    @SuppressWarnings("TooGenericExceptionCaught")
     override suspend fun await(): Result<T> = try {
         deferred.getOrCreate {
             distinctScope.async {
