@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.utils.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 
 /* Default filter to include FilterObject in a channel by its cid

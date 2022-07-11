@@ -19,69 +19,38 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class ZipCall<A : Any, B : Any>(
     private val callA: Call<A>,
     private val callB: Call<B>
 ) : Call<Pair<A, B>> {
-    private var job: Job? = null
+    private val canceled = AtomicBoolean(false)
 
     override fun cancel() {
-        job?.cancel()
+        canceled.set(true)
+        callA.cancel()
+        callB.cancel()
     }
 
-    override fun execute(): Result<Pair<A, B>> {
-        val job = Job()
-        this.job = job
-
-        return runBlocking(job) {
-            val deferredA = async { callA.await() }
-            val deferredB = async { callB.await() }
-
-            val resultA = deferredA.await()
-            if (resultA.isError) {
-                deferredB.cancel()
-                return@runBlocking getErrorA(resultA)
-            }
-
-            val resultB = deferredB.await()
-            if (resultB.isError) {
-                return@runBlocking getErrorB(resultB)
-            }
-
-            Result(Pair(resultA.data(), resultB.data()))
-        }
-    }
+    override fun execute(): Result<Pair<A, B>> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<Pair<A, B>>) {
-        suspend fun performCallback(result: Result<Pair<A, B>>) {
-            withContext(DispatcherProvider.Main) { callback.onResult(result) }
-        }
-
-        job = GlobalScope.launch {
-            val deferredA = async { callA.await() }
-            val deferredB = async { callB.await() }
-
-            val resultA = deferredA.await()
-            if (resultA.isError) {
-                deferredB.cancel()
-                performCallback(getErrorA(resultA))
-                return@launch
+        callA.enqueue { resultA ->
+            when {
+                canceled.get() -> { /* no-op */ }
+                resultA.isSuccess -> callB.enqueue { resultB ->
+                    when {
+                        canceled.get() -> null
+                        resultB.isSuccess -> resultA.combine(resultB)
+                        else -> getErrorB<A, B>(resultB)
+                    }?.let(callback::onResult)
+                }
+                else -> callback.onResult(getErrorA<A, B>(resultA).also { callB.cancel() })
             }
-
-            val resultB = deferredB.await()
-            if (resultB.isError) {
-                performCallback(getErrorB(resultB))
-                return@launch
-            }
-
-            performCallback(Result(Pair(resultA.data(), resultB.data())))
         }
     }
 
@@ -91,5 +60,28 @@ internal class ZipCall<A : Any, B : Any>(
 
     private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
         return Result(ChatError("Error executing callB", resultB.error().cause))
+    }
+
+    private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> =
+        Result(Pair(this.data(), result.data()))
+
+    override suspend fun await(): Result<Pair<A, B>> = withContext(DispatcherProvider.IO) {
+        val deferredA = async { callA.await() }
+        val deferredB = async { callB.await() }
+
+        val resultA = deferredA.await()
+        if (canceled.get()) return@withContext Call.callCanceledError()
+        if (resultA.isError) {
+            deferredB.cancel()
+            return@withContext getErrorA(resultA)
+        }
+
+        val resultB = deferredB.await()
+        if (canceled.get()) return@withContext Call.callCanceledError()
+        if (resultB.isError) {
+            return@withContext getErrorB(resultB)
+        }
+
+        resultA.combine(resultB)
     }
 }

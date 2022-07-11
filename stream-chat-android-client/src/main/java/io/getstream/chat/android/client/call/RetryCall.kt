@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.retry.CallRetryService
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -24,6 +25,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A wrapper around [Call] that allows retrying the original call based on
@@ -41,25 +44,32 @@ internal class RetryCall<T : Any>(
 ) : Call<T> {
 
     private var job: Job? = null
+    private val canceled = AtomicBoolean(false)
 
-    override fun execute(): Result<T> = runBlocking {
-        callRetryService.runAndRetry {
-            originalCall
-        }
-    }
+    override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        scope.launch {
-            val result = callRetryService.runAndRetry {
-                originalCall
-            }
+        job = scope.launch {
+            val result = await()
             withContext(DispatcherProvider.Main) {
+                yield()
                 callback.onResult(result)
             }
         }
     }
 
     override fun cancel() {
+        canceled.set(true)
+        originalCall.cancel()
         job?.cancel()
+    }
+
+    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
+        callRetryService.runAndRetry {
+            originalCall
+                .takeUnless { canceled.get() }
+                ?.await()
+                ?: callCanceledError()
+        }
     }
 }
