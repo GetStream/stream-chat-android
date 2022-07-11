@@ -143,7 +143,9 @@ public class StreamStatePluginFactory(
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
-        val clientState = ChatClient.instance().clientState
+        val clientState = chatClient.clientState.also { clientState ->
+            clientState.clearState()
+        }
 
         val repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -226,6 +228,7 @@ public class StreamStatePluginFactory(
                 chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
+                clientState.clearState()
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()

@@ -180,17 +180,6 @@ public class GlobalMutableState private constructor(
             GlobalMutableState(ClientState.create())
     }
 
-    @Deprecated(
-        message = "Use ClientMutableState.clearState()",
-        replaceWith = ReplaceWith(
-            expression = "ChatClient.instance().clientState.toMutableState()?.clearState()",
-            imports = [
-                "io.getstream.chat.android.client.ChatClient",
-                "io.getstream.chat.android.offline.extensions.clientState",
-                "io.getstream.chat.android.client.setup.state.internal.toMutableState"
-            ]
-        )
-    )
     override fun clearState() {
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
