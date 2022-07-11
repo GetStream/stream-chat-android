@@ -44,6 +44,7 @@ public enum class MessageOptionsUserReactionAlignment(public val value: Int) {
      * Aligns the reaction to the start of user avatar if the reaction is from the current user otherwise aligns it
      * to the end of the avatar.
      */
+    @Suppress("MagicNumber")
     BY_USER_INVERTED(3)
 }
 
