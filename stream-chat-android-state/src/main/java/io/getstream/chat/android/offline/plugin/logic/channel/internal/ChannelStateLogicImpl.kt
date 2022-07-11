@@ -463,7 +463,7 @@ internal class ChannelStateLogicImpl(
 
         updateDataFromChannel(
             channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
+            shouldRefreshMessages = request.isFilteringAroundIdMessages() || !request.isFilteringMessages(),
             scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
         )
     }
