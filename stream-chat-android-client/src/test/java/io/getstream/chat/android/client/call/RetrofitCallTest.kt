@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
@@ -84,7 +85,8 @@ internal class RetrofitCallTest {
         blockedRetrofit2Call.unblock()
         val result = deferedResult.await()
 
-        result `should be equal to` Call.callCanceledError()
+        result.isError.`should be true`()
+        result.error() `should be instance of` ChatError::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` false
         blockedRetrofit2Call.isCanceled() `should be equal to` true
@@ -141,6 +143,7 @@ internal class RetrofitCallTest {
         val call = RetrofitCall(blockedRetrofit2Call, parser, testCoroutines.scope)
 
         val deferedResult = async { call.await() }
+        delay(10)
         call.cancel()
         blockedRetrofit2Call.unblock()
         val result = deferedResult.await()

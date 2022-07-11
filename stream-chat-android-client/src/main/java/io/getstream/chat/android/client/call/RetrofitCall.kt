@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -25,39 +24,43 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import retrofit2.awaitResponse
-import java.util.concurrent.atomic.AtomicBoolean
 
 internal class RetrofitCall<T : Any>(
     private val call: retrofit2.Call<T>,
     private val parser: ChatParser,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
 ) : Call<T> {
-
-    private var canceled = AtomicBoolean(false)
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
     override fun cancel() {
-        canceled.set(true)
         call.cancel()
+        callScope.coroutineContext.cancelChildren()
     }
 
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        scope.launch { notifyResult(call.getResult(), callback) }
+        callScope.launch { notifyResult(call.getResult(), callback) }
     }
 
-    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
-        call.getResult().takeUnless { canceled.get() } ?: callCanceledError()
+    override suspend fun await(): Result<T> = Call.runCatching {
+        withContext(callScope.coroutineContext) {
+            call.getResult()
+        }
     }
 
     private suspend fun notifyResult(result: Result<T>, callback: Call.Callback<T>) =
         withContext(DispatcherProvider.Main) {
-            result.takeUnless { canceled.get() }?.let(callback::onResult)
+            callback.onResult(result)
         }
 
     private fun Throwable.toFailedResult(): Result<T> = Result(this.toFailedError())
@@ -68,7 +71,7 @@ internal class RetrofitCall<T : Any>(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun retrofit2.Call<T>.getResult(): Result<T> = withContext(scope.coroutineContext) {
+    private suspend fun retrofit2.Call<T>.getResult(): Result<T> = withContext(callScope.coroutineContext) {
         try {
             awaitResponse().getResult()
         } catch (t: Throwable) {
@@ -77,7 +80,7 @@ internal class RetrofitCall<T : Any>(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun Response<T>.getResult(): Result<T> = withContext(scope.coroutineContext) {
+    private suspend fun Response<T>.getResult(): Result<T> = withContext(callScope.coroutineContext) {
         if (isSuccessful) {
             try {
                 Result(body()!!)
