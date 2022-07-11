@@ -44,7 +44,9 @@ public interface Call<T : Any> {
 
     /**
      * Executes the call asynchronously, on a background thread. Safe to call from the main
-     * thread. The [callback] will always be invoked on the main thread.
+     * thread.
+     *
+     * The [callback] will only be invoked in case the [Call] is not canceled, and always on the main thread.
      */
     public fun enqueue(callback: Callback<T>)
 
@@ -57,7 +59,7 @@ public interface Call<T : Any> {
     public fun enqueue(): Unit = enqueue {}
 
     /**
-     * Awaits the result of [this] Call in a suspending way, asynchronously.
+     * Awaits the result of this [Call] in a suspending way, asynchronously.
      * Safe to call from any CoroutineContext.
      *
      * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
@@ -65,7 +67,7 @@ public interface Call<T : Any> {
     public suspend fun await(): Result<T>
 
     /**
-     * Cancels the execution of the call, if cancellation is supported for the operation.
+     * Cancels the execution of the call.
      */
     public fun cancel()
 
