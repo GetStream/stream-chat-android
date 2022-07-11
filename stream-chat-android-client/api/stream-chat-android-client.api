@@ -3585,9 +3585,6 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
 }
 
-public final class io/getstream/chat/android/client/setup/state/internal/ClientStateImplKt {
-}
-
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
 	public fun <init> (ILjava/util/List;)V
 	public final fun component1 ()I
