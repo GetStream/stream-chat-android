@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -55,23 +56,6 @@ internal class DoOnStartCallTest {
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` true
         blockedCall.isCanceled() `should be equal to` false
-    }
-
-    @Test
-    fun `Canceled Call should be executed and return a cancel error`() = runTest {
-        val blockedCall = BlockedCall(validResult)
-        val call = blockedCall.doOnStart(testCoroutines.scope, sideEffect)
-
-        val deferedResult = async { call.execute() }
-        call.cancel()
-        blockedCall.unblock()
-        val result = deferedResult.await()
-
-        result `should be equal to` Call.callCanceledError()
-        sideEffect.`should be invoked`()
-        blockedCall.isStarted() `should be equal to` false
-        blockedCall.isCompleted() `should be equal to` false
-        blockedCall.isCanceled() `should be equal to` true
     }
 
     @Test
@@ -130,13 +114,14 @@ internal class DoOnStartCallTest {
         val call = blockedCall.doOnStart(testCoroutines.scope, sideEffect)
 
         val deferedResult = async { call.await() }
+        delay(10)
         call.cancel()
         blockedCall.unblock()
         val result = deferedResult.await()
 
         result `should be equal to` Call.callCanceledError()
         sideEffect.`should be invoked`()
-        blockedCall.isStarted() `should be equal to` false
+        blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` false
         blockedCall.isCanceled() `should be equal to` true
     }
