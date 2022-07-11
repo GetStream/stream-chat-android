@@ -1315,7 +1315,7 @@ internal constructor(
             interceptor is PrepareMessageInterceptor
         } as? PrepareMessageInterceptor
 
-        val preparedMessage = getCurrentUser()?.let { user ->
+        val preparedMessage = getStoredUser()?.let { user ->
             prepareMessageInterceptor?.prepareMessage(message, channelId, channelType, user)
         } ?: message
 
