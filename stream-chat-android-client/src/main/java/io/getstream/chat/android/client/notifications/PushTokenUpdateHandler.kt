@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.notifications
 import android.content.Context
 import android.content.SharedPreferences
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device

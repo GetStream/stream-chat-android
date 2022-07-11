@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -27,17 +26,27 @@ import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeFalse
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@ExtendWith(TestCoroutineExtension::class)
 internal class ExtraDataValidatorTests {
 
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
     private val chatApi: ChatApi = mock()
-    private val validator = ExtraDataValidator(chatApi)
+    private lateinit var validator: ExtraDataValidator
+
+    @BeforeEach
+    fun setup() {
+        validator = ExtraDataValidator(testCoroutines.scope, chatApi)
+    }
 
     @Test
     fun testUpdateChannel() = runTest {

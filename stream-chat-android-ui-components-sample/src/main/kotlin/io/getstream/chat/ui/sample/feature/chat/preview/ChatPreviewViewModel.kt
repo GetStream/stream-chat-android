@@ -22,8 +22,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.flow.filterNotNull

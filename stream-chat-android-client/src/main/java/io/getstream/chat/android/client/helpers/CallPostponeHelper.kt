@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.helpers
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
@@ -68,7 +67,7 @@ internal class CallPostponeHelper(
         try {
             doJob(attemptsCount, job)
         } catch (e: Exception) {
-            ErrorCall(ChatError(e.message, e))
+            ErrorCall(coroutineScope, ChatError(e.message, e))
         }
 
     private tailrec suspend fun <T> doJob(attemptCount: Int = attemptsCount, job: () -> T): T {
