@@ -16,54 +16,48 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
-import java.util.concurrent.atomic.AtomicBoolean
 
 internal class DoOnResultCall<T : Any>(
     private val originalCall: Call<T>,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val consumer: suspend (Result<T>) -> Unit,
 ) : Call<T> {
 
-    private var job: Job? = null
-    private val canceled = AtomicBoolean(false)
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        scope.launch {
+        callScope.launch {
             originalCall.enqueue { result ->
-                if (!canceled.get()) {
-                    job = scope.launch {
-                        withContext(DispatcherProvider.Main) {
-                            callback.onResult(result)
-                        }
-                        yield()
-                        consumer(result)
+                callScope.launch {
+                    withContext(DispatcherProvider.Main) {
+                        callback.onResult(result)
                     }
+                    consumer(result)
                 }
             }
         }
     }
 
     override fun cancel() {
-        canceled.set(true)
         originalCall.cancel()
-        job?.cancel()
+        callScope.coroutineContext.cancelChildren()
     }
 
-    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
-        originalCall.await()
-            .takeUnless { canceled.get() }
-            ?.also { consumer(it) }
-            ?: callCanceledError()
+    override suspend fun await(): Result<T> = Call.runCatching {
+        withContext(callScope.coroutineContext) {
+            originalCall.await().also { consumer(it) }
+        }
     }
 }
