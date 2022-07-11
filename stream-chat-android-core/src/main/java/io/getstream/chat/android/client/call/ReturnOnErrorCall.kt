@@ -16,42 +16,38 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A wrapper around [Call] that swallows the error and emits new data from [onErrorReturn].
  */
 public class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
 ) : Call<T> {
 
-    private var job: Job? = null
-    private val canceled = AtomicBoolean(false)
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        scope.launch {
+        callScope.launch {
             originalCall.enqueue { originalResult ->
-                job = scope.launch {
-                    val finalResult = originalResult
-                        .takeUnless { canceled.get() }
-                        ?.let { map(it) }
-                    yield()
+                callScope.launch {
+                    val finalResult = map(originalResult)
                     withContext(DispatcherProvider.Main) {
-                        finalResult?.let(callback::onResult)
+                        callback.onResult(finalResult)
                     }
                 }
             }
@@ -59,17 +55,14 @@ public class ReturnOnErrorCall<T : Any>(
     }
 
     override fun cancel() {
-        canceled.set(true)
         originalCall.cancel()
-        job?.cancel()
+        callScope.coroutineContext.cancelChildren()
     }
 
-    override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
-        map(
-            originalCall.await()
-                .takeUnless { canceled.get() }
-                ?: callCanceledError()
-        )
+    override suspend fun await(): Result<T> = Call.runCatching(::map) {
+        withContext(callScope.coroutineContext) {
+            map(originalCall.await())
+        }
     }
 
     private suspend fun map(result: Result<T>): Result<T> = when (result.isSuccess) {

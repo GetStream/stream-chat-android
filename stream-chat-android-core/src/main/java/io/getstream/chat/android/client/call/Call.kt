@@ -78,10 +78,13 @@ public interface Call<T : Any> {
         public fun <T : Any> callCanceledError(): Result<T> =
             Result.error(ChatError("The call was canceled before complete its execution."))
 
-        public suspend fun <T : Any> runCatching(block: suspend () -> Result<T>): Result<T> = try {
+        public suspend fun <T : Any> runCatching(
+            errorMap: suspend (originalResultError: Result<T>) -> Result<T> = { it },
+            block: suspend () -> Result<T>,
+        ): Result<T> = try {
             block().also { yield() }
         } catch (t: Throwable) {
-            t.toResult()
+            errorMap(t.toResult())
         }
 
         private fun <T : Any> Throwable.toResult(): Result<T> = when (this) {
