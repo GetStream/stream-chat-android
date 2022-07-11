@@ -38,7 +38,7 @@ internal class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
         isBlocked.set(false)
     }
 
-    public fun block() {
+    fun block() {
         isBlocked.set(true)
     }
 
@@ -75,5 +75,9 @@ internal class BlockedCall<T : Any>(private val result: Result<T>) : Call<T> {
 
     override fun cancel() {
         cancelled.set(true)
+    }
+
+    fun uncancel() {
+        cancelled.set(false)
     }
 }

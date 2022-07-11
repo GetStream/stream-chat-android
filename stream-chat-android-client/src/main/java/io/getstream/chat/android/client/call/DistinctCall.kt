@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.concurrency.SynchronizedReference
-import kotlinx.coroutines.CancellationException
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +28,8 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
@@ -40,48 +42,40 @@ internal class DistinctCall<T : Any>(
 
     private val distinctScope = scope + SupervisorJob(scope.coroutineContext.job)
     private val deferred = SynchronizedReference<Deferred<Result<T>>>()
+    private val delegateCall = AtomicReference<Call<T>>()
 
-    internal fun originCall(): Call<T> = callBuilder()
+    internal fun originCall(): Call<T> = callBuilder().also { delegateCall.set(it) }
 
     override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
         distinctScope.launch {
             await().takeUnless { it.isCanceled }?.also { result ->
-                callback.onResult(result)
+                withContext(DispatcherProvider.Main) {
+                    callback.onResult(result)
+                }
             }
         }
     }
 
     @SuppressWarnings("TooGenericExceptionCaught")
-    override suspend fun await(): Result<T> = try {
+    override suspend fun await(): Result<T> = Call.runCatching {
         deferred.getOrCreate {
             distinctScope.async {
-                callBuilder().await()
+                callBuilder().await().also { doFinally() }
             }
         }.await()
-    } catch (e: Throwable) {
-        e.toResult()
-    } finally {
-        doFinally()
     }
 
     override fun cancel() {
-        try {
-            distinctScope.coroutineContext.cancelChildren()
-        } finally {
-            doFinally()
-        }
+        delegateCall.get()?.cancel()
+        distinctScope.coroutineContext.cancelChildren()
+        doFinally()
     }
 
     private fun doFinally() {
         deferred.reset()
         onFinished()
-    }
-
-    private fun Throwable.toResult(): Result<T> = when (this) {
-        is CancellationException -> Call.callCanceledError()
-        else -> Result.error(this)
     }
 
     private val Result<T>.isCanceled get() = this == Call.callCanceledError<T>()

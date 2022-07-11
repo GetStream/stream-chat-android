@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -51,7 +52,8 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
+        val onFinished: () -> Unit = mock()
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder, onFinished)
 
         val deferredResults = call.asyncRun { this.await() }
         callbacks.forEach(call::enqueue)
@@ -64,6 +66,7 @@ internal class DistinctCallTest {
             verify(it, times(1)).onResult(eq(validResult))
         }
         spyCallBuilder.`should be invoked once`()
+        verify(onFinished, times(1)).invoke()
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` true
         blockedCall.isCanceled() `should be equal to` false
@@ -74,13 +77,18 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult).apply { unblock() }
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
+        val onFinished: () -> Unit = mock()
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder, onFinished)
 
         val result = call.execute()
         call.cancel()
         delay(10)
+        blockedCall.block()
+        blockedCall.uncancel()
+        Mockito.reset(onFinished)
         val deferredResults = call.asyncRun { this.await() }
         callbacks.forEach(call::enqueue)
+        blockedCall.unblock()
 
         result `should be equal to` validResult
         deferredResults.forEach {
@@ -89,6 +97,7 @@ internal class DistinctCallTest {
         callbacks.forEach {
             verify(it, times(1)).onResult(eq(validResult))
         }
+        verify(onFinished, times(1)).invoke()
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` true
         blockedCall.isCanceled() `should be equal to` false
@@ -100,10 +109,12 @@ internal class DistinctCallTest {
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder) { }
+        val onFinished: () -> Unit = mock()
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder, onFinished)
 
         callbacks.forEach(call::enqueue)
         val deferredResults = call.asyncRun { this.await() }
+        delay(10)
         call.cancel()
         blockedCall.unblock()
 
@@ -113,6 +124,7 @@ internal class DistinctCallTest {
         callbacks.forEach {
             verify(it, never()).onResult(any())
         }
+        verify(onFinished, times(1)).invoke()
         spyCallBuilder.`should be invoked once`()
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` false
@@ -125,17 +137,21 @@ internal class DistinctCallTest {
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacksPreviousInvocation: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }
-        val call = DistinctCall(testCoroutines.scope, spyCallBuilder) { }
+        val onFinished: () -> Unit = mock()
+        val call = DistinctCall(scope = testCoroutines.scope, callBuilder = spyCallBuilder, onFinished)
 
         callbacksPreviousInvocation.forEach(call::enqueue)
         val previousDeferredResults = call.asyncRun { this.await() }
         call.cancel()
         blockedCall.unblock()
         spyCallBuilder.reset()
+        Mockito.reset(onFinished)
+        blockedCall.uncancel()
         delay(10)
         blockedCall.block()
         callbacks.forEach(call::enqueue)
         val deferredResults = call.asyncRun { this.await() }
+        delay(10)
         blockedCall.unblock()
 
         callbacksPreviousInvocation.forEach {
@@ -150,6 +166,7 @@ internal class DistinctCallTest {
         callbacks.forEach {
             verify(it, times(1)).onResult(eq(validResult))
         }
+        verify(onFinished, times(1)).invoke()
         spyCallBuilder.`should be invoked once`()
     }
 
