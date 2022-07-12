@@ -20,8 +20,11 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
@@ -30,32 +33,40 @@ import kotlinx.coroutines.withContext
  */
 public class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
 ) : Call<T> {
 
-    private var job: Job? = null
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
-    override fun execute(): Result<T> = runBlocking {
-        originalCall.execute().let {
-            if (it.isSuccess) it
-            else onErrorReturn(it.error())
-        }
-    }
+    override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        originalCall.enqueue { originalResult ->
-            if (originalResult.isSuccess) callback.onResult(originalResult)
-            else job = scope.launch {
-                val result = onErrorReturn(originalResult.error())
-                withContext(DispatcherProvider.Main) {
-                    callback.onResult(result)
+        callScope.launch {
+            originalCall.enqueue { originalResult ->
+                callScope.launch {
+                    val finalResult = map(originalResult)
+                    withContext(DispatcherProvider.Main) {
+                        callback.onResult(finalResult)
+                    }
                 }
             }
         }
     }
 
     override fun cancel() {
-        job?.cancel()
+        originalCall.cancel()
+        callScope.coroutineContext.cancelChildren()
+    }
+
+    override suspend fun await(): Result<T> = Call.runCatching(::map) {
+        withContext(callScope.coroutineContext) {
+            map(originalCall.await())
+        }
+    }
+
+    private suspend fun map(result: Result<T>): Result<T> = when (result.isSuccess) {
+        true -> result
+        else -> onErrorReturn(result.error())
     }
 }

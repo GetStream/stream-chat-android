@@ -20,7 +20,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -38,7 +37,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
@@ -158,7 +156,6 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.Executor
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 /**
@@ -1060,7 +1057,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(scope, ChatError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1449,8 +1446,10 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
-        callPostponeHelper.postponeCall { api.queryChannels(request) }
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
+        logger.logD("[queryChannelsInternal] request: $request")
+        return callPostponeHelper.postponeCall { api.queryChannels(request) }
+    }
 
     @CheckResult
     @InternalStreamChatApi
@@ -1459,7 +1458,7 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        logger.logD("Querying channel")
+        logger.logD("[queryChannelInternal] cid: $channelType:$channelId, request: $request")
         return api.queryChannel(channelType, channelId, request)
     }
 
@@ -1494,12 +1493,12 @@ internal constructor(
         }
         return queryChannelCall.doOnStart(scope) {
             relevantPlugins.forEach { plugin ->
-                logger.logD("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
+                logger.logV("[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}")
                 plugin.onQueryChannelRequest(channelType, channelId, request)
             }
         }.doOnResult(scope) { result ->
             relevantPlugins.forEach { plugin ->
-                logger.logD("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
+                logger.logV("[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}")
                 plugin.onQueryChannelResult(result, channelType, channelId, request)
             }
         }.precondition(relevantPlugins) {
@@ -1519,7 +1518,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        logger.logD("Querying channels")
+        logger.logD("[queryChannels] request: $request")
 
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
@@ -1528,12 +1527,12 @@ internal constructor(
             api.queryChannels(request)
         }.doOnStart(scope) {
             relevantPluginsLazy().forEach { listener ->
-                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsRequest")
+                logger.logV("[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}")
                 listener.onQueryChannelsRequest(request)
             }
         }.doOnResult(scope) { result ->
             relevantPluginsLazy().forEach { listener ->
-                logger.logD("Applying ${listener::class.qualifiedName}.onQueryChannelsResult")
+                logger.logV("[queryChannels] #doOnResult; plugin: ${listener::class.qualifiedName}")
                 listener.onQueryChannelsResult(result, request)
             }
         }.precondition(relevantPluginsLazy()) {
@@ -1693,6 +1692,7 @@ internal constructor(
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
             ErrorCall(
+                scope,
                 ChatError(
                     "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
                 )
@@ -1808,7 +1808,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.logE(errorMessage)
-            return ErrorCall(ChatError(errorMessage))
+            return ErrorCall(scope, ChatError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -2363,7 +2363,6 @@ internal constructor(
         private var cdnUrl: String = baseUrl
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
-        private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: NotificationHandler? = null
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
@@ -2496,12 +2495,6 @@ internal constructor(
             return this
         }
 
-        @InternalStreamChatApi
-        @VisibleForTesting
-        public fun callbackExecutor(callbackExecutor: Executor): Builder = apply {
-            this.callbackExecutor = callbackExecutor
-        }
-
         /**
          * Adds a plugin factory to be used by the client.
          * @see [PluginFactory]
@@ -2607,7 +2600,6 @@ internal constructor(
                     notificationConfig,
                     fileUploader,
                     tokenManager,
-                    callbackExecutor,
                     customOkHttpClient,
                     lifecycle,
                 )
