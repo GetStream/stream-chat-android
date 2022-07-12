@@ -169,11 +169,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupAttachmentActionsButton() {
         binding.attachmentActionsButton.setOnClickListener {
             AttachmentGalleryOptionsDialogFragment.newInstance(
-                showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
-                deleteHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
-                replyHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
-                saveImageHandler = handleSaveImage,
-                isMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
+                showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
+                deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
+                replyOptionHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
+                saveImageOptionHandler = handleSaveImage,
+                isMessageMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentGalleryOptionsDialogFragment.TAG)
         }
     }

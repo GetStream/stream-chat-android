@@ -29,10 +29,10 @@ import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogModeratedMessageBinding
 
 /**
- * Dialog that is shown when the user selects a moderated message. The options the user can select are to send the
- * message anyway, edit it or to delete it.
+ * Dialog that is shown when the user selects a moderated message. The options the user can select
+ * are to send the message anyway, edit it or to delete it.
  */
-internal class ModeratedMessageDialog private constructor() : FullScreenDialogFragment() {
+internal class ModeratedMessageDialogFragment : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogModeratedMessageBinding? = null
     private val binding: StreamUiDialogModeratedMessageBinding get() = _binding!!
@@ -54,25 +54,25 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        consumeMessageArg()
-        setupDismissalArea()
-        initSelectionListeners()
+        if (savedInstanceState == null && ::message.isInitialized) {
+            setupDialog()
+        } else {
+            // The process has been killed
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
         _binding = null
-        messageArg = null
         super.onDestroyView()
     }
 
     /**
-     * Gets the moderated message passed as an argument to the dialog.
+     * Initializes the dialog.
      */
-    private fun consumeMessageArg() {
-        messageArg?.let {
-            message = it
-            messageArg = null
-        } ?: dismiss()
+    private fun setupDialog() {
+        setupDismissalArea()
+        setupClickListeners()
     }
 
     /**
@@ -87,18 +87,16 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
     /**
      * Initialisation of click listeners for dialog options.
      */
-    private fun initSelectionListeners() {
+    private fun setupClickListeners() {
         with(binding) {
             sendAnyway.setOnClickListener {
                 selectionHandler?.onModeratedOptionSelected(message, SendAnyway)
                 dismiss()
             }
-
             editMessage.setOnClickListener {
                 selectionHandler?.onModeratedOptionSelected(message, EditMessage)
                 dismiss()
             }
-
             deleteMessage.setOnClickListener {
                 selectionHandler?.onModeratedOptionSelected(message, DeleteMessage)
                 dismiss()
@@ -108,9 +106,20 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
 
     /**
      * Set the handler for listening to dialog options selection.
+     *
+     * @param selectionHandler The handler to set.
      */
     fun setDialogSelectionHandler(selectionHandler: DialogSelectionHandler) {
         this.selectionHandler = selectionHandler
+    }
+
+    /**
+     * Initializes the dialog with the moderated message.
+     *
+     * @param message The moderated [Message].
+     */
+    fun setMessage(message: Message) {
+        this.message = message
     }
 
     /**
@@ -127,16 +136,14 @@ internal class ModeratedMessageDialog private constructor() : FullScreenDialogFr
         const val TAG = "ModeratedMessageDialog"
 
         /**
-         * The moderated [Message] extra argument upon which a user can take action.
+         * Creates a new instance of [ModeratedMessageDialogFragment].
+         *
+         * @param message The moderated message.
          */
-        private var messageArg: Message? = null
-
-        /**
-         * Creates a new instance of [ModeratedMessageDialog] to show to the user.
-         */
-        fun newInstance(message: Message): ModeratedMessageDialog {
-            this.messageArg = message
-            return ModeratedMessageDialog()
+        fun newInstance(message: Message): ModeratedMessageDialogFragment {
+            return ModeratedMessageDialogFragment().apply {
+                setMessage(message)
+            }
         }
     }
 }
