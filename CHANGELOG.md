@@ -50,6 +50,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 - The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 
@@ -58,6 +59,7 @@
 
 ### ✅ Added
 - Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
+- Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
 
