@@ -4,9 +4,6 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `MutableGlobalState::setInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setInitialized` instead.|
-| `MutableGlobalState::setConnectionState` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setConnectionState` instead.|
-| `MutableGlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
 | `GlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
 | `GlobalState::isInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
 | `GlobalState::isConnecting` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
