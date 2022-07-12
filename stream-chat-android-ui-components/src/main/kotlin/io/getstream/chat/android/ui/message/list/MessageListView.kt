@@ -1147,8 +1147,7 @@ public class MessageListView : ConstraintLayout {
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
-
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded
                     )
 
                     buffer.active()

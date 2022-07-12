@@ -633,19 +633,15 @@ public class MessageListViewModel(
      * list.
      */
     public fun scrollToBottom(scrollToBottom: () -> Unit) {
-        if (_mode.value is Mode.Thread) {
+        if (_mode.value is Mode.Thread || messageListData?.value?.areNewestMessagesLoaded == true) {
             scrollToBottom()
         } else {
-            if (messageListData?.value?.areNewestMessagesLoaded == true) {
-                scrollToBottom()
-            } else {
-                chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
-                    if (result.isSuccess) {
-                        scrollToBottom()
-                    } else {
-                        val error = result.error()
-                        logger.logE("Could not load newest messages. Cause: ${error.cause?.message}")
-                    }
+            chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
+                if (result.isSuccess) {
+                    scrollToBottom()
+                } else {
+                    val error = result.error()
+                    logger.logE("Could not load newest messages. Cause: ${error.cause?.message}")
                 }
             }
         }
