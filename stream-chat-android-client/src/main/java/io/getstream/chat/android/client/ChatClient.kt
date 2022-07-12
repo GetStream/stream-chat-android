@@ -79,8 +79,8 @@ import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.logger.StreamLogLevelValidator
+import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.BannedUser
@@ -2593,17 +2593,7 @@ internal constructor(
                 distinctApiCalls = distinctApiCalls,
                 debugRequests
             )
-
-            val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
-            if (noLoggerSet && logLevel != ChatLogLevel.NOTHING) {
-                StreamLog.setValidator(StreamLogLevelValidator(logLevel))
-                StreamLog.setLogger(
-                    CompositeStreamLogger(
-                        AndroidStreamLogger(),
-                        StreamLoggerHandler(loggerHandler)
-                    )
-                )
-            }
+            setupStreamLog()
 
             if (ToggleService.isInitialized().not()) {
                 ToggleService.init(appContext, emptyMap())
@@ -2640,6 +2630,19 @@ internal constructor(
                 lifecycle = lifecycle
             ).also {
                 configureInitializer(it)
+            }
+        }
+
+        private fun setupStreamLog() {
+            val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
+            if (noLoggerSet && logLevel != ChatLogLevel.NOTHING) {
+                StreamLog.setValidator(StreamLogLevelValidator(logLevel))
+                StreamLog.setLogger(
+                    CompositeStreamLogger(
+                        AndroidStreamLogger(),
+                        StreamLoggerHandler(loggerHandler)
+                    )
+                )
             }
         }
     }
