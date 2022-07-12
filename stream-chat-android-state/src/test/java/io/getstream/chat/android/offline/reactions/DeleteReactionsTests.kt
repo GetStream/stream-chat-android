@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -229,7 +230,8 @@ internal class DeleteReactionsTests {
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<MutableGlobalState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
+        private val clientState = mock<ClientState>()
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos
@@ -251,9 +253,10 @@ internal class DeleteReactionsTests {
 
         fun givenOfflineState(): Fixture = apply {
             whenever(globalState.isOnline()) doReturn false
+            whenever(clientState.isOnline) doReturn false
         }
 
         fun get(): Pair<DeleteReactionListenerImpl, StateRegistry> =
-            DeleteReactionListenerImpl(logicRegistry, globalState, repos) to stateRegistry
+            DeleteReactionListenerImpl(logicRegistry, clientState, repos) to stateRegistry
     }
 }

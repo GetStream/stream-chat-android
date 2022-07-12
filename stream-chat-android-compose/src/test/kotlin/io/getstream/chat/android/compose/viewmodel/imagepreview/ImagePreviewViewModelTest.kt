@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -76,13 +77,15 @@ internal class ImagePreviewViewModelTest {
     ) {
 
         private val globalState: GlobalMutableState = mock()
+        private val clientState: ClientState = mock()
 
         init {
             GlobalMutableState.instance = globalState
+            whenever(chatClient.clientState) doReturn mock()
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenAttachments(attachments: MutableList<Attachment>) = apply {
