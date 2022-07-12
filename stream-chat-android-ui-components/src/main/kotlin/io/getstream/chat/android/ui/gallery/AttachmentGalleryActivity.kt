@@ -173,7 +173,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyOptionHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
                 saveImageOptionHandler = handleSaveImage,
-                isMineMessage = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
+                isMessageMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentGalleryOptionsDialogFragment.TAG)
         }
     }

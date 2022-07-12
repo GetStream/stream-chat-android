@@ -56,7 +56,7 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
     /**
      * If the message belongs to the current user.
      */
-    private var isMineMessage: Boolean = false
+    private var isMessageMine: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return StreamUiFragmentAttachmentOptionsBinding.inflate(requireContext().streamThemeInflater, container, false)
@@ -96,7 +96,7 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
             saveImageOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
-        binding.attachmentOptionsMenu.setIsMine(isMineMessage)
+        binding.attachmentOptionsMenu.setIsMine(isMessageMine)
 
         binding.root.setOnClickListener { dismiss() }
     }
@@ -145,10 +145,10 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
     /**
      * Set the message ownership.
      *
-     * @param isMineMessage If the message belongs to the current user.
+     * @param isMessageMine If the message belongs to the current user.
      */
-    fun setIsMineMessage(isMineMessage: Boolean) {
-        this.isMineMessage = isMineMessage
+    fun setIsMessageMine(isMessageMine: Boolean) {
+        this.isMessageMine = isMessageMine
     }
 
     /**
@@ -171,21 +171,21 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
          * @param replyOptionHandler A callback for the "reply" option.
          * @param deleteOptionHandler A callback for the "delete" option.
          * @param saveImageOptionHandler A callback for the "save image" option.
-         * @param isMineMessage If the message belongs to the current user.
+         * @param isMessageMine If the message belongs to the current user.
          */
         fun newInstance(
             showInChatOptionHandler: AttachmentOptionHandler,
             replyOptionHandler: AttachmentOptionHandler,
             deleteOptionHandler: AttachmentOptionHandler,
             saveImageOptionHandler: AttachmentOptionHandler,
-            isMineMessage: Boolean,
+            isMessageMine: Boolean,
         ): AttachmentGalleryOptionsDialogFragment {
             return AttachmentGalleryOptionsDialogFragment().apply {
                 setShowInChatOptionHandler(showInChatOptionHandler)
                 setReplyOptionHandler(replyOptionHandler)
                 setDeleteOptionHandler(deleteOptionHandler)
                 setSaveImageOptionHandler(saveImageOptionHandler)
-                setIsMineMessage(isMineMessage)
+                setIsMessageMine(isMessageMine)
             }
         }
     }
