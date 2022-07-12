@@ -2094,6 +2094,10 @@ public final class io/getstream/chat/android/client/extensions/MessageExtensions
 public final class io/getstream/chat/android/client/extensions/SharedPreferencesKt {
 }
 
+public final class io/getstream/chat/android/client/extensions/StateFlowExtensions {
+	public static final fun asLiveData (Lkotlinx/coroutines/flow/StateFlow;)Landroidx/lifecycle/LiveData;
+}
+
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
 	public static final fun cidToTypeAndId (Ljava/lang/String;)Lkotlin/Pair;
 }
