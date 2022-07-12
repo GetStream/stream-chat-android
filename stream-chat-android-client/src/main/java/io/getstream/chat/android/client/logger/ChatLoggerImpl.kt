@@ -85,6 +85,7 @@ internal class ChatLoggerImpl constructor(
         if (level.isMoreOrEqualsThan(ChatLogLevel.DEBUG)) {
             Log.v(getTag(tag), message)
         }
+        handler?.logV(getTag(tag), message)
     }
 
     override fun logW(tag: Any, message: String) {

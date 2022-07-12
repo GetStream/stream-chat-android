@@ -48,6 +48,13 @@ public object StreamLog {
         private set
 
     /**
+     * Tests a [condition] on specified [internalLogger] implementation.
+     */
+    public fun inspect(condition: (logger: StreamLogger) -> Boolean): Boolean {
+        return condition(internalLogger)
+    }
+
+    /**
      * Sets a [StreamLogger] implementation to be used.
      */
     public fun setLogger(logger: StreamLogger) {
