@@ -21,21 +21,22 @@ package io.getstream.chat.android.offline.plugin.state.global.internal
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
-public class GlobalMutableState private constructor() : MutableGlobalState {
+public class GlobalMutableState private constructor(
+    override val clientState: ClientState,
+) : MutableGlobalState {
 
-    private val _initialized = MutableStateFlow(false)
-    private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val _totalUnreadCount = MutableStateFlow(0)
     private val _channelUnreadCount = MutableStateFlow(0)
     private val _errorEvent = MutableStateFlow(Event(ChatError()))
@@ -46,13 +47,41 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
     private val _typingChannelsOld = MutableStateFlow(TypingEvent("", emptyList()))
     private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
 
-    private val _user = MutableStateFlow<User?>(null)
+    @Deprecated(
+        message = "Use ClientState.user instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.user",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override val user: StateFlow<User?> = clientState.user
 
-    override val user: StateFlow<User?> = _user
+    @Deprecated(
+        message = "Use ClientState.initialized instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.initialized",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override val initialized: StateFlow<Boolean> = clientState.initialized
 
-    override val initialized: StateFlow<Boolean> = _initialized
-
-    override val connectionState: StateFlow<ConnectionState> = _connectionState
+    @Deprecated(
+        message = "Use ClientState.connectionState instead",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.connectionState",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override val connectionState: StateFlow<ConnectionState> = clientState.connectionState
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
 
@@ -70,15 +99,53 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
 
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
-    override fun isOnline(): Boolean = _connectionState.value == ConnectionState.CONNECTED
+    @Deprecated(
+        message = "Use ClientState.isOnline() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isOnline",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override fun isOnline(): Boolean = clientState.isOnline
 
-    override fun isOffline(): Boolean = _connectionState.value == ConnectionState.OFFLINE
+    @Deprecated(
+        message = "Use ClientState.isOffline() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isOffline",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override fun isOffline(): Boolean = clientState.isOffline
 
-    override fun isConnecting(): Boolean = _connectionState.value == ConnectionState.CONNECTING
+    @Deprecated(
+        message = "Use ClientState.isConnecting() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isConnecting",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override fun isConnecting(): Boolean = clientState.isConnecting
 
-    override fun isInitialized(): Boolean {
-        return _initialized.value
-    }
+    @Deprecated(
+        message = "Use ClientState.isInitialized() instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().clientState.isInitialized",
+            imports = [
+                "io.getstream.chat.android.client.ChatClient",
+                "io.getstream.chat.android.offline.extensions.clientState"
+            ]
+        )
+    )
+    override fun isInitialized(): Boolean = clientState.isInitialized
 
     public companion object {
         @InternalStreamChatApi
@@ -90,7 +157,7 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
          */
         @InternalStreamChatApi
         public fun getOrCreate(): GlobalMutableState {
-            return instance ?: GlobalMutableState().also { globalState ->
+            return instance ?: GlobalMutableState(ClientState.get()).also { globalState ->
                 instance = globalState
             }
         }
@@ -109,35 +176,21 @@ public class GlobalMutableState private constructor() : MutableGlobalState {
          * cause the SDK to present an inconsistent state.
          */
         @VisibleForTesting
-        internal fun create(): GlobalMutableState = GlobalMutableState()
+        internal fun create(): GlobalMutableState =
+            GlobalMutableState(ClientState.create())
     }
 
     override fun clearState() {
-        _initialized.value = false
-        _connectionState.value = ConnectionState.OFFLINE
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
         _banned.value = false
 
         _mutedUsers.value = emptyList()
         _channelMutes.value = emptyList()
-        _user.value = null
     }
 
     override fun setErrorEvent(errorEvent: Event<ChatError>) {
         _errorEvent.value = errorEvent
-    }
-
-    override fun setUser(user: User) {
-        _user.value = user
-    }
-
-    override fun setConnectionState(connectionState: ConnectionState) {
-        _connectionState.value = connectionState
-    }
-
-    override fun setInitialized(initialized: Boolean) {
-        _initialized.value = initialized
     }
 
     override fun setTotalUnreadCount(totalUnreadCount: Int) {

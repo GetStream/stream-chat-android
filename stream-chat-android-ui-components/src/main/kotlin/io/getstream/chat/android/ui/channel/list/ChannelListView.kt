@@ -28,7 +28,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -410,31 +409,33 @@ public class ChannelListView : FrameLayout {
         setMoreOptionsClickListener { channel ->
             context.getFragmentManager()?.let { fragmentManager ->
                 ChannelActionsDialogFragment
-                    .newInstance(channel.cid, !channel.isDirectMessaging(), actionDialogStyle)
+                    .newInstance(channel, actionDialogStyle)
                     .apply {
-                        channelActionListener = object : ChannelActionsDialogFragment.ChannelActionListener {
-                            override fun onDeleteConversationClicked(cid: String) {
-                                simpleChannelListView.listenerContainer.deleteClickListener.onClick(
-                                    simpleChannelListView.getChannel(cid)
-                                )
-                            }
+                        setChannelActionListener(
+                            object : ChannelActionsDialogFragment.ChannelActionListener {
+                                override fun onDeleteConversationClicked(cid: String) {
+                                    simpleChannelListView.listenerContainer.deleteClickListener.onClick(
+                                        simpleChannelListView.getChannel(cid)
+                                    )
+                                }
 
-                            override fun onLeaveChannelClicked(cid: String) {
-                                channelLeaveListener.onClick(
-                                    simpleChannelListView.getChannel(cid)
-                                )
-                            }
+                                override fun onLeaveChannelClicked(cid: String) {
+                                    channelLeaveListener.onClick(
+                                        simpleChannelListView.getChannel(cid)
+                                    )
+                                }
 
-                            override fun onMemberSelected(member: Member) {
-                                simpleChannelListView.listenerContainer.userClickListener.onClick(member.user)
-                            }
+                                override fun onMemberSelected(member: Member) {
+                                    simpleChannelListView.listenerContainer.userClickListener.onClick(member.user)
+                                }
 
-                            override fun onChannelInfoSelected(cid: String) {
-                                channelInfoListener.onClick(
-                                    simpleChannelListView.getChannel(cid)
-                                )
+                                override fun onChannelInfoSelected(cid: String) {
+                                    channelInfoListener.onClick(
+                                        simpleChannelListView.getChannel(cid)
+                                    )
+                                }
                             }
-                        }
+                        )
                     }
                     .show(fragmentManager, null)
             }

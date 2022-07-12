@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -245,6 +246,7 @@ internal class ChannelListViewModelTest {
 
         private val globalState: GlobalMutableState = mock()
         private val stateRegistry: StateRegistry = mock()
+        private val clientState: ClientState = mock()
 
         init {
             StateRegistry.instance = stateRegistry
@@ -252,10 +254,12 @@ internal class ChannelListViewModelTest {
 
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
+
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(chatClient.getCurrentUser()) doReturn currentUser
         }
 

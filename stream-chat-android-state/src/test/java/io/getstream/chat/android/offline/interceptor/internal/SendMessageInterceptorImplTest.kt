@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.offline.interceptor.internal
 
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ import org.mockito.kotlin.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageInterceptorImplTest {
-    private val globalState: GlobalState = mock {
+    private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
     }
 
@@ -51,7 +51,7 @@ internal class SendMessageInterceptorImplTest {
     private val sendMessageInterceptorImpl = SendMessageInterceptorImpl(
         context = mock(),
         logic = logic,
-        globalState = globalState,
+        clientState = clientState,
         channelRepository = mock(),
         messageRepository = mock(),
         attachmentRepository = mock(),
