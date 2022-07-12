@@ -14,6 +14,27 @@ _Add relevant screenshots_
 | --- | --- |
 | img | img |
 
+_Add relevant videos_
+
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<video src="" controls="controls" muted="muted" />
+</td>
+<td>
+<video src="" controls="controls" muted="muted" />
+</td>
+</tr>
+</tbody>
+</table>
+
 ### 🧪 Testing
 
 _Explain how this change can be tested (or why it can't be tested)_
