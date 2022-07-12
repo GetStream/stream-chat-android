@@ -23,10 +23,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import java.util.Date
 
 /**
@@ -34,7 +34,7 @@ import java.util.Date
  */
 internal class DeleteMessageListenerImpl(
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
     private val messageRepository: MessageRepository,
 ) : DeleteMessageListener {
 
@@ -46,7 +46,7 @@ internal class DeleteMessageListenerImpl(
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
 
-            val isModerationFailed = message.user.id == globalState.user.value?.id &&
+            val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
@@ -74,7 +74,7 @@ internal class DeleteMessageListenerImpl(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            val isOnline = globalState.isOnline()
+            val isOnline = clientState.isOnline
 
             val (channelType, channelId) = message.cid.cidToTypeAndId()
             val channelLogic = logic.channel(channelType, channelId)

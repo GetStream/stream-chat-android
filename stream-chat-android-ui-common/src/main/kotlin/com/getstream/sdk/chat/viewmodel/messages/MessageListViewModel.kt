@@ -42,12 +42,12 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -56,7 +56,6 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -75,7 +74,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  *
  * @param cid The full channel id, i.e. "messaging:123"
  * @param chatClient Entry point for all low-level operations.
- * @param globalState Global state of OfflinePlugin. Contains information
+ * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
  */
 @Suppress("TooManyFunctions")
@@ -83,7 +82,7 @@ public class MessageListViewModel(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
+    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -232,7 +231,7 @@ public class MessageListViewModel(
     /**
      * The currently logged in user.
      */
-    public val user: LiveData<User?> = globalState.user.asLiveData()
+    public val user: LiveData<User?> = clientState.user.asLiveData()
 
     /**
      * The logger used to print to errors, warnings, information

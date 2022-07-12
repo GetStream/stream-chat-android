@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
@@ -49,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val globalState: MutableGlobalState,
+    private val clientState: ClientState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -80,7 +82,7 @@ internal class LogicRegistry internal constructor(
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
             val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
-            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, SearchLogic(mutableState))
+            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, clientState, SearchLogic(mutableState))
 
             ChannelLogic(
                 repos = repos,
@@ -164,9 +166,11 @@ internal class LogicRegistry internal constructor(
          *
          * @throws IllegalStateException if instance is not null.
          */
+        @Suppress("LongParameterList")
         internal fun create(
             stateRegistry: StateRegistry,
             globalState: MutableGlobalState,
+            clientState: ClientState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
@@ -177,9 +181,17 @@ internal class LogicRegistry internal constructor(
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
                 )
             }
-            return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
-                instance = logicRegistry
-            }
+            return LogicRegistry(
+                stateRegistry,
+                globalState,
+                clientState,
+                userPresence,
+                repos,
+                client
+            )
+                .also { logicRegistry ->
+                    instance = logicRegistry
+                }
         }
 
         /**

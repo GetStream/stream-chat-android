@@ -162,7 +162,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**

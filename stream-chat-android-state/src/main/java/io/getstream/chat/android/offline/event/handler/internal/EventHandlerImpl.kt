@@ -83,6 +83,7 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
@@ -91,7 +92,6 @@ import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
@@ -107,6 +107,7 @@ import kotlin.random.Random
 
 private const val TAG = "Chat:EventHandlerOld"
 
+@Suppress("LongParameterList")
 internal class EventHandlerImpl(
     private val scope: CoroutineScope,
     private val recoveryEnabled: Boolean,
@@ -114,6 +115,7 @@ internal class EventHandlerImpl(
     private val logic: LogicRegistry,
     private val state: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
+    private val clientMutableState: ClientState,
     private val repos: RepositoryFacade,
     private val syncManager: SyncManager,
 ) : EventHandler {
@@ -213,14 +215,10 @@ internal class EventHandlerImpl(
             when (event) {
                 is DisconnectedEvent -> {
                     logger.i { "[handleConnectEvents] received DisconnectedEvent" }
-                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is ConnectedEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
                     updateCurrentUser(SelfUserFull(event.me))
-
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
-                    mutableGlobalState.setInitialized(true)
 
                     if (recoveryEnabled) {
                         syncManager.connectionRecovered()
@@ -237,7 +235,6 @@ internal class EventHandlerImpl(
 
                 is ConnectingEvent -> {
                     logger.i { "[handleConnectEvents] received ConnectingEvent" }
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
                 }
 
                 else -> Unit // Ignore other events
@@ -526,7 +523,7 @@ internal class EventHandlerImpl(
                 }
                 is UserUpdatedEvent -> {
                     event.user
-                        .takeIf { it.id == mutableGlobalState.user.value?.id }
+                        .takeIf { it.id == clientMutableState.user.value?.id }
                         ?.let {
                             updateCurrentUser(SelfUserPart(it))
                         }
@@ -682,11 +679,11 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        ownReactions = if (user != null && mutableGlobalState.user.value?.id != user.id) {
+        ownReactions = if (user != null && clientMutableState.user.value?.id != user.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == mutableGlobalState.user.value?.id ?: "" },
+                latestReactions.filter { it.userId == (clientMutableState.user.value?.id ?: "") },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
@@ -694,7 +691,7 @@ internal class EventHandlerImpl(
 
     private suspend fun updateCurrentUser(self: SelfUser) {
         val me = self.me
-        val currentUser = mutableGlobalState.user.value
+        val currentUser = clientMutableState.user.value
         if (me.id != currentUser?.id) {
             throw InputMismatchException(
                 "received connect event for user with id ${me.id} while for user configured " +
