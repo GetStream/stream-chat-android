@@ -539,7 +539,7 @@ public class MessageListViewModel(
      * Loads newer messages of a channel following the currently newest loaded message. In case of threads this will
      * do nothing.
      *
-     * @param messageId The id of the most new [Message] inside the messages list.
+     * @param messageId The id of the newest [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String) {
         if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
