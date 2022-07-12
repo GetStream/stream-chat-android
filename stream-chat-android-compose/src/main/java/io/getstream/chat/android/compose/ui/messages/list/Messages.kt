@@ -410,7 +410,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                         if (firstVisibleItemIndex > 5) {
                             lazyListState.scrollToItem(5)
                         }
-                        lazyListState.scrollToItem(0)
+                        lazyListState.animateScrollToItem(0)
                     }
                 }
             }
