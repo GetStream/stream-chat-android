@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.offline.plugin.state.global.internal
 
+import android.content.Context
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
@@ -156,8 +157,8 @@ public class GlobalMutableState private constructor(
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
         @InternalStreamChatApi
-        public fun getOrCreate(): GlobalMutableState {
-            return instance ?: GlobalMutableState(ClientState.get()).also { globalState ->
+        public fun getOrCreate(context: Context): GlobalMutableState {
+            return instance ?: GlobalMutableState(ClientState.getOrCreate(context)).also { globalState ->
                 instance = globalState
             }
         }
@@ -170,14 +171,6 @@ public class GlobalMutableState private constructor(
             "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
                 "PluginFactory to be able to use GlobalState from the SDK"
         }
-
-        /**
-         * Creates an instance of [GlobalMutableState] with a fresh state. Please keep in mind that many instances of this class may
-         * cause the SDK to present an inconsistent state.
-         */
-        @VisibleForTesting
-        internal fun create(): GlobalMutableState =
-            GlobalMutableState(ClientState.create())
     }
 
     override fun clearState() {

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -92,6 +93,7 @@ internal class MockClientBuilder(
         notificationsManager = mock()
 
         api = mock()
+        ClientState.instance = mock()
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()

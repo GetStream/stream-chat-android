@@ -16,8 +16,11 @@
 
 package io.getstream.chat.android.client.setup.state
 
+import android.content.Context
+import android.net.ConnectivityManager
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.StateFlow
@@ -71,6 +74,8 @@ public interface ClientState {
      */
     public val isInitialized: Boolean
 
+    public val internetAvailable: Boolean
+
     /**
      * Clears the state of [ClientState].
      */
@@ -78,15 +83,21 @@ public interface ClientState {
 
     public companion object {
 
-        private var instance: ClientState? = null
+        internal var instance: ClientState? = null
 
         @InternalStreamChatApi
-        public fun get(): ClientState =
-            instance ?: create().also { clientState ->
+        public fun getOrCreate(context: Context): ClientState =
+            instance ?: create(context).also { clientState ->
                 instance = clientState
             }
 
-        @InternalStreamChatApi
-        public fun create(): ClientState = ClientStateImpl()
+        public fun get(): ClientState = requireNotNull(instance) {
+            "ClientState was not initialized yet. Something is wrong with the initialization of the SDK."
+        }
+
+        private fun create(context: Context): ClientState =
+            ClientStateImpl(
+                NetworkStateProvider(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+            )
     }
 }

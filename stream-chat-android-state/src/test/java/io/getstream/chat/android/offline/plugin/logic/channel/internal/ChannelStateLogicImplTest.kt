@@ -32,7 +32,7 @@ import io.getstream.chat.android.offline.message.attachments.internal.Attachment
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
@@ -94,8 +94,8 @@ internal class ChannelStateLogicImplTest {
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig
     }
-    private val globalMutableState: MutableGlobalState = mock {
-        on(it.user) doReturn MutableStateFlow(user)
+    private val globalMutableState: GlobalMutableState = mock {
+        on(it.channelMutes) doReturn MutableStateFlow(emptyList())
     }
     private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(user)
@@ -108,6 +108,8 @@ internal class ChannelStateLogicImplTest {
 
     @BeforeEach
     fun setUp() {
+        GlobalMutableState.instance = globalMutableState
+
         _messages = emptyMap()
         _unreadCount.value = 0
         _lastMessageAt = null
