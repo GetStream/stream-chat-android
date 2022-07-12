@@ -24,7 +24,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -52,21 +51,63 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
 
-@Suppress("TooManyFunctions")
+/**
+ * An overlay with available message options to the selected message. Also, allows leaving a reaction.
+ */
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val optionsMode: OptionsMode by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
-    }
+    /**
+     * The options overlay type.
+     */
+    private lateinit var optionsMode: OptionsMode
 
-    private val style by lazy { messageListViewStyle!! }
+    /**
+     * The selected message
+     */
+    private lateinit var message: Message
 
-    private val viewHolderFactory by lazy { messageViewHolderFactory!! }
-    private val decoratorProvider by lazy { messageOptionsDecoratorProvider!! }
-    private val messageOptions by lazy { messageOptionItems }
+    /**
+     * Style for the dialog.
+     */
+    private lateinit var style: MessageListViewStyle
+
+    /**
+     * The factory class for message items.
+     */
+    private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
+
+    /**
+     * Creates a list of decorators for the message item.
+     */
+    private lateinit var messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider
+
+    /**
+     * A factory for the attachments in the selected message.
+     */
+    private lateinit var attachmentFactoryManager: AttachmentFactoryManager
+
+    /**
+     * The list of message options to display.
+     */
+    private lateinit var messageOptionItems: List<MessageOptionItem>
+
+    /**
+     * A callback for clicks on reactions.
+     */
+    private var reactionClickHandler: ReactionClickHandler? = null
+
+    /**
+     * A callback for clicks on users who reacted to the message.
+     */
+    private var userReactionClickHandler: UserReactionClickHandler? = null
+
+    /**
+     * A callback for clicks on message actions.
+     */
+    private var messageActionClickHandler: MessageActionClickHandler? = null
 
     private val optionsOffset: Int by lazy { requireContext().getDimension(R.dimen.stream_ui_spacing_medium) }
 
@@ -78,12 +119,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         )
     }
 
-    private lateinit var message: Message
     private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
-
-    private var reactionClickHandler: ReactionClickHandler? = null
-    private var userReactionClickHandler: UserReactionClickHandler? = null
-    private var messageActionClickHandler: MessageActionClickHandler? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,7 +133,20 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        consumeMessageArg()
+        val isInitialized = ::optionsMode.isInitialized && ::message.isInitialized && ::style.isInitialized &&
+            ::messageListItemViewHolderFactory.isInitialized && ::attachmentFactoryManager.isInitialized &&
+            ::messageOptionItems.isInitialized
+        if (savedInstanceState == null && isInitialized) {
+            setupDialog()
+        } else {
+            dismiss()
+        }
+    }
+
+    /**
+     * Initializes the dialog.
+     */
+    private fun setupDialog() {
         setupDismissibleArea()
         setupEditReactionsView()
         setupMessageView()
@@ -110,9 +159,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        messageListViewStyle = null
-        messageViewHolderFactory = null
-        messageOptionsDecoratorProvider = null
         _binding = null
     }
 
@@ -133,13 +179,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     fun setMessageActionClickHandler(messageActionClickHandler: MessageActionClickHandler) {
         this.messageActionClickHandler = messageActionClickHandler
-    }
-
-    private fun consumeMessageArg() {
-        messageArg?.let {
-            message = it
-            messageArg = null
-        } ?: dismiss()
     }
 
     private fun setupDismissibleArea() {
@@ -172,7 +211,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolderFactory.withDecoratorProvider(decoratorProvider) {
+        messageListItemViewHolderFactory.withDecoratorProvider(messageOptionsDecoratorProvider) {
             viewHolder = it.createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager)
@@ -223,7 +262,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 }
             }
 
-            setMessageOptions(messageOptions, style)
+            setMessageOptions(messageOptionItems, style)
 
             setMessageActionClickListener { messageAction ->
                 messageActionClickHandler?.onMessageActionClick(messageAction)
@@ -259,107 +298,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
-    internal fun interface ReactionClickHandler {
-        fun onReactionClick(message: Message, reactionType: String)
-    }
-
-    internal fun interface UserReactionClickHandler {
-        fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
-    }
-
-    internal fun interface MessageActionClickHandler {
-        fun onMessageActionClick(messageAction: MessageAction)
-    }
-
-    internal enum class OptionsMode {
-        MESSAGE_OPTIONS,
-        REACTION_OPTIONS
-    }
-
-    companion object {
-        const val TAG = "MessageOptionsDialogFragment"
-
-        private const val ARG_OPTIONS_MODE = "optionsMode"
-
-        internal var messageListViewStyle: MessageListViewStyle? = null
-
-        var messageArg: Message? = null
-        var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
-        var messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider? = null
-        var attachmentFactoryManager: AttachmentFactoryManager = AttachmentFactoryManager()
-        var messageOptionItems: List<MessageOptionItem> = emptyList()
-
-        fun newReactionOptionsInstance(
-            message: Message,
-            style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory,
-            messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager,
-            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
-        ): MessageOptionsDialogFragment {
-            return newInstance(
-                OptionsMode.REACTION_OPTIONS,
-                message,
-                style,
-                messageViewHolderFactory,
-                messageBackgroundFactory,
-                attachmentFactoryManager,
-                showAvatarPredicate,
-                emptyList(),
-            )
-        }
-
-        fun newMessageOptionsInstance(
-            message: Message,
-            style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory,
-            messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager,
-            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
-            messageOptionItems: List<MessageOptionItem>,
-        ): MessageOptionsDialogFragment {
-            return newInstance(
-                OptionsMode.MESSAGE_OPTIONS,
-                message,
-                style,
-                messageViewHolderFactory,
-                messageBackgroundFactory,
-                attachmentFactoryManager,
-                showAvatarPredicate,
-                messageOptionItems,
-            )
-        }
-
-        private fun newInstance(
-            optionsMode: OptionsMode,
-            message: Message,
-            style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory,
-            messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager,
-            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
-            messageOptionItems: List<MessageOptionItem>,
-        ): MessageOptionsDialogFragment {
-            this.messageListViewStyle = style
-            this.attachmentFactoryManager = attachmentFactoryManager
-            this.messageViewHolderFactory = messageViewHolderFactory
-            this.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
-                style.itemStyle,
-                style.replyMessageStyle,
-                messageBackgroundFactory,
-                showAvatarPredicate
-            )
-            this.messageOptionItems = messageOptionItems
-            return MessageOptionsDialogFragment().apply {
-                arguments = bundleOf(
-                    ARG_OPTIONS_MODE to optionsMode,
-                )
-                // pass message via static field
-                messageArg = message
-            }
-        }
-    }
-
     /**
      * Executes the given [block] function on [MessageListItemViewHolderFactory] with
      * the provided decorators and then resets them to the previous value.
@@ -378,6 +316,77 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             block(this)
         } finally {
             decoratorProvider = tempDecoratorProvider
+        }
+    }
+
+    /**
+     * A listener for reaction clicks.
+     */
+    internal fun interface ReactionClickHandler {
+        fun onReactionClick(message: Message, reactionType: String)
+    }
+
+    /**
+     * A listener for clicks on users who left the reactions.
+     */
+    internal fun interface UserReactionClickHandler {
+        fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
+    }
+
+    /**
+     * A listener for message option clicks.
+     */
+    internal fun interface MessageActionClickHandler {
+        fun onMessageActionClick(messageAction: MessageAction)
+    }
+
+    /**
+     * Represents the type of message options dialogs.
+     */
+    internal enum class OptionsMode {
+        MESSAGE_OPTIONS,
+        REACTION_OPTIONS
+    }
+
+    companion object {
+        const val TAG = "MessageOptionsDialogFragment"
+
+        /**
+         * Creates a new instance of [MessageOptionsDialogFragment].
+         *
+         * @param optionsMode The type of options dialog.
+         * @param message The selected message.
+         * @param style The style for the dialog.
+         * @param messageListItemViewHolderFactory The factory class for message items.
+         * @param messageBackgroundFactory The factory for message background.
+         * @param attachmentFactoryManager The factory for the attachments in the selected message.
+         * @param showAvatarPredicate If an avatar should be shown for the message.
+         * @param messageOptionItems The list of message options to display.
+         */
+        fun newInstance(
+            optionsMode: OptionsMode,
+            message: Message,
+            style: MessageListViewStyle,
+            messageListItemViewHolderFactory: MessageListItemViewHolderFactory,
+            messageBackgroundFactory: MessageBackgroundFactory,
+            attachmentFactoryManager: AttachmentFactoryManager,
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
+            messageOptionItems: List<MessageOptionItem>,
+        ): MessageOptionsDialogFragment {
+            return MessageOptionsDialogFragment().also {
+                it.optionsMode = optionsMode
+                it.message = message
+                it.style = style
+                it.attachmentFactoryManager = attachmentFactoryManager
+                it.messageListItemViewHolderFactory = messageListItemViewHolderFactory
+                it.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
+                    style.itemStyle,
+                    style.replyMessageStyle,
+                    messageBackgroundFactory,
+                    showAvatarPredicate
+                )
+                it.messageOptionItems = messageOptionItems
+            }
         }
     }
 }

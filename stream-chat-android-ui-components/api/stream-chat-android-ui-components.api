@@ -1803,6 +1803,7 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public fun onDestroyView ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
 	public final fun setAttachmentSelectionListener (Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionListener;)V
+	public final fun setStyle (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;)V
 }
 
 public final class io/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogFragment$Companion {
