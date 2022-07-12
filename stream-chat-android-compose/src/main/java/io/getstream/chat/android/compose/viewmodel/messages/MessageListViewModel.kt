@@ -1165,7 +1165,8 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
     public fun clearNewMessageState() {
-        if (!messagesState.startOfMessages) returnthreadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
+        if (!messagesState.startOfMessages) return
+        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
 
         messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
     }
