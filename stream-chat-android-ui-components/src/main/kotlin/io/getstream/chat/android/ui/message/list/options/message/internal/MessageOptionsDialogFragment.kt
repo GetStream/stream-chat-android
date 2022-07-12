@@ -53,7 +53,7 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
 
 /**
- * An overlay with available message options to the selected message. Also, allows to leave a reaction.
+ * An overlay with available message options to the selected message. Also, allows leaving a reaction.
  */
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
