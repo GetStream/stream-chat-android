@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -110,6 +111,10 @@ public class StreamOfflinePluginFactory(
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         val statePlugin = statePluginFactory.createStatePlugin(user, scope, repositoryFactory)
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            clearCachedInstance()
+        }
 
         return OfflinePlugin(
             queryChannelsListener = statePlugin,
