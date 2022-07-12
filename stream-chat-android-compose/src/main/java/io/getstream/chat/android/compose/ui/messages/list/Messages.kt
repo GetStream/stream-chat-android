@@ -407,6 +407,9 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             onClick = {
                 scrollToBottom {
                     coroutineScope.launch {
+                        if (firstVisibleItemIndex > 5) {
+                            lazyListState.scrollToItem(5)
+                        }
                         lazyListState.scrollToItem(0)
                     }
                 }
