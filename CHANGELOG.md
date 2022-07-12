@@ -18,8 +18,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+-. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)
 
 ### ❌ Removed
+- 🚨 Breaking change: Removed the `Member.role` field. [3851](https://github.com/GetStream/stream-chat-android/pull/3851)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -45,6 +47,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
+- The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 - Fixed potential crashes when showing dialogs after process recreation. [#3857](https://github.com/GetStream/stream-chat-android/pull/3857)
 
 ### ⬆️ Improved
@@ -65,6 +69,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
 
 ### ❌ Removed
 
