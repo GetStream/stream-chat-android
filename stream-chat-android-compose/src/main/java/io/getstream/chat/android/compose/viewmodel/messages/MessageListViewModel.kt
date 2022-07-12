@@ -286,7 +286,6 @@ public class MessageListViewModel(
                                 messageItems = emptyList(),
                             )
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
-
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(
