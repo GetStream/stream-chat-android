@@ -20,36 +20,34 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
-    private var job: Job? = null
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
-    internal suspend fun awaitImpl(): Result<T> {
-        return withContext(scope.coroutineContext) {
-            suspendingTask()
-        }
+    override fun execute(): Result<T> = runBlocking { await() }
+    override suspend fun await(): Result<T> = Call.runCatching {
+        withContext(callScope.coroutineContext) { suspendingTask() }
     }
 
     override fun cancel() {
-        job?.cancel()
-    }
-
-    override fun execute(): Result<T> {
-        return runBlocking(block = suspendingTask)
+        callScope.coroutineContext.cancelChildren()
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        job = scope.launch {
-            val result = suspendingTask()
+        callScope.launch {
+            val result = await()
             withContext(DispatcherProvider.Main) {
                 callback.onResult(result)
             }

@@ -24,7 +24,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
