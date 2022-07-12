@@ -7,7 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- The class `io.getstream.chat.android.offline.model.connection.ConnectionState` was moved to `io.getstream.chat.android.client.models.ConnectionState`. Please update your imports to be able to compile code using this class. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852).
+- 🚨 Breaking change: The class `io.getstream.chat.android.offline.model.connection.ConnectionState` was moved to `io.getstream.chat.android.client.models.ConnectionState`. Please update your imports to be able to compile code using this class. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852).
 
 
 ### ❌ Removed
