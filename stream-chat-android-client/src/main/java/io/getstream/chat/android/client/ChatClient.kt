@@ -199,6 +199,9 @@ internal constructor(
         }
     )
 
+    /**
+     * With clientState allows the user to get the state of the SDK like connection, initialization...
+     */
     public val clientState: ClientState
         get() = ClientState.get()
 

@@ -199,5 +199,8 @@ public interface GlobalState {
     )
     public fun isInitialized(): Boolean
 
+    /**
+     * Clears the state of [GlobalState].
+     */
     public fun clearState()
 }
