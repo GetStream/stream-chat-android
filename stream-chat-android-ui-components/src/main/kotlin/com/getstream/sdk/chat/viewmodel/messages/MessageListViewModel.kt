@@ -54,6 +54,9 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.offline.extensions.loadNewerMessages
+import io.getstream.chat.android.offline.extensions.loadNewestMessages
+import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -629,26 +632,6 @@ public class MessageListViewModel(
         }
 
         return (messageItem as? MessageListItem.MessageItem)?.message
-    }
-
-    /**
-     * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
-     * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
-     * list.
-     */
-    public fun scrollToBottom(scrollToBottom: () -> Unit) {
-        if (_mode.value is Mode.Thread || messageListData?.value?.areNewestMessagesLoaded == true) {
-            scrollToBottom()
-        } else {
-            chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
-                if (result.isSuccess) {
-                    scrollToBottom()
-                } else {
-                    val error = result.error()
-                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
-                }
-            }
-        }
     }
 
     /**
