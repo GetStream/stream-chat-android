@@ -2177,7 +2177,12 @@ public abstract interface class io/getstream/chat/android/client/logger/ChatLogg
 	public abstract fun logI (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logT (Ljava/lang/Object;Ljava/lang/Throwable;)V
 	public abstract fun logT (Ljava/lang/Throwable;)V
+	public abstract fun logV (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logW (Ljava/lang/Object;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/logger/ChatLoggerHandler$DefaultImpls {
+	public static fun logV (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;Ljava/lang/Object;Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/logger/TaggedLogger {

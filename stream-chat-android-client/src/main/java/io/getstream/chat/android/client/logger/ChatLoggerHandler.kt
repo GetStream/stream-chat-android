@@ -25,6 +25,8 @@ public interface ChatLoggerHandler {
 
     public fun logD(tag: Any, message: String)
 
+    public fun logV(tag: Any, message: String) { /* no-op */ }
+
     public fun logW(tag: Any, message: String)
 
     public fun logE(tag: Any, message: String)
