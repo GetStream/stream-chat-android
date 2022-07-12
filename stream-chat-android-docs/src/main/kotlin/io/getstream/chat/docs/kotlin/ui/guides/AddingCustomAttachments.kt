@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.BaseSelectedCustomAttachmentViewHolder
@@ -34,10 +35,14 @@ import java.util.Locale
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/)
  */
+@OptIn(ExperimentalStreamChatApi::class)
 class AddingCustomAttachmentsSnippet : Fragment() {
 
     private lateinit var messageInputView: MessageInputView
 
+    /**
+     * [Sending Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#sending-date-attachments)
+     */
     fun sendingDateAttachments() {
         // Create an instance of a date picker dialog
         val datePickerDialog = MaterialDatePicker.Builder
@@ -88,6 +93,9 @@ class AddingCustomAttachmentsSnippet : Fragment() {
         }
     }
 
+    /**
+     * [Rendering Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-date-attachments)
+     */
     fun renderingDateAttachments() {
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
     }
@@ -139,6 +147,16 @@ class AddingCustomAttachmentsSnippet : Fragment() {
         }
     }
 
+    /**
+     * [Rendering Quoted Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-quoted-date-attachments)
+     */
+    fun renderingQuotedDateAttachments() {
+        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
+            QuotedDateAttachmentFactory(),
+            DefaultQuotedAttachmentMessageFactory()
+        ))
+    }
+
     class QuotedDateAttachmentView(context: Context): FrameLayout(context) {
 
         private val binding = ViewQuotedDateAttachmentBinding.inflate(LayoutInflater.from(context), this)
@@ -172,12 +190,5 @@ class AddingCustomAttachmentsSnippet : Fragment() {
                 showDate(message.attachments.first())
             }
         }
-    }
-
-    fun renderingQuotedDateAttachments() {
-        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
-            QuotedDateAttachmentFactory(),
-            DefaultQuotedAttachmentMessageFactory()
-        ))
     }
 }
