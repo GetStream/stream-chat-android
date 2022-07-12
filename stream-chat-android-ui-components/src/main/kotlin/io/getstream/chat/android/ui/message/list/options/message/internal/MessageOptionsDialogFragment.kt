@@ -101,7 +101,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var reactionClickHandler: ReactionClickHandler? = null
 
     /**
-     * A callback for clicks on users who reacted tot he message.
+     * A callback for clicks on users who reacted to the message.
      */
     private var userReactionClickHandler: UserReactionClickHandler? = null
 
