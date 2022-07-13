@@ -16,8 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a way to convert `StateFlow` into `LiveData` for Java users.
-  You can now use `StateFlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
+- Added a way to convert `Flow` into `LiveData` for Java users.
+  You can now use `FlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
 
 ### ⚠️ Changed
 -. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-@file:JvmName("StateFlowExtensions")
+@file:JvmName("FlowExtensions")
 
 package io.getstream.chat.android.client.extensions
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 /**
- * Creates a [LiveData] that has values collected from the original [StateFlow].
+ * Creates a [LiveData] that has values collected from the original [Flow].
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("99999.9")

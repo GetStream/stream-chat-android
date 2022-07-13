@@ -2087,15 +2087,15 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
 }
 
+public final class io/getstream/chat/android/client/extensions/FlowExtensions {
+	public static final fun asLiveData (Lkotlinx/coroutines/flow/Flow;)Landroidx/lifecycle/LiveData;
+}
+
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 }
 
 public final class io/getstream/chat/android/client/extensions/SharedPreferencesKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/StateFlowExtensions {
-	public static final fun asLiveData (Lkotlinx/coroutines/flow/StateFlow;)Landroidx/lifecycle/LiveData;
 }
 
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
