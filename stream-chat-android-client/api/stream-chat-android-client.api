@@ -3420,7 +3420,12 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin {
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/factory/PluginFactory {
+	public abstract fun configure ()V
 	public abstract fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
+}
+
+public final class io/getstream/chat/android/client/plugin/factory/PluginFactory$DefaultImpls {
+	public static fun configure (Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/ChannelMarkReadListener {
@@ -3584,6 +3589,7 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInternetAvailable ()Z
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
 	public abstract fun isInitialized ()Z
@@ -3592,6 +3598,7 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 }
 
 public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
+	public final fun get ()Lio/getstream/chat/android/client/setup/state/ClientState;
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
