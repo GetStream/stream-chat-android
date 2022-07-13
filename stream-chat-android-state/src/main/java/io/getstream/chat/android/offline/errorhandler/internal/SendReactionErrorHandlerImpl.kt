@@ -24,8 +24,8 @@ import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -33,10 +33,12 @@ import kotlinx.coroutines.CoroutineScope
  * Returns a [Reaction] instance enriched with user [Reaction.syncStatus] if reaction was send offline and can be synced.
  *
  * @param scope [CoroutineScope]
- * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  */
-internal class SendReactionErrorHandlerImpl(private val scope: CoroutineScope, private val globalState: GlobalState) :
-    SendReactionErrorHandler {
+internal class SendReactionErrorHandlerImpl(
+    private val scope: CoroutineScope,
+    private val clientState: ClientState,
+) : SendReactionErrorHandler {
 
     /**
      * Replaces the original response error if the user is offline.
@@ -57,13 +59,13 @@ internal class SendReactionErrorHandlerImpl(private val scope: CoroutineScope, p
         currentUser: User,
     ): ReturnOnErrorCall<Reaction> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (globalState.isOnline()) {
+            if (clientState.isOnline) {
                 Result.error(originalError)
             } else {
                 Result.success(
                     reaction.enrichWithDataBeforeSending(
                         currentUser = currentUser,
-                        isOnline = globalState.isOnline(),
+                        isOnline = clientState.isOnline,
                         enforceUnique = enforceUnique,
                     ),
                 )

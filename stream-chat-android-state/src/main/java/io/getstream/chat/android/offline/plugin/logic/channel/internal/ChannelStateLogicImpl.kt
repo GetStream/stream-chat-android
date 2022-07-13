@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
@@ -50,11 +51,13 @@ import kotlin.math.max
  *
  * @property mutableState [ChannelMutableState]
  * @property globalMutableState [MutableGlobalState]
+ * @property clientState [ClientState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val clientState: ClientState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelStateLogic {
@@ -81,7 +84,7 @@ internal class ChannelStateLogicImpl(
      * @param message [Message].
      */
     override fun incrementUnreadCountIfNecessary(message: Message) {
-        val user = globalMutableState.user.value ?: return
+        val user = clientState.user.value ?: return
         val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
@@ -138,7 +141,7 @@ internal class ChannelStateLogicImpl(
      * @param reads the information about the read.
      */
     override fun updateReads(reads: List<ChannelUserRead>) {
-        globalMutableState.user.value?.let { currentUser ->
+        clientState.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = mutableState.rawReads
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -197,7 +200,7 @@ internal class ChannelStateLogicImpl(
             event == null -> {
                 typingEventsCopy.remove(userId)
             }
-            userId != globalMutableState.user.value?.id -> {
+            userId != clientState.user.value?.id -> {
                 typingEventsCopy[userId] = event
             }
         }

@@ -22,8 +22,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -33,7 +32,7 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
 
 internal class PinnedMessageListAdapter(
-    private val globalState: GlobalState = ChatClient.instance().globalState,
+    private val clientState: ClientState = ChatClient.instance().clientState,
 ) : ListAdapter<Message, RecyclerView.ViewHolder>(MessageDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
@@ -98,7 +97,7 @@ internal class PinnedMessageListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message, globalState.user.value?.asMention(context))
+            binding.root.setMessage(message, clientState.user.value?.asMention(context))
         }
     }
 

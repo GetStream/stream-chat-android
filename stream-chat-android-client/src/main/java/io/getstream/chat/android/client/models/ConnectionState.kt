@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.connection
+package io.getstream.chat.android.client.models
 
 /**
  * Represents possible states of the WebSocket connection.

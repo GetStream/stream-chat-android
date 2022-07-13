@@ -48,6 +48,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getAppSettings ()Lio/getstream/chat/android/client/models/AppSettings;
+	public final fun getClientState ()Lio/getstream/chat/android/client/setup/state/ClientState;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
 	public final fun getCurrentToken ()Ljava/lang/String;
@@ -2180,7 +2181,12 @@ public abstract interface class io/getstream/chat/android/client/logger/ChatLogg
 	public abstract fun logI (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logT (Ljava/lang/Object;Ljava/lang/Throwable;)V
 	public abstract fun logT (Ljava/lang/Throwable;)V
+	public abstract fun logV (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logW (Ljava/lang/Object;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/logger/ChatLoggerHandler$DefaultImpls {
+	public static fun logV (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;Ljava/lang/Object;Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/logger/TaggedLogger {
@@ -2624,6 +2630,14 @@ public final class io/getstream/chat/android/client/models/ConnectionData {
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/ConnectionState : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field CONNECTING Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field OFFLINE Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun values ()[Lio/getstream/chat/android/client/models/ConnectionState;
 }
 
 public final class io/getstream/chat/android/client/models/ContentUtils {
@@ -3563,6 +3577,21 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
 	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
+}
+
+public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
+	public static final field Companion Lio/getstream/chat/android/client/setup/state/ClientState$Companion;
+	public abstract fun clearState ()V
+	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun isConnecting ()Z
+	public abstract fun isInitialized ()Z
+	public abstract fun isOffline ()Z
+	public abstract fun isOnline ()Z
+}
+
+public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
