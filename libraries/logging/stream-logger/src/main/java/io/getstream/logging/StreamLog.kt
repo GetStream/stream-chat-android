@@ -51,7 +51,7 @@ public object StreamLog {
      * Tests a [condition] on specified [internalLogger] implementation.
      */
     @JvmStatic
-    public fun inspect(condition: (logger: StreamLogger) -> Boolean): Boolean {
+    public inline fun inspect(condition: (logger: StreamLogger) -> Boolean): Boolean {
         return condition(internalLogger)
     }
 

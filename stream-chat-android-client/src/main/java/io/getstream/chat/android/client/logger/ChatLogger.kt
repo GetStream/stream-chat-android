@@ -18,6 +18,14 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
+@Deprecated(
+    message = "Use StreamLog instead.",
+    replaceWith = ReplaceWith(
+        expression = "StreamLog",
+        imports = ["io.getstream.logging.StreamLog"]
+    ),
+    level = DeprecationLevel.WARNING
+)
 public interface ChatLogger {
 
     public fun logI(tag: Any, message: String)
@@ -40,9 +48,20 @@ public interface ChatLogger {
 
     public fun getLevel(): ChatLogLevel
 
-    public data class Config(val level: ChatLogLevel, val handler: ChatLoggerHandler?)
+    @Deprecated(
+        message = "Use ChatLoggerConfig instead.",
+        replaceWith = ReplaceWith(
+            expression = "ChatLoggerConfig",
+            imports = ["io.getstream.chat.android.client.logger.ChatLoggerConfig"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public data class Config(
+        override val level: ChatLogLevel,
+        override val handler: ChatLoggerHandler?
+    ) : ChatLoggerConfig
 
-    public class Builder(config: Config) {
+    public class Builder(config: ChatLoggerConfig) {
 
         private var level = config.level
         private var handler: ChatLoggerHandler? = config.handler
@@ -67,6 +86,17 @@ public interface ChatLogger {
     public companion object {
         public var instance: ChatLogger = ChatSilentLogger()
 
+        @Deprecated(
+            message = "Use StreamLog.getLogger instead.",
+            replaceWith = ReplaceWith(
+                expression = "StreamLog.getLogger(tag: String): TaggedLogger",
+                imports = [
+                    "io.getstream.logging.StreamLog",
+                    "io.getstream.logging.TaggedLogger",
+                ]
+            ),
+            level = DeprecationLevel.WARNING
+        )
         public fun get(tag: Any): TaggedLogger {
             return TaggedLoggerImpl(tag, instance)
         }

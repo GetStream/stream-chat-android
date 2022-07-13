@@ -16,8 +16,7 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
 import okhttp3.Headers
 import okhttp3.Interceptor
@@ -34,15 +33,13 @@ import java.util.concurrent.TimeUnit
 internal class HttpLoggingInterceptor : Interceptor {
 
     private val logger = StreamLog.getLogger("Chat:Http")
-    private val chatLogger = ChatLogger.get("Http")
 
     @Throws(IOException::class)
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
-        val level = chatLogger.getLevel()
-
         val request = chain.request()
-        if (level == ChatLogLevel.NOTHING) {
+        val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
+        if (noLoggerSet) {
             return chain.proceed(request)
         }
 

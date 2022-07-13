@@ -79,6 +79,7 @@ import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
@@ -2613,7 +2614,7 @@ internal constructor(
                 cdnHttpUrl = "$httpProtocol://$cdnUrl/",
                 wssUrl = "$wsProtocol://$baseUrl/",
                 warmUp = warmUp,
-                loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
+                loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
                 debugRequests
             )
