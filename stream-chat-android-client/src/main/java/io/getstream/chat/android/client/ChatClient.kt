@@ -1051,6 +1051,13 @@ internal constructor(
     /**
      * Disconnect the current user, stop all observers and clear user data
      */
+    @Deprecated(
+        message = "It is a blocking method that shouldn't be used from the Main Thread.\n" +
+            "Instead of that, you can use `ChatClient.disconnect(true)` that return a `Call` " +
+            "and run it safe using coroutines.",
+        replaceWith = ReplaceWith("this.disconnect(true).await()"),
+        level = DeprecationLevel.WARNING
+    )
     @WorkerThread
     public fun disconnect() {
         disconnect(true).execute()
