@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -1018,9 +1019,16 @@ internal constructor(
         }
     }
 
-    public fun disconnect() {
-        runBlocking(scope.coroutineContext) {
-            logger.i { "[disconnect] no args" }
+    /**
+     * Disconnect the current user, stop all observers and clear user data.
+     *
+     * @param flushPersistence if true will clear user data.
+     *
+     * @return Executable async [Call] which performs the disconnection.
+     */
+    @CheckResult
+    public fun disconnect(flushPersistence: Boolean): Call<Unit> =
+        CoroutineCall(scope) {
             notifications.onLogout()
             clientState.toMutableState()?.clearState()
             getCurrentUser().let(initializationCoordinator::userDisconnected)
@@ -1032,10 +1040,20 @@ internal constructor(
                 userStateService.onLogout()
                 chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
             }
-            userCredentialStorage.clear()
+            if (flushPersistence) {
+                userCredentialStorage.clear()
+            }
             lifecycleObserver.dispose()
             appSettingsManager.clear()
+            Result.success(Unit)
         }
+
+    /**
+     * Disconnect the current user, stop all observers and clear user data
+     */
+    @WorkerThread
+    public fun disconnect() {
+        disconnect(true).execute()
     }
 
     //region: api calls
