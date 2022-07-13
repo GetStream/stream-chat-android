@@ -27,4 +27,4 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("99999.9")
-public fun <T> StateFlow<T>.asLiveData(): LiveData<T> = this.asLiveData()
+public fun <T> Flow<T>.asLiveData(): LiveData<T> = this.asLiveData()
