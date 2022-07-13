@@ -80,7 +80,6 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -98,6 +97,7 @@ import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 import java.util.Date
@@ -119,19 +119,19 @@ constructor(
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
-    val logger = ChatLogger.get("MoshiChatApi")
+    val logger = StreamLog.getLogger("Chat:MoshiChatApi")
 
     private var userId: String = ""
         get() {
             if (field == "") {
-                logger.logE("userId accessed before being set. Did you forget to call ChatClient.connectUser()?")
+                logger.e { "userId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
             return field
         }
     private var connectionId: String = ""
         get() {
             if (field == "") {
-                logger.logE("connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?")
+                logger.e { "connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
             return field
         }

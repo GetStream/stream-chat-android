@@ -19,18 +19,21 @@ package io.getstream.chat.android.ui.message.input.transliteration
 import android.icu.text.Transliterator
 import android.os.Build
 import androidx.annotation.RequiresApi
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 
 public class DefaultStreamTransliterator(transliterationId: String? = null) : StreamTransliterator {
 
     private var transliterator: Transliterator? = null
-    private val logger = ChatLogger.get("DefaultStreamTransliterator")
+    private val logger = StreamLog.getLogger("Chat:DefaultStreamTransliterator")
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             transliterationId?.let(::setTransliterator)
         } else {
-            logger.logD("This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. User a custom StreamTransliterator to add transliteration.")
+            logger.d {
+                "This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. " +
+                    "User a custom StreamTransliterator to add transliteration."
+            }
         }
     }
 
@@ -39,7 +42,7 @@ public class DefaultStreamTransliterator(transliterationId: String? = null) : St
         if (Transliterator.getAvailableIDs().asSequence().contains(id)) {
             this.transliterator = Transliterator.getInstance(id)
         } else {
-            logger.logD("The id: $id for transliteration is not available")
+            logger.d { "The id: $id for transliteration is not available" }
         }
     }
 

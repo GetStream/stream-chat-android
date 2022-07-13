@@ -20,10 +20,10 @@ import android.content.Context
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
+import io.getstream.logging.StreamLog
 
 /**
  * Generator responsible for providing information needed to register Firebase push notifications provider
@@ -32,11 +32,11 @@ public class FirebasePushDeviceGenerator(
     private val firebaseMessaging: FirebaseMessaging = FirebaseMessaging.getInstance(),
     private val providerName: String? = null,
 ) : PushDeviceGenerator {
-    private val logger = ChatLogger.get("ChatNotifications")
+    private val logger = StreamLog.getLogger("Chat:Notifications")
 
     override fun isValidForThisDevice(context: Context): Boolean =
         (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS).also {
-            logger.logI("Is Firebase available on on this device -> $it")
+            logger.i { "Is Firebase available on on this device -> $it" }
         }
 
     override fun onPushDeviceGeneratorSelected() {
@@ -44,10 +44,10 @@ public class FirebasePushDeviceGenerator(
     }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
-        logger.logI("Getting Firebase token")
+        logger.i { "Getting Firebase token" }
         firebaseMessaging.token.addOnCompleteListener {
             if (it.isSuccessful) {
-                logger.logI("Firebase returned token successfully")
+                logger.i { "Firebase returned token successfully" }
                 onDeviceGenerated(
                     Device(
                         token = it.result,
@@ -56,7 +56,7 @@ public class FirebasePushDeviceGenerator(
                     )
                 )
             } else {
-                logger.logI("Error: Firebase didn't returned token")
+                logger.i { "Error: Firebase didn't returned token" }
             }
         }
     }

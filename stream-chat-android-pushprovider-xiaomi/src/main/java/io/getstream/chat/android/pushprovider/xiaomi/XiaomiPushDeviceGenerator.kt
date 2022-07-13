@@ -19,10 +19,10 @@ package io.getstream.chat.android.pushprovider.xiaomi
 import android.content.Context
 import com.xiaomi.channel.commonutils.android.Region
 import com.xiaomi.mipush.sdk.MiPushClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
+import io.getstream.logging.StreamLog
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -42,7 +42,7 @@ public class XiaomiPushDeviceGenerator(
 ) :
     PushDeviceGenerator {
     private val appContext = context.applicationContext
-    private val logger = ChatLogger.get("ChatNotifications")
+    private val logger = StreamLog.getLogger("Chat:Notifications")
     private var isAlreadyRegistered = AtomicBoolean(false)
 
     override fun isValidForThisDevice(context: Context): Boolean = true
@@ -52,7 +52,7 @@ public class XiaomiPushDeviceGenerator(
     }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
-        logger.logI("Getting Xiaomi token")
+        logger.i { "Getting Xiaomi token" }
         if (isAlreadyRegistered.compareAndSet(false, true)) {
             MiPushClient.setRegion(region)
             MiPushClient.registerPush(appContext, appId, appKey)
