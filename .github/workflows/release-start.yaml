@@ -5,8 +5,6 @@ on:
     inputs:
       force_bump_minor_version: 
         type: boolean
-      skip_main_sync:
-        type: boolean
       skip_version_bump:
         type: boolean
       skip_changelog_update:
