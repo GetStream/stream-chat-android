@@ -18,6 +18,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a way to convert `Flow` into `LiveData` for Java users.
+  You can now use `FlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
 - Base state of the SDK can be check using `io.getstream.chat.android.client.setup.state.ClientState` interface. Use this interface to receive the state of the SDK as StateFlows. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
 
 ### ⚠️ Changed
