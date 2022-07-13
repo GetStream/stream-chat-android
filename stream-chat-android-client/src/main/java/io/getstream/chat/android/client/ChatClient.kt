@@ -2570,6 +2570,8 @@ internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
+            pluginFactories.forEach { pluginFactory -> pluginFactory.configure() }
+
             chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->

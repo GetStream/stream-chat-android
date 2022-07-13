@@ -26,9 +26,11 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
+import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -53,6 +55,15 @@ public class StreamOfflinePluginFactory(
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
 
     private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+
+    override fun configure() {
+        ClientState.getOrCreate(appContext).apply {
+            clearState()
+        }
+        GlobalMutableState.getOrCreate(appContext).apply {
+            clearState()
+        }
+    }
 
     /**
      * Creates a [Plugin]

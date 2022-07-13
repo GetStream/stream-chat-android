@@ -84,6 +84,10 @@ public class StreamStatePluginFactory(
 
     private val logger = ChatLogger.get("StreamStatePluginFactory")
 
+    override fun configure() {
+
+    }
+
     /**
      * Creates a [Plugin]
      *
