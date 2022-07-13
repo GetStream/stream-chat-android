@@ -27,8 +27,7 @@ import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.enqueue
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
@@ -76,8 +75,6 @@ import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorStat
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.compose.util.extensions.asState
-import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -95,11 +92,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import com.getstream.sdk.chat.enums.GiphyAction as GiphyActionCommon
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -169,14 +166,12 @@ public class MessageListViewModel(
     /**
      * The information for the current [Channel].
      */
-    public var channel: Channel by mutableStateOf(Channel())
-        private set
+    public val channel: Channel by messageListController.channel.asState(viewModelScope)
 
     /**
      * The list of typing users.
      */
-    public var typingUsers: List<User> by mutableStateOf(emptyList())
-        private set
+    public val typingUsers: List<User> by messageListController.typingUsers.asState(viewModelScope)
 
     /**
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
@@ -256,8 +251,6 @@ public class MessageListViewModel(
      * messages and other pieces of information.
      */
     init {
-        observeTypingUsers()
-        observeMessages()
         observeChannel()
     }
 
@@ -339,46 +332,9 @@ public class MessageListViewModel(
     }
 
     /**
-     * Starts observing the list of typing users.
-     */
-    private fun observeTypingUsers() {
-        viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
-                typingUsers = it.users
-            }
-        }
-    }
-
-    /**
-     * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
-     * channel data, member count or online member count updates.
-     */
-    private fun observeChannel() {
-        viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { state ->
-                combine(
-                    state.channelData,
-                    state.membersCount,
-                    state.watcherCount,
-                ) { _, _, _ ->
-                    state.toChannel()
-                }
-            }.collect { channel ->
-                chatClient.notifications.dismissChannelNotifications(
-                    channelType = channel.type,
-                    channelId = channel.id
-                )
-                setCurrentChannel(channel)
-            }
-        }
-    }
-
-    /**
      * Sets the current channel, used to show info in the UI.
      */
-    private fun setCurrentChannel(channel: Channel) {
-        this.channel = channel
-    }
+    private fun setCurrentChannel(channel: Channel): Unit = messageListController.setCurrentChannel(channel)
 
     /**
      * Used to filter messages which we should show to the current user.
@@ -507,14 +463,12 @@ public class MessageListViewModel(
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
 
-        val (channelType, id) = channelId.cidToTypeAndId()
-
         val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
             messageItem is MessageItemState
         } as? MessageItemState
 
         if (currentMessage.id == latestMessage?.message?.id) {
-            chatClient.markRead(channelType, id).enqueue()
+            messageListController.markLastMessageRead()
         }
     }
 
@@ -935,7 +889,7 @@ public class MessageListViewModel(
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
 
-        chatClient.deleteMessage(message.id, hard).enqueue()
+        messageListController.deleteMessage(message, hard)
     }
 
     /**
@@ -957,11 +911,7 @@ public class MessageListViewModel(
      *
      * @param message The message that will be re-sent.
      */
-    private fun resendMessage(message: Message) {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-
-        chatClient.sendMessage(channelType, channelId, message).enqueue()
-    }
+    private fun resendMessage(message: Message) = messageListController.resendMessage(message)
 
     /**
      * Copies the message content using the [ClipboardHandler] we provide. This can copy both
@@ -978,124 +928,7 @@ public class MessageListViewModel(
      *
      * @param user The user to mute or unmute.
      */
-    private fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
-
-        if (isUserMuted) {
-            unmuteUser(user.id)
-        } else {
-            muteUser(user.id)
-        }
-    }
-
-    /**
-     * Mutes the given user inside this channel.
-     *
-     * @param userId The ID of the user to be muted.
-     * @param timeout The period of time for which the user will
-     * be muted, expressed in minutes. A null value signifies that
-     * the user will be muted for an indefinite time.
-     */
-    public fun muteUser(
-        userId: String,
-        timeout: Int? = null,
-    ) {
-        chatClient.muteUser(userId, timeout)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to mute the user"
-
-                StreamLog.e("MessageListViewModel.muteUser") { errorMessage }
-            })
-    }
-
-    /**
-     * Unmutes the given user inside this channel.
-     *
-     * @param userId The ID of the user to be unmuted.
-     */
-    public fun unmuteUser(userId: String) {
-        chatClient.unmuteUser(userId)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unmute the user"
-
-                StreamLog.e("MessageListViewModel.unMuteUser") { errorMessage }
-            })
-    }
-
-    /**
-     * Bans the given user inside this channel.
-     *
-     * @param userId The ID of the user to be banned.
-     * @param reason The reason for banning the user.
-     * @param timeout The period of time for which the user will
-     * be banned, expressed in minutes. A null value signifies that
-     * the user will be banned for an indefinite time.
-     */
-    public fun banUser(
-        userId: String,
-        reason: String? = null,
-        timeout: Int? = null,
-    ) {
-        chatClient.channel(channelId).banUser(userId, reason, timeout)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to ban the user"
-
-                StreamLog.e("MessageListViewModel.banUser") { errorMessage }
-            })
-    }
-
-    /**
-     * Unbans the given user inside this channel.
-     *
-     * @param userId The ID of the user to be unbanned.
-     */
-    public fun unbanUser(userId: String) {
-        chatClient.channel(channelId).unbanUser(userId)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unban the user"
-
-                StreamLog.e("MessageListViewModel.unban") { errorMessage }
-            })
-    }
-
-    /**
-     * Shadow bans the given user inside this channel.
-     *
-     * @param userId The ID of the user to be shadow banned.
-     * @param reason The reason for shadow banning the user.
-     * @param timeout The period of time for which the user will
-     * be shadow banned, expressed in minutes. A null value signifies that
-     * the user will be shadow banned for an indefinite time.
-     */
-    public fun shadowBanUser(
-        userId: String,
-        reason: String? = null,
-        timeout: Int? = null,
-    ) {
-        chatClient.channel(channelId).shadowBanUser(userId, reason, timeout)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
-
-                StreamLog.e("MessageListViewModel.shadowBanUser") { errorMessage }
-            })
-    }
-
-    /**
-     * Removes the shaddow ban for the given user inside
-     * this channel.
-     *
-     * @param userId The ID of the user for which the shadow
-     * ban is removed.
-     */
-    public fun removeShadowBanFromUser(userId: String) {
-        chatClient.channel(channelId).removeShadowBan(userId)
-            .enqueue(onError = { chatError ->
-                val errorMessage =
-                    chatError.message ?: chatError.cause?.message ?: "Unable to remove the user shadow ban"
-
-                StreamLog.e("MessageListViewModel.removeShadowBanFromUser") { errorMessage }
-            })
-    }
+    private fun updateUserMute(user: User) = messageListController.updateUserMute(user)
 
     /**
      * Triggered when the user chooses the [React] action for the currently selected message. If the
@@ -1105,38 +938,15 @@ public class MessageListViewModel(
      * @param reaction The reaction to add or remove.
      * @param message The currently selected message.
      */
-    private fun reactToMessage(reaction: Reaction, message: Message) {
-        val channelState = channelState.value ?: return
-
-        if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
-            chatClient.deleteReaction(
-                messageId = message.id,
-                reactionType = reaction.type,
-                cid = channelState.cid
-            ).enqueue()
-        } else {
-            chatClient.sendReaction(
-                reaction = reaction,
-                enforceUnique = enforceUniqueReactions,
-                cid = channelState.cid
-            ).enqueue()
-        }
-    }
+    private fun reactToMessage(reaction: Reaction, message: Message) =
+        messageListController.reactToMessage(reaction, message, enforceUniqueReactions)
 
     /**
      * Pins or unpins the message from the current channel based on its state.
      *
      * @param message The message to update the pin state of.
      */
-    private fun updateMessagePin(message: Message) {
-        val updateCall = if (message.pinned) {
-            chatClient.unpinMessage(message)
-        } else {
-            chatClient.pinMessage(message = message, expirationDate = null)
-        }
-
-        updateCall.enqueue()
-    }
+    private fun updateMessagePin(message: Message) = messageListController.updateMessagePin(message)
 
     /**
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
@@ -1247,12 +1057,12 @@ public class MessageListViewModel(
      * @param action The action to be executed.
      */
     public fun performGiphyAction(action: GiphyAction) {
-        val message = action.message
-        when (action) {
-            is SendGiphy -> chatClient.sendGiphy(message)
-            is ShuffleGiphy -> chatClient.shuffleGiphy(message)
-            is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
-        }.exhaustive.enqueue()
+        val actionToPerform: GiphyActionCommon = when (action) {
+            is CancelGiphy -> GiphyActionCommon.CANCEL
+            is SendGiphy -> GiphyActionCommon.SEND
+            is ShuffleGiphy -> GiphyActionCommon.SHUFFLE
+        }
+        messageListController.performGiphyAction(actionToPerform, action.message)
     }
 
     /**
