@@ -189,7 +189,7 @@ public class StreamStatePluginFactory(
         chatClient.apply {
             addInterceptor(defaultInterceptor)
             addErrorHandlers(
-                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories()
+                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repos)
                     .map { factory -> factory.create() }
             )
         }
