@@ -1,4 +1,4 @@
-# Adding Custom Attachments V2 (With the new MessageComposerView)
+# Adding Custom Attachments V2
 
 :::caution
 This version of the [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/) guide uses the new `MessageComposerView` which is still experimental.
@@ -13,7 +13,6 @@ In this guide, we'll demonstrate how to build a date sharing feature. Chat users
 This involves the following steps:
 1. Customizing the message composer so that it is capable of sending messages with `date` attachments.
 2. Adding support for `date` attachments in the message list.
-3. Adding support for `date` attachment previews in the message composer.
 
 :::note
 In this guide, we'll show only the main points concerning custom attachments. Smaller parts will be omitted for the sake of being concise.
@@ -23,9 +22,7 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 
 ## Sending Date Attachments
 
-First of all, you'll need to add a new date picker button to the leading content of [MessageComposerView](../04-message-components/05-message-composer.mdx).
-
-We'll take the [Default Implementation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button and set a click listener on it:
+First of all, you'll need to customize the leading content of [MessageComposerView](../04-message-components/05-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
 
 ```xml
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
@@ -139,10 +136,15 @@ messageComposerView.setLeadingContent(
 )
 ```
 
-After the date has been selected, we create an instance of `Attachment` with the corresponding payload and submit it to the `MessageComposerView`.
+This code will display the date picker dialog once the button is clicked:
 
+|||
+| --- | --- |
+| ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_1.png) | ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_2.png) |
 
-Note that the MessageInputView::submitCustomAttachments method also requires a ViewHolder factory to provide support for displaying custom attachment previews in in the MessageInputView. Here's the code for this factory:
+After the date has been selected, we create an instance of `Attachment` with the corresponding payload and add it to the composer with the `MessageComposerViewModel::addSelectedAttachments` method. 
+
+Next, we need to provide support for displaying custom attachment previews in the `MessageComposerView` by implementing the `AttachmentPreviewFactory` interface:
 
 ```kotlin
 interface AttachmentPreviewFactory {
@@ -155,6 +157,11 @@ interface AttachmentPreviewFactory {
     ): AttachmentPreviewViewHolder
 }
 ```
+
+There are two methods that need to be implemented:
+
+* `canHandle`: Checks whether the factory can handle the given attachment.
+* `onCreateViewHolder`: Represents the attachment preview UI within the `MessageComposerView`.
 
 ```kotlin
 class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
@@ -194,19 +201,23 @@ class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
 }
 ```
 
+Finally, provide the factory via `ChatUI`:
+
 ```kotlin
 ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
     listOf(
-        DateAttachmentPreviewFactory(),
+        // The new factory
+        DateAttachmentPreviewFactory(), 
+        // The default factories
         ImageAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),
     )
 )
 ```
 
-Now you can send a custom attachment of type `date` to the chat. The resulting UI will look like this:
+Now we are ready to send a custom attachment of type `date` to the chat. The resulting UI will look like this:
 
-![Sending Custom Attachment](../../assets/sending_custom_attachments_v2.png)
+![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_3.png)
 
 Next, you'll need to build a custom attachment factory to render the item in the message list.
 
@@ -294,12 +305,6 @@ To complete the date sharing feature you just need to provide `DateAttachmentFac
 ```kotlin
 ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
 ```
-
-Date attachments should now be correctly rendered in the message input and in the message list like in the screenshot below:
-
-![Rendering Custom Attachment](../../assets/rendering_custom_attachments_v2.png)
-
-
 
 Date attachments should now be correctly rendered in the message input and in the message list like in the screenshot below:
 
