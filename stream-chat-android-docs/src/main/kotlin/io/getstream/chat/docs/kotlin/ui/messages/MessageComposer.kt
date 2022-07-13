@@ -5,12 +5,15 @@ package io.getstream.chat.docs.kotlin.ui.messages
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
@@ -33,6 +36,7 @@ import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
+import io.getstream.chat.docs.databinding.CustomMessageComposerLeadingContentBinding
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
@@ -177,6 +181,7 @@ private object MessageComposerHandlingActionsSnippet {
 private object MessageComposerCustomizationSnippet {
 
     private lateinit var context: Context
+    private lateinit var fragmentManager: FragmentManager
     private lateinit var messageComposerView: MessageComposerView
     private lateinit var messageComposerViewModel: MessageComposerViewModel
 
@@ -281,10 +286,28 @@ private object MessageComposerCustomizationSnippet {
     }
 
     fun contentCustomizationSnippet3() {
-        messageComposerView.setLeadingContent(CustomMessageComposerLeadingContent(context))
+        messageComposerView.setLeadingContent(
+            CustomMessageComposerLeadingContent(context).also {
+                it.datePickerButtonClickListener = {
+                    val datePickerDialog = MaterialDatePicker.Builder
+                        .datePicker()
+                        .build()
+
+                    datePickerDialog.addOnPositiveButtonClickListener {
+                        // Handle date selection
+                    }
+
+                    datePickerDialog.show(fragmentManager, null)
+                }
+            }
+        )
     }
 
     private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+
+        private lateinit var binding: CustomMessageComposerLeadingContentBinding
+
+        public var datePickerButtonClickListener: () -> Unit = {}
 
         constructor(context: Context) : this(context, null)
 
@@ -294,7 +317,10 @@ private object MessageComposerCustomizationSnippet {
             context,
             attrs,
             defStyleAttr
-        )
+        ) {
+            binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true)
+            binding.datePickerButton.setOnClickListener { datePickerButtonClickListener() }
+        }
 
         override fun attachContext(messageComposerContext: MessageComposerContext) {
             // Access the style if necessary

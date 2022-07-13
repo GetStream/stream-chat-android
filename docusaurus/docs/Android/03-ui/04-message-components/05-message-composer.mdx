@@ -265,7 +265,7 @@ messageComposerView.setMentionSuggestionsContent(
 To create a custom content view you need to create an Android View that implements the `MessageComposerContent` interface:
 
 ```kotlin
-private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
 
     constructor(context: Context) : this(context, null)
 
@@ -299,3 +299,72 @@ Finally, you need to pass the created content view to the `MessageComposerView`:
 ```kotlin
 messageComposerView.setLeadingContent(CustomMessageComposerLeadingContent(context))
 ```
+
+Here is an example of how the leading content can be customized to show a date picker button:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/datePickerButton"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp"
+    android:src="@drawable/ic_calendar" />
+```
+
+```kotlin
+class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+
+    private lateinit var binding: CustomMessageComposerLeadingContentBinding
+
+    var datePickerButtonClickListener: () -> Unit = {}
+
+    constructor(context: Context) : this(context, null)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true)
+        binding.datePickerButton.setOnClickListener { datePickerButtonClickListener() }
+    }
+
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        // Access the style if necessary
+        val style = messageComposerContext.style
+    }
+
+    override fun renderState(state: MessageComposerState) {
+        // Render the state of the component
+    }
+}
+```
+
+```kotlin
+messageComposerView.setLeadingContent(
+    CustomMessageComposerLeadingContent(context).also {
+        it.datePickerButtonClickListener = {
+            val datePickerDialog = MaterialDatePicker.Builder
+                .datePicker()
+                .build()
+
+            datePickerDialog.addOnPositiveButtonClickListener {
+                // Handle date selection
+            }
+
+            datePickerDialog.show(fragmentManager, null)
+        }
+    }
+)
+```
+
+In the example above, we inflated a simple layout with just one date picker button and defined a listener to handle clicks on the button. A dialog is shown when the button is clicked.
+
+|||
+| --- | --- |
+| ![Message Composer](../../assets/message_composer_custom_slot_1.png) | ![Message Composer](../../assets/message_composer_custom_slot_2.png) |

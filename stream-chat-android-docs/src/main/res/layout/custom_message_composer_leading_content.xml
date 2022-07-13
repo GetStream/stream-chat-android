@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/datePickerButton"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp"
+    android:src="@drawable/ic_calendar"
+    />
