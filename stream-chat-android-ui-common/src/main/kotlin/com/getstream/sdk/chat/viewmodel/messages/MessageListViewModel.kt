@@ -640,7 +640,7 @@ public class MessageListViewModel(
                     scrollToBottom()
                 } else {
                     val error = result.error()
-                    logger.logE("Could not load newest messages. Cause: ${error.cause?.message}")
+                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
                 }
             }
         }
