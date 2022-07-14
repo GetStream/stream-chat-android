@@ -7,8 +7,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -30,6 +28,8 @@ import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,7 +50,7 @@ public class MessageListController(
      * The logger used to print to errors, warnings, information
      * and other things to log.
      */
-    private val logger: TaggedLogger = ChatLogger.get("MessageListController")
+    private val logger: TaggedLogger = StreamLog.getLogger("MessageListController")
 
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
@@ -150,7 +150,7 @@ public class MessageListController(
                         scrollToBottom()
                     } else {
                         val error = result.error()
-                        logger.logE("Could not load newest messages. Cause: ${error.cause?.message}")
+                        logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
                     }
                 }
             }
@@ -190,7 +190,7 @@ public class MessageListController(
         messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
         onResult: (Result<List<Message>>) -> Unit = {},
     ) {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
 
         _mode.value.run {
             when (this) {
@@ -219,7 +219,7 @@ public class MessageListController(
             ).enqueue { onResult(it) }
         } else {
             onResult(Result.error(ChatError("Thread state must be not null for offline plugin thread load more!")))
-            logger.logW("Thread state must be not null for offline plugin thread load more!")
+            logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 
@@ -253,12 +253,12 @@ public class MessageListController(
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not delete message: ${chatError.message}, Hard: ${hard}. " +
                             "Cause: ${chatError.cause?.message}. If you're using OfflinePlugin, the message " +
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
-                    )
+                    }
                 }
             )
     }
@@ -270,10 +270,10 @@ public class MessageListController(
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             chatClient.markRead(channelType, channelId).enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not mark cid: $channelId as read. Error message: ${chatError.message}. " +
                             "Cause message: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
         }
@@ -289,7 +289,7 @@ public class MessageListController(
         chatClient.flagMessage(message.id).enqueue { result ->
             onResult(result)
             if (result.isError) {
-                logger.logE("Could not flag message: ${result.error().message}")
+                logger.e { "Could not flag message: ${result.error().message}" }
             }
         }
     }
@@ -318,7 +318,7 @@ public class MessageListController(
         chatClient.pinMessage(message).enqueue { result ->
             onResult(result)
             if (result.isError) {
-                logger.logE("Could not pin message: ${result.error().message}. Cause: ${result.error().cause?.message}")
+                logger.e { "Could not pin message: ${result.error().message}. Cause: ${result.error().cause?.message}" }
             }
         }
     }
@@ -333,9 +333,9 @@ public class MessageListController(
         chatClient.unpinMessage(message).enqueue { result ->
             onResult(result)
             if (result.isError) {
-                logger.logE(
+                logger.e {
                     "Could not unpin message: ${result.error().message}. Cause: ${result.error().cause?.message}"
-                )
+                }
             }
         }
     }
@@ -350,10 +350,10 @@ public class MessageListController(
         chatClient.sendMessage(channelType, channelId, message)
             .enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "(Retry) Could not send message: ${chatError.message}. " +
                             "Cause: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
     }
@@ -383,7 +383,7 @@ public class MessageListController(
         chatClient.muteUser(user.id).enqueue { result ->
             onResult(result)
             if (result.isError) {
-                logger.logE("Could not mute user: ${result.error().message}")
+                logger.e { "Could not mute user: ${result.error().message}" }
             }
         }
     }
@@ -398,7 +398,7 @@ public class MessageListController(
         chatClient.unmuteUser(user.id).enqueue { result ->
             onResult(result)
             if (result.isError) {
-                logger.logE("Could not unmute user: ${result.error().message}")
+                logger.e { "Could not unmute user: ${result.error().message}" }
             }
         }
     }
@@ -420,10 +420,10 @@ public class MessageListController(
                 cid = cid
             ).enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
                             "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
         } else {
@@ -433,10 +433,10 @@ public class MessageListController(
                 cid = cid
             ).enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not send reaction for message with id: ${reaction.messageId} " +
                             "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
         }
@@ -454,10 +454,10 @@ public class MessageListController(
             GiphyAction.SHUFFLE -> chatClient.shuffleGiphy(message)
             GiphyAction.CANCEL -> chatClient.cancelEphemeralMessage(message)
         }.exhaustive.enqueue(onError = { chatError ->
-            logger.logE(
+            logger.e {
                 "Could not ${action.name} giphy for message id: ${message.id}. " +
                     "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-            )
+            }
         })
     }
 
