@@ -27,6 +27,7 @@
 ### ⚠️ Changed
 -. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)
 - `ChatLoggerHandler` has a new function named `logV`. [#3869](https://github.com/GetStream/stream-chat-android/pull/3869)
+- `ChatClient.disconnect()` is deprecated and a new `ChatClient.disconnect(Boolean)` method with a boolean argument is created. This method return a `Call` to be invoked for disconnection. [#3817](https://github.com/GetStream/stream-chat-android/pull/3817)
 
 ### ❌ Removed
 - 🚨 Breaking change: Removed the `Member.role` field. [3851](https://github.com/GetStream/stream-chat-android/pull/3851)

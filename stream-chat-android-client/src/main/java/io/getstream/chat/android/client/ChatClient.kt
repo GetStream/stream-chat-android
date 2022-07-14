@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -161,6 +162,7 @@ import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
@@ -235,7 +237,7 @@ internal constructor(
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe()
+                        runBlocking(context = scope.coroutineContext) { lifecycleObserver.observe() }
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
@@ -1016,23 +1018,48 @@ internal constructor(
         }
     }
 
-    public fun disconnect() {
-        logger.i { "[disconnect] no args" }
-        notifications.onLogout()
-        // fire a handler here that the chatDomain and chatUI can use
-        clientState.toMutableState()?.clearState()
-        getCurrentUser().let(initializationCoordinator::userDisconnected)
-        if (ToggleService.isSocketExperimental().not()) {
-            socketStateService.onDisconnectRequested()
-            userStateService.onLogout()
-            socket.disconnect()
-        } else {
-            userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+    /**
+     * Disconnect the current user, stop all observers and clear user data.
+     *
+     * @param flushPersistence if true will clear user data.
+     *
+     * @return Executable async [Call] which performs the disconnection.
+     */
+    @CheckResult
+    public fun disconnect(flushPersistence: Boolean): Call<Unit> =
+        CoroutineCall(scope) {
+            notifications.onLogout()
+            clientState.toMutableState()?.clearState()
+            getCurrentUser().let(initializationCoordinator::userDisconnected)
+            if (ToggleService.isSocketExperimental().not()) {
+                socketStateService.onDisconnectRequested()
+                userStateService.onLogout()
+                socket.disconnect()
+            } else {
+                userStateService.onLogout()
+                chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            }
+            if (flushPersistence) {
+                userCredentialStorage.clear()
+            }
+            lifecycleObserver.dispose()
+            appSettingsManager.clear()
+            Result.success(Unit)
         }
-        userCredentialStorage.clear()
-        lifecycleObserver.dispose()
-        appSettingsManager.clear()
+
+    /**
+     * Disconnect the current user, stop all observers and clear user data
+     */
+    @Deprecated(
+        message = "It is a blocking method that shouldn't be used from the Main Thread.\n" +
+            "Instead of that, you can use `ChatClient.disconnect(true)` that return a `Call` " +
+            "and run it safe using coroutines.",
+        replaceWith = ReplaceWith("this.disconnect(true).await()"),
+        level = DeprecationLevel.WARNING
+    )
+    @WorkerThread
+    public fun disconnect() {
+        disconnect(true).execute()
     }
 
     //region: api calls

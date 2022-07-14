@@ -97,9 +97,9 @@ object ChatHelper {
     /**
      * Logs out the user and removes their credentials from the persistent storage.
      */
-    fun disconnectUser() {
+    suspend fun disconnectUser() {
         ChatApp.credentialsRepository.clearCredentials()
 
-        ChatClient.instance().disconnect()
+        ChatClient.instance().disconnect(false).await()
     }
 }
