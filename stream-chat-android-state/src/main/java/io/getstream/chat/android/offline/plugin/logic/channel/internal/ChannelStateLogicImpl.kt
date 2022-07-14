@@ -478,7 +478,7 @@ internal class ChannelStateLogicImpl(
             * we are requesting the newest messages */
             !request.isFilteringMessages() -> {
                 mutableState.setEndOfOlderMessages(false)
-                mutableState.setEndOfNewerMessages(true)
+                mutableState.setEndOfNewerMessages(!mutableState.insideSearch.value)
             }
             /* If we are filtering around a specific message we are loading both newer and older messages
             * and can't be sure if there are no older or newer messages left */

@@ -276,8 +276,9 @@ public class MessageListViewModel(
                     channelState.messagesState,
                     user,
                     channelState.reads,
-                    channelState.unreadCount
-                ) { state, user, reads, unreadCount ->
+                    channelState.unreadCount,
+                    channelState.endOfNewerMessages
+                ) { state, user, reads, unreadCount, endOfNewerMessages ->
                     when (state) {
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
                         is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
@@ -297,7 +298,7 @@ public class MessageListViewModel(
                                 ),
                                 isLoadingMore = false,
                                 endOfMessages = channelState.endOfOlderMessages.value,
-                                startOfMessages = channelState.endOfNewerMessages.value,
+                                startOfMessages = endOfNewerMessages,
                                 currentUser = user,
                                 isLoadingMoreNewMessages = false,
                                 isLoadingMoreOldMessages = false,

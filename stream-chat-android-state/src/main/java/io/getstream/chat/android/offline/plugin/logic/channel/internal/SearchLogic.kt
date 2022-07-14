@@ -32,7 +32,7 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
             isInsideSearch && request.isFilteringNewerMessages() && noMoreMessages -> {
                 updateSearchState(false)
             }
-            isInsideSearch && !request.isFilteringMessages() -> {
+            isInsideSearch && !request.isFilteringMessages() && noMoreMessages -> {
                 updateSearchState(false)
             }
         }
