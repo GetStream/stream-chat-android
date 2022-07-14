@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
@@ -36,7 +37,6 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
