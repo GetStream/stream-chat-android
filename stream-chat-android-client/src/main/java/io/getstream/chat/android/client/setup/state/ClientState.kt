@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.StateFlow
 
 /**

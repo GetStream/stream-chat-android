@@ -93,7 +93,6 @@ internal class MockClientBuilder(
 
         api = mock()
 
-
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutineExtension.scope)

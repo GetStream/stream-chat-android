@@ -2616,9 +2616,8 @@ internal constructor(
             level = DeprecationLevel.ERROR
         )
         override fun internalBuild(): ChatClient {
-            if (apiKey.isEmpty()) {
+            if (apiKey.isEmpty())
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
-            }
 
             instance?.run {
                 Log.e(
