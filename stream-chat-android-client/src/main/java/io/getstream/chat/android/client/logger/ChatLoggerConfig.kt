@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.sync.messages.internal
+package io.getstream.chat.android.client.logger
 
-import android.content.Context
-import io.getstream.logging.StreamLog
-
-internal class OfflineSyncFirebaseMessagingHandler {
-    private val logger = StreamLog.getLogger("Chat:OfflineSyncFirebaseMessagingHandler")
-
-    fun syncMessages(context: Context, cid: String) {
-        logger.d { "Starting the sync" }
-
-        SyncMessagesWork.start(context, cid)
-    }
-
-    fun cancel(context: Context) {
-        SyncMessagesWork.cancel(context)
-    }
+/**
+ * A logging config to be used by the client.
+ */
+public interface ChatLoggerConfig {
+    public val level: ChatLogLevel
+    public val handler: ChatLoggerHandler?
 }
+
+internal data class ChatLoggerConfigImpl(
+    override val level: ChatLogLevel,
+    override val handler: ChatLoggerHandler?
+) : ChatLoggerConfig

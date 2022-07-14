@@ -86,7 +86,6 @@ internal class ClientConnectionTests {
     private lateinit var socket: ChatSocket
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
-    private lateinit var logger: ChatLogger
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
@@ -101,7 +100,6 @@ internal class ClientConnectionTests {
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
         fileUploader = mock()
-        logger = mock()
         notificationsManager = mock()
         initCallback = mock()
         api = mock()

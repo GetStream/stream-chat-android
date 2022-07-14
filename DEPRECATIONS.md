@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatLogger` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `ChatLogger.Config` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
+| `ChatLogger::get` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
+| `BaseChatModule::logger` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
 | `GlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
 | `GlobalState::isInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
 | `GlobalState::isConnecting` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|

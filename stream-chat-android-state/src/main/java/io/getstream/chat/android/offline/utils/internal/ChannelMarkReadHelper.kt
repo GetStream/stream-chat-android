@@ -17,12 +17,12 @@
 package io.getstream.chat.android.offline.utils.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
+import io.getstream.logging.StreamLog
 
 /**
  * Checks if the channel can be marked as read and marks it locally if needed.
@@ -39,7 +39,7 @@ internal class ChannelMarkReadHelper(
     private val clientState: ClientState,
 ) {
 
-    private val logger = ChatLogger.get("ChannelMarkReadHelper")
+    private val logger = StreamLog.getLogger("Chat:ChannelMarkReadHelper")
 
     /**
      * Marks channel as read locally if different conditions are met:
@@ -62,7 +62,7 @@ internal class ChannelMarkReadHelper(
         val messages = channelState.sortedMessages.value
 
         if (messages.isEmpty()) {
-            logger.logI("No messages; nothing to mark read.")
+            logger.i { "No messages; nothing to mark read." }
             return false
         }
 
@@ -72,19 +72,22 @@ internal class ChannelMarkReadHelper(
                     channelState.lastMarkReadEvent == null || lastMessageDate?.after(channelState.lastMarkReadEvent) == true
 
                 if (!shouldUpdate) {
-                    logger.logI("Last message date [$lastMessageDate] is not after last read event [${channelState.lastMarkReadEvent}]; no need to update.")
+                    logger.i {
+                        "Last message date [$lastMessageDate] is not after " +
+                            "last read event [${channelState.lastMarkReadEvent}]; no need to update."
+                    }
                     return false
                 }
 
                 val currentUser = chatClient.getCurrentUser()
 
                 if (currentUser == null) {
-                    logger.logI("Cannot mark read because user is not set!")
+                    logger.i { "Cannot mark read because user is not set!" }
                     return false
                 }
 
                 if (!clientState.isOnline) {
-                    logger.logI("Cannot mark read because user is offline!")
+                    logger.i { "Cannot mark read because user is offline!" }
                     return false
                 }
 

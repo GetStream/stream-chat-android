@@ -16,19 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.ui.common.R;
+import io.getstream.logging.StreamLog;
+import io.getstream.logging.TaggedLogger;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
  */
 public class AttachmentDocumentActivity extends AppCompatActivity {
-    private final static String TAG = AttachmentDocumentActivity.class.getSimpleName();
 
     private static final String KEY_URL = "url";
 
@@ -38,7 +36,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     int reloadCount = 0;
     final int maxReloadCount = 5;
 
-    private TaggedLogger logger = ChatLogger.Companion.get("AttachmentDocumentActivity");
+    private final TaggedLogger logger = StreamLog.getLogger("Chat:AttachmentDocumentActivity");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +119,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            logger.logE("The load failed due to an unknown error: " + error);
+            logger.e(() -> "The load failed due to an unknown error: " + error);
             if (error == null) {
                 return;
             }

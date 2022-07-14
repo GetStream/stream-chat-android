@@ -67,6 +67,7 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -121,6 +122,14 @@ internal open class BaseChatModule(
 
     fun experimentalSocket() = chatSocketExperimental
 
+    @Deprecated(
+        message = "Use StreamLog instead.",
+        replaceWith = ReplaceWith(
+            expression = "StreamLog",
+            imports = ["io.getstream.logging.StreamLog"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     fun logger(): ChatLogger = defaultLogger
 
     fun notifications(): ChatNotifications = defaultNotifications
@@ -194,7 +203,7 @@ internal open class BaseChatModule(
                     addInterceptor(HttpLoggingInterceptor())
                     addInterceptor(
                         CurlInterceptor { message ->
-                            logger().logI("CURL", message)
+                            StreamLog.i("CURL") { message }
                         }
                     )
                 }

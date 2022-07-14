@@ -17,24 +17,24 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.logging.StreamLog
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
 internal class ThreadLogic(private val mutableState: ThreadMutableState, private val channelLogic: ChannelLogic) :
     ThreadQueryListener {
 
-    private val logger = ChatLogger.get("ThreadLogic")
+    private val logger = StreamLog.getLogger("Chat:ThreadLogic")
 
     /** Runs precondition for loading more messages for thread. */
     internal fun precondition(): Result<Unit> {
         return if (mutableState.loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
-            logger.logI(errorMsg)
+            logger.i { errorMsg }
             Result(ChatError(errorMsg))
         } else {
             Result.success(Unit)

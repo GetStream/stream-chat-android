@@ -41,7 +41,6 @@ import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import com.google.android.material.snackbar.Snackbar
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
@@ -76,6 +75,7 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -86,7 +86,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
-    private val logger = ChatLogger.get("MessageInputView")
+    private val logger = StreamLog.getLogger("Chat:MessageInputView")
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -888,7 +888,7 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
         } catch (e: Exception) {
-            logger.logE("Failed to register keyboard listener", e)
+            logger.e(e) { "Failed to register keyboard listener" }
         }
     }
 

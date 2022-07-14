@@ -21,7 +21,7 @@ import android.graphics.Typeface
 import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 import java.util.HashMap
 
 internal class ChatFontsImpl(
@@ -32,7 +32,7 @@ internal class ChatFontsImpl(
     private val resourceMap: MutableMap<Int, Typeface> = HashMap()
     private val pathMap: MutableMap<String, Typeface> = HashMap()
 
-    private val logger = ChatLogger.get(ChatFonts::class.java.simpleName)
+    private val logger = StreamLog.getLogger(ChatFonts::class.java.simpleName)
 
     override fun setFont(textStyle: TextStyle, textView: TextView) {
         if (textStyle.font != null) {
@@ -94,7 +94,7 @@ internal class ChatFontsImpl(
         return try {
             ResourcesCompat.getFont(context, fontRes)
         } catch (t: Throwable) {
-            logger.logE(t)
+            logger.e(t) { "[safeLoadTypeface] failed: $t" }
             null
         }
     }
@@ -103,7 +103,7 @@ internal class ChatFontsImpl(
         return try {
             Typeface.createFromAsset(context.assets, fontPath)
         } catch (t: Throwable) {
-            logger.logE(t)
+            logger.e(t) { "[safeLoadTypeface] failed: $t" }
             null
         }
     }
