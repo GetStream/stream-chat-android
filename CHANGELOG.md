@@ -63,6 +63,7 @@
 
 ### ✅ Added
 - Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
+- Added the `MessageListViewModel::setMessagePositionHandler` method to customize message position within a group. [#3882](https://github.com/GetStream/stream-chat-android/pull/3882)
 
 ### ⚠️ Changed
 
