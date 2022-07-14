@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.logging.android.file
+package io.getstream.logging.android.init
 
 import android.app.Service
 import android.content.Intent

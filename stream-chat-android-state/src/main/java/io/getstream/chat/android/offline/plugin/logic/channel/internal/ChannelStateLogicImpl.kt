@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
@@ -50,11 +51,13 @@ import kotlin.math.max
  *
  * @property mutableState [ChannelMutableState]
  * @property globalMutableState [MutableGlobalState]
+ * @property clientState [ClientState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogicImpl(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val clientState: ClientState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelStateLogic {
@@ -81,7 +84,7 @@ internal class ChannelStateLogicImpl(
      * @param message [Message].
      */
     override fun incrementUnreadCountIfNecessary(message: Message) {
-        val user = globalMutableState.user.value ?: return
+        val user = clientState.user.value ?: return
         val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
@@ -138,7 +141,7 @@ internal class ChannelStateLogicImpl(
      * @param reads the information about the read.
      */
     override fun updateReads(reads: List<ChannelUserRead>) {
-        globalMutableState.user.value?.let { currentUser ->
+        clientState.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = mutableState.rawReads
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
@@ -197,7 +200,7 @@ internal class ChannelStateLogicImpl(
             event == null -> {
                 typingEventsCopy.remove(userId)
             }
-            userId != globalMutableState.user.value?.id -> {
+            userId != clientState.user.value?.id -> {
                 typingEventsCopy[userId] = event
             }
         }
@@ -239,18 +242,20 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message) {
-        upsertMessages(listOf(message))
+        if (mutableState.rawMessages.containsKey(message.id) || mutableState.endOfNewerMessages.value) {
+            upsertMessages(listOf(message))
+        }
     }
 
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
-     * @param messages the list of [Message] to be upserted
+     * @param messages the list of [Message] to be upserted.
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
@@ -416,7 +421,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (!mutableState.insideSearch.value || scrollUpdate) {
+        if (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
@@ -457,19 +462,37 @@ internal class ChannelStateLogicImpl(
         searchLogic.handleMessageBounds(request, noMoreMessages)
         mutableState.recoveryNeeded = false
 
-        if (noMoreMessages) {
-            if (request.isFilteringNewerMessages()) {
+        determinePaginationEnd(request, noMoreMessages)
+
+        updateDataFromChannel(
+            channel,
+            shouldRefreshMessages = request.isFilteringAroundIdMessages() ||
+                (!request.isFilteringMessages() && !mutableState.insideSearch.value),
+            scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
+        )
+    }
+
+    private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
+        when {
+            /* If we are not filtering the messages in any direction and not providing any message id then
+            * we are requesting the newest messages, only if not inside search so we don't override the
+            * search results */
+            !request.isFilteringMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(!mutableState.insideSearch.value)
+            }
+            /* If we are filtering around a specific message we are loading both newer and older messages
+            * and can't be sure if there are no older or newer messages left */
+            request.isFilteringAroundIdMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(false)
+            }
+            noMoreMessages -> if (request.isFilteringNewerMessages()) {
                 mutableState.setEndOfNewerMessages(true)
             } else {
                 mutableState.setEndOfOlderMessages(true)
             }
         }
-
-        updateDataFromChannel(
-            channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-            scrollUpdate = true
-        )
     }
 
     /**

@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
-import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -71,7 +71,6 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -107,7 +106,7 @@ internal class ChannelLogic(
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = ChatLogger.get("Query channel request")
+    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
 
     val cid: String
         get() = mutableState.cid
@@ -123,11 +122,7 @@ internal class ChannelLogic(
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
         channelStateLogic.refreshMuteState()
 
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
-         * so we force the backend usage */
-        if (!request.isFilteringNewerMessages()) {
-            runChannelQueryOffline(request)
-        }
+        runChannelQueryOffline(request)
     }
 
     override suspend fun onQueryChannelResult(
@@ -137,7 +132,7 @@ internal class ChannelLogic(
         request: QueryChannelRequest,
     ) {
         result.onSuccessSuspend { channel ->
-            StreamLog.v(TAG) { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
+            logger.v { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
@@ -178,13 +173,15 @@ internal class ChannelLogic(
      * @param messagesLimit The limit of messages inside the channel that should be requested.
      * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
      */
-    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
-            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
-            return
+            logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
+            return Result.error(
+                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+            )
         }
-        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
+        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**
@@ -220,7 +217,8 @@ internal class ChannelLogic(
 
         val onlineResult =
             ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
-                .await().also { result ->
+                .await()
+                .also { result ->
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
                 }
 
@@ -232,8 +230,12 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (request.isFilteringNewerMessages()) return null
+
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
-            logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
+            logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
@@ -298,7 +300,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
 
     internal fun upsertMessages(messages: List<Message>) {
         channelStateLogic.upsertMessages(messages)
@@ -399,7 +401,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessages(listOf(message))
+        channelStateLogic.upsertMessage(message)
     }
 
     /**
@@ -531,13 +533,13 @@ internal class ChannelLogic(
                 channelStateLogic.setHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 channelStateLogic.deleteMember(event.user.id)
@@ -640,9 +642,5 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         channelStateLogic.replyMessage(repliedMessage)
-    }
-
-    private companion object {
-        private const val TAG = "Channel-Logic"
     }
 }

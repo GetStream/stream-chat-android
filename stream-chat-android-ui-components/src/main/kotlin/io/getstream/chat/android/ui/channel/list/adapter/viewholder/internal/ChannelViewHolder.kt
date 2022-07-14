@@ -28,9 +28,8 @@ import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -51,6 +50,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBindi
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import kotlin.math.absoluteValue
 
+@Suppress("LongParameterList")
 internal class ChannelViewHolder @JvmOverloads constructor(
     parent: ViewGroup,
     private val channelClickListener: ChannelListView.ChannelClickListener,
@@ -65,9 +65,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         parent,
         false
     ),
-    private val globalState: GlobalState = ChatClient.instance().globalState,
+    private val clientState: ClientState = ChatClient.instance().clientState,
 ) : SwipeViewHolder(binding.root) {
-    private val currentUser = globalState.user
+    private val currentUser = clientState.user
 
     private var optionsCount = 1
 
@@ -287,7 +287,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == globalState.user.value?.id
+        val currentUserSentLastMessage = lastMessage.user.id == clientState.user.value?.id
         if (!currentUserSentLastMessage) {
             messageStatusImageView.setImageDrawable(null)
             return

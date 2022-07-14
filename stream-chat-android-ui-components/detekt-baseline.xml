@@ -5,7 +5,6 @@
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.type == ModelType.attach_file || attachment.type == ModelType.attach_video || attachment.type == ModelType.attach_audio || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
-    <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.editMessageEnabled &amp;&amp; ((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; selectedMessage.command != ModelType.attach_giphy</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canReplyToMessage</ID>
@@ -43,11 +42,8 @@
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
     <ID>LongMethod:SuggestionListViewStyle.kt$SuggestionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
-    <ID>LongParameterList:ChannelViewHolder.kt$ChannelViewHolder$( parent: ViewGroup, private val channelClickListener: ChannelListView.ChannelClickListener, private val channelLongClickListener: ChannelListView.ChannelLongClickListener, private val channelDeleteListener: ChannelListView.ChannelClickListener, private val channelMoreOptionsListener: ChannelListView.ChannelClickListener, private val userClickListener: ChannelListView.UserClickListener, private val swipeListener: ChannelListView.SwipeListener, private val style: ChannelListViewStyle, private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate( parent.streamThemeInflater, parent, false ), private val globalState: GlobalState = ChatClient.instance().globalState, )</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, style: MessageListViewStyle, messageViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
+    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, style: MessageListViewStyle, messageListItemViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
     <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>
@@ -72,7 +68,8 @@
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$0.5f</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$255</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
-    <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
+    <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
+    <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
@@ -89,17 +86,11 @@
     <ID>MaxLineLength:ChannelListPayloadDiff.kt$ChannelListPayloadDiff$return nameChanged || avatarViewChanged || usersChanged || lastMessageChanged || readStateChanged || unreadCountChanged || extraDataChanged</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$*</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
-    <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")</ID>
     <ID>MaxLineLength:ChannelListViewModelFactory.kt$ChannelListViewModelFactory$*</ID>
     <ID>MaxLineLength:ChannelListViewStyle.kt$ChannelListViewStyle$*</ID>
     <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
-    <ID>MaxLineLength:DefaultStreamTransliterator.kt$DefaultStreamTransliterator$logger.logD("This android version: ${Build.VERSION.SDK_INT} doesn't support transliteration natively. User a custom StreamTransliterator to add transliteration.")</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
@@ -112,7 +103,6 @@
     <ID>MaxLineLength:ImageAttachmentViewHolder.kt$ImageAttachmentViewHolder$data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }</ID>
     <ID>MaxLineLength:ImageAttachmentViewStyle.kt$ImageAttachmentViewStyle$*</ID>
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
-    <ID>MaxLineLength:MentionListViewModel.kt$MentionListViewModel$logger.logD("Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})")</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>

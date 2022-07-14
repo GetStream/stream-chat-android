@@ -25,17 +25,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -45,7 +44,7 @@ class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
+    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -68,7 +67,7 @@ class ChatInfoViewModel(
             _state.value = State()
             viewModelScope.launch {
                 // Update channel mute status
-                globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+                clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
                 _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { memberList ->
                     // Updates only if the user state is already set
@@ -78,6 +77,7 @@ class ChatInfoViewModel(
                 }
                 _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
                     _state.value = _state.value?.copy(
+                        createdBy = channelData.createdBy,
                         canDeleteChannel = channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
                     )
                 }
@@ -87,7 +87,7 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
+                        filter = clientState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
                         sort = QuerySortByField()
                     ).await()
 
@@ -179,6 +179,7 @@ class ChatInfoViewModel(
 
     data class State(
         val member: Member? = null,
+        val createdBy: User = User(),
         val channelMuted: Boolean = false,
         val isMemberBlocked: Boolean = false,
         val canDeleteChannel: Boolean = false,

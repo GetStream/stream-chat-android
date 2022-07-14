@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.stateIn
  * Used by [ChannelActionsDialogFragment] to provide the correct state
  * containing information about the channel.
  *
+ * @param cid The full channel id, i.e. "messaging:123".
  * @param isGroup True if the Channel is a group channel, false otherwise.
  * @param chatClient The main entry point for all low-level chat operations.
  */

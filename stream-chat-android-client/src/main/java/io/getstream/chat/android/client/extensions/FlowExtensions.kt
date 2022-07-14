@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.connection
+@file:JvmName("FlowExtensions")
+
+package io.getstream.chat.android.client.extensions
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.Flow
 
 /**
- * Represents possible states of the WebSocket connection.
+ * Creates a [LiveData] that has values collected from the original [Flow].
  */
-public enum class ConnectionState {
-    /**
-     * The client is connected to the WebSocket.
-     */
-    CONNECTED,
-
-    /**
-     * The client is trying to connect to the WebSocket.
-     */
-    CONNECTING,
-
-    /**
-     * The client is permanently disconnected from the WebSocket.
-     */
-    OFFLINE
-}
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@SinceKotlin("99999.9")
+public fun <T> Flow<T>.asLiveData(): LiveData<T> = this.asLiveData()

@@ -48,8 +48,17 @@ public object StreamLog {
         private set
 
     /**
+     * Tests a [condition] on specified [internalLogger] implementation.
+     */
+    @JvmStatic
+    public inline fun inspect(condition: (logger: StreamLogger) -> Boolean): Boolean {
+        return condition(internalLogger)
+    }
+
+    /**
      * Sets a [StreamLogger] implementation to be used.
      */
+    @JvmStatic
     public fun setLogger(logger: StreamLogger) {
         internalLogger = logger
     }
@@ -57,6 +66,7 @@ public object StreamLog {
     /**
      * Sets a [IsLoggableValidator] implementation to be used.
      */
+    @JvmStatic
     public fun setValidator(validator: IsLoggableValidator) {
         internalValidator = validator
     }
@@ -66,6 +76,7 @@ public object StreamLog {
      *
      * @return [TaggedLogger] Tagged logger.
      */
+    @JvmStatic
     public fun getLogger(tag: String): TaggedLogger = TaggedLogger(tag, internalLogger, internalValidator)
 
     /**
@@ -75,6 +86,7 @@ public object StreamLog {
      * @param throwable An exception to log.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun e(tag: String, throwable: Throwable, message: () -> String) {
         if (internalValidator.isLoggable(ERROR, tag)) {
             internalLogger.log(ERROR, tag, message(), throwable)
@@ -87,6 +99,7 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun e(tag: String, message: () -> String) {
         if (internalValidator.isLoggable(ERROR, tag)) {
             internalLogger.log(ERROR, tag, message())
@@ -99,6 +112,7 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun w(tag: String, message: () -> String) {
         if (internalValidator.isLoggable(WARN, tag)) {
             internalLogger.log(WARN, tag, message())
@@ -111,6 +125,7 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun i(tag: String, message: () -> String) {
         if (internalValidator.isLoggable(INFO, tag)) {
             internalLogger.log(INFO, tag, message())
@@ -123,6 +138,7 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun d(tag: String, message: () -> String) {
         if (internalValidator.isLoggable(DEBUG, tag)) {
             internalLogger.log(DEBUG, tag, message())
@@ -135,6 +151,7 @@ public object StreamLog {
      * @param tag Used to identify the source of a log message.
      * @param message The function returning a message you would like logged.
      */
+    @JvmStatic
     public inline fun v(tag: String, message: () -> String) {
         if (internalValidator.isLoggable(VERBOSE, tag)) {
             internalLogger.log(VERBOSE, tag, message())

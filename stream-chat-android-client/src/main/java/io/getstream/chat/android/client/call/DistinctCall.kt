@@ -17,92 +17,70 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.core.internal.concurrency.SynchronizedReference
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
-import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
 internal class DistinctCall<T : Any>(
-    internal val callBuilder: () -> Call<T>,
-    private val uniqueKey: Int,
+    scope: CoroutineScope,
+    private val callBuilder: () -> Call<T>,
     private val onFinished: () -> Unit,
 ) : Call<T> {
 
-    init {
-        StreamLog.i(TAG) { "<init> uniqueKey: $uniqueKey" }
-    }
+    private val distinctScope = scope + SupervisorJob(scope.coroutineContext.job)
+    private val deferred = SynchronizedReference<Deferred<Result<T>>>()
+    private val delegateCall = AtomicReference<Call<T>>()
 
-    private val delegate = AtomicReference<Call<T>>()
-    private val isRunning = AtomicBoolean()
-    private val subscribers = arrayListOf<Call.Callback<T>>()
+    internal fun originCall(): Call<T> = callBuilder()
 
-    override fun execute(): Result<T> {
-        return runBlocking {
-            StreamLog.d(TAG) { "[execute] uniqueKey: $uniqueKey" }
-            suspendCoroutine { continuation ->
-                enqueue { result ->
-                    StreamLog.v(TAG) { "[execute] completed($uniqueKey)" }
-                    continuation.resume(result)
+    override fun execute(): Result<T> = runBlocking { await() }
+
+    override fun enqueue(callback: Call.Callback<T>) {
+        distinctScope.launch {
+            await().takeUnless { it.isCanceled }?.also { result ->
+                withContext(DispatcherProvider.Main) {
+                    callback.onResult(result)
                 }
             }
         }
     }
 
-    override fun enqueue(callback: Call.Callback<T>) {
-        StreamLog.d(TAG) { "[enqueue] callback($$uniqueKey): $callback" }
-        synchronized(subscribers) {
-            subscribers.add(callback)
-        }
-        if (isRunning.compareAndSet(false, true)) {
-            delegate.set(
-                callBuilder().apply {
-                    enqueue { result ->
-                        try {
-                            synchronized(subscribers) {
-                                StreamLog.v(TAG) { "[enqueue] completed($uniqueKey): ${subscribers.size}" }
-                                subscribers.onResultCatching(result)
-                            }
-                        } finally {
-                            doFinally()
-                        }
-                    }
-                }
-            )
-        }
+    @SuppressWarnings("TooGenericExceptionCaught")
+    override suspend fun await(): Result<T> = Call.runCatching {
+        deferred.getOrCreate {
+            distinctScope.async {
+                callBuilder()
+                    .also { delegateCall.set(it) }
+                    .await()
+                    .also { doFinally() }
+            }
+        }.await()
     }
 
     override fun cancel() {
-        try {
-            StreamLog.d(TAG) { "[cancel] uniqueKey: $uniqueKey" }
-            delegate.get()?.cancel()
-        } finally {
-            doFinally()
-        }
+        delegateCall.get()?.cancel()
+        distinctScope.coroutineContext.cancelChildren()
+        doFinally()
     }
 
     private fun doFinally() {
-        synchronized(subscribers) {
-            subscribers.clear()
-        }
-        isRunning.set(false)
-        delegate.set(null)
-        onFinished()
-    }
-
-    private fun Collection<Call.Callback<T>>.onResultCatching(result: Result<T>) = forEach { callback ->
-        try {
-            callback.onResult(result)
-        } catch (_: Throwable) {
-            /* no-op */
+        if (deferred.reset()) {
+            onFinished()
         }
     }
 
-    private companion object {
-        private const val TAG = "Chat:DistinctCall"
-    }
+    private val Result<T>.isCanceled get() = this == Call.callCanceledError<T>()
 }

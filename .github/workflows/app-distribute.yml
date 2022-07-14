@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+      - release
 
 jobs:
   build_ui_components_sample_app:

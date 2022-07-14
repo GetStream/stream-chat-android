@@ -39,7 +39,7 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : Que
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         logic.queryChannels(request).run {
-            setCurrentQueryChannelsRequest(request)
+            onQueryChannelsRequest(request)
             queryOffline(request.toPagination())
         }
     }

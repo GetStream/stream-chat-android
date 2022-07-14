@@ -51,27 +51,6 @@ internal class CallTests {
     }
 
     @Test
-    fun `Should invoke methods in right order with precondition`() = runTest {
-        val mutableList = mutableListOf<Int>()
-
-        CoroutineCall(testCoroutines.scope) {
-            mutableList.add(2)
-            Result.success(2)
-        }
-            .doOnStart(testCoroutines.scope) { mutableList.add(1) }
-            .doOnResult(testCoroutines.scope) { mutableList.add(4) }
-            .withPrecondition(testCoroutines.scope) {
-                mutableList.add(0)
-                Result.success(Unit)
-            }
-            .enqueue {
-                mutableList.add(3)
-            }
-
-        mutableList shouldBeEqualTo listOf(0, 1, 2, 3, 4)
-    }
-
-    @Test
     fun `Should return from onErrorReturn when original call gives error`() = runTest {
         val result = CoroutineCall(testCoroutines.scope) {
             Result(ChatError("Test error"))

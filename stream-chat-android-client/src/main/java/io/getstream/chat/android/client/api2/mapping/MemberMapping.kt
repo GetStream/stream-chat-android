@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.models.Member
 internal fun DownstreamMemberDto.toDomain(): Member =
     Member(
         user = user.toDomain(),
-        role = role,
         createdAt = created_at,
         updatedAt = updated_at,
         isInvited = invited,
@@ -39,7 +38,6 @@ internal fun DownstreamMemberDto.toDomain(): Member =
 internal fun Member.toDto(): UpstreamMemberDto =
     UpstreamMemberDto(
         user = user.toDto(),
-        role = role,
         created_at = createdAt,
         updated_at = updatedAt,
         invited = isInvited,

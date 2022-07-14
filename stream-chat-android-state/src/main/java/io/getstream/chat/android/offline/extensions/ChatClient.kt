@@ -27,11 +27,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.isEphemeral
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -51,6 +49,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -147,7 +146,7 @@ private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: () -> T,
 ): StateFlow<T?> {
-    return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+    return clientState.user.map { it?.id }.distinctUntilChanged().map { userId ->
         if (userId == null) {
             null
         } else {
@@ -192,12 +191,12 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
     return CoroutineCall(state.scope) {
         try {
-            val logger = ChatLogger.get("DownloadAttachment")
+            val logger = StreamLog.getLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title
 
-            logger.logD("Downloading attachment. Name: $subPath, Url: $url")
+            logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
 
             downloadManager.enqueue(
                 DownloadManager.Request(Uri.parse(url))
@@ -383,4 +382,35 @@ private suspend fun ChatClient.loadMessageByIdInternal(
     } else {
         Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
     }
+}
+
+/**
+ * Loads the newest messages of a channel.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageLimit The number of messages to be loaded.
+ * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events.
+ * Used by the SDK to indicate if the user is online or not.
+ *
+ * @return Executable async [Call] responsible for loading the newest messages.
+ */
+public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int, userPresence: Boolean = true): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        loadNewestMessagesInternal(cid, messageLimit, userPresence)
+    }
+}
+
+@CheckResult
+internal suspend fun ChatClient.loadNewestMessagesInternal(
+    cid: String,
+    messageLimit: Int,
+    userPresence: Boolean
+): Result<Channel> {
+    val cidValidationResult = validateCidWithResult(cid)
+    if (!cidValidationResult.isSuccess) {
+        return cidValidationResult.error().toResultError()
+    }
+
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    return logic.channel(channelType = channelType, channelId = channelId).watch(messageLimit, userPresence)
 }

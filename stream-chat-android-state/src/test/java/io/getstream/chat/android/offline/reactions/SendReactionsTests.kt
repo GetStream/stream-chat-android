@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerImpl
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -185,13 +186,14 @@ internal class SendReactionsTests {
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<MutableGlobalState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, false, repos, client)
+        private val clientState = mock<ClientState>()
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client)
 
         suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
             whenever(repos.selectMessage(message.id)) doReturn message
         }
 
         fun get(): Pair<SendReactionListener, StateRegistry> =
-            SendReactionListenerImpl(logicRegistry, globalState, repos) to stateRegistry
+            SendReactionListenerImpl(logicRegistry, clientState, repos) to stateRegistry
     }
 }

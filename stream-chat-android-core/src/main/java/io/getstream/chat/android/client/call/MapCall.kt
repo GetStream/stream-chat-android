@@ -16,7 +16,12 @@
 
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class MapCall<T : Any, K : Any>(
@@ -24,37 +29,28 @@ internal class MapCall<T : Any, K : Any>(
     private val mapper: (T) -> K,
 ) : Call<K> {
 
-    private var canceled = AtomicBoolean(false)
+    private val canceled = AtomicBoolean(false)
 
     override fun cancel() {
         canceled.set(true)
+        call.cancel()
     }
 
-    override fun execute(): Result<K> {
-        val resultA = call.execute()
-
-        return if (resultA.isSuccess) {
-            val data = mapper(resultA.data())
-            Result(data)
-        } else {
-            val error = resultA.error()
-            Result(error)
-        }
-    }
+    override fun execute(): Result<K> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<K>) {
-        call.enqueue callback@{
-            if (canceled.get()) {
-                return@callback
-            }
-
-            if (it.isSuccess) {
-                val data = mapper(it.data())
-                callback.onResult(Result(data))
-            } else {
-                val error = it.error()
-                callback.onResult(Result(error))
-            }
+        call.enqueue {
+            it.takeUnless { canceled.get() }
+                ?.map(mapper)
+                ?.let(callback::onResult)
         }
+    }
+
+    override suspend fun await(): Result<K> = withContext(DispatcherProvider.IO) {
+        call.await()
+            .takeUnless { canceled.get() }
+            ?.map(mapper)
+            .takeUnless { canceled.get() }
+            ?: callCanceledError()
     }
 }

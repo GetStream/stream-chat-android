@@ -24,7 +24,7 @@ import android.os.Build
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.Timed
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -33,11 +33,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkLifecyclePublisher(private val connectivityManager: ConnectivityManager) : LifecyclePublisher {
 
-    private val logger = ChatLogger.get("NetworkLifecycle")
+    private val logger = StreamLog.getLogger("Chat:NetworkLifecycle")
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        logger.logD("$it")
+        logger.d { "$it" }
     }
 
     private val callback = object : ConnectivityManager.NetworkCallback() {

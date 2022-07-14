@@ -19,12 +19,12 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -51,7 +51,7 @@ public class StreamOfflinePluginFactory(
 
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
 
-    private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StreamOfflinePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -88,7 +88,7 @@ public class StreamOfflinePluginFactory(
         val cachedPlugin = cachedOfflinePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
             return cachedPlugin
         } else {
             clearCachedInstance()
@@ -110,6 +110,10 @@ public class StreamOfflinePluginFactory(
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         val statePlugin = statePluginFactory.createStatePlugin(user, scope, repositoryFactory)
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            clearCachedInstance()
+        }
 
         return OfflinePlugin(
             queryChannelsListener = statePlugin,

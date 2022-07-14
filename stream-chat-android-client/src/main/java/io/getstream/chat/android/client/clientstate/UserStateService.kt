@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.logging.StreamLog
 
 internal class UserStateService {
-    private val logger = ChatLogger.get("UserStateService")
+    private val logger = StreamLog.getLogger("Chat:UserStateService")
 
     fun onUserUpdated(user: User) {
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
@@ -48,7 +48,7 @@ internal class UserStateService {
 
     private val fsm = FiniteStateMachine<UserState, UserStateEvent> {
         defaultHandler { state, event ->
-            logger.logE("Can't handle $event while being in state ${state::class.simpleName}")
+            logger.e { "Can't handle $event while being in state ${state::class.simpleName}" }
             state
         }
         initialState(UserState.NotSet)

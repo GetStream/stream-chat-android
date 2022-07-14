@@ -90,7 +90,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.toAttachment
-import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialog
+import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialogFragment
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
@@ -118,6 +118,8 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageReplyHan
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageUnpinHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageLongClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageOptionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
@@ -319,7 +321,7 @@ public class MessageListView : ConstraintLayout {
         }.let(::showToast)
     }
 
-    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { action, message ->
+    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { _, _ ->
         throw IllegalStateException("onModeratedMessageOptionSelected must be set")
     }
 
@@ -360,7 +362,7 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed()) {
+                if (message.isModerationFailed(ChatClient.instance())) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()
@@ -376,10 +378,11 @@ public class MessageListView : ConstraintLayout {
                     )
 
                     MessageOptionsDialogFragment
-                        .newMessageOptionsInstance(
+                        .newInstance(
+                            optionsMode = MessageOptionsDialogFragment.OptionsMode.MESSAGE_OPTIONS,
                             message = message,
                             style = viewStyle,
-                            messageViewHolderFactory = messageListItemViewHolderFactory,
+                            messageListItemViewHolderFactory = messageListItemViewHolderFactory,
                             messageBackgroundFactory = messageBackgroundFactory,
                             attachmentFactoryManager = attachmentFactoryManager,
                             showAvatarPredicate = showAvatarPredicate,
@@ -400,18 +403,18 @@ public class MessageListView : ConstraintLayout {
         }
 
     /**
-     * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialog].
+     * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialogFragment].
      */
     private var moderatedMessageLongClickListener: ModeratedMessageLongClickListener? =
         ModeratedMessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                ModeratedMessageDialog.newInstance(message).apply {
-                    setDialogSelectionHandler(object : ModeratedMessageDialog.DialogSelectionHandler {
+                ModeratedMessageDialogFragment.newInstance(message).apply {
+                    setDialogSelectionHandler(object : ModeratedMessageDialogFragment.DialogSelectionHandler {
                         override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
                             moderatedMessageOptionHandler.onModeratedMessageOptionSelected(message, action)
                         }
                     })
-                }.show(fragmentManager, ModeratedMessageDialog.TAG)
+                }.show(fragmentManager, ModeratedMessageDialogFragment.TAG)
             }
         }
     private val defaultMessageRetryListener =
@@ -496,13 +499,15 @@ public class MessageListView : ConstraintLayout {
     private val defaultReactionViewClickListener =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(
-                    message,
-                    requireStyle(),
-                    messageListItemViewHolderFactory,
-                    messageBackgroundFactory,
-                    attachmentFactoryManager,
-                    showAvatarPredicate
+                MessageOptionsDialogFragment.newInstance(
+                    optionsMode = MessageOptionsDialogFragment.OptionsMode.REACTION_OPTIONS,
+                    message = message,
+                    style = requireStyle(),
+                    messageListItemViewHolderFactory = messageListItemViewHolderFactory,
+                    messageBackgroundFactory = messageBackgroundFactory,
+                    attachmentFactoryManager = attachmentFactoryManager,
+                    showAvatarPredicate = showAvatarPredicate,
+                    messageOptionItems = emptyList()
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -791,6 +796,13 @@ public class MessageListView : ConstraintLayout {
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
+    }
+
+    /**
+     * Scrolls the message list to the bottom.sl
+     */
+    public fun scrollToBottom() {
+        scrollHelper.scrollToBottom()
     }
 
     /**
@@ -1139,7 +1151,8 @@ public class MessageListView : ConstraintLayout {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
-                        isInitialList = isOldListEmpty && filteredList.isNotEmpty()
+                        isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded
                     )
 
                     buffer.active()
@@ -1561,21 +1574,32 @@ public class MessageListView : ConstraintLayout {
      */
     @InternalStreamChatApi
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        check(!isAdapterInitialized()) {
-            "Adapter was already initialized, please set DeletedMessageVisibility first. " +
-                "If you are using MessageListViewModel, please set the visibility before binding " +
-                "it to MessageListView."
+        if (this.deletedMessageVisibility != deletedMessageVisibility) {
+            check(!isAdapterInitialized()) {
+                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
+                    "If you are using MessageListViewModel, please set the visibility before binding " +
+                    "it to MessageListView."
+            }
+            this.deletedMessageVisibility = deletedMessageVisibility
         }
-        this.deletedMessageVisibility = deletedMessageVisibility
     }
 
     /**
-     * Sets the handler used when the user interacts with [ModeratedMessageDialog].
+     * Sets the handler used when the user interacts with [ModeratedMessageDialogFragment].
      *
      * @param handler The handler to use.
      */
     public fun setModeratedMessageHandler(handler: ModeratedMessageOptionHandler) {
         this.moderatedMessageOptionHandler = handler
+    }
+
+    /**
+     * Sets the handler used when the user interacts with [ScrollButtonView].
+     *
+     * @param handler The handler to use.
+     */
+    public fun setOnScrollToBottomHandler(handler: OnScrollToBottomHandler) {
+        this.scrollHelper.setScrollToBottomHandler(handler)
     }
 
     /**
@@ -1793,6 +1817,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ModeratedMessageOptionHandler {
         public fun onModeratedMessageOptionSelected(message: Message, moderatedMessageOption: ModeratedMessageOption)
+    }
+
+    public fun interface OnScrollToBottomHandler {
+        public fun onScrollToBottom()
     }
     //endregion
 

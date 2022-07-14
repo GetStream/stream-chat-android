@@ -193,6 +193,19 @@ class ChatFragment : Fragment() {
             binding.messageListView.setMessageEditHandler { message ->
                 messageComposerViewModel.performMessageAction(Edit(message))
             }
+            binding.messageListView.setModeratedMessageHandler { message, action ->
+                when (action) {
+                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
+                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
+                }
+            }
+            binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
+                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+                    messageComposerViewModel.performMessageAction(Reply(message))
+                }
+            }
         }
     }
 
@@ -259,6 +272,7 @@ class ChatFragment : Fragment() {
                     DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
                     EditMessage -> messageInputViewModel.postMessageToEdit(message)
                     SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
                 }
             }
         }

@@ -1,0 +1,52 @@
+name: ReleaseDocs
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish"]
+    types:
+      - completed
+
+jobs:
+  publish_dokka:
+    name: Dokka docs
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: release
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 11
+      - name: Generate Dokka HTML docs
+        run: ./gradlew dokkaHtmlMultimodule
+      - name: Deploy to GitHub pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          publish_dir: ./build/dokka/htmlMultiModule
+          publish_branch: gh-pages
+  push_docusaurus:
+    name: Publish docusaurus docs
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: release
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 11
+      - name: push
+        uses: GetStream/push-stream-chat-docusaurus-action@main
+        with:
+          target-branch: 'production'
+        env:
+          DOCUSAURUS_GH_TOKEN: ${{ secrets.DOCUSAURUS_GH_TOKEN }}
