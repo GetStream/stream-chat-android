@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 import java.util.Date
 import kotlin.math.floor
 import kotlin.math.max
@@ -36,7 +36,7 @@ internal class HealthMonitor(private val checkCallback: () -> Unit, private val 
     private var disconnected = false
     private var lastEventDate: Date = Date()
 
-    private val logger = ChatLogger.get("SocketMonitor")
+    private val logger = StreamLog.getLogger("Chat:SocketMonitor")
 
     private val reconnectRunnable = Runnable {
         if (needToReconnect()) {
@@ -58,7 +58,7 @@ internal class HealthMonitor(private val checkCallback: () -> Unit, private val 
     }
 
     fun start() {
-        logger.logD("Starting")
+        logger.d { "Starting" }
         lastEventDate = Date()
         disconnected = false
         resetHealthMonitor()
@@ -91,7 +91,7 @@ internal class HealthMonitor(private val checkCallback: () -> Unit, private val 
     private fun reconnect() {
         stop()
         val retryInterval = getRetryInterval(++consecutiveFailures)
-        logger.logI("Next connection attempt in $retryInterval ms")
+        logger.i { "Next connection attempt in $retryInterval ms" }
         delayHandler.postDelayed(reconnectRunnable, retryInterval)
     }
 

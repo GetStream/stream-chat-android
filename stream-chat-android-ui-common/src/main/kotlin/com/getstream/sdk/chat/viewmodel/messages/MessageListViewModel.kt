@@ -33,8 +33,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -42,12 +40,12 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
@@ -57,7 +55,8 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -76,7 +75,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  *
  * @param cid The full channel id, i.e. "messaging:123"
  * @param chatClient Entry point for all low-level operations.
- * @param globalState Global state of OfflinePlugin. Contains information
+ * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
  */
 @Suppress("TooManyFunctions")
@@ -84,7 +83,7 @@ public class MessageListViewModel(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
+    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -233,13 +232,13 @@ public class MessageListViewModel(
     /**
      * The currently logged in user.
      */
-    public val user: LiveData<User?> = globalState.user.asLiveData()
+    public val user: LiveData<User?> = clientState.user.asLiveData()
 
     /**
      * The logger used to print to errors, warnings, information
      * and other things to log.
      */
-    private val logger: TaggedLogger = ChatLogger.get("MessageListViewModel")
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Evaluates whether date separators should be added to the message list.
@@ -422,10 +421,10 @@ public class MessageListViewModel(
                 cid.cidToTypeAndId().let { (channelType, channelId) ->
                     chatClient.markRead(channelType, channelId).enqueue(
                         onError = { chatError ->
-                            logger.logE(
+                            logger.e {
                                 "Could not mark cid: $cid as read. Error message: ${chatError.message}. " +
                                     "Cause message: ${chatError.cause?.message}"
-                            )
+                            }
                         }
                     )
                 }
@@ -440,12 +439,12 @@ public class MessageListViewModel(
                 chatClient.deleteMessage(event.message.id, event.hard)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE(
+                            logger.e {
                                 "Could not delete message: ${chatError.message}, Hard: ${event.hard}. " +
                                     "Cause: ${chatError.cause?.message}. If you're using OfflinePlugin, the message " +
                                     "should be deleted in the database and it will be deleted in the backend when " +
                                     "the SDK sync its information."
-                            )
+                            }
                         }
                     )
             }
@@ -453,7 +452,7 @@ public class MessageListViewModel(
                 chatClient.flagMessage(event.message.id).enqueue { result ->
                     event.resultHandler(result)
                     if (result.isError) {
-                        logger.logE("Could not flag message: ${result.error().message}")
+                        logger.e { "Could not flag message: ${result.error().message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.FlagMessageError(result.error())))
                     }
                 }
@@ -461,7 +460,7 @@ public class MessageListViewModel(
             is Event.PinMessage -> {
                 chatClient.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not pin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.e { "Could not pin message: ${chatError.message}. Cause: ${chatError.cause?.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
                     }
                 )
@@ -469,7 +468,7 @@ public class MessageListViewModel(
             is Event.UnpinMessage -> {
                 chatClient.unpinMessage(Message(id = event.message.id)).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                        logger.e { "Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
                     }
                 )
@@ -482,10 +481,10 @@ public class MessageListViewModel(
                 chatClient.sendMessage(channelType, channelId, event.message)
                     .enqueue(
                         onError = { chatError ->
-                            logger.logE(
+                            logger.e {
                                 "(Retry) Could not send message: ${chatError.message}. " +
                                     "Cause: ${chatError.cause?.message}"
-                            )
+                            }
                         }
                     )
             }
@@ -495,7 +494,7 @@ public class MessageListViewModel(
             is Event.MuteUser -> {
                 chatClient.muteUser(event.user.id).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not mute user: ${chatError.message}")
+                        logger.e { "Could not mute user: ${chatError.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(chatError)))
                     }
                 )
@@ -503,7 +502,7 @@ public class MessageListViewModel(
             is Event.UnmuteUser -> {
                 chatClient.unmuteUser(event.user.id).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not unmute user: ${chatError.message}")
+                        logger.e { "Could not unmute user: ${chatError.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(chatError)))
                     }
                 )
@@ -516,7 +515,7 @@ public class MessageListViewModel(
                     timeout = null,
                 ).enqueue(
                     onError = { chatError ->
-                        logger.logE("Could not block user: ${chatError.message}")
+                        logger.e { "Could not block user: ${chatError.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
                     }
                 )
@@ -524,20 +523,20 @@ public class MessageListViewModel(
             is Event.ReplyMessage -> {
                 chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
-                        logger.logE(
+                        logger.e {
                             "Could not reply message: ${chatError.message}. " +
                                 "Cause: ${chatError.cause?.message}"
-                        )
+                        }
                     }
                 )
             }
             is Event.DownloadAttachment -> {
                 event.downloadAttachmentCall().enqueue(
                     onError = { chatError ->
-                        logger.logE(
+                        logger.e {
                             "Attachment download error: ${chatError.message}. " +
                                 "Cause: ${chatError.cause?.message}"
-                        )
+                        }
                     }
                 )
             }
@@ -560,7 +559,7 @@ public class MessageListViewModel(
                             _targetMessage.value = result.data()
                         } else {
                             val error = result.error()
-                            logger.logE("Could not load message: ${error.message}. Cause: ${error.cause?.message}")
+                            logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
                         }
                     }
                 }
@@ -583,14 +582,14 @@ public class MessageListViewModel(
 
                         chatClient.updateMessage(message).enqueue(
                             onError = { chatError ->
-                                logger.logE(
+                                logger.e {
                                     "Could not edit message to remove its attachments: ${chatError.message}. " +
                                         "Cause: ${chatError.cause?.message}"
-                                )
+                                }
                             }
                         )
                     } else {
-                        logger.logE("Could not load message: ${result.error()}")
+                        logger.e { "Could not load message: ${result.error()}" }
                     }
                 }
             }
@@ -606,7 +605,7 @@ public class MessageListViewModel(
                         onEvent(Event.ReplyMessage(cid, message))
                     } else {
                         val error = result.error()
-                        logger.logE("Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}")
+                        logger.e { "Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}" }
                     }
                 }
             }
@@ -677,30 +676,30 @@ public class MessageListViewModel(
             GiphyAction.SEND -> {
                 chatClient.sendGiphy(event.message).enqueue(
                     onError = { chatError ->
-                        logger.logE(
+                        logger.e {
                             "Could not send giphy for message id: ${event.message.id}. " +
                                 "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        )
+                        }
                     }
                 )
             }
             GiphyAction.SHUFFLE -> {
                 chatClient.shuffleGiphy(event.message).enqueue(
                     onError = { chatError ->
-                        logger.logE(
+                        logger.e {
                             "Could not shuffle giphy for message id: ${event.message.id}. " +
                                 "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        )
+                        }
                     }
                 )
             }
             GiphyAction.CANCEL -> {
                 chatClient.cancelEphemeralMessage(event.message).enqueue(
                     onError = { chatError ->
-                        logger.logE(
+                        logger.e {
                             "Could not cancel giphy for message id: ${event.message.id}. " +
                                 "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        )
+                        }
                     }
                 )
             }
@@ -736,7 +735,7 @@ public class MessageListViewModel(
                     messageListData?.loadingMoreNewMessagesChanged(false)
                 }
         } else {
-            logger.logE("There's no base message to request more message at bottom of limit")
+            logger.e { "There's no base message to request more message at bottom of limit" }
         }
     }
 
@@ -757,7 +756,7 @@ public class MessageListViewModel(
             }
         } else {
             threadListData?.loadingMoreOldMessagesChanged(false)
-            logger.logW("Thread state must be not null for offline plugin thread load more!")
+            logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 
@@ -820,10 +819,10 @@ public class MessageListViewModel(
                 cid = cid
             ).enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
                             "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
         } else {
@@ -833,10 +832,10 @@ public class MessageListViewModel(
                 cid = cid
             ).enqueue(
                 onError = { chatError ->
-                    logger.logE(
+                    logger.e {
                         "Could not send reaction for message with id: ${reaction.messageId} " +
                             "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    )
+                    }
                 }
             )
         }

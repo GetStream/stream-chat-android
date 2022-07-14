@@ -48,6 +48,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getAppSettings ()Lio/getstream/chat/android/client/models/AppSettings;
+	public final fun getClientState ()Lio/getstream/chat/android/client/setup/state/ClientState;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
 	public final fun getCurrentToken ()Ljava/lang/String;
@@ -204,15 +205,15 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;Z)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZZ)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLogger$Config;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;Z)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
 	public final fun getDebugRequests ()Z
 	public final fun getDistinctApiCalls ()Z
 	public final fun getHttpUrl ()Ljava/lang/String;
-	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
+	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLoggerConfig;
 	public final fun getWarmUp ()Z
 	public final fun getWssUrl ()Ljava/lang/String;
 	public final fun isAnonymous ()Z
@@ -2088,6 +2089,10 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
 }
 
+public final class io/getstream/chat/android/client/extensions/FlowExtensions {
+	public static final fun asLiveData (Lkotlinx/coroutines/flow/Flow;)Landroidx/lifecycle/LiveData;
+}
+
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 }
@@ -2145,7 +2150,7 @@ public abstract interface class io/getstream/chat/android/client/logger/ChatLogg
 }
 
 public final class io/getstream/chat/android/client/logger/ChatLogger$Builder {
-	public fun <init> (Lio/getstream/chat/android/client/logger/ChatLogger$Config;)V
+	public fun <init> (Lio/getstream/chat/android/client/logger/ChatLoggerConfig;)V
 	public final fun build ()Lio/getstream/chat/android/client/logger/ChatLogger;
 	public final fun handler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/logger/ChatLogger$Builder;
 	public final fun level (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/logger/ChatLogger$Builder;
@@ -2157,17 +2162,22 @@ public final class io/getstream/chat/android/client/logger/ChatLogger$Companion 
 	public final fun setInstance (Lio/getstream/chat/android/client/logger/ChatLogger;)V
 }
 
-public final class io/getstream/chat/android/client/logger/ChatLogger$Config {
+public final class io/getstream/chat/android/client/logger/ChatLogger$Config : io/getstream/chat/android/client/logger/ChatLoggerConfig {
 	public fun <init> (Lio/getstream/chat/android/client/logger/ChatLogLevel;Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public final fun component2 ()Lio/getstream/chat/android/client/logger/ChatLoggerHandler;
 	public final fun copy (Lio/getstream/chat/android/client/logger/ChatLogLevel;Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/logger/ChatLogger$Config;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/logger/ChatLogger$Config;Lio/getstream/chat/android/client/logger/ChatLogLevel;Lio/getstream/chat/android/client/logger/ChatLoggerHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/logger/ChatLogger$Config;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHandler ()Lio/getstream/chat/android/client/logger/ChatLoggerHandler;
-	public final fun getLevel ()Lio/getstream/chat/android/client/logger/ChatLogLevel;
+	public fun getHandler ()Lio/getstream/chat/android/client/logger/ChatLoggerHandler;
+	public fun getLevel ()Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/client/logger/ChatLoggerConfig {
+	public abstract fun getHandler ()Lio/getstream/chat/android/client/logger/ChatLoggerHandler;
+	public abstract fun getLevel ()Lio/getstream/chat/android/client/logger/ChatLogLevel;
 }
 
 public abstract interface class io/getstream/chat/android/client/logger/ChatLoggerHandler {
@@ -2177,7 +2187,12 @@ public abstract interface class io/getstream/chat/android/client/logger/ChatLogg
 	public abstract fun logI (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logT (Ljava/lang/Object;Ljava/lang/Throwable;)V
 	public abstract fun logT (Ljava/lang/Throwable;)V
+	public abstract fun logV (Ljava/lang/Object;Ljava/lang/String;)V
 	public abstract fun logW (Ljava/lang/Object;Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/logger/ChatLoggerHandler$DefaultImpls {
+	public static fun logV (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;Ljava/lang/Object;Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/logger/TaggedLogger {
@@ -2621,6 +2636,14 @@ public final class io/getstream/chat/android/client/models/ConnectionData {
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/ConnectionState : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field CONNECTING Lio/getstream/chat/android/client/models/ConnectionState;
+	public static final field OFFLINE Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/ConnectionState;
+	public static fun values ()[Lio/getstream/chat/android/client/models/ConnectionState;
 }
 
 public final class io/getstream/chat/android/client/models/ContentUtils {
@@ -3560,6 +3583,21 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 
 public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
 	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
+}
+
+public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
+	public static final field Companion Lio/getstream/chat/android/client/setup/state/ClientState$Companion;
+	public abstract fun clearState ()V
+	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun isConnecting ()Z
+	public abstract fun isInitialized ()Z
+	public abstract fun isOffline ()Z
+	public abstract fun isOnline ()Z
+}
+
+public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {

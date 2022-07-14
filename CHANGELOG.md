@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: The class `io.getstream.chat.android.offline.model.connection.ConnectionState` was moved to `io.getstream.chat.android.client.models.ConnectionState`. Please update your imports to be able to compile code using this class. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852).
+
 
 ### ❌ Removed
 
@@ -16,16 +18,21 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a way to convert `Flow` into `LiveData` for Java users.
+  You can now use `FlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
+- Base state of the SDK can be check using `io.getstream.chat.android.client.setup.state.ClientState` interface. Use this interface to receive the state of the SDK as StateFlows. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
 - Added `isFilteringMessages` check on request. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 -. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)
+- `ChatLoggerHandler` has a new function named `logV`. [#3869](https://github.com/GetStream/stream-chat-android/pull/3869)
 
 ### ❌ Removed
 - 🚨 Breaking change: Removed the `Member.role` field. [3851](https://github.com/GetStream/stream-chat-android/pull/3851)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed initializing channels state when DB is empty and API requests fails. [3870](https://github.com/GetStream/stream-chat-android/pull/3870)
 
 ### ⬆️ Improved
 
@@ -53,6 +60,7 @@
 - Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 - The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
+- Fixed potential crashes when showing dialogs after process recreation. [#3857](https://github.com/GetStream/stream-chat-android/pull/3857)
 
 ### ⬆️ Improved
 - `MessageListView` now allows multiple re-bindings of `MessageListViewModel` provided that `MessageListViewModel.deletedMessageVisibility` has not been changed since `MessageListView` was first initialized. [#3843](https://github.com/GetStream/stream-chat-android/pull/3843)

@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
@@ -98,6 +99,9 @@ internal class ChannelStateLogicImplTest {
     private val globalMutableState: MutableGlobalState = mock {
         on(it.user) doReturn MutableStateFlow(user)
     }
+    private val clientState: ClientState = mock {
+        on(it.user) doReturn MutableStateFlow(user)
+    }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
         on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
             invocationOnMock.arguments[0] as List<Message>
@@ -118,7 +122,7 @@ internal class ChannelStateLogicImplTest {
     }
 
     private val channelStateLogicImpl =
-        ChannelStateLogicImpl(mutableState, globalMutableState, mock(), attachmentUrlValidator)
+        ChannelStateLogicImpl(mutableState, globalMutableState, clientState, mock(), attachmentUrlValidator)
 
     @Test
     fun `given a message is outdated it should not be upserted`() {

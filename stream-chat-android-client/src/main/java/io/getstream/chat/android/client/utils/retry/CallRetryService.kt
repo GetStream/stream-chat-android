@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.utils.retry
 
 import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.delay
 
 /**
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
  */
 internal class CallRetryService(private val retryPolicy: RetryPolicy) {
 
-    private val logger = ChatLogger.get("CallRetryService")
+    private val logger = StreamLog.getLogger("Chat:CallRetryService")
 
     /**
      * Runs the task and retries based on [RetryPolicy].
@@ -49,16 +49,16 @@ internal class CallRetryService(private val retryPolicy: RetryPolicy) {
 
             if (shouldRetry) {
                 // temporary failure, continue
-                logger.logI(
+                logger.i {
                     "API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}"
-                )
+                }
                 delay(timeout.toLong())
                 attempt += 1
             } else {
-                logger.logI(
+                logger.i {
                     "API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. " +
                         "Error was ${result.error()}"
-                )
+                }
                 break
             }
         }

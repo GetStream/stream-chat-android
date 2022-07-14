@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
@@ -52,7 +51,7 @@ public class StreamOfflinePluginFactory(
 
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
 
-    private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StreamOfflinePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -89,7 +88,7 @@ public class StreamOfflinePluginFactory(
         val cachedPlugin = cachedOfflinePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
             return cachedPlugin
         } else {
             clearCachedInstance()

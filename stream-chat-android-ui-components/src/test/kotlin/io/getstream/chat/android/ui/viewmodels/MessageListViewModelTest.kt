@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -185,34 +186,35 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() = runTest {
-        val messageWithOwnReaction = message1.copy().apply { ownReactions = mutableListOf(reaction1) }
-        val messages = listOf(messageWithOwnReaction, message2)
-        val messageState = MessagesState.Result(messages)
-        val chatClient = MockChatClientBuilder().build()
+    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() =
+        runTest {
+            val messageWithOwnReaction = message1.copy().apply { ownReactions = mutableListOf(reaction1) }
+            val messages = listOf(messageWithOwnReaction, message2)
+            val messageState = MessagesState.Result(messages)
+            val chatClient = MockChatClientBuilder().build()
 
-        val viewModel = Fixture(chatClient = chatClient)
-            .givenCurrentUser()
-            .givenChannelQuery()
-            .givenChannelState(messageState = messageState, messages = messages)
-            .givenDeleteReaction()
-            .givenNotifications()
-            .get()
+            val viewModel = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(messageState = messageState, messages = messages)
+                .givenDeleteReaction()
+                .givenNotifications()
+                .get()
 
-        viewModel.onEvent(
-            MessageListViewModel.Event.MessageReaction(
-                message = messageWithOwnReaction,
-                reactionType = reaction1.type,
-                enforceUnique = true
+            viewModel.onEvent(
+                MessageListViewModel.Event.MessageReaction(
+                    message = messageWithOwnReaction,
+                    reactionType = reaction1.type,
+                    enforceUnique = true
+                )
             )
-        )
 
-        verify(chatClient).deleteReaction(
-            messageId = messageWithOwnReaction.id,
-            reactionType = reaction1.type,
-            cid = CID
-        )
-    }
+            verify(chatClient).deleteReaction(
+                messageId = messageWithOwnReaction.id,
+                reactionType = reaction1.type,
+                cid = CID
+            )
+        }
 
     private class Fixture(
         private val chatClient: ChatClient = MockChatClientBuilder().build(),
@@ -220,14 +222,17 @@ internal class MessageListViewModelTest {
     ) {
         private val globalState: GlobalMutableState = mock()
         private val stateRegistry: StateRegistry = mock()
+        private val clientState: ClientState = mock()
 
         init {
             StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
+
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

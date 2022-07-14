@@ -23,8 +23,8 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.experimental.socket.Event
 import io.getstream.chat.android.client.experimental.socket.ShutdownReason
 import io.getstream.chat.android.client.experimental.socket.Timed
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -34,14 +34,14 @@ import kotlinx.coroutines.withContext
 internal class StreamLifecyclePublisher(
     private val lifecycle: Lifecycle,
 ) : DefaultLifecycleObserver, LifecyclePublisher {
-    private val logger = ChatLogger.get("StreamLifecycle")
+    private val logger = StreamLog.getLogger("Chat:StreamLifecycle")
 
     @Volatile
     private var isObserving = false
 
     private var _lifecycleEvents = MutableStateFlow<Timed<Event.Lifecycle>?>(null)
     override val lifecycleEvents = _lifecycleEvents.asStateFlow().filterNotNull().onEach {
-        logger.logD("$it")
+        logger.d { "$it" }
     }
 
     override suspend fun observe() {

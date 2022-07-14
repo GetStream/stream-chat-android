@@ -90,7 +90,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.toAttachment
-import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialog
+import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialogFragment
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
@@ -118,6 +118,8 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageReplyHan
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageUnpinHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageLongClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageOptionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
@@ -376,10 +378,11 @@ public class MessageListView : ConstraintLayout {
                     )
 
                     MessageOptionsDialogFragment
-                        .newMessageOptionsInstance(
+                        .newInstance(
+                            optionsMode = MessageOptionsDialogFragment.OptionsMode.MESSAGE_OPTIONS,
                             message = message,
                             style = viewStyle,
-                            messageViewHolderFactory = messageListItemViewHolderFactory,
+                            messageListItemViewHolderFactory = messageListItemViewHolderFactory,
                             messageBackgroundFactory = messageBackgroundFactory,
                             attachmentFactoryManager = attachmentFactoryManager,
                             showAvatarPredicate = showAvatarPredicate,
@@ -400,18 +403,18 @@ public class MessageListView : ConstraintLayout {
         }
 
     /**
-     * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialog].
+     * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialogFragment].
      */
     private var moderatedMessageLongClickListener: ModeratedMessageLongClickListener? =
         ModeratedMessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                ModeratedMessageDialog.newInstance(message).apply {
-                    setDialogSelectionHandler(object : ModeratedMessageDialog.DialogSelectionHandler {
+                ModeratedMessageDialogFragment.newInstance(message).apply {
+                    setDialogSelectionHandler(object : ModeratedMessageDialogFragment.DialogSelectionHandler {
                         override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
                             moderatedMessageOptionHandler.onModeratedMessageOptionSelected(message, action)
                         }
                     })
-                }.show(fragmentManager, ModeratedMessageDialog.TAG)
+                }.show(fragmentManager, ModeratedMessageDialogFragment.TAG)
             }
         }
     private val defaultMessageRetryListener =
@@ -496,13 +499,15 @@ public class MessageListView : ConstraintLayout {
     private val defaultReactionViewClickListener =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(
-                    message,
-                    requireStyle(),
-                    messageListItemViewHolderFactory,
-                    messageBackgroundFactory,
-                    attachmentFactoryManager,
-                    showAvatarPredicate
+                MessageOptionsDialogFragment.newInstance(
+                    optionsMode = MessageOptionsDialogFragment.OptionsMode.REACTION_OPTIONS,
+                    message = message,
+                    style = requireStyle(),
+                    messageListItemViewHolderFactory = messageListItemViewHolderFactory,
+                    messageBackgroundFactory = messageBackgroundFactory,
+                    attachmentFactoryManager = attachmentFactoryManager,
+                    showAvatarPredicate = showAvatarPredicate,
+                    messageOptionItems = emptyList()
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -1580,7 +1585,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when the user interacts with [ModeratedMessageDialog].
+     * Sets the handler used when the user interacts with [ModeratedMessageDialogFragment].
      *
      * @param handler The handler to use.
      */

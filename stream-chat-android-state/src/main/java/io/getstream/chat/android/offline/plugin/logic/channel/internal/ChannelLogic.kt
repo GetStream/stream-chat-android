@@ -71,7 +71,6 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -107,7 +106,7 @@ internal class ChannelLogic(
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = ChatLogger.get("Query channel request")
+    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
 
     val cid: String
         get() = mutableState.cid
@@ -133,7 +132,7 @@ internal class ChannelLogic(
         request: QueryChannelRequest,
     ) {
         result.onSuccessSuspend { channel ->
-            StreamLog.v(TAG) { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
+            logger.v { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
             storeStateForChannel(channel)
@@ -177,7 +176,7 @@ internal class ChannelLogic(
     internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
-            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
+            logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
             return Result.error(
                 ChatError("Another request to watch this channel is in progress. Ignoring this request.")
             )
@@ -236,7 +235,7 @@ internal class ChannelLogic(
         if (request.isFilteringNewerMessages()) return null
 
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
-            logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
+            logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
@@ -643,9 +642,5 @@ internal class ChannelLogic(
 
     internal fun replyMessage(repliedMessage: Message?) {
         channelStateLogic.replyMessage(repliedMessage)
-    }
-
-    private companion object {
-        private const val TAG = "Channel-Logic"
     }
 }

@@ -26,9 +26,9 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -78,9 +78,10 @@ import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -208,19 +209,19 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.globalState::connectionState
+    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
 
     /**
      * Gives us information about the online state of the device.
      */
     public val isOnline: Flow<Boolean>
-        get() = chatClient.globalState.connectionState.map { it == ConnectionState.CONNECTED }
+        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatClient.globalState.user
+        get() = chatClient.clientState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -250,9 +251,9 @@ public class MessageListViewModel(
     private var scrollToMessage: Message? = null
 
     /**
-     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     * Instance of [TaggedLogger] to log exceptional and warning cases in behavior.
      */
-    private val logger = ChatLogger.get("MessageListViewModel")
+    private val logger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -523,7 +524,7 @@ public class MessageListViewModel(
         level = DeprecationLevel.WARNING
     )
     public fun loadMore() {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -580,7 +581,7 @@ public class MessageListViewModel(
             ).enqueue()
         } else {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
-            logger.logW("Thread state must be not null for offline plugin thread load more!")
+            logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 

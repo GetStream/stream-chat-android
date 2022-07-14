@@ -21,17 +21,17 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import java.util.Date
 
 internal class EditMessageListenerImpl(
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
 ) : EditMessageListener {
 
     /**
@@ -44,7 +44,7 @@ internal class EditMessageListenerImpl(
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
-        val isOnline = globalState.isOnline()
+        val isOnline = clientState.isOnline
         val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
         channelLogic.updateAndSaveMessages(messagesToEdit)

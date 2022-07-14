@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.logging.android.file.impl
+package io.getstream.logging.android.init.impl
 
 import android.app.Activity
 import android.content.Intent
@@ -22,8 +22,8 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import io.getstream.logging.android.file.StreamLogFileManager.ClearManager
-import io.getstream.logging.android.file.StreamLogFileManager.ShareManager
+import io.getstream.logging.android.init.StreamLogFileManager.ClearManager
+import io.getstream.logging.android.init.StreamLogFileManager.ShareManager
 import io.getstream.logging.file.FileStreamLogger
 import java.io.File
 
