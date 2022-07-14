@@ -74,6 +74,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added sections on writing performant Compose code inside [GUIDELINES.md](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/GUIDELINES.md#performance-guidelines). [#3884](https://github.com/GetStream/stream-chat-android/pull/3884)
 
 ### ⚠️ Changed
 - Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
