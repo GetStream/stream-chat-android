@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
@@ -42,7 +43,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -52,6 +53,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
+@ExtendWith(TestCoroutineExtension::class)
 internal class MessageComposerViewModelTest {
 
     @Test
@@ -342,6 +344,7 @@ internal class MessageComposerViewModelTest {
         private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     ) {
         private val globalState: GlobalMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
@@ -350,7 +353,8 @@ internal class MessageComposerViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
@@ -390,9 +394,6 @@ internal class MessageComposerViewModelTest {
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         val user1 = User(
             id = "Jc",

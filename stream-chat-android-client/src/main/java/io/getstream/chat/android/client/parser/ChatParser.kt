@@ -19,17 +19,18 @@ package io.getstream.chat.android.client.parser
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.errors.cause.MessageModerationFailedException
+import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
 
 internal interface ChatParser {
 
-    private val tag: String
-        get() = ChatParser::class.java.simpleName
+    private val tag: String get() = "Chat:ChatParser"
 
     fun toJson(any: Any): String
     fun <T : Any> fromJson(raw: String, clazz: Class<T>): T
@@ -60,14 +61,18 @@ internal interface ChatParser {
                 } catch (_: Throwable) {
                     ErrorResponse().apply { message = body }
                 }
+                val cause = error.extractCause()
                 ChatNetworkError.create(
                     streamCode = error.code,
-                    description = error.message + moreInfoTemplate(error.moreInfo),
-                    statusCode = statusCode
+                    description = error.message +
+                        moreInfoTemplate(error.moreInfo) +
+                        buildDetailsTemplate(error.details),
+                    statusCode = statusCode,
+                    cause = cause
                 )
             }
         } catch (expected: Throwable) {
-            ChatLogger.instance.logE(tag, expected)
+            StreamLog.e(tag, expected) { "[toError] failed" }
             ChatNetworkError.create(
                 code = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
@@ -87,7 +92,7 @@ internal interface ChatParser {
                 statusCode = statusCode
             )
         } catch (expected: Throwable) {
-            ChatLogger.instance.logE(tag, expected)
+            StreamLog.e(tag, expected) { "[toError] failed" }
             ChatNetworkError.create(
                 code = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
@@ -100,5 +105,26 @@ internal interface ChatParser {
         return if (moreInfo.isNotBlank()) {
             "\nMore information available at $moreInfo"
         } else ""
+    }
+
+    private fun buildDetailsTemplate(details: List<ErrorDetail>): String {
+        return if (details.isNotEmpty()) {
+            "\nError details: $details"
+        } else ""
+    }
+
+    private fun ErrorResponse.extractCause(): Throwable? {
+        if (code == ChatErrorCode.MESSAGE_MODERATION_FAILED.code) {
+            return MessageModerationFailedException(
+                details = details.map { detail ->
+                    MessageModerationFailedException.Detail(
+                        code = detail.code,
+                        messages = detail.messages
+                    )
+                },
+                message = message
+            )
+        }
+        return null
     }
 }

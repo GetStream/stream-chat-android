@@ -20,10 +20,10 @@ import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
+import kotlinx.coroutines.yield
 
 /**
  * A pending operation waiting to be ran.
@@ -44,7 +44,9 @@ public interface Call<T : Any> {
 
     /**
      * Executes the call asynchronously, on a background thread. Safe to call from the main
-     * thread. The [callback] will always be invoked on the main thread.
+     * thread.
+     *
+     * The [callback] will only be invoked in case the [Call] is not canceled, and always on the main thread.
      */
     public fun enqueue(callback: Callback<T>)
 
@@ -57,34 +59,40 @@ public interface Call<T : Any> {
     public fun enqueue(): Unit = enqueue {}
 
     /**
-     * Cancels the execution of the call, if cancellation is supported for the operation.
+     * Awaits the result of this [Call] in a suspending way, asynchronously.
+     * Safe to call from any CoroutineContext.
      *
-     * Note that calls can not be cancelled when running them with [execute].
+     * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
+     */
+    public suspend fun await(): Result<T>
+
+    /**
+     * Cancels the execution of the call.
      */
     public fun cancel()
 
     public fun interface Callback<T : Any> {
         public fun onResult(result: Result<T>)
     }
-}
 
-/**
- * Awaits the result of [this] Call in a suspending way, asynchronously.
- * Safe to call from any CoroutineContext.
- *
- * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
- */
-public suspend fun <T : Any> Call<T>.await(): Result<T> {
-    if (this is CoroutineCall<T>) {
-        return this.awaitImpl()
-    }
-    return suspendCancellableCoroutine { continuation ->
-        this.enqueue { result ->
-            continuation.resume(result)
+    @InternalStreamChatApi
+    public companion object {
+        public fun <T : Any> callCanceledError(): Result<T> =
+            Result.error(ChatError("The call was canceled before complete its execution."))
+
+        @SuppressWarnings("TooGenericExceptionCaught")
+        public suspend fun <T : Any> runCatching(
+            errorMap: suspend (originalResultError: Result<T>) -> Result<T> = { it },
+            block: suspend () -> Result<T>,
+        ): Result<T> = try {
+            block().also { yield() }
+        } catch (t: Throwable) {
+            errorMap(t.toResult())
         }
 
-        continuation.invokeOnCancellation {
-            this.cancel()
+        private fun <T : Any> Throwable.toResult(): Result<T> = when (this) {
+            is CancellationException -> callCanceledError()
+            else -> Result.error(this)
         }
     }
 }
@@ -125,7 +133,8 @@ public fun <T : Any> Call<T>.withPrecondition(
     WithPreconditionCall(this, scope, precondition)
 
 /**
- * Wraps this [Call] into [ReturnOnErrorCall] to return an item specified by side effect function when it encounters an error.
+ * Wraps this [Call] into [ReturnOnErrorCall] to return an item specified by side effect function when it encounters
+ * an error.
  *
  * @param scope Scope of coroutine in which to execute side effect function.
  * @param onError Function that returns data in the case of error.

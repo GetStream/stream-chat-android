@@ -22,7 +22,6 @@ import java.util.Date
 @JsonClass(generateAdapter = true)
 internal data class UpstreamMemberDto(
     val user: UpstreamUserDto,
-    val role: String?,
     val created_at: Date?,
     val updated_at: Date?,
     val invited: Boolean?,
@@ -36,7 +35,6 @@ internal data class UpstreamMemberDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMemberDto(
     val user: DownstreamUserDto,
-    val role: String?,
     val created_at: Date?,
     val updated_at: Date?,
     val invited: Boolean?,

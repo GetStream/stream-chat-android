@@ -57,6 +57,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-client")
+    api project(":stream-chat-android-state")
 
     // Kotlin
     implementation Dependencies.kotlinReflect
@@ -73,10 +74,13 @@ dependencies {
 
     // Serialization
     implementation Dependencies.moshi
+    implementation Dependencies.moshiKotlin
+    implementation Dependencies.moshiAdapters
     ksp Dependencies.moshiCodegen
 
     // Tests
     testImplementation project(":stream-chat-android-test")
+    testImplementation project(":stream-chat-android-client-test")
     testImplementation Dependencies.moshiKotlin
 
     testImplementation Dependencies.junitJupiterApi

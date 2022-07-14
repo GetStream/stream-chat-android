@@ -34,6 +34,10 @@ import kotlinx.coroutines.flow.StateFlow
  * @param newMessageState The state that represents any new messages.
  * @param parentMessageId The id of the parent message - if we're in a thread.
  * @param unreadCount The count of messages we haven't read yet.
+ * @param startOfMessages If we're ate the start of messages (to stop pagination).
+ * @param isLoadingMoreOldMessages If we're loading older messages.
+ * @param isLoadingMoreNewMessages If we're loading newer messages.
+ * @param focusedMessageOffsetState The offset needed to center a selected item in the list.
  */
 public data class MessagesState(
     val isLoading: Boolean = true,
@@ -45,13 +49,16 @@ public data class MessagesState(
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
+    val startOfMessages: Boolean = false,
+    val isLoadingMoreOldMessages: Boolean = false,
+    val isLoadingMoreNewMessages: Boolean = false,
+    private val focusedMessageOffsetState: MutableStateFlow<Int?> = MutableStateFlow(null)
 ) {
 
     /**
-     * Notifies the UI of the calculated message offset to center it on the screen.
+     * The offset the list needs to apply so that the focused item is centered inside the screen.
      */
-    private val _focusedMessageOffset: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val focusedMessageOffset: StateFlow<Int?> = _focusedMessageOffset
+    public val focusedMessageOffset: StateFlow<Int?> = focusedMessageOffsetState
 
     /**
      * Calculates the message offset needed for the message to center inside the list on scroll.
@@ -60,11 +67,14 @@ public data class MessagesState(
      * @param focusedMessageSize The size of the message item we wish to bring to the center and focus.
      */
     public fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
+        if (parentSize.height == 0 || focusedMessageSize.height == 0) return
+
         val sizeDiff = parentSize.height - focusedMessageSize.height
-        if (sizeDiff > 0) {
-            _focusedMessageOffset.value = -sizeDiff / 2
+        val offset = if (sizeDiff > 0) {
+            -sizeDiff / 2
         } else {
-            _focusedMessageOffset.value = -sizeDiff
+            -sizeDiff
         }
+        if (offset != focusedMessageOffsetState.value) focusedMessageOffsetState.value = offset
     }
 }

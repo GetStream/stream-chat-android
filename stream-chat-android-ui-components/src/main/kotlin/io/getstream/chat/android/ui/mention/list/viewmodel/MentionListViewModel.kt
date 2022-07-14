@@ -20,12 +20,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -62,7 +61,7 @@ public class MentionListViewModel : ViewModel() {
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = ChatLogger.get("MentionListViewModel")
+    private val logger = StreamLog.getLogger("Chat:MentionListViewModel")
 
     init {
         scope.launch {
@@ -80,11 +79,11 @@ public class MentionListViewModel : ViewModel() {
             val currentState = _state.value!!
 
             if (!currentState.canLoadMore) {
-                logger.logD("No more messages to load")
+                logger.d { "No more messages to load" }
                 return@launch
             }
             if (currentState.isLoading) {
-                logger.logD("Already loading")
+                logger.d { "Already loading" }
                 return@launch
             }
 
@@ -101,7 +100,9 @@ public class MentionListViewModel : ViewModel() {
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
 
-        logger.logD("Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})")
+        logger.d {
+            "Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})"
+        }
 
         val result = ChatClient.instance()
             .searchMessages(
@@ -114,14 +115,14 @@ public class MentionListViewModel : ViewModel() {
 
         if (result.isSuccess) {
             val messages = result.data().messages
-            logger.logD("Got ${messages.size} messages")
+            logger.d { "Got ${messages.size} messages" }
             _state.value = currentState.copy(
                 results = currentState.results + messages,
                 isLoading = false,
                 canLoadMore = messages.size == QUERY_LIMIT
             )
         } else {
-            logger.logD("Error ${result.error().message}")
+            logger.d { "Error ${result.error().message}" }
             _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,

@@ -16,20 +16,19 @@
 
 package io.getstream.chat.android.pushprovider.huawei
 
-import android.util.Log
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 
 internal class ChatHuaweiMessagingService : HmsMessageService() {
-    private val logger = ChatLogger.get("ChatHuaweiMessagingService")
+    private val logger = StreamLog.getLogger("Chat:Notifications")
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        logger.logD("onMessageReceived(): $remoteMessage")
+        logger.d { "[onHuaweiMessageReceived] remoteMessage: $remoteMessage" }
         try {
             HuaweiMessagingDelegate.handleRemoteMessage(remoteMessage)
         } catch (exception: IllegalStateException) {
-            Log.e(TAG, "Error while handling remote message", exception)
+            logger.e(exception) { "[onHuaweiMessageReceived] error while handling remote message" }
         } finally {
             stopSelf()
         }
@@ -39,11 +38,7 @@ internal class ChatHuaweiMessagingService : HmsMessageService() {
         try {
             HuaweiMessagingDelegate.registerHuaweiToken(token)
         } catch (exception: IllegalStateException) {
-            Log.e(TAG, "Error while registering Huawei Token", exception)
+            logger.e(exception) { "[onHuaweiNewToken] error while registering Huawei Token" }
         }
-    }
-
-    private companion object {
-        private const val TAG = "Chat:"
     }
 }

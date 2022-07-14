@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import android.Manifest
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleTheme
@@ -27,15 +28,20 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
+import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
+import io.getstream.chat.android.compose.handlers.PermissionHandler
+import io.getstream.chat.android.compose.handlers.StreamPermissionHandlers
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
@@ -86,6 +92,9 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
             "in a ChatTheme."
     )
 }
+private val LocalPermissionManagerProvider = compositionLocalOf<List<PermissionHandler>> {
+    error("No PermissionHandlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -107,8 +116,10 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
+ * @param permissionHandlers Handlers for various permissions.
  * @param content The content shown within the theme wrapper.
  */
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -132,6 +143,10 @@ public fun ChatTheme(
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
+    permissionHandlers: List<PermissionHandler> = StreamPermissionHandlers.defaultHandlers(
+        LocalContext.current,
+        listOf(rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -151,9 +166,10 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
-        LocalImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
+        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
-        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment
+        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
+        LocalPermissionManagerProvider provides permissionHandlers
     ) {
         content()
     }
@@ -267,4 +283,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageOptionsUserReactionAlignment.current
+
+    /**
+     * Retrieves the current [PermissionHandler]s at the call site's position in the hierarchy.
+     */
+    public val permissionHandlerProvider: List<PermissionHandler>
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalPermissionManagerProvider.current
 }

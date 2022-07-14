@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -41,12 +42,12 @@ internal class DevicesApiCallsTests {
 
     @BeforeEach
     fun before() {
-        mock = MockClientBuilder(testCoroutines.scope)
+        mock = MockClientBuilder(testCoroutines)
         client = mock.build()
     }
 
     @Test
-    fun getDevicesSuccess() {
+    fun getDevicesSuccess() = runTest {
         val devices = List(10) { randomDevice() }
 
         Mockito.`when`(
@@ -55,70 +56,70 @@ internal class DevicesApiCallsTests {
             RetroSuccess(devices).toRetrofitCall()
         )
 
-        val result = client.getDevices().execute()
+        val result = client.getDevices().await()
 
         verifySuccess(result, devices)
     }
 
     @Test
-    fun getDevicesError() {
+    fun getDevicesError() = runTest {
         Mockito.`when`(
             mock.api.getDevices()
         ).thenReturn(RetroError<List<Device>>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.getDevices().execute()
+        val result = client.getDevices().await()
 
         verifyError(result, mock.serverErrorCode)
     }
 
     @Test
-    fun addDevicesSuccess() {
+    fun addDevicesSuccess() = runTest {
         val device = randomDevice()
 
         Mockito.`when`(
             mock.api.addDevice(device)
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
-        val result = client.addDevice(device).execute()
+        val result = client.addDevice(device).await()
 
         verifySuccess(result, Unit)
     }
 
     @Test
-    fun addDevicesError() {
+    fun addDevicesError() = runTest {
         val device = randomDevice()
 
         Mockito.`when`(
             mock.api.addDevice(device)
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.addDevice(device).execute()
+        val result = client.addDevice(device).await()
 
         verifyError(result, mock.serverErrorCode)
     }
 
     @Test
-    fun deleteDeviceSuccess() {
+    fun deleteDeviceSuccess() = runTest {
         val device = randomDevice()
 
         Mockito.`when`(
             mock.api.deleteDevice(device)
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
-        val result = client.deleteDevice(device).execute()
+        val result = client.deleteDevice(device).await()
 
         verifySuccess(result, Unit)
     }
 
     @Test
-    fun deleteDeviceError() {
+    fun deleteDeviceError() = runTest {
         val device = randomDevice()
 
         Mockito.`when`(
             mock.api.deleteDevice(device)
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.deleteDevice(device).execute()
+        val result = client.deleteDevice(device).await()
 
         verifyError(result, mock.serverErrorCode)
     }

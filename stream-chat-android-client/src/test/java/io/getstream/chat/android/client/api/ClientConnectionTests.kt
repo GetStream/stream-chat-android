@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
@@ -23,7 +24,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
@@ -85,21 +86,20 @@ internal class ClientConnectionTests {
     private lateinit var socket: ChatSocket
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
-    private lateinit var logger: ChatLogger
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
 
     @BeforeEach
     fun before() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutines.scope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutines.scope)
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
         fileUploader = mock()
-        logger = mock()
         notificationsManager = mock()
         initCallback = mock()
         api = mock()
@@ -116,13 +116,15 @@ internal class ClientConnectionTests {
             notificationsManager,
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
             scope = testCoroutines.scope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
+            lifecycle = lifecycleOwner.lifecycle,
         )
     }
 

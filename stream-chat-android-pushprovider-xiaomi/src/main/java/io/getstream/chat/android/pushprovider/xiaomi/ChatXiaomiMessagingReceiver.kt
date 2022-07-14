@@ -17,18 +17,16 @@
 package io.getstream.chat.android.pushprovider.xiaomi
 
 import android.content.Context
-import android.util.Log
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import com.xiaomi.mipush.sdk.PushMessageReceiver
-import io.getstream.chat.android.client.logger.ChatLogger
-import java.lang.IllegalStateException
+import io.getstream.logging.StreamLog
 
 /**
  * Receiver that handle Push Notifications from Xiaomi servers.
  */
 public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
-    private val logger = ChatLogger.get("ChatXiaomiMessagingReceiver")
+    private val logger = StreamLog.getLogger("Chat:Notifications")
 
     /**
      * This method is called when a push notification is received from Xiaomi Servers.
@@ -37,11 +35,11 @@ public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
      * @param miPushMessage A [MiPushMessage] that contains inifo about the push notification.
      */
     override fun onReceivePassThroughMessage(context: Context, miPushMessage: MiPushMessage) {
-        logger.logD("onReceivePassThroughMessage(): $miPushMessage")
+        logger.i { "[onReceiveXiaomiPassThroughMessage] miPushMessage: $miPushMessage" }
         try {
             XiaomiMessagingDelegate.handleMiPushMessage(miPushMessage)
         } catch (exception: IllegalStateException) {
-            Log.e(TAG, "Error while handling remote message", exception)
+            logger.e(exception) { "[onReceivePassThroughMessage] error while handling remote message" }
         }
     }
 
@@ -52,14 +50,11 @@ public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
      * @param miPushCommandMessage A [MiPushCommandMessage] that contains inifo about the device.
      */
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
+        logger.d { "[onReceiveXiaomiRegisterResult] miPushCommandMessage: $miPushCommandMessage" }
         try {
             XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
         } catch (exception: IllegalStateException) {
-            Log.e(TAG, "Error while registering Xiaomi Token", exception)
+            logger.e(exception) { "[onReceiveRegisterResult] error while registering Xiaomi Token" }
         }
-    }
-
-    private companion object {
-        private const val TAG = "Chat:"
     }
 }

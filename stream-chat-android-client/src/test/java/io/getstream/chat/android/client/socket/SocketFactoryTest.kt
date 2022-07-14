@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
@@ -61,6 +62,20 @@ internal class SocketFactoryTest {
         )
     }
 
+    /** [arguments] */
+    @ParameterizedTest
+    @MethodSource("arguments")
+    internal fun testCreateSocket(connectionConf: SocketFactory.ConnectionConf, expectedUrl: String) {
+        socketFactory.createSocket(connectionConf)
+
+        verify(httpClient, only()).newWebSocket(
+            org.mockito.kotlin.check {
+                it.url.toString() `should be equal to` expectedUrl
+            },
+            any< WebSocketEventObserver>()
+        )
+    }
+
     companion object {
         private val chatParser: ChatParser = MoshiChatParser()
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"
@@ -73,32 +88,38 @@ internal class SocketFactoryTest {
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
-                    "${endpoint}connect?json=${buildFullUserJson(it)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
                 )
             },
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
                 )
             },
             User("anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it)}&api_key=$apiKey&stream-auth-type=anonymous"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous"
+                )
+            },
+            User("!anon").let {
+                Arguments.of(
+                    SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
+                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous"
                 )
             }
         )
 
-        private fun buildMinimumUserJson(user: User): String = encode(
-            defaultMap(user.id, mapOf("id" to user.id))
+        private fun buildMinimumUserJson(userId: String): String = encode(
+            defaultMap(userId, mapOf("id" to userId))
         )
 
-        private fun buildFullUserJson(user: User): String = encode(
+        private fun buildFullUserJson(user: User, userId: String): String = encode(
             defaultMap(
-                user.id,
+                userId,
                 mapOf(
-                    "id" to user.id,
+                    "id" to userId,
                     "role" to user.role,
                     "banned" to user.banned,
                     "invisible" to user.invisible,

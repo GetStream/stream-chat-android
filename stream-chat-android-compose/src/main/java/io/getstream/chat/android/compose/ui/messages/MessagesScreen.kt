@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -52,21 +53,28 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.model.DeleteMessage
+import io.getstream.chat.android.common.model.EditMessage
+import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
@@ -496,14 +504,36 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 
     val flagAction = messageActions.firstOrNull { it is Flag }
 
-    if (flagAction != null) {
-        SimpleDialog(
-            modifier = Modifier.padding(16.dp),
-            title = stringResource(id = R.string.stream_compose_flag_message_title),
-            message = stringResource(id = R.string.stream_compose_flag_message_text),
-            onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
-            onDismiss = { listViewModel.dismissMessageAction(flagAction) }
-        )
+        if (flagAction != null) {
+            SimpleDialog(
+                modifier = Modifier.padding(16.dp),
+                title = stringResource(id = R.string.stream_compose_flag_message_title),
+                message = stringResource(id = R.string.stream_compose_flag_message_text),
+                onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
+                onDismiss = { listViewModel.dismissMessageAction(flagAction) }
+            )
+        }
+
+        if (selectedMessageState is SelectedMessageFailedModerationState) {
+            ModeratedMessageDialog(
+                message = selectedMessage,
+                modifier = Modifier.background(
+                    shape = MaterialTheme.shapes.medium,
+                    color = ChatTheme.colors.inputBackground
+                ),
+                onDismissRequest = { listViewModel.removeOverlay() },
+                onDialogOptionInteraction = { message, action ->
+                    when (action) {
+                        DeleteMessage -> listViewModel.deleteMessage(message = message, true)
+                        EditMessage -> composerViewModel.performMessageAction(Edit(message))
+                        SendAnyway -> listViewModel.performMessageAction(Resend(message))
+                        else -> {
+                            // Custom events
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 

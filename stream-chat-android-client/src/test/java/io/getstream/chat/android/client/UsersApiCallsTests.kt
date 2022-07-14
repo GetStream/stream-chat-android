@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -44,12 +45,12 @@ internal class UsersApiCallsTests {
 
     @BeforeEach
     fun before() {
-        mock = MockClientBuilder(testCoroutines.scope)
+        mock = MockClientBuilder(testCoroutines)
         client = mock.build()
     }
 
     @Test
-    fun banSuccess() {
+    fun banSuccess() = runTest {
         val targetUserId = "target-id"
         val timeout = 13
         val reason = "reason"
@@ -71,7 +72,7 @@ internal class UsersApiCallsTests {
             mock.channelId,
             reason,
             timeout
-        ).execute()
+        ).await()
 
         verifySuccess(
             result,
@@ -80,7 +81,7 @@ internal class UsersApiCallsTests {
     }
 
     @Test
-    fun unbanSuccess() {
+    fun unbanSuccess() = runTest {
         val targetUserId = "target-id"
 
         Mockito.`when`(
@@ -96,7 +97,7 @@ internal class UsersApiCallsTests {
             targetUserId,
             mock.channelType,
             mock.channelId
-        ).execute()
+        ).await()
 
         verifySuccess(
             result,
@@ -105,7 +106,7 @@ internal class UsersApiCallsTests {
     }
 
     @Test
-    fun flagSuccess() {
+    fun flagSuccess() = runTest {
         val targetUserId = "target-id"
         val user = User("user-id")
         val targetUser = User(targetUserId)
@@ -127,13 +128,13 @@ internal class UsersApiCallsTests {
             mock.api.flagUser(targetUserId)
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagUser(targetUserId).execute()
+        val result = client.flagUser(targetUserId).await()
 
         verifySuccess(result, flag)
     }
 
     @Test
-    fun flagUserSuccess() {
+    fun flagUserSuccess() = runTest {
         val targetUserId = "target-id"
         val user = User("user-id")
         val targetUser = User(targetUserId)
@@ -155,13 +156,13 @@ internal class UsersApiCallsTests {
             mock.api.flagUser(targetUserId)
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagUser(targetUserId).execute()
+        val result = client.flagUser(targetUserId).await()
 
         verifySuccess(result, flag)
     }
 
     @Test
-    fun flagMessageSuccess() {
+    fun flagMessageSuccess() = runTest {
         val targetMessageId = "message-id"
         val user = User("user-id")
         val date = Date()
@@ -182,13 +183,13 @@ internal class UsersApiCallsTests {
             mock.api.flagMessage(targetMessageId)
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagMessage(targetMessageId).execute()
+        val result = client.flagMessage(targetMessageId).await()
 
         verifySuccess(result, flag)
     }
 
     @Test
-    fun getUsersSuccess() {
+    fun getUsersSuccess() = runTest {
         val user = User().apply { id = "a-user" }
 
         val request = QueryUsersRequest(Filters.eq("id", "1"), 0, 1)
@@ -199,13 +200,13 @@ internal class UsersApiCallsTests {
 
         val result = client.queryUsers(
             request
-        ).execute()
+        ).await()
 
         verifySuccess(result, listOf(user))
     }
 
     @Test
-    fun removeMembersSuccess() {
+    fun removeMembersSuccess() = runTest {
         val channel = Channel()
             .apply { id = "a-channel" }
 
@@ -219,13 +220,13 @@ internal class UsersApiCallsTests {
         ).thenReturn(RetroSuccess(channel).toRetrofitCall())
 
         val result =
-            client.removeMembers(mock.channelType, mock.channelId, listOf("a-id", "b-id")).execute()
+            client.removeMembers(mock.channelType, mock.channelId, listOf("a-id", "b-id")).await()
 
         verifySuccess(result, channel)
     }
 
     @Test
-    fun muteUserSuccess() {
+    fun muteUserSuccess() = runTest {
         val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
@@ -241,20 +242,20 @@ internal class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(mute).toRetrofitCall())
 
-        val result = client.muteUser(targetUser.id).execute()
+        val result = client.muteUser(targetUser.id).await()
 
         verifySuccess(result, mute)
     }
 
     @Test
-    fun unmuteUserSuccess() {
+    fun unmuteUserSuccess() = runTest {
         val targetUser = User().apply { id = "target-id" }
 
         Mockito.`when`(
             mock.api.unmuteUser(targetUser.id)
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
-        val result = client.unmuteUser(targetUser.id).execute()
+        val result = client.unmuteUser(targetUser.id).await()
 
         verifySuccess(result, Unit)
     }

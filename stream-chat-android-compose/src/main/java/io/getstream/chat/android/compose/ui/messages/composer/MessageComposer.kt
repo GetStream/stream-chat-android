@@ -288,7 +288,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
@@ -333,7 +333,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
+        if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }
@@ -657,12 +657,13 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
         }
 
         val context = LocalContext.current
-        val stringOk = stringResource(id = R.string.stream_compose_ok)
         LaunchedEffect(validationErrors.size) {
-            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
+            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed ||
+                firstValidationError is ValidationError.AttachmentSizeExceeded
+            ) {
                 snackbarHostState.showSnackbar(
                     message = errorMessage,
-                    actionLabel = stringOk,
+                    actionLabel = context.getString(R.string.stream_compose_ok),
                     duration = SnackbarDuration.Indefinite
                 )
             } else {

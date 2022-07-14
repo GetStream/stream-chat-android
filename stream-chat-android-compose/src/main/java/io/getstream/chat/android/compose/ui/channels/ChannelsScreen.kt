@@ -173,9 +173,9 @@ public fun ChannelsScreen(
             }
         }
 
-        val selectedChannel = selectedChannel ?: Channel()
+        val channel = selectedChannel ?: Channel()
         AnimatedVisibility(
-            visible = selectedChannel.cid.isNotEmpty(),
+            visible = channel.cid.isNotEmpty(),
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
@@ -192,9 +192,9 @@ public fun ChannelsScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                selectedChannel = selectedChannel,
+                selectedChannel = channel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                isMuted = listViewModel.isChannelMuted(channel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)

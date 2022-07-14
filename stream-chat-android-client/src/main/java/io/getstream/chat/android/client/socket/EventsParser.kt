@@ -21,8 +21,9 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.utils.stringify
+import io.getstream.logging.StreamLog
 import okhttp3.Response
 import okhttp3.WebSocket
 
@@ -33,11 +34,11 @@ internal class EventsParser(
 ) : okhttp3.WebSocketListener() {
 
     private var connectionEventReceived = false
-    private val logger = ChatLogger.get("Events")
+    private val logger = StreamLog.getLogger("Chat:Events")
     private var closedByClient = true
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        logger.logI("onOpen")
+        logger.i { "[onOpen] closedByClient: $closedByClient" }
         connectionEventReceived = false
         closedByClient = false
     }
@@ -45,7 +46,7 @@ internal class EventsParser(
     @Suppress("TooGenericExceptionCaught")
     override fun onMessage(webSocket: WebSocket, text: String) {
         try {
-            logger.logI(text)
+            logger.i { text }
             val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
             val errorData = errorMessage.data()
             if (errorMessage.isSuccess && errorData.error != null) {
@@ -54,7 +55,7 @@ internal class EventsParser(
                 handleEvent(text)
             }
         } catch (t: Throwable) {
-            logger.logE("onMessage", t)
+            logger.e(t) { "[onMessage] failed: $t" }
             onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
         }
     }
@@ -64,6 +65,7 @@ internal class EventsParser(
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        logger.i { "[onClosed] code: $code, closedByClient: $closedByClient" }
         if (code == CODE_CLOSE_SOCKET_FROM_CLIENT) {
             closedByClient = true
         } else {
@@ -73,18 +75,19 @@ internal class EventsParser(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        logger.logE("onFailure: $t", t)
+        logger.e(t) { "[onFailure] throwable: $t" }
         // Called when socket is disconnected by client also (client.disconnect())
         onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
     private fun onFailure(chatError: ChatError) {
-        logger.logE("onFailure $chatError", chatError)
+        logger.e { "[onFailure] chatError: ${chatError.stringify()}" }
         // Called when socket is disconnected by client also (client.disconnect())
         onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
     }
 
     internal fun closeByClient() {
+        logger.i { "[closeByClient] closedByClient: $closedByClient" }
         closedByClient = true
     }
 
@@ -108,10 +111,12 @@ internal class EventsParser(
     }
 
     private fun handleErrorEvent(error: ErrorResponse) {
+        logger.e { "[handleErrorEvent] error: $error" }
         onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
     }
 
     private fun onSocketError(error: ChatError) {
+        logger.e { "[onSocketError] closedByClient: $closedByClient, error: ${error.stringify()}" }
         if (!closedByClient) {
             chatSocket.onSocketError(error)
         }

@@ -19,12 +19,14 @@ package io.getstream.chat.android.client.chatclient
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.asCall
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -37,35 +39,35 @@ import org.mockito.kotlin.whenever
 internal class WhenQueryChannel : BaseChatClientTest() {
 
     @Test
-    fun `Given offline plugin with failing precondition Should not make API call and return error result`() {
+    fun `Given offline plugin with failing precondition Should not make API call and return error result`() = runTest {
         val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.error(ChatError())
         }
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
 
-        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
 
         result.isError `should be` true
         isNetworkApiCalled `should be` false
     }
 
     @Test
-    fun `Given offline plugin with success precondition Should make API call and return it's result`() {
+    fun `Given offline plugin with success precondition Should make API call and return it's result`() = runTest {
         val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.success(Unit)
         }
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
 
-        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
 
         result.isSuccess `should be` true
         isNetworkApiCalled `should be` true
     }
 
     @Test
-    fun `Given offline plugin with success precondition Should invoke methods in right order`() {
+    fun `Given offline plugin with success precondition Should invoke methods in right order`() = runTest {
         val list = mutableListOf<Int>()
         val plugin = mock<QueryChannelListenerPlugin> {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doAnswer {
@@ -87,7 +89,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             mock()
         }.get()
 
-        sut.queryChannel("channelType", "channelId", QueryChannelRequest()).execute()
+        sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
 
         list `should be equal to` listOf(1, 2, 3, 4)
     }
@@ -95,6 +97,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     private inner class Fixture {
 
         init {
+            whenever(socketStateService.state) doReturn SocketState.Connected(connectionId = "connectionId")
             whenever(api.queryChannel(any(), any(), any())) doReturn mock<Channel>().asCall()
         }
 
@@ -104,7 +107,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
 
         fun givenChannelResponse(channelProvider: () -> Channel) = apply {
             whenever(api.queryChannel(any(), any(), any())) doAnswer {
-                CoroutineCall(coroutineRule.scope) {
+                CoroutineCall(testCoroutines.scope) {
                     Result.success(channelProvider())
                 }
             }

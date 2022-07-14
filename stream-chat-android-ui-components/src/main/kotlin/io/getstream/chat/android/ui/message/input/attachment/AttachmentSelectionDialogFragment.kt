@@ -37,17 +37,25 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
 
+    /**
+     * Style for the dialog.
+     */
+    private lateinit var style: MessageInputViewStyle
+
+    /**
+     * A listener that is invoked when attachment picking has been completed
+     */
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
+
+    /**
+     * The list of currently selected attachments.
+     */
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
+
+    /**
+     * The source of the selected attachments.
+     */
     private var attachmentSource: AttachmentSource = AttachmentSource.MEDIA
-
-    private val style by lazy { staticStyle!! }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState != null) dismiss()
-        setupResultListener()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,9 +66,28 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         return binding.root
     }
 
-    @Suppress("DEPRECATION_ERROR")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null && ::style.isInitialized) {
+            setupResultListeners()
+        } else {
+            dismiss()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null && ::style.isInitialized) {
+            setupDialog()
+        } else {
+            dismiss()
+        }
+    }
+
+    /**
+     * Initializes the dialog.
+     */
+    private fun setupDialog() {
         binding.apply {
             val attachmentSelectionDialogStyle = style.attachmentSelectionDialogStyle
 
@@ -108,7 +135,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
     override fun onDestroyView() {
         super.onDestroyView()
-        staticStyle = null
         _binding = null
     }
 
@@ -118,6 +144,15 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     }
 
     override fun getTheme(): Int = R.style.StreamUiAttachmentBottomSheetDialog
+
+    /**
+     * Initializes the dialog with the style.
+     *
+     * @param style Style for the dialog.
+     */
+    public fun setStyle(style: MessageInputViewStyle) {
+        this.style = style
+    }
 
     /**
      * Sets the listener that will be notified when picking attachments has been completed.
@@ -155,7 +190,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         }
     }
 
-    private fun setupResultListener() {
+    private fun setupResultListeners() {
         childFragmentManager.setFragmentResultListener(REQUEST_KEY_CAMERA, this) { _, bundle ->
             val result = bundle.getSerializable(BUNDLE_KEY) as Set<AttachmentMetaData>
             attachmentSelectionListener?.onAttachmentsSelected(result, AttachmentSource.CAMERA)
@@ -175,17 +210,16 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         internal const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
         internal const val BUNDLE_KEY = "bundle_attachments"
 
-        internal var staticStyle: MessageInputViewStyle? = null
-
         /**
-         * Create a new instance of the Attachment picker dialog.
+         * Creates a new instance of [AttachmentSelectionDialogFragment].
          *
-         * See [AttachmentSelectionDialogStyle.createDefault] to load a default set of icons to be used for the
-         * attachment dialog's tabs.
+         * See [AttachmentSelectionDialogStyle.createDefault] to load a default set of icons
+         * to be used for the attachment dialog's tabs.
          */
         public fun newInstance(style: MessageInputViewStyle): AttachmentSelectionDialogFragment {
-            staticStyle = style
-            return AttachmentSelectionDialogFragment()
+            return AttachmentSelectionDialogFragment().apply {
+                setStyle(style)
+            }
         }
     }
 }

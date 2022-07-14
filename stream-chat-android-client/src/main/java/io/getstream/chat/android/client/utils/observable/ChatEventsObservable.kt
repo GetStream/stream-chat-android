@@ -24,24 +24,27 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import java.util.Date
+import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val chatSocketExperimental: ChatSocketExperimental
 ) {
 
-    private val logger = ChatLogger.get("EventsObservable")
+    private val logger = StreamLog.getLogger("Chat:EventsObservable")
 
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
@@ -73,7 +76,11 @@ internal class ChatEventsObservable(
 
     private fun checkIfEmpty() {
         if (subscriptions.isEmpty()) {
-            socket.removeListener(eventsMapper)
+            if (ToggleService.isSocketExperimental()) {
+                chatSocketExperimental.removeListener(eventsMapper)
+            } else {
+                socket.removeListener(eventsMapper)
+            }
         }
     }
 
@@ -98,7 +105,11 @@ internal class ChatEventsObservable(
     private fun addSubscription(subscription: EventSubscription): Disposable {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
-            socket.addListener(eventsMapper)
+            if (ToggleService.isSocketExperimental()) {
+                chatSocketExperimental.addListener(eventsMapper)
+            } else {
+                socket.addListener(eventsMapper)
+            }
         }
 
         subscriptions = subscriptions + subscription

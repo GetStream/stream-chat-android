@@ -51,7 +51,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     implementation project(":libraries:logging:stream-logger")
-    implementation project(":libraries:logging:stream-logger-file")
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAnnotations

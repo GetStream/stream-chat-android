@@ -21,11 +21,13 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.application.App
+import kotlinx.coroutines.launch
 
 class HomeFragmentViewModel : ViewModel() {
 
@@ -53,9 +55,11 @@ class HomeFragmentViewModel : ViewModel() {
     fun onUiAction(action: UiAction) {
         when (action) {
             is UiAction.LogoutClicked -> {
-                ChatClient.instance().disconnect()
-                App.instance.userRepository.clearUser()
-                _events.value = Event(UiEvent.NavigateToLoginScreen)
+                viewModelScope.launch {
+                    ChatClient.instance().disconnect(false).await()
+                    App.instance.userRepository.clearUser()
+                    _events.value = Event(UiEvent.NavigateToLoginScreen)
+                }
             }
         }
     }

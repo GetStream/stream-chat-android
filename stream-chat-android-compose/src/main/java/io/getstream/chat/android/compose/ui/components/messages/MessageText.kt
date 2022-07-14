@@ -37,7 +37,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
-import io.getstream.chat.android.compose.ui.util.isEmojiOnly
+import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
+import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 
 /**
@@ -50,112 +51,23 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
- * @param isQuote Is the message is a quote inside another message.
- * @param onLongItemClick Handler used for long pressing on the message text.
- */
-@Deprecated(
-    message = "Deprecated after moving the quoted text composition logic to QuotedMessageText which is now " +
-        "used to compose quoted messages. Use MessageText for regular message text.",
-    replaceWith = ReplaceWith(
-        expression = "MessageText(message: Message, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit)",
-        imports = ["io.getstream.chat.android.compose.ui.components.messages.MessageText"]
-    ),
-    level = DeprecationLevel.WARNING
-)
-@Composable
-public fun MessageText(
-    message: Message,
-    modifier: Modifier = Modifier,
-    isQuote: Boolean = false,
-    onLongItemClick: (Message) -> Unit,
-) {
-    val context = LocalContext.current
-
-    val styledText = buildAnnotatedMessageText(message)
-    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
-
-    val isEmojiOnly = message.isEmojiOnly() && !isQuote
-    val isSingleEmoji = message.isSingleEmoji() && !isQuote
-
-    val style = when {
-        isSingleEmoji -> ChatTheme.typography.singleEmoji
-        isEmojiOnly -> ChatTheme.typography.emojiOnly
-        else -> ChatTheme.typography.bodyBold
-    }
-
-    if (annotations.isNotEmpty()) {
-        ClickableText(
-            modifier = modifier
-                .padding(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
-                ),
-            text = styledText,
-            style = style,
-            onLongPress = { onLongItemClick(message) }
-        ) { position ->
-            val targetUrl = annotations.firstOrNull {
-                position in it.start..it.end
-            }?.item
-
-            if (targetUrl != null && targetUrl.isNotEmpty()) {
-                context.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(targetUrl)
-                    )
-                )
-            }
-        }
-    } else {
-        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
-        Text(
-            modifier = modifier
-                .padding(
-                    start = horizontalPadding,
-                    end = horizontalPadding,
-                    top = if (isEmojiOnly) 0.dp else 8.dp,
-                    bottom = if (isEmojiOnly) 0.dp else 8.dp
-                )
-                .clipToBounds(),
-            text = styledText,
-            style = style
-        )
-    }
-}
-
-/**
- * Default text element for messages, with extra styling and padding for the chat bubble.
- *
- * It detects if we have any annotations/links in the message, and if so, it uses the [ClickableText]
- * component to allow for clicks on said links, that will open the link.
- *
- * Alternatively, it just shows a basic [Text] element.
- *
- * @param message Message to show.
- * @param modifier Modifier for styling.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit,
+    onLongItemClick: (Message) -> Unit
 ) {
     val context = LocalContext.current
 
     val styledText = buildAnnotatedMessageText(message)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
-
-    val isEmojiOnly = message.isEmojiOnly()
-    val isSingleEmoji = message.isSingleEmoji()
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
-        isSingleEmoji -> ChatTheme.typography.singleEmoji
-        isEmojiOnly -> ChatTheme.typography.emojiOnly
+        message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
+        message.isFewEmoji() -> ChatTheme.typography.emojiOnly
         else -> ChatTheme.typography.bodyBold
     }
 
@@ -186,14 +98,13 @@ public fun MessageText(
             }
         }
     } else {
-        val horizontalPadding = if (isEmojiOnly) 0.dp else 12.dp
+        val horizontalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 12.dp
+        val verticalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 8.dp
         Text(
             modifier = modifier
                 .padding(
-                    start = horizontalPadding,
-                    end = horizontalPadding,
-                    top = if (isEmojiOnly) 0.dp else 8.dp,
-                    bottom = if (isEmojiOnly) 0.dp else 8.dp
+                    horizontal = horizontalPadding,
+                    vertical = verticalPadding
                 )
                 .clipToBounds(),
             text = styledText,

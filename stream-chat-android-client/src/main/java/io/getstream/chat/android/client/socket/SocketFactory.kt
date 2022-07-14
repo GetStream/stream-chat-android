@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.UnsupportedEncodingException
@@ -33,18 +35,30 @@ internal class SocketFactory(
     private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
 
-    private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
+    private val logger = StreamLog.getLogger("Chat:SocketFactory")
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
-        val url = buildUrl(connectionConf)
-        val request = Request.Builder().url(url).build()
+        val request = buildRequest(connectionConf)
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
-
-        logger.logI("new web socket: $url")
-
+        logger.i { "new web socket: ${request.url}" }
         return Socket(newWebSocket, parser)
     }
+
+    @Throws(UnsupportedEncodingException::class)
+    fun createSocket(connectionConf: ConnectionConf): OkHttpWebSocket {
+        val request = buildRequest(connectionConf)
+        val eventsObserver = WebSocketEventObserver()
+        httpClient.newWebSocket(request, eventsObserver)
+        logger.i { "new web socket: ${request.url}" }
+        return OkHttpWebSocket(eventsObserver, parser)
+    }
+
+    @Throws(UnsupportedEncodingException::class)
+    private fun buildRequest(connectionConf: ConnectionConf): Request =
+        Request.Builder()
+            .url(buildUrl(connectionConf))
+            .build()
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)
@@ -68,7 +82,7 @@ internal class SocketFactory(
     private fun buildUserDetailJson(connectionConf: ConnectionConf): String {
         val data = mapOf(
             "user_details" to connectionConf.reduceUserDetails(),
-            "user_id" to connectionConf.user.id,
+            "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
             "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
         )
@@ -81,7 +95,7 @@ internal class SocketFactory(
      *
      * @return A map of User's properties to update.
      */
-    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to user.id)
+    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
         .apply {
             if (!isReconnection) {
                 put("role", user.role)
@@ -114,5 +128,11 @@ internal class SocketFactory(
         ) : ConnectionConf()
 
         internal fun asReconnectionConf(): ConnectionConf = this.also { isReconnection = true }
+
+        internal val id: String
+            get() = when (this) {
+                is AnonymousConnectionConf -> user.id.replace("!", "")
+                is UserConnectionConf -> user.id
+            }
     }
 }

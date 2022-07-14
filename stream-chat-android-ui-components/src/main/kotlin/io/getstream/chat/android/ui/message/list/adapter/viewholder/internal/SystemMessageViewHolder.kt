@@ -40,5 +40,6 @@ internal class SystemMessageViewHolder(
 
         binding.messageTextView.text = data.message.text
         binding.messageTextView.setTextStyle(style.textStyleSystemMessage)
+        binding.messageTextView.gravity = style.systemMessageAlignment
     }
 }

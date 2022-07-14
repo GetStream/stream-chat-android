@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.common.extensions.isDeleted
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import kotlin.math.max
@@ -34,6 +35,7 @@ import kotlin.properties.Delegates
 internal class MessageListScrollHelper(
     private val recyclerView: RecyclerView,
     private val scrollButtonView: ScrollButtonView,
+    private val disableScrollWhenShowingDialog: Boolean,
     private val callback: MessageReadListener,
 ) {
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
@@ -46,6 +48,13 @@ internal class MessageListScrollHelper(
 
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
+
+    private var onScrollToBottomHandler: MessageListView.OnScrollToBottomHandler =
+        MessageListView.OnScrollToBottomHandler {
+            recyclerView.scrollToPosition(currentList.lastIndex)
+        }
+
+    internal var unreadCountEnabled: Boolean = true
 
     /**
      * True when the latest message is visible.
@@ -70,7 +79,7 @@ internal class MessageListScrollHelper(
 
     init {
         scrollButtonView.setOnClickListener {
-            recyclerView.scrollToPosition(currentList.lastIndex)
+            onScrollToBottomHandler.onScrollToBottom()
         }
         recyclerView.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -84,7 +93,9 @@ internal class MessageListScrollHelper(
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
 
-                    stopScrollIfPopupShown(recyclerView)
+                    if (disableScrollWhenShowingDialog) {
+                        stopScrollIfPopupShown(recyclerView)
+                    }
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -163,14 +174,23 @@ internal class MessageListScrollHelper(
         )
     }
 
-    internal fun onMessageListChanged(isThreadStart: Boolean, hasNewMessages: Boolean, isInitialList: Boolean) {
-        if (!scrollToBottomButtonEnabled || (!hasNewMessages || adapter.currentList.isEmpty())) {
+    internal fun scrollToBottom() {
+        recyclerView.scrollToPosition(currentList.lastIndex)
+    }
+
+    internal fun onMessageListChanged(
+        isThreadStart: Boolean,
+        hasNewMessages: Boolean,
+        isInitialList: Boolean,
+        areNewestMessagesLoaded: Boolean,
+    ) {
+        if (shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
             return
         }
 
         if (isThreadStart) {
             layoutManager.scrollToPosition(0)
-        } else if (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom) {
+        } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded)) {
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
         } else {
@@ -180,7 +200,24 @@ internal class MessageListScrollHelper(
         }
     }
 
+    private fun shouldKeepScrollPosition(
+        areNewestMessagesLoaded: Boolean,
+        hasNewMessages: Boolean,
+    ): Boolean {
+        return areNewestMessagesLoaded || !scrollToBottomButtonEnabled ||
+            (!hasNewMessages || adapter.currentList.isEmpty())
+    }
+
+    private fun shouldScrollToBottom(
+        isInitialList: Boolean,
+        areNewestMessagesLoaded: Boolean,
+    ): Boolean {
+        return areNewestMessagesLoaded && (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
+    }
+
     private fun refreshUnreadCount() {
+        if (!unreadCountEnabled) return
+
         var unreadCount = 0
         for (i in currentList.lastIndex downTo getLastSeenItemPosition() + 1) {
             if (currentList[i].isValid()) {
@@ -209,6 +246,10 @@ internal class MessageListScrollHelper(
 
     private fun MessageListItem.isValid(): Boolean {
         return this is MessageListItem.MessageItem && !(this.isTheirs && this.message.isDeleted())
+    }
+
+    internal fun setScrollToBottomHandler(onScrollToBottomHandler: MessageListView.OnScrollToBottomHandler) {
+        this.onScrollToBottomHandler = onScrollToBottomHandler
     }
 
     internal fun interface MessageReadListener {

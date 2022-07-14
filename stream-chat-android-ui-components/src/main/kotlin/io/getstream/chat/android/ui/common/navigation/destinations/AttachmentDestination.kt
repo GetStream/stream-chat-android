@@ -25,12 +25,12 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.stfalcon.imageviewer.StfalconImageViewer
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
+import io.getstream.logging.StreamLog
 
 public open class AttachmentDestination(
     public var message: Message,
@@ -38,7 +38,7 @@ public open class AttachmentDestination(
     context: Context,
 ) : ChatDestination(context) {
 
-    private val logger = ChatLogger.get("AttachmentDestination")
+    private val logger = StreamLog.getLogger("Chat:AttachmentDestination")
 
     override fun navigate() {
         showAttachment(message, attachment)
@@ -79,7 +79,7 @@ public open class AttachmentDestination(
         }
 
         if (url.isNullOrEmpty()) {
-            logger.logE("Wrong URL for attachment. Attachment: $attachment")
+            logger.e { "Wrong URL for attachment. Attachment: $attachment" }
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
@@ -102,7 +102,7 @@ public open class AttachmentDestination(
         val title = attachment.title ?: attachment.name ?: ""
 
         if (mimeType == null && type == null) {
-            ChatLogger.instance.logE("AttachmentDestination", "MimeType is null for url $url")
+            logger.e { "MimeType is null for url $url" }
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
@@ -131,9 +131,7 @@ public open class AttachmentDestination(
             }
 
             else -> {
-                ChatLogger.instance.logE(
-                    "AttachmentDestination", "Could not load attachment. Mimetype: $mimeType. Type: $type"
-                )
+                logger.e { "Could not load attachment. Mimetype: $mimeType. Type: $type" }
                 Toast.makeText(
                     context,
                     context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),

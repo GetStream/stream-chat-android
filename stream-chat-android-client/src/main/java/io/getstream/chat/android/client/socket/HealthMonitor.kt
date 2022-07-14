@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 import java.util.Date
 import kotlin.math.floor
 import kotlin.math.max
@@ -29,23 +29,23 @@ private const val MONITOR_INTERVAL = 1000L
 private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
 private const val MONITOR_START_DELAY = 1000L
 
-internal class HealthMonitor(private val healthCallback: HealthCallback) {
+internal class HealthMonitor(private val checkCallback: () -> Unit, private val reconnectCallback: () -> Unit) {
 
     private val delayHandler = Handler(Looper.getMainLooper())
     private var consecutiveFailures = 0
     private var disconnected = false
     private var lastEventDate: Date = Date()
 
-    private val logger = ChatLogger.get("SocketMonitor")
+    private val logger = StreamLog.getLogger("Chat:SocketMonitor")
 
-    private val reconnect = Runnable {
+    private val reconnectRunnable = Runnable {
         if (needToReconnect()) {
-            healthCallback.reconnect()
+            reconnectCallback()
         }
     }
 
     private val healthCheck: Runnable = Runnable {
-        healthCallback.check()
+        checkCallback()
         delayHandler.postDelayed(monitor, HEALTH_CHECK_INTERVAL)
     }
 
@@ -58,7 +58,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     }
 
     fun start() {
-        logger.logD("Starting")
+        logger.d { "Starting" }
         lastEventDate = Date()
         disconnected = false
         resetHealthMonitor()
@@ -66,13 +66,13 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     fun stop() {
         delayHandler.removeCallbacks(monitor)
-        delayHandler.removeCallbacks(reconnect)
+        delayHandler.removeCallbacks(reconnectRunnable)
         delayHandler.removeCallbacks(healthCheck)
     }
 
     fun ack() {
         lastEventDate = Date()
-        delayHandler.removeCallbacks(reconnect)
+        delayHandler.removeCallbacks(reconnectRunnable)
         disconnected = false
         consecutiveFailures = 0
     }
@@ -80,6 +80,7 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     fun onDisconnected() {
         disconnected = true
         resetHealthMonitor()
+        delayHandler.postDelayed(monitor, MONITOR_START_DELAY)
     }
 
     private fun resetHealthMonitor() {
@@ -90,8 +91,8 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
     private fun reconnect() {
         stop()
         val retryInterval = getRetryInterval(++consecutiveFailures)
-        logger.logI("Next connection attempt in $retryInterval ms")
-        delayHandler.postDelayed(reconnect, retryInterval)
+        logger.i { "Next connection attempt in $retryInterval ms" }
+        delayHandler.postDelayed(reconnectRunnable, retryInterval)
     }
 
     private fun needToReconnect() = disconnected || (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
@@ -104,10 +105,5 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
             25000
         )
         return floor(Math.random() * (max - min) + min).toLong()
-    }
-
-    interface HealthCallback {
-        fun check()
-        fun reconnect()
     }
 }
