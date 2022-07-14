@@ -681,11 +681,16 @@ public class MessageListViewModel(
      * the oldest message currently loaded.
      */
     private fun onEndRegionReached() {
-        val listData = if (mode.value is Mode.Thread) threadListData else messageListData
-        listData?.loadingMoreOldMessagesChanged(true)
-
-        messageListController.loadOlderMessages {
-            listData?.loadingMoreOldMessagesChanged(false)
+        currentMode.run {
+            when (this) {
+                is Mode.Normal -> {
+                    messageListData?.loadingMoreOldMessagesChanged(true)
+                    chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
+                        messageListData?.loadingMoreOldMessagesChanged(false)
+                    }
+                }
+                is Mode.Thread -> threadLoadMore(this)
+            }
         }
     }
 
