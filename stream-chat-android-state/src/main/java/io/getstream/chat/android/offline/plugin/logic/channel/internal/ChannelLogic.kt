@@ -184,6 +184,18 @@ internal class ChannelLogic(
         return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
+    internal suspend fun watchRefresh(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
+        if (mutableState.loading.value) {
+            logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
+            return Result.error(
+                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+            )
+        }
+        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
+            shouldRefresh = true
+        })
+    }
+
     /**
      * Loads a list of messages after the newest message in the current list.
      *

@@ -23,6 +23,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     override var watch: Boolean = false
     override var presence: Boolean = false
 
+    public var shouldRefresh: Boolean = false
+
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()
     public val members: MutableMap<String, Any> = mutableMapOf()
