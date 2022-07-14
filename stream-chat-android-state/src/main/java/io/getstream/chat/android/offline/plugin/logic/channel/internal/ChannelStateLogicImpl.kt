@@ -475,7 +475,8 @@ internal class ChannelStateLogicImpl(
     private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
         when {
             /* If we are not filtering the messages in any direction and not providing any message id then
-            * we are requesting the newest messages */
+            * we are requesting the newest messages, only if not inside search so we don't override the
+            * search results */
             !request.isFilteringMessages() -> {
                 mutableState.setEndOfOlderMessages(false)
                 mutableState.setEndOfNewerMessages(!mutableState.insideSearch.value)
