@@ -236,6 +236,10 @@ public fun MessagesScreen(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel
         )
+        MessageModerationDialog(
+            listViewModel = listViewModel,
+            composerViewModel = composerViewModel
+        )
         MessageDialogs(listViewModel = listViewModel)
     }
 }
@@ -479,6 +483,45 @@ private fun BoxScope.AttachmentsPickerMenu(
 }
 
 /**
+ * Contains the dialog for a message that needs to be moderated.
+ *
+ * @param listViewModel The [MessageListViewModel] used to read state and
+ * perform actions.
+ * @param composerViewModel The [MessageComposerViewModel] used to read state and
+ * perform actions.
+ */
+@Composable
+private fun MessageModerationDialog(
+    listViewModel: MessageListViewModel,
+    composerViewModel: MessageComposerViewModel,
+) {
+    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+
+    val selectedMessage = selectedMessageState?.message ?: Message()
+
+    if (selectedMessageState is SelectedMessageFailedModerationState) {
+        ModeratedMessageDialog(
+            message = selectedMessage,
+            modifier = Modifier.background(
+                shape = MaterialTheme.shapes.medium,
+                color = ChatTheme.colors.inputBackground
+            ),
+            onDismissRequest = { listViewModel.removeOverlay() },
+            onDialogOptionInteraction = { message, action ->
+                when (action) {
+                    DeleteMessage -> listViewModel.deleteMessage(message = message, true)
+                    EditMessage -> composerViewModel.performMessageAction(Edit(message))
+                    SendAnyway -> listViewModel.performMessageAction(Resend(message))
+                    else -> {
+                        // Custom events
+                    }
+                }
+            }
+        )
+    }
+}
+
+/**
  * Contains the message dialogs used to prompt the
  * user with message flagging and deletion actions
  *
@@ -504,36 +547,14 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 
     val flagAction = messageActions.firstOrNull { it is Flag }
 
-        if (flagAction != null) {
-            SimpleDialog(
-                modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.stream_compose_flag_message_title),
-                message = stringResource(id = R.string.stream_compose_flag_message_text),
-                onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
-                onDismiss = { listViewModel.dismissMessageAction(flagAction) }
-            )
-        }
-
-        if (selectedMessageState is SelectedMessageFailedModerationState) {
-            ModeratedMessageDialog(
-                message = selectedMessage,
-                modifier = Modifier.background(
-                    shape = MaterialTheme.shapes.medium,
-                    color = ChatTheme.colors.inputBackground
-                ),
-                onDismissRequest = { listViewModel.removeOverlay() },
-                onDialogOptionInteraction = { message, action ->
-                    when (action) {
-                        DeleteMessage -> listViewModel.deleteMessage(message = message, true)
-                        EditMessage -> composerViewModel.performMessageAction(Edit(message))
-                        SendAnyway -> listViewModel.performMessageAction(Resend(message))
-                        else -> {
-                            // Custom events
-                        }
-                    }
-                }
-            )
-        }
+    if (flagAction != null) {
+        SimpleDialog(
+            modifier = Modifier.padding(16.dp),
+            title = stringResource(id = R.string.stream_compose_flag_message_title),
+            message = stringResource(id = R.string.stream_compose_flag_message_text),
+            onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
+            onDismiss = { listViewModel.dismissMessageAction(flagAction) }
+        )
     }
 }
 
