@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `Messages` | 2022.07.08<br/>5.4.1 | 2022.08.02 ⌛ | 2022.09.06 ⌛ | Use new implementation of `Messages` composable. |
+| `Messages` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use new implementation of `Messages` composable. |
 | `MesageListViewModel.loadMore` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
 | `ChatLogger` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
 | `ChatLogger.Config` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
