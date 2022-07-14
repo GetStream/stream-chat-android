@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
@@ -47,7 +48,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest.filterWithOffset
 import io.getstream.logging.StreamLog

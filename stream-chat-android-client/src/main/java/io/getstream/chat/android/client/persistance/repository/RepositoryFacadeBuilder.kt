@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.builder.internal
+package io.getstream.chat.android.client.persistance.repository
 
 import android.content.Context
 import io.getstream.chat.android.client.models.Config

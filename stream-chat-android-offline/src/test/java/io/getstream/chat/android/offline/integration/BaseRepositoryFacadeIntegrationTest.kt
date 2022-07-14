@@ -20,10 +20,10 @@ import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacadeBuilder
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.test.TestCoroutineRule
