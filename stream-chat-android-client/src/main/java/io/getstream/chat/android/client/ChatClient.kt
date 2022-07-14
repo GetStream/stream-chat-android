@@ -208,8 +208,7 @@ internal constructor(
     /**
      * With clientState allows the user to get the state of the SDK like connection, initialization...
      */
-    public val clientState: ClientState
-        get() = ClientState.get()
+    public lateinit var clientState: ClientState
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -2570,8 +2569,6 @@ internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            pluginFactories.forEach { pluginFactory -> pluginFactory.configure() }
-
             chatClient.initializationCoordinator.addUserConnectedListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
@@ -2654,8 +2651,9 @@ internal constructor(
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
                 lifecycle = lifecycle
-            ).also {
-                configureInitializer(it)
+            ).also { chatClient ->
+                chatClient.clientState = ClientState.create(appContext)
+                configureInitializer(chatClient)
             }
         }
 

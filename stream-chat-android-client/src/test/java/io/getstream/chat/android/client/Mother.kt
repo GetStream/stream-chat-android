@@ -21,12 +21,16 @@ import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.test.randomBoolean
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.mockito.kotlin.mock
 import java.util.UUID
 
@@ -37,7 +41,7 @@ internal object Mother {
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Attachment>().apply(attachmentBuilder)
+        }<Attachment>().apply(attachmentBuilder)
     }
 
     fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
@@ -45,13 +49,13 @@ internal object Mother {
             sameInstance(Mute::class.java, mock())
             sameInstance(Message::class.java, mock())
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Channel>().apply(channelBuilder)
+        }<Channel>().apply(channelBuilder)
     }
 
     fun randomUser(userBuilder: User.() -> Unit = { }): User {
         return KFixture(fixture) {
             sameInstance(Mute::class.java, mock())
-        } <User>().apply(userBuilder)
+        }<User>().apply(userBuilder)
     }
 
     fun randomString(): String = UUID.randomUUID().toString()
@@ -59,7 +63,7 @@ internal object Mother {
     fun randomDevice(
         token: String = randomString(),
         pushProvider: PushProvider = PushProvider.values().random(),
-        providerName: String? = randomString().takeIf { randomBoolean() }
+        providerName: String? = randomString().takeIf { randomBoolean() },
     ): Device =
         Device(
             token = token,
@@ -71,5 +75,27 @@ internal object Mother {
         return KFixture(fixture) {
             sameInstance(User::class.java, user)
         }()
+    }
+
+    fun mockedClientState(): ClientState {
+        return object : ClientState {
+            override val user: StateFlow<User?> = MutableStateFlow(randomUser())
+
+            override val initialized: StateFlow<Boolean> = MutableStateFlow(true)
+
+            override val connectionState: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.CONNECTED)
+
+            override val isOnline: Boolean = true
+
+            override val isOffline: Boolean = false
+
+            override val isConnecting: Boolean = false
+
+            override val isInitialized: Boolean = true
+
+            override val internetAvailable: Boolean = true
+
+            override fun clearState() {  }
+        }
     }
 }

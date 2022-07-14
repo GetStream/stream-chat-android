@@ -128,6 +128,8 @@ internal class ClientConnectionTests {
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
         )
+
+        client.clientState = mock()
     }
 
     @Test

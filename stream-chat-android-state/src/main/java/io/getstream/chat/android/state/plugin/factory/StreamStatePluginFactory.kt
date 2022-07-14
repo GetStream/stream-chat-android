@@ -140,7 +140,7 @@ public class StreamStatePluginFactory(
         repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
-        val globalState = GlobalMutableState.getOrCreate(appContext).apply {
+        val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
         val clientState = chatClient.clientState.also { clientState ->

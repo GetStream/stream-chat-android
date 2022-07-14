@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.plugin.Plugin
  */
 public interface PluginFactory {
 
-    public fun configure() {}
-
     /**
      * Creates a [Plugin]
      *

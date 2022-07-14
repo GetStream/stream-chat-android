@@ -85,17 +85,7 @@ public interface ClientState {
 
         internal var instance: ClientState? = null
 
-        @InternalStreamChatApi
-        public fun getOrCreate(context: Context): ClientState =
-            instance ?: create(context).also { clientState ->
-                instance = clientState
-            }
-
-        public fun get(): ClientState = requireNotNull(instance) {
-            "ClientState was not initialized yet. Something is wrong with the initialization of the SDK."
-        }
-
-        private fun create(context: Context): ClientState =
+        public fun create(context: Context): ClientState =
             ClientStateImpl(
                 NetworkStateProvider(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
             )
