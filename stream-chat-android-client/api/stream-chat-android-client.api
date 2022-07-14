@@ -524,6 +524,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public final fun getWatchers ()Ljava/util/Map;
 	public fun hashCode ()I
 	public final fun isFilteringAroundIdMessages ()Z
+	public final fun isFilteringMessages ()Z
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
 	public final fun membersOffset ()I
