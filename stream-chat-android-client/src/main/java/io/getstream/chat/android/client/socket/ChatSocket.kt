@@ -25,13 +25,13 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -50,7 +50,7 @@ internal open class ChatSocket constructor(
     private val parser: ChatParser,
     private val coroutineScope: CoroutineScope,
 ) {
-    private val logger = ChatLogger.get("ChatSocket")
+    private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private var socket: Socket? = null
     private var eventsParser: EventsParser? = null
@@ -72,15 +72,15 @@ internal open class ChatSocket constructor(
 
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
-            logger.logI("[onNetworkConnected] socket state: ${state.javaClass.simpleName}")
+            logger.i { "[onNetworkConnected] socket state: ${state.javaClass.simpleName}" }
             if (state is State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
-                logger.logI("network connected, reconnecting socket")
+                logger.i { "network connected, reconnecting socket" }
                 reconnect(connectionConf)
             }
         }
 
         override fun onDisconnected() {
-            logger.logI("[onNetworkDisconnected] socket state: ${state.javaClass.simpleName}")
+            logger.i { "[onNetworkDisconnected] socket state: ${state.javaClass.simpleName}" }
             healthMonitor.stop()
             if (state is State.Connected || state is State.Connecting) {
                 state = State.NetworkDisconnected
@@ -95,7 +95,7 @@ internal open class ChatSocket constructor(
         State.DisconnectedTemporarily(null) as State
     ) { _, oldState, newState ->
         if (oldState != newState) {
-            logger.logI("[updateState] newState: ${newState.javaClass.simpleName}")
+            logger.i { "[updateState] newState: ${newState.javaClass.simpleName}" }
             when (newState) {
                 is State.Connecting -> {
                     healthMonitor.stop()
@@ -133,16 +133,16 @@ internal open class ChatSocket constructor(
         private set
 
     open fun onSocketError(error: ChatError) {
-        logger.logE("[onSocketError] error: ${error.stringify()}")
+        logger.e { "[onSocketError] error: ${error.stringify()}" }
         if (state !is State.DisconnectedPermanently) {
-            logger.logE(error)
+            logger.e { error.stringify() }
             callListeners { it.onError(error) }
             (error as? ChatNetworkError)?.let(::onChatNetworkError)
         }
     }
 
     private fun onChatNetworkError(error: ChatNetworkError) {
-        logger.logE("[onChatNetworkError] error: ${error.stringify()}")
+        logger.e { "[onChatNetworkError] error: ${error.stringify()}" }
         if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
             tokenManager.expireToken()
         }
@@ -188,7 +188,7 @@ internal open class ChatSocket constructor(
     }
 
     fun connectUser(user: User, isAnonymous: Boolean) {
-        logger.logI("[connectUser] isAnonymous: $isAnonymous, user.id: ${user.id}")
+        logger.i { "[connectUser] isAnonymous: $isAnonymous, user.id: ${user.id}" }
         connect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
@@ -198,7 +198,7 @@ internal open class ChatSocket constructor(
     }
 
     fun reconnectUser(user: User, isAnonymous: Boolean) {
-        logger.logI("[reconnectUser] isAnonymous: $isAnonymous, user.id: ${user.id}")
+        logger.i { "[reconnectUser] isAnonymous: $isAnonymous, user.id: ${user.id}" }
         reconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
@@ -209,7 +209,7 @@ internal open class ChatSocket constructor(
 
     protected open fun connect(connectionConf: SocketFactory.ConnectionConf) {
         val isNetworkConnected = networkStateProvider.isConnected()
-        logger.logI("[connect] isNetworkConnected: $isNetworkConnected")
+        logger.i { "[connect] isNetworkConnected: $isNetworkConnected" }
         this.connectionConf = connectionConf
         if (isNetworkConnected) {
             setupSocket(connectionConf)
@@ -220,18 +220,18 @@ internal open class ChatSocket constructor(
     }
 
     open fun disconnect() {
-        logger.logI("[disconnect] no args")
+        logger.i { "[disconnect] no args" }
         reconnectionAttempts = 0
         state = State.DisconnectedPermanently(null)
     }
 
     open fun releaseConnection() {
-        logger.logD("[releaseConnection] no args")
+        logger.d { "[releaseConnection] no args" }
         state = State.DisconnectedByRequest
     }
 
     open fun onConnectionResolved(event: ConnectedEvent) {
-        logger.logD("[releaseConnection] event.type: ${event.type}")
+        logger.d { "[releaseConnection] event.type: ${event.type}" }
         state = State.Connected(event)
     }
 
@@ -245,14 +245,14 @@ internal open class ChatSocket constructor(
     }
 
     private fun reconnect(connectionConf: SocketFactory.ConnectionConf?) {
-        logger.logD("[reconnect] user.id: ${connectionConf?.user?.id}")
+        logger.d { "[reconnect] user.id: ${connectionConf?.user?.id}" }
         shutdownSocketConnection()
         setupSocket(connectionConf?.asReconnectionConf())
     }
 
     private fun setupSocket(connectionConf: SocketFactory.ConnectionConf?) {
         val isNetworkConnected = networkStateProvider.isConnected()
-        logger.logI("[setupSocket] isNetworkConnected: $isNetworkConnected, user.id: ${connectionConf?.user?.id}")
+        logger.i { "[setupSocket] isNetworkConnected: $isNetworkConnected, user.id: ${connectionConf?.user?.id}" }
         state = when (isNetworkConnected) {
             true -> when (connectionConf) {
                 null -> State.DisconnectedPermanently(null)
@@ -283,7 +283,7 @@ internal open class ChatSocket constructor(
     }
 
     private fun shutdownSocketConnection() {
-        logger.logD("[shutdownSocketConnection] no args")
+        logger.d { "[shutdownSocketConnection] no args" }
         socketConnectionJob?.cancel()
         eventsParser?.closeByClient()
         eventsParser = null

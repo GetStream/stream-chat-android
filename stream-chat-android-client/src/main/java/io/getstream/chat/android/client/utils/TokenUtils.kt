@@ -17,14 +17,14 @@
 package io.getstream.chat.android.client.utils
 
 import android.util.Base64
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
 internal object TokenUtils {
 
-    val logger = ChatLogger.get("TokenUtils")
+    val logger = StreamLog.getLogger("Chat:TokenUtils")
 
     fun getUserId(token: String): String = try {
         JSONObject(
@@ -36,10 +36,10 @@ internal object TokenUtils {
                 ?: ""
         ).optString("user_id")
     } catch (e: JSONException) {
-        logger.logE("Unable to obtain userId from JWT Token Payload", e)
+        logger.e(e) { "Unable to obtain userId from JWT Token Payload" }
         ""
     } catch (e: IllegalArgumentException) {
-        logger.logE("Unable to obtain userId from JWT Token Payload", e)
+        logger.e(e) { "Unable to obtain userId from JWT Token Payload" }
         ""
     }
 

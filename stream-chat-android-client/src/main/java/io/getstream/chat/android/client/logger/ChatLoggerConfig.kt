@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.view.messages
-
-import com.getstream.sdk.chat.adapter.MessageListItem
+package io.getstream.chat.android.client.logger
 
 /**
- * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ * A logging config to be used by the client.
  */
-public data class MessageListItemWrapper(
-    val items: List<MessageListItem> = listOf(),
-    val hasNewMessages: Boolean = false,
-    val isTyping: Boolean = false,
-    val isThread: Boolean = false,
-    val areNewestMessagesLoaded: Boolean = false
-)
+public interface ChatLoggerConfig {
+    public val level: ChatLogLevel
+    public val handler: ChatLoggerHandler?
+}
+
+internal data class ChatLoggerConfigImpl(
+    override val level: ChatLogLevel,
+    override val handler: ChatLoggerHandler?
+) : ChatLoggerConfig

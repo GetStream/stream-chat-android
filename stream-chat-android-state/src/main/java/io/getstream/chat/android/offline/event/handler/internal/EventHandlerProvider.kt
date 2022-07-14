@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 
 /**
  * Provider of EventHandlerImpl. This should be used is services and Workers.
@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 internal object EventHandlerProvider {
 
     private var _eventHandler: EventHandler? = null
-    private val logger = ChatLogger.get("EventHandlerProvider")
+    private val logger = StreamLog.getLogger("Chat:EventHandlerProvider")
 
     /**
      * The [EventHandler]
@@ -37,11 +37,11 @@ internal object EventHandlerProvider {
             )
         set(value) {
             if (_eventHandler != null) {
-                logger.logE(
+                logger.e {
                     "EventHandlerProvider was initialized twice. " +
                         "We shouldn't happen, you may be initializing " +
                         "the SDK twice. Stop listening the old EventHandler..."
-                )
+                }
                 _eventHandler?.stopListening()
             }
 

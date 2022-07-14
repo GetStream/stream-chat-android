@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
@@ -38,6 +37,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -151,7 +151,7 @@ internal class LogicRegistry internal constructor(
     internal companion object {
         private var instance: LogicRegistry? = null
 
-        private val logger = ChatLogger.get("LogicRegistry")
+        private val logger = StreamLog.getLogger("Chat:LogicRegistry")
 
         /**
          * Creates and returns new instance of LogicRegistry.
@@ -176,10 +176,10 @@ internal class LogicRegistry internal constructor(
             client: ChatClient,
         ): LogicRegistry {
             if (instance != null) {
-                logger.logE(
+                logger.e {
                     "LogicRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
-                )
+                }
             }
             return LogicRegistry(
                 stateRegistry,

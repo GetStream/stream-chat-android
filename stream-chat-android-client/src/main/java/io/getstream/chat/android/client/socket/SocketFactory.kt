@@ -19,10 +19,10 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.UnsupportedEncodingException
@@ -35,13 +35,13 @@ internal class SocketFactory(
     private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
 
-    private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
+    private val logger = StreamLog.getLogger("Chat:SocketFactory")
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
         val request = buildRequest(connectionConf)
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)
-        logger.logI("new web socket: ${request.url}")
+        logger.i { "new web socket: ${request.url}" }
         return Socket(newWebSocket, parser)
     }
 
@@ -50,7 +50,7 @@ internal class SocketFactory(
         val request = buildRequest(connectionConf)
         val eventsObserver = WebSocketEventObserver()
         httpClient.newWebSocket(request, eventsObserver)
-        logger.logI("new web socket: ${request.url}")
+        logger.i { "new web socket: ${request.url}" }
         return OkHttpWebSocket(eventsObserver, parser)
     }
 

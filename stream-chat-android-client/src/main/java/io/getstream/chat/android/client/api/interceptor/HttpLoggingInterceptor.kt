@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.SilentStreamLogger
+import io.getstream.logging.StreamLog
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -32,15 +32,14 @@ import java.util.concurrent.TimeUnit
 
 internal class HttpLoggingInterceptor : Interceptor {
 
-    private val logger = ChatLogger.get("Http")
+    private val logger = StreamLog.getLogger("Chat:Http")
 
     @Throws(IOException::class)
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
-        val level = logger.getLevel()
-
         val request = chain.request()
-        if (level == ChatLogLevel.NOTHING) {
+        val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
+        if (noLoggerSet) {
             return chain.proceed(request)
         }
 
@@ -52,16 +51,16 @@ internal class HttpLoggingInterceptor : Interceptor {
         if (requestBody != null) {
             requestStartMessage += " (${requestBody.contentLength()}-byte body)"
         }
-        logger.logI(requestStartMessage)
+        logger.i { requestStartMessage }
 
         if (requestBody == null) {
-            logger.logI("--> END ${request.method}")
+            logger.i { "--> END ${request.method}" }
         } else if (bodyHasUnknownEncoding(request.headers)) {
-            logger.logI("--> END ${request.method} (encoded body omitted)")
+            logger.i { "--> END ${request.method} (encoded body omitted)" }
         } else if (requestBody.isDuplex()) {
-            logger.logI("--> END ${request.method} (duplex request body omitted)")
+            logger.i { "--> END ${request.method} (duplex request body omitted)" }
         } else if (requestBody.isOneShot()) {
-            logger.logI("--> END ${request.method} (one-shot body omitted)")
+            logger.i { "--> END ${request.method} (one-shot body omitted)" }
         } else {
             val buffer = Buffer()
             requestBody.writeTo(buffer)
@@ -69,14 +68,14 @@ internal class HttpLoggingInterceptor : Interceptor {
             val contentType = requestBody.contentType()
             val charset: Charset = contentType?.charset(StandardCharsets.UTF_8) ?: StandardCharsets.UTF_8
 
-            logger.logI("")
+            logger.i { "" }
             if (buffer.isProbablyUtf8()) {
-                logger.logI(buffer.readString(charset))
-                logger.logI("--> END ${request.method} (${requestBody.contentLength()}-byte body)")
+                logger.i { buffer.readString(charset) }
+                logger.i { "--> END ${request.method} (${requestBody.contentLength()}-byte body)" }
             } else {
-                logger.logI(
+                logger.i {
                     "--> END ${request.method} (binary ${requestBody.contentLength()}-byte body omitted)"
-                )
+                }
             }
         }
 
@@ -85,7 +84,7 @@ internal class HttpLoggingInterceptor : Interceptor {
         try {
             response = chain.proceed(request)
         } catch (e: Exception) {
-            logger.logI("<-- HTTP FAILED: $e")
+            logger.i { "<-- HTTP FAILED: $e" }
             throw e
         }
 
@@ -94,15 +93,15 @@ internal class HttpLoggingInterceptor : Interceptor {
         val responseBody = response.body!!
         val contentLength = responseBody.contentLength()
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
-        logger.logI(
+        logger.i {
             "<-- ${response.code}${if (response.message.isEmpty()) "" else ' ' +
                 response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"
-        )
+        }
 
         if (!response.promisesBody()) {
-            logger.logI("<-- END HTTP")
+            logger.i { "<-- END HTTP" }
         } else if (bodyHasUnknownEncoding(response.headers)) {
-            logger.logI("<-- END HTTP (encoded body omitted)")
+            logger.i { "<-- END HTTP (encoded body omitted)" }
         } else {
             val source = responseBody.source()
             source.request(Long.MAX_VALUE) // Buffer the entire body.
@@ -118,15 +117,15 @@ internal class HttpLoggingInterceptor : Interceptor {
             }
 
             if (!buffer.isProbablyUtf8()) {
-                logger.logI("")
-                logger.logI("<-- END HTTP (binary ${buffer.size}-byte body omitted)")
+                logger.i { "" }
+                logger.i { "<-- END HTTP (binary ${buffer.size}-byte body omitted)" }
                 return response
             }
 
             if (gzippedLength != null) {
-                logger.logI("<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body omitted)")
+                logger.i { "<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body omitted)" }
             } else {
-                logger.logI("<-- END HTTP (${buffer.size}-byte body omitted)")
+                logger.i { "<-- END HTTP (${buffer.size}-byte body omitted)" }
             }
         }
 

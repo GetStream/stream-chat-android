@@ -18,7 +18,6 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
@@ -70,7 +69,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
- * Implementation of [PluginFactory] that provides [OfflinePlugin].
+ * Implementation of [PluginFactory] that provides [StatePlugin].
  *
  * @param config [StatePluginConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
@@ -82,7 +81,7 @@ public class StreamStatePluginFactory(
 
     private var cachedStatePluginInstance: StatePlugin? = null
 
-    private val logger = ChatLogger.get("StreamStatePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StreamStatePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -110,7 +109,7 @@ public class StreamStatePluginFactory(
         val cachedPlugin = cachedStatePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
             return cachedPlugin
         } else {
             clearCachedInstance()
