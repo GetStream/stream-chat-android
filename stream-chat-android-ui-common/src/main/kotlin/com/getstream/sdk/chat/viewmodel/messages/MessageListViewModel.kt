@@ -25,9 +25,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
@@ -264,6 +266,11 @@ public class MessageListViewModel(
         }
 
     /**
+     * Determines the position of a message inside a group.
+     */
+    private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
+
+    /**
      * A background job used for view model initialization.
      * The job should be canceled after receiving the first, non-null value from the watch channel request.
      */
@@ -326,7 +333,8 @@ public class MessageListViewModel(
             isThread = false,
             dateSeparatorHandler = dateSeparatorHandler,
             deletedMessageVisibility = deletedMessageVisibility,
-            messageFooterVisibility = messageFooterVisibility
+            messageFooterVisibility = messageFooterVisibility,
+            messagePositionHandlerProvider = ::messagePositionHandler,
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -366,14 +374,15 @@ public class MessageListViewModel(
      */
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-            user,
-            threadMessages,
-            reads,
-            null,
-            true,
-            threadDateSeparatorHandler,
-            deletedMessageVisibility,
-            messageFooterVisibility
+            currentUser = user,
+            messages = threadMessages,
+            readsLd = reads,
+            typingLd = null,
+            isThread = true,
+            dateSeparatorHandler = threadDateSeparatorHandler,
+            deletedMessageVisibility = deletedMessageVisibility,
+            messageFooterVisibility = messageFooterVisibility,
+            messagePositionHandlerProvider = ::messagePositionHandler,
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -645,6 +654,15 @@ public class MessageListViewModel(
      */
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
         this.threadDateSeparatorHandler = threadDateSeparatorHandler
+    }
+
+    /**
+     * Sets a handler which determines the position of a message inside a group.
+     *
+     * @param messagePositionHandler The handler to use.
+     */
+    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
+        this.messagePositionHandler = messagePositionHandler
     }
 
     /**
@@ -1109,6 +1127,60 @@ public class MessageListViewModel(
      */
     public fun interface DateSeparatorHandler {
         public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
+    }
+
+    /**
+     * A handler to determine the position of a message inside a group.
+     */
+    public fun interface MessagePositionHandler {
+        /**
+         * Determines the position of a message inside a group.
+         *
+         * @param prevMessage The previous [Message] in the list.
+         * @param message The current [Message] in the list.
+         * @param nextMessage The next [Message] in the list.
+         * @param isAfterDateSeparator If a date separator was added before the current [Message].
+         *
+         * @return The position of the current message inside the group.
+         */
+        public fun handleMessagePosition(
+            prevMessage: Message?,
+            message: Message,
+            nextMessage: Message?,
+            isAfterDateSeparator: Boolean,
+        ): List<MessageListItem.Position>
+
+        public companion object {
+            /**
+             * The default implementation of the [MessagePositionHandler] interface which can be taken
+             * as a reference when implementing a custom one.
+             *
+             * @return The default implementation of [MessagePositionHandler].
+             */
+            internal fun defaultHandler(): MessagePositionHandler {
+                return MessagePositionHandler { prevMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean ->
+                    val prevUser = prevMessage?.user
+                    val user = message.user
+                    val nextUser = nextMessage?.user
+
+                    fun Message.isServerMessage(): Boolean {
+                        return type == ModelType.message_system || type == ModelType.message_error
+                    }
+
+                    mutableListOf<MessageListItem.Position>().apply {
+                        if (prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator) {
+                            add(MessageListItem.Position.TOP)
+                        }
+                        if (prevMessage != null && nextMessage != null && prevUser == user && nextUser == user) {
+                            add(MessageListItem.Position.MIDDLE)
+                        }
+                        if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {
+                            add(MessageListItem.Position.BOTTOM)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     internal companion object {

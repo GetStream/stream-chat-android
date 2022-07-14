@@ -462,6 +462,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
 	public final fun setDeletedMessageVisibility (Lio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public final fun setMessageFooterVisibility (Lio/getstream/chat/android/common/state/MessageFooterVisibility;)V
+	public final fun setMessagePositionHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$MessagePositionHandler;)V
 	public final fun setThreadDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
 }
 
@@ -760,6 +761,14 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$MessagePositionHandler {
+	public static final field Companion Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$MessagePositionHandler$Companion;
+	public abstract fun handleMessagePosition (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;Z)Ljava/util/List;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$MessagePositionHandler$Companion {
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode {
