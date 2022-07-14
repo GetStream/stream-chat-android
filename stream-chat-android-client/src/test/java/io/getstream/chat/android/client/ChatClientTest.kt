@@ -116,10 +116,9 @@ internal class ChatClientTest {
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
         ).apply {
+            clientState = Mother.mockedClientState()
             connectUser(user, token).enqueue()
         }
-
-        client.clientState = Mother.mockedClientState()
 
         result = mutableListOf()
     }
