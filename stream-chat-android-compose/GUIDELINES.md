@@ -15,7 +15,26 @@
   * [Customization Options](#customization-options)
   * [Slot APIs](#slot-apis)
 * [Drawable colors](#drawable-colors)
-* [Component Previews](#component-previews)  
+* [Component Previews](#component-previews)
+* [Performance Guidelines](#performance-guidelines)
+  * [Write Stable Classes](#write-stable-classes)
+  * [Real World Implications](#real-world-implications)
+    * [Creating Stable Composables](#creating-stable-composables)
+    * [Creating Unstable Composables](#creating-unstable-composables)
+  * [Rules for Writing Classes](#guidelines-for-writing-classes)
+  * [Guidelines for Writing Classes](#guidelines-for-writing-classes)
+    * [1. Do not use vars for properties inside state holding classes](#do-not-use-vars-for-properties-inside-state-holding-classes)
+    * [2. Private properties still affect stability](#private-properties-still-affect-stability)
+    * [3. not use classes that belong to an external module to form state](#do-not-use-classes-that-belong-to-an-external-module-to-form-state)
+    * [4. Do not expect immutability from collections ](#do-not-expect-immutability-from-collections)
+    * [5. Flows are unstable](#flows-are-unstable)
+    * [6. Inlined Composables are neither restartable nor skippable](#inlined-composables-are-neither-restartable-nor-skippable)
+  * [Hoist state properly](#hoist-state-properly)
+    * [Don't read the state too high](#dont-read-the-state-too-high)
+  * [Avoid Running Expensive calculations unnecessarily](#avoid-running-expensive-calculations-unnecessarily)
+  * [Defer reads as long as possible](#defer-reads-as-long-as-possible)
+
+
 
 ## Motivation
 
@@ -153,7 +172,7 @@ fun MessageItem(messageItemState: MessageItemState) {
 
 Resource names must start with `stream_compose_` prefix.
 
-## Customizing Components 
+## Customizing Components
 
 ### Customization Options
 
@@ -187,7 +206,7 @@ We heavily rely on [Slot APIs](https://developer.android.com/jetpack/compose/lay
 
 Rules when implementing Slot APIs:
 - **Consistent naming**: When exposing content slots consider using these common names: `leadingContent`, `centerContent`, `trailingContent`, `footerContent`, `headerContent`, `itemContent`, `content`.
-- **Default implementation**: The default implementation of a content slot should be internal, located in the same source file and should be named according to this pattern: `Default*LeadingContent`, `Default*CenterContent`, etc.  
+- **Default implementation**: The default implementation of a content slot should be internal, located in the same source file and should be named according to this pattern: `Default*LeadingContent`, `Default*CenterContent`, etc.
 - **Inner padding**: A component containing slots should be as simple as possible. That's why we try to handle paddings inside slots (for example, instead of adding a margin between slots).
 
 #### Example:
@@ -277,25 +296,25 @@ fun MyComposablePreview() {
 }
 ```
 
+## Performance Guidelines
 
---------------------
+Not all code performs equally well and it's easy to make a mistake along the way that will degrade SDK performance. For that reason the next few chapters will focus on writing performant Composables.
 
-
-## Write Stable Classes
+### Write Stable Classes
 
 To optimize runtime performance, Jetpack Compose relies on being able to infer if a state that is being read has
 changed.
 
 Fundamentally, there are 3 stability types:
 
-- **Unstable** - These hold data that is mutable and do not notify Composition upon mutating. Compose is unable to
-  validate that these have not changed.
-- **Stable** - These hold data that is mutable, but notify Composition upon mutating. This renders them stable since
+- **Unstable** - These hold data that is mutable and does not notify Composition upon mutating. Compose is unable to
+  validate any changes to state.
+- **Stable** - These hold data that is mutable, but notifies Composition upon mutating. This renders them stable since
   Composition is always informed of any changes to state.
 - **Immutable** - As the name suggests, these hold data that is immutable. Since the data never changes, Compose can
   treat this as stable data.
 
-### What are the real world implications of this?
+### Real World Implications
 
 If Compose is able to guarantee stability, it can grant certain performance benefits to a Composable, chiefly it can
 mark it as skippable.
@@ -303,7 +322,7 @@ mark it as skippable.
 Let's create pairs of classes and Composables and generate a Compose Compiler report for them. For now, we only
 care about the implications and not the mechanics, so we'll just analyze the results.
 
-#### Let's create a stable pair:
+#### Creating Stable Composables:
 
 First a stable class:
 
@@ -316,11 +335,11 @@ Then a Composable that uses said class as state:
 ```kotlin
 @Composable
 fun StableComposable(
-    stableClass: InherentlyStableClass
+  stableClass: InherentlyStableClass
 ) {
-    Text(
-        text = stableClass.text
-    )
+  Text(
+    text = stableClass.text
+  )
 }
 ```
 
@@ -350,13 +369,13 @@ stability is deemed to be stable as well.
 
 This has implications for our Composable, which is now marked as:
 
-- Restartable: Meaning that this composable can serve as a restarting scope. This means that whenever this Composable
+- **Restartable**: Meaning that this composable can serve as a restarting scope. This means that whenever this Composable
   needs to recompose, it will not trigger the recomposition of its parent scope.
-- Skippable: Since the only parameter our Composable uses as state is stable, Compose is able to infer when it has or
+- **Skippable**: Since the only parameter our Composable uses as state is stable, Compose is able to infer when it has or
   has not changed. This makes Compose Runtime able to **skip** recomposition of this Composable when its parent scope
   recomposes and all the parameters it uses as state remain the same.
 
-#### Let's create an ustable pair:
+#### Creating Unstable Composables:
 
 An unstable class:
 
@@ -369,11 +388,11 @@ And a Composable using it as state:
 ```kotlin
 @Composable
 fun UnstableComposable(
-    unstableClass: InherentlyUnstableClass
+  unstableClass: InherentlyUnstableClass
 ) {
-    Text(
-        text = unstableClass.text
-    )
+  Text(
+    text = unstableClass.text
+  )
 }
 ```
 
@@ -406,12 +425,12 @@ worrisome situation, however, for larger and more complex Composables, this can 
 **Note**: Composables that do not return `Unit` will be neither skippable nor restartable. It is understandable that
 these are not restartable as they are value producers and should force their parent to recompose upon change.
 
-### Rules for Writing classes
+### Guidelines for Writing Classes
 
 We have inferred that we desire stability. Mostly this means we aim for immutability as gaining stability through
 notifying composition requires a lot of work, such as was done by the creation of the `MutableState<T>` class.
 
-1) #### Do not use `var`s as properties inside state holding classes
+1) #### Do not use `var`s for properties inside state holding classes
 
 As these are mutable, but do not notify composition, they will make the composables which use them unstable.
 
@@ -434,8 +453,8 @@ class from above.
 
 ```kotlin
 data class InherentlyStableClass(
-    val publicStableProperty: String,
-    private var privateUnstableProperty: String
+  val publicStableProperty: String,
+  private var privateUnstableProperty: String
 )
 ```
 
@@ -452,19 +471,70 @@ unstable class InherentlyStableClass {
 Looking at the results, it's fairly obvious that the compiler struggles here. It marks both individual properties as
 stable, even though one is not, but marks the whole class as unstable.
 
-3) #### Do not use classes that belong to an external module
+3) #### Do not use classes that belong to an external module to form state
 
 Sadly, Compose can only infer stability for classes, interfaces and objects that originate from a module compiled by the
 Compose Compiler. This means that any externally originated class will be marked as unstable, regardless of its true
 stability.
 
-Do:
+Let's say we have the following class which comes from an external module and is therefor unstable:
 
-// TODO generate example
+```kotlin
+class Car(
+    val numberOfDoors: Int,
+    val hasRadio: Boolean,
+    val isCoolCar: Boolean,
+    val goesVroom: Boolean
+)
+```
 
-Don't:
+A common way to build state using it would be to do the following:
 
-// TODO generate example, we should create a UI model here
+```kotlin
+data class RegisteredCarState(
+    val registration: String,
+    val car: Car
+)
+```
+
+This however, is troublesome. Now we've made our state class unstable and therefore unskippable. This could potentially cause performance issues.
+
+Luckily there are multiple ways to get around this.
+
+If you only need a few properties of `Car` to form `RegisteredCarState`, you may simply flatten in as follows:
+
+```kotlin
+data class RegisteredCarState(
+    val registration: String,
+    var numberOfDoors: Int,
+    var hasRadio: Boolean
+)
+```
+
+However, this may not be appropriate in cases where you need the whole object with al of its properties.
+
+In such cases, you may create a local stable counterpart such as:
+
+```kotlin
+class CarState(
+    val numberOfDoors: Int,
+    val hasRadio: Boolean,
+    val isCoolCar: Boolean,
+    val goesVroom: Boolean
+)
+```
+
+The two are identical, but `CarState` is stable.
+
+Because users might need to convert to and from these classes depending on which architectural layer they are dealing with, you should provide easy mapping functions going both ways such as:
+
+```kotlin
+fun Car.toCarState(): CarState
+```
+
+```kotlin
+fun CarState.toCar(): Car
+```
 
 4) #### Do not expect immutability from collections
 
@@ -696,3 +766,161 @@ fun ConcertPerformers(venueName: String, performers: State<PersistentList<String
 
 Here, Compose does not only skip unnecessary calculations, but is smart enough to skip recomposing the parent scope
 since you're only changing a locally read property and not recomposing the whole function with new parameters.
+
+### Defer reads as long as possible
+
+This section is a simplification of the example provided in the official documentation
+seen [here](https://developer.android.com/jetpack/compose/performance#defer-reads).
+
+We'll create a small composable that is meant to be animated by sliding out:
+
+```kotlin
+@Composable
+fun SlidingComposable(scrollPosition: Int) {
+    val scrollPositionInDp = with(LocalDensity.current) { scrollPosition.toDp() }
+
+    Card(
+        modifier = Modifier.offset(scrollPositionInDp),
+        backgroundColor = Color.Cyan
+    ) {
+        Text(
+            text = "Hello I slide out"
+        )
+    }
+}
+```
+
+Much like in the original example, we've tied it to the scroll position. But since `LazyColumn` doesn't
+take `ScrollState`, we'll slightly modify our Composables to the following:
+
+```kotlin
+@Composable
+fun ConcertPerformers(
+    scrollState: ScrollState,
+    venueName: String,
+    performers: PersistentList<String>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            modifier = Modifier.background(color = Color.LightGray),
+            text = "The following performers are performing at $venueName tonight:"
+        )
+
+        Column(
+            Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
+        ) {
+            for (item in performers) {
+                PerformerItem(performer = item)
+            }
+        }
+    }
+}
+
+@Composable
+fun PerformerItem(performer: String) {
+    Card(
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .background(
+                color = Color.LightGray,
+            )
+            .wrapContentHeight()
+            .fillMaxWidth()
+    ) {
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = performer
+        )
+    }
+}
+```
+
+Now we can build this layout as follows:
+
+```kotlin
+setContent {
+    val scrollState = rememberScrollState()
+
+    Column(
+        Modifier.fillMaxSize()
+    ) {
+        SlidingComposable(scrollPosition = scrollState.value)
+
+        ConcertPerformers(
+            modifier = Modifier.weight(1f),
+            scrollState = scrollState,
+            venueName = viewModel.venueName,
+            performers = viewModel.concertPerformers.value
+        )
+    }
+}
+```
+
+By doing this we run into the same problem we had previously run, we read the state high and recompose everything
+inside `setContent`.
+We might be temped to solve it the same way as we did previously, by passing the whole `ScrollState` as a parameter, but
+there's another very handy way.
+
+We can introduce a lambda to defer the state read:
+
+```kotlin
+@Composable
+fun SlidingComposable(scrollPositionProvider: () -> Int) {
+    val scrollPositionInDp = with(LocalDensity.current) { scrollPositionProvider().toDp() }
+
+    Card(
+        modifier = Modifier.offset(scrollPositionInDp),
+        backgroundColor = Color.Cyan
+    ) {
+        Text(
+            text = "Hello I slide out"
+        )
+    }
+}
+```
+
+The `scrollPositionProvider` lambda does not change, only the result changes when an invocation occurs. This means that
+the state read is now happening inside of `SlidingComposable` and we do not cause parent recomposition.
+
+But wait, there's an extra step of optimization we can do!
+
+Compose draws UI in [phases](https://developer.android.com/jetpack/compose/phases):
+
+1. Composition (runs your Composables)
+2. Layout (measures the Composables and defines their placement)
+3. Drawing (Draws the elements on the screen)
+
+Skipping any of these phases - when possible - will lessen the overhead.
+
+In our example, we still cause recomposition, meaning that we go through all three steps. However, since we have not
+changed composition and are still drawing the same elements on screen, we should skip this step.
+
+```kotlin
+@Composable
+fun SlidingComposable(scrollPositionProvider: () -> Int) {
+
+    Card(
+        modifier = Modifier.offset {
+            IntOffset(x = scrollPositionProvider(), 0)
+        },
+        backgroundColor = Color.Cyan
+    ) {
+        Text(
+            text = "Hello I slide out"
+        )
+    }
+}
+```
+
+What's the big change here? `Modifier.offset(offset: Density.() -> IntOffset)` is called during the layout phase, so we
+are able to completely skip the composition phase by using it, this in turn provides a significant performance benefit.
+
+### Tooling
+
+Even with all the tips above, it's still easy to make a mistake. Therefor it's good to periodically use tooling to check if there are unnecessary recompositions occurring.
+
+One such tool is Layout Inspectors [recomposition counter](https://developer.android.com/jetpack/compose/tooling#recomposition-counts).
+Please keep in mind that this tool is available only inside Android Studio Dolphin and up, while using Compose `1.2.0-beta01.` and up.
