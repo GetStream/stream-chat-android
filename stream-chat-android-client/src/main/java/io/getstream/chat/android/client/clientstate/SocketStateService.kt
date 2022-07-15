@@ -47,7 +47,7 @@ internal class SocketStateService {
             initialState(SocketState.Idle)
 
             defaultHandler { state, event ->
-                logger.e { "Cannot handle event $event while being in inappropriate state $this" }
+                logger.e { "Cannot handle event $event while being in inappropriate state: $state" }
                 state
             }
 
