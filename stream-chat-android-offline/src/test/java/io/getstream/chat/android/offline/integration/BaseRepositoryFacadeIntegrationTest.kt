@@ -18,10 +18,7 @@ package io.getstream.chat.android.offline.integration
 
 import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacadeBuilder
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
@@ -50,21 +47,14 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     @CallSuper
     open fun setup() {
         chatDatabase = createRoomDB()
-        repositoryFacade = createRepositoryFacade()
+        repositoryFacade = RepositoryFacade.create(
+            DatabaseRepositoryFactory(chatDatabase, currentUser),
+            testCoroutines.scope
+        )
     }
 
     @After
     fun tearDown() {
         chatDatabase.close()
-    }
-
-    private fun createRepositoryFacade(): RepositoryFacade {
-        return RepositoryFacadeBuilder {
-            context(ApplicationProvider.getApplicationContext())
-            currentUser(currentUser)
-            scope(testCoroutines.scope)
-            defaultConfig(Config())
-            repositoryFactory(DatabaseRepositoryFactory(chatDatabase, currentUser))
-        }.build()
     }
 }

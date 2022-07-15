@@ -89,7 +89,6 @@ internal open class BaseRepositoryFacadeTest {
             override fun createSyncStateRepository(): SyncStateRepository = syncState
             override fun createAttachmentRepository(): AttachmentRepository = attachmentRepository
         }
-
         sut = RepositoryFacade.create(repositoryFactory, testCoroutines.scope)
     }
 }

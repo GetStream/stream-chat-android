@@ -20,7 +20,6 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacadeBuilder
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
@@ -146,18 +145,7 @@ public class StreamStatePluginFactory(
             clientState.clearState()
         }
 
-        val repos = RepositoryFacadeBuilder {
-            context(appContext)
-            scope(scope)
-            defaultConfig(
-                io.getstream.chat.android.client.models.Config(
-                    connectEventsEnabled = true,
-                    muteEnabled = true
-                )
-            )
-            currentUser(user)
-            repositoryFactory(repositoryFactory)
-        }.build()
+        val repos = RepositoryFacade.create(repositoryFactory, scope)
 
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, clientState.user, repos, repos.observeLatestUsers()
