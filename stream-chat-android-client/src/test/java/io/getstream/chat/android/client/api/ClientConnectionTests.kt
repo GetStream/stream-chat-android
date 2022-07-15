@@ -125,6 +125,7 @@ internal class ClientConnectionTests {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = emptyList(),
         )
     }
 
