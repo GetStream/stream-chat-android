@@ -80,6 +80,7 @@
 - Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⬆️ Improved
+- Improved recomposition in `MessagesScreen` by deferring state reads to the latest possible point. [#3667](https://github.com/GetStream/stream-chat-android/pull/3667)
 
 ### ✅ Added
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
