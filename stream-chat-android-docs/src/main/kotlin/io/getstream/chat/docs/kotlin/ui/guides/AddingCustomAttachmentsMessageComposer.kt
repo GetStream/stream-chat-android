@@ -96,7 +96,7 @@ class AddingCustomAttachmentsSnippet2 : Fragment() {
         var attachmentsButtonClickListener: () -> Unit = {}
         var commandsButtonClickListener: () -> Unit = {}
 
-        // 1. Add a listener for date picker button
+        // Click listener for the date picker button
         var calendarButtonClickListener: () -> Unit = {}
 
         constructor(context: Context) : this(context, null)
@@ -112,7 +112,7 @@ class AddingCustomAttachmentsSnippet2 : Fragment() {
             binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }
             binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
 
-            // 2. Add
+            // Set click listener for the date picker button
             binding.calendarButton.setOnClickListener { calendarButtonClickListener() }
         }
 

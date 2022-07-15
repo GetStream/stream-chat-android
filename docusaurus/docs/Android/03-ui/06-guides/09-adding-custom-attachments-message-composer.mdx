@@ -100,7 +100,22 @@ class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent 
     }
 
     override fun renderState(state: MessageComposerState) {
-        // Omitted for the sake of being concise
+        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+        val hasTextInput = state.inputValue.isNotEmpty()
+        val hasAttachments = state.attachments.isNotEmpty()
+        val hasCommandInput = state.inputValue.startsWith("/")
+        val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
+        val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
+        val isInEditMode = state.action is Edit
+
+        binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+        binding.attachmentsButton.isVisible =
+            style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
+
+        binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
+        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode
+        binding.commandsButton.isSelected = hasCommandSuggestions
     }
 }
 ```
