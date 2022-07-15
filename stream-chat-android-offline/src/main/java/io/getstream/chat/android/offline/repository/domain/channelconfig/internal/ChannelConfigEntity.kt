@@ -24,7 +24,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.util.Date
 
-@Entity(tableName = "stream_chat_channel_config")
+@Entity(tableName = CHANNEL_CONFIG_INNER_ENTITY_TABLE_NAME)
 internal data class ChannelConfigInnerEntity(
     @PrimaryKey
     val channelType: String,
@@ -50,7 +50,7 @@ internal data class ChannelConfigInnerEntity(
 )
 
 @Entity(
-    tableName = "command_inner_entity",
+    tableName = COMMAND_INNER_ENTITY_TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = ChannelConfigInnerEntity::class,
@@ -78,3 +78,6 @@ internal data class ChannelConfigEntity(
     @Relation(parentColumn = "channelType", entityColumn = "channelType", entity = CommandInnerEntity::class)
     val commands: List<CommandInnerEntity>,
 )
+
+internal const val COMMAND_INNER_ENTITY_TABLE_NAME = "command_inner_entity"
+internal const val CHANNEL_CONFIG_INNER_ENTITY_TABLE_NAME = "stream_chat_channel_config"

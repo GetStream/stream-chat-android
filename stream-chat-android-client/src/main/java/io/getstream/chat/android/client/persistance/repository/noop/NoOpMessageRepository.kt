@@ -34,6 +34,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = emptyList()
+    override suspend fun clear() { /* No-Op */ }
     override suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,

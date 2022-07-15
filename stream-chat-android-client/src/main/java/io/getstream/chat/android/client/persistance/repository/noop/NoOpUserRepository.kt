@@ -33,4 +33,5 @@ internal object NoOpUserRepository : UserRepository {
     override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> = emptyList()
     override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> = emptyList()
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    override suspend fun clear() { /* No-Op */ }
 }
