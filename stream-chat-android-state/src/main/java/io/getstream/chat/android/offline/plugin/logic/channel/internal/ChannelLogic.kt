@@ -185,6 +185,23 @@ internal class ChannelLogic(
     }
 
     /**
+     * Starts to watch this channel.
+     *
+     * @param messagesLimit The limit of messages inside the channel that should be requested.
+     * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
+     */
+    internal suspend fun loadNewestMessages(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
+        val request = QueryChannelPaginationRequest(messagesLimit)
+            .toWatchChannelRequest(userPresence)
+            .apply {
+                shouldRefresh = true
+            }
+
+        return runChannelQuery(request)
+    }
+
+
+    /**
      * Loads a list of messages after the newest message in the current list.
      *
      * @param messageId Id of message after which to fetch messages.
