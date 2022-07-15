@@ -374,7 +374,7 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
-                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     chatSocketExperimental.connectUser(user, isAnonymous)
@@ -422,7 +422,6 @@ internal constructor(
     }
 
     private fun initializeClientWithUser(
-        user: User,
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
@@ -513,8 +512,9 @@ internal constructor(
         }
 
         userCredentialStorage.get()?.let { config ->
+            initializationCoordinator.userConnectionRequest(User(id = config.userId).apply { name = config.userName })
+
             initializeClientWithUser(
-                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
             )
@@ -1029,6 +1029,7 @@ internal constructor(
     @CheckResult
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
         CoroutineCall(scope) {
+            logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             notifications.onLogout()
             clientState.toMutableState()?.clearState()
             getCurrentUser().let(initializationCoordinator::userDisconnected)
