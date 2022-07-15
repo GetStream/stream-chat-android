@@ -47,10 +47,15 @@ import kotlinx.coroutines.launch
 public class StreamOfflinePluginFactory(
     private val config: Config,
     private val appContext: Context,
-) : PluginFactory {
+) : PluginFactory, RepositoryFactory.Provider {
 
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
-
+    private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
+        StreamLog.e("StreamOfflinePlugin", throwable) {
+            "[uncaughtCoroutineException] throwable: $throwable, context: $context"
+        }
+    }
+    private val scope = CoroutineScope(SupervisorJob() + DispatcherProvider.IO + exceptionHandler)
     private val logger = StreamLog.getLogger("Chat:StreamOfflinePluginFactory")
 
     /**
@@ -93,18 +98,7 @@ public class StreamOfflinePluginFactory(
         } else {
             clearCachedInstance()
         }
-
-        val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
-            StreamLog.e("StreamOfflinePlugin", throwable) {
-                "[uncaughtCoroutineException] throwable: $throwable, context: $context"
-            }
-        }
-        val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-
-        val repositoryFactory = repositoryFactory
-            ?: createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)
-
+        val repositoryFactory = repositoryFactory ?: createRepositoryFactory(user)
         RepositoryProvider.changeRepositoryFactory(repositoryFactory)
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
@@ -140,15 +134,6 @@ public class StreamOfflinePluginFactory(
         cachedOfflinePluginInstance = null
     }
 
-    private fun createRepositoryFactory(
-        scope: CoroutineScope,
-        context: Context,
-        user: User?,
-        offlineEnabled: Boolean,
-    ): RepositoryFactory {
-        return DatabaseRepositoryFactory(createDatabase(scope, context, user, offlineEnabled), user)
-    }
-
     private fun createDatabase(
         scope: CoroutineScope,
         context: Context,
@@ -162,5 +147,9 @@ public class StreamOfflinePluginFactory(
                 scope.launch { inMemoryDatabase.clearAllTables() }
             }
         }
+    }
+
+    override fun createRepositoryFactory(user: User): RepositoryFactory {
+        return DatabaseRepositoryFactory(createDatabase(scope, appContext, user, config.persistenceEnabled), user)
     }
 }
