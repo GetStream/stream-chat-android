@@ -20,8 +20,6 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -66,6 +64,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
 
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
@@ -88,15 +87,6 @@ public class StreamStatePluginFactory(
      * @return The [Plugin] instance.
      */
     override fun get(user: User): Plugin = getOrCreateStatePlugin(user)
-
-    private var repositoryFactory: RepositoryFactory? = null
-
-    /**
-     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
-     */
-    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
-        this.repositoryFactory = repositoryFactory
-    }
 
     /**
      * Tries to get cached [StatePlugin] instance for the user if it exists or
@@ -124,20 +114,19 @@ public class StreamStatePluginFactory(
         }
         val job = SupervisorJob()
         val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-        val repositoryFactory = repositoryFactory
-            ?: createRepositoryFactory(scope, appContext, user)
-        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
 
-        return createStatePlugin(user, scope, repositoryFactory)
+        return createStatePlugin(user, scope)
     }
 
     @InternalStreamChatApi
+    @SuppressWarnings("LongMethod")
     public fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
+        val repositoryFacade = chatClient.repositoryFacade
+            ?: throw IllegalStateException("RepositoryFacade is not initialized on ChatClient")
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
@@ -145,21 +134,26 @@ public class StreamStatePluginFactory(
             clientState.clearState()
         }
 
-        val repos = RepositoryFacade.create(repositoryFactory, scope)
-
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, clientState.user, repos, repos.observeLatestUsers()
+            scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
         val logic =
-            LogicRegistry.create(stateRegistry, globalState, clientState, config.userPresence, repos, chatClient)
+            LogicRegistry.create(
+                stateRegistry,
+                globalState,
+                clientState,
+                config.userPresence,
+                repositoryFacade,
+                chatClient
+            )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
             logic = logic,
             clientState = clientState,
-            channelRepository = repos,
-            messageRepository = repos,
-            attachmentRepository = repos,
+            channelRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            attachmentRepository = repositoryFacade,
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType
         )
@@ -177,7 +171,7 @@ public class StreamStatePluginFactory(
         chatClient.apply {
             addInterceptor(defaultInterceptor)
             addErrorHandlers(
-                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repos)
+                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repositoryFacade)
                     .map { factory -> factory.create() }
             )
         }
@@ -186,7 +180,7 @@ public class StreamStatePluginFactory(
             chatClient = chatClient,
             globalState = globalState,
             clientState = clientState,
-            repos = repos,
+            repos = repositoryFacade,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
@@ -202,7 +196,7 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
             clientMutableState = clientState,
-            repos = repos,
+            repos = repositoryFacade,
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
@@ -235,17 +229,17 @@ public class StreamStatePluginFactory(
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
-            hideChannelListener = HideChannelListenerImpl(logic, repos),
+            hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
-            deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repos),
-            sendReactionListener = SendReactionListenerImpl(logic, clientState, repos),
-            deleteMessageListener = DeleteMessageListenerImpl(logic, clientState, repos),
-            sendMessageListener = SendMessageListenerImpl(logic, repos),
+            deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repositoryFacade),
+            sendReactionListener = SendReactionListenerImpl(logic, clientState, repositoryFacade),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, clientState, repositoryFacade),
+            sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
-            queryMembersListener = QueryMembersListenerImpl(repos),
+            queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
-            createChannelListener = CreateChannelListenerImpl(clientState, repos),
+            createChannelListener = CreateChannelListenerImpl(clientState, repositoryFacade),
             activeUser = user
         )
     }
@@ -289,13 +283,5 @@ public class StreamStatePluginFactory(
 
     private fun clearCachedInstance() {
         cachedStatePluginInstance = null
-    }
-
-    private fun createRepositoryFactory(
-        scope: CoroutineScope,
-        context: Context,
-        user: User?,
-    ): RepositoryFactory {
-        TODO("createRepositoryFactory is not implemented")
     }
 }

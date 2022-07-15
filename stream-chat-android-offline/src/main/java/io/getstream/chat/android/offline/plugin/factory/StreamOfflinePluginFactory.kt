@@ -21,7 +21,6 @@ import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -65,8 +64,6 @@ public class StreamOfflinePluginFactory(
      */
     override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
 
-    private var repositoryFactory: RepositoryFactory? = null
-
     private val statePluginFactory = StreamStatePluginFactory(
         config = StatePluginConfig(
             backgroundSyncEnabled = config.backgroundSyncEnabled,
@@ -75,13 +72,6 @@ public class StreamOfflinePluginFactory(
         ),
         appContext = appContext
     )
-
-    /**
-     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
-     */
-    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
-        this.repositoryFactory = repositoryFactory
-    }
 
     /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
@@ -98,12 +88,10 @@ public class StreamOfflinePluginFactory(
         } else {
             clearCachedInstance()
         }
-        val repositoryFactory = repositoryFactory ?: createRepositoryFactory(user)
-        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
-        val statePlugin = statePluginFactory.createStatePlugin(user, scope, repositoryFactory)
+        val statePlugin = statePluginFactory.createStatePlugin(user, scope)
 
         InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
             clearCachedInstance()

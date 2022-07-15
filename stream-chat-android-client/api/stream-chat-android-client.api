@@ -3411,25 +3411,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 }
 
-public final class io/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
-	public static final field Companion Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider$Companion;
-	public synthetic fun <init> (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun createAttachmentRepository ()Lio/getstream/chat/android/client/persistance/repository/AttachmentRepository;
-	public fun createChannelConfigRepository ()Lio/getstream/chat/android/client/persistance/repository/ChannelConfigRepository;
-	public fun createChannelRepository (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;
-	public fun createMessageRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/MessageRepository;
-	public fun createQueryChannelsRepository ()Lio/getstream/chat/android/client/persistance/repository/QueryChannelsRepository;
-	public fun createReactionRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ReactionRepository;
-	public fun createSyncStateRepository ()Lio/getstream/chat/android/client/persistance/repository/SyncStateRepository;
-	public fun createUserRepository ()Lio/getstream/chat/android/client/persistance/repository/UserRepository;
-	public fun get (Ljava/lang/Class;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider$Companion {
-	public final fun changeRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
-	public final fun get ()Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider;
-}
-
 public abstract interface class io/getstream/chat/android/client/plugin/Plugin {
 	public abstract fun getName ()Ljava/lang/String;
 }
