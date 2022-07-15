@@ -1048,6 +1048,7 @@ internal constructor(
                 chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
             }
             if (flushPersistence) {
+                repositoryFacade?.clear()
                 userCredentialStorage.clear()
             }
             lifecycleObserver.dispose()
