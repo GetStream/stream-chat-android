@@ -33,7 +33,7 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/)
+ * [Adding Custom Attachments (MessageInputView)](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-input/)
  */
 @OptIn(ExperimentalStreamChatApi::class)
 class AddingCustomAttachmentsSnippet : Fragment() {
@@ -41,7 +41,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
     private lateinit var messageInputView: MessageInputView
 
     /**
-     * [Sending Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#sending-date-attachments)
+     * [Sending Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-input/#sending-date-attachments)
      */
     fun sendingDateAttachments() {
         // Create an instance of a date picker dialog
@@ -94,7 +94,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
     }
 
     /**
-     * [Rendering Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-date-attachments)
+     * [Rendering Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-input/#rendering-date-attachments)
      */
     fun renderingDateAttachments() {
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
@@ -148,7 +148,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
     }
 
     /**
-     * [Rendering Quoted Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-quoted-date-attachments)
+     * [Rendering Quoted Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-input/#rendering-quoted-date-attachments)
      */
     fun renderingQuotedDateAttachments() {
         ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
