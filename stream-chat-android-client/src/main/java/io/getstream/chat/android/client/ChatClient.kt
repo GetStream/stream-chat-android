@@ -108,6 +108,9 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -193,6 +196,7 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     lifecycle: Lifecycle,
+    private val repositoryFacadeBuilder: (User) -> RepositoryFacade?,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -206,6 +210,12 @@ internal constructor(
             }
         }
     )
+
+    @InternalStreamChatApi
+    public var repositoryFacade: RepositoryFacade? = null
+        get() = field
+            ?: (getCurrentUser() ?: getStoredUser())?.let(repositoryFacadeBuilder)?.also { field = it }
+        private set
 
     /**
      * With clientState allows the user to get the state of the SDK like connection, initialization...
@@ -420,6 +430,7 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        repositoryFacade = repositoryFacadeBuilder(user)
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
@@ -1041,6 +1052,7 @@ internal constructor(
             }
             lifecycleObserver.dispose()
             appSettingsManager.clear()
+            repositoryFacade = null
             Result.success(Unit)
         }
 
@@ -2426,6 +2438,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -2549,6 +2562,13 @@ internal constructor(
         }
 
         /**
+         * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
+         */
+        public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
+            repositoryFactoryProvider = provider
+        }
+
+        /**
          * Adds a plugin factory to be used by the client.
          * @see [PluginFactory]
          *
@@ -2602,6 +2622,7 @@ internal constructor(
             replaceWith = ReplaceWith("this.build()"),
             level = DeprecationLevel.ERROR
         )
+        @SuppressWarnings("LongMethod")
         override fun internalBuild(): ChatClient {
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -2650,6 +2671,17 @@ internal constructor(
 
             val appSettingsManager = AppSettingManager(module.api())
 
+            val repositoryFacadeBuilder: (user: User) -> RepositoryFacade = { user: User ->
+                val repositoryFactory =
+                    repositoryFactoryProvider?.createRepositoryFactory(user)
+                        ?: pluginFactories
+                            .filterIsInstance<RepositoryFactory.Provider>()
+                            .firstOrNull()
+                            ?.createRepositoryFactory(user)
+                        ?: NoOpRepositoryFactory
+                RepositoryFacade.create(repositoryFactory, module.networkScope)
+            }
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2666,6 +2698,7 @@ internal constructor(
                 chatSocketExperimental = module.experimentalSocket(),
                 lifecycle = lifecycle,
                 pluginFactories = pluginFactories,
+                repositoryFacadeBuilder = repositoryFacadeBuilder,
             )
         }
 

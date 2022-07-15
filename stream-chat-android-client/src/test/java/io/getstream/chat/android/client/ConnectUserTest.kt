@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -64,6 +65,7 @@ internal class ConnectUserTest {
     private val user = User(id = userId)
     private val anonId = "!anon"
     private val anonUser = User(id = anonId)
+    private val repositoryFacade: RepositoryFacade = mock()
 
     @BeforeEach
     fun setup() {
@@ -92,6 +94,7 @@ internal class ConnectUserTest {
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
+            repositoryFacadeBuilder = { repositoryFacade },
         )
     }
 
