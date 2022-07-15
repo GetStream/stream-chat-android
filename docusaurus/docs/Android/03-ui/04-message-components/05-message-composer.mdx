@@ -1,0 +1,380 @@
+# Message Composer
+
+`MessageComposerView` replaces `MessageInputView`, addressing most of its pain-points, including
+extensibility, maintainability, etc. Just like the original view, the revamped component allows
+users to participate in the chat by sending messages and attachments.
+
+![Message Composer](../../assets/message_composer.png)
+
+It supports the following features:
+
+* Emoticons
+* Attachments
+* Slash Commands
+* Typing events
+* Editing messages
+* Threads
+* Mentions
+* Replies
+
+Let's see how to integrate the new `MessageComposerView` in your UI.
+
+## Usage
+
+To use `MessageComposerView`, include it in your XML layout.
+
+```xml
+<io.getstream.chat.android.ui.message.composer.MessageComposerView
+    android:id="@+id/messageComposerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+
+The recommended way of setting up `MessageComposerView` is by binding it to the `MessageComposerViewModel`. This will make it fully functional by setting up any necessary listeners and data handling.
+
+```kotlin
+class ChatFragment : Fragment() {
+    lateinit var messageComposerView: MessageComposerView
+
+    // Create MessageComposerViewModel for a given channel
+    val factory = MessageListViewModelFactory(cid = "channelType:channelId")
+    val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Bind MessageComposerViewModel with MessageComposerView
+        messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+    }
+}
+```
+
+Because it doesn't make sense to use the `MessageComposerView` as a standalone component, you also need to integrate it with the `MessageListView`:
+
+```kotlin
+class ChatFragment : Fragment() {
+    lateinit var messageComposerView: MessageComposerView
+    lateinit var messageListView: MessageListView
+
+    // Create ViewModels for MessageComposerView and MessageListView
+    val factory = MessageListViewModelFactory(cid = "channelType:channelId")
+    val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
+    val messageListViewModel: MessageListViewModel by viewModels { factory }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Bind MessageComposerViewModel with MessageComposerView
+        messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+
+        // Integrate MessageComposerView with MessageListView
+        messageListViewModel.mode.observe(viewLifecycleOwner) {
+            when (it) {
+                is MessageListViewModel.Mode.Thread -> {
+                    messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
+                }
+                is MessageListViewModel.Mode.Normal -> {
+                    messageComposerViewModel.leaveThread()
+                }
+            }
+        }
+        messageListView.setMessageReplyHandler { _, message ->
+            messageComposerViewModel.performMessageAction(Reply(message))
+        }
+        messageListView.setMessageEditHandler { message ->
+            messageComposerViewModel.performMessageAction(Edit(message))
+        }
+    }
+}
+```
+
+In the snippet above, you initialize the message composer and integrate it with the `MessageListView` by passing actions from the message list to the composer.
+
+This will produce a fully working solution, as shown in the image below.
+
+![Whole Screen](../../assets/message_composer_whole_screen.png) 
+
+## Handling Actions
+
+To handle actions supported by the `MessageComposerView` you can set the corresponding listeners:
+
+```kotlin
+messageComposerView.sendMessageButtonClickListener = {
+    // Handle send button click
+}
+messageComposerView.textInputChangeListener = { text ->
+    // Handle input text change
+}
+messageComposerView.attachmentSelectionListener = { attachments ->
+    // Handle attachment selection
+}
+messageComposerView.attachmentRemovalListener = { attachment ->
+    // Handle attachment removal
+}
+messageComposerView.mentionSelectionListener = { user ->
+    // Handle mention selection
+}
+messageComposerView.commandSelectionListener = { command ->
+    // Handle command selection
+}
+messageComposerView.alsoSendToChannelSelectionListener = { checked ->
+    // Handle "also send to channel" checkbox selection
+}
+messageComposerView.dismissActionClickListener = {
+    // Handle dismiss action button click
+}
+messageComposerView.commandsButtonClickListener = {
+    // Handle commands button click
+}
+messageComposerView.dismissSuggestionsListener = {
+    // Handle when suggestions popup is dismissed
+}
+messageComposerView.attachmentsButtonClickListener = {
+    // Handle attachments button click
+}
+```
+
+If you don't set your custom listeners, the default listeners from the `MessageComposerViewModel::bindView` method will be used:
+
+```kotlin
+messageComposerView.sendMessageButtonClickListener = {
+    messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage())
+}
+messageComposerView.textInputChangeListener = { text ->
+    messageComposerViewModel.setMessageInput(text)
+}
+messageComposerView.attachmentSelectionListener = { attachments ->
+    messageComposerViewModel.addSelectedAttachments(attachments)
+}
+messageComposerView.attachmentRemovalListener = { attachment ->
+    messageComposerViewModel.removeSelectedAttachment(attachment)
+}
+messageComposerView.mentionSelectionListener = { user ->
+    messageComposerViewModel.selectMention(user)
+}
+messageComposerView.commandSelectionListener = { command ->
+    messageComposerViewModel.selectCommand(command)
+}
+messageComposerView.alsoSendToChannelSelectionListener = { checked ->
+    messageComposerViewModel.setAlsoSendToChannel(checked)
+}
+messageComposerView.dismissActionClickListener = {
+    messageComposerViewModel.dismissMessageActions()
+}
+messageComposerView.commandsButtonClickListener = {
+    messageComposerViewModel.toggleCommandsVisibility()
+}
+messageComposerView.dismissSuggestionsListener = {
+    messageComposerViewModel.dismissSuggestionsPopup()
+}
+```
+
+Now let's see how to customize the view.
+
+## Customization
+
+`MessageComposerView` can be customized:
+
+- Using XML Attributes
+- Using style Transformations
+- By overriding content Views
+
+### Using XML Attributes
+
+Many attributes of this View can be configured, like changing its color, the border and the color of the message input, fonts, components visibility, and so on. The full list of available attributes can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml).
+
+Here's an example of setting a custom attribute:
+
+```xml
+<io.getstream.chat.android.ui.message.composer.MessageComposerView
+    android:id="@+id/messageComposerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:streamUiMessageComposerMessageInputTextColor="#005AFF"
+/>
+```
+
+This produces the following styling:
+
+![Custom Attribute](../../assets/message_composer_custom_attribute.png) 
+
+Different configurations can be used to achieve the desired appearance of `MessageComposerView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageComposerViewStyle` as described in the next section.
+
+### Using Style Transformations
+
+You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt) to apply global style transformations to all `MessageComposerView` instances. For example, you can create set up a `messageComposerStyleTransformer` like this one to change the input text color:
+
+```kotlin
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { viewStyle ->
+    viewStyle.copy(
+        messageInputTextStyle = viewStyle.messageInputTextStyle.copy(
+            color = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
+        )
+    )
+}
+```
+
+:::note 
+The transformer should be set before the View is rendered to make sure that the new style was applied.
+:::
+
+## Overriding Content Views
+
+With the new `MessageComposerView` you can replace certain parts of the layout with custom content views. There are several parts available for customization.
+
+* **Leading content**: Represents the left part with integration buttons.
+* **Center content**: Represents the center part with the text input. 
+* **Trailing content**: Represents the right part with the send button.
+* **Header content**: Represents the top part with the action mode title.
+* **Footer content**: Represents the bottom part with the "also send to channel" checkbox.
+* **Command suggestions content**: Represents the content inside the command suggestions popup.
+* **Mention suggestions content**: Represents the content inside the mention suggestions popup.
+
+The available methods with the default content view implementations are listed below:
+
+```kotlin
+messageComposerView.setLeadingContent(
+    DefaultMessageComposerLeadingContent(context).also {
+        it.attachmentsButtonClickListener = { messageComposerView.attachmentsButtonClickListener() }
+        it.commandsButtonClickListener = { messageComposerView.commandsButtonClickListener() }
+    }
+)
+messageComposerView.setCenterContent(
+    DefaultMessageComposerCenterContent(context).also {
+        it.textInputChangeListener = { text -> messageComposerView.textInputChangeListener(text) }
+        it.attachmentRemovalListener = { attachment -> messageComposerView.attachmentRemovalListener(attachment) }
+    }
+)
+messageComposerView.setTrailingContent(
+    DefaultMessageComposerTrailingContent(context).also {
+        it.sendMessageButtonClickListener = { messageComposerView.sendMessageButtonClickListener() }
+    }
+)
+messageComposerView.setHeaderContent(
+    DefaultMessageComposerHeaderContent(context).also {
+        it.dismissActionClickListener = { messageComposerView.dismissActionClickListener() }
+    }
+)
+messageComposerView.setFooterContent(
+    DefaultMessageComposerFooterContent(context).also {
+        it.alsoSendToChannelSelectionListener =
+            { checked -> messageComposerView.alsoSendToChannelSelectionListener(checked) }
+    }
+)
+messageComposerView.setCommandSuggestionsContent(
+    DefaultMessageComposerCommandSuggestionsContent(context).also {
+        it.commandSelectionListener =
+            { command -> messageComposerView.commandSelectionListener(command) }
+    }
+)
+messageComposerView.setMentionSuggestionsContent(
+    DefaultMessageComposerMentionSuggestionsContent(context).also {
+        it.mentionSelectionListener = { user -> messageComposerView.mentionSelectionListener(user) }
+    }
+)
+```
+
+To create a custom content view you need to create an Android View that implements the `MessageComposerContent` interface:
+
+```kotlin
+class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+
+    constructor(context: Context) : this(context, null)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
+
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        // Access the style if necessary
+        val style = messageComposerContext.style
+    }
+
+    override fun renderState(state: MessageComposerState) {
+        // Render the state of the component
+    }
+}
+
+```
+
+Notice that you need to implement 2 methods from the `MessageComposerContent` interface:
+
+- `attachContext()` Called only once when the View has been attached to the hierarchy.
+- `renderState()` Invoked when the state has changed and the UI needs to be updated accordingly.
+
+Finally, you need to pass the created content view to the `MessageComposerView`:
+
+```kotlin
+messageComposerView.setLeadingContent(CustomMessageComposerLeadingContent(context))
+```
+
+Here is an example of how the leading content can be customized to show a date picker button:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/datePickerButton"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp"
+    android:src="@drawable/ic_calendar" />
+```
+
+```kotlin
+class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+
+    private lateinit var binding: CustomMessageComposerLeadingContentBinding
+
+    var datePickerButtonClickListener: () -> Unit = {}
+
+    constructor(context: Context) : this(context, null)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true)
+        binding.datePickerButton.setOnClickListener { datePickerButtonClickListener() }
+    }
+
+    override fun attachContext(messageComposerContext: MessageComposerContext) {
+        // Access the style if necessary
+        val style = messageComposerContext.style
+    }
+
+    override fun renderState(state: MessageComposerState) {
+        // Render the state of the component
+    }
+}
+```
+
+```kotlin
+messageComposerView.setLeadingContent(
+    CustomMessageComposerLeadingContent(context).also {
+        it.datePickerButtonClickListener = {
+            val datePickerDialog = MaterialDatePicker.Builder
+                .datePicker()
+                .build()
+
+            datePickerDialog.addOnPositiveButtonClickListener {
+                // Handle date selection
+            }
+
+            datePickerDialog.show(fragmentManager, null)
+        }
+    }
+)
+```
+
+In the example above, we inflated a simple layout with just one date picker button and defined a listener to handle clicks on the button. A dialog is shown when the button is clicked.
+
+|||
+| --- | --- |
+| ![Message Composer](../../assets/message_composer_custom_slot_1.png) | ![Message Composer](../../assets/message_composer_custom_slot_2.png) |
