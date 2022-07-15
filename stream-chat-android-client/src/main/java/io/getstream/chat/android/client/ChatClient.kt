@@ -359,6 +359,7 @@ internal constructor(
         val userState = userStateService.state
 
         ClientState.get().toMutableState()?.setUser(user)
+        initializationCoordinator.userConnectionRequest(user)
 
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
@@ -425,7 +426,6 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
-        initializationCoordinator.userConnected(user)
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
@@ -2597,7 +2597,7 @@ internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectedListener { user ->
+            chatClient.initializationCoordinator.addUserConnectionRequestListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)
