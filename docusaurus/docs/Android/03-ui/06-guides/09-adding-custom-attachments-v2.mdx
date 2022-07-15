@@ -440,7 +440,7 @@ class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
 }
 ```
 
-To complete the quoted attachment feature and show it in UI you need to provide the `QuotedDateAttachmentFactory` via `ChatUI` alongside the `DefaultQuotedAttachmentFactory` to show the rest of the attachments:
+To complete the quoted attachment feature and show it inside the UI you need to provide the `QuotedDateAttachmentFactory` via `ChatUI` alongside the `DefaultQuotedAttachmentFactory` to show the rest of the attachments:
 
 ```kotlin
 ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
