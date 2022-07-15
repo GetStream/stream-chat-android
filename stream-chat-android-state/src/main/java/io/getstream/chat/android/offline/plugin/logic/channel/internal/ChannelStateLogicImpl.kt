@@ -421,7 +421,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages) {
+        if (scrollUpdate || shouldRefreshMessages) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
@@ -466,9 +466,7 @@ internal class ChannelStateLogicImpl(
 
         updateDataFromChannel(
             channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages() ||
-                (!request.isFilteringMessages() && !mutableState.insideSearch.value) ||
-                request.shouldRefresh,
+            shouldRefreshMessages = request.shouldRefresh || !request.isFilteringMessages(),
             scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
         )
     }
@@ -480,7 +478,7 @@ internal class ChannelStateLogicImpl(
             * search results */
             !request.isFilteringMessages() -> {
                 mutableState.setEndOfOlderMessages(false)
-                mutableState.setEndOfNewerMessages(!mutableState.insideSearch.value)
+                mutableState.setEndOfNewerMessages(true)
             }
             /* If we are filtering around a specific message we are loading both newer and older messages
             * and can't be sure if there are no older or newer messages left */
