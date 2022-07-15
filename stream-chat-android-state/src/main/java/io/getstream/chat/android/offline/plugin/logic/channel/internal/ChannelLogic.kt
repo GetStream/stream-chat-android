@@ -200,7 +200,6 @@ internal class ChannelLogic(
         return runChannelQuery(request)
     }
 
-
     /**
      * Loads a list of messages after the newest message in the current list.
      *
