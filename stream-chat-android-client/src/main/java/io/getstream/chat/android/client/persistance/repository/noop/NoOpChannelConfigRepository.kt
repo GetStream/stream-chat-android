@@ -27,4 +27,5 @@ internal object NoOpChannelConfigRepository : ChannelConfigRepository {
     override fun selectChannelConfig(channelType: String): ChannelConfig? = null
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) { /* No-Op */ }
     override suspend fun insertChannelConfig(config: ChannelConfig) { /* No-Op */ }
+    override suspend fun clear() { /* No-Op */ }
 }

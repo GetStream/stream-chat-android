@@ -3308,17 +3308,20 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun observeAttachmentsForMessage (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ChannelConfigRepository {
 	public abstract fun cacheChannelConfigs (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertChannelConfig (Lio/getstream/chat/android/client/models/ChannelConfig;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertChannelConfigs (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/ChannelConfig;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ChannelRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun clearChannelCache ()V
 	public abstract fun deleteChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3346,6 +3349,7 @@ public final class io/getstream/chat/android/client/persistance/repository/Chann
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/MessageRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/client/models/Message;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3364,11 +3368,13 @@ public final class io/getstream/chat/android/client/persistance/repository/Messa
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/QueryChannelsRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertQueryChannels (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectBy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ReactionRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertReaction (Lio/getstream/chat/android/client/models/Reaction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectReactionById (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectReactionIdsBySyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3380,11 +3386,13 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/SyncStateRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertSyncState (Lio/getstream/chat/android/client/sync/SyncState;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectSyncState (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/UserRepository {
+	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertCurrentUser (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertUser (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertUsers (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -22,10 +22,11 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity.Companion.ATTACHMENT_ENTITY_TABLE_NAME
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 
 @Entity(
-    tableName = "attachment_inner_entity",
+    tableName = ATTACHMENT_ENTITY_TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = MessageInnerEntity::class,
@@ -65,6 +66,7 @@ internal data class AttachmentEntity(
 ) {
     companion object {
         internal const val EXTRA_DATA_ID_KEY = "extra_data_id_key"
+        internal const val ATTACHMENT_ENTITY_TABLE_NAME = "attachment_inner_entity"
         internal fun generateId(messageId: String, index: Int): String {
             return messageId + "_$index"
         }

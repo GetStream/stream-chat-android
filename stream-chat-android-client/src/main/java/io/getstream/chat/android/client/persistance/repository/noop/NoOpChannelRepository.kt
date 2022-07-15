@@ -45,4 +45,5 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun evictChannel(cid: String) { /* No-Op */ }
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) { /* No-Op */ }
     override fun clearChannelCache() { /* No-Op */ }
+    override suspend fun clear() { /* No-Op */ }
 }

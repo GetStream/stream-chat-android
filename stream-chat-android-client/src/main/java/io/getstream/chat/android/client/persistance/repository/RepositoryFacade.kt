@@ -37,14 +37,14 @@ import java.util.Date
 @InternalStreamChatApi
 @SuppressWarnings("LongParameterList")
 public class RepositoryFacade private constructor(
-    userRepository: UserRepository,
-    configsRepository: ChannelConfigRepository,
+    private val userRepository: UserRepository,
+    private val configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
-    queryChannelsRepository: QueryChannelsRepository,
+    private val queryChannelsRepository: QueryChannelsRepository,
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
-    syncStateRepository: SyncStateRepository,
-    attachmentRepository: AttachmentRepository,
+    private val syncStateRepository: SyncStateRepository,
+    private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -146,6 +146,17 @@ public class RepositoryFacade private constructor(
         insertUsers(users)
         insertChannels(channels)
         insertMessages(messages, cacheForMessages)
+    }
+
+    override suspend fun clear() {
+        userRepository.clear()
+        channelsRepository.clear()
+        reactionsRepository.clear()
+        messageRepository.clear()
+        configsRepository.clear()
+        queryChannelsRepository.clear()
+        syncStateRepository.clear()
+        attachmentRepository.clear()
     }
 
     @InternalStreamChatApi

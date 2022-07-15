@@ -36,4 +36,9 @@ public interface SyncStateRepository {
      * @param userId String
      */
     public suspend fun selectSyncState(userId: String): SyncState?
+
+    /**
+     * Clear syncStates of this repository.
+     */
+    public suspend fun clear()
 }
