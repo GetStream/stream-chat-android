@@ -116,7 +116,7 @@ public interface GlobalState {
     @Deprecated(
         message = "Use typingChannels instead",
         replaceWith = ReplaceWith("typingChannels"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
