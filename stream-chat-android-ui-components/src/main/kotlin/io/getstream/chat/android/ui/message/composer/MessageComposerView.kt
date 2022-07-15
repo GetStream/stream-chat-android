@@ -123,7 +123,7 @@ public class MessageComposerView : ConstraintLayout {
     public var commandsButtonClickListener: () -> Unit = {}
 
     /**
-     * Click listener invoked when suggestion popup is dismissed,
+     * Click listener invoked when suggestion popup is dismissed.
      */
     public var dismissSuggestionsListener: () -> Unit = {}
 

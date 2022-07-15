@@ -69,6 +69,7 @@
 ### ✅ Added
 - Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
 - Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
+- Added documentation for [`MessageComposerView`](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer). [#3845](https://github.com/GetStream/stream-chat-android/pull/3845)
 
 ### ⚠️ Changed
 
