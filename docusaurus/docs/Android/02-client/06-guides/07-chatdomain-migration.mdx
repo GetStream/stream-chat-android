@@ -99,7 +99,7 @@ The snippet below shows you how to request channels and observe the state:
 ```kotlin
 // 1. Get the first 30 channels to which thierry belongs
 val filter = Filters.`in`("members", "thierry")
-val sort = QuerySort.desc<Channel>("last_updated")
+val sort = QuerySortByField.descByName<Channel>("lastUpdated")
 val request = QueryChannelsRequest(
     filter = filter,
     querySort = sort,

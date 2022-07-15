@@ -71,6 +71,7 @@ public data class Member(
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
+            "userId" -> getUserId()
             "createdAt" -> createdAt
             "updatedAt" -> updatedAt
             "isInvited" -> isInvited
