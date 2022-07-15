@@ -85,4 +85,15 @@ public interface RepositoryFactory {
      * Creates [AttachmentRepository]
      */
     public fun createAttachmentRepository(): AttachmentRepository
+
+    /**
+     * Interface to delegate creation of [RepositoryFactory].
+     */
+    public interface Provider {
+
+        /**
+         * Create a [RepositoryFactory] for the given [User].
+         */
+        public fun createRepositoryFactory(user: User): RepositoryFactory
+    }
 }

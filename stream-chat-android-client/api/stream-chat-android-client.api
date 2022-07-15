@@ -3406,6 +3406,10 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun get (Ljava/lang/Class;)Ljava/lang/Object;
 }
 
+public abstract interface class io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider {
+	public abstract fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
+}
+
 public final class io/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
 	public static final field Companion Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryProvider$Companion;
 	public synthetic fun <init> (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
