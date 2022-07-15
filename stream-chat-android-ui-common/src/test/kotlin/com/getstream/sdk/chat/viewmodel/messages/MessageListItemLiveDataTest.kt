@@ -90,7 +90,8 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
-            endOfNewMessages = endOfNewMessages
+            endOfNewMessages = endOfNewMessages,
+            messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
 
@@ -111,7 +112,8 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
-            endOfNewMessages = endOfNewMessages
+            endOfNewMessages = endOfNewMessages,
+            messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
 
@@ -147,7 +149,8 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
-            endOfNewMessages = endOfNewMessages
+            endOfNewMessages = endOfNewMessages,
+            messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
 
