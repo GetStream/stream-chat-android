@@ -191,6 +191,7 @@ internal constructor(
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
+    private val pluginFactories: List<PluginFactory>,
     lifecycle: Lifecycle,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
@@ -298,10 +299,6 @@ internal constructor(
         }
     }
 
-    internal fun addPlugins(plugins: List<Plugin>) {
-        this.plugins = plugins
-    }
-
     @InternalStreamChatApi
     public fun addInterceptor(interceptor: Interceptor) {
         this.interceptors.add(interceptor)
@@ -370,9 +367,8 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
-                initializationCoordinator.userConnectionRequest(user)
+                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 clientState.toMutableState()?.setUser(user)
-                initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     chatSocketExperimental.connectUser(user, isAnonymous)
@@ -420,9 +416,11 @@ internal constructor(
     }
 
     private fun initializeClientWithUser(
+        user: User,
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
@@ -510,9 +508,8 @@ internal constructor(
         }
 
         userCredentialStorage.get()?.let { config ->
-            initializationCoordinator.userConnectionRequest(User(id = config.userId).apply { name = config.userName })
-
             initializeClientWithUser(
+                User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
             )
@@ -2595,16 +2592,6 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
-        private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectionRequestListener { user ->
-                chatClient.addPlugins(
-                    pluginFactories.map { pluginFactory ->
-                        pluginFactory.get(user)
-                    }
-                )
-            }
-        }
-
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -2677,10 +2664,9 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle
-            ).also {
-                configureInitializer(it)
-            }
+                lifecycle = lifecycle,
+                pluginFactories = pluginFactories,
+            )
         }
 
         private fun setupStreamLog() {

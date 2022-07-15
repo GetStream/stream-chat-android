@@ -112,6 +112,7 @@ internal class MockClientBuilder(
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = emptyList(),
         )
 
         client.connectUser(user, token).enqueue()

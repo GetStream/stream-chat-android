@@ -27,27 +27,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 public class InitializationCoordinator private constructor() {
 
     private val userDisconnectedListeners: MutableList<(User?) -> Unit> = mutableListOf()
-    private val userConnectedListeners: MutableList<(User) -> Unit> = mutableListOf()
-
-    /**
-     * Adds a listener to user connection.
-     */
-    internal fun addUserConnectionRequestListener(listener: (User) -> Unit) {
-        userConnectedListeners.add(listener)
-    }
 
     /**
      * Adds a listener to user disconnection.
      */
     public fun addUserDisconnectedListener(listener: (User?) -> Unit) {
         userDisconnectedListeners.add(listener)
-    }
-
-    /**
-     * Notifies user connection
-     */
-    internal fun userConnectionRequest(user: User) {
-        userConnectedListeners.forEach { function -> function.invoke(user) }
     }
 
     /**

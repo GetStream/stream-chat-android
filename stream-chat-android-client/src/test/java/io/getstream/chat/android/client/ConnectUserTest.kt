@@ -91,6 +91,7 @@ internal class ConnectUserTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = emptyList(),
         )
     }
 
