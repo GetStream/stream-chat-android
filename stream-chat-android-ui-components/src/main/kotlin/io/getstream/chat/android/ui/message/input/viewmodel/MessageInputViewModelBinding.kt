@@ -138,6 +138,7 @@ public fun MessageInputViewModel.bindView(
         }
     )
 
+    @Suppress("DEPRECATION_ERROR")
     view.setTypingListener(
         object : MessageInputView.TypingListener {
             override fun onKeystroke() = keystroke()

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
