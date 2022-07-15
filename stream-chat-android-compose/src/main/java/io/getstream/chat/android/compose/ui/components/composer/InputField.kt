@@ -72,7 +72,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
             "decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit)",
         imports = ["io.getstream.chat.android.compose.ui.components.composer"]
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 @Composable
 public fun InputField(
