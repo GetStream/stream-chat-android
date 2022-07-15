@@ -4,7 +4,6 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError

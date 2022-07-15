@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.message.input
 
 import android.animation.AnimatorSet
@@ -280,7 +282,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "Use MessageInputView.setTypingListener(TypingUpdatesBuffer) instead to set a buffer " +
             "which internally manages buffering " +
             "start typing events and sending stop typing events.\n\n" +
@@ -1279,7 +1281,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "Use TypingUpdatesBuffer which internally manages buffering " +
             "start typing events and sending stop typing events.\n\n" +
             "For the default implementation see DefaultTypingUpdatesBuffer.",

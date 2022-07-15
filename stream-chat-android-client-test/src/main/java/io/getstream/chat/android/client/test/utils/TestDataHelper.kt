@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.test.utils
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -96,7 +96,7 @@ public class TestDataHelper {
     public val filter2: FilterObject =
         Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", listOf(user1.id)))
 
-    public val query1: QueryChannelsSpec = QueryChannelsSpec(filter1, QuerySort())
+    public val query1: QueryChannelsSpec = QueryChannelsSpec(filter1, QuerySortByField())
 
     public val attachment1: Attachment =
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
