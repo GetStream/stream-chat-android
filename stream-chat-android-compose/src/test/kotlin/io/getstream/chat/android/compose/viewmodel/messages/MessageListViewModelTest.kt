@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -113,15 +114,18 @@ internal class MessageListViewModelTest {
         private val channelId: String = CID,
     ) {
         private val globalState: GlobalMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
             StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
+
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
@@ -155,7 +159,9 @@ internal class MessageListViewModelTest {
                 whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
+                whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
+                whenever(it.unreadCount) doReturn MutableStateFlow(0)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope

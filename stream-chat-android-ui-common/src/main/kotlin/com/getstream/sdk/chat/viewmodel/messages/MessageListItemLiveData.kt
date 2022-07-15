@@ -74,7 +74,7 @@ import io.getstream.chat.android.common.state.MessageFooterVisibility
  *
  * @param deletedMessageVisibility Controls when deleted messages are shown.
  * @param messageFooterVisibility Controls when the message footer is shown.
- *
+ * @param endOfNewMessages Notifies when we have reached the end of new messages.
  */
 
 @Suppress("LongParameterList", "TooManyFunctions")
@@ -87,10 +87,12 @@ internal class MessageListItemLiveData(
     private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
+    private val endOfNewMessages: LiveData<Boolean>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
-    private var loadingMoreInProgress: Boolean = false
+    private var loadingMoreOlderItems: Boolean = false
+    private var loadingMoreNewerItems: Boolean = false
     private var messageItemsBase = listOf<MessageListItem>()
     private var messageItemsWithReads = listOf<MessageListItem>()
     private var typingUsers = listOf<User>()
@@ -115,6 +117,9 @@ internal class MessageListItemLiveData(
                 user
             }
             .combineWith(messageFooterVisibility) { user, _ ->
+                user
+            }
+            .combineWith(endOfNewMessages) { user, _ ->
                 user
             }
             .changeOnUserLoaded(messages) { changedMessages, currentUser ->
@@ -195,12 +200,35 @@ internal class MessageListItemLiveData(
     }
 
     /**
+     * Loading more indicator item should be added at the end of the items to indicate
+     * a pending request for the next page of messages.
+     */
+    @UiThread
+    internal fun loadingMoreNewMessagesChanged(loadingMoreInProgress: Boolean) {
+        if (loadingMoreNewerItems == loadingMoreInProgress) return
+
+        loadingMoreNewerItems = loadingMoreInProgress
+        onLoadingMoreChanged()
+    }
+
+    /**
      * Loading more indicator item should be added at the beginning of the items to indicate
      * a pending request for the next page of messages.
      */
     @UiThread
-    internal fun loadingMoreChanged(loadingMoreInProgress: Boolean) {
-        this.loadingMoreInProgress = loadingMoreInProgress
+    internal fun loadingMoreOldMessagesChanged(loadingMoreInProgress: Boolean) {
+        if (loadingMoreOlderItems == loadingMoreInProgress) return
+
+        loadingMoreOlderItems = loadingMoreInProgress
+        onLoadingMoreChanged()
+    }
+
+    /**
+     * Filters the messages that are not the loading indicator and appends the loading indicator it the list is
+     * loading.
+     */
+    @UiThread
+    private fun onLoadingMoreChanged() {
         messageItemsWithReads = messageItemsWithReads.filter {
             it !is MessageListItem.LoadingMoreIndicatorItem
         }
@@ -217,10 +245,14 @@ internal class MessageListItemLiveData(
      * @return Full list of [MessageListItem] to represent the state.
      */
     private fun buildItemsList(): List<MessageListItem> {
-        return getLoadingMoreItems() + messageItemsWithReads + typingItems
+        return if (loadingMoreOlderItems) {
+            getLoadingMoreItems() + messageItemsWithReads + typingItems
+        } else {
+            messageItemsWithReads + typingItems + getLoadingMoreItems()
+        }
     }
 
-    private fun getLoadingMoreItems() = if (loadingMoreInProgress) {
+    private fun getLoadingMoreItems() = if (loadingMoreOlderItems || loadingMoreNewerItems) {
         listOf<MessageListItem>(MessageListItem.LoadingMoreIndicatorItem)
     } else {
         emptyList()
@@ -457,6 +489,7 @@ internal class MessageListItemLiveData(
             isThread = isThread,
             isTyping = typingUsers.isNotEmpty(),
             hasNewMessages = hasNewMessages,
+            areNewestMessagesLoaded = endOfNewMessages.value == true
         )
     }
 

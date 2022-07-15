@@ -26,11 +26,11 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
+import io.getstream.logging.StreamLog
 
 /**
  * An Activity playing attachments such as audio and video.
@@ -43,7 +43,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private val type: String? by lazy { intent.getStringExtra(KEY_TYPE) }
     private val mimeType: String? by lazy { intent.getStringExtra(KEY_MIME_TYPE) }
 
-    private val logger = ChatLogger.get("AttachmentMediaActivity")
+    private val logger = StreamLog.getLogger("Chat:AttachmentMediaActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +51,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if ((type.isNullOrEmpty() && mimeType.isNullOrEmpty()) || url.isNullOrEmpty()) {
-            logger.logE("This file can't be displayed. The TYPE or the URL are null")
+            logger.e { "This file can't be displayed. The TYPE or the URL are null" }
             showPlaybackError()
             return
         }

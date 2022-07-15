@@ -20,15 +20,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
+import io.getstream.logging.StreamLog
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
-    private val logger = ChatLogger.get("UserLoginViewModel")
+    private val logger = StreamLog.getLogger("Chat:UserLoginViewModel")
     private val _state = MutableLiveData<State>()
     private val _events = MutableLiveData<Event<UiEvent>>()
 
@@ -64,10 +64,10 @@ class UserLoginViewModel : ViewModel() {
                 connectUser(chatUser, user.token)
                     .enqueue { result ->
                         if (result.isSuccess) {
-                            logger.logD("User set successfully")
+                            logger.d { "User set successfully" }
                         } else {
                             _events.postValue(Event(UiEvent.Error(result.error().message)))
-                            logger.logD("Failed to set user ${result.error()}")
+                            logger.d { "Failed to set user ${result.error()}" }
                         }
                     }
             }

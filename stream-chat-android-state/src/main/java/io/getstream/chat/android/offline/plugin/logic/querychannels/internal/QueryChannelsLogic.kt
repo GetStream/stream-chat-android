@@ -153,9 +153,21 @@ internal class QueryChannelsLogic(
         onOnlineQueryResult(result, request, repos, globalState)
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
+        } else {
+            initializeChannelsIfNeeded()
         }
         val loading = loadingForCurrentRequest()
         loading.value = false
+    }
+
+    /**
+     * Initializes [QueryChannelsMutableState._channels] with an empty map if it wasn't initialized yet.
+     * This might happen when we don't have any channels in the offline storage and API request fails.
+     */
+    private fun initializeChannelsIfNeeded() {
+        if (mutableState._channels.value == null) {
+            mutableState._channels.value = emptyMap()
+        }
     }
 
     /**

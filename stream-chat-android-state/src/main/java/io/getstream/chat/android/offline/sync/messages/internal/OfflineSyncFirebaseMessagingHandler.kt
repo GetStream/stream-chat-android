@@ -17,13 +17,13 @@
 package io.getstream.chat.android.offline.sync.messages.internal
 
 import android.content.Context
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.logging.StreamLog
 
 internal class OfflineSyncFirebaseMessagingHandler {
-    private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingHandler")
+    private val logger = StreamLog.getLogger("Chat:OfflineSyncFirebaseMessagingHandler")
 
     fun syncMessages(context: Context, cid: String) {
-        logger.logD("Starting the sync")
+        logger.d { "Starting the sync" }
 
         SyncMessagesWork.start(context, cid)
     }

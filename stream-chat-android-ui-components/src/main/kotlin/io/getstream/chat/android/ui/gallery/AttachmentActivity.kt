@@ -27,10 +27,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
+import io.getstream.logging.StreamLog
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -38,7 +38,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBindin
 public class AttachmentActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentBinding
 
-    private val logger = ChatLogger.get("AttachmentActivity")
+    private val logger = StreamLog.getLogger("Chat:AttachmentActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +51,7 @@ public class AttachmentActivity : AppCompatActivity() {
         val type = intent.getStringExtra("type")
         val url = intent.getStringExtra("url")
         if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
-            logger.logE("This file can't be displayed. TYPE or URL is missing.")
+            logger.e { "This file can't be displayed. TYPE or URL is missing." }
             Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()
             return
         }
@@ -128,7 +128,7 @@ public class AttachmentActivity : AppCompatActivity() {
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError?) {
-            logger.logE("The load failed due to an unknown error: $error")
+            logger.e { "The load failed due to an unknown error: $error" }
             if (error == null) {
                 return
             }

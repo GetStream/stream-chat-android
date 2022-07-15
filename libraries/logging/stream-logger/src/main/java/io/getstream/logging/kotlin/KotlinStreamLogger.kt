@@ -30,6 +30,7 @@ import java.util.Locale
  */
 public class KotlinStreamLogger(
     private val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH),
+    private val now: () -> Long = { System.currentTimeMillis() }
 ) : StreamLogger {
 
     override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
@@ -44,6 +45,4 @@ public class KotlinStreamLogger(
             else -> println(finalMessage)
         }
     }
-
-    private fun now() = System.currentTimeMillis()
 }

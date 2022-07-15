@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
@@ -71,6 +72,7 @@ internal class ChannelStateLogicImplTest {
     private val _membersCount = MutableStateFlow(0)
     private var _members: Map<String, Member> = emptyMap()
     private val _channelConfig = MutableStateFlow(Config())
+    private val _endOfNewerMessages = MutableStateFlow(true)
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -92,8 +94,12 @@ internal class ChannelStateLogicImplTest {
         on(mock::rawMembers.set(any())) doAnswer { _members = it.arguments[0] as Map<String, Member> }
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig
+        on(mock.endOfNewerMessages) doReturn _endOfNewerMessages
     }
     private val globalMutableState: MutableGlobalState = mock {
+        on(it.user) doReturn MutableStateFlow(user)
+    }
+    private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(user)
     }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
@@ -116,7 +122,7 @@ internal class ChannelStateLogicImplTest {
     }
 
     private val channelStateLogicImpl =
-        ChannelStateLogicImpl(mutableState, globalMutableState, mock(), attachmentUrlValidator)
+        ChannelStateLogicImpl(mutableState, globalMutableState, clientState, mock(), attachmentUrlValidator)
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
