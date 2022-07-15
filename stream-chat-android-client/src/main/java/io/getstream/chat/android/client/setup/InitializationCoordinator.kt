@@ -32,7 +32,7 @@ public class InitializationCoordinator private constructor() {
     /**
      * Adds a listener to user connection.
      */
-    internal fun addUserConnectedListener(listener: (User) -> Unit) {
+    internal fun addUserConnectionRequestListener(listener: (User) -> Unit) {
         userConnectedListeners.add(listener)
     }
 
@@ -46,7 +46,7 @@ public class InitializationCoordinator private constructor() {
     /**
      * Notifies user connection
      */
-    internal fun userConnected(user: User) {
+    internal fun userConnectionRequest(user: User) {
         userConnectedListeners.forEach { function -> function.invoke(user) }
     }
 

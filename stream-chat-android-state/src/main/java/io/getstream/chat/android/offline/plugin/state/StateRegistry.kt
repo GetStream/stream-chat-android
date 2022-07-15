@@ -130,7 +130,6 @@ public class StateRegistry private constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        instance = null
     }
 
     public companion object {

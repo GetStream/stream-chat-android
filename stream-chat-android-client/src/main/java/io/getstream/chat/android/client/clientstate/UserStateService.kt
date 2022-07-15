@@ -24,10 +24,12 @@ internal class UserStateService {
     private val logger = StreamLog.getLogger("Chat:UserStateService")
 
     fun onUserUpdated(user: User) {
+        logger.d { "[onUserUpdated] user id: ${user.id}" }
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
     fun onSetUser(user: User, isAnonymous: Boolean) {
+        logger.d { "[onSetUser] user id: ${user.id}" }
         if (isAnonymous) {
             fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
         } else {
@@ -36,10 +38,12 @@ internal class UserStateService {
     }
 
     fun onLogout() {
+        logger.d { "[onLogout]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
     fun onSocketUnrecoverableError() {
+        logger.d { "[onSocketUnrecoverableError]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 

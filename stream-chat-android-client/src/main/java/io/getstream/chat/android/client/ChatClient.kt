@@ -359,6 +359,7 @@ internal constructor(
         val userState = userStateService.state
 
         ClientState.get().toMutableState()?.setUser(user)
+        initializationCoordinator.userConnectionRequest(user)
 
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
@@ -373,7 +374,7 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
-                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
+                initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     chatSocketExperimental.connectUser(user, isAnonymous)
@@ -421,11 +422,9 @@ internal constructor(
     }
 
     private fun initializeClientWithUser(
-        user: User,
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
-        initializationCoordinator.userConnected(user)
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
@@ -513,8 +512,9 @@ internal constructor(
         }
 
         userCredentialStorage.get()?.let { config ->
+            initializationCoordinator.userConnectionRequest(User(id = config.userId).apply { name = config.userName })
+
             initializeClientWithUser(
-                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
             )
@@ -1029,6 +1029,7 @@ internal constructor(
     @CheckResult
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
         CoroutineCall(scope) {
+            logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             notifications.onLogout()
             clientState.toMutableState()?.clearState()
             getCurrentUser().let(initializationCoordinator::userDisconnected)
@@ -2597,7 +2598,7 @@ internal constructor(
         }
 
         private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectedListener { user ->
+            chatClient.initializationCoordinator.addUserConnectionRequestListener { user ->
                 chatClient.addPlugins(
                     pluginFactories.map { pluginFactory ->
                         pluginFactory.get(user)

@@ -34,6 +34,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed initializing channels state when DB is empty and API requests fails. [3870](https://github.com/GetStream/stream-chat-android/pull/3870)
+- Fixed that causes a crash while reconnecting to the SDK multiple times. [#3888](https://github.com/GetStream/stream-chat-android/pull/3888)
 
 ### ⬆️ Improved
 
