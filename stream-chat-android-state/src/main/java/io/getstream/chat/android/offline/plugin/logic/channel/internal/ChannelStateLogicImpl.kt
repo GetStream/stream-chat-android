@@ -466,8 +466,8 @@ internal class ChannelStateLogicImpl(
 
         updateDataFromChannel(
             channel,
-            shouldRefreshMessages = request.shouldRefresh || !request.isFilteringMessages(),
-            scrollUpdate = request.isFilteringNewerMessages() || request.filteringOlderMessages()
+            shouldRefreshMessages = request.shouldRefresh,
+            scrollUpdate = request.isFilteringMessages()
         )
     }
 

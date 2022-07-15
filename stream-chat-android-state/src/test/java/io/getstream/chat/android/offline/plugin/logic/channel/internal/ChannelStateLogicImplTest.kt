@@ -319,18 +319,6 @@ internal class ChannelStateLogicImplTest {
     }
 
     @Test
-    fun `given a non scroll messages come while inside search, messages should not be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val nonFilteringRequest = QueryChannelRequest()
-
-        channelStateLogicImpl.propagateChannelQuery(channel, nonFilteringRequest)
-        verify(mutableState, never()).rawMessages = any()
-    }
-
-    @Test
     fun `given a scroll messages come while inside search, messages should be added`() {
         _insideSearch.value = true
 
