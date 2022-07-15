@@ -86,6 +86,7 @@ public fun MessageListViewModel.bindView(
         }
     }
     view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
+    view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
 
     ownCapabilities.observe(lifecycleOwner) {
         view.setOwnCapabilities(it)

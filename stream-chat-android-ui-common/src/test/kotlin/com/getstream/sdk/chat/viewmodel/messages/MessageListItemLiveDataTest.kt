@@ -79,6 +79,7 @@ internal class MessageListItemLiveDataTest {
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
         val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
+        val endOfNewMessages = MutableLiveData(true)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -89,6 +90,7 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
+            endOfNewMessages = endOfNewMessages,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
@@ -99,6 +101,7 @@ internal class MessageListItemLiveDataTest {
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
         val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
+        val endOfNewMessages = MutableLiveData(true)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -109,6 +112,7 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
+            endOfNewMessages = endOfNewMessages,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
@@ -134,6 +138,7 @@ internal class MessageListItemLiveDataTest {
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
         val deletedMessageVisibility = MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
         val messageFooterVisibility = MutableLiveData<MessageFooterVisibility>(MessageFooterVisibility.LastInGroup)
+        val endOfNewMessages = MutableLiveData(true)
 
         return MessageListItemLiveData(
             currentUser = currentUser,
@@ -144,6 +149,7 @@ internal class MessageListItemLiveDataTest {
             dateSeparatorHandler = ::simpleDateGroups,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
+            endOfNewMessages = endOfNewMessages,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
         )
     }
@@ -255,7 +261,7 @@ internal class MessageListItemLiveDataTest {
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
         messageListItemLd.typingChanged(listOf(currentUser.value!!))
-        verify(testObserver, times(4)).onChanged(any())
+        verify(testObserver, times(5)).onChanged(any())
     }
 
     @Test

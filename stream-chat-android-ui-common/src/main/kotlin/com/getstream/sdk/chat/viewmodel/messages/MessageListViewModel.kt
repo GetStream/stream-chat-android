@@ -50,6 +50,7 @@ import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
+import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -334,6 +335,7 @@ public class MessageListViewModel(
             dateSeparatorHandler = dateSeparatorHandler,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
+            endOfNewMessages = channelState.endOfNewerMessages.asLiveData(),
             messagePositionHandlerProvider = ::messagePositionHandler,
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
@@ -382,6 +384,7 @@ public class MessageListViewModel(
             dateSeparatorHandler = threadDateSeparatorHandler,
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
+            endOfNewMessages = MutableLiveData(true),
             messagePositionHandlerProvider = ::messagePositionHandler,
         )
         threadListData?.let { tld ->
@@ -574,9 +577,7 @@ public class MessageListViewModel(
                 val attachmentToBeDeleted = event.attachment
                 chatClient.loadMessageById(
                     cid,
-                    event.messageId,
-                    DEFAULT_MESSAGES_LIMIT,
-                    DEFAULT_MESSAGES_LIMIT
+                    event.messageId
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -606,9 +607,7 @@ public class MessageListViewModel(
                 val cid = event.cid
                 chatClient.loadMessageById(
                     cid,
-                    messageId,
-                    DEFAULT_MESSAGES_LIMIT,
-                    DEFAULT_MESSAGES_LIMIT
+                    messageId
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
@@ -634,6 +633,26 @@ public class MessageListViewModel(
         }
 
         return (messageItem as? MessageListItem.MessageItem)?.message
+    }
+
+    /**
+     * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
+     * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
+     * list.
+     */
+    public fun scrollToBottom(scrollToBottom: () -> Unit) {
+        if (_mode.value is Mode.Thread || messageListData?.value?.areNewestMessagesLoaded == true) {
+            scrollToBottom()
+        } else {
+            chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
+                if (result.isSuccess) {
+                    scrollToBottom()
+                } else {
+                    val error = result.error()
+                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
+                }
+            }
+        }
     }
 
     /**
@@ -713,9 +732,9 @@ public class MessageListViewModel(
         currentMode.run {
             when (this) {
                 is Mode.Normal -> {
-                    messageListData?.loadingMoreChanged(true)
+                    messageListData?.loadingMoreOldMessagesChanged(true)
                     chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
-                        messageListData?.loadingMoreChanged(false)
+                        messageListData?.loadingMoreOldMessagesChanged(false)
                     }
                 }
                 is Mode.Thread -> threadLoadMore(this)
@@ -728,10 +747,10 @@ public class MessageListViewModel(
      */
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
-            messageListData?.loadingMoreChanged(true)
+            messageListData?.loadingMoreNewMessagesChanged(true)
             chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
                 .enqueue { result ->
-                    messageListData?.loadingMoreChanged(false)
+                    messageListData?.loadingMoreNewMessagesChanged(false)
                 }
         } else {
             logger.e { "There's no base message to request more message at bottom of limit" }
@@ -744,17 +763,17 @@ public class MessageListViewModel(
      * @param threadMode Current thread mode.
      */
     private fun threadLoadMore(threadMode: Mode.Thread) {
-        threadListData?.loadingMoreChanged(true)
+        threadListData?.loadingMoreOldMessagesChanged(true)
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
             ).enqueue {
-                threadListData?.loadingMoreChanged(false)
+                threadListData?.loadingMoreOldMessagesChanged(false)
             }
         } else {
-            threadListData?.loadingMoreChanged(false)
+            threadListData?.loadingMoreOldMessagesChanged(false)
             logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }

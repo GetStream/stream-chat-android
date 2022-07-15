@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 /**
  * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
  */
-private class MessageListHeaderViewSnippets() : Fragment() {
+private class MessageListHeaderViewSnippets : Fragment() {
 
     private lateinit var messageListHeaderView: MessageListHeaderView
 

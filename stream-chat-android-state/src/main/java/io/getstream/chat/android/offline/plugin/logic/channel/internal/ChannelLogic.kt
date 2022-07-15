@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -172,13 +173,15 @@ internal class ChannelLogic(
      * @param messagesLimit The limit of messages inside the channel that should be requested.
      * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
      */
-    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
-            return
+            return Result.error(
+                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+            )
         }
-        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
+        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**
@@ -297,7 +300,7 @@ internal class ChannelLogic(
         repos.insertMessages(messages)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
 
     internal fun upsertMessages(messages: List<Message>) {
         channelStateLogic.upsertMessages(messages)
@@ -398,7 +401,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessages(listOf(message))
+        channelStateLogic.upsertMessage(message)
     }
 
     /**
@@ -530,13 +533,13 @@ internal class ChannelLogic(
                 channelStateLogic.setHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 channelStateLogic.deleteMember(event.user.id)

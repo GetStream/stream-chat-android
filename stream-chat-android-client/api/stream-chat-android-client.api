@@ -43,6 +43,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect ()V
+	public final fun disconnect (Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnectSocket ()V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -512,6 +513,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
 	public final fun isFilteringAroundIdMessages ()Z
+	public final fun isFilteringMessages ()Z
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
 	public final fun membersOffset ()I
