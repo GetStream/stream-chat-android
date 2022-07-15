@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -89,6 +90,7 @@ internal class ClientConnectionTests {
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
+    private val repositoryFacade: RepositoryFacade = mock()
 
     @BeforeEach
     fun before() {
@@ -126,6 +128,7 @@ internal class ClientConnectionTests {
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
+            repositoryFacadeBuilder = { repositoryFacade },
         )
     }
 
