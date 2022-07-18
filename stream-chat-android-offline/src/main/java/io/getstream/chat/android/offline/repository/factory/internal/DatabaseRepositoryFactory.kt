@@ -41,7 +41,7 @@ private const val DEFAULT_CACHE_SIZE = 100
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
-    private val currentUser: User?,
+    private val currentUser: User,
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
