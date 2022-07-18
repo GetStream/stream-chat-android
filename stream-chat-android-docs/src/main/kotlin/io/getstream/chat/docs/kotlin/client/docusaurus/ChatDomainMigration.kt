@@ -124,7 +124,11 @@ class ChatDomainMigration {
             // }
 
             // New approach - returns the StateFlow<ChannelState?> object and performs watchChannel request
-            val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+            val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
+                cid = "messaging:sampleId",
+                messageLimit = 30,
+                coroutineScope = scope,
+            )
         }
     }
 
