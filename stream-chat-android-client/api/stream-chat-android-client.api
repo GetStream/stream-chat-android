@@ -9,7 +9,6 @@ public final class io/getstream/chat/android/client/BuildConfig {
 public final class io/getstream/chat/android/client/ChatClient {
 	public static final field Companion Lio/getstream/chat/android/client/ChatClient$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
-	public field clientState Lio/getstream/chat/android/client/setup/state/ClientState;
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -130,7 +129,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun setClientState (Lio/getstream/chat/android/client/setup/state/ClientState;)V
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
 	public static final fun setOFFLINE_SUPPORT_ENABLED (Z)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
@@ -3593,20 +3591,15 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 }
 
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
-	public static final field Companion Lio/getstream/chat/android/client/setup/state/ClientState$Companion;
 	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getInternetAvailable ()Z
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
 	public abstract fun isInitialized ()Z
+	public abstract fun isInternetAvailable ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z
-}
-
-public final class io/getstream/chat/android/client/setup/state/ClientState$Companion {
-	public final fun create (Landroid/content/Context;)Lio/getstream/chat/android/client/setup/state/ClientState;
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorDetail {
