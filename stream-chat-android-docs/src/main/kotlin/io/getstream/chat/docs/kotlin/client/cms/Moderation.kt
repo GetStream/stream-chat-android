@@ -92,7 +92,7 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/react/moderation/?language=kotlin#query-bans-endpoint">Query bans endpoint</a>
+         * @see <a href="https://getstream.io/chat/docs/android/moderation/?language=kotlin#query-bans-endpoint">Query bans endpoint</a>
          */
         inner class QueryBannedUsers {
 
