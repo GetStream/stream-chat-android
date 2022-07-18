@@ -181,11 +181,7 @@ internal class ChannelLogic(
                 ChatError("Another request to watch this channel is in progress. Ignoring this request.")
             )
         }
-        return runChannelQuery(
-            QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
-                shouldRefresh = true
-            }
-        )
+        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
     }
 
     /**
