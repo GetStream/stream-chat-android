@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.CustomMessageComposerLeadingContentBinding
+import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
@@ -305,7 +306,7 @@ private object MessageComposerCustomizationSnippet {
 
     private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
 
-        private lateinit var binding: CustomMessageComposerLeadingContentBinding
+        private lateinit var binding: MessageComposerLeadingContentBinding
 
         public var datePickerButtonClickListener: () -> Unit = {}
 
@@ -318,7 +319,7 @@ private object MessageComposerCustomizationSnippet {
             attrs,
             defStyleAttr
         ) {
-            binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true)
+            binding = MessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true)
             binding.datePickerButton.setOnClickListener { datePickerButtonClickListener() }
         }
 

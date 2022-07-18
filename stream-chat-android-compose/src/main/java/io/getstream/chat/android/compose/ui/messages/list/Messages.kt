@@ -442,7 +442,7 @@ private fun shouldScrollToBottomOnNewMessage(
     newMessageState ?: return false
 
     return focusedItemIndex == -1 &&
-        isScrollInProgress &&
+        !isScrollInProgress &&
         areNewestMessagesLoaded &&
         firstVisibleItemIndex < 3
 }
