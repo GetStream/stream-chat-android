@@ -19,7 +19,6 @@
 package io.getstream.chat.android.offline.plugin.state.global.internal
 
 import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ConnectionState
@@ -157,8 +156,8 @@ public class GlobalMutableState private constructor(
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
         @InternalStreamChatApi
-        public fun getOrCreate(): GlobalMutableState {
-            return instance ?: GlobalMutableState(ChatClient.instance().clientState).also { globalState ->
+        public fun create(clientState: ClientState): GlobalMutableState {
+            return instance ?: GlobalMutableState(clientState).also { globalState ->
                 instance = globalState
             }
         }

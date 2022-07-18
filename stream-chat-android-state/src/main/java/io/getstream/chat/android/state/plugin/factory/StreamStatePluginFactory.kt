@@ -139,11 +139,11 @@ public class StreamStatePluginFactory(
         repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
-        val globalState = GlobalMutableState.getOrCreate().apply {
-            clearState()
-        }
         val clientState = chatClient.clientState.also { clientState ->
             clientState.clearState()
+        }
+        val globalState = GlobalMutableState.create(chatClient.clientState).apply {
+            clearState()
         }
 
         val repos = RepositoryFacadeBuilder {

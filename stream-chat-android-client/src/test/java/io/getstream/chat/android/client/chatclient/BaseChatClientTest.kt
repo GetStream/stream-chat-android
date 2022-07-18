@@ -94,9 +94,8 @@ internal open class BaseChatClientTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            clientState = mock()
         )
-
-        chatClient.clientState = mock()
 
         Mockito.reset(
             socketStateService,

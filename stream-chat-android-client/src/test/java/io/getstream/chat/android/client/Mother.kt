@@ -93,7 +93,7 @@ internal object Mother {
 
             override val isInitialized: Boolean = true
 
-            override val internetAvailable: Boolean = true
+            override val isInternetAvailable: Boolean = true
 
             override fun clearState() {
                 // Nothing to do

@@ -128,6 +128,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
@@ -192,6 +193,7 @@ internal constructor(
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
+    public val clientState: ClientState,
     lifecycle: Lifecycle,
 ) {
     private val logger = StreamLog.getLogger("Client")
@@ -206,11 +208,6 @@ internal constructor(
             }
         }
     )
-
-    /**
-     * With clientState allows the user to get the state of the SDK like connection, initialization...
-     */
-    public lateinit var clientState: ClientState
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -2677,11 +2674,9 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle
-            ).also { chatClient ->
-                chatClient.clientState = ClientState.create(appContext)
-                configureInitializer(chatClient)
-            }
+                lifecycle = lifecycle,
+                clientState = ClientStateImpl(module.networkLifecyclePublisher())
+            ).also(::configureInitializer)
         }
 
         private fun setupStreamLog() {

@@ -91,9 +91,8 @@ internal class ConnectUserTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            clientState = mock()
         )
-
-        client.clientState = mock()
     }
 
     @Test
