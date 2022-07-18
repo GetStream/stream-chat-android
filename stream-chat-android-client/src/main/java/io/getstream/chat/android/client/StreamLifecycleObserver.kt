@@ -43,7 +43,7 @@ internal class StreamLifecycleObserver(
     suspend fun dispose() {
         if (isObserving) {
             withContext(DispatcherProvider.Main) {
-                lifecycle.addObserver(this@StreamLifecycleObserver)
+                lifecycle.removeObserver(this@StreamLifecycleObserver)
             }
         }
         isObserving = false
