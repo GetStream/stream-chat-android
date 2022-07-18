@@ -230,7 +230,7 @@ class Push {
          * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi/#receiving-notifications-in-the-client">Receiving Notifications in the Client</a>
          */
         fun configureXiaomiNotifications(context: Context) {
-            val notificationsConfig = NotificationConfig(
+            val notificationConfig = NotificationConfig(
                 pushDeviceGenerators = listOf(
                     XiaomiPushDeviceGenerator(
                         context = context,
@@ -240,7 +240,7 @@ class Push {
                 )
             )
             ChatClient.Builder("apiKey", context)
-                .notifications(notificationsConfig)
+                .notifications(notificationConfig)
                 .build()
         }
 

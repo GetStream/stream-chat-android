@@ -51,7 +51,7 @@ dependencies {
 Then, create a `XiaomiPushDeviceGenerator` and add it to the list of generators in `NotificationConfig`, which you should pass into `ChatClient.Builder` when you initialize the SDK:
 
 ```kotlin {3-7,11}
-val notificationsConfig = NotificationConfig(
+val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
         XiaomiPushDeviceGenerator(
             context = context,
@@ -61,7 +61,7 @@ val notificationsConfig = NotificationConfig(
     )
 )
 ChatClient.Builder("apiKey", context)
-    .notifications(notificationsConfig)
+    .notifications(notificationConfig)
     .build()
 ```
 
