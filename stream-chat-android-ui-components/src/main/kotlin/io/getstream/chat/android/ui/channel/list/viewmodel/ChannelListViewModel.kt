@@ -102,6 +102,7 @@ public class ChannelListViewModel(
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingEvents: LiveData<TypingEvent>
+        @Suppress("DEPRECATION_ERROR")
         get() = globalState.typingUpdates.asLiveData()
 
     /**

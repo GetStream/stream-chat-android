@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -48,7 +47,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -318,18 +316,6 @@ internal class ChannelStateLogicImplTest {
         )
 
         _messages `should be equal to` mapOf(message2.id to message2)
-    }
-
-    @Test
-    fun `given a non scroll messages come while inside search, messages should not be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val nonFilteringRequest = QueryChannelRequest()
-
-        channelStateLogicImpl.propagateChannelQuery(channel, nonFilteringRequest)
-        verify(mutableState, never()).rawMessages = any()
     }
 
     @Test

@@ -62,7 +62,8 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
-        verifyNoInteractions(listener)
+        // Listeners should always be called
+        verify(listener).invoke(any())
         result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
@@ -195,7 +196,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            initializationCoordinator.addUserConnectedListener(listener)
+            initializationCoordinator.addUserConnectionRequestListener(listener)
         }
 
         fun givenUserAndToken(user: User, token: String) = apply {

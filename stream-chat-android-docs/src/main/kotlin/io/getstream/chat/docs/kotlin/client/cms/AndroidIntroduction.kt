@@ -126,7 +126,7 @@ class AndroidIntroduction {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
         )
-    val sort = QuerySortByField<Channel>().descByName("last_message_at")
+    val sort = QuerySortByField<Channel>().descByName("lastMessageAt")
 
         val request = QueryChannelsRequest(
             filter = filter,

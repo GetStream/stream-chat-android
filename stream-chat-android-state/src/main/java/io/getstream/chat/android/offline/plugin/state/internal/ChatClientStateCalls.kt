@@ -62,7 +62,11 @@ internal class ChatClientStateCalls(
         logger.d { "watching channel with cid: $cid" }
         val (channelType, channelId) = cid.cidToTypeAndId()
         val userPresence = true // todo: Fix this!!
-        val request = QueryChannelPaginationRequest(messageLimit).toWatchChannelRequest(userPresence)
+        val request = QueryChannelPaginationRequest(messageLimit)
+            .toWatchChannelRequest(userPresence)
+            .apply {
+                shouldRefresh = true
+            }
         return queryChannel(channelType, channelId, request)
     }
 

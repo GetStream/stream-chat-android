@@ -722,9 +722,13 @@ public final class io/getstream/chat/android/client/api/models/querysort/QuerySo
 	public static final field Companion Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField$Companion;
 	public fun <init> ()V
 	public final fun asc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
+	public static final fun ascByName (Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
+	public static final fun ascByName (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
 	public fun comparatorFromFieldSort (Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute$FieldSortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;)Ljava/util/Comparator;
 	public fun comparatorFromNameAttribute (Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute$FieldNameSortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;)Ljava/util/Comparator;
 	public final fun desc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
+	public static final fun descByName (Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
+	public static final fun descByName (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByField;
 }
 
 public final class io/getstream/chat/android/client/api/models/querysort/QuerySortByField$Companion {

@@ -296,7 +296,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  */
 @Deprecated(
     "Use the version without offsets, as it uses less requests to backend.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
 )
 public fun ChatClient.loadMessageById(
     cid: String,
@@ -404,7 +404,7 @@ public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int, userPre
 internal suspend fun ChatClient.loadNewestMessagesInternal(
     cid: String,
     messageLimit: Int,
-    userPresence: Boolean
+    userPresence: Boolean,
 ): Result<Channel> {
     val cidValidationResult = validateCidWithResult(cid)
     if (!cidValidationResult.isSuccess) {
@@ -412,5 +412,6 @@ internal suspend fun ChatClient.loadNewestMessagesInternal(
     }
 
     val (channelType, channelId) = cid.cidToTypeAndId()
-    return logic.channel(channelType = channelType, channelId = channelId).watch(messageLimit, userPresence)
+    return logic.channel(channelType = channelType, channelId = channelId)
+        .loadNewestMessages(messageLimit, userPresence)
 }

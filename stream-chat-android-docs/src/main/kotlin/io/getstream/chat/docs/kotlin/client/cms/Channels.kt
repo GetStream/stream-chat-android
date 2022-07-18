@@ -10,6 +10,8 @@ import io.getstream.chat.android.client.api.models.Pagination.LESS_THAN
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
@@ -17,6 +19,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.isMutedFor
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
@@ -90,7 +93,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 ),
                 offset = 0,
                 limit = 10,
-                querySort = QuerySortByField.descByName("last_message_at")
+                querySort = QuerySortByField.descByName("lastMessageAt")
             ).apply {
                 // Watches the channels automatically
                 watch = true
@@ -304,7 +307,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                     ),
                     offset = 0,
                     limit = 10,
-                    querySort = QuerySortByField.descByName("last_message_at")
+                    querySort = QuerySortByField.descByName("lastMessageAt")
                 ).apply {
                     watch = true
                     state = true
@@ -372,6 +375,36 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
          * @see <a href="https://getstream.io/chat/docs/query_members/?language=kotlin">Querying Members</a>
          */
         inner class QueryingMembers {
+
+            fun paginationAndOrdering() {
+                val channelClient = client.channel("messaging", "general")
+                val filter = Filters.neutral()
+                val offset = 0
+                val limit = 10
+
+                // paginate by user_id in descending order
+                val sort = QuerySortByField<Member>().descByName("userId")
+
+                channelClient.queryMembers(offset, limit, filter, sort).enqueue { result ->
+                    if (result.isSuccess) {
+                        val members: List<Member> = result.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    }
+                }
+
+                // paginate by created at in ascending order
+                val createdAtSort = QuerySortByField<Member>().ascByName("createdAt")
+
+                channelClient.queryMembers(offset, limit, filter, createdAtSort).enqueue { result ->
+                    if (result.isSuccess) {
+                        val members: List<Member> = result.data()
+                    } else {
+                        Log.e(TAG, String.format("There was an error %s", result.error()), result.error().cause)
+                    }
+                }
+            }
+
             fun queryingMembers() {
                 val channelClient = client.channel("messaging", "general")
 
@@ -414,7 +447,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 // Query all the members
                 val filterByNone = NeutralFilterObject
 
-                // Results can also be orderd with the QuerySort param
+                // Results can also be ordered with the QuerySortByField param
                 // For example, this will order results by member creation time, descending
                 val createdAtDescendingSort = QuerySortByField<Member>().desc("created_at")
             }
@@ -444,6 +477,28 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                                 .withMessages(LESS_THAN, messages.last().id, pageSize)
                             // ...
                         }
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_capabilities/?language=kotlin">Capabilities</a>
+         */
+        inner class Capabilities {
+
+            fun frontendCapabilities() {
+                val channelClient = client.channel("messaging", "general")
+
+                channelClient.query(QueryChannelRequest()).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+
+                        val capabilities = channel.ownCapabilities
+                        val userCanDeleteOwnMessage = capabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
+                        val userCanUpdateAnyMessage = capabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
                     } else {
                         // Handle result.error()
                     }
@@ -687,6 +742,36 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                         } else {
                             // Handle result.error()
                         }
+                    }
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/disabling_channels/?language=kotlin">Disabling Channels</a>
+         */
+        inner class DisablingChannels {
+
+            fun freeze() {
+                val channelClient = client.channel("messaging", "general")
+
+                channelClient.updatePartial(set = mapOf("frozen" to true)).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+
+            fun unfreeze() {
+                val channelClient = client.channel("messaging", "general")
+
+                channelClient.updatePartial(unset = listOf("frozen")).enqueue { result ->
+                    if (result.isSuccess) {
+                        val channel = result.data()
+                    } else {
+                        // Handle result.error()
                     }
                 }
             }

@@ -113,17 +113,6 @@ public class ClientAndUsers {
             };
             client.connectUser(user, tokenProvider).enqueue(result -> { /* ... */ });
         }
-
-        public void loggingOutAndSwitchingUsers(User user, String token) {
-            client.disconnect(true).enqueue(disconnectResult -> {
-                if(disconnectResult.isSuccess()) {
-                    client.connectUser(user, token).enqueue(result -> { /* ... */ });
-                } else {
-                    // Handle result.error()
-                }
-            });
-
-        }
     }
 
     class AuthlessUsers {

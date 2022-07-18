@@ -35,6 +35,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed initializing channels state when DB is empty and API requests fails. [3870](https://github.com/GetStream/stream-chat-android/pull/3870)
+- Fixed that causes a crash while reconnecting to the SDK multiple times. [#3888](https://github.com/GetStream/stream-chat-android/pull/3888)
 
 ### ⬆️ Improved
 
@@ -63,6 +64,7 @@
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 - The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 - Fixed potential crashes when showing dialogs after process recreation. [#3857](https://github.com/GetStream/stream-chat-android/pull/3857)
+- Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
 
 ### ⬆️ Improved
 - `MessageListView` now allows multiple re-bindings of `MessageListViewModel` provided that `MessageListViewModel.deletedMessageVisibility` has not been changed since `MessageListView` was first initialized. [#3843](https://github.com/GetStream/stream-chat-android/pull/3843)
@@ -70,6 +72,9 @@
 ### ✅ Added
 - Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
 - Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
+- Added the `MessageListViewModel::setMessagePositionHandler` method to customize message position within a group. [#3882](https://github.com/GetStream/stream-chat-android/pull/3882)
+- Added documentation for [MessageComposerView](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer). [#3845](https://github.com/GetStream/stream-chat-android/pull/3845)
+- Added a new version of the [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/) guide that uses the new `MessageComposerView`. [#3877](https://github.com/GetStream/stream-chat-android/pull/3877)
 
 ### ⚠️ Changed
 
@@ -78,8 +83,10 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
+- Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
 
 ### ⬆️ Improved
+- Improved recomposition in `MessagesScreen` by deferring state reads to the latest possible point. [#3667](https://github.com/GetStream/stream-chat-android/pull/3667)
 
 ### ✅ Added
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
