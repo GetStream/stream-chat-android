@@ -231,7 +231,7 @@ internal open class ChatSocket constructor(
     }
 
     open fun onConnectionResolved(event: ConnectedEvent) {
-        logger.d { "[releaseConnection] event.type: ${event.type}" }
+        logger.d { "[onConnectionResolved] event.type: ${event.type}" }
         state = State.Connected(event)
     }
 

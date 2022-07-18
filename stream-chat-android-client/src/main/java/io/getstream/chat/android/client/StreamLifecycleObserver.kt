@@ -20,30 +20,34 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.withContext
 
 internal class StreamLifecycleObserver(
     private val lifecycle: Lifecycle,
     private val handler: LifecycleHandler,
 ) : DefaultLifecycleObserver {
+
+    private val logger = StreamLog.getLogger("Chat:LifecycleObserver")
+
     private var recurringResumeEvent = false
 
     @Volatile
     private var isObserving = false
 
-    suspend fun observe() {
+    fun observe() {
+        logger.d { "[observe] isObserving: $isObserving" }
         if (isObserving.not()) {
             isObserving = true
-            withContext(DispatcherProvider.Main) {
-                lifecycle.addObserver(this@StreamLifecycleObserver)
-            }
+            lifecycle.addObserver(this@StreamLifecycleObserver)
         }
     }
 
     suspend fun dispose() {
+        logger.d { "[observe] isObserving: $isObserving" }
         if (isObserving) {
             withContext(DispatcherProvider.Main) {
-                lifecycle.addObserver(this@StreamLifecycleObserver)
+                lifecycle.removeObserver(this@StreamLifecycleObserver)
             }
         }
         isObserving = false

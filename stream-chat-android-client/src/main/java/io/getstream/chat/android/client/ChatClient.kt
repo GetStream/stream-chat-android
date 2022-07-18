@@ -162,7 +162,6 @@ import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
@@ -194,7 +193,7 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     lifecycle: Lifecycle,
 ) {
-    private val logger = StreamLog.getLogger("Client")
+    private val logger = StreamLog.getLogger("Chat:ClientExt")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
     private val lifecycleObserver = StreamLifecycleObserver(
@@ -238,7 +237,7 @@ internal constructor(
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        runBlocking(context = scope.coroutineContext) { lifecycleObserver.observe() }
+                        lifecycleObserver.observe()
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()

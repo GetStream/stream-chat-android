@@ -37,11 +37,11 @@ internal class ChatClientStateCalls(
     private val state: StateRegistry,
     private val scope: CoroutineScope
 ) {
-    private val logger = StreamLog.getLogger("ChatClientState")
+    private val logger = StreamLog.getLogger("Chat:ClientStateCalls")
 
     /** Reference request of the channels query. */
     internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
-        logger.d { "querying state for channels" }
+        logger.d { "[queryChannels] request: $request" }
         chatClient.queryChannels(request).launch(scope)
         return state.queryChannels(request.filter, request.querySort)
     }
