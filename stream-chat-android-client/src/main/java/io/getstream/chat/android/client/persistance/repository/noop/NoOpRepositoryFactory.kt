@@ -27,24 +27,11 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import java.lang.IllegalArgumentException
 
 /**
  * No-Op RepositoryFactory.
  */
 internal object NoOpRepositoryFactory : RepositoryFactory {
-    override fun <T : Any> get(classz: Class<T>): T = when (classz) {
-        UserRepository::class -> NoOpUserRepository as T
-        ChannelConfigRepository::class -> NoOpChannelConfigRepository as T
-        QueryChannelsRepository::class -> NoOpQueryChannelsRepository as T
-        ReactionRepository::class -> NoOpReactionRepository as T
-        SyncStateRepository::class -> NoOpSyncStateRepository as T
-        AttachmentRepository::class -> NoOpAttachmentRepository as T
-        MessageRepository::class -> NoOpMessageRepository as T
-        ChannelRepository::class -> NoOpChannelRepository as T
-        else -> throw IllegalArgumentException("Class `$classz` not supported")
-    }
-
     override fun createUserRepository(): UserRepository = NoOpUserRepository
     override fun createChannelConfigRepository(): ChannelConfigRepository = NoOpChannelConfigRepository
     override fun createQueryChannelsRepository(): QueryChannelsRepository = NoOpQueryChannelsRepository
