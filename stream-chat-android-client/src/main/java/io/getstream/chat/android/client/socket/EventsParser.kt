@@ -21,9 +21,6 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.caching.TypingEventCache
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.stringify
@@ -39,13 +36,6 @@ internal class EventsParser(
     private var connectionEventReceived = false
     private val logger = ChatLogger.get("Events")
     private var closedByClient = true
-
-    /**
-     * Processes typing events and "cleans" stale [TypingStartEvent]s
-     * by firing out their [TypingStopEvent] counterparts that hold the
-     * same important data, e.g. user, cid, .. etc
-     */
-    private val typingEventCache = TypingEventCache { event -> onEvent(event) }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         logger.logI("[onOpen] closedByClient: $closedByClient")
@@ -113,13 +103,7 @@ internal class EventsParser(
                     onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
                 }
             } else {
-                // Don't call onEvent() immediately, instead
-                // let the caching class decide when it needs to be called
-                if (event is TypingStartEvent || event is TypingStopEvent) {
-                    typingEventCache.processEvent(event)
-                } else {
-                    onEvent(event)
-                }
+                onEvent(event)
             }
         } else {
             onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))

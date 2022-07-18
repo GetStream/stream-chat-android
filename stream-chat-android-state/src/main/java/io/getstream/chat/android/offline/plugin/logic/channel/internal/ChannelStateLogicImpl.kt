@@ -27,9 +27,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -40,6 +40,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import kotlin.math.max
 
@@ -58,6 +59,19 @@ internal class ChannelStateLogicImpl(
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) : ChannelStateLogic {
+
+    private val typingEventPruner = TypingEventPruner(coroutineScope = CoroutineScope(DispatcherProvider.IO))
+
+    init {
+        typingEventPruner.initialize(
+            channelId = mutableState.channelId,
+        )
+
+        typingEventPruner.onTypingEventsUpdated { rawTypingEvents, typingEvent ->
+            mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
+            globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
+        }
+    }
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
@@ -192,23 +206,9 @@ internal class ChannelStateLogicImpl(
      * @param event The start typing event or null if user stops typing.
      */
     override fun setTyping(userId: String, event: TypingStartEvent?) {
-        val typingEventsCopy = mutableState.rawTyping.toMutableMap()
-        when {
-            event == null -> {
-                typingEventsCopy.remove(userId)
-            }
-            userId != globalMutableState.user.value?.id -> {
-                typingEventsCopy[userId] = event
-            }
+        if (userId != globalMutableState.user.value?.id) {
+            typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
-
-        val typingEvent = typingEventsCopy.values
-            .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
-            .map { typingStartEvent -> typingStartEvent.user }
-            .let { sortedUsers -> TypingEvent(channelId = mutableState.channelId, users = sortedUsers) }
-
-        mutableState.updateTypingEvents(eventsMap = typingEventsCopy, typingEvent = typingEvent)
-        globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
     /**
