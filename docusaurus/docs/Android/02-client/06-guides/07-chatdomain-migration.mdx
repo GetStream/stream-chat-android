@@ -99,7 +99,7 @@ The snippet below shows you how to request channels and observe the state:
 ```kotlin
 // 1. Get the first 30 channels to which thierry belongs
 val filter = Filters.`in`("members", "thierry")
-val sort = QuerySort.desc<Channel>("last_updated")
+val sort = QuerySortByField.descByName<Channel>("lastUpdated")
 val request = QueryChannelsRequest(
     filter = filter,
     querySort = sort,
@@ -132,7 +132,11 @@ ChatDomain.instance().watchChannel(cid = "messaging:sampleId", messageLimit = 30
 }
 
 // New approach - returns the StateFlow<ChannelState?> object and performs watchChannel request
-val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
+    cid = "messaging:sampleId",
+    messageLimit = 30,
+    coroutineScope = scope,
+)
 ```
 
 You can read more in the [Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/) documentation.
