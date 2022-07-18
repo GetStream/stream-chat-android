@@ -162,7 +162,6 @@ import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
@@ -231,14 +230,14 @@ internal constructor(
     private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
-        eventsObservable.subscribe { event ->
+        eventsObservable.subscribeSuspend { event ->
             when (event) {
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        runBlocking(context = scope.coroutineContext) { lifecycleObserver.observe() }
+                        lifecycleObserver.observe()
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
