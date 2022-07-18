@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -371,35 +370,6 @@ class Messages(
                 }
             }
         }
-
-        fun searchMessagesLimitAndNextPagination() {
-            val channelFilter = Filters.`in`("members", listOf("john"))
-            val messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious")
-
-            // First 10 results sorted by relevance in descending order
-            val page1: SearchMessagesResult = client.searchMessages(
-                channelFilter = channelFilter,
-                messageFilter = messageFilter,
-                limit = 10,
-                sort = QuerySortByField.descByName("relevance")
-            ).execute().data()
-
-            // Next 10 results with the same sort order embedded in the next value
-            val page2: SearchMessagesResult = client.searchMessages(
-                channelFilter = channelFilter,
-                messageFilter = messageFilter,
-                limit = 10,
-                next = page1.previous
-            ).execute().data()
-
-            // The previous 10 results
-            val page1Again: SearchMessagesResult = client.searchMessages(
-                channelFilter = channelFilter,
-                messageFilter = messageFilter,
-                limit = 10,
-                next = page2.previous
-            ).execute().data()
-        }
     }
 
     /**
@@ -447,7 +417,7 @@ class Messages(
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
             channelClient.getPinnedMessages(
                 limit = 10,
-                sort = QuerySortByField.descByName("pinned_at"),
+                sort = QuerySortByField.descByName("pinnedAt"),
                 pagination = PinnedMessagesPagination.BeforeDate(
                     date = Date(),
                     inclusive = false,
@@ -465,7 +435,7 @@ class Messages(
             // List the next page of pinned messages
             channelClient.getPinnedMessages(
                 limit = 10,
-                sort = QuerySortByField.descByName("pinned_at"),
+                sort = QuerySortByField.descByName("pinnedAt"),
                 pagination = PinnedMessagesPagination.BeforeDate(
                     date = nextDate,
                     inclusive = false,

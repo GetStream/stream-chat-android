@@ -78,6 +78,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          *
          * @param fieldName Field name.
          */
+        @JvmStatic
         public fun <R : ComparableFieldProvider> ascByName(
             fieldName: String
         ): QuerySortByField<R> = QuerySortByField<R>().asc(fieldName)
@@ -87,6 +88,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          *
          * @param fieldName Field name.
          */
+        @JvmStatic
         public fun <R : ComparableFieldProvider> descByName(
             fieldName: String
         ): QuerySortByField<R> = QuerySortByField<R>().desc(fieldName)
@@ -96,6 +98,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          *
          * @param fieldName Field name.
          */
+        @JvmStatic
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.ascByName(
             fieldName: String
         ): QuerySortByField<R> = asc(fieldName)
@@ -105,6 +108,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          *
          * @param fieldName Field name.
          */
+        @JvmStatic
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.descByName(
             fieldName: String
         ): QuerySortByField<R> = desc(fieldName)

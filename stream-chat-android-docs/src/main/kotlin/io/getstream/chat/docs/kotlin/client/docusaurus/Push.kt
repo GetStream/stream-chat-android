@@ -2,16 +2,30 @@
 
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.huawei.hms.push.HmsMessageService
+import com.xiaomi.mipush.sdk.MiPushCommandMessage
+import com.xiaomi.mipush.sdk.MiPushMessage
+import com.xiaomi.mipush.sdk.PushMessageReceiver
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
+import io.getstream.chat.android.pushprovider.huawei.HuaweiMessagingDelegate
+import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
+import io.getstream.chat.android.pushprovider.xiaomi.XiaomiMessagingDelegate
+import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/">Push Notifications</a>
@@ -46,9 +60,9 @@ class Push {
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
-                messageId: String,
-                channelType: String,
-                channelId: String,
+                    messageId: String,
+                    channelType: String,
+                    channelId: String,
                 ->
                 // Return the intent you want to be triggered when the notification is clicked
                 val intent = Intent()
@@ -59,6 +73,58 @@ class Push {
         ChatClient.Builder("api-key", context)
             .notifications(notificationConfig, notificationHandler)
             .build()
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customize-notification-style">Customizing Notification Style</a>
+     */
+    fun customizeNotificationStyle(context: Context, notificationConfig: NotificationConfig) {
+        val notificationChannelId = ""
+        val notificationId = 1
+
+        class MyNotificationHandler(private val context: Context) : NotificationHandler {
+            private val notificationManager: NotificationManager by lazy {
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            }
+
+            override fun showNotification(channel: Channel, message: Message) {
+                val notification = NotificationCompat.Builder(context, notificationChannelId)
+                    .build()
+                notificationManager.notify(notificationId, notification)
+            }
+
+            override fun dismissChannelNotifications(channelType: String, channelId: String) {
+                // Dismiss all notification related with this channel
+            }
+
+            override fun dismissAllNotifications() {
+                // Dismiss all notifications
+            }
+        }
+
+        val notificationHandler = MyNotificationHandler(context)
+
+        ChatClient.Builder("api-key", context)
+            .notifications(notificationConfig, notificationHandler)
+            .build()
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#dismissing-notifications">Dismissing Notifications</a>
+     */
+    fun dismissingNotifications() {
+        ChatClient.dismissChannelNotifications("messaging", "general")
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#multi-bundle">Multi Bundle</a>
+     */
+    fun multiBundle() {
+        Device(
+            token = "token-generated-by-provider",
+            pushProvider = PushProvider.FIREBASE, // your push provider
+            providerName = "providerName",
+        )
     }
 
     /**
@@ -98,6 +164,106 @@ class Push {
                         // RemoteMessage was from Stream and it is already processed
                     } else {
                         // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+                    }
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei/#huawei-push-kit">Huawei Push Kit</a>
+     */
+    inner class Huawei {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei/#receiving-notifications-in-the-client">Receiving Notifications in the Client</a>
+         */
+        fun configureHuaweiNotifications(context: Context) {
+            val notificationConfig = NotificationConfig(
+                pushDeviceGenerators = listOf(
+                    HuaweiPushDeviceGenerator(
+                        context = context,
+                        appId = "YOUR HUAWEI APP ID"
+                    )
+                )
+            )
+            ChatClient.Builder("apiKey", context)
+                .notifications(notificationConfig)
+                .build()
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service">Using a Custom Service</a>
+         */
+        inner class CustomHuaweiMessagingService : HmsMessageService() {
+
+            override fun onNewToken(token: String) {
+                // Update device's token on Stream backend
+                try {
+                    HuaweiMessagingDelegate.registerHuaweiToken(token)
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+
+            override fun onMessageReceived(message: com.huawei.hms.push.RemoteMessage) {
+                try {
+                    if (HuaweiMessagingDelegate.handleRemoteMessage(message)) {
+                        // RemoteMessage was from Stream and it is already processed
+                    } else {
+                        // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+                    }
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi/#xiaomi-mi-push">Xiaomi Mi Push</a>
+     */
+    inner class Xiaomi {
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi/#receiving-notifications-in-the-client">Receiving Notifications in the Client</a>
+         */
+        fun configureXiaomiNotifications(context: Context) {
+            val notificationConfig = NotificationConfig(
+                pushDeviceGenerators = listOf(
+                    XiaomiPushDeviceGenerator(
+                        context = context,
+                        appId = "YOUR XIAOMI APP ID",
+                        appKey = "YOUR XIAOMI APP KEY",
+                    )
+                )
+            )
+            ChatClient.Builder("apiKey", context)
+                .notifications(notificationConfig)
+                .build()
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/xiaomi/#using-a-custom-pushmessagereceiver">Using a Custom PushMessageReceiver</a>
+         */
+        inner class CustomPushMessageReceiver : PushMessageReceiver() {
+
+            override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
+                // Update device's token on Stream backend
+                try {
+                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+
+            override fun onReceivePassThroughMessage(context: Context, miPushMessage: MiPushMessage) {
+                try {
+                    if (XiaomiMessagingDelegate.handleMiPushMessage(miPushMessage)) {
+                        // MiPushMessage was from Stream and it is already processed
+                    } else {
+                        // MiPushMessage wasn't sent from Stream and it needs to be handled by you
                     }
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized

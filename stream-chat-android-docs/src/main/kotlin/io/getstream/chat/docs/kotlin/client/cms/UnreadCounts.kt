@@ -1,12 +1,15 @@
 package io.getstream.chat.docs.kotlin.client.cms
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.extensions.countUnreadMentionsForUser
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
 
 class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
@@ -59,6 +62,82 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
                         val unreadChannels = event.unreadChannels
                         val totalUnreadCount = event.totalUnreadCount
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=kotlin">Unread Channels</a>
+     */
+    inner class UnreadChannels {
+
+        fun unreadChannels() {
+            // Get channel
+            val queryChannelRequest = QueryChannelRequest().withState()
+
+            client.queryChannel(
+                channelType = "channel-type",
+                channelId = "channel-id",
+                request = queryChannelRequest,
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    // readState is the list of read states for each user on the channel
+                    val readState: List<ChannelUserRead> = result.data().read
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
+        fun unreadMessagesPerChannel() {
+            // Get channel
+            val queryChannelRequest = QueryChannelRequest().withState()
+
+            client.queryChannel(
+                channelType = "channel-type",
+                channelId = "channel-id",
+                request = queryChannelRequest,
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    // Unread count for current user
+                    val unreadCount = result.data().unreadCount
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
+        fun unreadMentions() {
+            // Get channel
+            val queryChannelRequest = QueryChannelRequest().withState()
+            val currentUser = client.getCurrentUser()
+            if (currentUser == null) {
+                // Handle user not connected state
+                return
+            }
+
+            client.queryChannel(
+                channelType = "channel-type",
+                channelId = "channel-id",
+                request = queryChannelRequest,
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    // Unread mentions
+                    val channel = result.data()
+                    val unreadCount = channel.countUnreadMentionsForUser(currentUser)
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
+        fun markAllAsRead() {
+            client.markAllRead().enqueue { result ->
+                if (result.isSuccess) {
+                    //Handle success
+                } else {
+                    //Handle failure
                 }
             }
         }

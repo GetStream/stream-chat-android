@@ -61,7 +61,7 @@ val notificationConfig = NotificationConfig(
     )
 )
 ChatClient.Builder("apiKey", context)
-    .notifications(notificationsConfig)
+    .notifications(notificationConfig)
     .build()
 ```
 
@@ -96,7 +96,7 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
             } else {
                 // MiPushMessage wasn't sent from Stream and it needs to be handled by you
             }
-        } catch (IllegalStateException exception) {
+        } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
     }
