@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -240,18 +239,6 @@ internal class ChannelStateLogicTest {
 
         verify(mutableState, times(0)).updateTypingEvents(any(), any())
         verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
-    }
-
-    @Test
-    fun `given a non scroll messages come while inside search, messages should not be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val nonFilteringRequest = QueryChannelRequest()
-
-        channelStateLogicImpl.propagateChannelQuery(channel, nonFilteringRequest)
-        verify(mutableState, never()).rawMessages = any()
     }
 
     @Test
