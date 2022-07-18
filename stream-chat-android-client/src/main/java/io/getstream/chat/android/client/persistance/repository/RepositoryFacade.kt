@@ -162,8 +162,6 @@ public class RepositoryFacade private constructor(
     @InternalStreamChatApi
     public companion object {
 
-        private var instance: RepositoryFacade? = null
-
         /**
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
          * used mainly for tests or internally by other constructor methods.
@@ -200,17 +198,7 @@ public class RepositoryFacade private constructor(
                 attachmentRepository = factory.createAttachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
-            ).also {
-                instance = it
-            }
-        }
-
-        /**
-         * Gets the current Singleton of RepositoryFacade. If the initialization is not done yet, it throws exception.
-         */
-        @Throws(IllegalArgumentException::class)
-        internal fun get(): RepositoryFacade = requireNotNull(instance) {
-            "Offline plugin must be configured in ChatClient to use RepositoryFacade."
+            )
         }
     }
 }
