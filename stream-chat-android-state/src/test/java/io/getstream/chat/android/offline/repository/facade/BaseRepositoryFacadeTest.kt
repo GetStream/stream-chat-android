@@ -68,10 +68,6 @@ internal open class BaseRepositoryFacadeTest {
         attachmentRepository = mock()
 
         val repositoryFactory = object : RepositoryFactory {
-            override fun <T : Any> get(classz: Class<T>): T {
-                TODO("Not yet implemented")
-            }
-
             override fun createUserRepository(): UserRepository = users
             override fun createChannelConfigRepository(): ChannelConfigRepository = configs
             override fun createChannelRepository(
