@@ -247,7 +247,7 @@ internal class ChannelStateLogicImpl(
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message) {
-        if (!mutableState.insideSearch.value) {
+        if (mutableState.rawMessages.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
         }
     }
