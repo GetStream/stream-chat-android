@@ -41,6 +41,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
@@ -183,6 +185,7 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
  * @param messagesState The state of messages, current message list, thread, user and more.
  * @param lazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  */
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessagesState,
@@ -195,7 +198,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-    val offset = messagesState.focusedMessageOffset.collectAsState()
+    val offset = messagesState.focusedMessageOffset.collectAsStateWithLifecycle()
 
     LaunchedEffect(
         newMessageState,

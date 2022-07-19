@@ -19,7 +19,7 @@ If you're looking to build a custom UI, you can add the `SelectedChannelMenu` co
 @Composable
 fun MyCustomUi() {
     // Data for the component
-    val user by listViewModel.user.collectAsState()
+    val user by listViewModel.user.collectAsStateWithLifecycle()
     val selectedChannelState by listViewModel.selectedChannel
     val currentlySelectedChannel = selectedChannelState
 

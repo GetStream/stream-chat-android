@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
@@ -172,7 +173,7 @@ public fun MessageComposer(
         )
     },
 ) {
-    val messageComposerState by viewModel.messageComposerState.collectAsState()
+    val messageComposerState by viewModel.messageComposerState.collectAsStateWithLifecycle()
 
     MessageComposer(
         modifier = modifier,

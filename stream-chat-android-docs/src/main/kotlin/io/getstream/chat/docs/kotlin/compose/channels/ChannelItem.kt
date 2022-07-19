@@ -10,10 +10,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Filters
@@ -44,11 +45,12 @@ private object ChannelItemUsageSnippet {
 
         val listViewModel: ChannelListViewModel by viewModels { factory }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
-                val user by listViewModel.user.collectAsState() // Fetch user
+                val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
                 ChatTheme {
                     ChannelList(
@@ -86,11 +88,12 @@ private object ChannelItemHandlingActionsSnippet {
 
         val listViewModel: ChannelListViewModel by viewModels { factory }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
-                val user by listViewModel.user.collectAsState() // Fetch user
+                val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
                 ChatTheme {
                     ChannelList(
@@ -132,11 +135,12 @@ private object ChannelItemCustomizationSnippet {
 
         val listViewModel: ChannelListViewModel by viewModels { factory }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
-                val user by listViewModel.user.collectAsState() // Fetch user
+                val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
                 ChatTheme {
                     ChannelList(

@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -42,14 +44,15 @@ private object MessageListHeaderUsageSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
                 ChatTheme {
                     val channel = listViewModel.channel
-                    val currentUser by listViewModel.user.collectAsState()
-                    val connectionState by listViewModel.connectionState.collectAsState()
+                    val currentUser by listViewModel.user.collectAsStateWithLifecycle()
+                    val connectionState by listViewModel.connectionState.collectAsStateWithLifecycle()
                     val messageMode = listViewModel.messageMode
 
                     Column(Modifier.fillMaxSize()) {
@@ -86,13 +89,14 @@ private object MessageListHeaderHandlingActionsSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
                 ChatTheme {
                     val channel = listViewModel.channel
-                    val currentUser by listViewModel.user.collectAsState()
+                    val currentUser by listViewModel.user.collectAsStateWithLifecycle()
 
                     MessageListHeader(
                         channel = channel,
@@ -124,13 +128,14 @@ private object MessageListHeaderCustomizationSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
                 ChatTheme {
                     val channel = listViewModel.channel
-                    val currentUser by listViewModel.user.collectAsState()
+                    val currentUser by listViewModel.user.collectAsStateWithLifecycle()
 
                     MessageListHeader(
                         channel = channel,

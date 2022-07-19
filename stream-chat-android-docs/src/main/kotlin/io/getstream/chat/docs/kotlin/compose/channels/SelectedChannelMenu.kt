@@ -18,6 +18,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Filters
@@ -56,10 +58,11 @@ private object SelectedChannelMenuUsageSnippet {
             }
         }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         @Composable
         fun MyCustomUi() {
             // Data for the component
-            val user by listViewModel.user.collectAsState()
+            val user by listViewModel.user.collectAsStateWithLifecycle()
             val selectedChannelState by listViewModel.selectedChannel
             val currentlySelectedChannel = selectedChannelState
 
@@ -116,10 +119,11 @@ private object SelectedChannelMenuHandlingActionsSnippet {
             }
         }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         @Composable
         fun MyCustomUi() {
             // Data for the component
-            val user by listViewModel.user.collectAsState()
+            val user by listViewModel.user.collectAsStateWithLifecycle()
             val selectedChannelState by listViewModel.selectedChannel
             val currentlySelectedChannel = selectedChannelState
 
@@ -182,10 +186,11 @@ private object SelectedChannelMenuCustomizationSnippet {
             }
         }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         @Composable
         fun MyCustomUi() {
             // Data for the component
-            val user by listViewModel.user.collectAsState()
+            val user by listViewModel.user.collectAsStateWithLifecycle()
             val selectedChannelState by listViewModel.selectedChannel
             val currentlySelectedChannel = selectedChannelState
 

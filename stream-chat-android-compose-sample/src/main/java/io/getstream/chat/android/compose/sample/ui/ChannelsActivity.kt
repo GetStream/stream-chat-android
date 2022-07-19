@@ -44,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
@@ -111,9 +113,10 @@ class ChannelsActivity : BaseConnectedActivity() {
      * An example of a screen UI that's much more simple than the ChannelsScreen component, that features a custom
      * ChannelList item.
      */
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatClient.instance().globalState.user.collectAsState()
+        val user by ChatClient.instance().globalState.user.collectAsStateWithLifecycle()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -172,13 +175,14 @@ class ChannelsActivity : BaseConnectedActivity() {
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
      */
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     @Composable
     private fun MyCustomUi() {
         var query by remember { mutableStateOf("") }
 
-        val user by listViewModel.user.collectAsState()
+        val user by listViewModel.user.collectAsStateWithLifecycle()
         val delegatedSelectedChannel by listViewModel.selectedChannel
-        val connectionState by listViewModel.connectionState.collectAsState()
+        val connectionState by listViewModel.connectionState.collectAsStateWithLifecycle()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column {

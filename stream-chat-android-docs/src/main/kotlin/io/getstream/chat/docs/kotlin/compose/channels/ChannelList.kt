@@ -26,6 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
@@ -187,9 +189,10 @@ private object ChannelListCustomizationSnippet {
             }
         }
 
+        @OptIn(ExperimentalLifecycleComposeApi::class)
         @Composable
         fun CustomChannelListItem() {
-            val user by listViewModel.user.collectAsState() // Fetch user
+            val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
             ChannelList(
                 // Set up state

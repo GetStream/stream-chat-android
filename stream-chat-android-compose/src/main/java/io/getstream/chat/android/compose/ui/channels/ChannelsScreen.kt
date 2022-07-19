@@ -42,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -83,7 +85,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
  */
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 @Suppress("LongMethod")
 public fun ChannelsScreen(
@@ -114,8 +116,8 @@ public fun ChannelsScreen(
     )
 
     val selectedChannel by listViewModel.selectedChannel
-    val user by listViewModel.user.collectAsState()
-    val connectionState by listViewModel.connectionState.collectAsState()
+    val user by listViewModel.user.collectAsStateWithLifecycle()
+    val connectionState by listViewModel.connectionState.collectAsStateWithLifecycle()
 
     BackHandler(enabled = true) {
         if (selectedChannel != null) {

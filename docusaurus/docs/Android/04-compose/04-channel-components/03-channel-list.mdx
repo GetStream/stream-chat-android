@@ -191,7 +191,7 @@ Here's a simple example for building your own channel item, by overriding the `i
 ```kotlin
 @Composable
 fun CustomChannelListItem() {
-    val user by listViewModel.user.collectAsState() // Fetch user
+    val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
     ChannelList(
         ..., // Set up state

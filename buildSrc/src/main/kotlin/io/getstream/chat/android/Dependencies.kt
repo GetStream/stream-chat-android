@@ -77,6 +77,7 @@ object Versions {
     internal const val TIMBER = "5.0.1"
     internal const val TURBINE = "0.7.0"
     internal const val WORK = "2.7.1"
+    internal const val LIFECYCLE_VERSION = "2.6.0-alpha01"
 }
 
 object Dependencies {
@@ -196,15 +197,14 @@ object Dependencies {
     const val shot = "com.karumi:shot:${Versions.SHOT}"
     const val spotlessGradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:${Versions.SPOTLESS}"
     const val stfalconImageViewer = "com.github.stfalcon-studio:StfalconImageViewer:${Versions.STFALCON_IMAGE_VIEWER}"
-    const val testParameterInjector =
-        "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
+    const val testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:${Versions.THREETENABP}"
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
-
+    const val runtimeCompose = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.LIFECYCLE_VERSION}"
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
 

@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -148,8 +149,8 @@ public fun MessagesScreen(
     val messageMode = listViewModel.messageMode
     val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
-    val connectionState by listViewModel.connectionState.collectAsState()
-    val user by listViewModel.user.collectAsState()
+    val connectionState by listViewModel.connectionState.collectAsStateWithLifecycle()
+    val user by listViewModel.user.collectAsStateWithLifecycle()
 
     val backAction = {
         val isInThread = listViewModel.isInThread

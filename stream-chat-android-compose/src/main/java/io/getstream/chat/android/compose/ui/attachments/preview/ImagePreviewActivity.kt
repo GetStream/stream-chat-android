@@ -65,7 +65,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,6 +86,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
 import com.getstream.sdk.chat.StreamFileUtil
@@ -689,9 +690,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param message The message that holds all the images.
      * @return [List] of options the user can choose from, in the form of [ImagePreviewOption].
      */
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     @Composable
     private fun defaultImageOptions(message: Message): List<ImagePreviewOption> {
-        val user by imagePreviewViewModel.user.collectAsState()
+        val user by imagePreviewViewModel.user.collectAsStateWithLifecycle()
         val options = mutableListOf(
             ImagePreviewOption(
                 title = stringResource(id = R.string.stream_compose_image_preview_reply),

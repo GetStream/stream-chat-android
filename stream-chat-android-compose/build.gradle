@@ -64,7 +64,7 @@ dependencies {
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
-
+    implementation Dependencies.runtimeCompose
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions

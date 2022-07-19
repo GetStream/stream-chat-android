@@ -19,7 +19,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setContent {
-        val user by listViewModel.user.collectAsState() // Fetch user
+        val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
         ChatTheme {
             ChannelList(
@@ -121,7 +121,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     
     setContent {
-        val user by listViewModel.user.collectAsState() // Fetch user
+        val user by listViewModel.user.collectAsStateWithLifecycle() // Fetch user
 
         ChatTheme {
             ChannelList(

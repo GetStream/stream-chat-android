@@ -33,6 +33,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
@@ -74,6 +76,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  * [onChannelLongClick].
  * @param divider Composable that allows the user to define an item divider.
  */
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 public fun ChannelList(
     modifier: Modifier = Modifier,
@@ -101,7 +104,7 @@ public fun ChannelList(
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
-        val user by viewModel.user.collectAsState()
+        val user by viewModel.user.collectAsStateWithLifecycle()
 
         DefaultChannelItem(
             channelItem = channelItem,
@@ -112,7 +115,7 @@ public fun ChannelList(
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
-    val user by viewModel.user.collectAsState()
+    val user by viewModel.user.collectAsStateWithLifecycle()
 
     ChannelList(
         modifier = modifier,
