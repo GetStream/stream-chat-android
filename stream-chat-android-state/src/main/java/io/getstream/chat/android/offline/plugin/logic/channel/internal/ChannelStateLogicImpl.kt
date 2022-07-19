@@ -421,7 +421,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (scrollUpdate || shouldRefreshMessages) {
+        if (scrollUpdate) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 

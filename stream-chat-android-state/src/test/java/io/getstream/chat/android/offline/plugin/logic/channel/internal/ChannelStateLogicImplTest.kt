@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
@@ -29,7 +27,6 @@ import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.randomCID
@@ -37,7 +34,6 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -314,18 +310,5 @@ internal class ChannelStateLogicImplTest {
         )
 
         _messages `should be equal to` mapOf(message2.id to message2)
-    }
-
-    @Test
-    fun `given a scroll messages come while inside search, messages should be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val filteringRequest = QueryChannelPaginationRequest(1)
-            .withMessages(Pagination.GREATER_THAN, randomString(), 1)
-
-        channelStateLogicImpl.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).rawMessages = any()
     }
 }
