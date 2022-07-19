@@ -170,7 +170,6 @@ public class RepositoryFacade private constructor(
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
-        @VisibleForTesting
         @InternalStreamChatApi
         public fun create(
             factory: RepositoryFactory,
