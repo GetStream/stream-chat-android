@@ -133,6 +133,7 @@ public class StreamStatePluginFactory(
     }
 
     @InternalStreamChatApi
+    @Suppress("LongMethod")
     public fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
@@ -264,6 +265,7 @@ public class StreamStatePluginFactory(
         )
     }
 
+    @Suppress("LongParameterList")
     private fun createEventHandler(
         useSequentialEventHandler: Boolean,
         scope: CoroutineScope,

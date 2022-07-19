@@ -172,6 +172,7 @@ internal class LogicRegistry internal constructor(
          *
          * @throws IllegalStateException if instance is not null.
          */
+        @Suppress("LongParameterList")
         internal fun create(
             stateRegistry: StateRegistry,
             globalState: MutableGlobalState,
