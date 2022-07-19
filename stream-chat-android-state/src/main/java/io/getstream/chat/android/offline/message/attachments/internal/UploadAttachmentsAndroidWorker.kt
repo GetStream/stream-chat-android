@@ -27,7 +27,6 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import java.lang.IllegalStateException
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -42,7 +41,6 @@ internal class UploadAttachmentsAndroidWorker(
 
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
-            ?: throw IllegalStateException("RepositoryFacade is not initialized on ChatClient")
 
         return UploadAttachmentsWorker(
             channelType = channelType,

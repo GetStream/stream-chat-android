@@ -35,7 +35,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.Result
@@ -82,7 +82,6 @@ internal class ChatClientTest {
     val user = Mother.randomUser { id = userId }
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
-    val repositoryFacade: RepositoryFacade = mock()
 
     @BeforeEach
     fun setUp() {
@@ -120,7 +119,7 @@ internal class ChatClientTest {
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = pluginFactories,
-            repositoryFacadeBuilder = { repositoryFacade },
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
             connectUser(user, token).enqueue()
         }
