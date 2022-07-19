@@ -78,7 +78,7 @@ internal class ChannelStateLogicImpl(
             channelId = mutableState.channelId,
         )
 
-        typingEventPruner.onTypingEventsUpdated { rawTypingEvents, typingEvent ->
+        typingEventPruner.setOnTypingEventsUpdatedListener { rawTypingEvents, typingEvent ->
             mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
             globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
         }
