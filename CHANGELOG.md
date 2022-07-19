@@ -21,7 +21,6 @@
 - Added a way to convert `Flow` into `LiveData` for Java users.
   You can now use `FlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
 - Base state of the SDK can be check using `io.getstream.chat.android.client.setup.state.ClientState` interface. Use this interface to receive the state of the SDK as StateFlows. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
-- Added `isFilteringMessages` check on request. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 -. `Call` interface provides an `await()` suspend function implemented on every subclass and is not needed to use the extension function anymore. [#3807](https://github.com/GetStream/stream-chat-android/pull/3807)
@@ -39,10 +38,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
-- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ❌ Removed
 
@@ -59,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 - The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 - Fixed potential crashes when showing dialogs after process recreation. [#3857](https://github.com/GetStream/stream-chat-android/pull/3857)
 - Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
@@ -68,7 +66,6 @@
 
 ### ✅ Added
 - Added the ability to align system messages via a `MessageListView` attribute called `streamUiSystemMessageAlignment`. [#3840](https://github.com/GetStream/stream-chat-android/pull/3840)
-- Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 - Added the `MessageListViewModel::setMessagePositionHandler` method to customize message position within a group. [#3882](https://github.com/GetStream/stream-chat-android/pull/3882)
 - Added documentation for [MessageComposerView](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer). [#3845](https://github.com/GetStream/stream-chat-android/pull/3845)
 - Added a new version of the [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/) guide that uses the new `MessageComposerView`. [#3877](https://github.com/GetStream/stream-chat-android/pull/3877)
@@ -79,14 +76,12 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages arent loaded. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 - Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
 
 ### ⬆️ Improved
 - Improved recomposition in `MessagesScreen` by deferring state reads to the latest possible point. [#3667](https://github.com/GetStream/stream-chat-android/pull/3667)
 
 ### ✅ Added
-- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
 
 ### ⚠️ Changed
 - Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
