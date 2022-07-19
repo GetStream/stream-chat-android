@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
@@ -48,6 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param modifier Modifier for styling.
  * @param maxLines The number of lines that are allowed in the input.
+ * @param keyboardCapitalization The [KeyboardCapitalization] option to be applied to the input.
  * @param label Composable that represents the label UI, when there's no input.
  * @param innerLeadingContent Composable that represents the persistent inner leading content.
  * @param innerTrailingContent Composable that represents the persistent inner trailing content.
@@ -59,6 +61,7 @@ public fun MessageInput(
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     maxLines: Int = DefaultMessageInputMaxLines,
+    keyboardCapitalization: KeyboardCapitalization = KeyboardCapitalization.Sentences,
     label: @Composable (MessageComposerState) -> Unit = {
         DefaultComposerLabel(ownCapabilities = messageComposerState.ownCapabilities)
     },
@@ -75,6 +78,7 @@ public fun MessageInput(
         onValueChange = onValueChange,
         enabled = canSendMessage,
         innerPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        keyboardCapitalization = keyboardCapitalization,
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
