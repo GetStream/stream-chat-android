@@ -56,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 - The reply option on the gallery screen and moderation options now work with `MessageComposerView`. [#3864](https://github.com/GetStream/stream-chat-android/pull/3864)
 - Fixed potential crashes when showing dialogs after process recreation. [#3857](https://github.com/GetStream/stream-chat-android/pull/3857)
 - Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
