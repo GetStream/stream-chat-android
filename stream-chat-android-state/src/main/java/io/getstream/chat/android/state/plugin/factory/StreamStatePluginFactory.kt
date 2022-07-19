@@ -136,7 +136,7 @@ public class StreamStatePluginFactory(
     public fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory
+        repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
         val globalState = GlobalMutableState.getOrCreate().apply {
@@ -159,7 +159,14 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, globalState.user, repos, repos.observeLatestUsers()
         )
-        val logic = LogicRegistry.create(stateRegistry, globalState, config.userPresence, repos, chatClient)
+        val logic = LogicRegistry.create(
+            stateRegistry = stateRegistry,
+            globalState = globalState,
+            userPresence = config.userPresence,
+            repos = repos,
+            client = chatClient,
+            coroutineScope = scope
+        )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
@@ -265,7 +272,7 @@ public class StreamStatePluginFactory(
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
         repos: RepositoryFacade,
-        syncManager: SyncManager
+        syncManager: SyncManager,
     ): EventHandler {
         return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(

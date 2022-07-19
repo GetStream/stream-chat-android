@@ -37,6 +37,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,6 +53,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
+    private val coroutineScope: CoroutineScope,
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -80,7 +82,12 @@ internal class LogicRegistry internal constructor(
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
             val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
-            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, SearchLogic(mutableState))
+            val stateLogic = ChannelStateLogicImpl(
+                mutableState = mutableState,
+                globalMutableState = globalState,
+                searchLogic = SearchLogic(mutableState),
+                coroutineScope = coroutineScope
+            )
 
             ChannelLogic(
                 repos = repos,
@@ -159,6 +166,7 @@ internal class LogicRegistry internal constructor(
          * @param userPresence True if userPresence should be enabled, false otherwise.
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
+         * @param coroutineScope The scope used for running jobs.
          *
          * @return Instance of [LogicRegistry].
          *
@@ -170,6 +178,7 @@ internal class LogicRegistry internal constructor(
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
+            coroutineScope: CoroutineScope,
         ): LogicRegistry {
             if (instance != null) {
                 logger.logE(
@@ -177,7 +186,14 @@ internal class LogicRegistry internal constructor(
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
                 )
             }
-            return LogicRegistry(stateRegistry, globalState, userPresence, repos, client).also { logicRegistry ->
+            return LogicRegistry(
+                stateRegistry = stateRegistry,
+                globalState = globalState,
+                userPresence = userPresence,
+                repos = repos,
+                client = client,
+                coroutineScope = coroutineScope
+            ).also { logicRegistry ->
                 instance = logicRegistry
             }
         }

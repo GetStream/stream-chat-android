@@ -54,13 +54,21 @@ internal class TypingEventPruner(val coroutineScope: CoroutineScope) {
     }
 
     private fun addTypingEvent(userId: String, typingStartEvent: TypingStartEvent) {
+        // Create a new self stopping event
         val selfStoppingTypingEvent = SelfStoppingTypingEvent(
             coroutineScope = coroutineScope,
             typingStartEvent = typingStartEvent,
             userId = userId,
-            removeUser = { removeTypingEvent(it) }
+            removeUser = {
+                removeTypingEvent(it)
+            }
         )
 
+        // Cancel the self stopping event you are replacing if one exists
+        typingEvents.getOrDefault(userId, null)?.cancelJob()
+
+        // Replace the old self stopping event and call
+        // the updated typing events listener
         typingEvents[userId] = selfStoppingTypingEvent
         onUpdated(getRawTyping(), getTypingEvent())
     }

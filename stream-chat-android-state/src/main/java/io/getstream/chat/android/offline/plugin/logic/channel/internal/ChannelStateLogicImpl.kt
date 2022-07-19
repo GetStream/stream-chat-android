@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -58,11 +57,23 @@ internal class ChannelStateLogicImpl(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    coroutineScope: CoroutineScope,
 ) : ChannelStateLogic {
 
-    private val typingEventPruner = TypingEventPruner(coroutineScope = CoroutineScope(DispatcherProvider.IO))
+    /**
+     * Used to prune stale active typing events when the sender
+     * of these events was unable to send a stop typing event.
+     */
+    private val typingEventPruner = TypingEventPruner(coroutineScope = coroutineScope)
 
     init {
+        setupTypingEventsPruner()
+    }
+
+    /**
+     * Initializes the [TypingEventPruner].
+     */
+    private fun setupTypingEventsPruner() {
         typingEventPruner.initialize(
             channelId = mutableState.channelId,
         )
@@ -142,7 +153,7 @@ internal class ChannelStateLogicImpl(
      * @param channel the data of [Channel] to be updated.
      */
     override fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value?.ownCapabilities ?: emptySet()
+        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
         mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
     }
 
@@ -345,7 +356,7 @@ internal class ChannelStateLogicImpl(
      * @param deleteDate The date when the channel was deleted.
      */
     override fun deleteChannel(deleteDate: Date) {
-        mutableState.setChannelData(mutableState.channelData.value?.copy(deletedAt = deleteDate))
+        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deleteDate))
     }
 
     /**
