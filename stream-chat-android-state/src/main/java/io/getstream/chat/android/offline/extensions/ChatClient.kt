@@ -266,7 +266,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
-                repositoryFacade?.deleteChannelMessage(message)
+                repositoryFacade.deleteChannelMessage(message)
 
                 Result.success(true)
             } catch (exception: Exception) {
@@ -317,7 +317,7 @@ public fun ChatClient.loadMessageById(
                 result
             } else {
                 try {
-                    repositoryFacade?.selectMessage(messageId)?.let(::Result)
+                    repositoryFacade.selectMessage(messageId)?.let(::Result)
                         ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
                 } catch (exception: Exception) {
                     Result.error(exception)

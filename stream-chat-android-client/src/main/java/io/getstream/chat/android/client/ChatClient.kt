@@ -196,7 +196,7 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     lifecycle: Lifecycle,
-    private val repositoryFacadeBuilder: (User) -> RepositoryFacade?,
+    private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -212,10 +212,16 @@ internal constructor(
     )
 
     @InternalStreamChatApi
-    public var repositoryFacade: RepositoryFacade? = null
-        get() = field
-            ?: (getCurrentUser() ?: getStoredUser())?.let(repositoryFacadeBuilder)?.also { field = it }
-        private set
+    public val repositoryFacade: RepositoryFacade
+        get() = _repositoryFacade
+            ?: (getCurrentUser() ?: getStoredUser())
+                ?.let {
+                    createRepositoryFacade(createReposotiryFactory(it))
+                        .also { _repositoryFacade = it }
+                }
+            ?: createRepositoryFacade()
+
+    private var _repositoryFacade: RepositoryFacade? = null
 
     /**
      * With clientState allows the user to get the state of the SDK like connection, initialization...
@@ -430,7 +436,7 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
-        repositoryFacade = repositoryFacadeBuilder(user)
+        _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
@@ -438,6 +444,12 @@ internal constructor(
         appSettingsManager.loadAppSettings()
         warmUp()
     }
+
+    private fun createReposotiryFactory(user: User): RepositoryFactory =
+        repositoryFactoryProvider.createRepositoryFactory(user)
+
+    private fun createRepositoryFacade(repositoFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
+        RepositoryFacade.create(repositoFactory, scope)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -1048,12 +1060,12 @@ internal constructor(
                 chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
             }
             if (flushPersistence) {
-                repositoryFacade?.clear()
+                repositoryFacade.clear()
                 userCredentialStorage.clear()
             }
             lifecycleObserver.dispose()
             appSettingsManager.clear()
-            repositoryFacade = null
+            _repositoryFacade = null
             Result.success(Unit)
         }
 
@@ -2672,17 +2684,6 @@ internal constructor(
 
             val appSettingsManager = AppSettingManager(module.api())
 
-            val repositoryFacadeBuilder: (user: User) -> RepositoryFacade = { user: User ->
-                val repositoryFactory =
-                    repositoryFactoryProvider?.createRepositoryFactory(user)
-                        ?: pluginFactories
-                            .filterIsInstance<RepositoryFactory.Provider>()
-                            .firstOrNull()
-                            ?.createRepositoryFactory(user)
-                        ?: NoOpRepositoryFactory
-                RepositoryFacade.create(repositoryFactory, module.networkScope)
-            }
-
             return ChatClient(
                 config,
                 module.api(),
@@ -2699,7 +2700,11 @@ internal constructor(
                 chatSocketExperimental = module.experimentalSocket(),
                 lifecycle = lifecycle,
                 pluginFactories = pluginFactories,
-                repositoryFacadeBuilder = repositoryFacadeBuilder,
+                repositoryFactoryProvider = repositoryFactoryProvider
+                    ?: pluginFactories
+                        .filterIsInstance<RepositoryFactory.Provider>()
+                        .firstOrNull()
+                    ?: NoOpRepositoryFactory.Provider,
             )
         }
 

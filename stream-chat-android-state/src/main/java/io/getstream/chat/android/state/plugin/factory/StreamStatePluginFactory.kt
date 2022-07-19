@@ -64,7 +64,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
@@ -126,7 +125,6 @@ public class StreamStatePluginFactory(
     ): StatePlugin {
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
-            ?: throw IllegalStateException("RepositoryFacade is not initialized on ChatClient")
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
