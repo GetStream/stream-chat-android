@@ -302,6 +302,11 @@ public class StreamStatePluginFactory(
         cachedStatePluginInstance = null
     }
 
+    @Suppress(
+        "Parameter 'scope' is never used",
+        "Parameter 'context' is never used",
+        "Parameter 'user' is never used"
+    )
     private fun createRepositoryFactory(
         scope: CoroutineScope,
         context: Context,
