@@ -3412,7 +3412,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createReactionRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ReactionRepository;
 	public abstract fun createSyncStateRepository ()Lio/getstream/chat/android/client/persistance/repository/SyncStateRepository;
 	public abstract fun createUserRepository ()Lio/getstream/chat/android/client/persistance/repository/UserRepository;
-	public abstract fun get (Ljava/lang/Class;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider {
