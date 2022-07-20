@@ -51,6 +51,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
 
 ### ❌ Removed
 
