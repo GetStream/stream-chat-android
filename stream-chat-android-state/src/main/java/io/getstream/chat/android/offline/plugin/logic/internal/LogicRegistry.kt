@@ -109,7 +109,11 @@ internal class LogicRegistry internal constructor(
                 repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
                     ?: error("There is not such message with messageId = $messageId")
             }
-            ThreadLogic(stateRegistry.thread(messageId).toMutableState(), channel(channelType, channelId))
+            ThreadLogic(
+                repos,
+                stateRegistry.thread(messageId).toMutableState(),
+                channel(channelType, channelId)
+            )
         }
     }
 

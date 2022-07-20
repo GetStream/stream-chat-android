@@ -109,6 +109,19 @@
 
 ### ❌ Removed
 
+# July 20th, 2022 - 5.6.1
+## stream-chat-android-client
+### ⚠️ Changed
+- Functions inside `ThreadQueryListener` have been turned into `suspend` functions. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed a crash when reacting to a message in a thread. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed thread not scrolling to new message. [#3930](https://github.com/GetStream/stream-chat-android/pull/3930)
+
 # July 20th, 2022 - 5.6.0
 ## Common changes for all artifacts
 ### ⚠️ Changed
