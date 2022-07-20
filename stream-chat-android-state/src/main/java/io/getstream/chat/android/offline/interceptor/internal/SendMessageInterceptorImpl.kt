@@ -26,11 +26,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -41,10 +41,11 @@ import java.util.UUID
  * Implementation of [SendMessageInterceptor] that upload attachments, update original message
  * with new attachments and return updated message.
  */
+@Suppress("LongParameterList")
 internal class SendMessageInterceptorImpl(
     private val context: Context,
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
     private val channelRepository: ChannelRepository,
     private val messageRepository: MessageRepository,
     private val attachmentRepository: AttachmentRepository,
@@ -109,7 +110,7 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return if (globalState.isOnline()) {
+        return if (clientState.isOnline) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)

@@ -106,7 +106,8 @@ public class MessageComposerController(
      */
     public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
-        messageLimit = DefaultMessageLimit
+        messageLimit = DefaultMessageLimit,
+        coroutineScope = scope
     ).filterNotNull()
 
     /**

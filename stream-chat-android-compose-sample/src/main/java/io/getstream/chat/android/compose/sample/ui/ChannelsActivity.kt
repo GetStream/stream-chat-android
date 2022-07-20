@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
@@ -62,7 +63,7 @@ import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.offline.extensions.globalState
+import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
 
@@ -95,9 +96,10 @@ class ChannelsActivity : BaseConnectedActivity() {
                     onItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
-                        ChatHelper.disconnectUser()
-
-                        openUserLogin()
+                        listViewModel.viewModelScope.launch {
+                            ChatHelper.disconnectUser()
+                            openUserLogin()
+                        }
                     }
                 )
 
@@ -113,7 +115,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      */
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatClient.instance().globalState.user.collectAsState()
+        val user by ChatClient.instance().clientState.user.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),

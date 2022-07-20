@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.experimental.socket.lifecycle.Connection
 import io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.combine
 import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.HealthMonitor
@@ -36,7 +35,9 @@ import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -55,7 +56,7 @@ internal open class ChatSocket constructor(
     private val lifecycleObservers: List<LifecyclePublisher>,
 ) {
     private var pendingStartEvent: Event.Lifecycle.Started? = null
-    private val logger = ChatLogger.get("ChatSocket")
+    private val logger = StreamLog.getLogger("Chat:Socket")
 
     private var connectLifecyclePublisher = ConnectionLifecyclePublisher()
     private val listeners = mutableSetOf<SocketListener>()
@@ -79,7 +80,7 @@ internal open class ChatSocket constructor(
     init {
         (lifecycleObservers + connectLifecyclePublisher).combine()
             .onEach {
-                logger.logD("Received lifecycle event: $it and current state is: $state")
+                logger.d { "Received lifecycle event: $it and current state is: $state" }
                 stateMachine.sendEvent(it)
             }
             .launchIn(coroutineScope)
@@ -91,7 +92,7 @@ internal open class ChatSocket constructor(
             initialState(State.Disconnected(DisconnectCause.Error(null)))
 
             defaultHandler { state, event ->
-                logger.logE("Cannot handle event $event while being in inappropriate state $state")
+                logger.e { "Cannot handle event $event while being in inappropriate state $state" }
                 state
             }
 
@@ -235,7 +236,7 @@ internal open class ChatSocket constructor(
     }
 
     open fun onSocketError(error: ChatError) {
-        logger.logE(error)
+        logger.e { error.stringify() }
         callListeners { it.onError(error) }
         (error as? ChatNetworkError)?.let(::onChatNetworkError)
     }
@@ -336,7 +337,7 @@ internal open class ChatSocket constructor(
         if (event is Event.WebSocket.OnMessageReceived) {
             val text = event.message
             try {
-                logger.logI(text)
+                logger.i { "[handleEvent] text: $text" }
                 val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
                 val errorData = errorMessage.data()
                 if (errorMessage.isSuccess && errorData.error != null) {
@@ -346,7 +347,7 @@ internal open class ChatSocket constructor(
                     handleChatEvent(text)
                 }
             } catch (t: Throwable) {
-                logger.logE("onMessage", t)
+                logger.e(t) { "[handleEvent] failed: $t" }
                 onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
             }
         } else {

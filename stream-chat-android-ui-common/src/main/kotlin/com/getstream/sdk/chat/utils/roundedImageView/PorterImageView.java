@@ -13,8 +13,8 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.logger.TaggedLogger;
+import io.getstream.logging.StreamLog;
+import io.getstream.logging.TaggedLogger;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -34,7 +34,7 @@ public abstract class PorterImageView extends AppCompatImageView {
     private boolean invalidated = true;
     private boolean square = false;
 
-    private TaggedLogger logger = ChatLogger.Companion.get("PorterImageView");
+    private final TaggedLogger logger = StreamLog.getLogger("Chat:PorterImageView");
 
     public PorterImageView(Context context) {
         super(context);
@@ -132,7 +132,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     canvas.drawBitmap(drawableBitmap, 0.0f, 0.0f, drawablePaint);
                 }
             } catch (Exception e) {
-                logger.logE( "Exception occured while drawing " + getId(), e);
+                logger.e(e, () -> "Exception occurred while drawing " + getId());
             } finally {
                 canvas.restoreToCount(saveCount);
             }

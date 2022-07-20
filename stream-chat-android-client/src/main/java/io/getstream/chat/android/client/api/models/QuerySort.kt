@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByReflection
@@ -30,7 +32,7 @@ import kotlin.reflect.KProperty1
 @Deprecated(
     message = "Use QuerySortByReflection.",
     replaceWith = ReplaceWith("QuerySortByReflection"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 public class QuerySort<T : Any> : QuerySortByReflection<T>() {
 

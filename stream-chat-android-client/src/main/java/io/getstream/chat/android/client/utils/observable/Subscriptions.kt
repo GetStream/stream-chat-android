@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 public interface Disposable {
     public val isDisposed: Boolean
@@ -52,6 +54,30 @@ internal open class SubscriptionImpl(
                 listener!!.onEvent(event)
             } finally {
                 afterEventDelivered()
+            }
+        }
+    }
+}
+
+internal class SuspendSubscription(
+    private val scope: CoroutineScope,
+    private val filter: (ChatEvent) -> Boolean,
+    listener: ChatEventsObservable.ChatEventSuspendListener<ChatEvent>,
+) : EventSubscription {
+    private var listener: ChatEventsObservable.ChatEventSuspendListener<ChatEvent>? = listener
+
+    override var isDisposed: Boolean = false
+
+    override fun dispose() {
+        isDisposed = true
+        listener = null
+    }
+
+    override fun onNext(event: ChatEvent) {
+        check(!isDisposed) { "Subscription already disposed, onNext should not be called on it" }
+        scope.launch {
+            if (filter(event)) {
+                listener?.onEvent(event)
             }
         }
     }

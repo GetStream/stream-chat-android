@@ -26,9 +26,9 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -76,9 +76,10 @@ import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -206,19 +207,19 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.globalState::connectionState
+    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
 
     /**
      * Gives us information about the online state of the device.
      */
     public val isOnline: Flow<Boolean>
-        get() = chatClient.globalState.connectionState.map { it == ConnectionState.CONNECTED }
+        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatClient.globalState.user
+        get() = chatClient.clientState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -231,6 +232,11 @@ public class MessageListViewModel(
      * [NewMessageState] for the screen.
      */
     private var lastLoadedMessage: Message? = null
+
+    /**
+     * Represents the last loaded message in the thread, for comparison when determining the NewMessage
+     */
+    private var lastLoadedThreadMessage: Message? = null
 
     /**
      * Represents the latest message we've seen in the channel.
@@ -248,9 +254,9 @@ public class MessageListViewModel(
     private var scrollToMessage: Message? = null
 
     /**
-     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     * Instance of [TaggedLogger] to log exceptional and warning cases in behavior.
      */
-    private val logger = ChatLogger.get("MessageListViewModel")
+    private val logger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -307,7 +313,7 @@ public class MessageListViewModel(
                             newLastMessage?.id != lastLoadedMessage?.id
 
                         messagesState = if (hasNewMessage) {
-                            val newMessageState = getNewMessageState(newLastMessage)
+                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
 
                             newState.copy(
                                 newMessageState = newMessageState,
@@ -384,8 +390,7 @@ public class MessageListViewModel(
      *
      * @param lastMessage Last message in the list, used for comparison.
      */
-    private fun getNewMessageState(lastMessage: Message?): NewMessageState? {
-        val lastLoadedMessage = lastLoadedMessage
+    private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
         val currentUser = user.value
 
         return if (lastMessage != null && lastLoadedMessage != null && lastMessage.id != lastLoadedMessage.id) {
@@ -505,7 +510,7 @@ public class MessageListViewModel(
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     public fun loadMore() {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -531,7 +536,7 @@ public class MessageListViewModel(
             ).enqueue()
         } else {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
-            logger.logW("Thread state must be not null for offline plugin thread load more!")
+            logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 
@@ -542,7 +547,7 @@ public class MessageListViewModel(
      */
     private fun loadMessage(message: Message) {
         val cid = channelState.value?.cid
-        if (cid == null || chatClient.globalState.isOffline()) return
+        if (cid == null || chatClient.clientState.isOffline) return
 
         chatClient.loadMessageById(cid, message.id).enqueue()
     }
@@ -724,7 +729,14 @@ public class MessageListViewModel(
                     currentUser = user,
                     parentMessageId = threadId
                 )
-            }.collect { newState -> threadMessagesState = newState }
+            }.collect { newState ->
+                val newLastMessage =
+                    (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
+                threadMessagesState = newState.copy(
+                    newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+                )
+                lastLoadedThreadMessage = newLastMessage
+            }
         }
     }
 

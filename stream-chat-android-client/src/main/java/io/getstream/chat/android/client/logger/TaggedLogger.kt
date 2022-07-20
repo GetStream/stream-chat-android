@@ -18,6 +18,17 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
+@Deprecated(
+    message = "Use io.getstream.logging.TaggedLogger instead.",
+    replaceWith = ReplaceWith(
+        expression = "StreamLog.getLogger(tag: String): TaggedLogger",
+        imports = [
+            "io.getstream.logging.StreamLog",
+            "io.getstream.logging.TaggedLogger",
+        ]
+    ),
+    level = DeprecationLevel.WARNING
+)
 public interface TaggedLogger {
     public fun logI(message: String)
 

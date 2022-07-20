@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.sync.internal
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -32,6 +31,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
@@ -50,19 +49,17 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
-private const val MESSAGE_LIMIT = 30
-private const val MEMBER_LIMIT = 30
-private const val INITIAL_CHANNEL_OFFSET = 0
-private const val CHANNEL_LIMIT = 30
 private const val QUERIES_TO_RETRY = 3
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary, when connection
  * is reestabilished or when a health check even happens.
  */
+@Suppress("LongParameterList")
 internal class SyncManager(
     private val chatClient: ChatClient,
     private val globalState: MutableGlobalState,
+    private val clientState: ClientState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -70,7 +67,7 @@ internal class SyncManager(
 ) {
 
     private val entitiesRetryMutex = Mutex()
-    private val logger = StreamLog.getLogger("SyncManager")
+    private val logger = StreamLog.getLogger("Chat:SyncManager")
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
 
@@ -106,8 +103,6 @@ internal class SyncManager(
         globalState.run {
             setTotalUnreadCount(0)
             setChannelUnreadCount(0)
-            setInitialized(false)
-            setConnectionState(ConnectionState.OFFLINE)
             setBanned(false)
             setMutedUsers(emptyList())
         }
@@ -185,7 +180,7 @@ internal class SyncManager(
     private suspend fun connectionRecovered(recoverAll: Boolean = false) {
         logger.d { "[connectionRecovered] recoverAll: $recoverAll" }
         // 0. ensure load is complete
-        val online = globalState.isOnline()
+        val online = clientState.isOnline
 
         // 1. Retry any failed requests first (synchronous)
         logger.v { "[connectionRecovered] online: $online" }
@@ -217,18 +212,8 @@ internal class SyncManager(
 
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
-            val request = QueryChannelsRequest(
-                filter = queryLogic.state().filter,
-                offset = INITIAL_CHANNEL_OFFSET,
-                limit = CHANNEL_LIMIT,
-                querySort = queryLogic.state().sort,
-                messageLimit = MESSAGE_LIMIT,
-                memberLimit = MEMBER_LIMIT,
-            )
-            logger.v { "[updateActiveQueryChannels] request: $request" }
-            chatClient.queryChannelsInternal(request)
-                .await()
-                .also { queryLogic.onQueryChannelsResult(it, request) }
+            logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.state().filter}" }
+            queryLogic.queryFirstPage()
                 .onError {
                     logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
                 }
@@ -236,7 +221,6 @@ internal class SyncManager(
                     logger.v {
                         "[updateActiveQueryChannels] request completed; foundChannels.size: ${foundChannels.size}"
                     }
-                    queryLogic.updateOnlineChannels(foundChannels, true)
                     updatedCids.addAll(foundChannels.map { it.cid })
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }

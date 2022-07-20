@@ -94,7 +94,7 @@ class MyNotificationHandler(private val context: Context) : NotificationHandler 
     }
 
     override fun showNotification(channel: Channel, message: Message) {
-        NotificationCompat.Builder(context, notificationChannelId)
+        val notification = NotificationCompat.Builder(context, notificationChannelId)
             ... // Configure your own notification
             .build()
         notificationManager.notify(notificationId, notification)
@@ -144,4 +144,4 @@ Device(
 )
 ```
 
-If you are using any of the artifacts integration we support, you can configure it by an extra attribute on the constructor of the `PushProviderGenerator` class implementation.
+If you are using any of the artifacts integration we support, you can set them by adding an extra attribute on the constructor of the `PushProviderGenerator` class implementation.

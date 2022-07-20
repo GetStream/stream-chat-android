@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.errors.ChatError
@@ -63,6 +62,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
+        // Listeners should always be called
         verifyNoInteractions(listener)
         result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
@@ -196,7 +196,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            initializationCoordinator.addUserConnectedListener(listener)
+            initializationCoordinator.addUserConnectionRequestListener(listener)
         }
 
         fun givenUserAndToken(user: User, token: String) = apply {

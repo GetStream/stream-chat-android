@@ -20,14 +20,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
+import io.getstream.logging.StreamLog
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
-    private val logger = ChatLogger.get("CustomLoginViewModel")
+    private val logger = StreamLog.getLogger("Chat:CustomLoginViewModel")
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
@@ -61,7 +61,7 @@ class CustomLoginViewModel : ViewModel() {
             .enqueue { result ->
                 if (result.isSuccess) {
                     _state.postValue(State.RedirectToChannels)
-                    logger.logD("User set successfully")
+                    logger.d { "User set successfully" }
                     FirebaseLogger.userId = result.data().user.id
 
                     App.instance.userRepository.setUser(
@@ -75,7 +75,7 @@ class CustomLoginViewModel : ViewModel() {
                     )
                 } else {
                     _state.postValue(State.Error(result.error().message))
-                    logger.logD("Failed to set user ${result.error()}")
+                    logger.d { "Failed to set user ${result.error()}" }
                 }
             }
     }

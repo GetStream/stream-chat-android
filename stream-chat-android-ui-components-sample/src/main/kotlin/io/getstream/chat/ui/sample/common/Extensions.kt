@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
@@ -37,7 +35,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
@@ -122,9 +119,6 @@ fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int
         number = badgeNumber
     }
 }
-
-val Member.isOwner: Boolean
-    get() = role == "owner"
 
 const val CHANNEL_ARG_DRAFT = "draft"
 

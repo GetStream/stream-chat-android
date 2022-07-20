@@ -16,12 +16,17 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 @Suppress("TooManyFunctions")
 public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     override var state: Boolean = false
     override var watch: Boolean = false
     override var presence: Boolean = false
+
+    @InternalStreamChatApi
+    public var shouldRefresh: Boolean = false
 
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()

@@ -71,7 +71,7 @@ The Stream Huawei push provider artifact contains a `HuaweiMessagingService` imp
 If you're using Huawei notifications for other purposes inside your app as well, you will need your own custom service to replace this.  Here, you have to call `HuaweiMessagingDelegate`'s `registerHuaweiToken` and `handleRemoteMessage` methods, like so:
 
 ```kotlin {6,14}
-class CustomHuaweiMessagingService : HuaweiMessagingService() {
+inner class CustomHuaweiMessagingService : HmsMessageService() {
 
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
@@ -82,7 +82,7 @@ class CustomHuaweiMessagingService : HuaweiMessagingService() {
         }
     }
 
-    override fun onMessageReceived(message: RemoteMessage) {
+    override fun onMessageReceived(message: com.huawei.hms.push.RemoteMessage) {
         try {
             if (HuaweiMessagingDelegate.handleRemoteMessage(message)) {
                 // RemoteMessage was from Stream and it is already processed

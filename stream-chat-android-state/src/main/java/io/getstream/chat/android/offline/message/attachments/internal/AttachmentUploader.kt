@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.message.attachments.internal
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback

@@ -30,7 +30,7 @@ import java.io.File
 /**
  * [Message Input](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/)
  */
-private class MessageInputViewSnippets() : Fragment() {
+private class MessageInputViewSnippets : Fragment() {
 
     private lateinit var messageInputView: MessageInputView
 
