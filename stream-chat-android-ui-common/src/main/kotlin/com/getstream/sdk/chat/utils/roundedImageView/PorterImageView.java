@@ -16,7 +16,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import io.getstream.logging.StreamLog;
 import io.getstream.logging.TaggedLogger;
 
-
+@Deprecated
 @SuppressWarnings("WeakerAccess")
 public abstract class PorterImageView extends AppCompatImageView {
     private static final String TAG = PorterImageView.class.getSimpleName();
