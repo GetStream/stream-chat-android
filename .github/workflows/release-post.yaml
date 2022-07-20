@@ -1,4 +1,4 @@
-name: ChangelogAutomation
+name: ReleasePost
 
 on:
   workflow_run:
@@ -55,4 +55,3 @@ jobs:
           pr_title: "Release sync"
           pr_body: "Sync with release branch after the release happened"
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-  

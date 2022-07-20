@@ -91,6 +91,13 @@ internal class ChatEventsObservable(
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
+    fun subscribeSuspend(
+        filter: (ChatEvent) -> Boolean = { true },
+        listener: ChatEventSuspendListener<ChatEvent>,
+    ): Disposable {
+        return addSubscription(SuspendSubscription(scope, filter, listener))
+    }
+
     fun subscribeSingle(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventListener<ChatEvent>,
@@ -115,6 +122,10 @@ internal class ChatEventsObservable(
         subscriptions = subscriptions + subscription
 
         return subscription
+    }
+
+    internal fun interface ChatEventSuspendListener<EventT : ChatEvent> {
+        suspend fun onEvent(event: EventT)
     }
 
     /**

@@ -21,7 +21,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: develop
+          ref: release
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew minor-bump
@@ -53,6 +53,6 @@ jobs:
           bodyFile: "CHANGELOG_PARSED.md"
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
-          commit: develop
+          commit: release
 
 
