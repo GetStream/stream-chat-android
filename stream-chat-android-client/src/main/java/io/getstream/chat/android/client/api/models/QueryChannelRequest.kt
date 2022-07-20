@@ -99,14 +99,6 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     /**
-     * @return Whether the request contains any of [Pagination] values or not. If it does the messages are being
-     * filtered.
-     */
-    public fun isFilteringMessages(): Boolean {
-        return Pagination.values().map { it.toString() }.intersect(messages.keys).isNotEmpty()
-    }
-
-    /**
      * Returns offset of watchers for a requested channel.
      */
     public fun watchersOffset(): Int {
