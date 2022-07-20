@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptorFactory
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
