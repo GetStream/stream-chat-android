@@ -58,6 +58,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed thread not scrolling to new message. [#3930](https://github.com/GetStream/stream-chat-android/pull/3930)
 
 ### ⬆️ Improved
 
