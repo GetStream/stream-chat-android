@@ -353,7 +353,6 @@ internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
 
-
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
                 logger.e {
