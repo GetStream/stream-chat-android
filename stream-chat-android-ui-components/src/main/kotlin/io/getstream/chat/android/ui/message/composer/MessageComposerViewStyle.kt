@@ -60,6 +60,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
  * @param messageInputMaxLines The maximum number of message input lines.
  * @param messageInputCannotSendHintText The input hint text in case we can't send messages in this channel.
+ * @param messageInputInputType The [InputType] to be applied to the message input edit text.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -479,7 +480,8 @@ public data class MessageComposerViewStyle(
 
                 val messageInputInputType = a.getInt(
                     R.styleable.MessageComposerView_android_inputType,
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
                 println(messageInputInputType)
