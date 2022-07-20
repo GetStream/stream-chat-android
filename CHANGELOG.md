@@ -18,11 +18,13 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Functions inside `ThreadQueryListener` have been turned into `suspend` functions. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)  
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed a crash when reacting to a message in a thread. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)
 
 ### ⬆️ Improved
 
