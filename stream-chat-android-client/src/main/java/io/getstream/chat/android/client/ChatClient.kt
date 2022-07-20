@@ -162,7 +162,6 @@ import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
@@ -231,14 +230,14 @@ internal constructor(
     private var errorHandlers: List<ErrorHandler> = emptyList()
 
     init {
-        eventsObservable.subscribe { event ->
+        eventsObservable.subscribeSuspend { event ->
             when (event) {
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        runBlocking(context = scope.coroutineContext) { lifecycleObserver.observe() }
+                        lifecycleObserver.observe()
                     }
                     api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
@@ -358,9 +357,6 @@ internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
 
-        ClientState.get().toMutableState()?.setUser(user)
-        initializationCoordinator.userConnectionRequest(user)
-
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
                 logger.e {
@@ -374,6 +370,8 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                initializationCoordinator.userConnectionRequest(user)
+                clientState.toMutableState()?.setUser(user)
                 initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {

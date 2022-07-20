@@ -2080,7 +2080,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun isAdapterInitialized ()Z
 	public final fun requireStyle ()Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
-	public final fun scrollToBottom ()V
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener;)V
 	public final fun setAttachmentDeleteOptionClickHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDeleteOptionHandler;)V
@@ -2136,7 +2135,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ModeratedMessageLongClickListener;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
-	public final fun setOnScrollToBottomHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$OnScrollToBottomHandler;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
@@ -2290,10 +2288,6 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView$New
 	public static final field SCROLL_TO_BOTTOM Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$OnScrollToBottomHandler {
-	public abstract fun onScrollToBottom ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener {

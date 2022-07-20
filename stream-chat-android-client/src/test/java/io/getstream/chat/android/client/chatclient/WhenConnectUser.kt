@@ -63,7 +63,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         // Listeners should always be called
-        verify(listener).invoke(any())
+        verifyNoInteractions(listener)
         result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 

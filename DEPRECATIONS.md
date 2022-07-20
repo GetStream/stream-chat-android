@@ -6,8 +6,6 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | --- | --- | --- | --- | --- |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
 | `ChatClient::disconnect` | 2022.07.19 <br/>5.6.0 | 2022.08.19 ⌛ | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
-| `Messages` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use new implementation of `Messages` composable. |
-| `MesageListViewModel.loadMore` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
 | `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
 | `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
 | `ChatLogger::get` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
@@ -28,7 +26,6 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
 | `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
 | `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use the new implementation of `InputField`. |
->>>>>>> Stashed changes
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `QuotedMessage` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use new implementation of `QuotedText`. |
