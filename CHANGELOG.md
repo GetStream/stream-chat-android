@@ -1,25 +1,11 @@
-# UNRELEASED CHANGELOG
+# July 20th, 2022 - 5.6.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - 🚨 Breaking change: The class `io.getstream.chat.android.offline.model.connection.ConnectionState` was moved to `io.getstream.chat.android.client.models.ConnectionState`. Please update your imports to be able to compile code using this class. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852).
 
-
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added a way to convert `Flow` into `LiveData` for Java users.
-  You can now use `FlowExtensions.asLiveData()` for conversion. [3874](https://github.com/GetStream/stream-chat-android/pull/3874)
 - Base state of the SDK can be check using `io.getstream.chat.android.client.setup.state.ClientState` interface. Use this interface to receive the state of the SDK as StateFlows. [#3852](https://github.com/GetStream/stream-chat-android/pull/3852)
 
 ### ⚠️ Changed
@@ -34,25 +20,6 @@
 ### 🐞 Fixed
 - Fixed initializing channels state when DB is empty and API requests fails. [3870](https://github.com/GetStream/stream-chat-android/pull/3870)
 - Fixed that causes a crash while reconnecting to the SDK multiple times. [#3888](https://github.com/GetStream/stream-chat-android/pull/3888)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -69,10 +36,6 @@
 - Added documentation for [MessageComposerView](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer). [#3845](https://github.com/GetStream/stream-chat-android/pull/3845)
 - Added a new version of the [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/) guide that uses the new `MessageComposerView`. [#3877](https://github.com/GetStream/stream-chat-android/pull/3877)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed potential unnecessary channel query on the channel list screen. [#3895](https://github.com/GetStream/stream-chat-android/pull/3895)
@@ -80,56 +43,8 @@
 ### ⬆️ Improved
 - Improved recomposition in `MessagesScreen` by deferring state reads to the latest possible point. [#3667](https://github.com/GetStream/stream-chat-android/pull/3667)
 
-### ✅ Added
-
 ### ⚠️ Changed
 - Show snackbar instead of toast when file exceeds the size limit. [#3858](https://github.com/GetStream/stream-chat-android/pull/3858)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # July 05th, 2022 - 5.5.0
 ## Common changes for all artifacts
