@@ -66,7 +66,6 @@
             android:background="@null"
             android:ellipsize="end"
             android:hint="@string/stream_ui_message_composer_hint_normal"
-            android:inputType="textCapSentences|textMultiLine"
             android:maxLines="7"
             android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
             android:paddingVertical="18dp"
