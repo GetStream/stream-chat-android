@@ -67,7 +67,7 @@ internal class SyncManager(
 ) {
 
     private val entitiesRetryMutex = Mutex()
-    private val logger = StreamLog.getLogger("SyncManager")
+    private val logger = StreamLog.getLogger("Chat:SyncManager")
     internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     private var firstConnect = true
 
