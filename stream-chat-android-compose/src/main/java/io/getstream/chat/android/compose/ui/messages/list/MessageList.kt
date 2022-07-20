@@ -55,15 +55,13 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
- * @param onMessagesStartReached Handler for pagination when the end of the oldest messages has been reached.
+ * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
- * @param onMessagesEndReached Handler for pagination when the end of newest messages have been reached.
- * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -83,7 +81,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
+    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
@@ -93,15 +91,12 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    onMessagesEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
-    onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(
             messagesState = viewModel.currentMessagesState,
             lazyListState = lazyListState,
-            scrollToBottom = onScrollToBottomClicked,
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -134,8 +129,6 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
-        onMessagesEndReached = onMessagesEndReached,
-        onScrollToBottom = onScrollToBottomClicked,
     )
 }
 
@@ -220,8 +213,6 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onMessagesEndReached Handler for pagination when the end of newest messages have been reached.
- * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -245,16 +236,10 @@ public fun MessageList(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onMessagesEndReached: (String) -> Unit = {},
-    onScrollToBottom: (() -> Unit) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(
-            messagesState = currentState,
-            lazyListState = lazyListState,
-            scrollToBottom = onScrollToBottom
-        )
+        DefaultMessagesHelperContent(currentState, lazyListState)
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
@@ -284,8 +269,6 @@ public fun MessageList(
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
-            onMessagesEndReached = onMessagesEndReached,
-            onScrollToBottom = onScrollToBottom,
         )
         else -> emptyContent()
     }

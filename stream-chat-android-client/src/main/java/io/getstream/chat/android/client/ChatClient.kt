@@ -357,9 +357,6 @@ internal constructor(
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
 
-        ClientState.get().toMutableState()?.setUser(user)
-        initializationCoordinator.userConnectionRequest(user)
-
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
                 logger.e {
@@ -373,6 +370,8 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                initializationCoordinator.userConnectionRequest(user)
+                clientState.toMutableState()?.setUser(user)
                 initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {

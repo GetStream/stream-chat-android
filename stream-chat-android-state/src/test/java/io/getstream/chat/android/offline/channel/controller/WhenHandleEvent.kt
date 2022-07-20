@@ -81,8 +81,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     @BeforeEach
     fun setUp() {
-        channelMutableState.setEndOfNewerMessages(true)
-
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
             invocation.arguments[0] as List<Message>
         }
@@ -112,14 +110,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(userStartWatchingEvent)
 
-        verify(channelStateLogic).upsertMessage(newMessage)
+        verify(channelStateLogic).upsertMessages(listOf(newMessage))
         verify(channelStateLogic).incrementUnreadCountIfNecessary(newMessage)
         verify(channelStateLogic).setHidden(false)
     }
 
     // Message update
     @Test
-    fun `when a message update for an existing message arrives, it is added`() = runTest {
+    fun `when a message update for a non existing message arrives, it is added`() = runTest {
         val messageId = randomString()
         val message = randomMessage(
             id = messageId,
@@ -127,13 +125,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true
         )
-        channelLogic.upsertMessages(listOf(message))
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessages(listOf(messageUpdateEvent.message))
+        verify(channelStateLogic).upsertMessages(listOf(message))
     }
 
     // Member added event
@@ -188,19 +185,18 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, if message is in the list, the message of the event should be upsert`(): Unit = runTest {
+    fun `when reaction event arrives, the message of the event should be upsert`(): Unit = runTest {
         val message = randomMessage(
             showInChannel = true,
             silent = false,
         )
-        channelStateLogic.upsertMessages(listOf(message))
         val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
         channelLogic.handleEvent(reactionEvent)
 
         // Message is propagated
-        verify(channelStateLogic).upsertMessages(listOf(reactionEvent.message))
+        verify(channelStateLogic).upsertMessages(listOf(message))
     }
 
     // Channel deleted event
