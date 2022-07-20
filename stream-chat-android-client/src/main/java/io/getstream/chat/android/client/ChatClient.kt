@@ -193,7 +193,7 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     lifecycle: Lifecycle,
 ) {
-    private val logger = StreamLog.getLogger("Client")
+    private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
     private val lifecycleObserver = StreamLifecycleObserver(
