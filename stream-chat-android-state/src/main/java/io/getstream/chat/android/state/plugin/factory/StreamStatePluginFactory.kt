@@ -173,7 +173,9 @@ public class StreamStatePluginFactory(
             messageRepository = repos,
             attachmentRepository = repos,
             scope = scope,
-            networkType = config.uploadAttachmentsNetworkType
+            networkType = config.uploadAttachmentsNetworkType,
+            user = user,
+            prepareMessageLogic = PrepareMessageInterceptorFactory().create(appContext)
         )
 
         val prepareMessageInterceptor = PrepareMessageInterceptorFactory().create(appContext)
@@ -187,7 +189,6 @@ public class StreamStatePluginFactory(
 
         chatClient.apply {
             addInterceptor(sendMessageInterceptor)
-            addInterceptor(prepareMessageInterceptor)
             addErrorHandlers(
                 OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories()
                     .map { factory -> factory.create() }

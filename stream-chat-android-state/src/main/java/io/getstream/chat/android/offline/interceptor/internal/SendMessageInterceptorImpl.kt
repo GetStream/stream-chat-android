@@ -21,8 +21,10 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -51,6 +53,8 @@ internal class SendMessageInterceptorImpl(
     private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val networkType: UploadAttachmentsNetworkType,
+    private val prepareMessageLogic: PrepareMessageLogic,
+    private val user: User
 ) : SendMessageInterceptor {
 
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -64,16 +68,19 @@ internal class SendMessageInterceptorImpl(
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
 
-        message.populateMentions(channel.toChannel())
+        prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
+            message.populateMentions(channel.toChannel())
+        }
 
         // Update flow in channel controller
         channel.upsertMessage(message)
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(message)
         channelRepository.updateLastMessageForChannel(message.cid, message)
+
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update flow for currently running queries
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
 
         if (message.replyMessageId != null) {
             channel.replyMessage(null)

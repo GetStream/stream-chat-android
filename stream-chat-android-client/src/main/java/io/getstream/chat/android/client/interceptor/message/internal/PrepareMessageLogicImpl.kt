@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.interceptor.message.internal
 
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -28,9 +28,9 @@ import io.getstream.chat.android.client.utils.internal.getMessageType
 import java.util.Date
 import java.util.UUID
 
-internal class PrepareMessageInterceptorImpl(
+internal class PrepareMessageLogicImpl(
     private val networkStateProvider: NetworkStateProvider,
-) : PrepareMessageInterceptor {
+) : PrepareMessageLogic {
 
     /**
      * Prepares the message and its attachments but doesn't upload attachments.

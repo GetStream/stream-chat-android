@@ -31,10 +31,10 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-internal class PrepareMessageInterceptorImplTest {
+internal class PrepareMessageLogicImplTest {
 
     private val networkStateProvider: NetworkStateProvider = mock()
-    private val prepareMessageInterceptorImpl = PrepareMessageInterceptorImpl(networkStateProvider)
+    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(networkStateProvider)
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {

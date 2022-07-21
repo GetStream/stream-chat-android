@@ -18,15 +18,17 @@ package io.getstream.chat.android.client.interceptor.message
 
 import android.content.Context
 import android.net.ConnectivityManager
-import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageInterceptorImpl
+import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+@InternalStreamChatApi
 public class PrepareMessageInterceptorFactory {
 
-    public fun create(context: Context): PrepareMessageInterceptor {
+    public fun create(context: Context): PrepareMessageLogic {
         val networkStateProvider =
             NetworkStateProvider(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
 
-        return PrepareMessageInterceptorImpl(networkStateProvider)
+        return PrepareMessageLogicImpl(networkStateProvider)
     }
 }

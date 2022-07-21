@@ -37,7 +37,6 @@ internal class UploadAttachmentsAndroidWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        Log.d("UploadAttachmentsWorker", "Starting worker...")
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
@@ -80,7 +79,7 @@ internal class UploadAttachmentsAndroidWorker(
                     )
                 )
                 .build()
-            
+
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
