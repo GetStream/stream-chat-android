@@ -1,4 +1,4 @@
-name: ReleaseStart
+name: ReleaseStartTest
 
 on:
   workflow_dispatch:
