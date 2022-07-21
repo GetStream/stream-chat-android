@@ -69,8 +69,6 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
-    implementation Dependencies.dexter
-
     testImplementation project(":stream-chat-android-test")
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

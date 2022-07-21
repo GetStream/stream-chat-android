@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils.strings
+package io.getstream.chat.android.client.extensions.internal
 
-import android.content.Context
+import java.util.Date
 
-public class ChatStringsImpl(private val appContext: Context) : ChatStrings {
-    override fun get(resId: Int): String {
-        return appContext.getString(resId)
-    }
-
-    override fun get(resId: Int, vararg formatArgs: Any?): String {
-        return appContext.getString(resId, *formatArgs)
-    }
+/**
+ * Checks if the Date is later than [daysInMillis].
+ */
+internal fun Date.isLaterThanDays(daysInMillis: Long): Boolean {
+    val now = Date()
+    return now.time - time > daysInMillis
 }

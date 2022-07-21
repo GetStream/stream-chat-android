@@ -33,6 +33,10 @@ internal class DatabaseUserRepository(
 
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
+    override suspend fun clear() {
+        userDao.deleteAll()
+    }
+
     /**
      * Insert many users.
      *

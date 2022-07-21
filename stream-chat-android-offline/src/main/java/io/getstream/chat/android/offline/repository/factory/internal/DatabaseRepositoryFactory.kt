@@ -41,15 +41,10 @@ private const val DEFAULT_CACHE_SIZE = 100
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
-    private val currentUser: User?,
+    private val currentUser: User,
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
-
-    @Throws(IllegalStateException::class)
-    override fun <T : Any> get(classz: Class<T>): T {
-        return repositoriesCache[classz] as? T ?: throw IllegalStateException("This repository was not initialized yet")
-    }
 
     override fun createUserRepository(): UserRepository {
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?

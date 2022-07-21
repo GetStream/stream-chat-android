@@ -41,7 +41,7 @@ internal data class MessageEntity(
 )
 
 @Entity(
-    tableName = "stream_chat_message",
+    tableName = MESSAGE_ENTITY_TABLE_NAME,
     indices = [
         Index(value = ["cid", "createdAt"]),
         Index(value = ["syncStatus"]),
@@ -119,3 +119,5 @@ internal data class MessageSyncDescriptionEntity(
     val type: MessageSyncType,
     val content: String,
 )
+
+internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

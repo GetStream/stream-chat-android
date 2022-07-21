@@ -8,7 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-
+@Deprecated
 public class PorterShapeImageView extends PorterImageView {
     private Drawable shape;
     private Matrix matrix;

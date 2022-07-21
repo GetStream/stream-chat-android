@@ -14,8 +14,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
 
 ### ✅ Added
+- Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. []()
 
 ### ⚠️ Changed
 
@@ -23,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed preview for channels when sending messages offline. [3933](https://github.com/GetStream/stream-chat-android/pull/3933)
 
 ### ⬆️ Improved
 
@@ -51,6 +54,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
 
 ### ❌ Removed
 

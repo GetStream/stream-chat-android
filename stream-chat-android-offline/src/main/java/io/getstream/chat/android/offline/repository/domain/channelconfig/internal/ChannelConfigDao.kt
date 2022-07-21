@@ -23,31 +23,42 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 @Dao
-internal abstract class ChannelConfigDao {
+internal interface ChannelConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
-    open suspend fun insert(channelConfigEntities: List<ChannelConfigEntity>) {
+    suspend fun insert(channelConfigEntities: List<ChannelConfigEntity>) {
         insertConfigs(channelConfigEntities.map(ChannelConfigEntity::channelConfigInnerEntity))
         insertCommands(channelConfigEntities.flatMap(ChannelConfigEntity::commands))
     }
 
     @Transaction
-    open suspend fun insert(channelConfigEntity: ChannelConfigEntity) {
+    suspend fun insert(channelConfigEntity: ChannelConfigEntity) {
         insertConfig(channelConfigEntity.channelConfigInnerEntity)
         insertCommands(channelConfigEntity.commands)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertConfig(channelConfigInnerEntity: ChannelConfigInnerEntity)
+    suspend fun insertConfig(channelConfigInnerEntity: ChannelConfigInnerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertConfigs(channelConfigInnerEntities: List<ChannelConfigInnerEntity>)
+    suspend fun insertConfigs(channelConfigInnerEntities: List<ChannelConfigInnerEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertCommands(commands: List<CommandInnerEntity>)
+    suspend fun insertCommands(commands: List<CommandInnerEntity>)
 
     @Transaction
     @Query("SELECT * FROM stream_chat_channel_config LIMIT 100")
-    abstract suspend fun selectAll(): List<ChannelConfigEntity>
+    suspend fun selectAll(): List<ChannelConfigEntity>
+
+    @Query("DELETE FROM $COMMAND_INNER_ENTITY_TABLE_NAME")
+    suspend fun deleteCommands()
+
+    @Query("DELETE FROM $CHANNEL_CONFIG_INNER_ENTITY_TABLE_NAME")
+    suspend fun deleteConfigs()
+
+    suspend fun deleteAll() {
+        deleteConfigs()
+        deleteCommands()
+    }
 }

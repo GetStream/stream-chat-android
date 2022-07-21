@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.enums
+package io.getstream.chat.android.client.persistance.repository.noop
 
-public enum class OnlineStatus {
-    CONNECTED,
-    CONNECTING,
-    NOT_INITIALIZED,
-    FAILED
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+
+/**
+ * No-Op AttachmentRepository.
+ */
+internal object NoOpAttachmentRepository : AttachmentRepository {
+    override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> = emptyFlow()
+    override suspend fun clear() { /* No-Op */ }
 }

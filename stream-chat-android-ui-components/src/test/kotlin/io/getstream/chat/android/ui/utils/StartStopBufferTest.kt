@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils
+package io.getstream.chat.android.ui.utils
 
+import com.getstream.sdk.chat.utils.StartStopBuffer
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -40,4 +40,9 @@ public interface QueryChannelsRepository {
      * @param querySort [QuerySorter]
      */
     public suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec?
+
+    /**
+     * Clear QueryChannels of this repository.
+     */
+    public suspend fun clear()
 }

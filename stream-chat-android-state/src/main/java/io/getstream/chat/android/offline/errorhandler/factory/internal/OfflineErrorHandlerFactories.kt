@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.errorhandler.factory.internal
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
@@ -38,11 +37,11 @@ internal object OfflineErrorHandlerFactoriesProvider {
      *
      * @return A List of [ErrorHandlerFactory].
      */
-    fun createErrorHandlerFactories(): List<ErrorHandlerFactory> = listOf(
+    fun createErrorHandlerFactories(channelRepository: ChannelRepository): List<ErrorHandlerFactory> = listOf(
         DeleteReactionErrorHandlerFactory(),
         SendReactionErrorHandlerFactory(),
-        QueryMembersErrorHandlerFactory(),
-        CreateChannelErrorHandlerFactory(),
+        QueryMembersErrorHandlerFactory(channelRepository),
+        CreateChannelErrorHandlerFactory(channelRepository),
     )
 }
 
@@ -75,31 +74,27 @@ private class SendReactionErrorHandlerFactory : ErrorHandlerFactory {
 /**
  * Factory for [QueryMembersErrorHandlerImpl].
  */
-private class QueryMembersErrorHandlerFactory : ErrorHandlerFactory {
+private class QueryMembersErrorHandlerFactory(
+    private val channelRepository: ChannelRepository,
+) : ErrorHandlerFactory {
 
-    override fun create(): ErrorHandler {
-        val repositoryProvider = RepositoryProvider.get()
-
-        return QueryMembersErrorHandlerImpl(
-            scope = StateRegistry.get().scope,
-            clientState = ClientState.get(),
-            channelRepository = repositoryProvider.get(ChannelRepository::class.java)
-        )
-    }
+    override fun create(): ErrorHandler = QueryMembersErrorHandlerImpl(
+        scope = StateRegistry.get().scope,
+        clientState = ClientState.get(),
+        channelRepository = channelRepository
+    )
 }
 
 /**
  * Factory for [CreateChannelErrorHandlerImpl].
  */
-private class CreateChannelErrorHandlerFactory : ErrorHandlerFactory {
+private class CreateChannelErrorHandlerFactory(
+    private val channelRepository: ChannelRepository,
+) : ErrorHandlerFactory {
 
-    override fun create(): ErrorHandler {
-        val repositoryProvider = RepositoryProvider.get()
-
-        return CreateChannelErrorHandlerImpl(
-            scope = StateRegistry.get().scope,
-            clientState = ClientState.get(),
-            channelRepository = repositoryProvider.get(ChannelRepository::class.java)
-        )
-    }
+    override fun create(): ErrorHandler = CreateChannelErrorHandlerImpl(
+        scope = StateRegistry.get().scope,
+        clientState = ClientState.get(),
+        channelRepository = channelRepository,
+    )
 }
