@@ -234,6 +234,11 @@ public class MessageListViewModel(
     private var lastLoadedMessage: Message? = null
 
     /**
+     * Represents the last loaded message in the thread, for comparison when determining the NewMessage
+     */
+    private var lastLoadedThreadMessage: Message? = null
+
+    /**
      * Represents the latest message we've seen in the channel.
      */
     private var lastSeenChannelMessage: Message? by mutableStateOf(null)
@@ -308,7 +313,7 @@ public class MessageListViewModel(
                             newLastMessage?.id != lastLoadedMessage?.id
 
                         messagesState = if (hasNewMessage) {
-                            val newMessageState = getNewMessageState(newLastMessage)
+                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
 
                             newState.copy(
                                 newMessageState = newMessageState,
@@ -385,8 +390,7 @@ public class MessageListViewModel(
      *
      * @param lastMessage Last message in the list, used for comparison.
      */
-    private fun getNewMessageState(lastMessage: Message?): NewMessageState? {
-        val lastLoadedMessage = lastLoadedMessage
+    private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
         val currentUser = user.value
 
         return if (lastMessage != null && lastLoadedMessage != null && lastMessage.id != lastLoadedMessage.id) {
@@ -725,7 +729,14 @@ public class MessageListViewModel(
                     currentUser = user,
                     parentMessageId = threadId
                 )
-            }.collect { newState -> threadMessagesState = newState }
+            }.collect { newState ->
+                val newLastMessage =
+                    (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
+                threadMessagesState = newState.copy(
+                    newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+                )
+                lastLoadedThreadMessage = newLastMessage
+            }
         }
     }
 
