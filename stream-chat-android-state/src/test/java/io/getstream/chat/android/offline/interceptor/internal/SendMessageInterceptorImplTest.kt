@@ -57,6 +57,8 @@ internal class SendMessageInterceptorImplTest {
         attachmentRepository = mock(),
         scope = TestScope(),
         networkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        mock(),
+        randomUser()
     )
 
     @Test

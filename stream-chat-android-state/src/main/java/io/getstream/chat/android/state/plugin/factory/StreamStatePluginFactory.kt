@@ -158,8 +158,6 @@ public class StreamStatePluginFactory(
             prepareMessageLogic = PrepareMessageInterceptorFactory().create(appContext)
         )
 
-        val prepareMessageInterceptor = PrepareMessageInterceptorFactory().create(appContext)
-
         val channelMarkReadHelper = ChannelMarkReadHelper(
             chatClient = chatClient,
             logic = logic,
