@@ -1,4 +1,4 @@
-# July 21th, 2022 - 5.7.0
+# July 21th, 2022 - 5.8.0
 ## stream-chat-android-client
 ### ⚠️ Changed
 - Functions inside `ThreadQueryListener` have been turned into `suspend` functions. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)  
