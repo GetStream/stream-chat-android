@@ -44,3 +44,4 @@ jobs:
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: release-test
+          ssh: true
