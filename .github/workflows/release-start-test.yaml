@@ -42,6 +42,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          github_token: ${{ secrets.LEANDROS_TOKEN }}
           branch: release-test
-          ssh: true
