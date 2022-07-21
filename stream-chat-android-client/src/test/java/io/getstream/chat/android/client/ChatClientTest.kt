@@ -19,7 +19,6 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
@@ -36,6 +35,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -80,6 +81,7 @@ internal class ChatClientTest {
     val userId = randomString()
     val user = Mother.randomUser { id = userId }
     val tokenUtils: TokenUtils = mock()
+    var pluginFactories: List<PluginFactory> = emptyList()
 
     @BeforeEach
     fun setUp() {
@@ -116,6 +118,8 @@ internal class ChatClientTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = pluginFactories,
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
             connectUser(user, token).enqueue()
         }

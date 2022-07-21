@@ -23,22 +23,22 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 internal class ThreadQueryListenerImpl(private val logic: LogicRegistry) : ThreadQueryListener {
 
-    override fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =
+    override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =
         logic.thread(messageId).onGetRepliesPrecondition(messageId, limit)
 
-    override fun onGetRepliesRequest(messageId: String, limit: Int): Unit =
+    override suspend fun onGetRepliesRequest(messageId: String, limit: Int): Unit =
         logic.thread(messageId).onGetRepliesRequest(messageId, limit)
 
-    override fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int): Unit =
+    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int): Unit =
         logic.thread(messageId).onGetRepliesResult(result, messageId, limit)
 
-    override fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> =
+    override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> =
         logic.thread(messageId).onGetRepliesMorePrecondition(messageId, firstId, limit)
 
-    override fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int): Unit =
+    override suspend fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int): Unit =
         logic.thread(messageId).onGetRepliesMoreRequest(messageId, firstId, limit)
 
-    override fun onGetRepliesMoreResult(
+    override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
         messageId: String,
         firstId: String,

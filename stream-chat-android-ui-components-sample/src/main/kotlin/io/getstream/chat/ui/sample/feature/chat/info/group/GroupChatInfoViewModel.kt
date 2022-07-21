@@ -23,17 +23,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -42,7 +40,7 @@ import kotlinx.coroutines.launch
 class GroupChatInfoViewModel(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
+    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -63,7 +61,7 @@ class GroupChatInfoViewModel(
         _state.value = INITIAL_STATE
 
         // Update channel mute status
-        globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+        clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
         // Update members
         _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
@@ -89,7 +87,7 @@ class GroupChatInfoViewModel(
     }
 
     private fun handleMemberClick(member: Member) {
-        if (member.getUserId() != globalState.user.value?.id) {
+        if (member.getUserId() != clientState.user.value?.id) {
             val currentState = _state.value!!
             _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
         }

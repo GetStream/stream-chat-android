@@ -16,18 +16,20 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.logging.StreamLog
 
 internal class UserStateService {
-    private val logger = ChatLogger.get("UserStateService")
+    private val logger = StreamLog.getLogger("Chat:UserStateService")
 
     fun onUserUpdated(user: User) {
+        logger.d { "[onUserUpdated] user id: ${user.id}" }
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
     fun onSetUser(user: User, isAnonymous: Boolean) {
+        logger.d { "[onSetUser] user id: ${user.id}" }
         if (isAnonymous) {
             fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
         } else {
@@ -36,10 +38,12 @@ internal class UserStateService {
     }
 
     fun onLogout() {
+        logger.d { "[onLogout]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
     fun onSocketUnrecoverableError() {
+        logger.d { "[onSocketUnrecoverableError]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
@@ -48,7 +52,7 @@ internal class UserStateService {
 
     private val fsm = FiniteStateMachine<UserState, UserStateEvent> {
         defaultHandler { state, event ->
-            logger.logE("Can't handle $event while being in state ${state::class.simpleName}")
+            logger.e { "Can't handle $event while being in state ${state::class.simpleName}" }
             state
         }
         initialState(UserState.NotSet)

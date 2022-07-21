@@ -18,7 +18,6 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -92,6 +92,8 @@ internal class ConnectUserTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = emptyList(),
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         )
     }
 

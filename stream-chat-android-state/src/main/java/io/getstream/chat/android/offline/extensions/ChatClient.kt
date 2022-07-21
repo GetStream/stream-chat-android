@@ -27,16 +27,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.isEphemeral
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
@@ -51,6 +47,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -147,7 +144,7 @@ private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: () -> T,
 ): StateFlow<T?> {
-    return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+    return clientState.user.map { it?.id }.distinctUntilChanged().map { userId ->
         if (userId == null) {
             null
         } else {
@@ -192,12 +189,12 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
     return CoroutineCall(state.scope) {
         try {
-            val logger = ChatLogger.get("DownloadAttachment")
+            val logger = StreamLog.getLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title
 
-            logger.logD("Downloading attachment. Name: $subPath, Url: $url")
+            logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
 
             downloadManager.enqueue(
                 DownloadManager.Request(Uri.parse(url))
@@ -267,13 +264,9 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
         if (cidValidationResult.isSuccess) {
             try {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-
-                val repositoryProvider = RepositoryProvider.get()
-                val channelRepository = repositoryProvider.get(MessageRepository::class.java)
-
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
-                channelRepository.deleteChannelMessage(message)
+                repositoryFacade.deleteChannelMessage(message)
 
                 Result.success(true)
             } catch (exception: Exception) {
@@ -297,7 +290,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  */
 @Deprecated(
     "Use the version without offsets, as it uses less requests to backend.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
 )
 public fun ChatClient.loadMessageById(
     cid: String,
@@ -324,9 +317,7 @@ public fun ChatClient.loadMessageById(
                 result
             } else {
                 try {
-                    val repositoryProvider = RepositoryProvider.get()
-
-                    repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
+                    repositoryFacade.selectMessage(messageId)?.let(::Result)
                         ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
                 } catch (exception: Exception) {
                     Result.error(exception)

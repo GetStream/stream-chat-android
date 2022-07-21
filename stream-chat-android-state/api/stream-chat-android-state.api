@@ -177,14 +177,6 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/model/connection/ConnectionState : java/lang/Enum {
-	public static final field CONNECTED Lio/getstream/chat/android/offline/model/connection/ConnectionState;
-	public static final field CONNECTING Lio/getstream/chat/android/offline/model/connection/ConnectionState;
-	public static final field OFFLINE Lio/getstream/chat/android/offline/model/connection/ConnectionState;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/offline/model/connection/ConnectionState;
-	public static fun values ()[Lio/getstream/chat/android/offline/model/connection/ConnectionState;
-}
-
 public final class io/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType : java/lang/Enum {
 	public static final field CONNECTED Lio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;
 	public static final field METERED Lio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;
@@ -372,6 +364,5 @@ public final class io/getstream/chat/android/state/plugin/configuration/StatePlu
 public final class io/getstream/chat/android/state/plugin/factory/StreamStatePluginFactory : io/getstream/chat/android/client/plugin/factory/PluginFactory {
 	public fun <init> (Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;Landroid/content/Context;)V
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
-	public final fun setRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
 }
 

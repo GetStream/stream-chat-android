@@ -29,8 +29,6 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasOwnUser
@@ -77,6 +75,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -86,12 +85,10 @@ import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEven
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -115,6 +112,7 @@ private const val EVENTS_BUFFER = 100
  * Processes events sequentially. That means a new event will not be processed
  * until the previous event processing is not completed.
  */
+@Suppress("LongParameterList")
 internal class EventHandlerSequential(
     scope: CoroutineScope,
     private val recoveryEnabled: Boolean,
@@ -127,6 +125,7 @@ internal class EventHandlerSequential(
 ) : EventHandler {
 
     @VisibleForTesting
+    @Suppress("LongParameterList")
     constructor(
         scope: CoroutineScope,
         recoveryEnabled: Boolean,
@@ -317,17 +316,9 @@ internal class EventHandlerSequential(
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
-                is DisconnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState.setConnectionState(ConnectionState.OFFLINE)
-                }
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
                     mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTED)
-                    mutableGlobalState.setInitialized(true)
-                }
-                is ConnectingEvent -> if (batchEvent.isFromSocketConnection) {
-                    mutableGlobalState.setConnectionState(ConnectionState.CONNECTING)
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId

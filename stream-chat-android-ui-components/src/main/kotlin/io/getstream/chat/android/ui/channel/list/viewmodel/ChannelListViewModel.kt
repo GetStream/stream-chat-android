@@ -32,8 +32,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
@@ -48,6 +46,8 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStat
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -102,6 +102,7 @@ public class ChannelListViewModel(
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingEvents: LiveData<TypingEvent>
+        @Suppress("DEPRECATION_ERROR")
         get() = globalState.typingUpdates.asLiveData()
 
     /**
@@ -130,7 +131,7 @@ public class ChannelListViewModel(
     /**
      * The logger used to print information, warnings, errors, etc. to log.
      */
-    private val logger: TaggedLogger = ChatLogger.get("ChannelListViewModel")
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:ChannelListViewModel")
 
     /**
      * Filters the requested channels.
@@ -162,7 +163,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -273,7 +274,10 @@ public class ChannelListViewModel(
         chatClient.getCurrentUser()?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
                 onError = { chatError ->
-                    logger.logE("Could not leave channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    logger.e {
+                        "Could not leave channel with id: ${channel.id}. " +
+                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                    }
                     _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
                 }
             )
@@ -288,7 +292,10 @@ public class ChannelListViewModel(
     public fun deleteChannel(channel: Channel) {
         chatClient.channel(channel.cid).delete().enqueue(
             onError = { chatError ->
-                logger.logE("Could not delete channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                logger.e {
+                    "Could not delete channel with id: ${channel.id}. " +
+                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                }
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
             }
         )
@@ -305,7 +312,10 @@ public class ChannelListViewModel(
             clearHistory = false
         ).enqueue(
             onError = { chatError ->
-                logger.logE("Could not hide channel with id: ${channel.id}. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                logger.e {
+                    "Could not hide channel with id: ${channel.id}. " +
+                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                }
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
             }
         )
@@ -317,7 +327,10 @@ public class ChannelListViewModel(
     public fun markAllRead() {
         chatClient.markAllRead().enqueue(
             onError = { chatError ->
-                logger.logE("Could not mark all messages as read. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                logger.e {
+                    "Could not mark all messages as read. " +
+                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                }
             }
         )
     }
@@ -334,7 +347,10 @@ public class ChannelListViewModel(
                 viewModelScope.launch {
                     chatClient.queryChannels(it).enqueue(
                         onError = { chatError ->
-                            logger.logE("Could not load more channels. Error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                            logger.e {
+                                "Could not load more channels. Error: ${chatError.message}. " +
+                                    "Cause: ${chatError.cause?.message}"
+                            }
                         }
                     )
                 }

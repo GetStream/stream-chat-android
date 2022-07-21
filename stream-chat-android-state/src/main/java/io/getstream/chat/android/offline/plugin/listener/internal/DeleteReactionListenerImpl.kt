@@ -23,12 +23,12 @@ import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import java.util.Date
 
 /**
@@ -36,12 +36,12 @@ import java.util.Date
  * Handles adding reaction offline, updates the database and does the optimistic UI update.
  *
  * @param logic [LogicRegistry]
- * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * @param clientState [ClientState]
  * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
 internal class DeleteReactionListenerImpl(
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
     private val repos: RepositoryFacade,
 ) : DeleteReactionListener {
 
@@ -66,7 +66,7 @@ internal class DeleteReactionListenerImpl(
             type = reactionType,
             user = currentUser,
             userId = currentUser.id,
-            syncStatus = if (globalState.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
             deletedAt = Date(),
         )
 

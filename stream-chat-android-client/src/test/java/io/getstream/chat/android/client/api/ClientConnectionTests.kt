@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -86,7 +87,6 @@ internal class ClientConnectionTests {
     private lateinit var socket: ChatSocket
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
-    private lateinit var logger: ChatLogger
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
@@ -101,7 +101,6 @@ internal class ClientConnectionTests {
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
         fileUploader = mock()
-        logger = mock()
         notificationsManager = mock()
         initCallback = mock()
         api = mock()
@@ -127,6 +126,8 @@ internal class ClientConnectionTests {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = emptyList(),
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         )
     }
 

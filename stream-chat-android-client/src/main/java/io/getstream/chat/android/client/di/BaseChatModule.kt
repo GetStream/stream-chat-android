@@ -67,10 +67,10 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
@@ -82,7 +82,6 @@ internal open class BaseChatModule(
     private val notificationConfig: NotificationConfig,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val callbackExecutor: Executor?,
     private val customOkHttpClient: OkHttpClient? = null,
     private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
@@ -123,6 +122,14 @@ internal open class BaseChatModule(
 
     fun experimentalSocket() = chatSocketExperimental
 
+    @Deprecated(
+        message = "Use StreamLog instead.",
+        replaceWith = ReplaceWith(
+            expression = "StreamLog",
+            imports = ["io.getstream.logging.StreamLog"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     fun logger(): ChatLogger = defaultLogger
 
     fun notifications(): ChatNotifications = defaultNotifications
@@ -151,7 +158,7 @@ internal open class BaseChatModule(
             .baseUrl(endpoint)
             .client(okHttpClient)
             .also(parser::configRetrofit)
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, callbackExecutor))
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, networkScope))
             .build()
     }
 
@@ -196,7 +203,7 @@ internal open class BaseChatModule(
                     addInterceptor(HttpLoggingInterceptor())
                     addInterceptor(
                         CurlInterceptor { message ->
-                            logger().logI("CURL", message)
+                            StreamLog.i("CURL") { message }
                         }
                     )
                 }
@@ -253,11 +260,11 @@ internal open class BaseChatModule(
         buildRetrofitApi<ConfigApi>(),
         networkScope,
     ).let { originalApi ->
-        DistinctChatApiEnabler(DistinctChatApi(originalApi)) {
+        DistinctChatApiEnabler(DistinctChatApi(networkScope, originalApi)) {
             chatConfig.distinctApiCalls
         }
     }.let { originalApi ->
-        ExtraDataValidator(originalApi)
+        ExtraDataValidator(networkScope, originalApi)
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {

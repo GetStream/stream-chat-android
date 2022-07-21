@@ -1,11 +1,17 @@
 package io.getstream.chat.docs.java.client.cms;
 
+import java.util.List;
+
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.MarkAllReadEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent;
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
+import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.User;
 
 public class UnreadCounts {
@@ -66,6 +72,69 @@ public class UnreadCounts {
                         }
                     }
             );
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/unread_channel/?language=java">Unread Channels</a>
+     */
+    class UnreadChannels {
+        public void unreadChannels() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
+
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+                if (result.isSuccess()) {
+                    // readState is the list of read states for each user on the channel
+                    List<ChannelUserRead> readState = result.data().getRead();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void unreadMessages() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
+
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+                if (result.isSuccess()) {
+                    // Unread count for current user
+                    Integer unreadCount = result.data().getUnreadCount();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void unreadMentions() {
+            // Get channel
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
+            User currentUser = client.getCurrentUser();
+            if (currentUser == null) {
+                // Handle user not connected state
+                return;
+            }
+
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+                if (result.isSuccess()) {
+                    // Unread mentions
+                    Channel channel = result.data();
+                    Integer unreadCount = ChannelExtensionKt.countUnreadMentionsForUser(channel, currentUser);
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void markAllAsRead() {
+            client.markAllRead().enqueue((result) -> {
+                if (result.isSuccess()) {
+                    //Handle success
+                } else {
+                    //Handle failure
+                }
+            });
         }
     }
 }

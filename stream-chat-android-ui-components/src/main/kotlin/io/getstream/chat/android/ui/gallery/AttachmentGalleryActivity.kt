@@ -34,7 +34,6 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -48,6 +47,7 @@ import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryViewModel
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsDialogFragment
 import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentDialogFragment
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
 
-    private val logger = ChatLogger.get("AttachmentGalleryActivity")
+    private val logger = StreamLog.getLogger("Chat:AttachmentGalleryActivity")
 
     /**
      * If the "reply" option is present in the list.
@@ -169,11 +169,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupAttachmentActionsButton() {
         binding.attachmentActionsButton.setOnClickListener {
             AttachmentGalleryOptionsDialogFragment.newInstance(
-                showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
-                deleteHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
-                replyHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
-                saveImageHandler = handleSaveImage,
-                isMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
+                showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
+                deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
+                replyOptionHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
+                saveImageOptionHandler = handleSaveImage,
+                isMessageMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentGalleryOptionsDialogFragment.TAG)
         }
     }
@@ -296,7 +296,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 deleteOptionEnabled = style.deleteOptionEnabled
             }
         } catch (e: Exception) {
-            logger.logE("Failed to obtain style attribute for the options menu", e)
+            logger.e(e) { "Failed to obtain style attribute for the options menu" }
         }
     }
 

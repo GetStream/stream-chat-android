@@ -32,16 +32,16 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.zipWith
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.utils.stringify
+import io.getstream.logging.StreamLog
 
 internal class LoadNotificationDataWorker(
     private val context: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
 
-    private val logger = ChatLogger.get("LoadNotificationDataWorker")
+    private val logger = StreamLog.getLogger("Chat:Notifications-Loader")
 
     override suspend fun doWork(): Result {
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
@@ -61,11 +61,11 @@ internal class LoadNotificationDataWorker(
                 ChatClient.displayNotification(channel = channel, message = message)
                 Result.success()
             } else {
-                logger.logE("Error while loading notification data: ${result.error()}")
+                logger.e { "Error while loading notification data: ${result.error().stringify()}" }
                 Result.failure()
             }
         } catch (exception: IllegalStateException) {
-            logger.logE("Error while loading notification data: ${exception.message}")
+            logger.e { "Error while loading notification data: ${exception.message}" }
             Result.failure()
         }
     }

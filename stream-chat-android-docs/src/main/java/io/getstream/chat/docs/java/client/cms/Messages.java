@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
@@ -86,6 +85,20 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=java#update-a-message">Update A Message</a>
          */
         public void updateAMessage() {
+            // Update some field of the message
+            message.setText("my updated text");
+
+            // Send the message to the channel
+            channelClient.updateMessage(message).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message updatedMessage = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void partialUpdateAMessage() {
             // Update some field of the message
             message.setText("my updated text");
 
@@ -402,7 +415,7 @@ public class Messages {
 
         public void paginateOverAllPinnedMessages() {
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
-            channelClient.getPinnedMessages(10, new QuerySortByField<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
+            channelClient.getPinnedMessages(10,  QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();
@@ -414,7 +427,7 @@ public class Messages {
             // You can use a pinnedAt date retrieved from the previous request to get the next page
             Date nextDate = new Date();
             // List the next page of pinned messages
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
+            channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();

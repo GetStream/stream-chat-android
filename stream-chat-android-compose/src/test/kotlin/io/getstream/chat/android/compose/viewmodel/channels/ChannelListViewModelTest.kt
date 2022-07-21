@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.compose.viewmodel.channels
 
 import io.getstream.chat.android.client.ChatClient
@@ -28,6 +30,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -269,6 +272,7 @@ internal class ChannelListViewModelTest {
         private val initialFilters: FilterObject? = queryFilter,
     ) {
         private val globalState: GlobalMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
@@ -277,10 +281,11 @@ internal class ChannelListViewModelTest {
 
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
@@ -288,7 +293,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenIsOffline(isOffline: Boolean = false) = apply {
-            whenever(globalState.isOffline()) doReturn isOffline
+            whenever(clientState.isOffline) doReturn isOffline
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {

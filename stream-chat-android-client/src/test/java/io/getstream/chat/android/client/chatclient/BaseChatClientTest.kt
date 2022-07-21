@@ -23,7 +23,9 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
@@ -69,6 +71,7 @@ internal open class BaseChatClientTest {
 
     protected lateinit var chatClient: ChatClient
     internal val tokenUtils: TokenUtils = mock()
+    internal val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
     @BeforeEach
     fun before() {
@@ -94,6 +97,8 @@ internal open class BaseChatClientTest {
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycle = lifecycleOwner.lifecycle,
+            pluginFactories = pluginFactories,
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         )
         Mockito.reset(
             socketStateService,

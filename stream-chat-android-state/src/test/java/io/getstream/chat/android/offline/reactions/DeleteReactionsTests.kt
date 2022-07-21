@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -32,7 +34,6 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
@@ -229,8 +230,8 @@ internal class DeleteReactionsTests {
 
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<MutableGlobalState>()
-        private val logicRegistry =
-            LogicRegistry.create(stateRegistry, globalState, false, repos, client, testCoroutines.scope)
+        private val clientState = mock<ClientState>()
+        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos
@@ -252,9 +253,10 @@ internal class DeleteReactionsTests {
 
         fun givenOfflineState(): Fixture = apply {
             whenever(globalState.isOnline()) doReturn false
+            whenever(clientState.isOnline) doReturn false
         }
 
         fun get(): Pair<DeleteReactionListenerImpl, StateRegistry> =
-            DeleteReactionListenerImpl(logicRegistry, globalState, repos) to stateRegistry
+            DeleteReactionListenerImpl(logicRegistry, clientState, repos) to stateRegistry
     }
 }

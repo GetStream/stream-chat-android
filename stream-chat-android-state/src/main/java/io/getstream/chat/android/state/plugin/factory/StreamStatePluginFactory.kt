@@ -18,13 +18,12 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -53,8 +52,6 @@ import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventLis
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
@@ -69,7 +66,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
- * Implementation of [PluginFactory] that provides [OfflinePlugin].
+ * Implementation of [PluginFactory] that provides [StatePlugin].
  *
  * @param config [StatePluginConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
@@ -81,7 +78,7 @@ public class StreamStatePluginFactory(
 
     private var cachedStatePluginInstance: StatePlugin? = null
 
-    private val logger = ChatLogger.get("StreamStatePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StreamStatePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -89,15 +86,6 @@ public class StreamStatePluginFactory(
      * @return The [Plugin] instance.
      */
     override fun get(user: User): Plugin = getOrCreateStatePlugin(user)
-
-    private var repositoryFactory: RepositoryFactory? = null
-
-    /**
-     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
-     */
-    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
-        this.repositoryFactory = repositoryFactory
-    }
 
     /**
      * Tries to get cached [StatePlugin] instance for the user if it exists or
@@ -109,7 +97,7 @@ public class StreamStatePluginFactory(
         val cachedPlugin = cachedStatePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
             return cachedPlugin
         } else {
             clearCachedInstance()
@@ -125,40 +113,27 @@ public class StreamStatePluginFactory(
         }
         val job = SupervisorJob()
         val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-        val repositoryFactory = repositoryFactory
-            ?: createRepositoryFactory(scope, appContext, user)
-        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
 
-        return createStatePlugin(user, scope, repositoryFactory)
+        return createStatePlugin(user, scope)
     }
 
     @InternalStreamChatApi
-    @Suppress("LongMethod")
+    @SuppressWarnings("LongMethod")
     public fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
-        repositoryFactory: RepositoryFactory,
     ): StatePlugin {
         val chatClient = ChatClient.instance()
+        val repositoryFacade = chatClient.repositoryFacade
         val globalState = GlobalMutableState.getOrCreate().apply {
             clearState()
         }
-
-        val repos = RepositoryFacadeBuilder {
-            context(appContext)
-            scope(scope)
-            defaultConfig(
-                io.getstream.chat.android.client.models.Config(
-                    connectEventsEnabled = true,
-                    muteEnabled = true
-                )
-            )
-            currentUser(user)
-            repositoryFactory(repositoryFactory)
-        }.build()
+        val clientState = chatClient.clientState.also { clientState ->
+            clientState.clearState()
+        }
 
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, globalState.user, repos, repos.observeLatestUsers()
+            scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
@@ -172,10 +147,10 @@ public class StreamStatePluginFactory(
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,
             logic = logic,
-            globalState = globalState,
-            channelRepository = repos,
-            messageRepository = repos,
-            attachmentRepository = repos,
+            clientState = clientState,
+            channelRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            attachmentRepository = repositoryFacade,
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType
         )
@@ -187,13 +162,13 @@ public class StreamStatePluginFactory(
             chatClient = chatClient,
             logic = logic,
             state = stateRegistry,
-            globalState = globalState,
+            clientState = clientState,
         )
 
         chatClient.apply {
             addInterceptor(defaultInterceptor)
             addErrorHandlers(
-                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories()
+                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repositoryFacade)
                     .map { factory -> factory.create() }
             )
         }
@@ -201,7 +176,8 @@ public class StreamStatePluginFactory(
         val syncManager = SyncManager(
             chatClient = chatClient,
             globalState = globalState,
-            repos = repos,
+            clientState = clientState,
+            repos = repositoryFacade,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
@@ -216,7 +192,8 @@ public class StreamStatePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
-            repos = repos,
+            clientMutableState = clientState,
+            repos = repositoryFacade,
             syncManager = syncManager,
         ).also { eventHandler ->
             EventHandlerProvider.eventHandler = eventHandler
@@ -229,6 +206,7 @@ public class StreamStatePluginFactory(
                 chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
+                clientState.clearState()
                 globalState.clearState()
                 scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
@@ -242,30 +220,28 @@ public class StreamStatePluginFactory(
             }
         }
 
-        globalState.setUser(user)
-
         return StatePlugin(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
-            editMessageListener = EditMessageListenerImpl(logic, globalState),
-            hideChannelListener = HideChannelListenerImpl(logic, repos),
+            editMessageListener = EditMessageListenerImpl(logic, clientState),
+            hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
-            deleteReactionListener = DeleteReactionListenerImpl(logic, globalState, repos),
-            sendReactionListener = SendReactionListenerImpl(logic, globalState, repos),
-            deleteMessageListener = DeleteMessageListenerImpl(logic, globalState, repos),
-            sendMessageListener = SendMessageListenerImpl(logic, repos),
+            deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repositoryFacade),
+            sendReactionListener = SendReactionListenerImpl(logic, clientState, repositoryFacade),
+            deleteMessageListener = DeleteMessageListenerImpl(logic, clientState, repositoryFacade),
+            sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
-            queryMembersListener = QueryMembersListenerImpl(repos),
+            queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
-            createChannelListener = CreateChannelListenerImpl(globalState, repos),
+            createChannelListener = CreateChannelListenerImpl(clientState, repositoryFacade),
             activeUser = user
         )
     }
 
-    @Suppress("LongParameterList")
+    @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
         useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
@@ -273,6 +249,7 @@ public class StreamStatePluginFactory(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
+        clientMutableState: ClientState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
     ): EventHandler {
@@ -294,6 +271,7 @@ public class StreamStatePluginFactory(
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
+                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = syncManager,
             )
@@ -302,18 +280,5 @@ public class StreamStatePluginFactory(
 
     private fun clearCachedInstance() {
         cachedStatePluginInstance = null
-    }
-
-    @Suppress(
-        "Parameter 'scope' is never used",
-        "Parameter 'context' is never used",
-        "Parameter 'user' is never used"
-    )
-    private fun createRepositoryFactory(
-        scope: CoroutineScope,
-        context: Context,
-        user: User?,
-    ): RepositoryFactory {
-        TODO("createRepositoryFactory is not implemented")
     }
 }

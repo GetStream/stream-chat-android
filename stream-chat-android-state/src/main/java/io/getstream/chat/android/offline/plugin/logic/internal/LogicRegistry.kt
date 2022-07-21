@@ -21,8 +21,9 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
@@ -36,6 +37,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
+import io.getstream.logging.StreamLog
 import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
@@ -50,6 +52,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val globalState: MutableGlobalState,
+    private val clientState: ClientState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -114,7 +117,11 @@ internal class LogicRegistry internal constructor(
                 repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
                     ?: error("There is not such message with messageId = $messageId")
             }
-            ThreadLogic(stateRegistry.thread(messageId).toMutableState(), channel(channelType, channelId))
+            ThreadLogic(
+                repos,
+                stateRegistry.thread(messageId).toMutableState(),
+                channel(channelType, channelId)
+            )
         }
     }
 
@@ -150,13 +157,12 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        instance = null
     }
 
     internal companion object {
         private var instance: LogicRegistry? = null
 
-        private val logger = ChatLogger.get("LogicRegistry")
+        private val logger = StreamLog.getLogger("Chat:LogicRegistry")
 
         /**
          * Creates and returns new instance of LogicRegistry.
@@ -176,13 +182,14 @@ internal class LogicRegistry internal constructor(
         internal fun create(
             stateRegistry: StateRegistry,
             globalState: MutableGlobalState,
+            clientState: ClientState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
         ): LogicRegistry {
             if (instance != null) {
-                logger.logE(
+                logger.e {
                     "LogicRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
                 )

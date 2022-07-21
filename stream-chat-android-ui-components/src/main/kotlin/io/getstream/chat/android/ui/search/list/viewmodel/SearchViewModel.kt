@@ -20,15 +20,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -63,7 +62,7 @@ public class SearchViewModel : ViewModel() {
      */
     private var job: Job? = null
 
-    private val logger = ChatLogger.get("SearchViewModel")
+    private val logger = StreamLog.getLogger("Chat:SearchViewModel")
 
     /**
      * Changes the current query state. An empty search query
@@ -137,7 +136,7 @@ public class SearchViewModel : ViewModel() {
      * Notifies the UI about the search results and enables the pagination.
      */
     private fun handleSearchMessageSuccess(messages: List<Message>) {
-        logger.logD("Found messages: ${messages.size}")
+        logger.d { "Found messages: ${messages.size}" }
         val currentState = _state.value!!
         _state.value = currentState.copy(
             results = currentState.results + messages,
@@ -151,7 +150,7 @@ public class SearchViewModel : ViewModel() {
      * Notifies the UI about the error and enables the pagination.
      */
     private fun handleSearchMessagesError(chatError: ChatError) {
-        logger.logD("Error searching messages: ${chatError.message}")
+        logger.d { "Error searching messages: ${chatError.message}" }
         _state.value = _state.value!!.copy(
             isLoading = false,
             isLoadingMore = false,
@@ -167,7 +166,7 @@ public class SearchViewModel : ViewModel() {
      * @param offset The pagination offset offset.
      */
     private suspend fun searchMessages(query: String, offset: Int): Result<List<Message>> {
-        logger.logD("Searching for \"$query\" with offset: $offset")
+        logger.d { "Searching for \"$query\" with offset: $offset" }
         val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
         // TODO: use the pagination based on "limit" nad "next" params here
         return ChatClient.instance()

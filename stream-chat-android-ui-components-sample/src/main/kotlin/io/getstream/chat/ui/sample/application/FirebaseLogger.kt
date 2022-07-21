@@ -17,12 +17,12 @@
 package io.getstream.chat.ui.sample.application
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.logging.StreamLog
 
 object FirebaseLogger : ChatLoggerHandler {
     private const val INTERNAL_LOG_PREFIX = "Chat"
-    private val logger = ChatLogger.get("FirebaseLogger")
+    private val logger = StreamLog.getLogger("Chat:FirebaseLogger")
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
     var userId: String? = null
@@ -37,7 +37,7 @@ object FirebaseLogger : ChatLoggerHandler {
         }
 
         if (tag == null && message == null && error == null) {
-            logger.logD("No data provided; skipping Crashlytics logging")
+            logger.d { "No data provided; skipping Crashlytics logging" }
             return
         }
 

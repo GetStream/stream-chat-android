@@ -24,9 +24,9 @@ import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -35,12 +35,12 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @param scope [CoroutineScope]
  * @param logic [LogicRegistry]
- * @param globalState [GlobalState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * @param clientState [ClientState]
  */
 internal class DeleteReactionErrorHandlerImpl(
     private val scope: CoroutineScope,
     private val logic: LogicRegistry,
-    private val globalState: GlobalState,
+    private val clientState: ClientState,
 ) : DeleteReactionErrorHandler {
 
     /**
@@ -60,7 +60,7 @@ internal class DeleteReactionErrorHandlerImpl(
         messageId: String,
     ): ReturnOnErrorCall<Message> {
         return originalCall.onErrorReturn(scope) { originalError ->
-            if (cid == null || globalState.isOnline()) {
+            if (cid == null || clientState.isOnline) {
                 Result.error(originalError)
             } else {
                 val (channelType, channelId) = cid.cidToTypeAndId()

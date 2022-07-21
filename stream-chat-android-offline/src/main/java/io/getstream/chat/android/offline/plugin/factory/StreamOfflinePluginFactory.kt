@@ -19,12 +19,11 @@ package io.getstream.chat.android.offline.plugin.factory
 import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -47,11 +46,16 @@ import kotlinx.coroutines.launch
 public class StreamOfflinePluginFactory(
     private val config: Config,
     private val appContext: Context,
-) : PluginFactory {
+) : PluginFactory, RepositoryFactory.Provider {
 
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
-
-    private val logger = ChatLogger.get("StreamOfflinePluginFactory")
+    private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
+        StreamLog.e("StreamOfflinePlugin", throwable) {
+            "[uncaughtCoroutineException] throwable: $throwable, context: $context"
+        }
+    }
+    private val scope = CoroutineScope(SupervisorJob() + DispatcherProvider.IO + exceptionHandler)
+    private val logger = StreamLog.getLogger("Chat:StreamOfflinePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -59,8 +63,6 @@ public class StreamOfflinePluginFactory(
      * @return The [Plugin] instance.
      */
     override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
-
-    private var repositoryFactory: RepositoryFactory? = null
 
     private val statePluginFactory = StreamStatePluginFactory(
         config = StatePluginConfig(
@@ -72,13 +74,6 @@ public class StreamOfflinePluginFactory(
     )
 
     /**
-     * Sets a custom repository factory. Use this to change the persistence layer of the SDK.
-     */
-    public fun setRepositoryFactory(repositoryFactory: RepositoryFactory) {
-        this.repositoryFactory = repositoryFactory
-    }
-
-    /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
      * creates the new [OfflinePlugin] and initialized its dependencies.
      *
@@ -88,28 +83,19 @@ public class StreamOfflinePluginFactory(
         val cachedPlugin = cachedOfflinePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.logI("OfflinePlugin for the user is already initialized. Returning cached instance.")
+            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
             return cachedPlugin
         } else {
             clearCachedInstance()
         }
 
-        val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
-            StreamLog.e("StreamOfflinePlugin", throwable) {
-                "[uncaughtCoroutineException] throwable: $throwable, context: $context"
-            }
-        }
-        val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-
-        val repositoryFactory = repositoryFactory
-            ?: createRepositoryFactory(scope, appContext, user, config.persistenceEnabled)
-
-        RepositoryProvider.changeRepositoryFactory(repositoryFactory)
-
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
-        val statePlugin = statePluginFactory.createStatePlugin(user, scope, repositoryFactory)
+        val statePlugin = statePluginFactory.createStatePlugin(user, scope)
+
+        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            clearCachedInstance()
+        }
 
         return OfflinePlugin(
             queryChannelsListener = statePlugin,
@@ -136,15 +122,6 @@ public class StreamOfflinePluginFactory(
         cachedOfflinePluginInstance = null
     }
 
-    private fun createRepositoryFactory(
-        scope: CoroutineScope,
-        context: Context,
-        user: User?,
-        offlineEnabled: Boolean,
-    ): RepositoryFactory {
-        return DatabaseRepositoryFactory(createDatabase(scope, context, user, offlineEnabled), user)
-    }
-
     private fun createDatabase(
         scope: CoroutineScope,
         context: Context,
@@ -158,5 +135,9 @@ public class StreamOfflinePluginFactory(
                 scope.launch { inMemoryDatabase.clearAllTables() }
             }
         }
+    }
+
+    override fun createRepositoryFactory(user: User): RepositoryFactory {
+        return DatabaseRepositoryFactory(createDatabase(scope, appContext, user, config.persistenceEnabled), user)
     }
 }
