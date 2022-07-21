@@ -1,4 +1,4 @@
-name: ReleaseStart
+name: ReleaseStartTest
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: release
+          ref: release-test
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew minor-bump
@@ -42,23 +42,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          branch: release
-      - name: Create GITHUB_TAG_RELEASE_VERSION 
-        run: |
-          ./gradlew version-print
-          version="$(cat temp-version)"
-          echo GITHUB_TAG_RELEASE_VERSION=v$version >> $GITHUB_ENV
-      - name: Generate release file
-        if: "${{ github.event.inputs.skip_github_release != 'true' }}"
-        run: ./gradlew generate-release
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        if: "${{ github.event.inputs.skip_github_release != 'true' }}"
-        with:
-          artifacts: "release.tar.gz,foo/*.txt"
-          bodyFile: "CHANGELOG_PARSED.md"
-          token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
-          commit: release
-
-
+          branch: release-test
