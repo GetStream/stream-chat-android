@@ -18,7 +18,7 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageInterceptorFactory
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -155,7 +155,7 @@ public class StreamStatePluginFactory(
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType,
             user = user,
-            prepareMessageLogic = PrepareMessageInterceptorFactory().create(appContext)
+            prepareMessageLogic = PrepareMessageLogicFactory().create(appContext)
         )
 
         val channelMarkReadHelper = ChannelMarkReadHelper(
