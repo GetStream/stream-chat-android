@@ -31,12 +31,18 @@ jobs:
       - name: Parse release section in changelog
         if: "${{ github.event.inputs.skip_changelog_update != 'true' }}"
         run: ./gradlew changelog-release-section
-      - name: Push changes
+      - name: Commit changes
         uses: EndBug/add-and-commit@v8
         with:
           add: '["CHANGELOG.md", "buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt"]'
           message: "AUTOMATION: Version Bump and CHANGELOG Update"
           default_author: github_actions
+          push: false
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: release
       - name: Create GITHUB_TAG_RELEASE_VERSION 
         run: |
           ./gradlew version-print
