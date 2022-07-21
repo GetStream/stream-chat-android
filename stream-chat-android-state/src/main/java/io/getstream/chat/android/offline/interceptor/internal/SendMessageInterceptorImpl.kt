@@ -126,7 +126,7 @@ internal class SendMessageInterceptorImpl(
             createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
             syncStatus = when {
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                clientState.isInternetAvailable -> SyncStatus.IN_PROGRESS
+                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
@@ -161,7 +161,7 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return if (clientState.isInternetAvailable) {
+        return if (clientState.isNetworkAvailable) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)

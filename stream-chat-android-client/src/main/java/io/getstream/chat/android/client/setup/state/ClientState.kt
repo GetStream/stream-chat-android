@@ -73,7 +73,7 @@ public interface ClientState {
      * If internet is available or not. This is not related to the connection of the SDK, it returns
      * if internet is available in the device.
      */
-    public val isInternetAvailable: Boolean
+    public val isNetworkAvailable: Boolean
 
     /**
      * Clears the state of [ClientState].

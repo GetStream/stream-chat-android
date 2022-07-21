@@ -50,7 +50,7 @@ internal class ClientStateImpl(
 
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
-    override val isInternetAvailable: Boolean
+    override val isNetworkAvailable: Boolean
         get() = networkLifecyclePublisher.isConnected()
 
     override fun clearState() {
