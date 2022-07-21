@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
 
 ### ✅ Added
 - Added `isFilteringMessages` check on request. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
@@ -24,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed preview for channels when sending messages offline. [3933](https://github.com/GetStream/stream-chat-android/pull/3933)
 
 ### ⬆️ Improved
 
@@ -57,6 +59,7 @@
 - Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
+- Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
 
 ### ❌ Removed
 
@@ -116,6 +119,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 20th, 2022 - 5.6.1
+## stream-chat-android-client
+### ⚠️ Changed
+- Functions inside `ThreadQueryListener` have been turned into `suspend` functions. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed a crash when reacting to a message in a thread. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed thread not scrolling to new message. [#3930](https://github.com/GetStream/stream-chat-android/pull/3930)
 
 # July 20th, 2022 - 5.6.0
 ## Common changes for all artifacts

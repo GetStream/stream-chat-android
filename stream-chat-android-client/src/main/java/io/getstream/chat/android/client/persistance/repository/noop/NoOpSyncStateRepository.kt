@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat
+package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.ChatClient
-import org.mockito.kotlin.mock
+import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.sync.SyncState
 
-public class MockChatClientBuilder(
-    private val builderFunction: () -> ChatClient = { mock() }
-) : ChatClient.ChatClientBuilder() {
-    override fun internalBuild(): ChatClient = builderFunction()
+/**
+ * No-Op SyncStateRepository.
+ */
+internal object NoOpSyncStateRepository : SyncStateRepository {
+    override suspend fun insertSyncState(syncState: SyncState) { /* No-Op */ }
+    override suspend fun selectSyncState(userId: String): SyncState? = null
+    override suspend fun clear() { /* No-Op */ }
 }

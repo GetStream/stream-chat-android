@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.viewmodel.messages
+package io.getstream.chat.android.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User

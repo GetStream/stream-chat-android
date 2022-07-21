@@ -6,26 +6,30 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | --- | --- | --- | --- | --- |
 | `Messages` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use new implementation of `Messages` composable. |
 | `MesageListViewModel.loadMore` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
-| `ChatLogger` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
-| `ChatLogger.Config` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
-| `ChatLogger::get` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
-| `BaseChatModule::logger` | 2022.07.13 <br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
-| `GlobalState::setUser` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
-| `GlobalState::isInitialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
-| `GlobalState::isConnecting` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
-| `GlobalState::isOffline` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOffline` instead.|
-| `GlobalState::isOnline` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOnline` instead.|
-| `GlobalState::connectionState` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:connectionState` instead.|
-| `GlobalState::initialized` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:initialized` instead.|
-| `GlobalState::user` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState::user` instead.|
-| `GlobalState::errorEvents` | 2022.07.06 <br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | This method is no longer used.|
-| `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.18 ⌛ | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
-| `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.18 ⌛ | 2022.08.01 ⌛ | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
-| `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use QuerySortByReflection. |
-| `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the version without offsets, as it uses less requests to backend. |
-| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
-| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
-| `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.18 ⌛ | 2022.08.15 ⌛ | Use the new implementation of `InputField`. |
+| `LegacyDateFormatter` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
+| `PorterImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
+| `PorterShapeImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
+| `ChatClient::disconnect` | 2022.07.19 <br/>5.6.0 | 2022.08.19 ⌛ | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
+| `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
+| `ChatLogger::get` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
+| `BaseChatModule::logger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `GlobalState::setUser` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
+| `GlobalState::isInitialized` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
+| `GlobalState::isConnecting` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
+| `GlobalState::isOffline` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOffline` instead.|
+| `GlobalState::isOnline` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOnline` instead.|
+| `GlobalState::connectionState` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:connectionState` instead.|
+| `GlobalState::initialized` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:initialized` instead.|
+| `GlobalState::user` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState::user` instead.|
+| `GlobalState::errorEvents` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | This method is no longer used.|
+| `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
+| `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
+| `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use QuerySortByReflection. |
+| `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use the version without offsets, as it uses less requests to backend. |
+| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
+| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
+| `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use the new implementation of `InputField`. |
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `QuotedMessage` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use new implementation of `QuotedText`. |

@@ -18,20 +18,25 @@ package io.getstream.chat.android.offline.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.logging.StreamLog
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-internal class ThreadLogic(private val mutableState: ThreadMutableState, private val channelLogic: ChannelLogic) :
-    ThreadQueryListener {
+internal class ThreadLogic(
+    private val repos: RepositoryFacade,
+    private val mutableState: ThreadMutableState,
+    private val channelLogic: ChannelLogic
+) : ThreadQueryListener {
 
     private val logger = StreamLog.getLogger("Chat:ThreadLogic")
 
     /** Runs precondition for loading more messages for thread. */
-    internal fun precondition(): Result<Unit> {
+    private fun precondition(): Result<Unit> {
         return if (mutableState.loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
@@ -42,12 +47,14 @@ internal class ThreadLogic(private val mutableState: ThreadMutableState, private
     }
 
     /** Runs side effect when a request is going to be launched. */
-    internal fun onRequest() {
+    @Suppress("UnusedPrivateMember")
+    private suspend fun onRequest(messageId: String, firstId: String?, limit: Int) {
         mutableState._loadingOlderMessages.value = true
+        // TODO implement thread replies loading from DB
     }
 
     /** Runs side effect when a result is obtained. */
-    internal fun onResult(result: Result<List<Message>>, limit: Int) {
+    private suspend fun onResult(result: Result<List<Message>>, limit: Int) {
         if (result.isSuccess) {
             // Note that we don't handle offline storage for threads at the moment.
             val newMessages = result.data()
@@ -58,19 +65,31 @@ internal class ThreadLogic(private val mutableState: ThreadMutableState, private
         }
 
         mutableState._loadingOlderMessages.value = false
+
+        result.onSuccessSuspend {
+            repos.insertMessages(it)
+        }
     }
 
-    override fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> = precondition()
+    override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> = precondition()
 
-    override fun onGetRepliesRequest(messageId: String, limit: Int) = onRequest()
+    override suspend fun onGetRepliesRequest(messageId: String, limit: Int) = onRequest(messageId, null, limit)
 
-    override fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) =
+    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) =
         onResult(result, limit)
 
-    override fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int) = precondition()
+    override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int) = precondition()
 
-    override fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int) = onRequest()
+    override suspend fun onGetRepliesMoreRequest(
+        messageId: String,
+        firstId: String,
+        limit: Int
+    ) = onRequest(messageId, firstId, limit)
 
-    override fun onGetRepliesMoreResult(result: Result<List<Message>>, messageId: String, firstId: String, limit: Int) =
-        onResult(result, limit)
+    override suspend fun onGetRepliesMoreResult(
+        result: Result<List<Message>>,
+        messageId: String,
+        firstId: String,
+        limit: Int
+    ) = onResult(result, limit)
 }

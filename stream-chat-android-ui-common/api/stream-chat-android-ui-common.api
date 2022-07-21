@@ -2,86 +2,6 @@ public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/con
 	public fun <init> ()V
 }
 
-public abstract class com/getstream/sdk/chat/adapter/MessageListItem {
-	public final fun getStableId ()J
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$DateSeparatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public fun <init> (Ljava/util/Date;)V
-	public final fun component1 ()Ljava/util/Date;
-	public final fun copy (Ljava/util/Date;)Lcom/getstream/sdk/chat/adapter/MessageListItem$DateSeparatorItem;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/adapter/MessageListItem$DateSeparatorItem;Ljava/util/Date;ILjava/lang/Object;)Lcom/getstream/sdk/chat/adapter/MessageListItem$DateSeparatorItem;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDate ()Ljava/util/Date;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$LoadingMoreIndicatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$LoadingMoreIndicatorItem;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$MessageItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Z
-	public final fun component4 ()Ljava/util/List;
-	public final fun component5 ()Z
-	public final fun component6 ()Z
-	public final fun component7 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZZ)Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;ZLjava/util/List;ZZZILjava/lang/Object;)Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
-	public final fun getMessageReadBy ()Ljava/util/List;
-	public final fun getPositions ()Ljava/util/List;
-	public final fun getShowMessageFooter ()Z
-	public fun hashCode ()I
-	public final fun isMessageRead ()Z
-	public final fun isMine ()Z
-	public final fun isTheirs ()Z
-	public final fun isThreadMode ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$Position : java/lang/Enum {
-	public static final field BOTTOM Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static final field MIDDLE Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static final field TOP Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static fun values ()[Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public fun <init> (Ljava/util/Date;I)V
-	public final fun component1 ()Ljava/util/Date;
-	public final fun component2 ()I
-	public final fun copy (Ljava/util/Date;I)Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem;Ljava/util/Date;IILjava/lang/Object;)Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDate ()Ljava/util/Date;
-	public final fun getMessageCount ()I
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/adapter/MessageListItem$TypingItem : com/getstream/sdk/chat/adapter/MessageListItem {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lcom/getstream/sdk/chat/adapter/MessageListItem$TypingItem;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/adapter/MessageListItem$TypingItem;Ljava/util/List;ILjava/lang/Object;)Lcom/getstream/sdk/chat/adapter/MessageListItem$TypingItem;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUsers ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/coil/StreamImageLoaderFactory : coil/ImageLoaderFactory {
 	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -97,23 +17,6 @@ public final class com/getstream/sdk/chat/disposable/CoilDisposable : com/getstr
 public abstract interface class com/getstream/sdk/chat/disposable/Disposable {
 	public abstract fun dispose ()V
 	public abstract fun isDisposed ()Z
-}
-
-public final class com/getstream/sdk/chat/enums/GiphyAction : java/lang/Enum {
-	public static final field CANCEL Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static final field SEND Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static final field SHUFFLE Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static fun values ()[Lcom/getstream/sdk/chat/enums/GiphyAction;
-}
-
-public final class com/getstream/sdk/chat/enums/OnlineStatus : java/lang/Enum {
-	public static final field CONNECTED Lcom/getstream/sdk/chat/enums/OnlineStatus;
-	public static final field CONNECTING Lcom/getstream/sdk/chat/enums/OnlineStatus;
-	public static final field FAILED Lcom/getstream/sdk/chat/enums/OnlineStatus;
-	public static final field NOT_INITIALIZED Lcom/getstream/sdk/chat/enums/OnlineStatus;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/enums/OnlineStatus;
-	public static fun values ()[Lcom/getstream/sdk/chat/enums/OnlineStatus;
 }
 
 public abstract interface class com/getstream/sdk/chat/images/ImageHeadersProvider {
@@ -146,9 +49,6 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation$RoundedCorners : com/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation {
 	public fun <init> (F)V
 	public final fun getRadius ()F
-}
-
-public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
 }
 
 public final class com/getstream/sdk/chat/model/AttachmentMetaData {
@@ -187,22 +87,6 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class com/getstream/sdk/chat/navigation/ChatNavigationHandler {
-	public abstract fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)Z
-}
-
-public abstract interface class com/getstream/sdk/chat/navigation/ChatNavigator {
-	public abstract fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)V
-}
-
-public abstract class com/getstream/sdk/chat/navigation/destinations/ChatDestination {
-	public fun <init> (Landroid/content/Context;)V
-	protected final fun getContext ()Landroid/content/Context;
-	public abstract fun navigate ()V
-	protected final fun start (Landroid/content/Intent;)V
-	protected final fun startForResult (Landroid/content/Intent;I)V
-}
-
 public final class com/getstream/sdk/chat/startup/ThreeTenInitializer : androidx/startup/Initializer {
 	public fun <init> ()V
 	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
@@ -224,13 +108,6 @@ public final class com/getstream/sdk/chat/utils/DateFormatter$Companion {
 public final class com/getstream/sdk/chat/utils/DateFormatterKt {
 }
 
-public class com/getstream/sdk/chat/utils/GridSpacingItemDecoration : androidx/recyclerview/widget/RecyclerView$ItemDecoration {
-	public fun <init> (IIZ)V
-	public fun getItemOffsets (Landroid/graphics/Rect;Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$State;)V
-	public fun setSpacing (I)V
-	public fun setSpanCount (I)V
-}
-
 public abstract class com/getstream/sdk/chat/utils/LegacyDateFormatter : com/getstream/sdk/chat/utils/DateFormatter {
 	public fun <init> ()V
 	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
@@ -246,14 +123,6 @@ public final class com/getstream/sdk/chat/utils/MediaStringUtil {
 	public static synthetic fun convertVideoLength$default (JLjava/util/Locale;ILjava/lang/Object;)Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/utils/StartStopBuffer {
-	public fun <init> ()V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class com/getstream/sdk/chat/utils/StorageHelper$Companion {
 }
 
@@ -261,12 +130,9 @@ public class com/getstream/sdk/chat/utils/Utils {
 	public static final field locale Ljava/util/Locale;
 	public fun <init> ()V
 	public static fun dpToPx (I)I
-	public static fun getApplicationName (Landroid/content/Context;)Ljava/lang/String;
 	public static fun getMimeType (Ljava/io/File;)Ljava/lang/String;
 	public static fun getMimeType (Ljava/lang/String;)Ljava/lang/String;
-	public static fun hideSoftKeyboard (Landroid/content/Context;)V
 	public static fun hideSoftKeyboard (Landroid/view/View;)V
-	public static fun isSVGImage (Ljava/lang/String;)Z
 	public static fun showSoftKeyboard (Landroid/content/Context;)V
 	public static fun showSoftKeyboard (Landroid/view/View;)V
 }
@@ -285,9 +151,6 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 	public static final fun onPermissionRequested (Landroid/content/Context;Ljava/lang/String;)V
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
@@ -296,16 +159,10 @@ public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 public final class com/getstream/sdk/chat/utils/extensions/DateKt {
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt {
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibilityKt {
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
@@ -316,12 +173,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/StringKt {
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/ViewGroupKt {
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/ViewKt {
 }
 
 public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
@@ -344,17 +195,6 @@ public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView 
 	public fun setShape (Landroid/content/Context;Landroid/graphics/drawable/Drawable;)V
 }
 
-public abstract interface class com/getstream/sdk/chat/utils/strings/ChatStrings {
-	public abstract fun get (I)Ljava/lang/String;
-	public abstract fun get (I[Ljava/lang/Object;)Ljava/lang/String;
-}
-
-public final class com/getstream/sdk/chat/utils/strings/ChatStringsImpl : com/getstream/sdk/chat/utils/strings/ChatStrings {
-	public fun <init> (Landroid/content/Context;)V
-	public fun get (I)Ljava/lang/String;
-	public fun get (I[Ljava/lang/Object;)Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
 	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public fun clear ()V
@@ -364,23 +204,6 @@ public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffe
 public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
 	public abstract fun clear ()V
 	public abstract fun onKeystroke ()V
-}
-
-public final class com/getstream/sdk/chat/view/EndlessMessageListScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
-	public fun <init> (ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
-	public final fun disablePagination ()V
-	public final fun enablePagination ()V
-	public final fun fetchAtBottom (Z)V
-	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
-	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
-}
-
-public final class com/getstream/sdk/chat/view/EndlessScrollListener : androidx/recyclerview/widget/RecyclerView$OnScrollListener {
-	public fun <init> (ILkotlin/jvm/functions/Function0;)V
-	public final fun disablePagination ()V
-	public final fun enablePagination ()V
-	public fun onScrollStateChanged (Landroidx/recyclerview/widget/RecyclerView;I)V
-	public fun onScrolled (Landroidx/recyclerview/widget/RecyclerView;II)V
 }
 
 public class com/getstream/sdk/chat/view/activity/AttachmentDocumentActivity : androidx/appcompat/app/AppCompatActivity {

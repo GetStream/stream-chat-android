@@ -99,4 +99,9 @@ public interface MessageRepository {
      * @param syncStatus [SyncStatus]
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
+
+    /**
+     * Clear messages of this repository.
+     */
+    public suspend fun clear()
 }

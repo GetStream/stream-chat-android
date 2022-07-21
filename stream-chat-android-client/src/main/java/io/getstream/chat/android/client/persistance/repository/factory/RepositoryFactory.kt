@@ -32,8 +32,6 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
  */
 public interface RepositoryFactory {
 
-    public fun <T : Any> get(classz: Class<T>): T
-
     /**
      * Creates [UserRepository]
      */
@@ -85,4 +83,15 @@ public interface RepositoryFactory {
      * Creates [AttachmentRepository]
      */
     public fun createAttachmentRepository(): AttachmentRepository
+
+    /**
+     * Interface to delegate creation of [RepositoryFactory].
+     */
+    public interface Provider {
+
+        /**
+         * Create a [RepositoryFactory] for the given [User].
+         */
+        public fun createRepositoryFactory(user: User): RepositoryFactory
+    }
 }

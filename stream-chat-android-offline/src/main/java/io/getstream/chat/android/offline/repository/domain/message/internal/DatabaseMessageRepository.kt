@@ -153,6 +153,11 @@ internal class DatabaseMessageRepository(
         return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
     }
 
+    override suspend fun clear() {
+        messageCache.evictAll()
+        messageDao.deleteAll()
+    }
+
     private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
