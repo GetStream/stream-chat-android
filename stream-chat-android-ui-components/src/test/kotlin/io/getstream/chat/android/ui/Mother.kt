@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui
 
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -24,6 +25,7 @@ import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.positiveRandomInt
@@ -33,6 +35,90 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import java.util.Date
+
+internal fun createMessage(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    text: String = randomString(),
+    html: String = randomString(),
+    parentId: String? = randomString(),
+    command: String? = randomString(),
+    attachments: MutableList<Attachment> = mutableListOf(),
+    mentionedUsers: MutableList<User> = mutableListOf(),
+    replyCount: Int = randomInt(),
+    reactionCounts: MutableMap<String, Int> = mutableMapOf(),
+    reactionScores: MutableMap<String, Int> = mutableMapOf(),
+    syncStatus: SyncStatus = randomSyncStatus(),
+    type: String = randomString(),
+    latestReactions: MutableList<Reaction> = mutableListOf(),
+    ownReactions: MutableList<Reaction> = mutableListOf(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDate(),
+    user: User = createUser(),
+    extraData: MutableMap<String, Any> = mutableMapOf(),
+    silent: Boolean = randomBoolean()
+): Message = Message(
+    id = id,
+    cid = cid,
+    text = text,
+    html = html,
+    parentId = parentId,
+    command = command,
+    attachments = attachments,
+    mentionedUsers = mentionedUsers,
+    replyCount = replyCount,
+    reactionCounts = reactionCounts,
+    reactionScores = reactionScores,
+    syncStatus = syncStatus,
+    type = type,
+    latestReactions = latestReactions,
+    ownReactions = ownReactions,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    user = user,
+    extraData = extraData,
+    silent = silent
+)
+
+internal fun randomUser(
+    id: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
+    role: String = randomString(),
+    invisible: Boolean = randomBoolean(),
+    banned: Boolean = randomBoolean(),
+    devices: List<Device> = mutableListOf(),
+    online: Boolean = randomBoolean(),
+    createdAt: Date? = null,
+    updatedAt: Date? = null,
+    lastActive: Date? = null,
+    totalUnreadCount: Int = positiveRandomInt(),
+    unreadChannels: Int = positiveRandomInt(),
+    mutes: List<Mute> = mutableListOf(),
+    teams: List<String> = listOf(),
+    channelMutes: List<ChannelMute> = emptyList(),
+    extraData: MutableMap<String, Any> = mutableMapOf()
+): User = User(
+    id,
+    name,
+    image,
+    role,
+    invisible,
+    banned,
+    devices,
+    online,
+    createdAt,
+    updatedAt,
+    lastActive,
+    totalUnreadCount,
+    unreadChannels,
+    mutes,
+    teams,
+    channelMutes,
+    extraData
+)
 
 internal fun createUser(
     id: String = randomString(),
