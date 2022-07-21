@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
@@ -64,7 +65,8 @@ internal class ChannelStateLogicImpl(
      * Used to prune stale active typing events when the sender
      * of these events was unable to send a stop typing event.
      */
-    private val typingEventPruner = TypingEventPruner(coroutineScope = coroutineScope)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val typingEventPruner = TypingEventPruner(coroutineScope = coroutineScope)
 
     init {
         setupTypingEventsPruner()

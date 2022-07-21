@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -31,9 +32,12 @@ import kotlinx.coroutines.launch
  * connection)
  *
  * @property coroutineScope The scope used to launch jobs.
+ * @param delayTimeMs The period of time it takes before an individual stale
+ * typing event is removed.
  */
 internal class TypingEventPruner(
     private val coroutineScope: CoroutineScope,
+    private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
 ) {
 
     /**
@@ -55,9 +59,10 @@ internal class TypingEventPruner(
     /**
      * A mutable map of typing events.
      *
-     * Each event is capable of timed death using [TimedTypingStartEvent.removeUser]
+     * Each event is capable of timed death using [TimedTypingStartEvent.removeTypingEvent]
      */
-    private val typingEvents = mutableMapOf<String, TimedTypingStartEvent>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val typingEvents = mutableMapOf<String, TimedTypingStartEvent>()
 
     /**
      * Initializes the pruner by passing in and setting
@@ -110,6 +115,7 @@ internal class TypingEventPruner(
             coroutineScope = coroutineScope,
             typingStartEvent = typingStartEvent,
             userId = userId,
+            delayTimeMs = DEFAULT_DELAY_TIME_MS,
             removeTypingEvent = {
                 removeTypingEvent(it)
             }
@@ -143,7 +149,8 @@ internal class TypingEventPruner(
      * Used to set a value to
      * [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.rawTyping].
      */
-    private fun getRawTyping(): Map<String, TypingStartEvent> = typingEvents.mapValues { it.value.typingStartEvent }
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getRawTyping(): Map<String, TypingStartEvent> = typingEvents.mapValues { it.value.typingStartEvent }
 
     /**
      * Produces an up to date [TypingEvent] instance.
@@ -151,7 +158,8 @@ internal class TypingEventPruner(
      * Used to set a value to
      * [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.typing].
      */
-    private fun getTypingEvent(): TypingEvent = typingEvents.values
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getTypingEvent(): TypingEvent = typingEvents.values
         .map { it.typingStartEvent }
         .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
         .map { typingStartEvent -> typingStartEvent.user }
@@ -170,6 +178,25 @@ internal class TypingEventPruner(
         ) -> Unit,
     ) {
         this.onUpdated = onUpdated
+    }
+
+    /**
+     * Clears all existing typing updates and posts
+     * the resulting updated lists.
+     */
+    fun clear() {
+        typingEvents.clear()
+
+        onUpdated(getRawTyping(), getTypingEvent())
+    }
+
+    companion object {
+
+        /**
+         * The default time period before a [TypingStartEvent] is considered
+         * stale and needs to be "cleaned".
+         */
+        const val DEFAULT_DELAY_TIME_MS = 7000L
     }
 }
 
@@ -190,7 +217,7 @@ internal data class TimedTypingStartEvent(
     private val coroutineScope: CoroutineScope,
     internal val typingStartEvent: TypingStartEvent,
     private val userId: String,
-    private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
+    private val delayTimeMs: Long,
     private val removeTypingEvent: (userId: String) -> Unit,
 ) {
 
@@ -215,14 +242,5 @@ internal data class TimedTypingStartEvent(
      */
     fun cancelJob() {
         job?.cancel()
-    }
-
-    companion object {
-
-        /**
-         * The default time period before a [TypingStartEvent] is considered
-         * stale and needs to be "cleaned".
-         */
-        const val DEFAULT_DELAY_TIME_MS = 7000L
     }
 }
