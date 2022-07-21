@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
@@ -170,6 +171,7 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 /**
@@ -2292,8 +2294,8 @@ internal constructor(
      * Returns all events that happened for a list of channels since last sync (while the user was not
      * connected to the web-socket).
      *
-     * @param channelsIds The list of channel CIDs
-     * @param lastSyncAt The last time the user was online and in sync
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
      *
      * @return Executable async [Call] responsible for obtaining missing events.
      */
@@ -2304,11 +2306,27 @@ internal constructor(
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
             .withPrecondition(scope) {
-                when (channelsIds.isEmpty()) {
-                    true -> Result.error(ChatError("channelsIds must contain at least 1 id."))
-                    else -> Result.success(Unit)
-                }
+                checkSyncHistoryPreconditions(channelsIds, lastSyncAt)
             }
+    }
+
+    /**
+     * Checks if sync history request parameters meet preconditions:
+     * 1. If [channelsIds] is not empty.
+     * 2. If [lastSyncAt] is no later than 30 days
+     */
+    private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
+        return when {
+            channelsIds.isEmpty() -> {
+                Result.error(ChatError("channelsIds must contain at least 1 id."))
+            }
+            lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
+                Result.error(ChatError("lastSyncAt cannot by later than 30 days."))
+            }
+            else -> {
+                Result.success(Unit)
+            }
+        }
     }
 
     /**
@@ -2763,6 +2781,7 @@ internal constructor(
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+        private val THIRTY_DAYS_IN_MILLISECONDS = 30 * TimeUnit.DAYS.toMillis(1)
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
