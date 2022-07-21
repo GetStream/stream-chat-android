@@ -2,6 +2,7 @@
 ## stream-chat-android-client
 ### ⚠️ Changed
 - Functions inside `ThreadQueryListener` have been turned into `suspend` functions. [#3926](https://github.com/GetStream/stream-chat-android/pull/3926)  
+- lalalalalalal
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
