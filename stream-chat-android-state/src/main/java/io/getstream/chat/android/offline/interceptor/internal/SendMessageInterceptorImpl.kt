@@ -68,32 +68,32 @@ internal class SendMessageInterceptorImpl(
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
 
-        prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
+        val preparedMessage = prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
             message.populateMentions(channel.toChannel())
         }
 
         // Update flow in channel controller
-        channel.upsertMessage(message)
+        channel.upsertMessage(preparedMessage)
         // we insert early to ensure we don't lose messages
-        messageRepository.insertMessage(message)
-        channelRepository.updateLastMessageForChannel(message.cid, message)
+        messageRepository.insertMessage(preparedMessage)
+        channelRepository.updateLastMessageForChannel(message.cid, preparedMessage)
 
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update flow for currently running queries
         logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
 
-        if (message.replyMessageId != null) {
+        if (preparedMessage.replyMessageId != null) {
             channel.replyMessage(null)
         }
 
         return if (!isRetrying) {
-            if (message.hasPendingAttachments()) {
-                uploadAttachments(message, channelType, channelId)
+            if (preparedMessage.hasPendingAttachments()) {
+                uploadAttachments(preparedMessage, channelType, channelId)
             } else {
-                Result.success(message)
+                Result.success(preparedMessage)
             }
         } else {
-            retryMessage(message, channelType, channelId)
+            retryMessage(preparedMessage, channelType, channelId)
         }
     }
 
