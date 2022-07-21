@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed preview for channels when sending messages offline. [3933](https://github.com/GetStream/stream-chat-android/pull/3933)
 
 ### ⬆️ Improved
 
