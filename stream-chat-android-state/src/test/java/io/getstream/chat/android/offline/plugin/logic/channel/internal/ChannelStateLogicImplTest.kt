@@ -37,7 +37,6 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
@@ -127,7 +126,14 @@ internal class ChannelStateLogicImplTest {
     }
 
     private val channelStateLogicImpl =
-        ChannelStateLogicImpl(mutableState, globalMutableState, mock(), attachmentUrlValidator)
+        ChannelStateLogicImpl(
+            mutableState,
+            globalMutableState = globalMutableState,
+            clientState = clientState,
+            searchLogic = mock(),
+            attachmentUrlValidator = attachmentUrlValidator,
+            coroutineScope = testCoroutines.scope
+        )
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
@@ -321,31 +327,6 @@ internal class ChannelStateLogicImplTest {
         )
 
         _messages `should be equal to` mapOf(message2.id to message2)
-    }
-
-    @Test
-    fun `given a non scroll messages come while inside search, messages should not be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val nonFilteringRequest = QueryChannelRequest()
-
-        channelStateLogicImpl.propagateChannelQuery(channel, nonFilteringRequest)
-        verify(mutableState, never()).rawMessages = any()
-    }
-
-    @Test
-    fun `given a scroll messages come while inside search, messages should be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val filteringRequest = QueryChannelPaginationRequest(1)
-            .withMessages(Pagination.GREATER_THAN, randomString(), 1)
-
-        channelStateLogicImpl.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).rawMessages = any()
     }
 
     @Test

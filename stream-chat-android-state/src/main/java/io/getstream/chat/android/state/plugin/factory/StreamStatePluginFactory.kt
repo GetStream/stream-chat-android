@@ -139,9 +139,10 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             globalState = globalState,
             userPresence = config.userPresence,
-            repos = repos,
+            repos = repositoryFacade,
             client = chatClient,
-            coroutineScope = scope
+            clientState = clientState,
+            coroutineScope = scope,
         )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(

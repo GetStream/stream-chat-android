@@ -38,7 +38,6 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
@@ -89,6 +88,7 @@ internal class LogicRegistry internal constructor(
                 mutableState = mutableState,
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
+                clientState = clientState,
                 coroutineScope = coroutineScope
             )
 
@@ -172,7 +172,6 @@ internal class LogicRegistry internal constructor(
          * @param userPresence True if userPresence should be enabled, false otherwise.
          * @param repos [RepositoryFacade] to interact with local data sources.
          * @param client An instance of [ChatClient].
-         * @param coroutineScope The scope used for running jobs.
          *
          * @return Instance of [LogicRegistry].
          *
@@ -192,18 +191,20 @@ internal class LogicRegistry internal constructor(
                 logger.e {
                     "LogicRegistry instance is already created. " +
                         "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
-                )
+                }
             }
             return LogicRegistry(
                 stateRegistry = stateRegistry,
                 globalState = globalState,
+                clientState = clientState,
                 userPresence = userPresence,
                 repos = repos,
                 client = client,
                 coroutineScope = coroutineScope
-            ).also { logicRegistry ->
-                instance = logicRegistry
-            }
+            )
+                .also { logicRegistry ->
+                    instance = logicRegistry
+                }
         }
 
         /**
