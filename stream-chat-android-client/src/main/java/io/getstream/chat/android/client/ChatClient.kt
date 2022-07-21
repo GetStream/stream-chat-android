@@ -171,7 +171,7 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.days
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
 /**
@@ -2781,7 +2781,7 @@ internal constructor(
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-        private val THIRTY_DAYS_IN_MILLISECONDS = 30 * TimeUnit.DAYS.toMillis(1)
+        private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
