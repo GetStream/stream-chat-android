@@ -48,6 +48,7 @@ import java.util.concurrent.ConcurrentHashMap
  * 2. Query channel
  * 3. Query thread
  */
+@Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val globalState: MutableGlobalState,
