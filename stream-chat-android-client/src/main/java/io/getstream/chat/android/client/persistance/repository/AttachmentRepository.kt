@@ -28,4 +28,9 @@ public interface AttachmentRepository {
      * Observes any change in attachments for an specific message.
      */
     public fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
+
+    /**
+     * Clear attachments of this repository.
+     */
+    public suspend fun clear()
 }

@@ -247,4 +247,8 @@ internal class MockMessageRepository : MessageRepository {
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun clear() {
+        messages.clear()
+    }
 }

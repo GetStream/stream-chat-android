@@ -125,4 +125,8 @@ internal class DatabaseReactionRepository(
         return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
             .map { it.toModel(getUser) }
     }
+
+    override suspend fun clear() {
+        reactionDao.deleteAll()
+    }
 }

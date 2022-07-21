@@ -17,15 +17,18 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.annotation.CallSuper
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.BeforeEach
@@ -64,17 +67,24 @@ internal open class BaseRepositoryFacadeTest {
         syncState = mock()
         attachmentRepository = mock()
 
-        sut = RepositoryFacade(
-            userRepository = users,
-            configsRepository = configs,
-            channelsRepository = channels,
-            queryChannelsRepository = queryChannels,
-            messageRepository = messages,
-            reactionsRepository = reactions,
-            syncStateRepository = syncState,
-            attachmentRepository = attachmentRepository,
-            scope = testCoroutines.scope,
-            defaultConfig = mock(),
-        )
+        val repositoryFactory = object : RepositoryFactory {
+            override fun createUserRepository(): UserRepository = users
+            override fun createChannelConfigRepository(): ChannelConfigRepository = configs
+            override fun createChannelRepository(
+                getUser: suspend (userId: String) -> User,
+                getMessage: suspend (messageId: String) -> Message?,
+            ): ChannelRepository = channels
+
+            override fun createQueryChannelsRepository(): QueryChannelsRepository = queryChannels
+            override fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
+                messages
+
+            override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+                reactions
+
+            override fun createSyncStateRepository(): SyncStateRepository = syncState
+            override fun createAttachmentRepository(): AttachmentRepository = attachmentRepository
+        }
+        sut = RepositoryFacade.create(repositoryFactory, testCoroutines.scope)
     }
 }

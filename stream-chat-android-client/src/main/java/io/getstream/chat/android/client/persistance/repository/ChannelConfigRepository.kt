@@ -41,4 +41,9 @@ public interface ChannelConfigRepository {
      * Writes [ChannelConfig]
      */
     public suspend fun insertChannelConfig(config: ChannelConfig)
+
+    /**
+     * Clear ChanelConfigs of this repository.
+     */
+    public suspend fun clear()
 }

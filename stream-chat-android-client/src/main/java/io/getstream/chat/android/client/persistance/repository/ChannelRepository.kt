@@ -152,6 +152,11 @@ public interface ChannelRepository {
      */
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
+    /**
+     * Clear Channels of this repository.
+     */
+    public suspend fun clear()
+
     @VisibleForTesting
     public fun clearChannelCache()
 

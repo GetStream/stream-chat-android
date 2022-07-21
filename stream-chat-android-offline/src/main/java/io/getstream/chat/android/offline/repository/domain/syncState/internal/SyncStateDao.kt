@@ -27,8 +27,11 @@ internal interface SyncStateDao {
     suspend fun insert(syncStateEntity: SyncStateEntity)
 
     @Query(
-        "SELECT * FROM stream_sync_state " +
+        "SELECT * FROM $SYNC_STATE_ENTITY_TABLE_NAME " +
             "WHERE stream_sync_state.userId = :userId"
     )
     suspend fun select(userId: String): SyncStateEntity?
+
+    @Query("DELETE FROM $SYNC_STATE_ENTITY_TABLE_NAME")
+    suspend fun deleteAll()
 }

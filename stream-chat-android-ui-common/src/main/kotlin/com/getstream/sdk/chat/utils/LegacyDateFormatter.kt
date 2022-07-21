@@ -20,6 +20,10 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import java.util.Date
 
+@Deprecated(
+    message = "The class is unused and will be removed",
+    level = DeprecationLevel.WARNING
+)
 public abstract class LegacyDateFormatter : DateFormatter {
     /**
      * Formats the given date as a String.
