@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.message.attachments.internal
 
 import android.content.Context
-import android.util.Log
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -81,8 +80,7 @@ internal class UploadAttachmentsAndroidWorker(
                     )
                 )
                 .build()
-
-            Log.d("UploadAttachmentsWorker", "Starting worker")
+            
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
