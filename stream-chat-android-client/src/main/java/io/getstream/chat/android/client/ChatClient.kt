@@ -328,7 +328,7 @@ internal constructor(
             val jointString = plugins.joinToString { plugin ->
                 plugin::class.qualifiedName ?: "plugin without qualified name"
             }
-            logger.d { "Plugins found: $jointString" }
+            logger.d { "Plugins found:     $jointString" }
         } else {
             logger.d { "No plugins found for this request." }
         }
