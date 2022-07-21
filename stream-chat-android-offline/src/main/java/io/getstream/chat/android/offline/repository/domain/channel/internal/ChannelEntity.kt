@@ -53,7 +53,7 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
  * @param membership Represents relationship of the current user to this channel.
  */
-@Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
+@Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
     val type: String,
     val channelId: String,
@@ -86,3 +86,5 @@ internal data class ChannelEntity(
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 }
+
+internal const val CHANNEL_ENTITY_TABLE_NAME = "stream_chat_channel_state"

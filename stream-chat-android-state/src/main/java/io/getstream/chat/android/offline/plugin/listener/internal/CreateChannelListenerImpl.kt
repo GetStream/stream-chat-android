@@ -21,11 +21,11 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.generateChannelIdIfNeeded
 import java.util.Date
 

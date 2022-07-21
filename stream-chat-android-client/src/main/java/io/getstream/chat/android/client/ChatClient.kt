@@ -108,6 +108,9 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -191,7 +194,9 @@ internal constructor(
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
+    private val pluginFactories: List<PluginFactory>,
     lifecycle: Lifecycle,
+    private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -205,6 +210,18 @@ internal constructor(
             }
         }
     )
+
+    @InternalStreamChatApi
+    public val repositoryFacade: RepositoryFacade
+        get() = _repositoryFacade
+            ?: (getCurrentUser() ?: getStoredUser())
+                ?.let {
+                    createRepositoryFacade(createReposotiryFactory(it))
+                        .also { _repositoryFacade = it }
+                }
+            ?: createRepositoryFacade()
+
+    private var _repositoryFacade: RepositoryFacade? = null
 
     /**
      * With clientState allows the user to get the state of the SDK like connection, initialization...
@@ -298,10 +315,6 @@ internal constructor(
         }
     }
 
-    internal fun addPlugins(plugins: List<Plugin>) {
-        this.plugins = plugins
-    }
-
     @InternalStreamChatApi
     public fun addInterceptor(interceptor: Interceptor) {
         this.interceptors.add(interceptor)
@@ -370,9 +383,8 @@ internal constructor(
             }
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
-                initializationCoordinator.userConnectionRequest(user)
+                initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 clientState.toMutableState()?.setUser(user)
-                initializeClientWithUser(cacheableTokenProvider, isAnonymous)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     chatSocketExperimental.connectUser(user, isAnonymous)
@@ -420,15 +432,24 @@ internal constructor(
     }
 
     private fun initializeClientWithUser(
+        user: User,
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
+        plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
     }
+
+    private fun createReposotiryFactory(user: User): RepositoryFactory =
+        repositoryFactoryProvider.createRepositoryFactory(user)
+
+    private fun createRepositoryFacade(repositoFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
+        RepositoryFacade.create(repositoFactory, scope)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -510,9 +531,8 @@ internal constructor(
         }
 
         userCredentialStorage.get()?.let { config ->
-            initializationCoordinator.userConnectionRequest(User(id = config.userId).apply { name = config.userName })
-
             initializeClientWithUser(
+                User(id = config.userId).apply { name = config.userName },
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
             )
@@ -1040,10 +1060,12 @@ internal constructor(
                 chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
             }
             if (flushPersistence) {
+                repositoryFacade.clear()
                 userCredentialStorage.clear()
             }
             lifecycleObserver.dispose()
             appSettingsManager.clear()
+            _repositoryFacade = null
             Result.success(Unit)
         }
 
@@ -2429,6 +2451,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -2552,6 +2575,13 @@ internal constructor(
         }
 
         /**
+         * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
+         */
+        public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
+            repositoryFactoryProvider = provider
+        }
+
+        /**
          * Adds a plugin factory to be used by the client.
          * @see [PluginFactory]
          *
@@ -2595,16 +2625,6 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
-        private fun configureInitializer(chatClient: ChatClient) {
-            chatClient.initializationCoordinator.addUserConnectionRequestListener { user ->
-                chatClient.addPlugins(
-                    pluginFactories.map { pluginFactory ->
-                        pluginFactory.get(user)
-                    }
-                )
-            }
-        }
-
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -2615,6 +2635,7 @@ internal constructor(
             replaceWith = ReplaceWith("this.build()"),
             level = DeprecationLevel.ERROR
         )
+        @SuppressWarnings("LongMethod")
         override fun internalBuild(): ChatClient {
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -2677,10 +2698,14 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle
-            ).also {
-                configureInitializer(it)
-            }
+                lifecycle = lifecycle,
+                pluginFactories = pluginFactories,
+                repositoryFactoryProvider = repositoryFactoryProvider
+                    ?: pluginFactories
+                        .filterIsInstance<RepositoryFactory.Provider>()
+                        .firstOrNull()
+                    ?: NoOpRepositoryFactory.Provider,
+            )
         }
 
         private fun setupStreamLog() {

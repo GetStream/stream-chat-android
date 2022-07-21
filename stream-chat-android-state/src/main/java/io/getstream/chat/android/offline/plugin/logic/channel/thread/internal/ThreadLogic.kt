@@ -18,12 +18,12 @@ package io.getstream.chat.android.offline.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.logging.StreamLog
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */

@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.domain.queryChannels.internal
+package io.getstream.chat.android.client.persistance.repository.noop
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 
-@Entity(tableName = QUERY_CHANNELS_ENTITY_TABLE_NAME)
-internal data class QueryChannelsEntity(
-    @PrimaryKey
-    var id: String,
-    val filter: FilterObject,
-    val querySort: QuerySorter<Channel>,
-    val cids: List<String>
-)
-
-internal const val QUERY_CHANNELS_ENTITY_TABLE_NAME = "stream_channel_query"
+/**
+ * No-Op QueryChannelsRepository.
+ */
+internal object NoOpQueryChannelsRepository : QueryChannelsRepository {
+    override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) { /* No-Op */ }
+    override suspend fun selectBy(filter: FilterObject, querySort: QuerySorter<Channel>): QueryChannelsSpec? = null
+    override suspend fun clear() { /* No-Op */ }
+}

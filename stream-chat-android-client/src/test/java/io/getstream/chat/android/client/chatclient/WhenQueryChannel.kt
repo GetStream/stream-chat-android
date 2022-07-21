@@ -114,7 +114,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
         }
 
         fun get(): ChatClient = chatClient.apply {
-            addPlugins(this@WhenQueryChannel.plugins)
+            plugins = this@WhenQueryChannel.plugins
         }
     }
 }

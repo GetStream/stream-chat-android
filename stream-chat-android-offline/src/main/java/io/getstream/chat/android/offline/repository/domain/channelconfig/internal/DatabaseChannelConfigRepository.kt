@@ -62,4 +62,8 @@ internal class DatabaseChannelConfigRepository(
         channelConfigs += config.type to config
         channelConfigDao.insert(config.toEntity())
     }
+
+    override suspend fun clear() {
+        channelConfigDao.deleteAll()
+    }
 }

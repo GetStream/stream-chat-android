@@ -23,11 +23,14 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 @Dao
-internal abstract class QueryChannelsDao {
+internal interface QueryChannelsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
+    suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
 
     @Transaction
-    @Query("SELECT * FROM stream_channel_query WHERE stream_channel_query.id=:id")
-    abstract suspend fun select(id: String): QueryChannelsEntity?
+    @Query("SELECT * FROM $QUERY_CHANNELS_ENTITY_TABLE_NAME WHERE $QUERY_CHANNELS_ENTITY_TABLE_NAME.id=:id")
+    suspend fun select(id: String): QueryChannelsEntity?
+
+    @Query("DELETE FROM $QUERY_CHANNELS_ENTITY_TABLE_NAME")
+    suspend fun deleteAll()
 }

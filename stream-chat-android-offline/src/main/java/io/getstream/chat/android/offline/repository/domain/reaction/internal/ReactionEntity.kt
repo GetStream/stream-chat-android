@@ -38,7 +38,7 @@ import java.util.Date
  * reactionEntity.toUser()
  */
 @Entity(
-    tableName = "stream_chat_reaction",
+    tableName = REACTION_ENTITY_TABLE_NAME,
     indices = [
         Index(
             value = ["messageId", "userId", "type"],
@@ -78,3 +78,5 @@ internal data class ReactionEntity(
     @PrimaryKey
     var id = messageId.hashCode() + userId.hashCode() + type.hashCode()
 }
+
+internal const val REACTION_ENTITY_TABLE_NAME = "stream_chat_reaction"

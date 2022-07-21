@@ -14,31 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.persistance.repository
+package io.getstream.chat.android.client.persistance.repository.noop
 
+import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.sync.SyncState
 
 /**
- * Repository to read and write data about the sync state of the SDK.
+ * No-Op SyncStateRepository.
  */
-public interface SyncStateRepository {
-
-    /**
-     * Inserts a sync state.
-     *
-     * @param syncState [SyncState]
-     */
-    public suspend fun insertSyncState(syncState: SyncState)
-
-    /**
-     * Selects a sync state.
-     *
-     * @param userId String
-     */
-    public suspend fun selectSyncState(userId: String): SyncState?
-
-    /**
-     * Clear syncStates of this repository.
-     */
-    public suspend fun clear()
+internal object NoOpSyncStateRepository : SyncStateRepository {
+    override suspend fun insertSyncState(syncState: SyncState) { /* No-Op */ }
+    override suspend fun selectSyncState(userId: String): SyncState? = null
+    override suspend fun clear() { /* No-Op */ }
 }

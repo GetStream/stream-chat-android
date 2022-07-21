@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.persistance.repository
+package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
- * Repository to read and write data about the sync state of the SDK.
+ * No-Op AttachmentRepository.
  */
-public interface SyncStateRepository {
-
-    /**
-     * Inserts a sync state.
-     *
-     * @param syncState [SyncState]
-     */
-    public suspend fun insertSyncState(syncState: SyncState)
-
-    /**
-     * Selects a sync state.
-     *
-     * @param userId String
-     */
-    public suspend fun selectSyncState(userId: String): SyncState?
-
-    /**
-     * Clear syncStates of this repository.
-     */
-    public suspend fun clear()
+internal object NoOpAttachmentRepository : AttachmentRepository {
+    override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> = emptyFlow()
+    override suspend fun clear() { /* No-Op */ }
 }
