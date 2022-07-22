@@ -34,7 +34,6 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequ
 import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
@@ -237,7 +236,6 @@ public class StreamStatePluginFactory(
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),
             queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
-            createChannelListener = CreateChannelListenerImpl(clientState, repositoryFacade),
             activeUser = user
         )
     }

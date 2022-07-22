@@ -285,8 +285,11 @@ internal class CreateChannelTests {
             repositoryFacade = repos
         }
 
-        fun get(): CreateChannelListenerImpl {
-            return CreateChannelListenerImpl(clientState, repositoryFacade)
+        fun get(): io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl {
+            return io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl(
+                clientState,
+                repositoryFacade
+            )
         }
     }
 }
