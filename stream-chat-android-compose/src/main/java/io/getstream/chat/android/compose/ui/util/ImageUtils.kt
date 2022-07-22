@@ -32,7 +32,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.ui.utils.adjustColorBrightness
+import io.getstream.chat.android.uiutils.adjustColorBrightness
 import kotlin.math.abs
 
 private const val GradientDarkerColorFactor = 1.3f

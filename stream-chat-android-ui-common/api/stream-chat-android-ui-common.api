@@ -156,12 +156,6 @@ public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/DateKt {
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibilityKt {
 }
 

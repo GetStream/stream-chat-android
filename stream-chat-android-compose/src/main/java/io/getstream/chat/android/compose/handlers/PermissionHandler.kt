@@ -22,13 +22,13 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
-import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.getstream.sdk.chat.utils.extensions.wasPermissionRequested
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.uiutils.extensions.openSystemSettings
 
 /**
  * Interface for implementing custom permission handlers.

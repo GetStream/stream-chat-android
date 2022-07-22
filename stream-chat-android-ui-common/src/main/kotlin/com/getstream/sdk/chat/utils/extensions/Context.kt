@@ -17,25 +17,6 @@
 package com.getstream.sdk.chat.utils.extensions
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import android.view.LayoutInflater
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
-@InternalStreamChatApi
-public inline val Context.inflater: LayoutInflater
-    get() = LayoutInflater.from(this)
-
-@InternalStreamChatApi
-public fun Context.openSystemSettings() {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        val uri: Uri = Uri.fromParts("package", packageName, null)
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        data = uri
-    }
-    startActivity(intent)
-}
 
 /**
  * @param permission The permission we want to check if it was requested before.

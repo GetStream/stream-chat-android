@@ -75,8 +75,8 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
-import io.getstream.chat.android.ui.utils.extensions.containsLinks
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
+import io.getstream.chat.android.uiutils.extensions.containsLinks
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

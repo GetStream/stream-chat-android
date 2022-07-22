@@ -5,11 +5,31 @@ public final class io/getstream/chat/android/ui/utils/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/ui/utils/ColorUtilsKt {
+public final class io/getstream/chat/android/uiutils/ColorUtilsKt {
 	public static final fun adjustColorBrightness (IF)I
 }
 
-public final class io/getstream/chat/android/ui/utils/extensions/StringKt {
+public final class io/getstream/chat/android/uiutils/EmojiUtils {
+	public static final field INSTANCE Lio/getstream/chat/android/uiutils/EmojiUtils;
+	public final fun getEmojiCount (Lio/getstream/chat/android/client/models/Message;)I
+	public final fun isEmojiOnly (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
+}
+
+public final class io/getstream/chat/android/uiutils/extensions/ContextKt {
+	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
+	public static final fun openSystemSettings (Landroid/content/Context;)V
+}
+
+public final class io/getstream/chat/android/uiutils/extensions/DateKt {
+	public static final fun isInLastMinute (Ljava/util/Date;)Z
+}
+
+public final class io/getstream/chat/android/uiutils/extensions/FiltersKt {
+	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/client/models/Filters;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/api/models/FilterObject;
+}
+
+public final class io/getstream/chat/android/uiutils/extensions/StringKt {
 	public static final fun containsLinks (Ljava/lang/String;)Z
 }
 

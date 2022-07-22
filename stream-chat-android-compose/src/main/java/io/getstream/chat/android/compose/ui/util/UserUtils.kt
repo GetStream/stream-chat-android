@@ -18,9 +18,9 @@ package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
 import android.text.format.DateUtils
-import com.getstream.sdk.chat.utils.extensions.isInLastMinute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.extensions.isInLastMinute
 
 /**
  * Returns a string describing the elapsed time since the user was online (was watching the channel).

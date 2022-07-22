@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.uiutils
 
 import android.graphics.Color
 import kotlin.math.roundToInt
