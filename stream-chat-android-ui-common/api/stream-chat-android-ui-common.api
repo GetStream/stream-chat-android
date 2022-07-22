@@ -172,9 +172,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/StringKt {
-}
-
 public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V

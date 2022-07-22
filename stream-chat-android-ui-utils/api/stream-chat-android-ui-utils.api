@@ -1,0 +1,15 @@
+public final class io/getstream/chat/android/ui/utils/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class io/getstream/chat/android/ui/utils/ColorUtilsKt {
+	public static final fun adjustColorBrightness (IF)I
+}
+
+public final class io/getstream/chat/android/ui/utils/extensions/StringKt {
+	public static final fun containsLinks (Ljava/lang/String;)Z
+}
+
