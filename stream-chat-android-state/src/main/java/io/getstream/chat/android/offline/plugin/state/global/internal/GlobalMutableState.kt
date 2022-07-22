@@ -215,8 +215,14 @@ public class GlobalMutableState private constructor(
 
     override fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent) {
         _typingChannelsOld.tryEmit(typingEvent)
+
         val typingChannelsCopy = _typingChannels.value.toMutableMap()
-        typingChannelsCopy[cid] = typingEvent
+
+        if (typingEvent.users.isEmpty()) {
+            typingChannelsCopy.remove(cid)
+        } else {
+            typingChannelsCopy[cid] = typingEvent
+        }
         _typingChannels.tryEmit(typingChannelsCopy)
     }
 }
