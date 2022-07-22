@@ -128,7 +128,7 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState.also { clientState ->
             clientState.clearState()
         }
-        val globalState = GlobalMutableState.getOrCreate(chatClient.clientState).apply {
+        val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
         }
 

@@ -156,7 +156,7 @@ public class GlobalMutableState private constructor(
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
         @InternalStreamChatApi
-        public fun getOrCreate(clientState: ClientState): GlobalMutableState {
+        public fun get(clientState: ClientState): GlobalMutableState {
             return instance ?: GlobalMutableState(clientState).also { globalState ->
                 instance = globalState
             }

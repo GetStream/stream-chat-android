@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
  * @param cid CID of the channel currently being checked.
  */
 internal fun isChannelMutedForCurrentUser(cid: String, chatClient: ChatClient = ChatClient.instance()): Boolean {
-    return GlobalMutableState.getOrCreate(chatClient.clientState)
+    return GlobalMutableState.get(chatClient.clientState)
         .channelMutes.value.any { mutedChannel -> mutedChannel.channel.cid == cid }
 }
 
