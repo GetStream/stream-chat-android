@@ -16,6 +16,12 @@ public final class io/getstream/chat/android/uiutils/EmojiUtils {
 	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
+public final class io/getstream/chat/android/uiutils/extensions/ChannelKt {
+	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
+	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
+	public static final fun isDirectMessaging (Lio/getstream/chat/android/client/models/Channel;)Z
+}
+
 public final class io/getstream/chat/android/uiutils/extensions/ContextKt {
 	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
 	public static final fun openSystemSettings (Landroid/content/Context;)V

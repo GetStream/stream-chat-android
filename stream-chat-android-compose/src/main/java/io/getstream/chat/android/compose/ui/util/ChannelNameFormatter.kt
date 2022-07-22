@@ -17,10 +17,10 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import com.getstream.sdk.chat.utils.extensions.getDisplayName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.extensions.getDisplayName
 
 /**
  *  An interface that allows to generate a name for the given channel.

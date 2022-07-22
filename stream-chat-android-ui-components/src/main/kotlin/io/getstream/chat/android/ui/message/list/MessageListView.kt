@@ -37,7 +37,6 @@ import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
@@ -141,6 +140,7 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelpe
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
+import io.getstream.chat.android.uiutils.extensions.isDirectMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

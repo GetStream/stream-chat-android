@@ -148,9 +148,6 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/client/models/Attachment;)Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 	public static final fun onPermissionRequested (Landroid/content/Context;Ljava/lang/String;)V
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
