@@ -159,7 +159,7 @@ public class GlobalMutableState private constructor(
         @InternalStreamChatApi
         public fun get(clientState: ClientState): GlobalMutableState {
             return instance ?: synchronized(this) {
-                GlobalMutableState(clientState).also { globalState ->
+                instance ?: GlobalMutableState(clientState).also { globalState ->
                     instance = globalState
                 }
             }
