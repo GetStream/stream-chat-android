@@ -20,11 +20,10 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.utils.extensions.combineWith
+import androidx.lifecycle.distinctUntilChanged
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 
 /**
  * Binds [ChannelListView] with [ChannelListViewModel], updating the view's state based on
@@ -38,25 +37,18 @@ public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    state.combineWith(paginationState) { channelState, paginationState ->
-        paginationState?.let { paginationState ->
-            view.setPaginationEnabled(!paginationState.endOfChannels && !paginationState.loadingMore)
-        }
-
-        if (channelState?.isLoading == true) {
+    listState.distinctUntilChanged().observe(lifecycleOwner) {
+        if (it.isLoading) {
             view.showLoadingView()
         } else {
-            channelState?.let { channelState ->
-                view.hideLoadingView()
-                var list: List<ChannelListItem> = channelState.channels.map(ChannelListItem::ChannelItem)
-                if (paginationState?.loadingMore == true) {
-                    list = list + ChannelListItem.LoadingMoreItem
-                }
-
-                view.setChannels(list)
-            }
+            view.hideLoadingView()
+            view.setChannels(it.channelItems)
         }
-    }.observe(lifecycleOwner){}
+    }
+
+    paginationState.observe(lifecycleOwner) { paginationState ->
+        view.setPaginationEnabled(!paginationState.endOfChannels && !paginationState.loadingMore)
+    }
 
     view.setOnEndReachedListener {
         onAction(ChannelListViewModel.Action.ReachedEndOfList)

@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -45,6 +46,7 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.logging.StreamLog
@@ -118,6 +120,19 @@ public class ChannelListViewModel(
      * reached the end of all available channels.
      */
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
+
+    /**
+     * Combines [stateMerger] and [paginationState] to prepare the list to be shown in the UI with no need to edit it
+     * afterwards. In we are loading more items to the list, automatically adds the loading indicator.
+     */
+    public val listState: LiveData<ListState> =
+        stateMerger.combineWith(paginationStateMerger) { state, paginationState ->
+            var list: List<ChannelListItem> = state?.channels?.map(ChannelListItem::ChannelItem) ?: emptyList()
+            if (paginationState?.loadingMore == true) {
+                list = list + ChannelListItem.LoadingMoreItem
+            }
+            ListState(state?.isLoading == true, list)
+        }
 
     /**
      * Used to update and emit error events.
@@ -384,6 +399,9 @@ public class ChannelListViewModel(
      * @param channels The list of channels to be displayed.
      */
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
+
+    // TODO
+    public data class ListState(val isLoading: Boolean, val channelItems: List<ChannelListItem>)
 
     /**
      * Takes in a list of channels and returns the muted ones.
