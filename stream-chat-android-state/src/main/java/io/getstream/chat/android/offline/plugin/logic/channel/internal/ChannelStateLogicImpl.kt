@@ -212,6 +212,12 @@ internal class ChannelStateLogicImpl(
         }
     }
 
+    /**
+     * Updates the typing events inside [ChannelMutableState] and [MutableGlobalState].
+     *
+     * @param rawTypingEvents A map of typing events used to update [ChannelMutableState].
+     * @param typingEvent A [TypingEvent] object used to update [MutableGlobalState].
+     */
     private fun updateTypingStates(
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
