@@ -132,6 +132,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
@@ -197,6 +198,7 @@ internal constructor(
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
+    public val clientState: ClientState,
     lifecycle: Lifecycle,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
@@ -224,12 +226,6 @@ internal constructor(
             ?: createRepositoryFacade()
 
     private var _repositoryFacade: RepositoryFacade? = null
-
-    /**
-     * With clientState allows the user to get the state of the SDK like connection, initialization...
-     */
-    public val clientState: ClientState
-        get() = ClientState.get()
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -2723,6 +2719,7 @@ internal constructor(
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
+                clientState = ClientStateImpl(module.networkLifecyclePublisher())
             )
         }
 

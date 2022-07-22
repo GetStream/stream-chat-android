@@ -70,7 +70,7 @@ internal class LogicRegistry internal constructor(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
-                GlobalMutableState.get().toMutableState(),
+                globalState.toMutableState(),
                 this,
                 stateRegistry
             )

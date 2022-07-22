@@ -115,6 +115,7 @@ internal class MockClientBuilder(
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = mock()
         )
 
         client.connectUser(user, token).enqueue()

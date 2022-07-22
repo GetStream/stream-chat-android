@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
@@ -69,7 +68,7 @@ internal class EventBatchUpdate private constructor(
         getCurrentChannel(cid)?.also { channel ->
             channel.updateLastMessage(message)
 
-            val currentUserId = ClientState.get().user.value?.id ?: return
+            val currentUserId = currentUserId ?: return
 
             if (isNewMessage) {
                 val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
