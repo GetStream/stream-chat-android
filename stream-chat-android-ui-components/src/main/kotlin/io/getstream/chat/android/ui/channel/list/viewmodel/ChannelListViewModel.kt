@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
@@ -96,7 +97,7 @@ public class ChannelListViewModel(
     /**
      * Represents the current state containing channel list information.
      */
-    public val state: LiveData<State> = stateMerger
+    public val state: LiveData<State> = stateMerger.distinctUntilChanged()
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
