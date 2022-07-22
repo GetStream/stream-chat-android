@@ -55,32 +55,4 @@
         app:layout_constraintTop_toBottomOf="@id/searchInputView"
         />
 
-    <TextView
-        android:id="@+id/allChannels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="All"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/switchFilter"
-        app:layout_constraintTop_toTopOf="@id/switchFilter"
-        />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switchFilter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/singleChannel"
-        />
-
-    <TextView
-        android:id="@+id/singleChannel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Single"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/switchFilter"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
