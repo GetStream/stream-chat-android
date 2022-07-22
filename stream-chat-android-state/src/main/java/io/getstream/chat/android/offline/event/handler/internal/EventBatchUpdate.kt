@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.internal.incrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.updateLastMessage
@@ -76,7 +77,7 @@ internal class EventBatchUpdate private constructor(
                 if (message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastReadDate,
-                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid)
+                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid, ChatClient.instance().clientState)
                     )
                 ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
