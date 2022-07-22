@@ -99,7 +99,9 @@ internal open class BaseChatClientTest {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = mock()
         )
+
         Mockito.reset(
             socketStateService,
             userStateService,

@@ -120,9 +120,11 @@ internal class ChatClientTest {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = Mother.mockedClientState()
         ).apply {
             connectUser(user, token).enqueue()
         }
+
         result = mutableListOf()
     }
 

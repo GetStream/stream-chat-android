@@ -72,7 +72,7 @@ public val ChatClient.state: StateRegistry
  * [GlobalState] instance that contains information about the current user, unreads, etc.
  */
 public val ChatClient.globalState: GlobalState
-    get() = GlobalMutableState.getOrCreate()
+    get() = GlobalMutableState.get()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.

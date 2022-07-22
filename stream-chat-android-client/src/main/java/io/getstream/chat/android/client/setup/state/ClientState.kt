@@ -18,8 +18,6 @@ package io.getstream.chat.android.client.setup.state
 
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -72,21 +70,13 @@ public interface ClientState {
     public val isInitialized: Boolean
 
     /**
+     * If internet is available or not. This is not related to the connection of the SDK, it returns
+     * if internet is available in the device.
+     */
+    public val isNetworkAvailable: Boolean
+
+    /**
      * Clears the state of [ClientState].
      */
     public fun clearState()
-
-    public companion object {
-
-        private var instance: ClientState? = null
-
-        @InternalStreamChatApi
-        public fun get(): ClientState =
-            instance ?: create().also { clientState ->
-                instance = clientState
-            }
-
-        @InternalStreamChatApi
-        public fun create(): ClientState = ClientStateImpl()
-    }
 }
