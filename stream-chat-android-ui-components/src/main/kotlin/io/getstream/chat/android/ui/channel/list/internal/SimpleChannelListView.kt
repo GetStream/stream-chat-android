@@ -164,9 +164,20 @@ internal class SimpleChannelListView @JvmOverloads constructor(
     }
 
     fun setChannels(channels: List<ChannelListItem>, commitCallback: () -> Unit) {
-        requireAdapter().submitList(channels, commitCallback)
+        requireAdapter().submitList(channels) {
+            commitCallback()
+            if (channels.contains(ChannelListItem.LoadingMoreItem)) {
+                layoutManager.scrollToPosition(channels.size - 1)
+            }
+        }
     }
 
+    @Deprecated(
+        message = "Deprecated in favor of new logic for setChannels. To set the loading item call set channels with" +
+            "the loading item already in the list. Show loading more function is race condition prone, which can cause" +
+            "the list to apply an old state of channels.",
+        level = DeprecationLevel.WARNING
+    )
     fun showLoadingMore(show: Boolean) {
         requireAdapter().let { adapter ->
             val currentList = adapter.currentList
@@ -218,6 +229,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
                 val linearLayoutManager = getLayoutManager()?.cast<LinearLayoutManager>()
                 val lastVisiblePosition = linearLayoutManager?.findLastVisibleItemPosition()
                 val reachedTheEnd = requireAdapter().itemCount - 1 == lastVisiblePosition
+                println("reachedTheEnd &&")
                 if (reachedTheEnd && enabled) {
                     endReachedListener?.onEndReached()
                 }
