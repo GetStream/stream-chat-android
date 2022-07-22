@@ -44,6 +44,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -58,6 +59,9 @@ internal class TotalUnreadCountTest {
     private lateinit var data: TestDataHelper
     private lateinit var globalMutableState: GlobalMutableState
     private lateinit var clientMutableState: ClientState
+
+    private val totalUnreadCount = MutableStateFlow(0)
+    private val channelUnreadCount = MutableStateFlow(0)
 
     @BeforeAll
     fun beforeAll() {
@@ -74,7 +78,13 @@ internal class TotalUnreadCountTest {
         clientMutableState = mock {
             on(it.user) doReturn userStateFlow
         }
-        globalMutableState = GlobalMutableState.getOrCreate()
+
+        globalMutableState = mock {
+            on(it.channelMutes) doReturn MutableStateFlow(emptyList())
+            on(it.totalUnreadCount) doReturn totalUnreadCount
+            on(it.channelUnreadCount) doReturn channelUnreadCount
+        }
+        GlobalMutableState.instance = globalMutableState
     }
 
     @ParameterizedTest
@@ -96,8 +106,8 @@ internal class TotalUnreadCountTest {
 
         sut.handleEvents(newMessageEventWithUnread)
 
-        globalMutableState.totalUnreadCount.value `should be equal to` 5
-        globalMutableState.channelUnreadCount.value `should be equal to` 2
+        verify(globalMutableState).setTotalUnreadCount(5)
+        verify(globalMutableState).setChannelUnreadCount(2)
     }
 
     @ParameterizedTest
@@ -118,8 +128,8 @@ internal class TotalUnreadCountTest {
         )
         sut.handleEvents(markReadEventWithUnread)
 
-        globalMutableState.totalUnreadCount.value `should be equal to` 0
-        globalMutableState.channelUnreadCount.value `should be equal to` 0
+        verify(globalMutableState).setTotalUnreadCount(0)
+        verify(globalMutableState).setChannelUnreadCount(0)
     }
 
     // @ParameterizedTest
@@ -151,7 +161,7 @@ internal class TotalUnreadCountTest {
             EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
                 scope = testCoroutines.scope,
                 recoveryEnabled = true,
-                subscribeForEvents = { _ -> mock() },
+                subscribeForEvents = { mock() },
                 logicRegistry = mock(),
                 stateRegistry = mock(),
                 mutableGlobalState = globalMutableState,

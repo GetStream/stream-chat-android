@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.errorhandler.factory.internal
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.QueryMembersErrorHandlerImpl
@@ -54,7 +54,7 @@ private class DeleteReactionErrorHandlerFactory : ErrorHandlerFactory {
         return DeleteReactionErrorHandlerImpl(
             scope = StateRegistry.get().scope,
             logic = LogicRegistry.get(),
-            clientState = ClientState.get(),
+            clientState = ChatClient.instance().clientState,
         )
     }
 }
@@ -66,7 +66,7 @@ private class SendReactionErrorHandlerFactory : ErrorHandlerFactory {
     override fun create(): ErrorHandler {
         return SendReactionErrorHandlerImpl(
             scope = StateRegistry.get().scope,
-            clientState = ClientState.get(),
+            clientState = ChatClient.instance().clientState,
         )
     }
 }
@@ -80,7 +80,7 @@ private class QueryMembersErrorHandlerFactory(
 
     override fun create(): ErrorHandler = QueryMembersErrorHandlerImpl(
         scope = StateRegistry.get().scope,
-        clientState = ClientState.get(),
+        clientState = ChatClient.instance().clientState,
         channelRepository = channelRepository
     )
 }
@@ -94,7 +94,7 @@ private class CreateChannelErrorHandlerFactory(
 
     override fun create(): ErrorHandler = CreateChannelErrorHandlerImpl(
         scope = StateRegistry.get().scope,
-        clientState = ClientState.get(),
+        clientState = ChatClient.instance().clientState,
         channelRepository = channelRepository,
     )
 }

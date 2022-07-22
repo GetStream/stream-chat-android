@@ -94,6 +94,7 @@ internal class ConnectUserTest {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = mock()
         )
     }
 

@@ -117,7 +117,7 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return if (clientState.isOnline) {
+        return if (clientState.isNetworkAvailable) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)

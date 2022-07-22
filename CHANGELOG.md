@@ -17,7 +17,8 @@
 - Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
 
 ### ✅ Added
-- Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. []()
+- Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. [#3934](https://github.com/GetStream/stream-chat-android/pull/3934)
+- Added `ClientState::isNetworkAvailable` which gives you information about device's internet connection status.[#3880](https://github.com/GetStream/stream-chat-android/pull/3880)
 
 ### ⚠️ Changed
 

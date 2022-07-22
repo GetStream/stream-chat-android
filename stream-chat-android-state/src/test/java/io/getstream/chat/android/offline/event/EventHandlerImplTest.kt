@@ -84,7 +84,7 @@ internal class EventHandlerImplTest {
         chatClient = mock()
         logicRegistry = mock()
         stateRegistry = mock()
-        globalState = GlobalMutableState.create()
+        globalState = mock()
         clientState = mock {
             on(it.user) doReturn MutableStateFlow(user)
             on(it.connectionState) doReturn connectionState

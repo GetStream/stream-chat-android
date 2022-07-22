@@ -128,6 +128,7 @@ internal class ClientConnectionTests {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = mock()
         )
     }
 

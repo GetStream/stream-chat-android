@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 
 /**
@@ -24,8 +25,10 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
  *
  * @param cid CID of the channel currently being checked.
  */
-internal fun isChannelMutedForCurrentUser(cid: String): Boolean =
-    GlobalMutableState.getOrCreate().channelMutes.value.any { mutedChannel -> mutedChannel.channel.cid == cid }
+internal fun isChannelMutedForCurrentUser(cid: String, chatClient: ChatClient = ChatClient.instance()): Boolean {
+    return GlobalMutableState.get(chatClient.clientState)
+        .channelMutes.value.any { mutedChannel -> mutedChannel.channel.cid == cid }
+}
 
 /**
  * Generates the channel id based on the member ids if provided [channelId] is empty.
