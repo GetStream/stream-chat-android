@@ -150,6 +150,7 @@ public class GlobalMutableState private constructor(
     public companion object {
         @InternalStreamChatApi
         @VisibleForTesting
+        @Volatile
         public var instance: GlobalMutableState? = null
 
         /**
@@ -157,8 +158,10 @@ public class GlobalMutableState private constructor(
          */
         @InternalStreamChatApi
         public fun get(clientState: ClientState): GlobalMutableState {
-            return instance ?: GlobalMutableState(clientState).also { globalState ->
-                instance = globalState
+            return instance ?: synchronized(this) {
+                GlobalMutableState(clientState).also { globalState ->
+                    instance = globalState
+                }
             }
         }
     }
