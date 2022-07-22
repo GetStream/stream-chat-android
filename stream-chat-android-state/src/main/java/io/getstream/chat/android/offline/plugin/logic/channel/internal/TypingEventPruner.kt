@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -31,48 +30,29 @@ import kotlinx.coroutines.launch
  * due to technical difficulties. (e.g. process death, loss of Internet
  * connection)
  *
+ * @param channelId The id of the channel for which the typing events are being pruned.
  * @property coroutineScope The scope used to launch jobs.
  * @param delayTimeMs The period of time it takes before an individual stale
  * typing event is removed.
+ * @param onUpdated Triggered when typing events have been updated.
+
  */
 internal class TypingEventPruner(
+    private val channelId: String,
     private val coroutineScope: CoroutineScope,
     private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
-) {
-
-    /**
-     * The id of the channel for which the typing
-     * events are being pruned.
-     */
-    private lateinit var channelId: String
-
-    /**
-     * Triggered when typing events have been updated.
-     *
-     * Use [setOnTypingEventsUpdatedListener] to set a listener externally.
-     */
-    private var onUpdated: (
+    private val onUpdated: (
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
-    ) -> Unit = { _, _ -> }
+    ) -> Unit,
+) {
 
     /**
      * A mutable map of typing events.
      *
      * Each event is capable of timed death using [TimedTypingStartEvent.removeTypingEvent]
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val typingEvents = mutableMapOf<String, TimedTypingStartEvent>()
-
-    /**
-     * Initializes the pruner by passing in and setting
-     * the ID of the channel that the pruner is responsible for.
-     *
-     * @param channelId The ID of the channel the pruner is responsible for.
-     */
-    fun initialize(channelId: String) {
-        this.channelId = channelId
-    }
+    private val typingEvents = mutableMapOf<String, TimedTypingStartEvent>()
 
     /**
      * Called when a typing event needs to be processed.
@@ -149,8 +129,7 @@ internal class TypingEventPruner(
      * Used to set a value to
      * [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.rawTyping].
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getRawTyping(): Map<String, TypingStartEvent> = typingEvents.mapValues { it.value.typingStartEvent }
+    private fun getRawTyping(): Map<String, TypingStartEvent> = typingEvents.mapValues { it.value.typingStartEvent }
 
     /**
      * Produces an up to date [TypingEvent] instance.
@@ -158,27 +137,11 @@ internal class TypingEventPruner(
      * Used to set a value to
      * [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.typing].
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getTypingEvent(): TypingEvent = typingEvents.values
+    private fun getTypingEvent(): TypingEvent = typingEvents.values
         .map { it.typingStartEvent }
         .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
         .map { typingStartEvent -> typingStartEvent.user }
         .let { sortedUsers -> TypingEvent(channelId = channelId, users = sortedUsers) }
-
-    /**
-     * Sets the listener used for typing updates.
-     *
-     * @param onUpdated The lambda that will be called whenever the
-     * list of typing events is updated.
-     */
-    fun setOnTypingEventsUpdatedListener(
-        onUpdated: (
-            rawTypingEvents: Map<String, TypingStartEvent>,
-            typingEvent: TypingEvent,
-        ) -> Unit,
-    ) {
-        this.onUpdated = onUpdated
-    }
 
     /**
      * Clears all existing typing updates and posts

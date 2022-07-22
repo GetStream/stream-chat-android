@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
@@ -41,7 +40,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,6 +47,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -335,7 +334,7 @@ internal class ChannelStateLogicImplTest {
 
         channelStateLogicImpl.setTyping(typingStartEvent.user.id, typingStartEvent)
 
-        channelStateLogicImpl.typingEventPruner.getRawTyping() shouldBeEqualTo mapOf()
-        channelStateLogicImpl.typingEventPruner.getTypingEvent() shouldBeEqualTo TypingEvent(channelId, listOf())
+        verify(mutableState, times(0)).updateTypingEvents(any(), any())
+        verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
     }
 }

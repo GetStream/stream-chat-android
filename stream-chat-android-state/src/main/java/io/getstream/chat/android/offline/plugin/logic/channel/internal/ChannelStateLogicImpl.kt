@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -68,26 +68,11 @@ internal class ChannelStateLogicImpl(
      * Used to prune stale active typing events when the sender
      * of these events was unable to send a stop typing event.
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val typingEventPruner = TypingEventPruner(coroutineScope = coroutineScope)
-
-    init {
-        setupTypingEventsPruner()
-    }
-
-    /**
-     * Initializes the [TypingEventPruner].
-     */
-    private fun setupTypingEventsPruner() {
-        typingEventPruner.initialize(
-            channelId = mutableState.channelId,
-        )
-
-        typingEventPruner.setOnTypingEventsUpdatedListener { rawTypingEvents, typingEvent ->
-            mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
-            globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
-        }
-    }
+    private val typingEventPruner = TypingEventPruner(
+        coroutineScope = coroutineScope,
+        channelId = mutableState.channelId,
+        onUpdated = ::updateTypingStates
+    )
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
@@ -225,6 +210,14 @@ internal class ChannelStateLogicImpl(
         if (userId != clientState.user.value?.id) {
             typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
+    }
+
+    private fun updateTypingStates(
+        rawTypingEvents: Map<String, TypingStartEvent>,
+        typingEvent: TypingEvent,
+    ) {
+        mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
+        globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
     /**
