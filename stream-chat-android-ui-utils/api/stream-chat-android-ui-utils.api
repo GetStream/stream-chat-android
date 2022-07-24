@@ -5,6 +5,25 @@ public final class io/getstream/chat/android/ui/utils/BuildConfig {
 	public fun <init> ()V
 }
 
+public final class io/getstream/chat/android/uiutils/constants/AttachmentType {
+	public static final field AUDIO Ljava/lang/String;
+	public static final field FILE Ljava/lang/String;
+	public static final field GIPHY Ljava/lang/String;
+	public static final field IMAGE Ljava/lang/String;
+	public static final field IMGUR Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/uiutils/constants/AttachmentType;
+	public static final field LINK Ljava/lang/String;
+	public static final field PRODUCT Ljava/lang/String;
+	public static final field UNKNOWN Ljava/lang/String;
+	public static final field VIDEO Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/uiutils/extensions/AttachmentKt {
+	public static final fun hasLink (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isFile (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isUploading (Lio/getstream/chat/android/client/models/Attachment;)Z
+}
+
 public final class io/getstream/chat/android/uiutils/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;

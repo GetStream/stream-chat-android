@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.extensions.isUploading
 import io.getstream.chat.android.uiutils.utils.EmojiUtils
 
 /**

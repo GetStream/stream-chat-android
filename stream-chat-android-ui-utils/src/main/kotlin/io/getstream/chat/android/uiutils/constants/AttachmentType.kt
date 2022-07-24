@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.uiutils.constants
 
-import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Attachment
-
-internal fun Attachment.isImage(): Boolean = type == ModelType.attach_image
-
-internal fun Attachment.isGiphy(): Boolean = type == ModelType.attach_giphy
+/**
+ * Represent the types of attachments.
+ */
+public object AttachmentType {
+    public const val IMAGE: String = "image"
+    public const val IMGUR: String = "imgur"
+    public const val GIPHY: String = "giphy"
+    public const val VIDEO: String = "video"
+    public const val AUDIO: String = "audio"
+    public const val PRODUCT: String = "product"
+    public const val FILE: String = "file"
+    public const val LINK: String = "link"
+    public const val UNKNOWN: String = "unknown"
+}
