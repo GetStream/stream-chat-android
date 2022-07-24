@@ -25,6 +25,7 @@ public final class io/getstream/chat/android/uiutils/extensions/FiltersKt {
 }
 
 public final class io/getstream/chat/android/uiutils/extensions/StringKt {
+	public static final fun addSchemeToUrlIfNeeded (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun containsLinks (Ljava/lang/String;)Z
 }
 
