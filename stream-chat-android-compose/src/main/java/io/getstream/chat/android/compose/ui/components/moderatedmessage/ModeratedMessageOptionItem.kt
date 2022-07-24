@@ -27,7 +27,7 @@ import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Composable that represents a single option inisde the [ModeratedMessageDialog].
+ * Composable that represents a single option inside the [ModeratedMessageDialog].
  * By default shows only text of the action a user can perform.
  *
  * @param option The option that the user can choose for the moderated message.
