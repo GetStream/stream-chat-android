@@ -21,7 +21,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.uiutils.EmojiUtils
+import io.getstream.chat.android.uiutils.utils.EmojiUtils
 
 /**
  * Takes the current message and returns the sender display name.

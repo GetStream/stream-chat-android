@@ -5,17 +5,6 @@ public final class io/getstream/chat/android/ui/utils/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/uiutils/ColorUtilsKt {
-	public static final fun adjustColorBrightness (IF)I
-}
-
-public final class io/getstream/chat/android/uiutils/EmojiUtils {
-	public static final field INSTANCE Lio/getstream/chat/android/uiutils/EmojiUtils;
-	public final fun getEmojiCount (Lio/getstream/chat/android/client/models/Message;)I
-	public final fun isEmojiOnly (Lio/getstream/chat/android/client/models/Message;)Z
-	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
-}
-
 public final class io/getstream/chat/android/uiutils/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
@@ -37,5 +26,16 @@ public final class io/getstream/chat/android/uiutils/extensions/FiltersKt {
 
 public final class io/getstream/chat/android/uiutils/extensions/StringKt {
 	public static final fun containsLinks (Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/uiutils/utils/ColorUtilsKt {
+	public static final fun adjustColorBrightness (IF)I
+}
+
+public final class io/getstream/chat/android/uiutils/utils/EmojiUtils {
+	public static final field INSTANCE Lio/getstream/chat/android/uiutils/utils/EmojiUtils;
+	public final fun getEmojiCount (Lio/getstream/chat/android/client/models/Message;)I
+	public final fun isEmojiOnly (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
 }
 

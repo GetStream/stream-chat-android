@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils
+package io.getstream.chat.android.uiutils.utils
 
 import io.getstream.chat.android.client.models.Message
 
