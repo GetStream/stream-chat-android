@@ -29,6 +29,10 @@ public final class io/getstream/chat/android/uiutils/extensions/StringKt {
 	public static final fun containsLinks (Ljava/lang/String;)Z
 }
 
+public final class io/getstream/chat/android/uiutils/extensions/UserKt {
+	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;III)Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/uiutils/utils/ColorUtilsKt {
 	public static final fun adjustColorBrightness (IF)I
 }

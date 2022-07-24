@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.util
+package io.getstream.chat.android.uiutils.extensions
 
 import android.content.Context
+import android.text.format.DateUtils
+import androidx.annotation.StringRes
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.uiutils.extensions.getLastSeenText
 
 /**
  * Returns a string describing the elapsed time since the user was online (was watching the channel).
@@ -30,13 +30,29 @@ import io.getstream.chat.android.uiutils.extensions.getLastSeenText
  * - Last seen 13 hours ago
  *
  * @param context The context to load string resources.
+ * @param onlineResId Resource id for the online text.
+ * @param justNowResId Resource id for the just now text.
+ * @param lastSeenResId Resource id for the last seen text.
  * @return A string that represents the elapsed time since the user was online.
  */
-public fun User.getLastSeenText(context: Context): String {
-    return getLastSeenText(
-        context = context,
-        onlineResId = R.string.stream_compose_user_status_online,
-        justNowResId = R.string.stream_compose_user_status_last_seen_just_now,
-        lastSeenResId = R.string.stream_compose_user_status_last_seen,
-    )
+public fun User.getLastSeenText(
+    context: Context,
+    @StringRes onlineResId: Int,
+    @StringRes justNowResId: Int,
+    @StringRes lastSeenResId: Int,
+): String {
+    if (online) {
+        return context.getString(onlineResId)
+    }
+
+    return (lastActive ?: updatedAt ?: createdAt)?.let {
+        if (it.isInLastMinute()) {
+            context.getString(justNowResId)
+        } else {
+            context.getString(
+                lastSeenResId,
+                DateUtils.getRelativeTimeSpanString(it.time).toString()
+            )
+        }
+    } ?: ""
 }
