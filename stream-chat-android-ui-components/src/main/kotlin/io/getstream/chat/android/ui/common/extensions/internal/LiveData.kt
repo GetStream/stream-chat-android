@@ -18,6 +18,13 @@ package io.getstream.chat.android.ui.common.extensions.internal
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Observes two live datas together.
@@ -32,5 +39,21 @@ internal fun <P, Q> Pair<LiveData<P>, LiveData<Q>>.observeTogether(
 
     this.second.observe(lifecycle) {
         block(this.first.value, it)
+    }
+}
+
+/**
+ * Adds Flow as a Source to this MediatorLiveData
+ */
+internal fun <T, S> MediatorLiveData<T>.addFlow(
+    context: CoroutineContext = EmptyCoroutineContext,
+    source: Flow<S>,
+    onChanged: Observer<in S>
+) {
+    source.asLiveData(context).also { liveData ->
+        addSource(liveData, onChanged)
+        context[Job]?.invokeOnCompletion {
+            removeSource(liveData)
+        }
     }
 }
