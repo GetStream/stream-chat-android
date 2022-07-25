@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.channel
+package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -285,9 +284,10 @@ internal class CreateChannelTests {
             repositoryFacade = repos
         }
 
-        fun get(): io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl {
-            return io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl(
+        fun get(): CreateChannelListenerImpl {
+            return CreateChannelListenerImpl(
                 clientState,
+                repositoryFacade,
                 repositoryFacade
             )
         }
