@@ -229,7 +229,6 @@ internal class SimpleChannelListView @JvmOverloads constructor(
                 val linearLayoutManager = getLayoutManager()?.cast<LinearLayoutManager>()
                 val lastVisiblePosition = linearLayoutManager?.findLastVisibleItemPosition()
                 val reachedTheEnd = requireAdapter().itemCount - 1 == lastVisiblePosition
-                println("reachedTheEnd &&")
                 if (reachedTheEnd && enabled) {
                     endReachedListener?.onEndReached()
                 }
