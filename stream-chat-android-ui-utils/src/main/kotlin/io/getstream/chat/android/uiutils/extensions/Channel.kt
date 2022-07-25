@@ -36,6 +36,21 @@ private fun Channel.includesCurrentUser(): Boolean {
 }
 
 /**
+ * Returns channel's last regular or system message if exists.
+ * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
+ *
+ * @return Last message from the channel or null if it doesn't exist.
+ */
+public fun Channel.getPreviewMessage(currentUser: User?): Message? =
+    messages.asSequence()
+        .filter { it.createdAt != null || it.createdLocallyAt != null }
+        .filter { it.deletedAt == null }
+        .filter { !it.silent }
+        .filter { it.user.id == currentUser?.id || !it.shadowed }
+        .filter { it.type == MessageType.REGULAR || it.type == MessageType.SYSTEM }
+        .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
+
+/**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.
  *
  * @param context The context to load string resources.
@@ -68,24 +83,4 @@ private fun Channel.nameFromMembers(currentUser: User?, maxMembers: Int): String
 
         else -> null
     }
-}
-
-/**
- * Returns channel's last regular or system message if exists.
- * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
- *
- * @return Last message from the channel or null if it doesn't exist.
- */
-public fun Channel.getPreviewMessage(currentUser: User?): Message? =
-    messages.asSequence()
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
-        .filter { !it.silent }
-        .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { type == MessageType.REGULAR || type == MessageType.SYSTEM }
-        .maxByOrNull { it.getCreatedAtOrThrow() }
-
-private fun Message.getCreatedAtOrThrow(): Date {
-    val created = createdAt ?: createdLocallyAt
-    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }
