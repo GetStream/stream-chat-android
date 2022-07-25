@@ -856,6 +856,7 @@ public class MessageInputView : ConstraintLayout {
             setInputFieldScrollBarEnabled(messageInputViewStyle.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(messageInputViewStyle.messageInputScrollbarFadingEnabled)
             setCustomBackgroundDrawable(messageInputViewStyle.editTextBackgroundDrawable)
+            setInputType(messageInputViewStyle.messageInputInputType)
 
             messageInputViewStyle.messageInputTextStyle.apply(binding.messageEditText)
 

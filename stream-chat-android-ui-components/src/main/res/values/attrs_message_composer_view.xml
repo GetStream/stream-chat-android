@@ -103,6 +103,7 @@
         <attr name="streamUiMessageComposerScrollbarFadingEnabled" format="boolean" />
         <attr name="streamUiMessageComposerMessageInputMaxLines" format="integer" />
         <attr name="streamUiMessageComposerMessageInputCannotSendHintText" format="string" />
+        <attr name="android:inputType" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
