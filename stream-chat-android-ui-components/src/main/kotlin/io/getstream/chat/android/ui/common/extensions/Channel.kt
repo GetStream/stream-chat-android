@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.common.extensions
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.uiutils.extensions.getPreviewMessage
+import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
 /**
  * Returns channel's last regular or system message if exists.

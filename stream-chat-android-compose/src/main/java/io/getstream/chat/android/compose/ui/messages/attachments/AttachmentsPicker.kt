@@ -70,7 +70,7 @@ import io.getstream.chat.android.compose.ui.components.attachments.images.Images
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.uiutils.extensions.openSystemSettings
+import io.getstream.chat.android.uiutils.extension.openSystemSettings
 import java.io.File
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extensions
+package io.getstream.chat.android.uiutils.extension
 
 import android.content.Context
 import android.text.format.DateUtils

@@ -28,7 +28,7 @@ import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.extensions.downloadAttachment
-import io.getstream.chat.android.uiutils.extensions.openSystemSettings
+import io.getstream.chat.android.uiutils.extension.openSystemSettings
 
 /**
  * Interface for implementing custom permission handlers.

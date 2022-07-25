@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.utils
+package io.getstream.chat.android.uiutils.util
 
 import io.getstream.chat.android.client.models.Message
 
 /**
  * Util used for detecting emojis inside messages.
  */
-public object EmojiUtils {
+public object EmojiUtil {
 
     /**
      * Checks whether the message consists of emoji only.

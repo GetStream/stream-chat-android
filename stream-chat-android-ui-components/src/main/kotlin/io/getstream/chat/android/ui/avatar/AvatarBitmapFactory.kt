@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
 import io.getstream.chat.android.ui.avatar.internal.AvatarBitmapCombiner
 import io.getstream.chat.android.ui.common.extensions.internal.getIntArray
-import io.getstream.chat.android.uiutils.utils.adjustColorBrightness
+import io.getstream.chat.android.uiutils.util.adjustColorBrightness
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extensions
+package io.getstream.chat.android.uiutils.extension
 
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.uiutils.constants.AttachmentType
+import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * @return If the [Attachment] is a file or not.

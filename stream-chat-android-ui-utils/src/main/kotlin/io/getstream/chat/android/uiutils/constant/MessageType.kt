@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.constants
+package io.getstream.chat.android.uiutils.constant
 
 /**
  * Represents types of messages.

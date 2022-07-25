@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extensions
-
-import java.util.Date
+package io.getstream.chat.android.uiutils.constant
 
 /**
- * If the date is not older than one minute.
+ * Represents types of attachments.
  */
-public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILLIS < time)
-
-private const val ONE_MINUTE_IN_MILLIS = 60000
+public object AttachmentType {
+    public const val IMAGE: String = "image"
+    public const val IMGUR: String = "imgur"
+    public const val GIPHY: String = "giphy"
+    public const val VIDEO: String = "video"
+    public const val AUDIO: String = "audio"
+    public const val PRODUCT: String = "product"
+    public const val FILE: String = "file"
+    public const val LINK: String = "link"
+    public const val UNKNOWN: String = "unknown"
+}

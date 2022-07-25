@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
-import io.getstream.chat.android.uiutils.extensions.isFile
+import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.

@@ -44,7 +44,7 @@ import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 

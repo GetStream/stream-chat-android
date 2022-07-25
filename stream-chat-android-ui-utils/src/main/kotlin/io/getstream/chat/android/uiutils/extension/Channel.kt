@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extensions
+package io.getstream.chat.android.uiutils.extension
 
 import android.content.Context
 import androidx.annotation.PluralsRes
@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.uiutils.constants.MessageType
+import io.getstream.chat.android.uiutils.constant.MessageType
 
 /**
  * Returns channel's last regular or system message if exists.

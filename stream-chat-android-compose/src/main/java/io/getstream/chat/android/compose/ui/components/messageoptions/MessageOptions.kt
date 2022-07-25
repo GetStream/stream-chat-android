@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isGiphy
 import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Displays all available [MessageOptionItem]s.

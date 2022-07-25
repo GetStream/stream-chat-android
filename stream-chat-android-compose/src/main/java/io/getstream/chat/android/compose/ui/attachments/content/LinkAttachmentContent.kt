@@ -52,8 +52,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.uiutils.extensions.addSchemeToUrlIfNeeded
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link

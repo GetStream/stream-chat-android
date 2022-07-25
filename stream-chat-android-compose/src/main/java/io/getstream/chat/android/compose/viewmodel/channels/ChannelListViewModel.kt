@@ -41,7 +41,7 @@ import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.uiutils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

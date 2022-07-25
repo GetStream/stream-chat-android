@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extensions
+package io.getstream.chat.android.uiutils.extension
 
 /**
  * Checks if a message contains a link using a

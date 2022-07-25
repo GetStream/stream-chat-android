@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * ViewHolder used for displaying messages that contain link attachments

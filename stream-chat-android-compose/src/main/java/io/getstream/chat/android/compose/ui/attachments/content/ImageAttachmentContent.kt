@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewCont
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isMedia
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Builds an image attachment message, which can be composed of several images or will show an upload state if we're

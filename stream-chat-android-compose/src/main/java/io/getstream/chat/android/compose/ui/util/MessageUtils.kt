@@ -21,8 +21,8 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.uiutils.extensions.isUploading
-import io.getstream.chat.android.uiutils.utils.EmojiUtils
+import io.getstream.chat.android.uiutils.extension.isUploading
+import io.getstream.chat.android.uiutils.util.EmojiUtil
 
 /**
  * Takes the current message and returns the sender display name.
@@ -86,17 +86,17 @@ internal fun Message.isGiphyEphemeral(): Boolean = isGiphy() && isEphemeral()
 /**
  * @return If the message is emoji only or not.
  */
-internal fun Message.isEmojiOnly(): Boolean = EmojiUtils.isEmojiOnly(this)
+internal fun Message.isEmojiOnly(): Boolean = EmojiUtil.isEmojiOnly(this)
 
 /**
  * @return If the message is single emoji only or not.
  */
-internal fun Message.isSingleEmoji(): Boolean = EmojiUtils.isSingleEmoji(this)
+internal fun Message.isSingleEmoji(): Boolean = EmojiUtil.isSingleEmoji(this)
 
 /**
  * @return The number of emoji inside the message.
  */
-internal fun Message.getEmojiCount(): Int = EmojiUtils.getEmojiCount(this)
+internal fun Message.getEmojiCount(): Int = EmojiUtil.getEmojiCount(this)
 
 /**
  * @return If the message should has less or equal to [MaxFullSizeEmoji] emoji count.

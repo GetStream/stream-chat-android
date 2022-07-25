@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
-import io.getstream.chat.android.uiutils.extensions.getMembersStatusText
+import io.getstream.chat.android.uiutils.extension.getMembersStatusText
 
 /**
  * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state

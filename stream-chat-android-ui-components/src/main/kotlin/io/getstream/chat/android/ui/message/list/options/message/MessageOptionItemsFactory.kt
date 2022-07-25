@@ -34,7 +34,7 @@ import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
-import io.getstream.chat.android.uiutils.extensions.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * An interface that allows the creation of message option items.

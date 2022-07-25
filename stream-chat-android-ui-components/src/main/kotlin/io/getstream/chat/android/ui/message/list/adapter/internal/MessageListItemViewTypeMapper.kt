@@ -39,8 +39,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.uiutils.extensions.hasLink
-import io.getstream.chat.android.uiutils.extensions.isUploading
+import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.uiutils.extension.isUploading
 
 internal object MessageListItemViewTypeMapper {
 

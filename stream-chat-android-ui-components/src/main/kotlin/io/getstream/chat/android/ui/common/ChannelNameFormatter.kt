@@ -21,7 +21,7 @@ import androidx.annotation.StringRes
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.uiutils.extensions.getDisplayName
+import io.getstream.chat.android.uiutils.extension.getDisplayName
 
 /**
  *  An interface that generates a name for the given channel.
