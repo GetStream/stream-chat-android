@@ -112,6 +112,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
         binding.messageEditText.isVerticalFadingEdgeEnabled = style.messageInputScrollbarFadingEnabled
+        binding.messageEditText.inputType = style.messageInputInputType
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             style.messageInputCursorDrawable?.let {
                 binding.messageEditText.textCursorDrawable = it
