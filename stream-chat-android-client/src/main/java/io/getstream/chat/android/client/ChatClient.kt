@@ -248,6 +248,8 @@ internal constructor(
         eventsObservable.subscribeSuspend { event ->
             when (event) {
                 is ConnectedEvent -> {
+                    initializationCoordinator.socketConnectionStateChanged(event)
+
                     val user = event.me
                     val connectionId = event.connectionId
                     if (ToggleService.isSocketExperimental().not()) {
@@ -264,6 +266,8 @@ internal constructor(
                     }
                 }
                 is DisconnectedEvent -> {
+                    initializationCoordinator.socketConnectionStateChanged(event)
+
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
@@ -282,6 +286,8 @@ internal constructor(
                     notifications.onNewMessageEvent(event)
                 }
                 is ConnectingEvent -> {
+                    initializationCoordinator.socketConnectionStateChanged(event)
+
                     clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
                 }
                 else -> Unit // Ignore other events
