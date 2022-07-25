@@ -33,8 +33,13 @@ public fun adjustColorBrightness(color: Int, factor: Float): Int {
     val b = (Color.blue(color) * factor).roundToInt()
     return Color.argb(
         a,
-        r.coerceAtMost(255),
-        g.coerceAtMost(255),
-        b.coerceAtMost(255)
+        r.coerceAtMost(MAX_COLOR_COMPONENT_VALUE),
+        g.coerceAtMost(MAX_COLOR_COMPONENT_VALUE),
+        b.coerceAtMost(MAX_COLOR_COMPONENT_VALUE)
     )
 }
+
+/**
+ * Maximum value a color component can have.
+ */
+private const val MAX_COLOR_COMPONENT_VALUE = 255
