@@ -33,8 +33,6 @@ import io.getstream.chat.android.client.extensions.internal.isEphemeral
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
@@ -74,7 +72,7 @@ public val ChatClient.state: StateRegistry
  * [GlobalState] instance that contains information about the current user, unreads, etc.
  */
 public val ChatClient.globalState: GlobalState
-    get() = GlobalMutableState.getOrCreate()
+    get() = GlobalMutableState.get(clientState)
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
@@ -266,13 +264,9 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
         if (cidValidationResult.isSuccess) {
             try {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-
-                val repositoryProvider = RepositoryProvider.get()
-                val channelRepository = repositoryProvider.get(MessageRepository::class.java)
-
                 val (channelType, channelId) = message.cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
-                channelRepository.deleteChannelMessage(message)
+                repositoryFacade.deleteChannelMessage(message)
 
                 Result.success(true)
             } catch (exception: Exception) {
@@ -323,9 +317,7 @@ public fun ChatClient.loadMessageById(
                 result
             } else {
                 try {
-                    val repositoryProvider = RepositoryProvider.get()
-
-                    repositoryProvider.get(MessageRepository::class.java).selectMessage(messageId)?.let(::Result)
+                    repositoryFacade.selectMessage(messageId)?.let(::Result)
                         ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
                 } catch (exception: Exception) {
                     Result.error(exception)

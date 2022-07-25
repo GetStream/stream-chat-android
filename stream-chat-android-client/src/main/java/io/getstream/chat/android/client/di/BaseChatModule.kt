@@ -122,6 +122,9 @@ internal open class BaseChatModule(
 
     fun experimentalSocket() = chatSocketExperimental
 
+    fun networkLifecyclePublisher(): NetworkLifecyclePublisher =
+        NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+
     @Deprecated(
         message = "Use StreamLog instead.",
         replaceWith = ReplaceWith(
@@ -243,7 +246,7 @@ internal open class BaseChatModule(
         parser,
         listOf(
             StreamLifecyclePublisher(lifecycle),
-            NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+            networkLifecyclePublisher(),
         ),
     )
 

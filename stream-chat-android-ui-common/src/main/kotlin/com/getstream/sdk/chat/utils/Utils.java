@@ -2,11 +2,9 @@ package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.text.Layout;
 import android.text.Spannable;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.view.MotionEvent;
@@ -24,32 +22,10 @@ public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
 
-    public static boolean isSVGImage(String url) {
-        return (TextUtils.isEmpty(url) || url.contains("random_svg"));
-    }
-
-    public static String getApplicationName(Context context) {
-        ApplicationInfo applicationInfo = context.getApplicationInfo();
-        int stringId = applicationInfo.labelRes;
-        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
-    }
-
     public static void showSoftKeyboard(@NonNull Context context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (!imm.isAcceptingText())
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    public static void hideSoftKeyboard(@NonNull Context context) {
-        View view = null;
-        if (context instanceof Activity) {
-            // Find the currently focused view, so we can grab the correct window token from it.
-            view = ((Activity) context).getCurrentFocus();
-        }
-
-        // If we don't have an Activity, or no view currently has focus, create a new one,
-        // just so we can grab a window token from it
-        hideSoftKeyboard(view != null ? view : new View(context));
     }
 
     public static void showSoftKeyboard(@NonNull View view) {

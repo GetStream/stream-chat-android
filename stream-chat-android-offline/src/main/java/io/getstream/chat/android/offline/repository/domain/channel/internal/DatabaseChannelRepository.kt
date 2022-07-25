@@ -262,4 +262,8 @@ internal class DatabaseChannelRepository(
             }
         }
     }
+
+    override suspend fun clear() {
+        channelDao.deleteAll()
+    }
 }

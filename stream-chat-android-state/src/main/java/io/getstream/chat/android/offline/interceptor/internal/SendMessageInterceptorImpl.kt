@@ -126,18 +126,20 @@ internal class SendMessageInterceptorImpl(
             createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
             syncStatus = when {
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                clientState.isOnline -> SyncStatus.IN_PROGRESS
+                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
         // Update flow in channel controller
         channel.upsertMessage(newMessage)
+
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update flow for currently running queries
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(newMessage)
         channelRepository.updateLastMessageForChannel(newMessage.cid, newMessage)
+
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
         return newMessage
     }
 
@@ -161,7 +163,7 @@ internal class SendMessageInterceptorImpl(
      * @return [Result] having message with latest attachments state or error if there was any.
      */
     private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
-        return if (clientState.isOnline) {
+        return if (clientState.isNetworkAvailable) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)

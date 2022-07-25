@@ -35,4 +35,8 @@ internal class DatabaseAttachmentRepository(private val attachmentDao: Attachmen
             .distinctUntilChanged()
             .map { attachments -> attachments.map(AttachmentEntity::toModel) }
     }
+
+    override suspend fun clear() {
+        attachmentDao.deleteAll()
+    }
 }

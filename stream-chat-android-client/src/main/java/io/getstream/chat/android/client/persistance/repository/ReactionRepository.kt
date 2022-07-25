@@ -90,4 +90,9 @@ public interface ReactionRepository {
         messageId: String,
         userId: String,
     ): List<Reaction>
+
+    /**
+     * Clear reactions of this repository.
+     */
+    public suspend fun clear()
 }

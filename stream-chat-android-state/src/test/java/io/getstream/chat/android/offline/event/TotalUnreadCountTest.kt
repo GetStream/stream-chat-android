@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.event
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
@@ -26,7 +27,6 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.event.model.EventHandlerType
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
@@ -37,6 +37,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -44,9 +45,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class TotalUnreadCountTest {
 
     companion object {
@@ -58,6 +61,9 @@ internal class TotalUnreadCountTest {
     private lateinit var data: TestDataHelper
     private lateinit var globalMutableState: GlobalMutableState
     private lateinit var clientMutableState: ClientState
+
+    private val totalUnreadCount = MutableStateFlow(0)
+    private val channelUnreadCount = MutableStateFlow(0)
 
     @BeforeAll
     fun beforeAll() {
@@ -74,7 +80,13 @@ internal class TotalUnreadCountTest {
         clientMutableState = mock {
             on(it.user) doReturn userStateFlow
         }
-        globalMutableState = GlobalMutableState.getOrCreate()
+
+        globalMutableState = mock {
+            on(it.channelMutes) doReturn MutableStateFlow(emptyList())
+            on(it.totalUnreadCount) doReturn totalUnreadCount
+            on(it.channelUnreadCount) doReturn channelUnreadCount
+        }
+        GlobalMutableState.instance = globalMutableState
     }
 
     @ParameterizedTest
@@ -96,8 +108,8 @@ internal class TotalUnreadCountTest {
 
         sut.handleEvents(newMessageEventWithUnread)
 
-        globalMutableState.totalUnreadCount.value `should be equal to` 5
-        globalMutableState.channelUnreadCount.value `should be equal to` 2
+        verify(globalMutableState).setTotalUnreadCount(5)
+        verify(globalMutableState).setChannelUnreadCount(2)
     }
 
     @ParameterizedTest
@@ -118,8 +130,8 @@ internal class TotalUnreadCountTest {
         )
         sut.handleEvents(markReadEventWithUnread)
 
-        globalMutableState.totalUnreadCount.value `should be equal to` 0
-        globalMutableState.channelUnreadCount.value `should be equal to` 0
+        verify(globalMutableState).setTotalUnreadCount(0)
+        verify(globalMutableState).setChannelUnreadCount(0)
     }
 
     // @ParameterizedTest
@@ -151,7 +163,7 @@ internal class TotalUnreadCountTest {
             EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
                 scope = testCoroutines.scope,
                 recoveryEnabled = true,
-                subscribeForEvents = { _ -> mock() },
+                subscribeForEvents = { mock() },
                 logicRegistry = mock(),
                 stateRegistry = mock(),
                 mutableGlobalState = globalMutableState,

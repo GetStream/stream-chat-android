@@ -48,6 +48,10 @@ internal class DatabaseQueryChannelsRepository(
         return queryChannelsDao.select(generateId(filter, querySort))?.let(Companion::toModel)
     }
 
+    override suspend fun clear() {
+        queryChannelsDao.deleteAll()
+    }
+
     private companion object {
         private fun generateId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
             return "${filter.hashCode()}-${querySort.toDto().hashCode()}"

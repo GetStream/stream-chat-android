@@ -5,6 +5,9 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
+| `LegacyDateFormatter` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
+| `PorterImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
+| `PorterShapeImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
 | `ChatClient::disconnect` | 2022.07.19 <br/>5.6.0 | 2022.08.19 ⌛ | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
 | `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
 | `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.builder.internal
+package io.getstream.chat.android.client.persistance.repository
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.internal.users
@@ -25,14 +25,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
-import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
-import io.getstream.chat.android.client.persistance.repository.ReactionRepository
-import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
-import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
@@ -43,15 +35,16 @@ import kotlinx.coroutines.awaitAll
 import java.util.Date
 
 @InternalStreamChatApi
-public class RepositoryFacade(
-    userRepository: UserRepository,
-    configsRepository: ChannelConfigRepository,
+@SuppressWarnings("LongParameterList")
+public class RepositoryFacade private constructor(
+    private val userRepository: UserRepository,
+    private val configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
-    queryChannelsRepository: QueryChannelsRepository,
+    private val queryChannelsRepository: QueryChannelsRepository,
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
-    syncStateRepository: SyncStateRepository,
-    attachmentRepository: AttachmentRepository,
+    private val syncStateRepository: SyncStateRepository,
+    private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -66,7 +59,7 @@ public class RepositoryFacade(
     override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> =
         selectChannels(channelCIDs, null, forceCache)
 
-    internal suspend fun selectChannels(
+    public suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
         forceCache: Boolean = false,
@@ -92,7 +85,7 @@ public class RepositoryFacade(
     }
 
     @VisibleForTesting
-    internal fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
+    public fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
         config = selectChannelConfig(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
@@ -142,7 +135,7 @@ public class RepositoryFacade(
         channelsRepository.updateMembersForChannel(cid, members)
     }
 
-    internal suspend fun storeStateForChannels(
+    public suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>? = null,
         users: List<User>,
         channels: Collection<Channel>,
@@ -155,10 +148,19 @@ public class RepositoryFacade(
         insertMessages(messages, cacheForMessages)
     }
 
+    override suspend fun clear() {
+        userRepository.clear()
+        channelsRepository.clear()
+        reactionsRepository.clear()
+        messageRepository.clear()
+        configsRepository.clear()
+        queryChannelsRepository.clear()
+        syncStateRepository.clear()
+        attachmentRepository.clear()
+    }
+
     @InternalStreamChatApi
     public companion object {
-
-        private var instance: RepositoryFacade? = null
 
         /**
          * Creates a new instance of [RepositoryFacade] and populate the Singleton instance. This method should be
@@ -168,16 +170,17 @@ public class RepositoryFacade(
          * @param scope [CoroutineScope]
          * @param defaultConfig [Config]
          */
-        @VisibleForTesting
         @InternalStreamChatApi
         public fun create(
             factory: RepositoryFactory,
             scope: CoroutineScope,
-            defaultConfig: Config,
+            defaultConfig: Config = Config(),
         ): RepositoryFacade {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
-                requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
+                requireNotNull(userRepository.selectUser(userId)) {
+                    "User with the userId: `$userId` has not been found"
+                }
             }
 
             val messageRepository = factory.createMessageRepository(getUser)
@@ -194,17 +197,7 @@ public class RepositoryFacade(
                 attachmentRepository = factory.createAttachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
-            ).also {
-                instance = it
-            }
-        }
-
-        /**
-         * Gets the current Singleton of RepositoryFacade. If the initialization is not done yet, it throws exception.
-         */
-        @Throws(IllegalArgumentException::class)
-        internal fun get(): RepositoryFacade = requireNotNull(instance) {
-            "Offline plugin must be configured in ChatClient to use RepositoryFacade."
+            )
         }
     }
 }

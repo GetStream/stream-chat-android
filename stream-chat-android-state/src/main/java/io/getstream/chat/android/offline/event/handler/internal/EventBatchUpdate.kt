@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.internal.incrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.updateLastMessage
@@ -24,9 +25,8 @@ import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.message.latestOrNull
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
 
@@ -69,7 +69,7 @@ internal class EventBatchUpdate private constructor(
         getCurrentChannel(cid)?.also { channel ->
             channel.updateLastMessage(message)
 
-            val currentUserId = ClientState.get().user.value?.id ?: return
+            val currentUserId = currentUserId ?: return
 
             if (isNewMessage) {
                 val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
@@ -77,7 +77,7 @@ internal class EventBatchUpdate private constructor(
                 if (message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastReadDate,
-                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid)
+                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid, ChatClient.instance().clientState)
                     )
                 ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
