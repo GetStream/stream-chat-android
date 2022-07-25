@@ -246,6 +246,7 @@
             <enum name="italic" value="2" />
         </attr>
         <attr name="streamUiCooldownTimerBackgroundDrawable" format="reference" />
+        <attr name="android:inputType" />
     </declare-styleable>
 
 </resources>

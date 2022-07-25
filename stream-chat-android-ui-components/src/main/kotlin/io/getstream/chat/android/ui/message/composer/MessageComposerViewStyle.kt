@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.message.composer
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.InputType
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -59,6 +60,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param messageInputScrollbarFadingEnabled If the vertical edges should be faded on scroll or not.
  * @param messageInputMaxLines The maximum number of message input lines.
  * @param messageInputCannotSendHintText The input hint text in case we can't send messages in this channel.
+ * @param messageInputInputType The [InputType] to be applied to the message input edit text.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -108,6 +110,7 @@ public data class MessageComposerViewStyle(
     public val messageInputScrollbarFadingEnabled: Boolean,
     public val messageInputMaxLines: Int,
     public val messageInputCannotSendHintText: String,
+    public val messageInputInputType: Int,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -475,6 +478,14 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerBackgroundDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
 
+                val messageInputInputType = a.getInt(
+                    R.styleable.MessageComposerView_android_inputType,
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                )
+
+                println(messageInputInputType)
+
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,
@@ -503,6 +514,7 @@ public data class MessageComposerViewStyle(
                     messageInputScrollbarFadingEnabled = messageInputScrollbarFadingEnabled,
                     messageInputMaxLines = messageInputMaxLines,
                     messageInputCannotSendHintText = messageInputCannotSendHintText,
+                    messageInputInputType = messageInputInputType,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
