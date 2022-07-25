@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.message.input
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.InputType
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import com.getstream.sdk.chat.utils.AttachmentConstants
@@ -74,6 +75,7 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * @property replyInputModeIcon Icon displayed in MessageInputView's top left corner when user replies to the message. Default value is [R.drawable.stream_ui_ic_arrow_curve_left]
  * @property commandButtonRippleColor Ripple color of the command button. Default value is [colorControlHighlight]
  * @property attachmentButtonRippleColor Ripple color of the attachment button. Default value is [colorControlHighlight]
+ * @property messageInputInputType The [InputType] to be applied to the message input edit text.
  */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -120,6 +122,7 @@ public data class MessageInputViewStyle(
     public val replyInputModeIcon: Drawable,
     @ColorInt public val commandButtonRippleColor: Int?,
     @ColorInt public val attachmentButtonRippleColor: Int?,
+    public val messageInputInputType: Int
 ) {
 
     public companion object {
@@ -574,6 +577,12 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiCommandButtonRippleColor
                 )
 
+                val messageInputInputType = a.getInt(
+                    R.styleable.MessageComposerView_android_inputType,
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -618,7 +627,8 @@ public data class MessageInputViewStyle(
                     editInputModeIcon = editInputModeIcon,
                     replyInputModeIcon = replyInputModeIcon,
                     attachmentButtonRippleColor = attachmentsButtonRippleColor,
-                    commandButtonRippleColor = commandsButtonRippleColor
+                    commandButtonRippleColor = commandsButtonRippleColor,
+                    messageInputInputType = messageInputInputType
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
                     .also { style -> style.checkMaxAttachmentsCountRange() }
             }
