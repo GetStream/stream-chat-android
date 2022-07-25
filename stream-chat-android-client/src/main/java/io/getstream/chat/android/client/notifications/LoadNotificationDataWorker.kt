@@ -56,8 +56,8 @@ internal class LoadNotificationDataWorker(
             val getChannel = client.queryChannel(
                 channelType, channelId,
                 QueryChannelRequest().apply {
-                    isNotificationUpdate = true
-                }
+                isNotificationUpdate = true
+            }
             )
 
             val result = getChannel.zipWith(getMessage).await()
