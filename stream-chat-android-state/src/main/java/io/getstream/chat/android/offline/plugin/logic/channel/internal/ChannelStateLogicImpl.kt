@@ -131,7 +131,7 @@ internal class ChannelStateLogicImpl(
      * @param channel the data of [Channel] to be updated.
      */
     override fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value?.ownCapabilities ?: emptySet()
+        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
         mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
     }
 
@@ -429,6 +429,18 @@ internal class ChannelStateLogicImpl(
         mutableState.setChannelConfig(channel.config)
     }
 
+    override fun updateDataFromChannel(
+        channel: Channel,
+        shouldRefreshMessages: Boolean,
+        scrollUpdate: Boolean,
+        isNotificationUpdate: Boolean,
+    ) {
+        if (!isNotificationUpdate) {
+            updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
+            return
+        }
+    }
+
     /**
      * Update the old messages for channel. It doesn't add new messages.
      *
@@ -458,16 +470,20 @@ internal class ChannelStateLogicImpl(
      */
     override fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
         val noMoreMessages = request.messagesLimit() > channel.messages.size
+        val isNotificationUpdate = request.isNotificationUpdate
 
-        searchLogic.handleMessageBounds(request, noMoreMessages)
-        mutableState.recoveryNeeded = false
+        if (!isNotificationUpdate) {
+            searchLogic.handleMessageBounds(request, noMoreMessages)
+            mutableState.recoveryNeeded = false
 
-        determinePaginationEnd(request, noMoreMessages)
+            determinePaginationEnd(request, noMoreMessages)
+        }
 
         updateDataFromChannel(
             channel,
             shouldRefreshMessages = request.shouldRefresh,
-            scrollUpdate = request.isFilteringMessages()
+            scrollUpdate = request.isFilteringMessages(),
+            isNotificationUpdate = request.isNotificationUpdate
         )
     }
 

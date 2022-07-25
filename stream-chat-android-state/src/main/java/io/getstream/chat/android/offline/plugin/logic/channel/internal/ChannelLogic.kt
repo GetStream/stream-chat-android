@@ -120,6 +120,8 @@ internal class ChannelLogic(
     }
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
+        if (request.isNotificationUpdate) return
+
         channelStateLogic.refreshMuteState()
 
         runChannelQueryOffline(request)
