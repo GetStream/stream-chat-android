@@ -3582,14 +3582,6 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
 }
 
-public final class io/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState : java/lang/Enum {
-	public static final field CONNECTED Lio/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState;
-	public static final field CONNECTING Lio/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState;
-	public static final field DISCONNECTED Lio/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState;
-	public static fun values ()[Lio/getstream/chat/android/client/setup/InitializationCoordinator$SocketConnectionState;
-}
-
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
 	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;

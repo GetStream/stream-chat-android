@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -63,7 +64,7 @@ internal class TypingEventPruner(
      */
     init {
         initializationCoordinator.addSocketConnectionStateListener { socketConnectionState ->
-            if (socketConnectionState == InitializationCoordinator.SocketConnectionState.DISCONNECTED) {
+            if (socketConnectionState == ConnectionState.OFFLINE) {
                 clear()
             }
         }

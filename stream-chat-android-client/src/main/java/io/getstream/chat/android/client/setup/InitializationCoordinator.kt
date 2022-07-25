@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
@@ -36,7 +37,7 @@ public class InitializationCoordinator private constructor() {
     /**
      * Listeners which will get invoked when the web socket goes through connection changes.
      */
-    private val onSocketConnectionStateChangedListener: MutableList<(SocketConnectionState) -> Unit> = mutableListOf()
+    private val onSocketConnectionStateChangedListener: MutableList<(ConnectionState) -> Unit> = mutableListOf()
 
     /**
      * Adds a listener to user disconnection.
@@ -48,7 +49,7 @@ public class InitializationCoordinator private constructor() {
     /**
      * Adds a listener used to listen to socket connection changes
      */
-    public fun addSocketConnectionStateListener(listener: (SocketConnectionState) -> Unit) {
+    public fun addSocketConnectionStateListener(listener: (ConnectionState) -> Unit) {
         onSocketConnectionStateChangedListener.add(listener)
     }
 
@@ -66,10 +67,10 @@ public class InitializationCoordinator private constructor() {
      * [ConnectedEvent], [ConnectingEvent], [DisconnectedEvent].
      */
     internal fun socketConnectionStateChanged(chatEvent: ChatEvent) {
-        val socketConnectionState: SocketConnectionState = when (chatEvent) {
-            is ConnectedEvent -> SocketConnectionState.CONNECTED
-            is ConnectingEvent -> SocketConnectionState.CONNECTING
-            is DisconnectedEvent -> SocketConnectionState.DISCONNECTED
+        val socketConnectionState: ConnectionState = when (chatEvent) {
+            is ConnectedEvent -> ConnectionState.CONNECTED
+            is ConnectingEvent -> ConnectionState.CONNECTING
+            is DisconnectedEvent -> ConnectionState.OFFLINE
             else -> {
                 StreamLog.w("InitializationCoordinator.socketConnectionStateChanged") {
                     "Only ChatEvents of types ConnectedEvent, ConnectingEvent and DisconnectedEvent" +
@@ -83,15 +84,6 @@ public class InitializationCoordinator private constructor() {
         onSocketConnectionStateChangedListener.forEach { function ->
             function(socketConnectionState)
         }
-    }
-
-    /**
-     * Used to represent socket connection events.
-     */
-    public enum class SocketConnectionState {
-        CONNECTED,
-        CONNECTING,
-        DISCONNECTED
     }
 
     public companion object {
