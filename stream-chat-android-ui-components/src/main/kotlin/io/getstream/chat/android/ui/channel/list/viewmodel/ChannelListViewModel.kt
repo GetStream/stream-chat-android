@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -46,7 +45,6 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.logging.StreamLog
