@@ -18,6 +18,16 @@ public final class io/getstream/chat/android/uiutils/constants/AttachmentType {
 	public static final field VIDEO Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/uiutils/constants/MessageType {
+	public static final field EPHEMERAL Ljava/lang/String;
+	public static final field ERROR Ljava/lang/String;
+	public static final field FAILED Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/uiutils/constants/MessageType;
+	public static final field REGULAR Ljava/lang/String;
+	public static final field REPLY Ljava/lang/String;
+	public static final field SYSTEM Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/uiutils/extensions/AttachmentKt {
 	public static final fun hasLink (Lio/getstream/chat/android/client/models/Attachment;)Z
 	public static final fun isFile (Lio/getstream/chat/android/client/models/Attachment;)Z
@@ -27,6 +37,7 @@ public final class io/getstream/chat/android/uiutils/extensions/AttachmentKt {
 public final class io/getstream/chat/android/uiutils/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
+	public static final fun getPreviewMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
 	public static final fun isDirectMessaging (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 

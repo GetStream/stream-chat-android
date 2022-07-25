@@ -17,16 +17,13 @@
 package io.getstream.chat.android.uiutils.constants
 
 /**
- * Represents types of attachments.
+ * Represents types of messages.
  */
-public object AttachmentType {
-    public const val IMAGE: String = "image"
-    public const val IMGUR: String = "imgur"
-    public const val GIPHY: String = "giphy"
-    public const val VIDEO: String = "video"
-    public const val AUDIO: String = "audio"
-    public const val PRODUCT: String = "product"
-    public const val FILE: String = "file"
-    public const val LINK: String = "link"
-    public const val UNKNOWN: String = "unknown"
+public object MessageType {
+    public const val REGULAR: String = "regular"
+    public const val EPHEMERAL: String = "ephemeral"
+    public const val ERROR: String = "error"
+    public const val FAILED: String = "failed"
+    public const val REPLY: String = "reply"
+    public const val SYSTEM: String = "system"
 }

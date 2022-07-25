@@ -17,11 +17,11 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.extensions.getPreviewMessage
 import java.util.Date
 
 /**
@@ -30,14 +30,7 @@ import java.util.Date
  *
  * @return Last message from the channel or null if it doesn't exist.
  */
-public fun Channel.getLastMessage(currentUser: User?): Message? =
-    messages.asSequence()
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
-        .filter { !it.silent }
-        .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { it.isRegular() || it.isSystem() }
-        .maxByOrNull { it.getCreatedAtOrThrow() }
+public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMessage(currentUser)
 
 /**
  * Filters the read status of each person other than the target user.
