@@ -37,8 +37,8 @@ public final class io/getstream/chat/android/uiutils/extensions/AttachmentKt {
 public final class io/getstream/chat/android/uiutils/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIIII)Ljava/lang/String;
 	public static final fun getPreviewMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
-	public static final fun isDirectMessaging (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class io/getstream/chat/android/uiutils/extensions/ContextKt {

@@ -30,27 +30,27 @@ import io.getstream.chat.android.client.models.User
  * - Last seen 13 hours ago
  *
  * @param context The context to load string resources.
- * @param onlineResId Resource id for the online text.
- * @param justNowResId Resource id for the just now text.
- * @param lastSeenResId Resource id for the last seen text.
+ * @param userOnlineResId Resource id for the online text.
+ * @param userLastSeenJustNowResId Resource id for the just now text.
+ * @param userLastSeenResId Resource id for the last seen text.
  * @return A string that represents the elapsed time since the user was online.
  */
 public fun User.getLastSeenText(
     context: Context,
-    @StringRes onlineResId: Int,
-    @StringRes justNowResId: Int,
-    @StringRes lastSeenResId: Int,
+    @StringRes userOnlineResId: Int,
+    @StringRes userLastSeenJustNowResId: Int,
+    @StringRes userLastSeenResId: Int,
 ): String {
     if (online) {
-        return context.getString(onlineResId)
+        return context.getString(userOnlineResId)
     }
 
     return (lastActive ?: updatedAt ?: createdAt)?.let {
         if (it.isInLastMinute()) {
-            context.getString(justNowResId)
+            context.getString(userLastSeenJustNowResId)
         } else {
             context.getString(
-                lastSeenResId,
+                userLastSeenResId,
                 DateUtils.getRelativeTimeSpanString(it.time).toString()
             )
         }

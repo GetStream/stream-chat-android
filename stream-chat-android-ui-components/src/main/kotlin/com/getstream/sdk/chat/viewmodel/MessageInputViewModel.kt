@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
@@ -37,7 +38,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.uiutils.extensions.isDirectMessaging
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

@@ -35,8 +35,8 @@ import io.getstream.chat.android.uiutils.extensions.getLastSeenText
 public fun User.getLastSeenText(context: Context): String {
     return getLastSeenText(
         context = context,
-        onlineResId = R.string.stream_ui_user_status_online,
-        justNowResId = R.string.stream_ui_user_status_last_seen_just_now,
-        lastSeenResId = R.string.stream_ui_user_status_last_seen,
+        userOnlineResId = R.string.stream_ui_user_status_online,
+        userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
+        userLastSeenResId = R.string.stream_ui_user_status_last_seen,
     )
 }

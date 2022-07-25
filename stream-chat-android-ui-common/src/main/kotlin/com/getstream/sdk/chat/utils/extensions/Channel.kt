@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package com.getstream.sdk.chat.utils.extensions
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
 
-/**
- * Observes two live datas together.
- */
-internal fun <P, Q> Pair<LiveData<P>, LiveData<Q>>.observeTogether(
-    lifecycle: LifecycleOwner,
-    block: (P?, Q?) -> Unit,
-) {
-    this.first.observe(lifecycle) {
-        block(it, this.second.value)
-    }
+public fun Channel.isDirectMessaging(): Boolean {
+    return members.size == 2 && includesCurrentUser()
+}
 
-    this.second.observe(lifecycle) {
-        block(this.first.value, it)
-    }
+private fun Channel.includesCurrentUser(): Boolean {
+    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
+    return members.any { it.user.id == currentUserId }
 }

@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.extensions.getMembersStatusText
 import io.getstream.chat.android.uiutils.extensions.getPreviewMessage
 import java.util.Date
 
@@ -79,28 +80,15 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  * @return The text that represent the member status of the channel.
  */
 public fun Channel.getMembersStatusText(context: Context, currentUser: User?): String {
-    return when {
-        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
-            .user
-            .getLastSeenText(context)
-        else -> {
-            val memberCountString = context.resources.getQuantityString(
-                R.plurals.stream_compose_member_count,
-                memberCount,
-                memberCount
-            )
-
-            return if (watcherCount > 0) {
-                context.getString(
-                    R.string.stream_compose_member_count_online,
-                    memberCountString,
-                    watcherCount
-                )
-            } else {
-                memberCountString
-            }
-        }
-    }
+    return getMembersStatusText(
+        context = context,
+        currentUser = currentUser,
+        userOnlineResId = R.string.stream_compose_user_status_online,
+        userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
+        userLastSeenResId = R.string.stream_compose_user_status_last_seen,
+        memberCountResId = R.plurals.stream_compose_member_count,
+        memberCountWithOnlineResId = R.string.stream_compose_member_count_online,
+    )
 }
 
 /**

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.uiutils.extensions
 
 import android.content.Context
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
@@ -24,16 +25,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.uiutils.constants.MessageType
-import java.util.Date
-
-public fun Channel.isDirectMessaging(): Boolean {
-    return members.size == 2 && includesCurrentUser()
-}
-
-private fun Channel.includesCurrentUser(): Boolean {
-    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
-    return members.any { it.user.id == currentUserId }
-}
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -83,4 +74,65 @@ private fun Channel.nameFromMembers(currentUser: User?, maxMembers: Int): String
 
         else -> null
     }
+}
+
+/**
+ * Returns a string describing the member status of the channel: either a member count for a group channel
+ * or the last seen text for a direct one-to-one conversation with the current user.
+ *
+ * @param context The context to load string resources.
+ * @param currentUser The currently logged in user.
+ * @return The text that represent the member status of the channel.
+ */
+public fun Channel.getMembersStatusText(
+    context: Context,
+    currentUser: User?,
+    @StringRes userOnlineResId: Int,
+    @StringRes userLastSeenJustNowResId: Int,
+    @StringRes userLastSeenResId: Int,
+    @PluralsRes memberCountResId: Int,
+    @StringRes memberCountWithOnlineResId: Int,
+): String {
+    return when {
+        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
+            .user
+            .getLastSeenText(
+                context = context,
+                userOnlineResId = userOnlineResId,
+                userLastSeenJustNowResId = userLastSeenJustNowResId,
+                userLastSeenResId = userLastSeenResId,
+            )
+        else -> {
+            val memberCountString = context.resources.getQuantityString(
+                memberCountResId,
+                memberCount,
+                memberCount
+            )
+
+            return if (watcherCount > 0) {
+                context.getString(
+                    memberCountWithOnlineResId,
+                    memberCountString,
+                    watcherCount
+                )
+            } else {
+                memberCountString
+            }
+        }
+    }
+}
+
+/**
+ * Checks if the channel is a direct conversation between the current user and some
+ * other user.
+ *
+ * A one-to-one chat is basically a corner case of a distinct channel with only 2 members.
+ *
+ * @param currentUser The currently logged in user.
+ * @return True if the channel is a one-to-one conversation.
+ */
+private fun Channel.isOneToOne(currentUser: User?): Boolean {
+    return cid.contains("!members") &&
+        members.size == 2 &&
+        members.any { it.user.id == currentUser?.id }
 }

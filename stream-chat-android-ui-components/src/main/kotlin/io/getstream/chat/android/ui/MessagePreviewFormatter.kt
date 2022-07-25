@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -29,7 +30,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getSenderDisplayN
 import io.getstream.chat.android.ui.common.extensions.internal.italicize
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.extensions.isSystem
-import io.getstream.chat.android.uiutils.extensions.isDirectMessaging
 
 /**
  * An interface that allows to generate a preview text for the given message.
