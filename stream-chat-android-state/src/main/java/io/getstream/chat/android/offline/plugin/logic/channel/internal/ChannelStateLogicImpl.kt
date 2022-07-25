@@ -247,8 +247,12 @@ internal class ChannelStateLogicImpl(
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message) {
+        println("is inside search: ${mutableState.insideSearch.value}")
         if (mutableState.rawMessages.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
+        } else {
+            val newMessages = parseMessages(listOf(message), true)
+            updateLastMessageAtByNewMessages(newMessages.values)
         }
     }
 
@@ -350,7 +354,7 @@ internal class ChannelStateLogicImpl(
      * @param deleteDate The date when the channel was deleted.
      */
     override fun deleteChannel(deleteDate: Date) {
-        mutableState.setChannelData(mutableState.channelData.value?.copy(deletedAt = deleteDate))
+        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deleteDate))
     }
 
     /**
@@ -429,16 +433,33 @@ internal class ChannelStateLogicImpl(
         mutableState.setChannelConfig(channel.config)
     }
 
+    // TODO
     override fun updateDataFromChannel(
         channel: Channel,
         shouldRefreshMessages: Boolean,
         scrollUpdate: Boolean,
         isNotificationUpdate: Boolean,
     ) {
-        if (!isNotificationUpdate) {
-            updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
-            return
+        // Update all the flow objects based on the channel
+        updateChannelData(channel)
+        setWatcherCount(channel.watcherCount)
+
+        mutableState.setRead(mutableState.read.value)
+        mutableState.setMembersCount(channel.memberCount)
+
+        updateReads(channel.read)
+
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
+        setMembers(channel.members)
+        setWatchers(channel.watchers)
+
+        if (!isNotificationUpdate && (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages)) {
+            upsertMessages(channel.messages, shouldRefreshMessages)
         }
+
+        mutableState.lastMessageAt = channel.lastMessageAt
+        mutableState.setChannelConfig(channel.config)
     }
 
     /**

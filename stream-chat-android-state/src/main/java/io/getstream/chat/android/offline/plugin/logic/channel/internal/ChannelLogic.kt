@@ -257,15 +257,15 @@ internal class ChannelLogic(
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateDataFromLocalChannel(channel)
+                updateDataFromLocalChannel(channel, request.isNotificationUpdate)
             }
         }
     }
 
-    private fun updateDataFromLocalChannel(localChannel: Channel) {
+    private fun updateDataFromLocalChannel(localChannel: Channel, isNotificationUpdate: Boolean) {
         localChannel.hidden?.let(channelStateLogic::setHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel, scrollUpdate = true)
+        updateDataFromChannel(localChannel, scrollUpdate = true, isNotificationUpdate = isNotificationUpdate)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -291,8 +291,9 @@ internal class ChannelLogic(
         channel: Channel,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
+        isNotificationUpdate: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
+        channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate, isNotificationUpdate)
     }
 
     internal fun deleteMessage(message: Message) {
@@ -524,9 +525,7 @@ internal class ChannelLogic(
         StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
-                if (!mutableState.insideSearch.value) {
-                    upsertEventMessage(event.message)
-                }
+                upsertEventMessage(event.message)
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.setHidden(false)
             }
