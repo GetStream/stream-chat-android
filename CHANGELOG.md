@@ -49,6 +49,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed list state race condition while switching filters in channel list. [#3939](https://github.com/GetStream/stream-chat-android/pull/3939/files)
 
 ### ⬆️ Improved
 
