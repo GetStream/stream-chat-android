@@ -354,6 +354,22 @@ internal class ChannelStateLogic(
         mutableState.setChannelConfig(channel.config)
     }
 
+    // TODO
+    /**
+     * Updates data from channel.
+     *
+     * @param channel [Channel]
+     * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
+     * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
+     * when the user is searching in the channel.
+     */
+    fun updateDataFromChannel(
+        channel: Channel,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+        isNotificationUpdate: Boolean = false
+    )
+
     /**
      * Update the old messages for channel. It doesn't add new messages.
      *
