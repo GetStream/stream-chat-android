@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.setup.state.internal
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +58,9 @@ internal class ClientStateImpl(
         _initialized.value = false
         _connectionState.value = ConnectionState.OFFLINE
         _user.value = null
+
+        InitializationCoordinator.getOrCreate()
+            .removeSocketConnectionStateListeners()
     }
 
     override fun setUser(user: User) {

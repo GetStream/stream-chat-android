@@ -54,6 +54,13 @@ public class InitializationCoordinator private constructor() {
     }
 
     /**
+     * Removes the listeners listening to socket state changes.
+     */
+    public fun removeSocketConnectionStateListeners() {
+        onSocketConnectionStateChangedListener.clear()
+    }
+
+    /**
      * Notifies user disconnection
      */
     internal fun userDisconnected(user: User?) {
