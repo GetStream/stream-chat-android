@@ -204,7 +204,7 @@ internal class MessageListScrollHelper(
         areNewestMessagesLoaded: Boolean,
         hasNewMessages: Boolean,
     ): Boolean {
-        return areNewestMessagesLoaded || !scrollToBottomButtonEnabled ||
+        return !areNewestMessagesLoaded || !scrollToBottomButtonEnabled ||
             (!hasNewMessages || adapter.currentList.isEmpty())
     }
 
