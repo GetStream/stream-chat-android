@@ -310,6 +310,24 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BanUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BanUser;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BanUser;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BanUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getTimeout ()Ljava/lang/Integer;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BlockUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
@@ -444,6 +462,19 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ReplyAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -481,6 +512,24 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShadowBanUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShadowBanUser;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShadowBanUser;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShadowBanUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getTimeout ()Ljava/lang/Integer;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ShowMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -499,6 +548,19 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ThreadModeEntered;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$ThreadModeEntered;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getParentMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnbanUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnbanUser;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnbanUser;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnbanUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

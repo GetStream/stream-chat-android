@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -906,10 +907,119 @@ public class MessageListViewModel(
         val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
 
         if (isUserMuted) {
-            chatClient.unmuteUser(user.id)
+            unMuteUser(user.id)
         } else {
-            chatClient.muteUser(user.id)
-        }.enqueue()
+            muteUser(user.id)
+        }
+    }
+
+    /**
+     * Mutes the given user inside this channel.
+     *
+     * @param userId The ID of the user to be muted.
+     * @param timeout The period of time for which the user will
+     * be muted, expressed in minutes. A null value signifies that
+     * the user will be muted for an indefinite time.
+     */
+    public fun muteUser(
+        userId: String,
+        timeout: Int? = null,
+    ) {
+        chatClient.muteUser(userId, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to mute the user"
+
+                StreamLog.e("MessageListViewModel.muteUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Unmutes the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unmuted.
+     */
+    public fun unMuteUser(userId: String) {
+        chatClient.unmuteUser(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unmute the user"
+
+                StreamLog.e("MessageListViewModel.unMuteUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be banned.
+     * @param reason The reason for banning the user.
+     * @param timeout The period of time for which the user will
+     * be banned, expressed in minutes. A null value signifies that
+     * the user will be banned for an indefinite time.
+     */
+    public fun banUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        chatClient.channel(channelId).banUser(userId, reason, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to ban the user"
+
+                StreamLog.e("MessageListViewModel.banUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Unbans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unbanned.
+     */
+    public fun unbanUser(userId: String) {
+        chatClient.channel(channelId).unbanUser(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unban the user"
+
+                StreamLog.e("MessageListViewModel.unban") { errorMessage }
+            })
+    }
+
+    /**
+     * Shadow bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be shadow banned.
+     * @param reason The reason for shadow banning the user.
+     * @param timeout The period of time for which the user will
+     * be shadow banned, expressed in minutes. A null value signifies that
+     * the user will be shadow banned for an indefinite time.
+     */
+    public fun shadowBanUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        chatClient.channel(channelId).shadowBanUser(userId, reason, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
+
+                StreamLog.e("MessageListViewModel.shadowBanUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Removes the shaddow ban for the given user inside
+     * this channel.
+     *
+     * @param userId The ID of the user for which the shadow
+     * ban is removed.
+     */
+    public fun removeShadowBanFromUser(userId: String,) {
+        chatClient.channel(channelId).removeShadowBan(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage =
+                    chatError.message ?: chatError.cause?.message ?: "Unable to remove the user shadow ban"
+
+                StreamLog.e("MessageListViewModel.removeShadowBanFromUser") { errorMessage }
+            })
     }
 
     /**
