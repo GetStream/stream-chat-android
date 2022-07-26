@@ -247,11 +247,10 @@ internal class ChannelStateLogicImpl(
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message) {
-        println("is inside search: ${mutableState.insideSearch.value}")
         if (mutableState.rawMessages.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
         } else {
-            val newMessages = parseMessages(listOf(message), true)
+            val newMessages = parseMessages(listOf(message))
             updateLastMessageAtByNewMessages(newMessages.values)
         }
     }
@@ -410,6 +409,19 @@ internal class ChannelStateLogicImpl(
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
      */
+    @Deprecated(
+        "Replaced in place of new implementation of updateDataFromChannel.",
+        replaceWith = ReplaceWith(
+            expression = "updateDataFromChannel(" +
+                "channel: Channel," +
+                "shouldRefreshMessages: Boolean," +
+                "scrollUpdate: Boolean," +
+                "isNotificationUpdate: Boolean" +
+                ")",
+            imports = ["io.getstream.chat.android.offline.plugin.logic.channel.internal"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     override fun updateDataFromChannel(channel: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -433,7 +445,15 @@ internal class ChannelStateLogicImpl(
         mutableState.setChannelConfig(channel.config)
     }
 
-    // TODO
+    /**
+     * Updates data from channel.
+     *
+     * @param channel [Channel]
+     * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
+     * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
+     * when the user is searching in the channel.
+     * @param isNotificationUpdate Whether the message list update is due to a new notification.
+     */
     override fun updateDataFromChannel(
         channel: Channel,
         shouldRefreshMessages: Boolean,
@@ -454,12 +474,35 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (!isNotificationUpdate && (!mutableState.insideSearch.value || scrollUpdate || shouldRefreshMessages)) {
+        if (shouldUpsertMessages(
+                isNotificationUpdate = isNotificationUpdate,
+                isInsideSearch = mutableState.insideSearch.value,
+                isScrollUpdate = scrollUpdate,
+                shouldRefreshMessages = shouldRefreshMessages
+            )
+        ) {
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
         mutableState.lastMessageAt = channel.lastMessageAt
         mutableState.setChannelConfig(channel.config)
+    }
+
+    /**
+     * @param isNotificationUpdate Whether the data is updating due to a new notification.
+     * @param isInsideSearch Whether we are inside search or not.
+     * @param isScrollUpdate Whether the update is dut to a scroll update, meaning pagination.
+     * @param shouldRefreshMessages Whether the message list should get refreshed.
+     *
+     * @return Whether we need to upsert the messages or not.
+     */
+    private fun shouldUpsertMessages(
+        isNotificationUpdate: Boolean,
+        isInsideSearch: Boolean,
+        isScrollUpdate: Boolean,
+        shouldRefreshMessages: Boolean
+    ): Boolean {
+        return !isNotificationUpdate && (!isInsideSearch || isScrollUpdate || shouldRefreshMessages)
     }
 
     /**
