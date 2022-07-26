@@ -89,6 +89,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.delay
 import java.util.Date
 
 /**
@@ -137,10 +138,15 @@ internal class ChannelLogic(
             logger.v { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            storeStateForChannel(channel)
-        }
-            .onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
-            .onError(channelStateLogic::propagateQueryError)
+
+            if (!mutableState.insideSearch.value && !request.isFilteringAroundIdMessages()) {
+                storeStateForChannel(channel)
+            } else {
+                delay(300)
+            }
+        }.onSuccess { channel ->
+            channelStateLogic.propagateChannelQuery(channel, request)
+        }.onError(channelStateLogic::propagateQueryError)
     }
 
     private suspend fun storeStateForChannel(channel: Channel) {

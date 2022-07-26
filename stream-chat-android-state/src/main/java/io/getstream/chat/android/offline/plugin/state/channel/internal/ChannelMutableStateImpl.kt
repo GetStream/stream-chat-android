@@ -50,6 +50,7 @@ internal class ChannelMutableStateImpl(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
+    private val cacheMessages: MutableList<Message> = mutableListOf()
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
@@ -72,6 +73,11 @@ internal class ChannelMutableStateImpl(
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
     private val _lastMessageAt = MutableStateFlow<Date?>(null)
+
+    private fun cacheMessages() {
+        cacheMessages.clear()
+        cacheMessages.addAll(sortedMessages.value)
+    }
 
     /** raw version of messages. */
     override var rawMessages: Map<String, Message>
@@ -211,7 +217,7 @@ internal class ChannelMutableStateImpl(
         // recreate a channel object from the various observables.
         val channelData = channelData.value
 
-        val messages = sortedMessages.value
+        val messages = if (insideSearch.value) cacheMessages else sortedMessages.value
         val members = members.value
         val watchers = watchers.value
         val reads = _rawReads.value.values.toList()
@@ -280,6 +286,12 @@ internal class ChannelMutableStateImpl(
     }
 
     override fun setInsideSearch(isInsideSearch: Boolean) {
+        when {
+            isInsideSearch && !_insideSearch.value -> { cacheMessages() }
+
+            !isInsideSearch && _insideSearch.value -> { cacheMessages.clear() }
+        }
+
         _insideSearch.value = isInsideSearch
     }
 
