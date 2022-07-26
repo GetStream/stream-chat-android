@@ -22,14 +22,14 @@ import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
 import java.util.Date
 import java.util.UUID
 
 internal class PrepareMessageLogicImpl(
-    private val networkStateProvider: NetworkStateProvider,
+    private val clientState: ClientState,
 ) : PrepareMessageLogic {
 
     /**
@@ -71,7 +71,7 @@ internal class PrepareMessageLogicImpl(
             createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
             syncStatus = when {
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                networkStateProvider.isConnected() -> SyncStatus.IN_PROGRESS
+                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
         }
