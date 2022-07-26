@@ -379,6 +379,18 @@ internal class ChannelStateLogic(
      * when the user is searching in the channel.
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
      */
+    @Deprecated(
+        message = "Replaced in place of new implementation of updateDataFromChannel.",
+        replaceWith = ReplaceWith(
+            expression = "updateDataFromChannel(" +
+                "channel: Channel, shouldRefreshMessages: Boolean," +
+                "scrollUpdate: Boolean," +
+                "isNotificationUpdate: Boolean" +
+                ")",
+            imports = ["io.getstream.chat.android.offline.plugin.logic.channel.internal"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     fun updateDataFromChannel(
         channel: Channel,
         shouldRefreshMessages: Boolean = false,
@@ -442,7 +454,6 @@ internal class ChannelStateLogic(
             (!isInsideSearch || isScrollUpdate || shouldRefreshMessages)
     }
 
-    // TODO
     /**
      * Updates data from channel.
      *
@@ -450,12 +461,13 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
+     * @param isNotificationUpdate Whether the message list update is due to a new notification.
      */
     fun updateDataFromChannel(
         channel: Channel,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
-        isNotificationUpdate: Boolean = false
+        isNotificationUpdate: Boolean = false,
     )
 
     /**
