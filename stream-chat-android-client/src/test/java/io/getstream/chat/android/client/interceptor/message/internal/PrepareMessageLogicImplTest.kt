@@ -55,6 +55,36 @@ internal class PrepareMessageLogicImplTest {
     }
 
     @Test
+    fun `given message is prepared, it should always have id, user, cid, type, createdLocallyAt and syncStatus`() {
+        val newUser = randomUser()
+        val attachment: Attachment = randomAttachment()
+        val messageWithAttachments = randomMessage(
+            attachments = mutableListOf(attachment),
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            id = "",
+            cid = "",
+            user = randomUser(),
+            type = "",
+            createdAt = null,
+        )
+
+        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+            messageWithAttachments,
+            randomString(),
+            randomString(),
+            newUser
+        )
+
+        preparedMessage.run {
+            id `should not be equal to` ""
+            cid `should not be equal to` ""
+            user `should be equal to` newUser
+            type `should not be equal to` ""
+            createdLocallyAt `should not be equal to` null
+        }
+    }
+
+    @Test
     fun `given a message doesn't have attachments and user is online, the status should be updated accordingly`() {
         whenever(clientState.isNetworkAvailable) doReturn true
 
