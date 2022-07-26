@@ -58,9 +58,6 @@ internal class ClientStateImpl(
         _initialized.value = false
         _connectionState.value = ConnectionState.OFFLINE
         _user.value = null
-
-        InitializationCoordinator.getOrCreate()
-            .removeSocketConnectionStateListeners()
     }
 
     override fun setUser(user: User) {

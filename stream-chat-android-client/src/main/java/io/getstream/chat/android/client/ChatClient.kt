@@ -1070,6 +1070,7 @@ internal constructor(
             lifecycleObserver.dispose()
             appSettingsManager.clear()
             _repositoryFacade = null
+            initializationCoordinator.removeSocketConnectionStateListeners()
             Result.success(Unit)
         }
 
