@@ -151,7 +151,7 @@ internal open class ChatSocket constructor(
             state<State.Connected> {
                 onEnter {
                     if (it is Event.WebSocket.OnConnectedEventReceived) {
-                        healthMonitor.start()
+                        healthMonitor.ack()
                         callListeners { listener -> listener.onConnected(it.connectedEvent) }
                     }
                 }
