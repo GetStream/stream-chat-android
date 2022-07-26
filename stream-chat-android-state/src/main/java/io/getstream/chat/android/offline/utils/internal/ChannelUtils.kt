@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.utils.internal
 
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 
 /**
@@ -42,7 +43,8 @@ internal fun isChannelMutedForCurrentUser(cid: String, clientState: ClientState)
  *
  * @return [channelId] if not blank or new, member-based id.
  */
-internal fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
+@InternalStreamChatApi
+public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
     return channelId.ifBlank {
         memberIds.joinToString(prefix = "!members-")
     }
