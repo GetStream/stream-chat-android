@@ -16,11 +16,8 @@
 
 package io.getstream.chat.android.client.interceptor.message
 
-import android.content.Context
-import android.net.ConnectivityManager
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
-import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
