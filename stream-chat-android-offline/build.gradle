@@ -98,7 +98,6 @@ dependencies {
     testImplementation Dependencies.coroutinesTest
 
     testImplementation Dependencies.robolectric
-    testImplementation Dependencies.dotenv
 
     testImplementation Dependencies.kfixture
     testImplementation Dependencies.kluent

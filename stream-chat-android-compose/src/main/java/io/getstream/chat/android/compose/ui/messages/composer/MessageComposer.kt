@@ -548,6 +548,23 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
+@Deprecated(
+    message = "To be marked as an internal component. Use MessageInput directly.",
+    replaceWith = ReplaceWith(
+        expression = "MessageInput(" +
+            "    messageComposerState: MessageComposerState," +
+            "    onValueChange: (String) -> Unit," +
+            "    onAttachmentRemoved: (Attachment) -> Unit," +
+            "    modifier: Modifier = Modifier," +
+            "    maxLines: Int = DefaultMessageInputMaxLines," +
+            "    keyboardCapitalization: KeyboardCapitalization," +
+            "    label: @Composable (MessageComposerState) -> Unit," +
+            "    innerLeadingContent: @Composable RowScope.() -> Unit," +
+            "    innerTrailingContent: @Composable RowScope.() -> Unit" +
+            ")",
+        imports = arrayOf("io.getstream.chat.android.compose.ui.components.composer.MessageInput")
+    )
+)
 @Composable
 public fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,

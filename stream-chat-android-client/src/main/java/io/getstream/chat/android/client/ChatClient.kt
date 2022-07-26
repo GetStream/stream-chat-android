@@ -274,9 +274,9 @@ internal constructor(
                             if (ToggleService.isSocketExperimental().not()) {
                                 socketStateService.onSocketUnrecoverableError()
                             }
-                            clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                         }
                     }
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
