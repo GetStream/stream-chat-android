@@ -43,7 +43,7 @@ internal fun <P, Q> Pair<LiveData<P>, LiveData<Q>>.observeTogether(
 }
 
 /**
- * Adds Flow as a Source to this MediatorLiveData
+ * Adds [Flow] as a source to this [MediatorLiveData].
  */
 internal fun <T, S> MediatorLiveData<T>.addFlow(
     context: CoroutineContext = EmptyCoroutineContext,

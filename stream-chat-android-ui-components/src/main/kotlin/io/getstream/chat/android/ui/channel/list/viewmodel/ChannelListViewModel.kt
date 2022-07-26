@@ -51,7 +51,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -197,7 +196,7 @@ public class ChannelListViewModel(
          * We clean up any previous loads to make sure the current one is the only one running.
          */
         queryJob?.cancel()
-        val queryJob = SupervisorJob(viewModelScope.coroutineContext.job).also {
+        val queryJob = Job(viewModelScope.coroutineContext.job).also {
             this.queryJob = it
         }
 
