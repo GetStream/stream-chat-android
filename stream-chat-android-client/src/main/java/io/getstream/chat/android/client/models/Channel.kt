@@ -110,6 +110,7 @@ public data class Channel(
             "frozen" -> frozen
             "lastMessageAt" -> lastMessageAt
             "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
             "deletedAt" -> deletedAt
             "memberCount" -> memberCount
             "unreadCount" -> unreadCount
@@ -117,6 +118,7 @@ public data class Channel(
             "hidden" -> hidden
             "cooldown" -> cooldown
             "lastUpdated" -> lastUpdated
+            "hasUnread" -> hasUnread
             else -> extraData[fieldName] as? Comparable<*>
         }
     }

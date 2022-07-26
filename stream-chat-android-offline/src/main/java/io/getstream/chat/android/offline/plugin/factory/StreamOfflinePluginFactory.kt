@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
+import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -97,6 +98,14 @@ public class StreamOfflinePluginFactory(
             clearCachedInstance()
         }
 
+        val chatClient = ChatClient.instance()
+
+        val createChannelListener = CreateChannelListenerImpl(
+            clientState = chatClient.clientState,
+            channelRepository = chatClient.repositoryFacade,
+            userRepository = chatClient.repositoryFacade
+        )
+
         return OfflinePlugin(
             queryChannelsListener = statePlugin,
             queryChannelListener = statePlugin,
@@ -113,7 +122,7 @@ public class StreamOfflinePluginFactory(
             shuffleGiphyListener = statePlugin,
             queryMembersListener = statePlugin,
             typingEventListener = statePlugin,
-            createChannelListener = statePlugin,
+            createChannelListener = createChannelListener,
             activeUser = user
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }

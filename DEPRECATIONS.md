@@ -6,6 +6,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | --- | --- | --- | --- | --- |
 | `Messages` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use new implementation of `Messages` composable. |
 | `MesageListViewModel.loadMore` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
+| `RowScope.DefaultComposerInputContent` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
 | `LegacyDateFormatter` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
 | `PorterImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
 | `PorterShapeImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |

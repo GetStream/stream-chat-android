@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.offline.internal.extensions
 
 import com.squareup.moshi.JsonAdapter
@@ -24,7 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.models.Attachment
@@ -94,7 +91,7 @@ internal class ChannelExtensionsTest {
         val firstChannel = randomChannel(lastMessageAt = Date(1000))
         val secondChannel = randomChannel(lastMessageAt = Date(3000))
         val thirdChannel = randomChannel(lastMessageAt = Date(2000))
-        val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
+        val sort = QuerySortByField.descByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,
@@ -118,7 +115,7 @@ internal class ChannelExtensionsTest {
         val firstChannel = randomChannel(lastMessageAt = Date(1000))
         val secondChannel = randomChannel(lastMessageAt = Date(3000))
         val thirdChannel = randomChannel(lastMessageAt = Date(2000))
-        val sort = QuerySort<Channel>().asc(Channel::lastMessageAt)
+        val sort = QuerySortByField.ascByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
             channelOffset = 0,

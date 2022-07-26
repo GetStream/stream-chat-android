@@ -57,23 +57,12 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
-import io.github.cdimascio.dotenv.Dotenv
-import io.github.cdimascio.dotenv.dotenv
+import io.getstream.chat.android.test.randomString
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 
 public class TestDataHelper {
-    public val dotenv: Dotenv = dotenv {
-        ignoreIfMissing = true
-    }
-
-    public val apiKey: String = checkNotNull(dotenv["STREAM_API_KEY"]) {
-        "Be sure to specify the STREAM_API_KEY environment variable"
-    }
-    public val logLevel: String = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) {
-        "Be sure to specify the STREAM_LOG_LEVEL environment variable"
-    }
 
     public val connection1: String = "test-connection"
     public val user1: User = User("broad-lake-3")
@@ -82,9 +71,7 @@ public class TestDataHelper {
     public val mute1: Mute = Mute(user1, userEvil, Date(), Date(), null)
     public val me1: User = User("broad-lake-3").apply { mutes = listOf(mute1) }
 
-    public val user1Token: String = checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) {
-        "Be sure to specify the STREAM_USER_1_TOKEN environment variable"
-    }
+    public val user1Token: String = randomString()
 
     public val user2: User = User("test-user-2")
     public val userMap: MutableMap<String, User> = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)

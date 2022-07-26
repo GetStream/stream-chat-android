@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.offline.querychannels
 
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.test.randomChannel
@@ -36,7 +35,7 @@ internal class QueryChannelsSortTest {
     fun `Given shuffled channels When sorting the list Should return sorted channels`(
         testName: String,
         channelList: List<Channel>,
-        querySort: QuerySort<Channel>,
+        querySort: QuerySortByField<Channel>,
         expectedChannelList: List<CustomObject>,
     ) {
         val result = channelList.sortedWith(querySort.comparator)
@@ -63,7 +62,7 @@ internal class QueryChannelsSortTest {
         fun lastUpdatedSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by lastUpdated field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::lastUpdated)
+                querySort = QuerySortByField.ascByName("lastUpdated")
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
@@ -72,7 +71,7 @@ internal class QueryChannelsSortTest {
             },
             sortArguments(
                 testName = "Sorting by lastUpdated field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::lastUpdated)
+                querySort = QuerySortByField.descByName("lastUpdated")
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
@@ -81,7 +80,7 @@ internal class QueryChannelsSortTest {
             },
             sortArguments(
                 testName = "Sorting by last_updated field name in ascending order",
-                querySort = QuerySort<Channel>().asc("last_updated")
+                querySort = QuerySortByField.ascByName("last_updated")
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
@@ -90,7 +89,7 @@ internal class QueryChannelsSortTest {
             },
             sortArguments(
                 testName = "Sorting by last_updated field name in descending order",
-                querySort = QuerySort<Channel>().desc("last_updated")
+                querySort = QuerySortByField.descByName("last_updated")
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
@@ -103,25 +102,25 @@ internal class QueryChannelsSortTest {
         fun lastMessageAtSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by lastMessageAt field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::lastMessageAt)
+                querySort = QuerySortByField.ascByName("lastMessageAt")
             ) {
                 randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by lastMessageAt field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::lastMessageAt)
+                querySort = QuerySortByField.descByName("lastMessageAt")
             ) {
                 randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = -it))
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in ascending order",
-                querySort = QuerySort<Channel>().asc("last_message_at")
+                querySort = QuerySortByField.ascByName("last_message_at")
             ) {
                 randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in descending order",
-                querySort = QuerySort<Channel>().desc("last_message_at")
+                querySort = QuerySortByField.descByName("last_message_at")
             ) {
                 randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = -it))
             },
@@ -131,25 +130,25 @@ internal class QueryChannelsSortTest {
         fun updatedAtSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by updatedAt field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::updatedAt)
+                querySort = QuerySortByField.ascByName("updatedAt")
             ) {
                 randomChannel(updatedAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by updatedAt field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::updatedAt)
+                querySort = QuerySortByField.descByName("updatedAt")
             ) {
                 randomChannel(updatedAt = dateWithOffset(offsetSeconds = -it))
             },
             sortArguments(
                 testName = "Sorting by updated_at field name in ascending order",
-                querySort = QuerySort<Channel>().asc("updated_at")
+                querySort = QuerySortByField.ascByName("updated_at")
             ) {
                 randomChannel(updatedAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by updated_at field name in descending order",
-                querySort = QuerySort<Channel>().desc("updated_at")
+                querySort = QuerySortByField.descByName("updated_at")
             ) {
                 randomChannel(updatedAt = dateWithOffset(offsetSeconds = -it))
             },
@@ -159,25 +158,25 @@ internal class QueryChannelsSortTest {
         fun createdAtSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by createdAt field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::createdAt)
+                querySort = QuerySortByField.ascByName("createdAt")
             ) {
                 randomChannel(createdAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by createdAt field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::createdAt)
+                querySort = QuerySortByField.descByName("createdAt")
             ) {
                 randomChannel(createdAt = dateWithOffset(offsetSeconds = -it))
             },
             sortArguments(
                 testName = "Sorting by created_at field name in ascending order",
-                querySort = QuerySort<Channel>().asc("created_at")
+                querySort = QuerySortByField.ascByName("created_at")
             ) {
                 randomChannel(createdAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by created_at field name in descending order",
-                querySort = QuerySort<Channel>().desc("created_at")
+                querySort = QuerySortByField.descByName("created_at")
             ) {
                 randomChannel(createdAt = dateWithOffset(offsetSeconds = -it))
             }
@@ -187,25 +186,25 @@ internal class QueryChannelsSortTest {
         fun memberCountSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by memberCount field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::memberCount)
+                querySort = QuerySortByField.ascByName("memberCount")
             ) {
                 randomChannel(memberCount = it)
             },
             sortArguments(
                 testName = "Sorting by memberCount field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::memberCount)
+                querySort = QuerySortByField.descByName("memberCount")
             ) {
                 randomChannel(memberCount = 9 - it)
             },
             sortArguments(
                 testName = "Sorting by member_count field name in ascending order",
-                querySort = QuerySort<Channel>().asc("member_count")
+                querySort = QuerySortByField.ascByName("member_count")
             ) {
                 randomChannel(memberCount = it)
             },
             sortArguments(
                 testName = "Sorting by member_count field name in descending order",
-                querySort = QuerySort<Channel>().desc("member_count")
+                querySort = QuerySortByField.descByName("member_count")
             ) {
                 randomChannel(memberCount = 9 - it)
             },
@@ -215,25 +214,25 @@ internal class QueryChannelsSortTest {
         fun unreadCountSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by unreadCount field reference in ascending order",
-                querySort = QuerySort<Channel>().asc(Channel::unreadCount)
+                querySort = QuerySortByField.ascByName("unreadCount")
             ) {
                 randomChannel(unreadCount = it)
             },
             sortArguments(
                 testName = "Sorting by unreadCount field reference in descending order",
-                querySort = QuerySort<Channel>().desc(Channel::unreadCount)
+                querySort = QuerySortByField.descByName("unreadCount")
             ) {
                 randomChannel(unreadCount = 9 - it)
             },
             sortArguments(
                 testName = "Sorting by unread_count field name in ascending order",
-                querySort = QuerySort<Channel>().asc("unread_count")
+                querySort = QuerySortByField.ascByName("unread_count")
             ) {
                 randomChannel(unreadCount = it)
             },
             sortArguments(
                 testName = "Sorting by unread_count field name in descending order",
-                querySort = QuerySort<Channel>().desc("unread_count")
+                querySort = QuerySortByField.descByName("unread_count")
             ) {
                 randomChannel(unreadCount = 9 - it)
             },
@@ -254,7 +253,7 @@ internal class QueryChannelsSortTest {
                         expectedList[2],
                         expectedList[5]
                     ),
-                    QuerySort<Channel>().asc(Channel::hasUnread),
+                    QuerySortByField.ascByName<Channel>("hasUnread"),
                     expectedList,
                 )
             },
@@ -271,7 +270,7 @@ internal class QueryChannelsSortTest {
                         expectedList[2],
                         expectedList[5]
                     ),
-                    QuerySort<Channel>().desc(Channel::hasUnread),
+                    QuerySortByField.descByName<Channel>("hasUnread"),
                     expectedList,
                 )
             },
@@ -288,7 +287,7 @@ internal class QueryChannelsSortTest {
                         expectedList[2],
                         expectedList[5]
                     ),
-                    QuerySort<Channel>().asc("has_unread"),
+                    QuerySortByField.ascByName<Channel>("has_unread"),
                     expectedList,
                 )
             },
@@ -305,7 +304,7 @@ internal class QueryChannelsSortTest {
                         expectedList[2],
                         expectedList[5]
                     ),
-                    QuerySort<Channel>().desc("has_unread"),
+                    QuerySortByField.descByName<Channel>("has_unread"),
                     expectedList,
                 )
             }
@@ -315,13 +314,13 @@ internal class QueryChannelsSortTest {
         fun nameSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by name extra data field in ascending order",
-                querySort = QuerySort<Channel>().asc("name")
+                querySort = QuerySortByField.ascByName("name"),
             ) {
                 randomChannel().apply { name = "$it" }
             },
             sortArguments(
                 testName = "Sorting by name extra data field in descending order",
-                querySort = QuerySort<Channel>().desc("name")
+                querySort = QuerySortByField.descByName("name"),
             ) {
                 randomChannel().apply { name = "${9 - it}" }
             }
@@ -333,7 +332,7 @@ internal class QueryChannelsSortTest {
                 Arguments.of(
                     "Sorting by unsupported field in ascending order",
                     expectedList,
-                    QuerySort<Channel>().asc("unsupported_field"),
+                    QuerySortByField.ascByName<Channel>("unsupported_field"),
                     expectedList,
                 )
             },
@@ -341,7 +340,7 @@ internal class QueryChannelsSortTest {
                 Arguments.of(
                     "Sorting by unsupported field in descending order",
                     expectedList,
-                    QuerySort<Channel>().desc("unsupported_field"),
+                    QuerySortByField.descByName<Channel>("unsupported_field"),
                     expectedList,
                 )
             },
@@ -351,9 +350,9 @@ internal class QueryChannelsSortTest {
         fun multiSortByFieldReferencesArguments() = listOf(
             sortArguments(
                 testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order",
-                querySort = QuerySort<Channel>()
-                    .desc(Channel::unreadCount)
-                    .asc(Channel::memberCount)
+                querySort = QuerySortByField
+                    .descByName<Channel>("unreadCount")
+                    .ascByName("memberCount")
             ) {
                 randomChannel(
                     memberCount = it,
@@ -366,9 +365,9 @@ internal class QueryChannelsSortTest {
         fun multiSortByFieldNamesArguments() = listOf(
             sortArguments(
                 testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order",
-                querySort = QuerySort<Channel>()
-                    .desc("unread_count")
-                    .asc("name")
+                querySort = QuerySortByField
+                    .descByName<Channel>("unreadCount")
+                    .ascByName("name")
             ) {
                 randomChannel().apply {
                     name = "$it"
@@ -379,7 +378,7 @@ internal class QueryChannelsSortTest {
 
         private fun sortArguments(
             testName: String,
-            querySort: QuerySort<Channel>,
+            querySort: QuerySortByField<Channel>,
             channelFactory: (Int) -> Channel,
         ): Arguments {
             return List(10, channelFactory).let { expectedList ->
