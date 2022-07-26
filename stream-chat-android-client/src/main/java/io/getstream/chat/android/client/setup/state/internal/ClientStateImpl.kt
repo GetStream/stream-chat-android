@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.setup.state.internal
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import kotlinx.coroutines.flow.MutableStateFlow
