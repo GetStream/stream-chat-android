@@ -62,6 +62,7 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
+        coroutineScope,
         checkCallback = {
             (stateMachine.state as? State.Connected)?.let { state -> sendEvent(state.event) }
         },

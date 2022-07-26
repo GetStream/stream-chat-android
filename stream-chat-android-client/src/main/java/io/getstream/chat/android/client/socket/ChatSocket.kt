@@ -58,6 +58,7 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
+        coroutineScope,
         reconnectCallback = {
             if (state is State.DisconnectedTemporarily) {
                 this@ChatSocket.reconnect(connectionConf)
