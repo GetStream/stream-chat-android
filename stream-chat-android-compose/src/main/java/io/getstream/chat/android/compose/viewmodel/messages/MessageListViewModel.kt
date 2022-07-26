@@ -110,7 +110,7 @@ import java.util.concurrent.TimeUnit
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
-@Suppress("TooManyFunctions, LargeClass")
+@Suppress("TooManyFunctions, LargeClass, TooManyFunctions")
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
@@ -1012,7 +1012,7 @@ public class MessageListViewModel(
      * @param userId The ID of the user for which the shadow
      * ban is removed.
      */
-    public fun removeShadowBanFromUser(userId: String,) {
+    public fun removeShadowBanFromUser(userId: String) {
         chatClient.channel(channelId).removeShadowBan(userId)
             .enqueue(onError = { chatError ->
                 val errorMessage =
