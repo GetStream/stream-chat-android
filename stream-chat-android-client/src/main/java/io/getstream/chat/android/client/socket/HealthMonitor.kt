@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Date
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -31,13 +31,14 @@ private const val MONITOR_INTERVAL = 10_000L
 private const val NO_EVENT_INTERVAL_THRESHOLD = 30_000L
 
 internal class HealthMonitor(
+    private val timeProvider: TimeProvider = TimeProvider,
     private val coroutineScope: CoroutineScope,
     private val checkCallback: () -> Unit,
     private val reconnectCallback: () -> Unit,
 ) {
 
     private var consecutiveFailures = 0
-    private var lastAckDate: Date = Date()
+    private var lastAck: Long = 0
     private var healthMonitorJob: Job? = null
     private var healthCheckJob: Job? = null
     private var reconnectJob: Job? = null
@@ -71,6 +72,7 @@ internal class HealthMonitor(
      */
     fun onDisconnected() {
         stopAllJobs()
+        lastAck = 0
         postponeReconnect()
     }
 
@@ -79,7 +81,7 @@ internal class HealthMonitor(
      */
     private fun resetHealthMonitor() {
         stopAllJobs()
-        lastAckDate = Date()
+        lastAck = timeProvider.provideCurrentTimeInMilliseconds()
         consecutiveFailures = 0
         postpoeHealthMonitor()
     }
@@ -140,7 +142,8 @@ internal class HealthMonitor(
      *
      * @return True if time elapsed is bigger and we need to start reconnection process.
      */
-    private fun needToReconnect(): Boolean = (Date().time - lastAckDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
+    private fun needToReconnect(): Boolean =
+        (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
 
     @Suppress("MagicNumber")
     private fun getRetryInterval(consecutiveFailures: Int): Long {
