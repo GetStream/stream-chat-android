@@ -562,7 +562,8 @@ public class MessageListViewModel(
                     timeout = event.timeout,
                 ).enqueue(
                     onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
+                        val errorMessage = chatError.message ?: chatError.cause?.message
+                        ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
