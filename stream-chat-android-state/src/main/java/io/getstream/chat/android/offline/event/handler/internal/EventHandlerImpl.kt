@@ -134,7 +134,7 @@ internal class EventHandlerImpl(
             val initJob = scope.async {
                 syncManager.updateAllReadStateForDate(currentUser.id, Date())
                 syncManager.loadSyncStateForUser(currentUser.id)
-                replayEventsForAllChannels()
+                replayEventsForAllChannels(currentUser)
             }
             eventSubscription = client.subscribe {
                 scope.async {
@@ -193,7 +193,7 @@ internal class EventHandlerImpl(
             }
     }
 
-    private suspend fun replayEventsForAllChannels() {
+    private suspend fun replayEventsForAllChannels(user: User) {
         repos.cacheChannelConfigs()
 
         // Sync cached channels
