@@ -81,6 +81,7 @@ internal class PrepareMessageLogicImplTest {
             user `should be equal to` newUser
             type `should not be equal to` ""
             createdLocallyAt `should not be equal to` null
+            syncStatus `should be equal to` SyncStatus.AWAITING_ATTACHMENTS
         }
     }
 
