@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.compose.viewmodel.channels
 
 import io.getstream.chat.android.client.ChatClient
@@ -24,7 +22,8 @@ import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -268,7 +267,7 @@ internal class ChannelListViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
-        private val initialSort: QuerySort<Channel> = querySort,
+        private val initialSort: QuerySorter<Channel> = querySort,
         private val initialFilters: FilterObject? = queryFilter,
     ) {
         private val globalState: GlobalMutableState = mock()
@@ -346,7 +345,7 @@ internal class ChannelListViewModelTest {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "jc")
         )
-        private val querySort = QuerySort.desc<Channel>("last_updated")
+        private val querySort = QuerySortByField.descByName<Channel>("lastUpdated")
 
         private val channel1: Channel = Channel().apply {
             type = "messaging"

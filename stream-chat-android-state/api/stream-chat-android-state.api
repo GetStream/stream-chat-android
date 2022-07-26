@@ -335,6 +335,9 @@ public class io/getstream/chat/android/offline/utils/Event {
 	public final fun peekContent ()Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/offline/utils/internal/ChannelUtilsKt {
+}
+
 public final class io/getstream/chat/android/state/BuildConfig {
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z

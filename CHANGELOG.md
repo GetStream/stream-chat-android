@@ -12,9 +12,11 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed the missing disconnected state in `ClientState.connectionState`. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 
 ### ⬆️ Improved
 - Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
+- Adding logs to understand more about unrecoverable errors in socket connection. [#3946](https://github.com/GetStream/stream-chat-android/pull/3946)
 
 ### ✅ Added
 - Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. [#3934](https://github.com/GetStream/stream-chat-android/pull/3934)
@@ -49,6 +51,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 - Fixed list state race condition while switching filters in channel list. [#3939](https://github.com/GetStream/stream-chat-android/pull/3939/files)
 
 ### ⬆️ Improved
@@ -63,6 +66,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 
 ### ⬆️ Improved
 
