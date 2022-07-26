@@ -154,7 +154,7 @@ public class StreamStatePluginFactory(
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType,
             user = user,
-            prepareMessageLogic = PrepareMessageLogicFactory().create(appContext)
+            prepareMessageLogic = PrepareMessageLogicFactory().create()
         )
 
         val channelMarkReadHelper = ChannelMarkReadHelper(

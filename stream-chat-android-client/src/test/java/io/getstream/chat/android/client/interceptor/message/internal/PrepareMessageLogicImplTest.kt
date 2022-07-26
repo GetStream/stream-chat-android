@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.Mother.randomAttachment
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.randomString
@@ -33,8 +33,8 @@ import org.mockito.kotlin.whenever
 
 internal class PrepareMessageLogicImplTest {
 
-    private val networkStateProvider: NetworkStateProvider = mock()
-    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(networkStateProvider)
+    private val clientState: ClientState = mock()
+    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState)
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
@@ -56,7 +56,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given a message doesn't have attachments and user is online, the status should be updated accordingly`() {
-        whenever(networkStateProvider.isConnected()) doReturn true
+        whenever(clientState.isNetworkAvailable) doReturn true
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),
@@ -75,7 +75,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given a message doesn't have attachments and user is offline, the status should be updated accordingly`() {
-        whenever(networkStateProvider.isConnected()) doReturn false
+        whenever(clientState.isNetworkAvailable) doReturn false
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),

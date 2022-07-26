@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.interceptor.message
 
 import android.content.Context
 import android.net.ConnectivityManager
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -30,13 +31,8 @@ public class PrepareMessageLogicFactory {
 
     /**
      * Creates a new instance of [PrepareMessageLogic]
-     *
-     * @param context Context
      */
-    public fun create(context: Context): PrepareMessageLogic {
-        val networkStateProvider =
-            NetworkStateProvider(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-
-        return PrepareMessageLogicImpl(networkStateProvider)
+    public fun create(): PrepareMessageLogic {
+        return PrepareMessageLogicImpl(ChatClient.instance().clientState)
     }
 }
