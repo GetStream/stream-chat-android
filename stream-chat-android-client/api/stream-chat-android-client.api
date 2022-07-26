@@ -3695,8 +3695,9 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 	public final fun fromInt (I)Lio/getstream/chat/android/client/utils/SyncStatus;
 }
 
-public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
-	public fun <init> ()V
+public final class io/getstream/chat/android/client/utils/TimeProvider {
+	public static final field INSTANCE Lio/getstream/chat/android/client/utils/TimeProvider;
+	public final fun provideCurrentTimeInMilliseconds ()J
 	public final fun provideCurrentTimeInSeconds ()J
 }
 
