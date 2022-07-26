@@ -103,7 +103,7 @@ internal open class ChatSocket constructor(
                     callListeners { it.onConnecting() }
                 }
                 is State.Connected -> {
-                    healthMonitor.start()
+                    healthMonitor.ack()
                     callListeners { it.onConnected(newState.event) }
                 }
                 is State.NetworkDisconnected -> {

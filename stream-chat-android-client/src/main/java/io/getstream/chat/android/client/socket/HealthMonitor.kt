@@ -46,14 +46,6 @@ internal class HealthMonitor(
     private val logger = StreamLog.getLogger("Chat:SocketMonitor")
 
     /**
-     * Start monitoring connection.
-     */
-    fun start() {
-        logger.d { "Starting Health Monitor" }
-        resetHealthMonitor()
-    }
-
-    /**
      * Stop monitoring connection.
      */
     fun stop() {
