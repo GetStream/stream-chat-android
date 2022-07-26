@@ -32,6 +32,7 @@ private const val NO_EVENT_INTERVAL_THRESHOLD = 30_000L
 
 internal class HealthMonitor(
     private val timeProvider: TimeProvider = TimeProvider,
+    private val retryInterval: RetryInterval = ExponencialRetryInterval,
     private val coroutineScope: CoroutineScope,
     private val checkCallback: () -> Unit,
     private val reconnectCallback: () -> Unit,
@@ -112,9 +113,9 @@ internal class HealthMonitor(
      */
     private fun postponeReconnect() {
         reconnectJob?.cancel()
-        val retryInterval = getRetryInterval(++consecutiveFailures)
-        logger.i { "Next connection attempt in $retryInterval ms" }
-        reconnectJob = coroutineScope.launchDelayed(retryInterval) {
+        val retryIntervalTime = retryInterval.nextInterval(consecutiveFailures++)
+        logger.i { "Next connection attempt in $retryIntervalTime ms" }
+        reconnectJob = coroutineScope.launchDelayed(retryIntervalTime) {
             reconnectCallback()
             postpoeHealthMonitor()
         }
@@ -137,21 +138,28 @@ internal class HealthMonitor(
     private fun needToReconnect(): Boolean =
         (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
 
-    @Suppress("MagicNumber")
-    private fun getRetryInterval(consecutiveFailures: Int): Long {
-        val max = min(500 + consecutiveFailures * 2000, 25000)
-        val min = min(
-            max(250, (consecutiveFailures - 1) * 2000),
-            25000
-        )
-        return floor(Math.random() * (max - min) + min).toLong()
-    }
-
     private fun CoroutineScope.launchDelayed(
         delayMiliseconds: Long,
         block: suspend CoroutineScope.() -> Unit
     ): Job = launch {
         delay(delayMiliseconds)
         block()
+    }
+
+    internal fun interface RetryInterval {
+        fun nextInterval(consecutiveFailures: Int): Long
+    }
+
+    object ExponencialRetryInterval : RetryInterval {
+
+        @Suppress("MagicNumber")
+        override fun nextInterval(consecutiveFailures: Int): Long {
+            val max = min(500 + consecutiveFailures * 2000, 25000)
+            val min = min(
+                max(250, (consecutiveFailures - 1) * 2000),
+                25000
+            )
+            return floor(Math.random() * (max - min) + min).toLong()
+        }
     }
 }
