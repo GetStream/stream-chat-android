@@ -2130,6 +2130,10 @@ public final class io/getstream/chat/android/client/extensions/internal/Reaction
 public final class io/getstream/chat/android/client/extensions/internal/UserKt {
 }
 
+public abstract interface class io/getstream/chat/android/client/interceptor/message/PrepareMessageLogic {
+	public abstract fun prepareMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
+}
+
 public final class io/getstream/chat/android/client/logger/ChatLogLevel : java/lang/Enum {
 	public static final field ALL Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static final field DEBUG Lio/getstream/chat/android/client/logger/ChatLogLevel;

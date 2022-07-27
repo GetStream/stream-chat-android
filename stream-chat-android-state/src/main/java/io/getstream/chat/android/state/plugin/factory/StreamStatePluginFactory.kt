@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -31,7 +32,6 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.interceptor.internal.DefaultInterceptor
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerImpl
@@ -152,10 +152,9 @@ public class StreamStatePluginFactory(
             messageRepository = repositoryFacade,
             attachmentRepository = repositoryFacade,
             scope = scope,
-            networkType = config.uploadAttachmentsNetworkType
-        )
-        val defaultInterceptor = DefaultInterceptor(
-            sendMessageInterceptor = sendMessageInterceptor
+            networkType = config.uploadAttachmentsNetworkType,
+            user = user,
+            prepareMessageLogic = PrepareMessageLogicFactory().create()
         )
 
         val channelMarkReadHelper = ChannelMarkReadHelper(
@@ -166,7 +165,7 @@ public class StreamStatePluginFactory(
         )
 
         chatClient.apply {
-            addInterceptor(defaultInterceptor)
+            addInterceptor(sendMessageInterceptor)
             addErrorHandlers(
                 OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repositoryFacade)
                     .map { factory -> factory.create() }
