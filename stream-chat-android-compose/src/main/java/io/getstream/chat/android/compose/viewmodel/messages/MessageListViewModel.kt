@@ -907,7 +907,7 @@ public class MessageListViewModel(
         val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
 
         if (isUserMuted) {
-            unMuteUser(user.id)
+            unmuteUser(user.id)
         } else {
             muteUser(user.id)
         }
@@ -938,7 +938,7 @@ public class MessageListViewModel(
      *
      * @param userId The ID of the user to be unmuted.
      */
-    public fun unMuteUser(userId: String) {
+    public fun unmuteUser(userId: String) {
         chatClient.unmuteUser(userId)
             .enqueue(onError = { chatError ->
                 val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unmute the user"

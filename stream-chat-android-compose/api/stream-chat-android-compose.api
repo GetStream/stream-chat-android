@@ -1935,8 +1935,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun selectReactions (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun shadowBanUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
-	public final fun unMuteUser (Ljava/lang/String;)V
 	public final fun unbanUser (Ljava/lang/String;)V
+	public final fun unmuteUser (Ljava/lang/String;)V
 	public final fun updateLastSeenMessage (Lio/getstream/chat/android/client/models/Message;)V
 }
 
