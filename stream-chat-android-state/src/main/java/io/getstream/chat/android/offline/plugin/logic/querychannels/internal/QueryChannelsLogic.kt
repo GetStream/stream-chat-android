@@ -151,13 +151,15 @@ internal class QueryChannelsLogic(
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request, repos, globalState)
+
+        val loading = loadingForCurrentRequest()
+        loading.value = false
+
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
         } else {
             initializeChannelsIfNeeded()
         }
-        val loading = loadingForCurrentRequest()
-        loading.value = false
     }
 
     /**
