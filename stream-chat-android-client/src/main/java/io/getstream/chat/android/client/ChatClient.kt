@@ -1382,12 +1382,12 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
-        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
-        return CoroutineCall(scope) {
+        val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
+        return CoroutineCall(scope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+            sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
