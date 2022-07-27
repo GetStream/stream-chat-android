@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.ModelFields
@@ -259,7 +260,6 @@ internal constructor(
 
                     clientState.toMutableState()?.run {
                         setConnectionState(ConnectionState.CONNECTED)
-                        setInitialized(true)
                         setUser(user)
                     }
                 }
@@ -390,7 +390,9 @@ internal constructor(
                     socketStateService.onConnectionRequested()
                     socket.connectUser(user, isAnonymous)
                 }
-                waitFirstConnection(timeoutMilliseconds)
+                waitFirstConnection(timeoutMilliseconds).also {
+                    clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
+                }
             }
             userState is UserState.UserSet -> {
                 logger.w {
@@ -426,7 +428,10 @@ internal constructor(
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
-        }.onError { disconnect() }
+        }.onError {
+            clientState.toMutableState()?.setInitializionState(InitializationState.ERROR)
+            disconnect()
+        }
     }
 
     private fun initializeClientWithUser(
@@ -484,6 +489,7 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
+        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
         return CoroutineCall(scope) {
             logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
             setUser(user, tokenProvider, timeoutMilliseconds).also { result ->

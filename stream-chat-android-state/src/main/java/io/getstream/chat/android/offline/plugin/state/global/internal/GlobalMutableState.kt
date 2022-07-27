@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
@@ -29,8 +30,10 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.utils.Event
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 @InternalStreamChatApi
 public class GlobalMutableState private constructor(
@@ -69,7 +72,9 @@ public class GlobalMutableState private constructor(
             ]
         )
     )
-    override val initialized: StateFlow<Boolean> = clientState.initialized
+    override val initialized: Flow<Boolean> = clientState.initialized.map { state ->
+        state == InitializationState.COMPLETE
+    }
 
     @Deprecated(
         message = "Use ClientState.connectionState instead",

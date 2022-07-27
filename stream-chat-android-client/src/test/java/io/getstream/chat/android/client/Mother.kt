@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
@@ -81,7 +82,7 @@ internal object Mother {
         return object : ClientState {
             override val user: StateFlow<User?> = MutableStateFlow(randomUser())
 
-            override val initialized: StateFlow<Boolean> = MutableStateFlow(true)
+            override val initialized: StateFlow<InitializationState> = MutableStateFlow(InitializationState.COMPLETE)
 
             override val connectionState: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.CONNECTED)
 
