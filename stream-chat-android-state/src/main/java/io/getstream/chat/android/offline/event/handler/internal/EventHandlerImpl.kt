@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -614,6 +615,15 @@ internal class EventHandlerImpl(
                         .handleEvent(userPresenceChanged)
                 }
         }
+
+        // handle events for active threads
+        sortedEvents.filterIsInstance<HasMessage>()
+            .groupBy { it.message.parentId ?: it.message.id }
+            .forEach { (messageId, events) ->
+                if (logic.isActiveThread(messageId)) {
+                    logic.thread(messageId).handleEvents(events)
+                }
+            }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event

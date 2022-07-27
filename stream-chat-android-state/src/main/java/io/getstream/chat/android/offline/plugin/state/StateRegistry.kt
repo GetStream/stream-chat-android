@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.plugin.state
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -27,9 +26,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableStateImpl
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
@@ -37,7 +36,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -111,12 +109,7 @@ public class StateRegistry private constructor(
      */
     public fun thread(messageId: String): ThreadState {
         return threads.getOrPut(messageId) {
-            val (channelType, channelId) = runBlocking {
-                messageRepository.selectMessage(messageId)?.cid?.cidToTypeAndId()
-                    ?: error("There is not such message with messageId = $messageId")
-            }
-            val channelsState = channel(channelType, channelId)
-            ThreadMutableState(messageId, channelsState.toMutableState(), scope)
+            ThreadMutableStateImpl(messageId, scope)
         }
     }
 
