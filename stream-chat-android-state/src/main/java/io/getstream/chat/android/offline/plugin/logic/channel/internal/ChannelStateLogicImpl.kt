@@ -459,6 +459,7 @@ internal class ChannelStateLogicImpl(
         shouldRefreshMessages: Boolean,
         scrollUpdate: Boolean,
         isNotificationUpdate: Boolean,
+        skipMessages: Boolean
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -474,7 +475,7 @@ internal class ChannelStateLogicImpl(
         setMembers(channel.members)
         setWatchers(channel.watchers)
 
-        if (shouldUpsertMessages(
+        if (!skipMessages && shouldUpsertMessages(
                 isNotificationUpdate = isNotificationUpdate,
                 isInsideSearch = mutableState.insideSearch.value,
                 isScrollUpdate = scrollUpdate,
@@ -547,7 +548,8 @@ internal class ChannelStateLogicImpl(
             channel,
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
-            isNotificationUpdate = request.isNotificationUpdate
+            isNotificationUpdate = request.isNotificationUpdate,
+            request.skipMessages
         )
     }
 

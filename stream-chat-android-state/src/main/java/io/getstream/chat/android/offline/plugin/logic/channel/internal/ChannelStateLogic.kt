@@ -257,6 +257,7 @@ internal interface ChannelStateLogic {
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
+        skipMessages: Boolean
     )
 
     /**

@@ -71,7 +71,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            coroutineScope = viewModelScope,
+            skipMessages = true
         ).filterNotNull()
 
     /**

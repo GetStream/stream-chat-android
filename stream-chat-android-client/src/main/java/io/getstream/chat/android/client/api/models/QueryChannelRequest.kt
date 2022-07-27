@@ -29,6 +29,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     public var shouldRefresh: Boolean = false
     @InternalStreamChatApi
     public var isNotificationUpdate: Boolean = false
+    @InternalStreamChatApi
+    public var skipMessages: Boolean = false
 
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()
