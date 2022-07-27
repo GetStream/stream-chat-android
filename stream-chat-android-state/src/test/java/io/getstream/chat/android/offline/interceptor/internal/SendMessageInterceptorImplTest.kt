@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.interceptor.internal
 
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
@@ -31,6 +33,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
@@ -48,6 +51,12 @@ internal class SendMessageInterceptorImplTest {
         on(it.channel(any(), any())) doReturn channelLogic
     }
 
+    private val prepareMessage: PrepareMessageLogic = mock {
+        on(it.prepareMessage(any(), any(), any(), any())) doAnswer { invocationOnMock ->
+            invocationOnMock.arguments[0] as Message
+        }
+    }
+
     private val sendMessageInterceptorImpl = SendMessageInterceptorImpl(
         context = mock(),
         logic = logic,
@@ -57,6 +66,8 @@ internal class SendMessageInterceptorImplTest {
         attachmentRepository = mock(),
         scope = TestScope(),
         networkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        prepareMessage,
+        randomUser()
     )
 
     @Test

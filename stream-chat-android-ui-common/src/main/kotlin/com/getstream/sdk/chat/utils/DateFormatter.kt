@@ -104,7 +104,7 @@ internal class DefaultDateFormatter(
     override fun formatTime(localTime: LocalTime?): String {
         localTime ?: return ""
         val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
-        return formatter.format(localTime)
+        return formatter.format(localTime).uppercase(Locale.getDefault())
     }
 
     private fun LocalDate.isToday(): Boolean {

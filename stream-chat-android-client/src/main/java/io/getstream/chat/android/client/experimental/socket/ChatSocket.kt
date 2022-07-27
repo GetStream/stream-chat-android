@@ -268,6 +268,9 @@ internal open class ChatSocket constructor(
             ChatErrorCode.API_KEY_NOT_FOUND.code,
             ChatErrorCode.VALIDATION_ERROR.code,
             -> {
+                logger.d {
+                    "One unrecoverable error happened. Error: ${error.stringify()}. Error code: ${error.streamCode}"
+                }
                 disconnect(DisconnectCause.UnrecoverableError(error))
             }
             else -> {

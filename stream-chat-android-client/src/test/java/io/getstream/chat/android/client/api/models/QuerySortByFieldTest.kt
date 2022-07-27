@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.test.randomString
@@ -28,24 +28,24 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class QuerySortTest {
+internal class QuerySortByFieldTest {
 
     /**
-     * [generateQuerySortInput]
+     * [generateQuerySortByFieldInput]
      */
     @ParameterizedTest
-    @MethodSource("generateQuerySortInput")
-    fun `Two QuerySort with the same content should produce the same hashcode`(
-        a: QuerySort<Any>,
-        b: QuerySort<Any>,
+    @MethodSource("generateQuerySortByFieldInput")
+    fun `Two QuerySorter with the same content should produce the same hashcode`(
+        a: QuerySorter<Any>,
+        b: QuerySorter<Any>,
     ) {
         a.hashCode() `should be equal to` b.hashCode()
     }
 
     @Test
     fun `Two same query sorts should be equal`() {
-        val sort1 = QuerySort.asc(Channel::memberCount).ascByName("created_at")
-        val sort2 = QuerySort.asc<Channel>("member_count").asc(Channel::createdAt)
+        val sort1 = QuerySortByField.ascByName<Channel>("memberCount").ascByName("createdAt")
+        val sort2 = QuerySortByField.ascByName<Channel>("memberCount").ascByName("createdAt")
 
         sort1 `should be equal to` sort2
     }
@@ -53,29 +53,29 @@ internal class QuerySortTest {
     companion object {
 
         @JvmStatic
-        fun generateQuerySortInput() = listOf(
+        fun generateQuerySortByFieldInput() = listOf(
             randomString().let {
                 Arguments.of(
-                    QuerySort.Companion.asc<Channel>(it),
-                    QuerySort.Companion.asc<Channel>(it)
+                    QuerySortByField.ascByName<Channel>(it),
+                    QuerySortByField.ascByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
-                    QuerySort.Companion.asc<Message>(it),
-                    QuerySort.Companion.asc<Message>(it)
+                    QuerySortByField.ascByName<Message>(it),
+                    QuerySortByField.ascByName<Message>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
-                    QuerySort.Companion.desc<Channel>(it),
-                    QuerySort.Companion.desc<Channel>(it)
+                    QuerySortByField.descByName<Channel>(it),
+                    QuerySortByField.descByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
-                    QuerySort.Companion.desc<Message>(it),
-                    QuerySort.Companion.desc<Message>(it)
+                    QuerySortByField.descByName<Message>(it),
+                    QuerySortByField.descByName<Message>(it),
                 )
             },
         )

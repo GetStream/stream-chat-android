@@ -274,9 +274,9 @@ internal constructor(
                             if (ToggleService.isSocketExperimental().not()) {
                                 socketStateService.onSocketUnrecoverableError()
                             }
-                            clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                         }
                     }
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                 }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
@@ -1382,12 +1382,12 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
-        val relevantInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
-        return CoroutineCall(scope) {
+        val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
+        return CoroutineCall(scope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            relevantInterceptors.fold(Result.success(message)) { message, interceptor ->
+            sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
@@ -1518,15 +1518,26 @@ internal constructor(
      *
      * @param request The request's parameters combined into [QueryChannelsRequest] class.
      *
+     * @see [queryChannels]
+     *
      * @return Executable async [Call] responsible for querying channels.
      */
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        logger.d { "[queryChannelsInternal] request: $request" }
-        return callPostponeHelper.postponeCall { api.queryChannels(request) }
+        val isConnectionRequired = request.watch || request.presence
+        logger.d { "[queryChannelsInternal] request: $request, isConnectionRequired: $isConnectionRequired" }
+
+        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
+            api.queryChannels(request)
+        }
     }
 
+    /**
+     * Runs [queryChannel] without applying side effects.
+     *
+     * @see [queryChannel]
+     */
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelInternal(
@@ -1534,14 +1545,23 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        logger.d { "[queryChannelInternal] cid: $channelType:$channelId, request: $request" }
-        return api.queryChannel(channelType, channelId, request)
+        val isConnectionRequired = request.watch || request.presence
+        logger.d {
+            "[queryChannelInternal] cid: $channelType:$channelId, request: $request, " +
+                "isConnectionRequired: $isConnectionRequired"
+        }
+
+        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
+            api.queryChannel(channelType, channelId, request)
+        }
     }
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
-     * The call requires active socket connection and will be automatically postponed and retried until
-     * the connection is established or the maximum number of attempts is reached.
+     * The call requires active socket connection if [QueryChannelRequest.watch] or [QueryChannelRequest.presence] is
+     * enabled, and will be automatically postponed and retried until the connection is established or the maximum
+     * number of attempts is reached.
+     *
      * @see [CallPostponeHelper]
      *
      * @param request The request's parameters combined into [QueryChannelRequest] class.
@@ -1554,38 +1574,29 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannel] channelType: $channelType, channelId: $channelId, " +
-                "isConnectionRequired: $isConnectionRequired"
-        }
-
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
-        val callBuilder = { api.queryChannel(channelType, channelId, request) }
-        val queryChannelCall = when (isConnectionRequired) {
-            true -> callPostponeHelper.postponeCall(callBuilder)
-            else -> callBuilder.invoke()
-        }
-        return queryChannelCall.doOnStart(scope) {
-            relevantPlugins.forEach { plugin ->
-                logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onQueryChannelRequest(channelType, channelId, request)
+        return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
+            .doOnStart(scope) {
+                relevantPlugins.forEach { plugin ->
+                    logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onQueryChannelRequest(channelType, channelId, request)
+                }
+            }.doOnResult(scope) { result ->
+                relevantPlugins.forEach { plugin ->
+                    logger.v { "[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onQueryChannelResult(result, channelType, channelId, request)
+                }
+            }.precondition(relevantPlugins) {
+                onQueryChannelPrecondition(channelType, channelId, request)
             }
-        }.doOnResult(scope) { result ->
-            relevantPlugins.forEach { plugin ->
-                logger.v { "[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onQueryChannelResult(result, channelType, channelId, request)
-            }
-        }.precondition(relevantPlugins) {
-            onQueryChannelPrecondition(channelType, channelId, request)
-        }
     }
 
     /**
      * Gets the channels from the server based on parameters from [QueryChannelsRequest].
-     * The call requires active socket connection and will be automatically postponed and retried until
-     * the connection is established or the maximum number of attempts is reached.
+     * The call requires active socket connection if [QueryChannelsRequest.watch] or [QueryChannelsRequest.presence] is
+     * enabled, and will be automatically postponed and retried until the connection is established or
+     * the maximum number of attempts is reached.
      * @see [CallPostponeHelper]
      *
      * @param request The request's parameters combined into [QueryChannelsRequest] class.
@@ -1594,14 +1605,10 @@ internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        logger.d { "[queryChannels] request: $request" }
-
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
-        return callPostponeHelper.postponeCall {
-            api.queryChannels(request)
-        }.doOnStart(scope) {
+        return queryChannelsInternal(request = request).doOnStart(scope) {
             relevantPluginsLazy().forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
@@ -1692,9 +1699,19 @@ internal constructor(
         )
     }
 
+    /**
+     * Stops watching the channel which means you won't receive more events for the channel.
+     * The call requires active socket connection and will be automatically postponed and
+     * retried until the connection is established.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     *
+     * @return Executable async [Call] responsible for stop watching the channel.
+     */
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return api.stopWatching(channelType, channelId)
+        return callPostponeHelper.postponeCall { api.stopWatching(channelType, channelId) }
     }
 
     /**
@@ -1897,12 +1914,24 @@ internal constructor(
     /**
      * Query users matching [query] request.
      *
+     * The call requires active socket connection if [QueryUsersRequest.presence] is enabled, and will be
+     * automatically postponed and retried until the connection is established.
+     *
      * @param query [QueryUsersRequest] with query parameters like filters, sort to get matching users.
      *
      * @return [Call] with a list of [User].
      */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
+        val isConnectionRequired = query.presence
+        logger.d {
+            "[queryUsers]  request: $query, isConnectionRequired: $isConnectionRequired"
+        }
+
+        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
+            api.queryUsers(query)
+        }
+    }
 
     /**
      * Adds members to a given channel.

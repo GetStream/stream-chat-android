@@ -12,15 +12,23 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed the missing disconnected state in `ClientState.connectionState`. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 
 ### ⬆️ Improved
 - Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
+- Adding logs to understand more about unrecoverable errors in socket connection. [#3946](https://github.com/GetStream/stream-chat-android/pull/3946)
 
 ### ✅ Added
 - Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. [#3934](https://github.com/GetStream/stream-chat-android/pull/3934)
 - Added `ClientState::isNetworkAvailable` which gives you information about device's internet connection status.[#3880](https://github.com/GetStream/stream-chat-android/pull/3880)
 
 ### ⚠️ Changed
+- Queries that require active socket connection will be postponed until connection is established: [#3952](https://github.com/GetStream/stream-chat-android/pull/3952)
+  - `ChatClient::queryChannel` and `ChatClient::createChannel` will be postponed if [QueryChannelRequest.watch] or [QueryChannelRequest.presence] is enabled.
+  - `ChatClient::queryChannels` will be postponed if [QueryChannelsRequest.watch] or [QueryChannelsRequest.presence] is enabled.
+  - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
+  - `ChatClient::stopWatching` always requires active socket connection.
+
 
 ### ❌ Removed
 
@@ -49,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 
 ### ⬆️ Improved
 
@@ -62,6 +71,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
 
 ### ⬆️ Improved
 

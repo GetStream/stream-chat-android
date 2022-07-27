@@ -21,7 +21,8 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
@@ -32,14 +33,17 @@ import java.util.Date
 /**
  * [CreateChannelListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles creating the channel offline and updates the database.
- * Does not perform optimistic UI update as it's impossible to determine whether a particular channel should be visible for the current user or not.
+ * Does not perform optimistic UI update as it's impossible to determine whether a particular channel should be visible
+ * for the current user or not.
  *
  * @param clientState [ClientState]
- * @param repositoryFacade [RepositoryFacade] to cache intermediate data and final result.
+ * @param channelRepository [ChannelRepository] to cache intermediate data and final result of channels.
+ * @param userRepository [UserRepository] Requests users from database.
  */
 internal class CreateChannelListenerImpl(
     private val clientState: ClientState,
-    private val repositoryFacade: RepositoryFacade,
+    private val channelRepository: ChannelRepository,
+    private val userRepository: UserRepository,
 ) : CreateChannelListener {
 
     /**
@@ -75,17 +79,18 @@ internal class CreateChannelListenerImpl(
             image = getExtraValue("image", "")
         }
 
-        repositoryFacade.insertChannel(channel)
+        channelRepository.insertChannel(channel)
     }
 
     /**
      * Converts member's id to [Member] object.
-     * Tries to fetch users from cache and fallbacks to the empty [User] object with an [User.id] if the user wasn't cached yet.
+     * Tries to fetch users from cache and fallbacks to the empty [User] object with an [User.id] if the user
+     * wasn't cached yet.
      *
      * @return The list of members.
      */
     private suspend fun getMembers(memberIds: List<String>): List<Member> {
-        val cachedUsers = repositoryFacade.selectUsers(memberIds)
+        val cachedUsers = userRepository.selectUsers(memberIds)
         val missingUserIds = memberIds.minus(cachedUsers.map(User::id).toSet())
 
         return (cachedUsers + missingUserIds.map(::User)).map(::Member)
@@ -114,17 +119,17 @@ internal class CreateChannelListenerImpl(
 
             // Generated if might differ from the actual one. This might happen when the channel already exists.
             if (channel.cid != generatedCid) {
-                repositoryFacade.deleteChannel(generatedCid)
+                channelRepository.deleteChannel(generatedCid)
             }
-            repositoryFacade.insertChannel(channel)
+            channelRepository.insertChannel(channel)
         } else {
-            repositoryFacade.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
+            channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
                 cachedChannel.syncStatus = if (result.error().isPermanent()) {
                     SyncStatus.FAILED_PERMANENTLY
                 } else {
                     SyncStatus.SYNC_NEEDED
                 }
-                repositoryFacade.insertChannel(cachedChannel)
+                channelRepository.insertChannel(cachedChannel)
             }
         }
     }

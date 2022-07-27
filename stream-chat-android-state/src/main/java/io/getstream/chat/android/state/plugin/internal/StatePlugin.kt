@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.plugin.internal
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -55,10 +54,10 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param sendMessageListener [SendMessageListener]
  * @param queryMembersListener [QueryMembersListener]
  * @param typingEventListener [TypingEventListener]
- * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [StatePlugin] instance.
  */
 @InternalStreamChatApi
+@Suppress("LongParameterList")
 public class StatePlugin(
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
@@ -75,7 +74,6 @@ public class StatePlugin(
     private val sendMessageListener: SendMessageListener,
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
-    private val createChannelListener: CreateChannelListener,
     internal val activeUser: User,
 ) : Plugin,
     QueryChannelsListener by queryChannelsListener,
@@ -92,8 +90,7 @@ public class StatePlugin(
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
-    TypingEventListener by typingEventListener,
-    CreateChannelListener by createChannelListener {
+    TypingEventListener by typingEventListener {
 
     override val name: String = MODULE_NAME
 
