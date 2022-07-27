@@ -570,7 +570,7 @@ public class MessageListViewModel(
                     }
                 )
             }
-            is Event.RemoveShadowBan -> {
+            is Event.RemoveShadowBanFromUser -> {
                 val channelClient = chatClient.channel(cid)
                 channelClient.removeShadowBan(
                     targetId = event.user.id,
@@ -1113,7 +1113,7 @@ public class MessageListViewModel(
          *
          * @param user The user to be blocked.
          */
-        public data class RemoveShadowBan(val user: User) : Event()
+        public data class RemoveShadowBanFromUser(val user: User) : Event()
 
         /**
          * When the user replies to a message.

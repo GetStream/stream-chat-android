@@ -460,11 +460,11 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBanFromUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
-	public final fun copy (Lio/getstream/chat/android/client/models/User;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBan;
+	public final fun copy (Lio/getstream/chat/android/client/models/User;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBanFromUser;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBanFromUser;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveShadowBanFromUser;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
