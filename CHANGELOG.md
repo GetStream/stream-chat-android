@@ -23,6 +23,12 @@
 - Added `ClientState::isNetworkAvailable` which gives you information about device's internet connection status.[#3880](https://github.com/GetStream/stream-chat-android/pull/3880)
 
 ### ⚠️ Changed
+- Queries that require active socket connection will be postponed until connection is established: [#3952](https://github.com/GetStream/stream-chat-android/pull/3952)
+  - `ChatClient::queryChannel` and `ChatClient::createChannel` will be postponed if [QueryChannelRequest.watch] or [QueryChannelRequest.presence] is enabled.
+  - `ChatClient::queryChannels` will be postponed if [QueryChannelsRequest.watch] or [QueryChannelsRequest.presence] is enabled.
+  - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
+  - `ChatClient::stopWatching` always requires active socket connection.
+
 
 ### ❌ Removed
 
