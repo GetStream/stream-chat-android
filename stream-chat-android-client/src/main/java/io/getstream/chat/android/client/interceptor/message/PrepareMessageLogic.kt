@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.interceptor.internal
+package io.getstream.chat.android.client.interceptor.message
 
-import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 
-/**
- * Implementation of [Interceptor] that brings support for intercepting API requests. This class work as a delegator of calls for one
- * of its dependencies, so avoid to add logic here.
- *
- * @param sendMessageInterceptor [SendMessageInterceptor]
- */
-internal class DefaultInterceptor(sendMessageInterceptor: SendMessageInterceptor) :
-    Interceptor,
-    SendMessageInterceptor by sendMessageInterceptor
+public interface PrepareMessageLogic {
+
+    public fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message
+}

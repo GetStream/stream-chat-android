@@ -18,29 +18,25 @@ package io.getstream.chat.android.offline.interceptor.internal
 
 import android.content.Context
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.populateMentions
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.internal.getMessageType
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
-import io.getstream.chat.android.offline.message.attachments.internal.generateUploadId
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
-import java.util.Date
 import java.util.UUID
 
 /**
@@ -57,6 +53,8 @@ internal class SendMessageInterceptorImpl(
     private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val networkType: UploadAttachmentsNetworkType,
+    private val prepareMessageLogic: PrepareMessageLogic,
+    private val user: User
 ) : SendMessageInterceptor {
 
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -69,78 +67,34 @@ internal class SendMessageInterceptorImpl(
         isRetrying: Boolean,
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
-        message.populateMentions(channel.toChannel())
 
-        if (message.replyMessageId != null) {
+        val preparedMessage = prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
+            message.populateMentions(channel.toChannel())
+        }
+
+        // Update flow in channel controller
+        channel.upsertMessage(preparedMessage)
+        // we insert early to ensure we don't lose messages
+        messageRepository.insertMessage(preparedMessage)
+        channelRepository.updateLastMessageForChannel(message.cid, preparedMessage)
+
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update flow for currently running queries
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
+
+        if (preparedMessage.replyMessageId != null) {
             channel.replyMessage(null)
         }
 
         return if (!isRetrying) {
-            val preparedMessage = prepareNewMessage(message, channelType, channelId)
-
             if (preparedMessage.hasPendingAttachments()) {
                 uploadAttachments(preparedMessage, channelType, channelId)
             } else {
                 Result.success(preparedMessage)
             }
         } else {
-            retryMessage(message, channelType, channelId)
+            retryMessage(preparedMessage, channelType, channelId)
         }
-    }
-
-    /**
-     * Prepares the message and its attachments but doesn't upload attachments.
-     *
-     * Following steps are required to initialize message properly before sending the message to the backend API:
-     * 1. Message id is generated if the message doesn't have id.
-     * 2. Message cid is updated if the message doesn't have cid.
-     * 3. Message user is set to the current user.
-     * 4. Attachments are prepared with upload state.
-     * 5. Message timestamp and sync status is set.
-     *
-     * Then this message is inserted in database (Optimistic UI update) and final message is returned.
-     */
-    private suspend fun prepareNewMessage(message: Message, channelType: String, channelId: String): Message {
-        val channel = logic.channel(channelType, channelId)
-        val newMessage = message.copy().apply {
-            if (id.isEmpty()) {
-                id = generateMessageId()
-            }
-            if (cid.isEmpty()) {
-                enrichWithCid(channel.cid)
-            }
-            user = requireNotNull(clientState.user.value)
-
-            val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
-            attachmentsToUpload.forEach { attachment ->
-                if (attachment.uploadId == null) {
-                    attachment.uploadId = generateUploadId()
-                }
-                attachment.uploadState = Attachment.UploadState.Idle
-            }
-            nonFileAttachments.forEach { attachment ->
-                attachment.uploadState = Attachment.UploadState.Success
-            }
-
-            type = getMessageType(message)
-            createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
-            syncStatus = when {
-                attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
-                else -> SyncStatus.SYNC_NEEDED
-            }
-        }
-        // Update flow in channel controller
-        channel.upsertMessage(newMessage)
-
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        // we insert early to ensure we don't lose messages
-        messageRepository.insertMessage(newMessage)
-        channelRepository.updateLastMessageForChannel(newMessage.cid, newMessage)
-
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
-        return newMessage
     }
 
     /**
@@ -184,6 +138,7 @@ internal class SendMessageInterceptorImpl(
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
         var messageToBeSent = newMessage
+
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
                 attachmentRepository.observeAttachmentsForMessage(newMessage.id)
@@ -230,12 +185,5 @@ internal class SendMessageInterceptorImpl(
     fun cancelJobs() {
         jobsMap.values.forEach { it.cancel() }
         uploadIds.values.forEach { UploadAttachmentsAndroidWorker.stop(context, it) }
-    }
-
-    /**
-     * Returns a unique message id prefixed with user id.
-     */
-    private fun generateMessageId(): String {
-        return clientState.user.value!!.id + "-" + UUID.randomUUID().toString()
     }
 }

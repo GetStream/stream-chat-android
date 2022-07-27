@@ -24,7 +24,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * Intercepts the outgoing requests and potentially modifies the Message being sent to the API.
  */
 @InternalStreamChatApi
-public interface SendMessageInterceptor {
+public interface SendMessageInterceptor : Interceptor {
     /**
      * Intercept the message before sending it to the API.
      *
