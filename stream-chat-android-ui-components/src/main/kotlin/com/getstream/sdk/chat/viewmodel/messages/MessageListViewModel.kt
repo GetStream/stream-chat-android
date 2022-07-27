@@ -1076,14 +1076,12 @@ public class MessageListViewModel(
          * When the user bans another user.
          *
          * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
          * @param reason The reason for banning the user.
          * @param timeout The time until the user is automatically unbanned, expressed in minutes.
          * A null value represent an indefinite ban.
          */
         public data class BanUser(
             val user: User,
-            val cid: String,
             val reason: String? = null,
             val timeout: Int? = null,
         ) : Event()
@@ -1092,15 +1090,13 @@ public class MessageListViewModel(
          * When the user unbans another user.
          *
          * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
          */
-        public data class UnbanUser(val user: User, val cid: String) : Event()
+        public data class UnbanUser(val user: User) : Event()
 
         /**
          * When the user shadow bans another user.
          *
          * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
          * @param reason The reason for shadow banning the user.
          * @param timeout The time until the shadow ban is automatically removed
          * for the given user, expressed in minutes.
@@ -1108,7 +1104,6 @@ public class MessageListViewModel(
          */
         public data class ShadowBanUser(
             val user: User,
-            val cid: String,
             val reason: String? = null,
             val timeout: Int? = null,
         ) : Event()
@@ -1117,9 +1112,8 @@ public class MessageListViewModel(
          * When the user removes the shadow ban from another user.
          *
          * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
          */
-        public data class RemoveShadowBan(val user: User, val cid: String) : Event()
+        public data class RemoveShadowBan(val user: User) : Event()
 
         /**
          * When the user replies to a message.
