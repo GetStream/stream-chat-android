@@ -29,7 +29,6 @@
   - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
   - `ChatClient::stopWatching` always requires active socket connection.
 
-
 ### ❌ Removed
 
 ## stream-chat-android-offline
@@ -50,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added more file sources to the file provider used when sending file attachments. [3958](https://github.com/GetStream/stream-chat-android/pull/3958)
 
 ### ⚠️ Changed
 
