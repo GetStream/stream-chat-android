@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.offline
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -137,7 +136,7 @@ internal fun randomMessageEntity(
 internal fun randomQueryChannelsEntity(
     id: String = randomString(),
     filter: FilterObject = NeutralFilterObject,
-    querySort: QuerySort<Channel> = QuerySort(),
+    querySort: QuerySorter<Channel> = QuerySortByField(),
     cids: List<String> = emptyList(),
 ): QueryChannelsEntity = QueryChannelsEntity(id, filter, querySort, cids)
 
