@@ -47,8 +47,8 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
  * @param context The context to load string resources.
  * @param currentUser The currently logged-in user.
  * @param fallback The resource identifier of a fallback string if the [Channel] object lacks
- * @param maxMembers The maximum number of members used to generate a name for a distinct channel.
  * information to construct a valid display name string.
+ * @param maxMembers The maximum number of members used to generate a name for a distinct channel.
  *
  * @return The display name of the channel.
  */

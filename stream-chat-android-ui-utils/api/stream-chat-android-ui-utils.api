@@ -42,7 +42,6 @@ public final class io/getstream/chat/android/uiutils/extension/ChannelKt {
 }
 
 public final class io/getstream/chat/android/uiutils/extension/ContextKt {
-	public static final fun getInflater (Landroid/content/Context;)Landroid/view/LayoutInflater;
 	public static final fun openSystemSettings (Landroid/content/Context;)V
 }
 

@@ -20,14 +20,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.view.LayoutInflater
-
-/**
- * Creates a new [LayoutInflater] instance associated with a particular Context. Ths context
- * supplies the theme from which the default values for their attributes are retrieved.
- */
-public inline val Context.inflater: LayoutInflater
-    get() = LayoutInflater.from(this)
 
 /**
  * Forwards user to the application settings screen.
