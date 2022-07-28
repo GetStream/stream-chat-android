@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
@@ -28,7 +27,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
 /**
- * Listener for requests of message deletion and for message deletion results.
+ * Listener for requests of message deletion and for message deletion results responsible to
+ * change SDK state
  */
 internal class DeleteMessageListenerState(
     private val logic: LogicRegistry,
@@ -41,12 +41,7 @@ internal class DeleteMessageListenerState(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        val (channelType, channelId) = messageId.cidToTypeAndId()
-        return logic.channel(channelType, channelId)
-            .stateLogic()
-            .getMessageById(messageId)
-            ?.let { Result.success(Unit) }
-            ?: Result.error(ChatError(message = "No message found with id: $messageId"))
+        return Result.success(Unit)
     }
 
     /**

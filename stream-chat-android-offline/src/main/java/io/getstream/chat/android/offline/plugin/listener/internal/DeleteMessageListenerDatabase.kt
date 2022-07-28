@@ -28,7 +28,8 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
 /**
- * Listener for requests of message deletion and for message deletion results.
+ * Listener for requests of message deletion and for message deletion results responsible to
+ * change database.
  */
 internal class DeleteMessageListenerDatabase(
     private val clientState: ClientState,
