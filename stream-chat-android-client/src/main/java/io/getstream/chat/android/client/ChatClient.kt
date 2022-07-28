@@ -157,6 +157,7 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
+import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -390,9 +391,7 @@ internal constructor(
                     socketStateService.onConnectionRequested()
                     socket.connectUser(user, isAnonymous)
                 }
-                waitFirstConnection(timeoutMilliseconds).also {
-                    clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
-                }
+                waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet -> {
                 logger.w {
@@ -431,6 +430,8 @@ internal constructor(
         }.onError {
             clientState.toMutableState()?.setInitializionState(InitializationState.ERROR)
             disconnect()
+        }.onSuccess {
+            clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
         }
     }
 
