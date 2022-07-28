@@ -490,8 +490,8 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
-        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
         return CoroutineCall(scope) {
+            clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
             logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
             setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.v {

@@ -26,8 +26,11 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -65,6 +68,7 @@ internal class ConnectUserTest {
     private val user = User(id = userId)
     private val anonId = "!anon"
     private val anonUser = User(id = anonId)
+    private val clientState: ClientState = ClientStateImpl(mock())
 
     @BeforeEach
     fun setup() {
@@ -94,7 +98,7 @@ internal class ConnectUserTest {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            clientState = clientState
         )
     }
 
@@ -107,6 +111,29 @@ internal class ConnectUserTest {
         result.isError `should be equal to` true
         result.error().message `should be equal to`
             "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+    }
+
+    @Test
+    fun `When connection is successful, initialisation state should be updated`() = runTest {
+        val connectionId = randomString()
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+
+        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+        socket.sendEvent(event)
+        val result = deferred.await()
+
+        result.isSuccess `should be equal to` true
+        clientState.initialized.value `should be equal to` InitializationState.COMPLETE
+    }
+
+    @Test
+    fun `When connection is running, initialisation state should be updated`() = runTest {
+        val connectionId = randomString()
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+
+        client.connectUser(user, jwt).enqueue()
+
+        clientState.initialized.value `should be equal to` InitializationState.RUNNING
     }
 
     @Test
