@@ -17,6 +17,7 @@
 package com.getstream.sdk.chat.utils.typing
 
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -35,21 +36,18 @@ import kotlinx.coroutines.launch
  *
  * You should call [clear] before an instance of this class is removed.
  *
+ * @param coroutineScope The coroutine scope used for running the timer and sending updates.
  * @param onTypingStarted Signals that a typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.keystroke]
  * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
+@InternalStreamChatApi
 public class DefaultTypingUpdatesBuffer(
+    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
     private val onTypingStarted: () -> Unit,
     private val onTypingStopped: () -> Unit,
 ) : TypingUpdatesBuffer {
-
-    /**
-     * The coroutine scope used for running the timer and
-     * sending updates.
-     */
-    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
 
     /**
      * Holds the currently running job.
