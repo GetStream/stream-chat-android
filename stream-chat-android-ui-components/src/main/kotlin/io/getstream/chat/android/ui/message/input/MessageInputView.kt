@@ -533,8 +533,10 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun consumeHasBigFile(hasBigFile: Boolean) {
-        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) {
-            alertBigFileSendAttempt()
+        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: let {
+            if (hasBigFile) {
+                alertBigFileSendAttempt()
+            }
         }
     }
 

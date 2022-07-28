@@ -4,6 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
+| `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
 | `LegacyDateFormatter` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
 | `PorterImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
