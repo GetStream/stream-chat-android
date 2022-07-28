@@ -39,7 +39,6 @@ import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
-import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import com.google.android.material.snackbar.Snackbar
@@ -77,6 +76,7 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
+import io.getstream.chat.android.uiutils.extension.containsLinks
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -18,7 +18,8 @@ package io.getstream.chat.android.ui.common.extensions
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -26,11 +27,4 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
  *
  * @return Last message from the channel or null if it doesn't exist.
  */
-public fun Channel.getLastMessage(): Message? =
-    messages.asSequence()
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
-        .filter { !it.silent }
-        .filter { it.user.isCurrentUser() || !it.shadowed }
-        .filter { it.isRegular() || it.isSystem() }
-        .maxByOrNull { it.getCreatedAtOrThrow() }
+public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())

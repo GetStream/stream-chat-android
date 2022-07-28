@@ -18,18 +18,13 @@
 
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
-import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
-import io.getstream.chat.android.ui.common.extensions.internal.observeTogether
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+import io.getstream.chat.android.uiutils.extension.getMembersStatusText
 
 /**
  * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state
@@ -47,6 +42,17 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         )
         view.setTitle(channelName)
         view.setAvatar(channel)
+
+        val memberStatus = channel.getMembersStatusText(
+            context = view.context,
+            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
+            userOnlineResId = R.string.stream_ui_user_status_online,
+            userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
+            userLastSeenResId = R.string.stream_ui_user_status_last_seen,
+            memberCountResId = R.plurals.stream_ui_message_list_header_member_count,
+            memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
+        )
+        view.setOnlineStateSubtitle(memberStatus)
     }
 
     online.observe(lifecycle) { onlineState ->
@@ -71,49 +77,5 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         } else {
             view.setNormalMode()
         }
-    }
-
-    Pair(members, membersCount).observeTogether(lifecycle) { members, membersCount ->
-        view.setOnlineStateSubtitle(getOnlineStateSubtitle(view.context, members ?: emptyList(), membersCount ?: 0))
-    }
-}
-
-private fun getOnlineStateSubtitle(context: Context, members: List<Member>, membersCount: Int): String {
-    val users = members.map { member -> member.user }.filterCurrentUser()
-    if (users.isEmpty() || membersCount == 0) return String.EMPTY
-
-    return if (users.size == 1) {
-        users.first().getLastSeenText(context)
-    } else {
-        getGroupSubtitle(context, members, membersCount)
-    }
-}
-
-private fun List<User>.filterCurrentUser(): List<User> {
-    return if (ChatClient.isInitialized) {
-        val currentUser = ChatClient.instance().clientState.user.value
-        filter { it.id != currentUser?.id }
-    } else {
-        this
-    }
-}
-
-private fun getGroupSubtitle(context: Context, members: List<Member>, membersCount: Int): String {
-    val allUsers = members.map { it.user }
-    val onlineUsers = allUsers.count { it.online }
-    val groupMembers = context.resources.getQuantityString(
-        R.plurals.stream_ui_message_list_header_member_count,
-        membersCount,
-        membersCount
-    )
-
-    return if (onlineUsers > 0) {
-        context.getString(
-            R.string.stream_ui_message_list_header_member_count_online,
-            groupMembers,
-            onlineUsers
-        )
-    } else {
-        groupMembers
     }
 }

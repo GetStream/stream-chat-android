@@ -17,15 +17,14 @@
 package io.getstream.chat.android.ui.message.composer.attachment.factory
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
+import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
@@ -39,11 +38,7 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.uploadId != null ||
-            attachment.upload != null ||
-            attachment.type == ModelType.attach_file ||
-            attachment.type == ModelType.attach_video ||
-            attachment.type == ModelType.attach_audio
+        return attachment.isFile()
     }
 
     /**
