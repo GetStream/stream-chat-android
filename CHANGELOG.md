@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated compile & target SDK to **32**. [#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
+- Updated Kotlin version to **1.7.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 
@@ -80,6 +82,7 @@
 
 ### ⚠️ Changed
 - Deprecated `RowScope.DefaultComposerInputContent` to be marked internal. Use `MessageInput` directly instead. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Updated Compose compiler and UI version to **1.2.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 

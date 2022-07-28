@@ -131,7 +131,7 @@ internal class ChannelStateLogicImpl(
      * @param channel the data of [Channel] to be updated.
      */
     override fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value?.ownCapabilities ?: emptySet()
+        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
         mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
     }
 
@@ -348,7 +348,7 @@ internal class ChannelStateLogicImpl(
      * @param deleteDate The date when the channel was deleted.
      */
     override fun deleteChannel(deleteDate: Date) {
-        mutableState.setChannelData(mutableState.channelData.value?.copy(deletedAt = deleteDate))
+        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deleteDate))
     }
 
     /**
@@ -506,7 +506,7 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableState._rawMessages] with new messages.
+     * Updates [ChannelMutableState.rawMessages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.
