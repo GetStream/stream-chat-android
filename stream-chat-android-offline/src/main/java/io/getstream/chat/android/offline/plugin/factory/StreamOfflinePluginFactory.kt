@@ -30,6 +30,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
@@ -109,10 +110,14 @@ public class StreamOfflinePluginFactory(
             userRepository = chatClient.repositoryFacade
         )
 
-        val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(
+        val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
             clientState = chatClient.clientState,
             messageRepository = chatClient.repositoryFacade,
             userRepository = chatClient.repositoryFacade
+        )
+
+        val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerComposite(
+            listOf(statePlugin, deleteMessageListenerDatabase)
         )
 
         return OfflinePlugin(
