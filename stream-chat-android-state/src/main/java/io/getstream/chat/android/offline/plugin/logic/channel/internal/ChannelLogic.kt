@@ -135,10 +135,15 @@ internal class ChannelLogic(
             logger.v { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            storeStateForChannel(channel)
-        }
-            .onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
-            .onError(channelStateLogic::propagateQueryError)
+
+            if (!mutableState.insideSearch.value && !request.isFilteringAroundIdMessages()) {
+                storeStateForChannel(channel)
+            }
+        }.onSuccess { channel ->
+            logger.d { "[onQueryChannelResult.onSuccess] skip messages: ${request.skipMessages}" }
+
+            channelStateLogic.propagateChannelQuery(channel, request)
+        }.onError(channelStateLogic::propagateQueryError)
     }
 
     private suspend fun storeStateForChannel(channel: Channel) {
@@ -232,7 +237,8 @@ internal class ChannelLogic(
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
-            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
+            ChatClient.instance()
+                .queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
                 .await()
                 .also { result ->
                     onQueryChannelResult(result, mutableState.channelType, mutableState.channelId, request)
@@ -255,15 +261,24 @@ internal class ChannelLogic(
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateDataFromLocalChannel(channel, request.isNotificationUpdate)
+                updateDataFromLocalChannel(channel, request.isNotificationUpdate, request.skipMessages)
             }
         }
     }
 
-    private fun updateDataFromLocalChannel(localChannel: Channel, isNotificationUpdate: Boolean) {
+    private fun updateDataFromLocalChannel(
+        localChannel: Channel,
+        isNotificationUpdate: Boolean,
+        skipMessages: Boolean,
+    ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel, scrollUpdate = true, isNotificationUpdate = isNotificationUpdate)
+        updateDataFromChannel(
+            localChannel,
+            scrollUpdate = true,
+            isNotificationUpdate = isNotificationUpdate,
+            skipMessages = skipMessages
+        )
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -290,8 +305,15 @@ internal class ChannelLogic(
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
+        skipMessages: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate, isNotificationUpdate)
+        channelStateLogic.updateDataFromChannel(
+            channel,
+            shouldRefreshMessages,
+            scrollUpdate,
+            isNotificationUpdate,
+            skipMessages
+        )
     }
 
     internal fun deleteMessage(message: Message) {

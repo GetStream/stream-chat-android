@@ -45,7 +45,7 @@ class GroupChatInfoAddUsersViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope).filterNotNull()
+        chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope, true).filterNotNull()
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()

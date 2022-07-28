@@ -97,7 +97,8 @@ public class MessageListViewModel(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            coroutineScope = viewModelScope,
+            skipMessages = messageId != null
         )
 
     /**
@@ -296,7 +297,8 @@ public class MessageListViewModel(
             chatClient.watchChannelAsState(
                 cid = cid,
                 messageLimit = DEFAULT_MESSAGES_LIMIT,
-                coroutineScope = viewModelScope
+                coroutineScope = viewModelScope,
+                skipMessages = messageId != null
             ).collect { channelState ->
                 if (channelState != null) {
                     initWithOfflinePlugin(channelState)
