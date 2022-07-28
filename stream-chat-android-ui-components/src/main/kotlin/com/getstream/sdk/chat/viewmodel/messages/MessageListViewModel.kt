@@ -158,12 +158,10 @@ public class MessageListViewModel(
      * @see Mode
      */
     public val mode: LiveData<Mode> = messageListController.mode.map {
-        val mode = when (it) {
+        when (it) {
             is MessageMode.MessageThread -> Mode.Thread(it.parentMessage, it.threadState)
             MessageMode.Normal -> Mode.Normal
         }
-        println("mode is: ${mode::class.java.simpleName}")
-        mode
     }.asLiveData()
 
     /**

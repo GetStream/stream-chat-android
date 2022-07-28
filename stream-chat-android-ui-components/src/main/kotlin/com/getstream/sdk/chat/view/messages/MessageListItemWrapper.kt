@@ -33,8 +33,13 @@ public data class MessageListItemWrapper(
 
 // TODO
 public fun MessageListState.toMessageListItemWrapper(): MessageListItemWrapper {
+    var messagesList: List<MessageListItem> = messages.map { it.toUiMessageListItem() }
+
+    if (isLoadingOlderMessages) messagesList = messagesList + listOf(MessageListItem.LoadingMoreIndicatorItem)
+    if (isLoadingNewerMessages) messagesList = listOf(MessageListItem.LoadingMoreIndicatorItem) + messagesList
+
     return MessageListItemWrapper(
-        items = messages.map { it.toUiMessageListItem() },
+        items = messagesList,
         hasNewMessages = newMessageState != null,
         isTyping = false, // TODO
         areNewestMessagesLoaded = endOfNewMessagesReached // TODO?
