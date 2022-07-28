@@ -20,6 +20,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilder
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
 import io.getstream.chat.android.core.internal.fsm.builder.StateFunction
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -42,7 +44,7 @@ public class FiniteStateMachine<S : Any, E : Any>(
     private val defaultEventHandler: (S, E) -> S,
 ) {
     private val mutex = Mutex()
-    private var _state: S = initialState
+    private val _state: MutableStateFlow<S> = MutableStateFlow(initialState)
 
     private suspend inline fun <T> Mutex.withLockIfNotLocked(action: () -> T): T {
         return if (isLocked.not()) {
@@ -53,11 +55,16 @@ public class FiniteStateMachine<S : Any, E : Any>(
     }
 
     /**
+     * The current state as [StateFlow].
+     */
+    public val stateFlow: StateFlow<S> = _state
+
+    /**
      * The current state.
      */
     public val state: S
         get() = runBlocking {
-            mutex.withLockIfNotLocked { _state }
+            mutex.withLockIfNotLocked { _state.value }
         }
 
     /**
@@ -66,16 +73,14 @@ public class FiniteStateMachine<S : Any, E : Any>(
     public fun sendEvent(event: E) {
         runBlocking {
             val shouldNotify = mutex.withLock {
-                val oldState = _state
+                val oldState = _state.value
                 val functions = stateFunctions[oldState::class]
                 val handler = functions?.getHandler(event) ?: defaultEventHandler
-                _state = handler(oldState, event)
-                _state != oldState
+                _state.emit(handler(oldState, event))
+                _state.value != oldState
             }
             if (shouldNotify) {
-                with(_state) {
-                    notifyOnEnter(event)
-                }
+                _state.value.notifyOnEnter(event)
             }
         }
     }
