@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
-import android.util.Log
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 
@@ -27,21 +26,15 @@ internal class SearchLogic(private val mutableState: ChannelMutableState) {
     fun handleMessageBounds(request: QueryChannelRequest, noMoreMessages: Boolean) {
         when {
             !isInsideSearch && request.isFilteringAroundIdMessages() -> {
-                updateSearchState(true).also {
-                    Log.d("SearchLogic", "is inside search!!")
-                }
+                updateSearchState(true)
             }
 
             isInsideSearch && request.isFilteringNewerMessages() && noMoreMessages -> {
-                updateSearchState(false).also {
-                    Log.d("SearchLogic", "is outside search!! Because it got to the end of messages")
-                }
+                updateSearchState(false)
             }
 
             !request.isNotificationUpdate && !request.isFilteringMessages() && !request.skipMessages -> {
-                updateSearchState(false).also {
-                    Log.d("SearchLogic", "is outside search!!")
-                }
+                updateSearchState(false)
             }
         }
     }
