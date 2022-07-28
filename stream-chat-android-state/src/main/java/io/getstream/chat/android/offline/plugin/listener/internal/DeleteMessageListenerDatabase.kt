@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -26,14 +24,11 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import java.util.Date
 
 /**
  * Listener for requests of message deletion and for message deletion results.
  */
 internal class DeleteMessageListenerDatabase(
-    private val logic: LogicRegistry,
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
 ) : DeleteMessageListener {
@@ -44,26 +39,8 @@ internal class DeleteMessageListenerDatabase(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-
-        return messageRepository.selectMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
-                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
-
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            val channelLogic = logic.channel(channelType, channelId).stateLogic()
-
-            if (isModerationFailed) {
-                channelLogic.deleteMessage(message)
-                messageRepository.deleteChannelMessage(message)
-                Result.error(
-                    MessageModerationDeletedException(
-                        "Message with failed moderation has been deleted locally: $messageId"
-                    )
-                )
-            } else {
-                Result.success(Unit)
-            }
+        return messageRepository.selectMessage(messageId)?.let {
+            Result.success(Unit)
         } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
     }
 
@@ -74,14 +51,13 @@ internal class DeleteMessageListenerDatabase(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            val isOnline = clientState.isOnline
+            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
+                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
-            val messageToBeDeleted = message.copy(
-                deletedAt = Date(),
-                syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-            )
-
-            removeMessage(messageToBeDeleted)
+            if (isModerationFailed) {
+                messageRepository.deleteChannelMessage(message)
+            }
         }
     }
 
@@ -92,27 +68,5 @@ internal class DeleteMessageListenerDatabase(
      * @param result the result of the API call.
      */
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
-        if (result.isSuccess) {
-            val deletedMessage = result.data()
-            deletedMessage.syncStatus = SyncStatus.COMPLETED
-
-            removeMessage(deletedMessage)
-        } else {
-            messageRepository.selectMessage(originalMessageId)?.let { originalMessage ->
-                val failureMessage = originalMessage.copy(
-                    syncStatus = SyncStatus.SYNC_NEEDED,
-                    updatedLocallyAt = Date(),
-                )
-
-                removeMessage(failureMessage)
-            }
-        }
-    }
-
-    private fun removeMessage(message: Message) {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-        logic.channel(channelType, channelId)
-            .stateLogic()
-            .upsertMessages(message.let(::listOf))
     }
 }
