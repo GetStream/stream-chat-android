@@ -33,7 +33,7 @@ public interface ClientState {
     public val user: StateFlow<User?>
 
     /**
-     * If the client was already initialized and
+     * The state of the initialization process of the SDK.
      */
     public val initialized: StateFlow<InitializationState>
 
