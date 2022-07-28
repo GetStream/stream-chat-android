@@ -72,7 +72,7 @@ internal class DeleteMessageListenerState(
                     syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
                 )
 
-                removeMessage(messageToBeDeleted)
+                updateMessage(messageToBeDeleted)
             }
         }
     }
@@ -87,8 +87,7 @@ internal class DeleteMessageListenerState(
         if (result.isSuccess) {
             val deletedMessage = result.data()
             deletedMessage.syncStatus = SyncStatus.COMPLETED
-
-            removeMessage(deletedMessage)
+            updateMessage(deletedMessage)
         } else {
             val (channelType, channelId) = originalMessageId.cidToTypeAndId()
             logic.channel(channelType, channelId)
@@ -100,12 +99,12 @@ internal class DeleteMessageListenerState(
                         updatedLocallyAt = Date(),
                     )
 
-                    removeMessage(failureMessage)
+                    updateMessage(failureMessage)
                 }
         }
     }
 
-    private fun removeMessage(message: Message) {
+    private fun updateMessage(message: Message) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         logic.channel(channelType, channelId)
             .stateLogic()

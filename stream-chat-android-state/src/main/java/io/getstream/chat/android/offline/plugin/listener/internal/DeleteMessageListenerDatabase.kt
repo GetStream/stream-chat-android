@@ -16,14 +16,16 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import java.util.Date
 
 /**
  * Listener for requests of message deletion and for message deletion results.
@@ -31,6 +33,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 internal class DeleteMessageListenerDatabase(
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository,
 ) : DeleteMessageListener {
 
     /**
@@ -39,9 +42,7 @@ internal class DeleteMessageListenerDatabase(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        return messageRepository.selectMessage(messageId)?.let {
-            Result.success(Unit)
-        } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
+        return Result.success(Unit)
     }
 
     /**
@@ -57,6 +58,9 @@ internal class DeleteMessageListenerDatabase(
 
             if (isModerationFailed) {
                 messageRepository.deleteChannelMessage(message)
+            } else {
+                userRepository.insertUsers(message.users())
+                messageRepository.insertMessage(message, true)
             }
         }
     }
@@ -68,5 +72,21 @@ internal class DeleteMessageListenerDatabase(
      * @param result the result of the API call.
      */
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
+        if (result.isSuccess) {
+            val deletedMessage = result.data()
+            deletedMessage.syncStatus = SyncStatus.COMPLETED
+
+            messageRepository.insertMessage(deletedMessage, true)
+        } else {
+            messageRepository.selectMessage(originalMessageId)?.let { originalMessage ->
+                val failureMessage = originalMessage.copy(
+                    syncStatus = SyncStatus.SYNC_NEEDED,
+                    updatedLocallyAt = Date(),
+                )
+
+                messageRepository.insertMessage(failureMessage, true)
+            }
+        }
     }
 }
+
