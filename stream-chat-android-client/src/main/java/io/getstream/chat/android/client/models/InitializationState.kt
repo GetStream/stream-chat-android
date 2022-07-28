@@ -38,5 +38,4 @@ public enum class InitializationState {
      * initialization process.
      */
     NOT_INITIALIZED,
-
 }

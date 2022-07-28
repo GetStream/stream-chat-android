@@ -2821,7 +2821,6 @@ public final class io/getstream/chat/android/client/models/GuestUser {
 
 public final class io/getstream/chat/android/client/models/InitializationState : java/lang/Enum {
 	public static final field COMPLETE Lio/getstream/chat/android/client/models/InitializationState;
-	public static final field ERROR Lio/getstream/chat/android/client/models/InitializationState;
 	public static final field NOT_INITIALIZED Lio/getstream/chat/android/client/models/InitializationState;
 	public static final field RUNNING Lio/getstream/chat/android/client/models/InitializationState;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/InitializationState;
