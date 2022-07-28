@@ -39,8 +39,4 @@ public enum class InitializationState {
      */
     NOT_INITIALIZED,
 
-    /**
-     * An error happened during the initialization process.
-     */
-    ERROR
 }

@@ -428,7 +428,6 @@ internal constructor(
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
         }.onError {
-            clientState.toMutableState()?.setInitializionState(InitializationState.ERROR)
             disconnect()
         }.onSuccess {
             clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
@@ -1055,6 +1054,7 @@ internal constructor(
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             notifications.onLogout()
             clientState.toMutableState()?.clearState()
+            clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
             getCurrentUser().let(initializationCoordinator::userDisconnected)
             if (ToggleService.isSocketExperimental().not()) {
                 socketStateService.onDisconnectRequested()
