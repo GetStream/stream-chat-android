@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.state.messages.list.TypingItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -92,6 +93,9 @@ public fun MessageContainer(
         is ThreadSeparatorState -> threadSeparatorContent(messageListItem)
         is SystemMessageState -> systemMessageContent(messageListItem)
         is MessageItemState -> messageItemContent(messageListItem)
+        else -> {
+            // TODO
+        }
     }
 }
 

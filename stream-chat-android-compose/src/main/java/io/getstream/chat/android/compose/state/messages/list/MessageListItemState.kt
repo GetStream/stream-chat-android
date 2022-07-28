@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.state.messages.list
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.model.MessageListItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import java.util.Date
 
@@ -46,6 +47,9 @@ public data class ThreadSeparatorState(val replyCount: Int) : MessageListItemSta
  * @param message The message to show.
  */
 public data class SystemMessageState(val message: Message) : MessageListItemState()
+
+// TODO
+public data class TypingItemState(val users: List<User>): MessageListItemState()
 
 /**
  * Represents each message item we show in the list of messages.

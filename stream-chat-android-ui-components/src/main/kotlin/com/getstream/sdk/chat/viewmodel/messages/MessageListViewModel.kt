@@ -24,12 +24,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.getstream.sdk.chat.view.messages.toMessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
@@ -38,7 +40,6 @@ import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -50,23 +51,19 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadNewerMessages
-import io.getstream.chat.android.offline.extensions.loadNewestMessages
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
+import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
+import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
+import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
 
 /**
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
@@ -84,7 +81,15 @@ public class MessageListViewModel(
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
-    private val messageListController: MessageListController = MessageListController(cid, chatClient),
+    private val messageListController: MessageListController = MessageListController(
+        cid,
+        chatClient,
+        DeletedMessageVisibility.ALWAYS_VISIBLE,
+        true,
+        true,
+        24L * 60L * 60L * 1000L,
+        MessageFooterVisibility.LastInGroup
+    ),
 ) : ViewModel() {
 
     /**
@@ -104,14 +109,20 @@ public class MessageListViewModel(
     /**
      * Contains a list of messages along with additional
      * information about the message list.
+     * TODO
      */
-    private var messageListData: MessageListItemLiveData? = null
+    private var messageListData: LiveData<MessageListItemWrapper> = messageListController.messageListState.map {
+        it.toMessageListItemWrapper()
+    }.asLiveData()
 
     /**
      * Contains a list of messages along with additional
      * information about the message list. Sets the
+     * TODO
      */
-    private var threadListData: MessageListItemLiveData? = null
+    private var threadListData: LiveData<MessageListItemWrapper> = messageListController.threadListState.map {
+        it.toMessageListItemWrapper()
+    }.asLiveData()
 
     /**
      * Regulates the visibility of deleted messages.
@@ -147,23 +158,13 @@ public class MessageListViewModel(
      * @see Mode
      */
     public val mode: LiveData<Mode> = messageListController.mode.map {
-        when (it) {
+        val mode = when (it) {
             is MessageMode.MessageThread -> Mode.Thread(it.parentMessage, it.threadState)
             MessageMode.Normal -> Mode.Normal
         }
+        println("mode is: ${mode::class.java.simpleName}")
+        mode
     }.asLiveData()
-
-    /**
-     * Holds information about the number of unread messages
-     * by the current user in the given channel.
-     */
-    private val _reads: MediatorLiveData<List<ChannelUserRead>> = MediatorLiveData()
-
-    /**
-     * Holds information about the number of unread messages
-     * by the current user in the given channel.
-     */
-    private val reads: LiveData<List<ChannelUserRead>> = _reads
 
     /**
      * Emits true if we should load more messages.
@@ -178,7 +179,7 @@ public class MessageListViewModel(
     /**
      *  The current channel used to load the message list data.
      */
-    public val channel: LiveData<Channel> = messageListController.channel.asLiveData()
+    public val channel: LiveData<Channel> = messageListController.channel.asLiveData().distinctUntilChanged()
 
     /**
      * The target message that the list should scroll to.
@@ -264,12 +265,7 @@ public class MessageListViewModel(
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
         initialJob = viewModelScope.launch {
-            chatClient.watchChannelAsState(
-                cid = cid,
-                messageLimit = DEFAULT_MESSAGES_LIMIT,
-                coroutineScope = viewModelScope,
-                skipMessages = messageId != null
-            ).collect { channelState ->
+            channelState.collect { channelState ->
                 if (channelState != null) {
                     initWithOfflinePlugin(channelState)
                     initialJob?.cancel()
@@ -285,48 +281,15 @@ public class MessageListViewModel(
      * @param channelState State container for particular channel.
      */
     private fun initWithOfflinePlugin(channelState: ChannelState) {
-        ChatClient.dismissChannelNotifications(
-            channelType = channelState.channelType,
-            channelId = channelState.channelId
-        )
-
-        channelState.channelData.onStart {
-            messageListController.setCurrentChannel(channelState.toChannel())
-        }.launchIn(viewModelScope)
-
-        val typingIds = messageListController.typingUsers.asLiveData()
-
-        messageListData = MessageListItemLiveData(
-            currentUser = user,
-            messages = channelState.messages.asLiveData(),
-            readsLd = channelState.reads.asLiveData(),
-            typingLd = typingIds,
-            isThread = false,
-            dateSeparatorHandler = dateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility,
-            messageFooterVisibility = messageFooterVisibility,
-            messagePositionHandlerProvider = ::messagePositionHandler,
-            endOfNewMessages = channelState.endOfNewerMessages.asLiveData(),
-        )
-        _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
         _insideSearch.addSource(channelState.insideSearch.asLiveData()) { _insideSearch.value = it }
 
         stateMerger.apply {
-            val messagesStateLiveData = channelState.messagesState.asLiveData()
-            addSource(messagesStateLiveData) { messageState ->
-                when (messageState) {
-                    MessagesState.Loading,
-                    MessagesState.NoQueryActive,
-                    -> value = State.Loading
-                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
-                    is MessagesState.Result -> {
-                        removeSource(messagesStateLiveData)
-                        onNormalModeEntered()
-                    }
-                }
+            addSource(messageListData) {
+                value = State.Result(it)
             }
         }
+
         messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
             stateMerger.observeForever(object : Observer<State> {
                 override fun onChanged(state: State?) {
@@ -336,48 +299,6 @@ public class MessageListViewModel(
                     }
                 }
             })
-        }
-    }
-
-    /**
-     * Moves the message list into thread mode.
-     *
-     * @param threadMessages The messages that belong to the thread.
-     */
-    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
-        threadListData = MessageListItemLiveData(
-            currentUser = user,
-            messages = threadMessages,
-            readsLd = reads,
-            typingLd = null,
-            isThread = true,
-            dateSeparatorHandler = threadDateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility,
-            messageFooterVisibility = messageFooterVisibility,
-            messagePositionHandlerProvider = ::messagePositionHandler,
-            endOfNewMessages = MutableLiveData(true)
-        )
-        threadListData?.let { tld ->
-            messageListData?.let { mld ->
-                stateMerger.apply {
-                    removeSource(mld)
-                    addSource(tld) { value = State.Result(it) }
-                }
-            }
-        }
-    }
-
-    /**
-     * Moves the message list into normal mode.
-     */
-    private fun resetThread() {
-        threadListData?.let {
-            stateMerger.removeSource(it)
-        }
-        messageListData?.let {
-            stateMerger.addSource(it) { messageListItemWrapper ->
-                stateMerger.value = State.Result(messageListItemWrapper)
-            }
         }
     }
 
@@ -545,15 +466,10 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
-                val message = messageListData?.value
-                    ?.items
-                    ?.asSequence()
-                    ?.filterIsInstance<MessageListItem.MessageItem>()
-                    ?.find { messageItem -> messageItem.message.id == event.messageId }
-                    ?.message
+                val message = getMessageWithId(event.messageId)
 
                 if (message != null) {
-                    _targetMessage.value = message!!
+                    _targetMessage.value = message
                 } else {
                     chatClient.loadMessageById(
                         cid,
@@ -622,13 +538,7 @@ public class MessageListViewModel(
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
      */
-    public fun getMessageWithId(messageId: String): Message? {
-        val messageItem = messageListData?.value?.items?.firstOrNull {
-            it is MessageListItem.MessageItem && it.message.id == messageId
-        }
-
-        return (messageItem as? MessageListItem.MessageItem)?.message
-    }
+    public fun getMessageWithId(messageId: String): Message? = messageListController.getMessageWithId(messageId)
 
     /**
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
@@ -673,7 +583,12 @@ public class MessageListViewModel(
      * @param event The type of action the user has selected.
      */
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
-        messageListController.performGiphyAction(event.action, event.message)
+        val action = when (event.action) {
+            GiphyAction.SEND -> SendGiphyCommon(event.message)
+            GiphyAction.SHUFFLE -> ShuffleGiphyCommon(event.message)
+            GiphyAction.CANCEL -> CancelGiphyCommon(event.message)
+        }
+        messageListController.performGiphyAction(action)
     }
 
     /**
@@ -681,17 +596,7 @@ public class MessageListViewModel(
      * the oldest message currently loaded.
      */
     private fun onEndRegionReached() {
-        currentMode.run {
-            when (this) {
-                is Mode.Normal -> {
-                    messageListData?.loadingMoreOldMessagesChanged(true)
-                    chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
-                        messageListData?.loadingMoreOldMessagesChanged(false)
-                    }
-                }
-                is Mode.Thread -> threadLoadMore(this)
-            }
-        }
+        messageListController.loadOlderMessages()
     }
 
     /**
@@ -699,10 +604,7 @@ public class MessageListViewModel(
      */
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
-            messageListData?.loadingMoreNewMessagesChanged(true)
-            messageListController.loadNewerMessages(baseMessageId, DEFAULT_MESSAGES_LIMIT) {
-                messageListData?.loadingMoreNewMessagesChanged(false)
-            }
+            messageListController.loadNewerMessages(baseMessageId, DEFAULT_MESSAGES_LIMIT)
         } else {
             logger.e { "There's no base message to request more message at bottom of limit" }
         }
@@ -732,8 +634,12 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun onThreadModeEntered(parentMessage: Message) {
-        messageListController.enterThreadMode(parentMessage) { threadState ->
-            setThreadMessages(threadState.messages.asLiveData())
+        messageListController.enterThreadMode(parentMessage)
+        stateMerger.apply {
+            removeSource(messageListData)
+            addSource(threadListData) {
+                value = State.Result(it)
+            }
         }
     }
 
@@ -758,7 +664,12 @@ public class MessageListViewModel(
      */
     private fun onNormalModeEntered() {
         messageListController.enterNormalMode()
-        resetThread()
+        stateMerger.apply {
+            removeSource(threadListData)
+            addSource(messageListData) {
+                value = State.Result(it)
+            }
+        }
     }
 
     /**

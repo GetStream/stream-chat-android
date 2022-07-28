@@ -23,12 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
-import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -60,25 +57,19 @@ import io.getstream.chat.android.compose.state.messages.SelectedMessageReactions
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
-import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
-import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
-import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
+import io.getstream.chat.android.compose.state.messages.toMessagesState
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadNewerMessages
-import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
@@ -86,15 +77,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import com.getstream.sdk.chat.enums.GiphyAction as GiphyActionCommon
+import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
+import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
+import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
+import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -121,13 +111,17 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val messageListController: MessageListController = MessageListController(channelId, chatClient),
+    private val messageListController: MessageListController =
+        MessageListController(
+            channelId,
+            chatClient,
+            deletedMessageVisibility,
+            showSystemMessages,
+            showDateSeparators,
+            dateSeparatorThresholdMillis,
+            messageFooterVisibility
+        ),
 ) : ViewModel() {
-
-    /**
-     * Holds information about the current state of the [Channel].
-     */
-    private val channelState: StateFlow<ChannelState?> = messageListController.channelState
 
     /**
      * Holds information about the abilities the current user
@@ -214,17 +208,6 @@ public class MessageListViewModel(
     private var threadJob: Job? = null
 
     /**
-     * Represents the last loaded message in the list, for comparison when determining the
-     * [NewMessageState] for the screen.
-     */
-    private var lastLoadedMessage: Message? = null
-
-    /**
-     * Represents the last loaded message in the thread, for comparison when determining the NewMessage
-     */
-    private var lastLoadedThreadMessage: Message? = null
-
-    /**
      * Represents the latest message we've seen in the channel.
      */
     private var lastSeenChannelMessage: Message? by mutableStateOf(null)
@@ -249,132 +232,32 @@ public class MessageListViewModel(
      * messages and other pieces of information.
      */
     init {
-        observeChannel()
+        observeMessageListState()
+        observeThreadListState()
     }
 
     /**
-     * Starts observing the messages in the current channel. We observe the 'messagesState', 'user' and
-     * 'endOfOlderMessages' states, as well as build the `newMessageState` using [getNewMessageState]
-     * and combine it into a [MessagesState] that holds all the information required for the screen.
+     * Starts observing the current channel. We take the data exposed by the message list controller and map it to
+     * compose list.
      */
-    private fun observeMessages() {
+    private fun observeMessageListState() {
         viewModelScope.launch {
-            channelState.filterNotNull().collectLatest { channelState ->
-                combine(
-                    channelState.messagesState,
-                    user,
-                    channelState.reads,
-                    channelState.unreadCount,
-                    channelState.endOfNewerMessages
-                ) { state, user, reads, unreadCount, endOfNewerMessages ->
-                    when (state) {
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
-                        -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
-                            messagesState.copy(
-                                isLoading = false,
-                                messageItems = emptyList(),
-                            )
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
-                            messagesState.copy(
-                                isLoading = false,
-                                messageItems = groupMessages(
-                                    messages = filterMessagesToShow(state.messages),
-                                    isInThread = false,
-                                    reads = reads,
-                                ),
-                                isLoadingMore = false,
-                                endOfMessages = channelState.endOfOlderMessages.value,
-                                startOfMessages = endOfNewerMessages,
-                                currentUser = user,
-                                isLoadingMoreNewMessages = false,
-                                isLoadingMoreOldMessages = false,
-                                unreadCount = unreadCount ?: messagesState.unreadCount
-                            )
-                        }
-                    }
+            messageListController.messageListState.collect {
+                messagesState = it.toMessagesState()
+                if (scrollToMessage != null) {
+                    messagesState.messageItems.firstOrNull {
+                        it is MessageItemState && it.message.id == scrollToMessage?.id
+                    }?.let { focusMessage((it as MessageItemState).message.id) }
                 }
-                    .catch {
-                        it.cause?.printStackTrace()
-                        showEmptyState()
-                    }
-                    .collect { newState ->
-                        val newLastMessage =
-                            (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
-
-                        val hasNewMessage = lastLoadedMessage != null &&
-                            messagesState.messageItems.isNotEmpty() &&
-                            newLastMessage?.id != lastLoadedMessage?.id
-
-                        messagesState = if (hasNewMessage) {
-                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-
-                            newState.copy(
-                                newMessageState = newMessageState,
-                            )
-                        } else {
-                            newState
-                        }
-
-                        if (scrollToMessage != null) {
-                            messagesState.messageItems.firstOrNull {
-                                it is MessageItemState && it.message.id == scrollToMessage?.id
-                            }?.let { focusMessage((it as MessageItemState).message.id) }
-                        }
-
-                        lastLoadedMessage = newLastMessage
-                    }
             }
         }
     }
 
-    /**
-     * Sets the current channel, used to show info in the UI.
-     */
-    private fun setCurrentChannel(channel: Channel): Unit = messageListController.setCurrentChannel(channel)
-
-    /**
-     * Used to filter messages which we should show to the current user.
-     *
-     * @param messages List of all messages.
-     * @return Filtered messages.
-     */
-    private fun filterMessagesToShow(messages: List<Message>): List<Message> {
-        val currentUser = user.value
-
-        return messages.filter {
-            val shouldShowIfDeleted = when (deletedMessageVisibility) {
-                DeletedMessageVisibility.ALWAYS_VISIBLE -> true
-                DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-                    !(it.deletedAt != null && it.user.id != currentUser?.id)
-                }
-                else -> it.deletedAt == null
+    private fun observeThreadListState() {
+        viewModelScope.launch {
+            messageListController.threadListState.collect {
+                threadMessagesState = it.toMessagesState()
             }
-            val isSystemMessage = it.isSystem() || it.isError()
-
-            shouldShowIfDeleted || (isSystemMessage && showSystemMessages)
-        }
-    }
-
-    /**
-     * Builds the [NewMessageState] for the UI, whenever the message state changes. This is used to
-     * allow us to show the user a floating button giving them the option to scroll to the bottom
-     * when needed.
-     *
-     * @param lastMessage Last message in the list, used for comparison.
-     */
-    private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
-        val currentUser = user.value
-
-        return if (lastMessage != null && lastLoadedMessage != null && lastMessage.id != lastLoadedMessage.id) {
-            if (lastMessage.user.id == currentUser?.id) {
-                MyOwn
-            } else {
-                Other
-            }
-        } else {
-            null
         }
     }
 
@@ -471,14 +354,6 @@ public class MessageListViewModel(
     }
 
     /**
-     * If there's an error, we just set the current state to be empty - 'isLoading' as false and
-     * 'messages' as an empty list.
-     */
-    private fun showEmptyState() {
-        messagesState = messagesState.copy(isLoading = false, messageItems = emptyList())
-    }
-
-    /**
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     @Deprecated(
@@ -496,7 +371,6 @@ public class MessageListViewModel(
         if (messageMode is MessageMode.MessageThread) {
             threadLoadMore(messageMode)
         } else {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
             chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
         }
     }
@@ -539,10 +413,7 @@ public class MessageListViewModel(
      * @param messageId The id of the most new [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String) {
-        val isLoading = messageListController.loadNewerMessages(messageId)
-        if (isLoading) {
-            messagesState = messagesState.copy(isLoadingMore = isLoading, isLoadingMoreNewMessages = isLoading)
-        }
+        messageListController.loadNewerMessages(messageId)
     }
 
     /**
@@ -712,167 +583,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val channelState = channelState.value ?: return
-        messageListController.enterThreadMode(parentMessage) { threadState ->
-            observeThreadMessages(
-                threadId = threadState.parentId,
-                messages = threadState.messages,
-                endOfOlderMessages = threadState.endOfOlderMessages,
-                reads = channelState.reads
-            )
-        }
-    }
-
-    /**
-     * Observes the currently active thread. In process, this
-     * creates a [threadJob] that we can cancel once we leave the thread.
-     *
-     * The data consists of the 'messages', 'user' and 'endOfOlderMessages' states,
-     * that are combined into one [MessagesState].
-     *
-     * @param threadId The message id with the thread we want to observe.
-     * @param messages State flow source of thread messages.
-     * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
-     * @param reads State flow source of read states.
-     */
-    private fun observeThreadMessages(
-        threadId: String,
-        messages: StateFlow<List<Message>>,
-        endOfOlderMessages: StateFlow<Boolean>,
-        reads: StateFlow<List<ChannelUserRead>>,
-    ) {
-        threadJob = viewModelScope.launch {
-            combine(user, endOfOlderMessages, messages, reads) { user, endOfOlderMessages, messages, reads ->
-                threadMessagesState.copy(
-                    isLoading = false,
-                    messageItems = groupMessages(
-                        messages = filterMessagesToShow(messages),
-                        isInThread = true,
-                        reads = reads,
-                    ),
-                    isLoadingMore = false,
-                    endOfMessages = endOfOlderMessages,
-                    currentUser = user,
-                    parentMessageId = threadId,
-                    isLoadingMoreOldMessages = false,
-                    isLoadingMoreNewMessages = false
-                )
-            }.collect { newState ->
-                val newLastMessage =
-                    (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
-                threadMessagesState = newState.copy(
-                    newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
-                )
-                lastLoadedThreadMessage = newLastMessage
-            }
-        }
-    }
-
-    /**
-     * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
-     * group, where the positions can be [MessageItemGroupPosition.Top], [MessageItemGroupPosition.Middle],
-     * [MessageItemGroupPosition.Bottom] or [MessageItemGroupPosition.None] if the message isn't in a group.
-     *
-     * @param messages The messages we need to group.
-     * @param isInThread If we are in inside a thread.
-     * @param reads The list of read states.
-     *
-     * @return A list of [MessageListItemState]s, each containing a position.
-     */
-    private fun groupMessages(
-        messages: List<Message>,
-        isInThread: Boolean,
-        reads: List<ChannelUserRead>,
-    ): List<MessageListItemState> {
-        val parentMessageId = (messageMode as? MessageMode.MessageThread)?.parentMessage?.id
-        val currentUser = user.value
-        val groupedMessages = mutableListOf<MessageListItemState>()
-        val lastRead = reads
-            .filter { it.user.id != currentUser?.id }
-            .mapNotNull { it.lastRead }
-            .maxOrNull()
-
-        messages.forEachIndexed { index, message ->
-            val user = message.user
-            val previousMessage = messages.getOrNull(index - 1)
-            val nextMessage = messages.getOrNull(index + 1)
-
-            val previousUser = previousMessage?.user
-            val nextUser = nextMessage?.user
-
-            val willSeparateNextMessage =
-                nextMessage?.let { shouldAddDateSeparator(message, it) } ?: false
-
-            val position = when {
-                previousUser != user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Top
-                previousUser == user && nextUser == user && !willSeparateNextMessage -> MessageItemGroupPosition.Middle
-                previousUser == user && nextUser != user -> MessageItemGroupPosition.Bottom
-                else -> MessageItemGroupPosition.None
-            }
-
-            val isLastMessageInGroup =
-                position == MessageItemGroupPosition.Bottom || position == MessageItemGroupPosition.None
-
-            val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
-                message = message,
-                isLastMessageInGroup = isLastMessageInGroup,
-                nextMessage = nextMessage
-            )
-
-            if (shouldAddDateSeparator(previousMessage, message)) {
-                groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
-            }
-
-            if (message.isSystem() || message.isError()) {
-                groupedMessages.add(SystemMessageState(message = message))
-            } else {
-                val isMessageRead = message.createdAt
-                    ?.let { lastRead != null && it <= lastRead }
-                    ?: false
-
-                groupedMessages.add(
-                    MessageItemState(
-                        message = message,
-                        currentUser = currentUser,
-                        groupPosition = position,
-                        parentMessageId = parentMessageId,
-                        isMine = user.id == currentUser?.id,
-                        isInThread = isInThread,
-                        isMessageRead = isMessageRead,
-                        shouldShowFooter = shouldShowFooter,
-                        deletedMessageVisibility = deletedMessageVisibility
-                    )
-                )
-            }
-
-            if (index == 0 && isInThread) {
-                groupedMessages.add(ThreadSeparatorState(message.replyCount))
-            }
-        }
-
-        return groupedMessages.reversed()
-    }
-
-    /**
-     * Decides if we need to add a date separator or not.
-     *
-     * If the user disables them, we don't add any separators, otherwise we check if there are previous messages or if
-     * the time difference between two messages is higher than the threshold.
-     *
-     * @param previousMessage The previous message.
-     * @param message The current message.
-     * @return If we should add a date separator to the list.
-     */
-    private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
-        return if (!showDateSeparators) {
-            false
-        } else if (previousMessage == null) {
-            true
-        } else {
-            val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
-
-            return timeDifference > dateSeparatorThresholdMillis
-        }
+        messageListController.enterThreadMode(parentMessage)
     }
 
     /**
@@ -954,9 +665,6 @@ public class MessageListViewModel(
     public fun leaveThread() {
         messageListController.enterNormalMode()
         messagesState = messagesState.copy(selectedMessageState = null)
-        threadMessagesState = MessagesState()
-        lastSeenThreadMessage = null
-        threadJob?.cancel()
     }
 
     /**
@@ -971,12 +679,7 @@ public class MessageListViewModel(
      * Clears the [NewMessageState] from our UI state, after the user taps on the "Scroll to bottom"
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
-    public fun clearNewMessageState() {
-        if (!messagesState.startOfMessages) return
-        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
-
-        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
-    }
+    public fun clearNewMessageState(): Unit = messageListController.clearNewMessageState()
 
     /**
      * Sets the focused message to be the message with the given ID, after which it removes it from
@@ -1056,11 +759,11 @@ public class MessageListViewModel(
      */
     public fun performGiphyAction(action: GiphyAction) {
         val actionToPerform: GiphyActionCommon = when (action) {
-            is CancelGiphy -> GiphyActionCommon.CANCEL
-            is SendGiphy -> GiphyActionCommon.SEND
-            is ShuffleGiphy -> GiphyActionCommon.SHUFFLE
+            is CancelGiphy -> CancelGiphyCommon(action.message)
+            is SendGiphy -> SendGiphyCommon(action.message)
+            is ShuffleGiphy -> ShuffleGiphyCommon(action.message)
         }
-        messageListController.performGiphyAction(actionToPerform, action.message)
+        messageListController.performGiphyAction(actionToPerform)
     }
 
     /**

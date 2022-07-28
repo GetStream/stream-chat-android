@@ -484,8 +484,6 @@ public data class MessageComposerViewStyle(
                         InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
-                println(messageInputInputType)
-
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,

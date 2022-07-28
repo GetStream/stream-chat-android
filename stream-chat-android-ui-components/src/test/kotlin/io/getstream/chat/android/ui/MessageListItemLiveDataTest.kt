@@ -24,7 +24,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message

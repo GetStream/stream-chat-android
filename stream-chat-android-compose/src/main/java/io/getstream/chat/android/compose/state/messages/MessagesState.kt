@@ -18,7 +18,11 @@ package io.getstream.chat.android.compose.state.messages
 
 import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.model.MessageListState
+import io.getstream.chat.android.common.model.MyOwn
+import io.getstream.chat.android.common.model.Other
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.util.extensions.toMessageListItemState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -77,5 +81,29 @@ public data class MessagesState(
             -sizeDiff
         }
         if (offset != focusedMessageOffsetState.value) focusedMessageOffsetState.value = offset
+    }
+}
+
+public fun MessageListState.toMessagesState(): MessagesState {
+    // TODO selectedMessageState, focusedMessageOffsetState
+    return MessagesState(
+        isLoading = isLoading,
+        isLoadingMore = isLoadingOlderMessages || isLoadingNewerMessages,
+        endOfMessages = endOfOldMessagesReached,
+        currentUser = currentUser,
+        parentMessageId = parentMessageId,
+        unreadCount = unreadCount,
+        startOfMessages = endOfNewMessagesReached,
+        isLoadingMoreNewMessages = isLoadingNewerMessages,
+        isLoadingMoreOldMessages = isLoadingOlderMessages,
+        messageItems = messages.reversed().map { it.toMessageListItemState() },
+        newMessageState = newMessageState?.toComposeState()
+    )
+}
+
+public fun io.getstream.chat.android.common.model.NewMessageState.toComposeState(): NewMessageState {
+    return when(this) {
+        MyOwn -> io.getstream.chat.android.compose.state.messages.MyOwn
+        Other -> io.getstream.chat.android.compose.state.messages.Other
     }
 }
