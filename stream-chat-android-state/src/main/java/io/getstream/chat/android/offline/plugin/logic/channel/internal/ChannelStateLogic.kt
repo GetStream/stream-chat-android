@@ -257,4 +257,6 @@ internal interface ChannelStateLogic {
      * Refreshes the mute state for the channel
      */
     fun refreshMuteState()
+
+    fun getMessageById(messageId: String): Message?
 }

@@ -32,7 +32,7 @@ import java.util.Date
 /**
  * Listener for requests of message deletion and for message deletion results.
  */
-internal class DeleteMessageListenerImpl(
+internal class DeleteMessageListenerDatabase(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
@@ -44,14 +44,14 @@ internal class DeleteMessageListenerImpl(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        return messageRepository.selectMessage(messageId)?.let { message ->
 
+        return messageRepository.selectMessage(messageId)?.let { message ->
             val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             val (channelType, channelId) = message.cid.cidToTypeAndId()
-            val channelLogic = logic.channel(channelType, channelId)
+            val channelLogic = logic.channel(channelType, channelId).stateLogic()
 
             if (isModerationFailed) {
                 channelLogic.deleteMessage(message)
@@ -76,15 +76,12 @@ internal class DeleteMessageListenerImpl(
         messageRepository.selectMessage(messageId)?.let { message ->
             val isOnline = clientState.isOnline
 
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            val channelLogic = logic.channel(channelType, channelId)
-
-            val messagesToBeDeleted = message.copy(
+            val messageToBeDeleted = message.copy(
                 deletedAt = Date(),
                 syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-            ).let(::listOf)
+            )
 
-            channelLogic.updateAndSaveMessages(messagesToBeDeleted)
+            removeMessage(messageToBeDeleted)
         }
     }
 
@@ -99,9 +96,7 @@ internal class DeleteMessageListenerImpl(
             val deletedMessage = result.data()
             deletedMessage.syncStatus = SyncStatus.COMPLETED
 
-            val (channelType, channelId) = deletedMessage.cid.cidToTypeAndId()
-            logic.channel(channelType, channelId)
-                .updateAndSaveMessages(deletedMessage.let(::listOf))
+            removeMessage(deletedMessage)
         } else {
             messageRepository.selectMessage(originalMessageId)?.let { originalMessage ->
                 val failureMessage = originalMessage.copy(
@@ -109,10 +104,15 @@ internal class DeleteMessageListenerImpl(
                     updatedLocallyAt = Date(),
                 )
 
-                val (channelType, channelId) = failureMessage.cid.cidToTypeAndId()
-                logic.channel(channelType, channelId)
-                    .updateAndSaveMessages(failureMessage.let(::listOf))
+                removeMessage(failureMessage)
             }
         }
+    }
+
+    private fun removeMessage(message: Message) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        logic.channel(channelType, channelId)
+            .stateLogic()
+            .upsertMessages(message.let(::listOf))
     }
 }
