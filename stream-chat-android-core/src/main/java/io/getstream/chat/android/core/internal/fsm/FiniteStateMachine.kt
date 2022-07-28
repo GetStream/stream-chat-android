@@ -76,7 +76,7 @@ public class FiniteStateMachine<S : Any, E : Any>(
                 val oldState = _state.value
                 val functions = stateFunctions[oldState::class]
                 val handler = functions?.getHandler(event) ?: defaultEventHandler
-                _state.emit(handler(oldState, event))
+                _state.value = handler(oldState, event)
                 _state.value != oldState
             }
             if (shouldNotify) {

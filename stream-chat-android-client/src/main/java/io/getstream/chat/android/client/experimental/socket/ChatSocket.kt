@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 @Suppress("TooManyFunctions", "LongParameterList")
-internal open class ChatSocket constructor(
+internal class ChatSocket private constructor(
     private val apiKey: String,
     private val wssUrl: String,
     private val tokenManager: TokenManager,
@@ -76,18 +76,7 @@ internal open class ChatSocket constructor(
     )
 
     private var reconnectionAttempts = 0
-
     private var connectionEventReceived = false
-
-    init {
-        (lifecycleObservers + connectLifecyclePublisher).combine()
-            .onEach {
-                logger.d { "Received lifecycle event: $it and current state is: $state" }
-                stateMachine.sendEvent(it)
-            }
-            .launchIn(coroutineScope)
-        coroutineScope.launch { startObservers() }
-    }
 
     private val stateMachine: FiniteStateMachine<State, Event> by lazy {
         FiniteStateMachine {
@@ -195,6 +184,16 @@ internal open class ChatSocket constructor(
     private val state
         get() = stateMachine.state
 
+    private fun initialize() {
+        (lifecycleObservers + connectLifecyclePublisher).combine()
+            .onEach {
+                logger.d { "Received lifecycle event: $it and current state is: $state" }
+                stateMachine.sendEvent(it)
+            }
+            .launchIn(coroutineScope)
+        coroutineScope.launch { startObservers() }
+    }
+
     fun connectUser(user: User, isAnonymous: Boolean) {
         val connectionConf = if (isAnonymous) {
             SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
@@ -237,7 +236,7 @@ internal open class ChatSocket constructor(
         }
     }
 
-    open fun onSocketError(error: ChatError) {
+    fun onSocketError(error: ChatError) {
         logger.e { error.stringify() }
         callListeners { it.onError(error) }
         (error as? ChatNetworkError)?.let(::onChatNetworkError)
@@ -389,8 +388,21 @@ internal open class ChatSocket constructor(
         }
     }
 
-    private companion object {
+    companion object {
         private const val RETRY_LIMIT = 3
         private const val DEFAULT_DELAY = 500
+
+        fun create(
+            apiKey: String,
+            wssUrl: String,
+            tokenManager: TokenManager,
+            socketFactory: SocketFactory,
+            coroutineScope: CoroutineScope,
+            parser: ChatParser,
+            lifecycleObservers: List<LifecyclePublisher>,
+        ): ChatSocket =
+            ChatSocket(apiKey, wssUrl, tokenManager, socketFactory, coroutineScope, parser, lifecycleObservers).apply {
+                this.initialize()
+            }
     }
 }
