@@ -168,6 +168,7 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                         // User who stopped watching the channel
                         val user = event.user
                     }
+                    else -> Unit
                 }
             }
         }
