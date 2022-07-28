@@ -49,22 +49,22 @@ internal class DeleteMessageListenerState(
      *
      * @param messageId
      */
-    override suspend fun onMessageDeleteRequest(messageId: String) {
-        val (channelType, channelId) = messageId.cidToTypeAndId()
-        val stateLogic = logic.channel(channelType, channelId).stateLogic()
+    override suspend fun onMessageDeleteRequest(messageCid: String) {
+        val (channelType, channelId) = messageCid.cidToTypeAndId()
+        val channelLogic = logic.channel(channelType, channelId)
 
-        stateLogic.getMessageById(messageId)?.let { message ->
+        channelLogic.getMessage(messageCid)?.let { message ->
             val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             if (isModerationFailed) {
-                stateLogic.deleteMessage(message)
+                channelLogic.stateLogic().deleteMessage(message)
             } else {
-                val isOnline = clientState.isOnline
+                val networkAvailable = clientState.isNetworkAvailable
                 val messageToBeDeleted = message.copy(
                     deletedAt = Date(),
-                    syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+                    syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
                 )
 
                 updateMessage(messageToBeDeleted)
@@ -86,8 +86,7 @@ internal class DeleteMessageListenerState(
         } else {
             val (channelType, channelId) = originalMessageId.cidToTypeAndId()
             logic.channel(channelType, channelId)
-                .stateLogic()
-                .getMessageById(originalMessageId)
+                .getMessage(originalMessageId)
                 ?.let { originalMessage ->
                     val failureMessage = originalMessage.copy(
                         syncStatus = SyncStatus.SYNC_NEEDED,
@@ -103,6 +102,6 @@ internal class DeleteMessageListenerState(
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         logic.channel(channelType, channelId)
             .stateLogic()
-            .upsertMessages(message.let(::listOf))
+            .upsertMessage(message)
     }
 }

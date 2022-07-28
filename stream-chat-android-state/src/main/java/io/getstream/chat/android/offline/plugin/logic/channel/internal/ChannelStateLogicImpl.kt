@@ -554,8 +554,6 @@ internal class ChannelStateLogicImpl(
         }
     }
 
-    override fun getMessageById(messageId: String): Message? = writeChannelState().rawMessages[messageId]
-
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
         private const val TAG = "ChannelStateLogicImpl"
