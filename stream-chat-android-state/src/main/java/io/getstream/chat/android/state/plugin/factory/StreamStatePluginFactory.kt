@@ -229,7 +229,7 @@ public class StreamStatePluginFactory(
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repositoryFacade),
             sendReactionListener = SendReactionListenerImpl(logic, clientState, repositoryFacade),
-            deleteMessageListener = DeleteMessageListenerState(logic, clientState, repositoryFacade),
+            deleteMessageListener = DeleteMessageListenerState(logic, clientState),
             sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerImpl(logic),

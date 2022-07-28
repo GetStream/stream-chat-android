@@ -23,11 +23,14 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -100,9 +103,15 @@ public class StreamOfflinePluginFactory(
 
         val chatClient = ChatClient.instance()
 
-        val createChannelListener = CreateChannelListenerImpl(
+        val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = chatClient.clientState,
             channelRepository = chatClient.repositoryFacade,
+            userRepository = chatClient.repositoryFacade
+        )
+
+        val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(
+            clientState = chatClient.clientState,
+            messageRepository = chatClient.repositoryFacade,
             userRepository = chatClient.repositoryFacade
         )
 
@@ -116,7 +125,7 @@ public class StreamOfflinePluginFactory(
             markAllReadListener = statePlugin,
             deleteReactionListener = statePlugin,
             sendReactionListener = statePlugin,
-            deleteMessageListener = statePlugin,
+            deleteMessageListener = deleteMessageListener,
             sendMessageListener = statePlugin,
             sendGiphyListener = statePlugin,
             shuffleGiphyListener = statePlugin,
