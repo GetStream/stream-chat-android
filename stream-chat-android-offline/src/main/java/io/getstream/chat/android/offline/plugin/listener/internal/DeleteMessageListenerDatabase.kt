@@ -70,8 +70,14 @@ internal class DeleteMessageListenerDatabase(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            userRepository.insertUsers(message.users())
-            messageRepository.insertMessage(message, true)
+            val networkAvailable = clientState.isNetworkAvailable
+            val messageToBeDeleted = message.copy(
+                deletedAt = Date(),
+                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+            )
+
+            userRepository.insertUsers(messageToBeDeleted.users())
+            messageRepository.insertMessage(messageToBeDeleted, true)
         }
     }
 
