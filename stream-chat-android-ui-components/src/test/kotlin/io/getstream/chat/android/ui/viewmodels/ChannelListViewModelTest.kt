@@ -192,7 +192,6 @@ internal class ChannelListViewModelTest {
                     loading = false
                 )
                 .givenChannelMutes()
-                .givenIsOffline(false)
                 .get()
 
             val mockObserver: Observer<ChannelListViewModel.State> = mock()
@@ -221,7 +220,6 @@ internal class ChannelListViewModelTest {
                     loading = false
                 )
                 .givenChannelMutes()
-                .givenIsOffline(true)
                 .get()
 
             val mockObserver: Observer<ChannelListViewModel.State> = mock()
@@ -265,10 +263,6 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
             whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
-        }
-
-        fun givenIsOffline(isOffline: Boolean = false) = apply {
-            whenever(globalState.isOffline()) doReturn isOffline
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
