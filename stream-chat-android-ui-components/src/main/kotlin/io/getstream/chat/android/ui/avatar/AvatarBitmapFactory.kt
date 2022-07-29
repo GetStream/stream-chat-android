@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
 import io.getstream.chat.android.ui.avatar.internal.AvatarBitmapCombiner
 import io.getstream.chat.android.ui.common.extensions.internal.getIntArray
-import io.getstream.chat.android.ui.common.internal.adjustColorLBrightness
+import io.getstream.chat.android.uiutils.util.adjustColorBrightness
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
@@ -342,8 +342,8 @@ public open class AvatarBitmapFactory(private val context: Context) {
             0f,
             0f,
             avatarSize.toFloat(),
-            adjustColorLBrightness(baseColor, GRADIENT_DARKER_COLOR_FACTOR),
-            adjustColorLBrightness(baseColor, GRADIENT_LIGHTER_COLOR_FACTOR),
+            adjustColorBrightness(baseColor, GRADIENT_DARKER_COLOR_FACTOR),
+            adjustColorBrightness(baseColor, GRADIENT_LIGHTER_COLOR_FACTOR),
             Shader.TileMode.CLAMP
         )
     }

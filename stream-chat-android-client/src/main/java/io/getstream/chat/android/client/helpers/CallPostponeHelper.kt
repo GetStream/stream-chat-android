@@ -48,6 +48,22 @@ internal class CallPostponeHelper(
 ) {
 
     /**
+     * Postpones or immediately executes the call based on [shouldPostpone] parameter.
+     *
+     * @param shouldPostpone Whether the call should be postponed
+     * @param call A call to be run when the socket connection is established.
+     *
+     * @return Executable async [Call] responsible for querying channels
+     */
+    internal fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
+        return if (shouldPostpone) {
+            postponeCall(call)
+        } else {
+            call()
+        }
+    }
+
+    /**
      * Postpones call.
      *
      * @param call A call to be run when the socket connection is established.

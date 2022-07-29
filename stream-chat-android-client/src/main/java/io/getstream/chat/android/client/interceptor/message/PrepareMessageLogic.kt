@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.util.extensions.internal
+package io.getstream.chat.android.client.interceptor.message
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 
-/**
- * @return if the current reaction is owned by current user or not.
- */
-internal fun UserReactionItemState.isMine(): Boolean {
-    return user.id == ChatClient.instance().getCurrentUser()?.id
+public interface PrepareMessageLogic {
+
+    public fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message
 }

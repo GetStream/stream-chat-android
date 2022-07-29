@@ -65,7 +65,7 @@ import androidx.compose.ui.unit.dp
  * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
  * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
  * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
- * @param groupAvatarInitialsXOffset The y offset of the user initials inside avatar when there are more than two users.
+ * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
  */
 @Immutable
 public data class StreamDimens(

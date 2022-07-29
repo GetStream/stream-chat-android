@@ -175,6 +175,14 @@ public final class io/getstream/chat/android/compose/state/imagepreview/ImagePre
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
+public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
 public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType : java/lang/Enum {
 	public static final field QUOTE Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
 	public static final field SHOW_IN_CHAT Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
@@ -1162,7 +1170,7 @@ public final class io/getstream/chat/android/compose/ui/components/reactionoptio
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ExtendedReactionsOptionsKt {
-	public static final fun ExtendedReactionsOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/GridCells;Ljava/util/Map;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ExtendedReactionsOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/grid/GridCells;Ljava/util/Map;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ReactionOptionItemKt {
@@ -1183,7 +1191,7 @@ public final class io/getstream/chat/android/compose/ui/components/reactionpicke
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionpicker/ReactionsPickerKt {
-	public static final fun ReactionsPicker-Hzv_svQ (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/foundation/lazy/GridCells;Lkotlin/jvm/functions/Function0;Ljava/util/Map;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ReactionsPicker-Hzv_svQ (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/foundation/lazy/grid/GridCells;Lkotlin/jvm/functions/Function0;Ljava/util/Map;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/ComposableSingletons$SelectedMessageMenuKt {

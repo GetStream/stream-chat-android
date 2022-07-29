@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.interceptor.internal
+package io.getstream.chat.android.uiutils.extension
 
-import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 
 /**
- * Implementation of [Interceptor] that brings support for intercepting API requests. This class work as a delegator of calls for one
- * of its dependencies, so avoid to add logic here.
- *
- * @param sendMessageInterceptor [SendMessageInterceptor]
+ * Forwards user to the application settings screen.
  */
-internal class DefaultInterceptor(sendMessageInterceptor: SendMessageInterceptor) :
-    Interceptor,
-    SendMessageInterceptor by sendMessageInterceptor
+public fun Context.openSystemSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    startActivity(intent)
+}

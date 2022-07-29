@@ -43,7 +43,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -55,10 +59,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
@@ -71,6 +75,7 @@ import io.getstream.chat.android.compose.ui.components.attachments.images.Images
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.uiutils.extension.openSystemSettings
 import java.io.File
 
 /**
@@ -93,8 +98,11 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
     val context = LocalContext.current
+    var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
     val storagePermissionState =
-        rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
+        rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE) {
+            storagePermissionRequested = true
+        }
     val requiresCameraPermission = isCameraPermissionDeclared(context)
 
     val cameraPermissionState =
@@ -139,7 +147,7 @@ public fun AttachmentsPicker(
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
                         attachmentsPickerViewModel.changeAttachmentPickerMode(it) {
-                            storagePermissionState.hasPermission
+                            storagePermissionState.status.isGranted
                         }
                     },
                     onSendAttachmentsClick = {
@@ -159,7 +167,7 @@ public fun AttachmentsPicker(
                         MediaCapture -> cameraPermissionState
                     }
 
-                    val hasPermission = permissionState?.hasPermission ?: true
+                    val hasPermission = permissionState?.status?.isGranted ?: true
 
                     val content = @Composable {
                         when (pickerMode) {
@@ -202,22 +210,20 @@ public fun AttachmentsPicker(
                     if (pickerMode == MediaCapture && permissionState == null) {
                         content()
                     } else if (permissionState != null) {
-                        PermissionRequired(
-                            permissionState = permissionState,
-                            permissionNotGrantedContent = { MissingPermissionContent(permissionState) },
-                            permissionNotAvailableContent = { MissingPermissionContent(permissionState) },
-                            content = content
-                        )
+                        when (permissionState.status) {
+                            PermissionStatus.Granted -> content()
+                            is PermissionStatus.Denied -> MissingPermissionContent(permissionState)
+                        }
                     }
 
-                    LaunchedEffect(storagePermissionState.hasPermission) {
-                        if (storagePermissionState.hasPermission) {
+                    LaunchedEffect(storagePermissionState.status.isGranted) {
+                        if (storagePermissionState.status.isGranted) {
                             attachmentsPickerViewModel.loadData()
                         }
                     }
 
                     LaunchedEffect(pickerMode) {
-                        if (!hasPermission && !storagePermissionState.permissionRequested) {
+                        if (!hasPermission && !storagePermissionRequested) {
                             storagePermissionState.launchPermissionRequest()
                         }
                     }

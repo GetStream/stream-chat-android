@@ -20,22 +20,11 @@ import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.Px
-import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 internal fun TextView.setTextSizePx(@Px size: Float) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
-}
-
-/**
- * Sets the start drawable of a [TextView].
- *
- * @param id Res of drawable.
- */
-internal fun TextView.setStartDrawable(@DrawableRes id: Int) {
-    setStartDrawable(ContextCompat.getDrawable(context, id))
 }
 
 /**

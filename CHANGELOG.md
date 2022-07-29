@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated compile & target SDK to **32**. [#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
+- Updated Kotlin version to **1.7.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 
@@ -23,6 +25,12 @@
 - Added `ClientState::isNetworkAvailable` which gives you information about device's internet connection status.[#3880](https://github.com/GetStream/stream-chat-android/pull/3880)
 
 ### ⚠️ Changed
+- Queries that require active socket connection will be postponed until connection is established: [#3952](https://github.com/GetStream/stream-chat-android/pull/3952)
+  - `ChatClient::queryChannel` and `ChatClient::createChannel` will be postponed if [QueryChannelRequest.watch] or [QueryChannelRequest.presence] is enabled.
+  - `ChatClient::queryChannels` will be postponed if [QueryChannelsRequest.watch] or [QueryChannelsRequest.presence] is enabled.
+  - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
+  - `ChatClient::stopWatching` always requires active socket connection.
+
 
 ### ❌ Removed
 
@@ -52,6 +60,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
+- Fixed list state race condition while switching filters in channel list. [#3939](https://github.com/GetStream/stream-chat-android/pull/3939/files)
 
 ### ⬆️ Improved
 
@@ -75,6 +84,7 @@
 
 ### ⚠️ Changed
 - Deprecated `RowScope.DefaultComposerInputContent` to be marked internal. Use `MessageInput` directly instead. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Updated Compose compiler and UI version to **1.2.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 
