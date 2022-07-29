@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
@@ -43,7 +45,22 @@ internal class DeleteMessageListenerDatabase(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        return Result.success(Unit)
+        return messageRepository.selectMessage(messageId)?.let { message ->
+            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
+                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+
+            if (isModerationFailed) {
+                messageRepository.deleteChannelMessage(message)
+                Result.error(
+                    MessageModerationDeletedException(
+                        "Message with failed moderation has been deleted locally: $messageId"
+                    )
+                )
+            } else {
+                Result.success(Unit)
+            }
+        } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
     }
 
     /**
@@ -53,16 +70,8 @@ internal class DeleteMessageListenerDatabase(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
-                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
-
-            if (isModerationFailed) {
-                messageRepository.deleteChannelMessage(message)
-            } else {
-                userRepository.insertUsers(message.users())
-                messageRepository.insertMessage(message, true)
-            }
+            userRepository.insertUsers(message.users())
+            messageRepository.insertMessage(message, true)
         }
     }
 
