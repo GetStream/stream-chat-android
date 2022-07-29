@@ -563,7 +563,7 @@ public class MessageListViewModel(
                 ).enqueue(
                     onError = { chatError ->
                         val errorMessage = chatError.message ?: chatError.cause?.message
-                            ?: "Unable to shadow ban the user"
+                        ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
@@ -1062,7 +1062,7 @@ public class MessageListViewModel(
          * @param cid The full channel id, i.e. "messaging:123".
          */
         @Deprecated(
-            "Deprecated in order to bring make the action more explicit." +
+            "Deprecated in order to make the action more explicit." +
                 "Use `MessageListViewModel.ShadowBanUser` if you want to keep the same functionality " +
                 "(shadow banning) or `MessageListViewModel.BanUser` if you want to ban a user.",
             replaceWith = ReplaceWith(
