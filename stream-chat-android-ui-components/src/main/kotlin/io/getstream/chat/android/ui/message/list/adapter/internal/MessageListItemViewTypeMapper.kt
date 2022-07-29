@@ -18,10 +18,7 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.isError
 import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
@@ -42,6 +39,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.uiutils.extension.isUploading
 
 internal object MessageListItemViewTypeMapper {
 
@@ -97,15 +96,6 @@ internal object MessageListItemViewTypeMapper {
             attachments.any { it.isImage() } &&
             attachments.all { it.isImage() || it.hasLink() } &&
             attachments.none { it.isUploading() }
-    }
-
-    /**
-     * @return If the attachment is currently being uploaded to the server.
-     */
-    private fun Attachment.isUploading(): Boolean {
-        return (uploadState is Attachment.UploadState.InProgress || uploadState is Attachment.UploadState.Idle) &&
-            upload != null &&
-            uploadId != null
     }
 
     /**

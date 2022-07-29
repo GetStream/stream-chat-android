@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils.extensions
+package io.getstream.chat.android.uiutils.constant
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
-
-private const val ONE_MINUTE_IN_MILISECONDS = 60000
-
-@InternalStreamChatApi
-public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILISECONDS < time)
+/**
+ * Represents types of attachments.
+ */
+public object AttachmentType {
+    public const val IMAGE: String = "image"
+    public const val IMGUR: String = "imgur"
+    public const val GIPHY: String = "giphy"
+    public const val VIDEO: String = "video"
+    public const val AUDIO: String = "audio"
+    public const val PRODUCT: String = "product"
+    public const val FILE: String = "file"
+    public const val LINK: String = "link"
+    public const val UNKNOWN: String = "unknown"
+}

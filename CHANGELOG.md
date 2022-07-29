@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated compile & target SDK to **32**. [#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
+- Updated Kotlin version to **1.7.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 
@@ -59,11 +61,13 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed the display of disconnected state in channel list and message list headers. [#3943](https://github.com/GetStream/stream-chat-android/pull/3943)
+- Fixed list state race condition while switching filters in channel list. [#3939](https://github.com/GetStream/stream-chat-android/pull/3939/files)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added `android:inputType` customization option to `MessageComposerView` and `MessageInputView`. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Added `streamUiOptionsOverlayEditReactionsMargin`, `streamUiOptionsOverlayUserReactionsMargin` and `streamUiOptionsOverlayMessageOptionsMargin` attributes to `MessageInputView` to customize the spacing between the elements on the message options overlay. [#3950](https://github.com/GetStream/stream-chat-android/pull/3950)
 - Added `MessageListViewModel.Event.BanUser`. This event is used to ban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 - Added `MessageListViewModel.Event.UnbanUser`. This event is used to unban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 - Added `MessageListViewModel.Event.ShadowBanUser`. This event is used to shadow ban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
@@ -102,6 +106,7 @@
 
 ### ⚠️ Changed
 - Deprecated `RowScope.DefaultComposerInputContent` to be marked internal. Use `MessageInput` directly instead. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Updated Compose compiler and UI version to **1.2.0**.[#3965](https://github.com/GetStream/stream-chat-android/pull/3965)
 
 ### ❌ Removed
 

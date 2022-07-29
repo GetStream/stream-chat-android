@@ -29,8 +29,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
-import io.getstream.chat.android.compose.ui.util.isFile
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.

@@ -26,7 +26,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,13 +55,12 @@ internal fun MessagesScrollingOption(
             .wrapContentSize()
     ) {
         Surface(
+            onClick = onClick,
             modifier = Modifier
                 .padding(top = 12.dp)
                 .size(48.dp),
             shape = CircleShape,
             elevation = 4.dp,
-            indication = rememberRipple(),
-            onClick = onClick,
             color = ChatTheme.colors.barsBackground
         ) {
             Icon(

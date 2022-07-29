@@ -124,7 +124,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewCli
 import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHandler
-import io.getstream.chat.android.ui.message.list.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserReactionClickListener
@@ -234,9 +233,6 @@ public class MessageListView : ConstraintLayout {
     }
     private var userUnmuteHandler = UserUnmuteHandler {
         throw IllegalStateException("onUnmuteUserHandler must be set.")
-    }
-    private var userBlockHandler = UserBlockHandler { _, _ ->
-        throw IllegalStateException("onBlockUserHandler must be set.")
     }
     private var customActionHandler = CustomActionHandler { _, _ ->
         throw IllegalStateException("onCustomActionHandler must be set.")
@@ -1469,21 +1465,6 @@ public class MessageListView : ConstraintLayout {
     )
     public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
         this.userUnmuteHandler = userUnmuteHandler
-    }
-
-    /**
-     * Sets the handler used when the user is going to be blocked in the channel.
-     *
-     * @param userBlockHandler The handler to use.
-     */
-    @Deprecated(
-        message = "The block action has been removed. Use MessageOptionItemsFactory.setMessageOptionItemsFactory() " +
-            "in conjunction with MessageOptionItemsFactory.setCustomActionHandler() to add support for custom block " +
-            "action.",
-        level = DeprecationLevel.ERROR
-    )
-    public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
-        this.userBlockHandler = userBlockHandler
     }
 
     /**

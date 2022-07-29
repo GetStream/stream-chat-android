@@ -47,9 +47,9 @@ import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isGiphy
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Displays all available [MessageOptionItem]s.

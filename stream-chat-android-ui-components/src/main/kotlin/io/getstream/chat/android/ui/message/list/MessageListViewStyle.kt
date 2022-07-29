@@ -84,6 +84,9 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
  * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
+ * @property optionsOverlayEditReactionsMargin Defines the margin between the selected message and the edit reactions bubble on the options overlay.
+ * @property optionsOverlayUserReactionsMargin Defines the margin between the selected message and the user reaction list on the options overlay.
+ * @property optionsOverlayMessageOptionsMargin Defines the margin between the selected message and the message option list on the options overlay.
  */
 public data class MessageListViewStyle
 @Deprecated(
@@ -137,6 +140,9 @@ constructor(
     public val scrollButtonBottomMargin: Int,
     public val scrollButtonEndMargin: Int,
     public val disableScrollWhenShowingDialog: Boolean,
+    public val optionsOverlayEditReactionsMargin: Int,
+    public val optionsOverlayUserReactionsMargin: Int,
+    public val optionsOverlayMessageOptionsMargin: Int,
 ) {
 
     /**
@@ -279,6 +285,9 @@ constructor(
         private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
+        private val DEFAULT_EDIT_REACTIONS_MARGIN = 0.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN = 8.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN = 24.dpToPx()
 
         private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
             return TextStyle.Builder(typedArray)
@@ -582,6 +591,24 @@ constructor(
                     true
                 )
 
+                val optionsOverlayEditReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMargin,
+                        DEFAULT_EDIT_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayUserReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMargin,
+                        DEFAULT_USER_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayMessageOptionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMargin,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN
+                    )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -628,6 +655,9 @@ constructor(
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
                     disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
+                    optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
+                    optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
+                    optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
