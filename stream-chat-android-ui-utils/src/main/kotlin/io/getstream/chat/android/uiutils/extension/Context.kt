@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.util.extensions.internal
+package io.getstream.chat.android.uiutils.extension
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 
 /**
- * @return if the current reaction is owned by current user or not.
+ * Forwards user to the application settings screen.
  */
-internal fun UserReactionItemState.isMine(): Boolean {
-    return user.id == ChatClient.instance().getCurrentUser()?.id
+public fun Context.openSystemSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    startActivity(intent)
 }

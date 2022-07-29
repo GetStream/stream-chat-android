@@ -67,7 +67,13 @@ public class MessageListHeaderViewModel(
      */
     public val channel: LiveData<Channel> =
         channelState.flatMapLatest { state ->
-            state.channelData.combine(state.members) { _, _ -> state.toChannel() }
+            combine(
+                state.channelData,
+                state.members,
+                state.watcherCount
+            ) { _, _, _ ->
+                state.toChannel()
+            }
         }.asLiveData()
 
     /**
