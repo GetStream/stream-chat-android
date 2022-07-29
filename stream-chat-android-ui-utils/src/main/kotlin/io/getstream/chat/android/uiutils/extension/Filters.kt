@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.util.extensions.internal
+package io.getstream.chat.android.uiutils.extension
+
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.User
 
 /**
- * Small extension function designed to add a
- * scheme to URLs that do not have one so that
- * they can be opened using [android.content.Intent.ACTION_VIEW]
+ * Create the default channel list filter for the given user.
+ *
+ * @param user The currently logged in user.
+ * @return The default filter for the channel list view.
  */
-internal fun String.addSchemeToUrlIfNeeded(): String = when {
-    this.startsWith("http://") -> this
-    this.startsWith("https://") -> this
-    else -> "http://$this"
+public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
+    return if (user == null) {
+        null
+    } else {
+        and(
+            eq("type", "messaging"),
+            `in`("members", listOf(user.id)),
+        )
+    }
 }

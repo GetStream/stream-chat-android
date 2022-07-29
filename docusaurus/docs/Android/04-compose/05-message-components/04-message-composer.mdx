@@ -108,25 +108,13 @@ To customize these actions, simply pass in a lambda function for each when build
 Typing updates should be sent sparingly as a way of saving valuable API calls. Luckily, we offer such behavior out of the box.
 `MessageComposerViewModel` contains `MessageComposerController`, which in turn uses [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer.kt) in order to intelligently make start and stop typing API calls.
 
-Should you wish to customize the behavior, you can set your own `DefaultTypingUpdatesBuffer` like so:
+If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer.kt) interface instead:
 
 ```kotlin
 composerViewModel.setTypingUpdatesBuffer(
-    DefaultTypingUpdatesBuffer(
-        onTypingStarted = {
-            // Make a keystroke API call
-            // Implement your custom action
-        },
-        onTypingStopped = {
-            // Make a typing stopped API call
-            // Implement your custom action
-        }
-    )
+    // Your custom implementation of TypingUpdatesBuffer
 )
 ```
-
-If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer.kt) interface instead.
-
 
 ## Customization
 

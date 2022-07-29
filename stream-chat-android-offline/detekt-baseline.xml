@@ -13,26 +13,17 @@
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>
     <ID>LongMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
     <ID>LongParameterList:OfflinePlugin.kt$OfflinePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, internal val activeUser: User, )</ID>
-    <ID>MaxLineLength:ChannelDao.kt$ChannelDao$@Query("UPDATE stream_chat_channel_state SET hidden = :hidden, hideMessagesBefore = :hideMessagesBefore WHERE cid = :cid")</ID>
     <ID>MaxLineLength:ChannelEntity.kt$ChannelEntity$*</ID>
     <ID>MaxLineLength:Config.kt$Config$*</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt; :dateFilter || createdLocallyAt &lt; :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt &lt;= :dateFilter || createdLocallyAt &lt;= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$@Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")</ID>
-    <ID>MaxLineLength:MessageDao.kt$MessageDao$protected</ID>
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
-    <ID>MaxLineLength:ReactionDao.kt$ReactionDao$@Query("SELECT * FROM stream_chat_reaction WHERE stream_chat_reaction.type = :reactionType AND stream_chat_reaction.messageid = :messageId AND userId = :userId")</ID>
     <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
-    <ID>UnnecessaryAbstractClass:QueryChannelsDao.kt$QueryChannelsDao</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>
   </CurrentIssues>
 </SmellBaseline>

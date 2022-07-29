@@ -62,6 +62,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
                         val unreadChannels = event.unreadChannels
                         val totalUnreadCount = event.totalUnreadCount
                     }
+                    else -> Unit
                 }
             }
         }

@@ -143,30 +143,32 @@ internal class QueryChannelsLogic(
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        val existingChannels = mutableState._channels.value ?: emptyMap()
-        mutableState._channels.value = existingChannels + channels.map { it.cid to it }
+        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
         channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request, repos, globalState)
+
+        val loading = loadingForCurrentRequest()
+        loading.value = false
+
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
         } else {
             initializeChannelsIfNeeded()
         }
-        val loading = loadingForCurrentRequest()
-        loading.value = false
     }
 
     /**
-     * Initializes [QueryChannelsMutableState._channels] with an empty map if it wasn't initialized yet.
+     * Initializes [QueryChannelsMutableState.rawChannels] with an empty map if it wasn't initialized yet.
      * This might happen when we don't have any channels in the offline storage and API request fails.
      */
     private fun initializeChannelsIfNeeded() {
-        if (mutableState._channels.value == null) {
-            mutableState._channels.value = emptyMap()
+        if (mutableState.rawChannels == null) {
+            mutableState.rawChannels = emptyMap()
         }
     }
 
@@ -265,7 +267,7 @@ internal class QueryChannelsLogic(
         request: QueryChannelsRequest,
         channels: List<Channel>,
     ) {
-        val existingChannels = mutableState._channels.value
+        val existingChannels = mutableState.rawChannels
         val currentChannelsOffset = mutableState.channelsOffset.value
         logger.d {
             "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
@@ -331,7 +333,7 @@ internal class QueryChannelsLogic(
         removeChannels(listOf(cid), repos)
 
     private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
-        val existingChannels = mutableState._channels.value
+        val existingChannels = mutableState.rawChannels
         if (existingChannels.isNullOrEmpty()) {
             logger.w { "[removeChannels] skipping remove channels as they are not loaded yet." }
             return
@@ -341,7 +343,7 @@ internal class QueryChannelsLogic(
 
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        mutableState._channels.value = existingChannels - cidSet
+        mutableState.rawChannels = existingChannels - cidSet
     }
 
     /**
@@ -401,12 +403,12 @@ internal class QueryChannelsLogic(
      * @param cidList The channels to refresh.
      */
     private fun refreshChannels(cidList: Collection<String>) {
-        val existingChannels = mutableState._channels.value
+        val existingChannels = mutableState.rawChannels
         if (existingChannels == null) {
             logger.w { "[refreshChannels] rejected (existingChannels is null)" }
             return
         }
-        mutableState._channels.value = existingChannels + mutableState.queryChannelsSpec.cids
+        mutableState.rawChannels = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
@@ -450,7 +452,7 @@ internal class QueryChannelsLogic(
      */
     private fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
-        val existingChannels = mutableState._channels.value
+        val existingChannels = mutableState.rawChannels
         if (existingChannels == null) {
             logger.w { "[refreshMembersStateForUser] rejected (existingChannels is null)" }
             return
@@ -465,6 +467,6 @@ internal class QueryChannelsLogic(
                 )
             }
 
-        mutableState._channels.value = existingChannels + affectedChannels
+        mutableState.rawChannels = existingChannels + affectedChannels
     }
 }

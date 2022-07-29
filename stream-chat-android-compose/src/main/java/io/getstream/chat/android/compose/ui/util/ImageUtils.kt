@@ -32,31 +32,11 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.uiutils.util.adjustColorBrightness
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 private const val GradientDarkerColorFactor = 1.3f
 private const val GradientLighterColorFactor = 0.7f
-
-/**
- * Used for gradient color adjustment when the user doesn't have an image.
- *
- * @param color The color to adjust.
- * @param factor The factor by which we adjust the color.
- * @return [Int] ARGB value of the color after adjustment.
- */
-internal fun adjustColorBrightness(color: Int, factor: Float): Int {
-    val a = android.graphics.Color.alpha(color)
-    val r = (android.graphics.Color.red(color) * factor).roundToInt()
-    val g = (android.graphics.Color.green(color) * factor).roundToInt()
-    val b = (android.graphics.Color.blue(color) * factor).roundToInt()
-    return android.graphics.Color.argb(
-        a,
-        r.coerceAtMost(255),
-        g.coerceAtMost(255),
-        b.coerceAtMost(255)
-    )
-}
 
 /**
  * Generates a gradient for an initials avatar based on the user initials.

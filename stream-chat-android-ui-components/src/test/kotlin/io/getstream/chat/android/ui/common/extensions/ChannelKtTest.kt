@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.ui.common.extensions
 
-import com.getstream.sdk.chat.utils.extensions.getDisplayName
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.createMember
 import io.getstream.chat.android.ui.createUser
 import io.getstream.chat.android.ui.randomChannel
+import io.getstream.chat.android.uiutils.extension.getDisplayName
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock

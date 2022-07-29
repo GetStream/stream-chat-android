@@ -54,9 +54,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -77,7 +77,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -559,7 +558,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                                                 parentSize.width
                                             ) || zoom != DefaultZoomScale
                                         ) {
-                                            event.changes.forEach { it.consumePositionChange() }
+                                            event.changes.forEach { it.consume() }
                                         }
                                     } while (event.changes.any { it.pressed })
 
@@ -815,7 +814,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     ImageGalleryHeader()
 
                     LazyVerticalGrid(
-                        cells = GridCells.Fixed(ColumnCount),
+                        columns = GridCells.Fixed(ColumnCount),
                         content = {
                             itemsIndexed(message.attachments) { index, attachment ->
                                 ImageGalleryItem(index, attachment, message.user, pagerState)
