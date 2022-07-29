@@ -88,21 +88,6 @@ internal class ChatSocket private constructor(
             }
 
             state<State.Disconnected> {
-                onEnter {
-                    when (disconnectCause) {
-                        is DisconnectCause.Error -> {
-                            healthMonitor.onDisconnected()
-                        }
-                        else -> {
-                            healthMonitor.stop()
-                        }
-                    }
-                    callListeners { listener -> listener.onDisconnected(this.disconnectCause) }
-                    pendingStartEvent?.also {
-                        stateMachine.sendEvent(it)
-                        pendingStartEvent = null
-                    }
-                }
                 onEvent<Event.Lifecycle.Started> {
                     connectLifecyclePublisher.connectionConf?.let {
                         val webSocket = open(it)
@@ -119,10 +104,6 @@ internal class ChatSocket private constructor(
             }
 
             state<State.Connecting> {
-                onEnter {
-                    healthMonitor.stop()
-                    callListeners { listener -> listener.onConnecting() }
-                }
                 onEvent<Event.WebSocket.OnConnectionOpened<*>> {
                     connectionEventReceived = false
                     this
@@ -139,12 +120,6 @@ internal class ChatSocket private constructor(
             }
 
             state<State.Connected> {
-                onEnter {
-                    if (it is Event.WebSocket.OnConnectedEventReceived) {
-                        healthMonitor.ack()
-                        callListeners { listener -> listener.onConnected(it.connectedEvent) }
-                    }
-                }
                 onEvent<Event.Lifecycle.Started> {
                     // no-op
                     this
@@ -176,7 +151,6 @@ internal class ChatSocket private constructor(
             }
 
             state<State.Destroyed> {
-                onEnter { coroutineScope.launch { disposeObservers() } }
             }
         }
     }
@@ -191,7 +165,36 @@ internal class ChatSocket private constructor(
                 stateMachine.sendEvent(it)
             }
             .launchIn(coroutineScope)
-        coroutineScope.launch { startObservers() }
+        coroutineScope.launch {
+            startObservers()
+            stateMachine.stateFlow.collect {
+                when (it) {
+                    is State.Connected -> {
+                        healthMonitor.ack()
+                        callListeners { listener -> listener.onConnected(it.event) }
+                    }
+                    is State.Connecting -> {
+                        healthMonitor.stop()
+                        callListeners { listener -> listener.onConnecting() }
+                    }
+                    is State.Disconnecting -> { /* no-op */ }
+                    is State.Disconnected -> {
+                        when (it.disconnectCause) {
+                            is DisconnectCause.Error -> healthMonitor.onDisconnected()
+                            else -> healthMonitor.stop()
+                        }
+                        callListeners { listener -> listener.onDisconnected(it.disconnectCause) }
+                        pendingStartEvent?.also {
+                            stateMachine.sendEvent(it)
+                            pendingStartEvent = null
+                        }
+                    }
+                    is State.Destroyed -> {
+                        disposeObservers()
+                    }
+                }
+            }
+        }
     }
 
     fun connectUser(user: User, isAnonymous: Boolean) {
