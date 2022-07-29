@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,9 +25,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -66,7 +65,6 @@ private const val DefaultNumberOfPicturesPerRow = 3
  * @param onImageSelected Handler when the user clicks on any image item.
  * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImagesPicker(
     images: List<AttachmentPickerItemState>,
@@ -81,7 +79,7 @@ public fun ImagesPicker(
 ) {
     LazyVerticalGrid(
         modifier = modifier,
-        cells = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
+        columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
         contentPadding = PaddingValues(1.dp)
     ) {
         items(images) { imageItem -> itemContent(imageItem) }

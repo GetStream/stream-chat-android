@@ -18,9 +18,7 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-@InternalStreamChatApi
 internal fun Channel.isCurrentUserBanned(): Boolean {
     val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
     return members.any { it.user.id == currentUserId && it.banned }

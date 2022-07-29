@@ -258,7 +258,6 @@ internal class DeleteReactionsTests {
         }
 
         fun givenOfflineState(): Fixture = apply {
-            whenever(globalState.isOnline()) doReturn false
             whenever(clientState.isOnline) doReturn false
         }
 

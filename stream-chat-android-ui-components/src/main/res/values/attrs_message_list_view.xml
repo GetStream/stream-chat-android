@@ -344,10 +344,20 @@
         <attr name="streamUiPinOptionIcon" format="reference" />
         <attr name="streamUiUnpinOptionIcon" format="reference" />
         <attr name="streamUiPinMessageEnabled" format="boolean" />
+        <!-- {@deprecated This attribute is deprecated and planned for removal.
+        The option to mute the user will be removed from MessageListView. } -->
         <attr name="streamUiMuteOptionIcon" format="reference" />
+        <!-- {@deprecated This attribute is deprecated and planned for removal.
+        The option to mute the user will be removed from MessageListView. } -->
         <attr name="streamUiUnmuteOptionIcon" format="reference" />
+        <!-- {@deprecated This attribute is deprecated and planned for removal.
+        The option to mute the user will be removed from MessageListView. } -->
         <attr name="streamUiMuteUserEnabled" format="boolean" />
+        <!-- {@deprecated This attribute is deprecated and planned for removal.
+        The option to block the user will be removed from MessageListView. } -->
         <attr name="streamUiBlockOptionIcon" format="reference" />
+        <!-- {@deprecated This attribute is deprecated and planned for removal.
+        The option to block the user will be removed from MessageListView. } -->
         <attr name="streamUiBlockUserEnabled" format="boolean" />
         <attr name="streamUiDeleteOptionIcon" format="reference" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
@@ -500,5 +510,12 @@
 
         <!-- Prevent scroll while a dialog is shown over the message list -->
         <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean" />
+
+        <!-- The margin between the selected message and the edit reactions bubble on the options overlay. -->
+        <attr name="streamUiOptionsOverlayEditReactionsMargin" format="dimension|reference" />
+        <!-- The margin between the selected message and the user reaction list on the options overlay. -->
+        <attr name="streamUiOptionsOverlayUserReactionsMargin" format="dimension|reference" />
+        <!-- The margin between the selected message and the message option list on the options overlay. -->
+        <attr name="streamUiOptionsOverlayMessageOptionsMargin" format="dimension|reference" />
     </declare-styleable>
 </resources>

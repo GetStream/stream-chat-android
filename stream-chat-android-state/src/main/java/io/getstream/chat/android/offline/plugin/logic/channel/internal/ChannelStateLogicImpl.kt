@@ -518,7 +518,7 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableState._rawMessages] with new messages.
+     * Updates [ChannelMutableState.rawMessages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.

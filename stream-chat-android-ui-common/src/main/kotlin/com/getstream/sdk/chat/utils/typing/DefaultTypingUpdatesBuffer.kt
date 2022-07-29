@@ -35,21 +35,23 @@ import kotlinx.coroutines.launch
  *
  * You should call [clear] before an instance of this class is removed.
  *
+ * @param coroutineScope The coroutine scope used for running the timer and sending updates.
  * @param onTypingStarted Signals that a typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.keystroke]
  * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
+@Deprecated(
+    message = "This class has been deprecated and will be removed." +
+        "Should you wish to implement your own buffer, you can create " +
+        "a custom implementation of `TypingUpdatesBuffer`.",
+    level = DeprecationLevel.WARNING
+)
 public class DefaultTypingUpdatesBuffer(
+    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
     private val onTypingStarted: () -> Unit,
     private val onTypingStopped: () -> Unit,
 ) : TypingUpdatesBuffer {
-
-    /**
-     * The coroutine scope used for running the timer and
-     * sending updates.
-     */
-    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
 
     /**
      * Holds the currently running job.

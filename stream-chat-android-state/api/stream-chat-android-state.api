@@ -273,7 +273,6 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/g
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getTypingUpdates ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
 	public abstract fun isInitialized ()Z
@@ -289,14 +288,17 @@ public abstract class io/getstream/chat/android/offline/plugin/state/querychanne
 
 public final class io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$Loading : io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$Loading;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$NoQueryActive : io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$NoQueryActive;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$OfflineNoResults : io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$OfflineNoResults;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData$Result : io/getstream/chat/android/offline/plugin/state/querychannels/ChannelsStateData {
@@ -330,6 +332,9 @@ public class io/getstream/chat/android/offline/utils/Event {
 	public final fun getContentIfNotHandled ()Ljava/lang/Object;
 	public final fun getHasBeenHandled ()Z
 	public final fun peekContent ()Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/utils/internal/ChannelUtilsKt {
 }
 
 public final class io/getstream/chat/android/state/BuildConfig {

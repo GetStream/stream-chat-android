@@ -40,9 +40,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
-import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 internal class ImageAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
