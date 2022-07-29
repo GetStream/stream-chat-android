@@ -123,7 +123,7 @@ internal class ConnectUserTest {
         val result = deferred.await()
 
         result.isSuccess `should be equal to` true
-        clientState.initialized.value `should be equal to` InitializationState.COMPLETE
+        clientState.initializationState.value `should be equal to` InitializationState.COMPLETE
     }
 
     @Test
@@ -133,7 +133,7 @@ internal class ConnectUserTest {
 
         client.connectUser(user, jwt).enqueue()
 
-        clientState.initialized.value `should be equal to` InitializationState.RUNNING
+        clientState.initializationState.value `should be equal to` InitializationState.RUNNING
     }
 
     @Test

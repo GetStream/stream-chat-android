@@ -26,10 +26,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ClientStateImpl(
-    private val networkLifecyclePublisher: NetworkLifecyclePublisher
+    private val networkLifecyclePublisher: NetworkLifecyclePublisher,
 ) : ClientMutableState {
 
-    private val _initialized = MutableStateFlow(InitializationState.NOT_INITIALIZED)
+    private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
+    private val _initialized = MutableStateFlow(false)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val _user = MutableStateFlow<User?>(null)
 
@@ -45,9 +46,16 @@ internal class ClientStateImpl(
         get() = _connectionState.value == ConnectionState.CONNECTING
 
     override val isInitialized: Boolean
-        get() = _initialized.value == InitializationState.COMPLETE
+        get() = _initializationState.value == InitializationState.COMPLETE
 
-    override val initialized: StateFlow<InitializationState> = _initialized
+    @Deprecated(
+        "Use initializationState instead",
+        ReplaceWith("initializationState")
+    )
+    override val initialized: StateFlow<Boolean> = _initialized
+
+    override val initializationState: StateFlow<InitializationState>
+        get() = _initializationState
 
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
@@ -55,7 +63,7 @@ internal class ClientStateImpl(
         get() = networkLifecyclePublisher.isConnected()
 
     override fun clearState() {
-        _initialized.value = InitializationState.NOT_INITIALIZED
+        _initializationState.value = InitializationState.NOT_INITIALIZED
         _connectionState.value = ConnectionState.OFFLINE
         _user.value = null
     }
@@ -69,7 +77,8 @@ internal class ClientStateImpl(
     }
 
     override fun setInitializionState(state: InitializationState) {
-        _initialized.value = state
+        _initializationState.value = state
+        _initialized.value = state == InitializationState.COMPLETE
     }
 }
 

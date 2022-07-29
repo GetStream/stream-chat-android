@@ -35,7 +35,16 @@ public interface ClientState {
     /**
      * The state of the initialization process of the SDK.
      */
-    public val initialized: StateFlow<InitializationState>
+    @Deprecated(
+        "Use ClientState.initializationState instead",
+        ReplaceWith("initializationState")
+    )
+    public val initialized: StateFlow<Boolean>
+
+    /**
+     * The state of the initialization process of the SDK.
+     */
+    public val initializationState: StateFlow<InitializationState>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
