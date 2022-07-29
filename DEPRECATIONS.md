@@ -15,26 +15,6 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageListView::setBlockUserEnabled` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The option to block the user from `MessageListView` has been deprecated and will be removed. |
 | `MessageListView` attributes | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The attributes `streamUiMuteOptionIcon`, `streamUiUnmuteOptionIcon`, `streamUiMuteUserEnabled`, `streamUiBlockOptionIcon` and `streamUiBlockUserEnabled` have been deprecated and will be removed. The options to block and mute users will no longer be contained inside `MessageListView` |
 | `MessageListViewStyle` constructor containing params: `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` and `blockEnabled`  | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
-| `RowScope.DefaultComposerInputContent` | 2022.08.02 <br/>5.6.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
-| `LegacyDateFormatter` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
-| `PorterImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
-| `PorterShapeImageView` | 2022.07.25<br/>5.6.2 | 2022.08.01 ⌛ | 2022.08.08 ⌛ | The class is unused and will be removed. |
-| `ChatClient::disconnect` | 2022.07.19 <br/>5.6.0 | 2022.08.19 ⌛ | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
-| `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
-| `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
-| `ChatLogger::get` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
-| `BaseChatModule::logger` | 2022.07.19<br/>5.6.0 | 2022.08.13 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
-| `GlobalState::setUser` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientMutableState:setUser` instead.|
-| `GlobalState::isInitialized` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
-| `GlobalState::isConnecting` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
-| `GlobalState::isOffline` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOffline` instead.|
-| `GlobalState::isOnline` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:isOnline` instead.|
-| `GlobalState::connectionState` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:connectionState` instead.|
-| `GlobalState::initialized` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState:initialized` instead.|
-| `GlobalState::user` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | Use `ClientState::user` instead.|
-| `GlobalState::errorEvents` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | This method is no longer used.|
-| `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
-| `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
 | `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
 | `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
