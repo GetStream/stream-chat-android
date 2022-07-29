@@ -43,7 +43,7 @@ internal class DeleteMessageListenerState(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        //Todo: Fix this! MessageId is not CID
+        // Todo: Fix this! MessageId is not CID
         val (channelType, channelId) = messageId.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
@@ -71,7 +71,7 @@ internal class DeleteMessageListenerState(
      * @param messageId
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
-        //Todo: Fix this! MessageId is not CID
+        // Todo: Fix this! MessageId is not CID
         val (channelType, channelId) = messageId.cidToTypeAndId()
         val channelLogic = logic.channel(channelType, channelId)
 
@@ -106,7 +106,7 @@ internal class DeleteMessageListenerState(
             deletedMessage.syncStatus = SyncStatus.COMPLETED
             updateMessage(deletedMessage)
         } else {
-            //Todo: Fix this! MessageId is not CID
+            // Todo: Fix this! MessageId is not CID
             val (channelType, channelId) = originalMessageId.cidToTypeAndId()
             logic.channel(channelType, channelId)
                 .getMessage(originalMessageId)
