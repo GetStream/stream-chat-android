@@ -31,7 +31,6 @@
   - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
   - `ChatClient::stopWatching` always requires active socket connection.
 
-
 ### ❌ Removed
 
 ## stream-chat-android-offline
@@ -52,6 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added more file sources to the file provider used when sending file attachments. [3958](https://github.com/GetStream/stream-chat-android/pull/3958)
 
 ### ⚠️ Changed
 - Deprecated `MessageAction.MuteUser`. The option to mute users via a message options has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
