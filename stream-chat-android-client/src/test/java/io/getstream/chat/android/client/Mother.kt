@@ -42,7 +42,7 @@ internal object Mother {
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        }<Attachment>().apply(attachmentBuilder)
+        } <Attachment>().apply(attachmentBuilder)
     }
 
     fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
@@ -50,13 +50,13 @@ internal object Mother {
             sameInstance(Mute::class.java, mock())
             sameInstance(Message::class.java, mock())
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        }<Channel>().apply(channelBuilder)
+        } <Channel>().apply(channelBuilder)
     }
 
     fun randomUser(userBuilder: User.() -> Unit = { }): User {
         return KFixture(fixture) {
             sameInstance(Mute::class.java, mock())
-        }<User>().apply(userBuilder)
+        } <User>().apply(userBuilder)
     }
 
     fun randomString(): String = UUID.randomUUID().toString()
