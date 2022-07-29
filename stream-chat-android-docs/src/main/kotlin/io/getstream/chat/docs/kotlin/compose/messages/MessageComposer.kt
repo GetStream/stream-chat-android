@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -146,18 +145,12 @@ private object HandlingTypingUpdatesSnippet {
         override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
             super.onCreate(savedInstanceState, persistentState)
 
+            // This needs to be commented out or the docs module build will fail
+            /*
             composerViewModel.setTypingUpdatesBuffer(
-                DefaultTypingUpdatesBuffer(
-                    onTypingStarted = {
-                        // Make a keystroke API call
-                        // Implement your custom action
-                    },
-                    onTypingStopped = {
-                        // Make a typing stopped API call
-                        // Implement your custom action
-                    }
-                )
+                // Your custom implementation of TypingUpdatesBuffer
             )
+            */
         }
     }
 }

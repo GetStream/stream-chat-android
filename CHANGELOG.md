@@ -70,6 +70,7 @@
 
 ### ⚠️ Changed
 - Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
+- Deprecated `DefaultTypingUpdatesBuffer`. Should you wish to create your own implementation of a typing buffer, you can create a custom implementation of `TypingUpdatesBuffer`. [#3968](https://github.com/GetStream/stream-chat-android/pull/3968)
 
 ### ❌ Removed
 

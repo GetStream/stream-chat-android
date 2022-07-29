@@ -188,7 +188,8 @@ public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView 
 }
 
 public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
-	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun clear ()V
 	public fun onKeystroke ()V
 }
