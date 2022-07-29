@@ -76,7 +76,7 @@
 
 ### ⚠️ Changed
 - Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
-- Deprecated `MessageListViewModel.BlockUser`. User `MessageListViewModel.ShadowBanUser` if you want to retain the same functionality, or `MessageListViewModel.BanUser` if you want to outright ban the user. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListViewModel.BlockUser`. Use `MessageListViewModel.ShadowBanUser` if you want to retain the same functionality, or `MessageListViewModel.BanUser` if you want to outright ban the user. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 - Deprecated `MessageListView::setUserMuteHandler`. The option to mute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 - Deprecated `MessageListView::setUserUnmuteHandler`. The option to unmute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 - Deprecated `MessageListView::setMuteUserEnabled`. The option to mute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
