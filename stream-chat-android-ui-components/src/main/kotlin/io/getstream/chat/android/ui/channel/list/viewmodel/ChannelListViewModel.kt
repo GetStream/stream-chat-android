@@ -102,11 +102,12 @@ public class ChannelListViewModel(
     public val state: LiveData<State> = stateMerger.distinctUntilChanged()
 
     /**
-     * Updates about currently typing users in active channels. See [TypingEvent].
+     * Updates about currently typing users in active channels.
+     *
+     * @see [GlobalState.typingChannels]
      */
-    public val typingEvents: LiveData<TypingEvent>
-        @Suppress("DEPRECATION_ERROR")
-        get() = globalState.typingUpdates.asLiveData()
+    public val typingEvents: LiveData<Map<String, TypingEvent>>
+        get() = globalState.typingChannels.asLiveData()
 
     /**
      * Represents the current pagination state that is a product
