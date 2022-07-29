@@ -32,7 +32,6 @@
   - `ChatClient::queryUsers` will be postponed if [QueryUsersRequest.presence] is enabled.
   - `ChatClient::stopWatching` always requires active socket connection.
 
-
 ### ❌ Removed
 
 ## stream-chat-android-offline
@@ -53,8 +52,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added more file sources to the file provider used when sending file attachments. [3958](https://github.com/GetStream/stream-chat-android/pull/3958)
 
 ### ⚠️ Changed
+- Deprecated `MessageAction.MuteUser`. The option to mute users via a message options has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 
 ### ❌ Removed
 
@@ -67,9 +68,26 @@
 
 ### ✅ Added
 - Added `android:inputType` customization option to `MessageComposerView` and `MessageInputView`. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Added `streamUiOptionsOverlayEditReactionsMargin`, `streamUiOptionsOverlayUserReactionsMargin` and `streamUiOptionsOverlayMessageOptionsMargin` attributes to `MessageInputView` to customize the spacing between the elements on the message options overlay. [#3950](https://github.com/GetStream/stream-chat-android/pull/3950)
+- Added `MessageListViewModel.Event.BanUser`. This event is used to ban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel.Event.UnbanUser`. This event is used to unban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel.Event.ShadowBanUser`. This event is used to shadow ban a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel.Event.RemoveShadowBanFromUser`. This event is used to remove a shadow ban from a user by using calling `MessageListViewModel.onEvent(Event)` and providing it as an argument. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+
 
 ### ⚠️ Changed
 - Deprecated `LegacyDateFormatter`, `PorterImageView` and `PorterShapeImageView` classes as they are unused. [3923](https://github.com/GetStream/stream-chat-android/pull/3923)
+- Deprecated `DefaultTypingUpdatesBuffer`. Should you wish to create your own implementation of a typing buffer, you can create a custom implementation of `TypingUpdatesBuffer`. [#3968](https://github.com/GetStream/stream-chat-android/pull/3968)
+- Deprecated `MessageListViewModel.BlockUser`. Use `MessageListViewModel.ShadowBanUser` if you want to retain the same functionality, or `MessageListViewModel.BanUser` if you want to outright ban the user. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView::setUserMuteHandler`. The option to mute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView::setUserUnmuteHandler`. The option to unmute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView::setMuteUserEnabled`. The option to mute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView.UserMuteHandler`. The option to mute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView.UserUnmuteHandler`. The option to unmute users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView::setBlockUserEnabled`. The option to block users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated `MessageListView.UserBlockHandler`. The option to block users via message option has been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated the following `MessageListViewAttributes`: `streamUiMuteOptionIcon`, `streamUiUnmuteOptionIcon`, `streamUiMuteUserEnabled`, `streamUiBlockOptionIcon` and `streamUiBlockUserEnabled`. The options to block and mute user using `MessageListView` message options have been deprecated and will be removed. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Deprecated the `MessageListViewStyle` constructor containing params `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` and `blockEnabled`. Use the constructor which does not contain these parameters. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 
 ### ❌ Removed
 
@@ -81,6 +99,12 @@
 
 ### ✅ Added
 - Added `KeyboardOptions` customization option to `MessageInput` composable. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)
+- Added `MessageListViewModel::banUser`. You can use it to ban a user belonging to the current channel. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel::unbanUser`. You can use it to unban a user belonging to the current channel. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel::shadowBanUser`. You can use it to shadow ban a user belonging to the current channel. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel::removeShadowBanFromUser`. You can use it to remove a shadow ban from a user belonging to the current channel. For the difference between banning and shadow banning, you can read the documentation [here](https://getstream.io/blog/feature-announcement-shadow-ban/). [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel::muteUser`. You can use it to mute a user belonging to the current channel. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
+- Added `MessageListViewModel::unmuteUser`. You can use it to mute a user belonging to the current channel. [#3953](https://github.com/GetStream/stream-chat-android/pull/3953)
 
 ### ⚠️ Changed
 - Deprecated `RowScope.DefaultComposerInputContent` to be marked internal. Use `MessageInput` directly instead. [#3942](https://github.com/GetStream/stream-chat-android/pull/3924)

@@ -84,8 +84,17 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
  * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
+ * @property optionsOverlayEditReactionsMargin Defines the margin between the selected message and the edit reactions bubble on the options overlay.
+ * @property optionsOverlayUserReactionsMargin Defines the margin between the selected message and the user reaction list on the options overlay.
+ * @property optionsOverlayMessageOptionsMargin Defines the margin between the selected message and the message option list on the options overlay.
  */
-public data class MessageListViewStyle(
+public data class MessageListViewStyle
+@Deprecated(
+    "Properties `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` " +
+        "and `blockEnabled` have been deprecated and will be removed. " +
+        "Use the constructor without these parameters."
+)
+constructor(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
     public val itemStyle: MessageListItemStyle,
@@ -131,7 +140,150 @@ public data class MessageListViewStyle(
     public val scrollButtonBottomMargin: Int,
     public val scrollButtonEndMargin: Int,
     public val disableScrollWhenShowingDialog: Boolean,
+    public val optionsOverlayEditReactionsMargin: Int,
+    public val optionsOverlayUserReactionsMargin: Int,
+    public val optionsOverlayMessageOptionsMargin: Int,
 ) {
+
+    /**
+     * Style for [MessageListView].
+     * Use this class together with [TransformStyle.messageListStyleTransformer] to change [MessageListView] styles programmatically.
+     *
+     * @property scrollButtonViewStyle Style for [ScrollButtonView].
+     * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
+     * @property itemStyle Style for message list view holders.
+     * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+     * @property replyMessageStyle Styles messages that are replies.
+     * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
+     * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
+     * @property replyIcon Icon for reply option. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
+     * @property replyEnabled Enables/disables reply feature. Enabled by default.
+     * @property threadReplyIcon Icon for thread option. Default value is [R.drawable.stream_ui_ic_thread_reply].
+     * @property threadsEnabled Enables/disables threads feature. Enabled by default.
+     * @property retryIcon Icon for retry option. Default value is [R.drawable.stream_ui_ic_send].
+     * @property copyIcon Icon for copy option. Default value is [R.drawable.stream_ui_ic_copy].
+     * @property editMessageEnabled Enables/disables edit message feature. Enabled by default.
+     * @property editIcon Icon for edit message option. Default value is [R.drawable.stream_ui_ic_edit].
+     * @property flagIcon Icon for flag message option. Default value is [R.drawable.stream_ui_ic_flag].
+     * @property flagEnabled Enables/disables "flag message" option.
+     * @property pinIcon Icon for pin message option. Default value is [R.drawable.stream_ui_ic_pin].
+     * @property unpinIcon Icon for unpin message option. Default value is [R.drawable.stream_ui_ic_unpin].
+     * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
+     * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
+     * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
+     * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
+     * @property retryMessageEnabled Enables/disables retry failed message feature. Enabled by default.
+     * @property deleteConfirmationEnabled Enables/disables showing confirmation dialog before deleting message. Enabled by default.
+     * @property flagMessageConfirmationEnabled Enables/disables showing confirmation dialog before flagging message. Disabled by default.
+     * @property messageOptionsText Text appearance of message option items.
+     * @property warningMessageOptionsText Text appearance of warning message option items.
+     * @property messageOptionsBackgroundColor Background color of message options. Default value is [R.color.stream_ui_white].
+     * @property userReactionsBackgroundColor Background color of user reactions card. Default value is [R.color.stream_ui_white].
+     * @property userReactionsTitleText Text appearance of of user reactions card title.
+     * @property optionsOverlayDimColor Overlay dim color. Default value is [R.color.stream_ui_literal_transparent].
+     * @property emptyViewTextStyle Style for the text displayed in the empty view when no data is present.
+     * @property loadingView Layout for the loading view. Default value is [R.layout.stream_ui_default_loading_view].
+     * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
+     * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
+     * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
+     * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
+     * @property scrollButtonEndMargin Defines the end margin of the scroll button.
+     * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
+     */
+    public constructor(
+        scrollButtonViewStyle: ScrollButtonViewStyle,
+        scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
+        itemStyle: MessageListItemStyle,
+        giphyViewHolderStyle: GiphyViewHolderStyle,
+        replyMessageStyle: MessageReplyStyle,
+        reactionsEnabled: Boolean,
+        @ColorInt backgroundColor: Int,
+        replyIcon: Int,
+        replyEnabled: Boolean,
+        threadReplyIcon: Int,
+        threadsEnabled: Boolean,
+        retryIcon: Int,
+        copyIcon: Int,
+        editMessageEnabled: Boolean,
+        editIcon: Int,
+        flagIcon: Int,
+        flagEnabled: Boolean,
+        pinIcon: Int,
+        unpinIcon: Int,
+        pinMessageEnabled: Boolean,
+        deleteIcon: Int,
+        deleteMessageEnabled: Boolean,
+        copyTextEnabled: Boolean,
+        retryMessageEnabled: Boolean,
+        deleteConfirmationEnabled: Boolean,
+        flagMessageConfirmationEnabled: Boolean,
+        messageOptionsText: TextStyle,
+        warningMessageOptionsText: TextStyle,
+        @ColorInt messageOptionsBackgroundColor: Int,
+        @ColorInt userReactionsBackgroundColor: Int,
+        userReactionsTitleText: TextStyle,
+        @ColorInt optionsOverlayDimColor: Int,
+        emptyViewTextStyle: TextStyle,
+        @LayoutRes loadingView: Int,
+        messagesStart: Int,
+        threadMessagesStart: Int,
+        messageOptionsUserReactionAlignment: Int,
+        scrollButtonBottomMargin: Int,
+        scrollButtonEndMargin: Int,
+        disableScrollWhenShowingDialog: Boolean,
+        optionsOverlayEditReactionsMargin: Int,
+        optionsOverlayUserReactionsMargin: Int,
+        optionsOverlayMessageOptionsMargin: Int,
+    ) : this(
+        scrollButtonViewStyle = scrollButtonViewStyle,
+        scrollButtonBehaviour = scrollButtonBehaviour,
+        itemStyle = itemStyle,
+        giphyViewHolderStyle = giphyViewHolderStyle,
+        replyMessageStyle = replyMessageStyle,
+        reactionsEnabled = reactionsEnabled,
+        backgroundColor = backgroundColor,
+        replyIcon = replyIcon,
+        replyEnabled = replyEnabled,
+        threadReplyIcon = threadReplyIcon,
+        threadsEnabled = threadsEnabled,
+        retryIcon = retryIcon,
+        copyIcon = copyIcon,
+        editMessageEnabled = editMessageEnabled,
+        editIcon = editIcon,
+        flagIcon = flagIcon,
+        flagEnabled = flagEnabled,
+        pinIcon = pinIcon,
+        unpinIcon = unpinIcon,
+        pinMessageEnabled = pinMessageEnabled,
+        muteIcon = R.drawable.stream_ui_ic_mute,
+        unmuteIcon = R.drawable.stream_ui_ic_umnute,
+        muteEnabled = false,
+        blockIcon = R.drawable.stream_ui_ic_user_block,
+        blockEnabled = false,
+        deleteIcon = deleteIcon,
+        deleteMessageEnabled = deleteMessageEnabled,
+        copyTextEnabled = copyTextEnabled,
+        retryMessageEnabled = retryMessageEnabled,
+        deleteConfirmationEnabled = deleteConfirmationEnabled,
+        flagMessageConfirmationEnabled = flagMessageConfirmationEnabled,
+        messageOptionsText = messageOptionsText,
+        warningMessageOptionsText = warningMessageOptionsText,
+        messageOptionsBackgroundColor = messageOptionsBackgroundColor,
+        userReactionsBackgroundColor = userReactionsBackgroundColor,
+        userReactionsTitleText = userReactionsTitleText,
+        optionsOverlayDimColor = optionsOverlayDimColor,
+        emptyViewTextStyle = emptyViewTextStyle,
+        loadingView = loadingView,
+        messagesStart = messagesStart,
+        threadMessagesStart = threadMessagesStart,
+        messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
+        scrollButtonBottomMargin = scrollButtonBottomMargin,
+        scrollButtonEndMargin = scrollButtonEndMargin,
+        disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
+        optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
+        optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
+        optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin
+    )
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -139,6 +291,9 @@ public data class MessageListViewStyle(
         private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
+        private val DEFAULT_EDIT_REACTIONS_MARGIN = 0.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN = 8.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN = 24.dpToPx()
 
         private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
             return TextStyle.Builder(typedArray)
@@ -442,6 +597,24 @@ public data class MessageListViewStyle(
                     true
                 )
 
+                val optionsOverlayEditReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMargin,
+                        DEFAULT_EDIT_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayUserReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMargin,
+                        DEFAULT_USER_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayMessageOptionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMargin,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN
+                    )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -488,6 +661,9 @@ public data class MessageListViewStyle(
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
                     disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
+                    optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
+                    optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
+                    optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

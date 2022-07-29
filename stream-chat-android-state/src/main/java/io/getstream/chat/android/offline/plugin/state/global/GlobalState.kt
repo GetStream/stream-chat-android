@@ -43,7 +43,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public val user: StateFlow<User?>
 
@@ -58,7 +59,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public val initialized: Flow<Boolean>
 
@@ -73,7 +75,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public val connectionState: StateFlow<ConnectionState>
 
@@ -96,7 +99,11 @@ public interface GlobalState {
      *       // create a toast
      *   }
      */
-    @Deprecated("This property is no longer used.")
+    @Deprecated(
+        message = "This property is no longer used.",
+
+        level = DeprecationLevel.ERROR,
+    )
     public val errorEvents: StateFlow<Event<ChatError>>
 
     /**
@@ -113,16 +120,6 @@ public interface GlobalState {
      * if the current user is banned or not.
      */
     public val banned: StateFlow<Boolean>
-
-    @Deprecated(
-        message = "Use typingChannels instead",
-        replaceWith = ReplaceWith("typingChannels"),
-        level = DeprecationLevel.ERROR,
-    )
-    /**
-     * Updates about currently typing users in active channels. See [TypingEvent].
-     */
-    public val typingUpdates: StateFlow<TypingEvent>
 
     /**
      * Map of typing users in all active channel.
@@ -145,7 +142,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public fun isOnline(): Boolean
 
@@ -162,7 +160,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public fun isOffline(): Boolean
 
@@ -179,7 +178,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public fun isConnecting(): Boolean
 
@@ -196,7 +196,8 @@ public interface GlobalState {
                 "io.getstream.chat.android.client.ChatClient",
                 "io.getstream.chat.android.offline.extensions.clientState",
             ]
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public fun isInitialized(): Boolean
 

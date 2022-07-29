@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import java.io.File
 
+/**
+ * A model for the currently selected attachment item.
+ */
 @ExperimentalStreamChatApi
 public data class AttachmentMetaData(
     var uri: Uri? = null,
@@ -50,6 +53,7 @@ public data class AttachmentMetaData(
         mimeType = Utils.getMimeType(file)
         type = getTypeFromMimeType(mimeType)
         size = file.length()
+        title = file.name
     }
 
     private fun getTypeFromMimeType(mimeType: String?): String = mimeType?.let { type ->

@@ -125,7 +125,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
      */
     public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
         onTypingStarted = ::keystroke,
-        onTypingStopped = ::stopTyping
+        onTypingStopped = ::stopTyping,
+        coroutineScope = viewModelScope
     )
 
     /**

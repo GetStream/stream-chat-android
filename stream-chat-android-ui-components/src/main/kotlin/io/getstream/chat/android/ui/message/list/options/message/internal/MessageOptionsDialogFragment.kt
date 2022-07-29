@@ -26,6 +26,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -207,6 +208,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             } else {
                 isVisible = false
             }
+
+            val params = (layoutParams as ViewGroup.MarginLayoutParams)
+            params.updateMargins(bottom = style.optionsOverlayEditReactionsMargin)
         }
     }
 
@@ -243,6 +247,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     dismiss()
                 }
             }
+
+            val params = (layoutParams as ViewGroup.MarginLayoutParams)
+            params.updateMargins(top = style.optionsOverlayUserReactionsMargin)
         }
     }
 
@@ -268,6 +275,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 messageActionClickHandler?.onMessageActionClick(messageAction)
                 dismiss()
             }
+
+            val params = (layoutParams as ViewGroup.MarginLayoutParams)
+            params.updateMargins(top = style.optionsOverlayMessageOptionsMargin)
         }
     }
 
