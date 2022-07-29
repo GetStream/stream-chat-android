@@ -27,6 +27,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 /**
  * Updates [MutableGlobalState] with [SelfUser] instance.
  */
+@Suppress("DEPRECATION_ERROR")
 internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     val me = when (self) {
         is SelfUserFull -> self.me
