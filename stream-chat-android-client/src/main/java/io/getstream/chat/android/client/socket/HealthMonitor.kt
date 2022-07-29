@@ -76,7 +76,7 @@ internal class HealthMonitor(
         stopAllJobs()
         lastAck = timeProvider.provideCurrentTimeInMilliseconds()
         consecutiveFailures = 0
-        postpoeHealthMonitor()
+        postponeHealthMonitor()
     }
 
     /**
@@ -84,7 +84,7 @@ internal class HealthMonitor(
      * If the connection is not alive anymore, an action to reconnect is postponed.
      * In another case the healthCheck is postponed.
      */
-    private fun postpoeHealthMonitor() {
+    private fun postponeHealthMonitor() {
         healthMonitorJob?.cancel()
         healthMonitorJob = coroutineScope.launchDelayed(MONITOR_INTERVAL) {
             if (needToReconnect()) {
@@ -103,7 +103,7 @@ internal class HealthMonitor(
         healthCheckJob?.cancel()
         healthCheckJob = coroutineScope.launchDelayed(HEALTH_CHECK_INTERVAL) {
             checkCallback()
-            postpoeHealthMonitor()
+            postponeHealthMonitor()
         }
     }
 
@@ -117,7 +117,7 @@ internal class HealthMonitor(
         logger.i { "Next connection attempt in $retryIntervalTime ms" }
         reconnectJob = coroutineScope.launchDelayed(retryIntervalTime) {
             reconnectCallback()
-            postpoeHealthMonitor()
+            postponeHealthMonitor()
         }
     }
 
@@ -139,10 +139,10 @@ internal class HealthMonitor(
         (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
 
     private fun CoroutineScope.launchDelayed(
-        delayMiliseconds: Long,
+        delayMilliseconds: Long,
         block: suspend CoroutineScope.() -> Unit
     ): Job = launch {
-        delay(delayMiliseconds)
+        delay(delayMilliseconds)
         block()
     }
 
