@@ -231,6 +231,9 @@ constructor(
         scrollButtonBottomMargin: Int,
         scrollButtonEndMargin: Int,
         disableScrollWhenShowingDialog: Boolean,
+        optionsOverlayEditReactionsMargin: Int,
+        optionsOverlayUserReactionsMargin: Int,
+        optionsOverlayMessageOptionsMargin: Int,
     ) : this(
         scrollButtonViewStyle = scrollButtonViewStyle,
         scrollButtonBehaviour = scrollButtonBehaviour,
@@ -277,6 +280,9 @@ constructor(
         scrollButtonBottomMargin = scrollButtonBottomMargin,
         scrollButtonEndMargin = scrollButtonEndMargin,
         disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
+        optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
+        optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
+        optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin
     )
 
     internal companion object {
