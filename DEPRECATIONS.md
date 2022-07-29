@@ -35,6 +35,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `GlobalState::errorEvents` | 2022.07.19<br/>5.6.0 | 2022.08.06 ⌛ | 2022.09.06 ⌛ | This method is no longer used.|
 | `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | Use `GlobalState::typingChannels` instead. |
 | `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.01 ⌛ | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
+| `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
 | `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
