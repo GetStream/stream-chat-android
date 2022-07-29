@@ -22,13 +22,15 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
-import com.getstream.sdk.chat.utils.extensions.openSystemSettings
 import com.getstream.sdk.chat.utils.extensions.wasPermissionRequested
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.uiutils.extension.openSystemSettings
 
 /**
  * Interface for implementing custom permission handlers.
@@ -79,7 +81,7 @@ public class DownloadPermissionHandler(
     private val permissionState: PermissionState,
     private val context: Context,
     private inline val onPermissionRequired: () -> Unit = {
-        if (!context.wasPermissionRequested(permissionState.permission) || permissionState.shouldShowRationale) {
+        if (!context.wasPermissionRequested(permissionState.permission) || permissionState.status.shouldShowRationale) {
             permissionState.launchPermissionRequest()
         } else {
             context.openSystemSettings()
@@ -106,8 +108,8 @@ public class DownloadPermissionHandler(
      */
     @Composable
     public fun ObservePermissionChanges() {
-        LaunchedEffect(key1 = permissionState.hasPermission) {
-            if (permissionState.hasPermission) lastPayload?.let {
+        LaunchedEffect(key1 = permissionState.status.isGranted) {
+            if (permissionState.status.isGranted) lastPayload?.let {
                 onPermissionGranted(it)
                 lastPayload = null
             }
@@ -126,7 +128,7 @@ public class DownloadPermissionHandler(
     }
 
     override fun onHandleRequest(payload: Map<String, Any>) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || permissionState.hasPermission) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || permissionState.status.isGranted) {
             onPermissionGranted(payload)
             lastPayload = null
         } else {

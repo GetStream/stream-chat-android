@@ -43,10 +43,16 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
-    private val logger = StreamLog.getLogger("QueryChannelsState")
+    private val logger = StreamLog.getLogger("Chat:QueryChannelsState")
+
+    internal var rawChannels: Map<String, Channel>?
+        get() = _channels.value
+        set(value) {
+            _channels.value = value
+        }
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-    internal val _channels = MutableStateFlow<Map<String, Channel>?>(null)
+    private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
     internal val _endOfChannels = MutableStateFlow(false)

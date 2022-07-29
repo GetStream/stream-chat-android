@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils.extensions
+package io.getstream.chat.android.uiutils.extension
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.util.Date
 
-@InternalStreamChatApi
-public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
-    return if (user == null) {
-        null
-    } else {
-        and(
-            eq("type", "messaging"),
-            `in`("members", listOf(user.id)),
-        )
-    }
-}
+/**
+ * If the date is not older than one minute.
+ */
+public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILLIS < time)
+
+private const val ONE_MINUTE_IN_MILLIS = 60000

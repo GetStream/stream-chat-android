@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.uiutils.extension.isUploading
 
 /**
  * An [AttachmentFactory] that validates and shows uploading attachments using [FileUploadContent].

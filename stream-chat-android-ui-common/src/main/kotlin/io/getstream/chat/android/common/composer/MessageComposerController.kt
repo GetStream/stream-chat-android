@@ -17,7 +17,6 @@
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
@@ -40,6 +39,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.uiutils.extension.containsLinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -98,7 +98,8 @@ public class MessageComposerController(
      */
     public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
         onTypingStarted = ::sendKeystrokeEvent,
-        onTypingStopped = ::sendStopTypingEvent
+        onTypingStopped = ::sendStopTypingEvent,
+        coroutineScope = scope
     )
 
     /**

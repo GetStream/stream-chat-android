@@ -1,8 +1,8 @@
 package io.getstream.chat.android
 
 object Configuration {
-    const val compileSdk = 31
-    const val targetSdk = 31
+    const val compileSdk = 32
+    const val targetSdk = 32
     const val minSdk = 21
     const val majorVersion = 5
     const val minorVersion = 6

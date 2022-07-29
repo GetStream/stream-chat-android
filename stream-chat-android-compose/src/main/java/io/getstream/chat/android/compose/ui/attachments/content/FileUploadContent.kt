@@ -44,7 +44,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.uiutils.extension.isUploading
 
 /**
  * Represents the content when files are being uploaded.
