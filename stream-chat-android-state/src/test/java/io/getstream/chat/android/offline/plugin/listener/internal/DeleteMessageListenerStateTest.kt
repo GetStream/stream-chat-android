@@ -50,6 +50,7 @@ internal class DeleteMessageListenerStateTest {
     }
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
+        on(it.channelFromMessageId(any())) doReturn channelLogic
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =

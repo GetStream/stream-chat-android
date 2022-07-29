@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
@@ -43,11 +44,9 @@ internal class DeleteMessageListenerState(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        // Todo: Fix this! MessageId is not CID
-        val (channelType, channelId) = messageId.cidToTypeAndId()
-        val channelLogic = logic.channel(channelType, channelId)
+        val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
-        return channelLogic.getMessage(messageId)?.let { message ->
+        return channelLogic?.getMessage(messageId)?.let { message ->
             val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
@@ -71,11 +70,9 @@ internal class DeleteMessageListenerState(
      * @param messageId
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
-        // Todo: Fix this! MessageId is not CID
-        val (channelType, channelId) = messageId.cidToTypeAndId()
-        val channelLogic = logic.channel(channelType, channelId)
+        val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
-        channelLogic.getMessage(messageId)?.let { message ->
+        channelLogic?.getMessage(messageId)?.let { message ->
             val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
@@ -106,10 +103,8 @@ internal class DeleteMessageListenerState(
             deletedMessage.syncStatus = SyncStatus.COMPLETED
             updateMessage(deletedMessage)
         } else {
-            // Todo: Fix this! MessageId is not CID
-            val (channelType, channelId) = originalMessageId.cidToTypeAndId()
-            logic.channel(channelType, channelId)
-                .getMessage(originalMessageId)
+            logic.channelFromMessageId(originalMessageId)
+                ?.getMessage(originalMessageId)
                 ?.let { originalMessage ->
                     val failureMessage = originalMessage.copy(
                         syncStatus = SyncStatus.SYNC_NEEDED,
