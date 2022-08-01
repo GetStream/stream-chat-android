@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 internal class WithPreconditionCall<T : Any>(
     private val originalCall: Call<T>,
     scope: CoroutineScope,
-    private val precondition: suspend () -> Result<Unit>,
+    private val precondition: suspend () -> Result<Unit>
 ) : Call<T> {
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 

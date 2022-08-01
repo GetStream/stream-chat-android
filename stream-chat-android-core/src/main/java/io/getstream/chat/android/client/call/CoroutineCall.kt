@@ -31,7 +31,7 @@ import kotlinx.coroutines.withContext
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
     scope: CoroutineScope,
-    private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
+    private val suspendingTask: suspend CoroutineScope.() -> Result<T>
 ) : Call<T> {
 
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)

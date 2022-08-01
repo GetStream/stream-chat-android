@@ -30,7 +30,7 @@ import io.getstream.logging.StreamLog
  */
 public class FirebasePushDeviceGenerator(
     private val firebaseMessaging: FirebaseMessaging = FirebaseMessaging.getInstance(),
-    private val providerName: String? = null,
+    private val providerName: String? = null
 ) : PushDeviceGenerator {
     private val logger = StreamLog.getLogger("Chat:Notifications")
 
@@ -52,7 +52,7 @@ public class FirebasePushDeviceGenerator(
                     Device(
                         token = it.result,
                         pushProvider = PushProvider.FIREBASE,
-                        providerName = providerName,
+                        providerName = providerName
                     )
                 )
             } else {

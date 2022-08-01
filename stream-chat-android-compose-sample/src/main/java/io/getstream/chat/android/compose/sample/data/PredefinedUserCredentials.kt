@@ -169,6 +169,6 @@ object PredefinedUserCredentials {
                 image = "https://getstream.imgix.net/images/random_svg/QT.png"
             },
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"
-        ),
+        )
     )
 }

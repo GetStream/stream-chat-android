@@ -90,7 +90,7 @@ class CustomLoginActivity : AppCompatActivity() {
     @Composable
     fun CustomLoginScreen(
         onBackButtonClick: () -> Unit,
-        onLoginButtonClick: (UserCredentials) -> Unit,
+        onLoginButtonClick: (UserCredentials) -> Unit
     ) {
         Scaffold(
             topBar = { CustomLoginToolbar(onClick = onBackButtonClick) },
@@ -114,25 +114,25 @@ class CustomLoginActivity : AppCompatActivity() {
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_api_key),
                         value = apiKeyText,
-                        onValueChange = { apiKeyText = it },
+                        onValueChange = { apiKeyText = it }
                     )
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_user_id),
                         value = userIdText,
-                        onValueChange = { userIdText = it },
+                        onValueChange = { userIdText = it }
                     )
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_user_token),
                         value = userTokenText,
-                        onValueChange = { userTokenText = it },
+                        onValueChange = { userTokenText = it }
                     )
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_user_name),
                         value = userNameText,
-                        onValueChange = { userNameText = it },
+                        onValueChange = { userNameText = it }
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -147,7 +147,7 @@ class CustomLoginActivity : AppCompatActivity() {
                                         id = userIdText
                                         name = userNameText
                                     },
-                                    token = userTokenText,
+                                    token = userTokenText
                                 )
                             )
                         }
@@ -177,7 +177,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                         contentDescription = null,
-                        tint = Color.Black,
+                        tint = Color.Black
                     )
                 }
             },
@@ -190,7 +190,7 @@ class CustomLoginActivity : AppCompatActivity() {
     private fun CustomLoginInputField(
         hint: String,
         value: String,
-        onValueChange: (String) -> Unit,
+        onValueChange: (String) -> Unit
     ) {
         TextField(
             modifier = Modifier
@@ -207,7 +207,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 cursorColor = ChatTheme.colors.primaryAccent,
                 focusedIndicatorColor = ChatTheme.colors.primaryAccent,
                 focusedLabelColor = ChatTheme.colors.primaryAccent,
-                unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
+                unfocusedLabelColor = ChatTheme.colors.textLowEmphasis
             )
         )
     }
@@ -215,7 +215,7 @@ class CustomLoginActivity : AppCompatActivity() {
     @Composable
     private fun CustomLoginButton(
         enabled: Boolean,
-        onClick: () -> Unit = {},
+        onClick: () -> Unit = {}
     ) {
         Button(
             modifier = Modifier
@@ -225,7 +225,7 @@ class CustomLoginActivity : AppCompatActivity() {
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = ChatTheme.colors.primaryAccent,
-                disabledBackgroundColor = ChatTheme.colors.disabled,
+                disabledBackgroundColor = ChatTheme.colors.disabled
             ),
             onClick = onClick
         ) {

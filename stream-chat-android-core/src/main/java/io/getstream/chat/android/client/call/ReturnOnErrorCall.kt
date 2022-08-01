@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 public class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
     scope: CoroutineScope,
-    private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
+    private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>
 ) : Call<T> {
 
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)

@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 internal class DoOnResultCall<T : Any>(
     private val originalCall: Call<T>,
     scope: CoroutineScope,
-    private val consumer: suspend (Result<T>) -> Unit,
+    private val consumer: suspend (Result<T>) -> Unit
 ) : Call<T> {
 
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)

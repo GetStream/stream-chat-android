@@ -62,13 +62,13 @@ public object FirebaseMessagingDelegate {
     @JvmStatic
     public fun registerFirebaseToken(
         token: String,
-        providerName: String? = fallbackProviderName,
+        providerName: String? = fallbackProviderName
     ) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.FIREBASE,
-                providerName = providerName,
+                providerName = providerName
             )
         )
     }
@@ -78,7 +78,7 @@ private fun RemoteMessage.toPushMessage() =
     PushMessage(
         channelId = data.getValue("channel_id"),
         messageId = data.getValue("message_id"),
-        channelType = data.getValue("channel_type"),
+        channelType = data.getValue("channel_type")
     )
 
 private fun RemoteMessage.isValid() =
