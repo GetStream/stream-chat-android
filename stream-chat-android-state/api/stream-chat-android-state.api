@@ -269,7 +269,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/g
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
