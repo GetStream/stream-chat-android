@@ -173,4 +173,6 @@ dependencies {
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
     androidTestImplementation Dependencies.navigationTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }

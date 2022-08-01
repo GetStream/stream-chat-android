@@ -91,4 +91,6 @@ dependencies {
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
+
+    detektPlugins(Dependencies.detektFormatting)
 }

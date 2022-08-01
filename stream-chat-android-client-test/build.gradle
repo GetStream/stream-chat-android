@@ -62,4 +62,6 @@ dependencies {
     androidTestImplementation Dependencies.kluent
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
+
+    detektPlugins(Dependencies.detektFormatting)
 }
