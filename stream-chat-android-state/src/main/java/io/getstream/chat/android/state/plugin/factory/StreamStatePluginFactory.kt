@@ -134,15 +134,15 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
-        val logic =
-            LogicRegistry.create(
-                stateRegistry,
-                globalState,
-                clientState,
-                config.userPresence,
-                repositoryFacade,
-                chatClient
-            )
+        val logic = LogicRegistry.create(
+            stateRegistry = stateRegistry,
+            globalState = globalState,
+            userPresence = config.userPresence,
+            repos = repositoryFacade,
+            client = chatClient,
+            clientState = clientState,
+            coroutineScope = scope,
+        )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
             context = appContext,

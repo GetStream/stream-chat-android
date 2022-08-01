@@ -24,30 +24,54 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelStateLogicImplTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    @BeforeEach
+    fun setup() {
+        channelStateLogicImpl = ChannelStateLogicImpl(
+            mutableState,
+            globalMutableState = globalMutableState,
+            clientState = clientState,
+            searchLogic = mock(),
+            attachmentUrlValidator = attachmentUrlValidator,
+            coroutineScope = testCoroutines.scope
+        )
+    }
 
     private val user = randomUser()
     private var _messages: Map<String, Message> = emptyMap()
@@ -66,6 +90,7 @@ internal class ChannelStateLogicImplTest {
     private val _membersCount = MutableStateFlow(0)
     private var _members: Map<String, Member> = emptyMap()
     private val _channelConfig = MutableStateFlow(Config())
+    private val channelId = "channelId"
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -76,6 +101,7 @@ internal class ChannelStateLogicImplTest {
         on(mock::lastMessageAt.set(any())) doAnswer { _lastMessageAt = it.arguments[0] as Date }
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()
+        on(mock.channelId) doReturn channelId
         on(mock.channelData) doReturn _channelData
         on(mock::rawReads.get()) doAnswer { _reads }
         on(mock::rawReads.set(any())) doAnswer { _reads = it.arguments[0] as Map<String, ChannelUserRead> }
@@ -115,8 +141,7 @@ internal class ChannelStateLogicImplTest {
         _watcherCount.value = 0
     }
 
-    private val channelStateLogicImpl =
-        ChannelStateLogicImpl(mutableState, globalMutableState, clientState, mock(), attachmentUrlValidator)
+    private lateinit var channelStateLogicImpl: ChannelStateLogicImpl
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
@@ -310,5 +335,15 @@ internal class ChannelStateLogicImplTest {
         )
 
         _messages `should be equal to` mapOf(message2.id to message2)
+    }
+
+    @Test
+    fun `Given TypingStartEvent contains the currently logged in userId Should not update typing events`() {
+        val typingStartEvent = randomTypingStartEvent(user = user)
+
+        channelStateLogicImpl.setTyping(typingStartEvent.user.id, typingStartEvent)
+
+        verify(mutableState, times(0)).updateTypingEvents(any(), any())
+        verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
     }
 }
