@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -176,13 +175,12 @@ internal class TypingEventPruner(
  * @param delayTimeMs The period of time it takes before the event is removed.
  * @param removeTypingEvent The lambda called when the stale typing event should be removed.
  */
-@InternalStreamChatApi
 internal data class TimedTypingStartEvent(
     private val coroutineScope: CoroutineScope,
     internal val typingStartEvent: TypingStartEvent,
     private val userId: String,
     private val delayTimeMs: Long,
-    private val removeTypingEvent: (userId: String) -> Unit,
+    private inline val removeTypingEvent: (userId: String) -> Unit,
 ) {
 
     /**
