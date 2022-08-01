@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.utils.SystemTimeProvider
+import io.getstream.chat.android.client.utils.TimeProvider
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ import org.mockito.kotlin.whenever
 
 internal class AttachmentHelperTests {
 
-    private lateinit var timeProvider: SystemTimeProvider
+    private lateinit var timeProvider: TimeProvider
     private lateinit var sut: AttachmentHelper
 
     @BeforeEach

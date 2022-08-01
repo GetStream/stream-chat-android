@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
@@ -58,6 +59,7 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
+        coroutineScope = coroutineScope,
         reconnectCallback = {
             if (state is State.DisconnectedTemporarily) {
                 this@ChatSocket.reconnect(connectionConf)
@@ -102,7 +104,7 @@ internal open class ChatSocket constructor(
                     callListeners { it.onConnecting() }
                 }
                 is State.Connected -> {
-                    healthMonitor.start()
+                    healthMonitor.ack()
                     callListeners { it.onConnected(newState.event) }
                 }
                 is State.NetworkDisconnected -> {
@@ -236,7 +238,9 @@ internal open class ChatSocket constructor(
     }
 
     open fun onEvent(event: ChatEvent) {
-        healthMonitor.ack()
+        if (event is HealthEvent) {
+            healthMonitor.ack()
+        }
         callListeners { listener -> listener.onEvent(event) }
     }
 
