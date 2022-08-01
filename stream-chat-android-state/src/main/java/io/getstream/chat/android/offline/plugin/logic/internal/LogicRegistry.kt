@@ -92,6 +92,12 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    fun channelFromMessageId(messageId: String): ChannelLogic? {
+        return channels.values.find { channelLogic ->
+            channelLogic.getMessage(messageId) != null
+        }
+    }
+
     /**
      * Provides [ChannelStateLogic] for the channelType and channelId
      *
