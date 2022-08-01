@@ -36,10 +36,12 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed preview for channels when sending messages offline. [3933](https://github.com/GetStream/stream-chat-android/pull/3933)
+- Fixed adding a channel to `ChannelListView` when receiving `NewMessageEvent` and channel is not present in the list yet. [#3975](https://github.com/GetStream/stream-chat-android/pull/3975)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added calling watch channel after receiving `NotificationMessageNew` event. [#3975](https://github.com/GetStream/stream-chat-android/pull/3975)
 
 ### ⚠️ Changed
 

@@ -97,23 +97,7 @@ internal class DefaultChatEventHandlerTest {
     }
 
     @Test
-    fun `Given the channel is not present When received NotificationMessageNewEvent Should add the channel`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
-
-        val event = randomNotificationMessageNewEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationMessageNewEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Add(channel)
-    }
-
-    @Test
-    fun `Given the channel is not present When received NotificationMessageNewEvent Should skip the event`() {
+    fun `Given the channel is not present When received NotificationMessageNewEvent Should watch and add a channel`() {
         val cid = randomString()
         val channel = randomChannel(cid = cid)
         val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
@@ -125,7 +109,7 @@ internal class DefaultChatEventHandlerTest {
             Filters.neutral()
         )
 
-        result `should be equal to` EventHandlingResult.Skip
+        result `should be equal to` EventHandlingResult.WatchAndAdd(cid)
     }
 
     @Test

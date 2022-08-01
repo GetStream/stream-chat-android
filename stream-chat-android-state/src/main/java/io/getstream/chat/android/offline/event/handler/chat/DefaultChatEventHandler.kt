@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The list of visible channels.
  */
-public class DefaultChatEventHandler(
+public open class DefaultChatEventHandler(
     private val channels: StateFlow<List<Channel>?>,
 ) : BaseChatEventHandler() {
 
@@ -74,15 +74,17 @@ public class DefaultChatEventHandler(
     ): EventHandlingResult = EventHandlingResult.Skip
 
     /**
-     * Handles [NotificationMessageNewEvent]. It adds the channel, if it is absent.
+     * Handles [NewMessageEvent]. It adds the channel if it is absent and but the channel was already cached.
      *
-     * @param event Instance of [NotificationMessageNewEvent] that is being handled.
+     * @param event Instance of [NewMessageEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
+     * @param cachedChannel optional [Channel] object cached.
      */
-    override fun handleNotificationMessageNewEvent(
-        event: NotificationMessageNewEvent,
+    override fun handleNewMessageEvent(
+        event: NewMessageEvent,
         filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsent(channels, event.channel)
+        cachedChannel: Channel?
+    ): EventHandlingResult = addIfChannelIsAbsent(channels, cachedChannel)
 
     /**
      * Handles [MemberRemovedEvent]. It removes the channel if it's present in the list.

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -128,10 +129,30 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
 
-    /** Handles [NotificationMessageNewEvent] event. It runs in background. */
+    /**
+     * Handles [NotificationMessageNewEvent] event.
+     * By default returns [EventHandlingResult.WatchAndAdd].
+     *
+     * @param event [NotificationMessageNewEvent] to handle.
+     * @param filter [FilterObject] for query channels collection.
+     */
     public open fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
+    ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
+
+    /**
+     * Handles [NewMessageEvent] event.
+     * By default returns [EventHandlingResult.Skip].
+     *
+     * @param event [NewMessageEvent] to handle.
+     * @param filter [FilterObject] for query channels collection.
+     * @param cachedChannel optional [Channel] object cached.
+     */
+    public open fun handleNewMessageEvent(
+        event: NewMessageEvent,
+        filter: FilterObject,
+        cachedChannel: Channel?,
     ): EventHandlingResult = EventHandlingResult.Skip
 
     /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
@@ -159,6 +180,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         cachedChannel: Channel?,
     ): EventHandlingResult {
         return when (event) {
+            is NewMessageEvent -> handleNewMessageEvent(event, filter, cachedChannel)
             is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
             is ChannelVisibleEvent -> handleChannelVisibleEvent(event, filter)
             is MemberRemovedEvent -> handleMemberRemovedEvent(event, filter, cachedChannel)
