@@ -74,7 +74,7 @@ public object XiaomiMessagingDelegate {
     @JvmStatic
     public fun registerXiaomiToken(
         miPushCommandMessage: MiPushCommandMessage,
-        providerName: String? = fallbackProviderName,
+        providerName: String? = fallbackProviderName
     ) {
         miPushCommandMessage
             .takeIf { it.command == MiPushClient.COMMAND_REGISTER }
@@ -85,7 +85,7 @@ public object XiaomiMessagingDelegate {
                     Device(
                         token = this,
                         pushProvider = PushProvider.XIAOMI,
-                        providerName = providerName,
+                        providerName = providerName
                     )
                 )
             }
@@ -104,7 +104,7 @@ public object XiaomiMessagingDelegate {
             PushMessage(
                 channelId = it["channel_id"]!!,
                 messageId = it["message_id"]!!,
-                channelType = it["channel_type"]!!,
+                channelType = it["channel_type"]!!
             )
         }
 

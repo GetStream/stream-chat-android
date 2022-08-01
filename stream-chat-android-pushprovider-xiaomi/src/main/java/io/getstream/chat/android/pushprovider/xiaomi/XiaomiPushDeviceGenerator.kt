@@ -38,7 +38,7 @@ public class XiaomiPushDeviceGenerator(
     private val appId: String,
     private val appKey: String,
     private val providerName: String? = null,
-    private val region: Region = Region.Global,
+    private val region: Region = Region.Global
 ) :
     PushDeviceGenerator {
     private val appContext = context.applicationContext
