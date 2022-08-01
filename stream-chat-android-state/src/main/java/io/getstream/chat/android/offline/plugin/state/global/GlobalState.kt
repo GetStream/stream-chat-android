@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -62,7 +61,7 @@ public interface GlobalState {
         ),
         level = DeprecationLevel.ERROR,
     )
-    public val initialized: Flow<Boolean>
+    public val initialized: StateFlow<Boolean>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
