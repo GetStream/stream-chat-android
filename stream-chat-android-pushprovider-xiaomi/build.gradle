@@ -28,7 +28,7 @@ android {
             consumerProguardFiles 'consumer-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
             consumerProguardFiles 'consumer-rules.pro'
         }
     }
