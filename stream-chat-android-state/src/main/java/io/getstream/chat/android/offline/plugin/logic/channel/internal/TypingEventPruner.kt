@@ -17,9 +17,7 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -43,7 +41,6 @@ internal class TypingEventPruner(
     private val channelId: String,
     private val coroutineScope: CoroutineScope,
     private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
-    initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val onUpdated: (
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
@@ -56,19 +53,6 @@ internal class TypingEventPruner(
      * Each event is capable of timed death using [TimedTypingStartEvent.removeTypingEvent]
      */
     private val typingEvents = mutableMapOf<String, TimedTypingStartEvent>()
-
-    /**
-     * Sets the pruner up to listen to web socket state changes
-     * and clear currently active typing events when the socket
-     * is disconnected.
-     */
-    init {
-        initializationCoordinator.addSocketConnectionStateListener { socketConnectionState ->
-            if (socketConnectionState == ConnectionState.OFFLINE) {
-                clear()
-            }
-        }
-    }
 
     /**
      * Called when a typing event needs to be processed.
