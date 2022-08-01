@@ -5,7 +5,49 @@
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
-    <ID>ReturnCount:Channel.kt$ @InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ChannelsApiCallsTests.kt:434</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:157</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:170</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:176</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.call.RetrofitCallTest.kt:67</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.call.RetrofitCallTest.kt:80</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.chatclient.WhenConnectUser.kt:67</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.chatclient.WhenConnectUser.kt:71</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.clientstate.UserStateServiceTests.kt:107</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.ConnectionLifecyclePublisherTest.kt:57</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:128</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:191</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:192</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:193</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:204</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:205</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisherTest.kt:206</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.helpers.AttachmentHelperTests.kt:127</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.helpers.AttachmentHelperTests.kt:128</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.helpers.AttachmentHelperTests.kt:72</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.helpers.AttachmentHelperTests.kt:82</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.helpers.AttachmentHelperTests.kt:95</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.socket.ChatSocketTest.kt:122</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.socket.ChatSocketTest.kt:140</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.socket.SocketFactoryTest.kt:91</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.socket.SocketFactoryTest.kt:97</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:101</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:105</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:109</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:113</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:117</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:57</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:61</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:65</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:69</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:73</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:77</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:81</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:85</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:89</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:93</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.utils.TokenUtilsTest.kt:97</ID>
+    <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
     <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
   </CurrentIssues>
 </SmellBaseline>

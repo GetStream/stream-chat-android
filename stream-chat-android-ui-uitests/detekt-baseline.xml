@@ -2,9 +2,9 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable fun UserList( onUserCredentialsClick: (UserCredentials) -> Unit, modifier: Modifier = Modifier, )</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun LoginScreen()</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun SdkTypeList( sdkType: SdkType, onSdkTypeClick: (SdkType) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable fun UserList( onUserCredentialsClick: (UserCredentials) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun LoginScreen()</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun SdkTypeList( sdkType: SdkType, onSdkTypeClick: (SdkType) -> Unit, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
     <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
@@ -25,6 +25,21 @@
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9taXNsYXYifQ.-n5L1OmG4KpL0O16h8SeqKJID0DzUmy_nilqTgi8EZQ"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.1H7yz3CZ_wtSxj0B36tOkfdFtKzULSPwRyesufrTGpM"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.pfG5thPeT7ytMSExrg3yoXQ02AqrLj2gIxuBZkTlr_c"</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:103</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:111</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:119</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:127</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:135</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:143</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:31</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:39</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:47</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:55</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:63</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:71</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:79</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:87</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.uitests.app.login.UserCredentials.kt:95</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>

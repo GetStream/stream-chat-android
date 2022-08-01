@@ -6,6 +6,9 @@
     <ID>ComplexMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
     <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
     <ID>ForbiddenComment:HomeFragmentViewModel.kt$HomeFragmentViewModel.State$// TODO: implement unread mentions count</ID>
+    <ID>Indentation:io.getstream.chat.ui.sample.application.ChatInitializer.kt:43</ID>
+    <ID>Indentation:io.getstream.chat.ui.sample.application.ChatInitializer.kt:44</ID>
+    <ID>Indentation:io.getstream.chat.ui.sample.application.ChatInitializer.kt:45</ID>
     <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
@@ -65,6 +68,46 @@
     <ID>MaxLineLength:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.channel.add.AddChannelFragment.kt:99</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.channel.add.AddChannelViewModel.kt:79</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.channel.add.group.header.AddGroupChannelMembersAdapter.kt:54</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.channel.add.group.select_name.AddGroupChannelSelectNameFragment.kt:128</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory.kt:33</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.ChatInfoFragment.kt:131</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragment.kt:128</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragment.kt:147</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragment.kt:149</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragment.kt:191</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoViewModel.kt:126</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionView.kt:57</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment.kt:160</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsViewModel.kt:122</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment.kt:94</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel.kt:155</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment.kt:31</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:100</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:110</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:116</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:137</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:152</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:168</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:79</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:85</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment.kt:92</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:45</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:48</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:51</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:54</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:57</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:60</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:63</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment.kt:69</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextMessagesComponentBrowserFragment.kt:44</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt:47</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt:55</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.RepliedMessagesComponentBrowserFragment.kt:123</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.RepliedMessagesComponentBrowserFragment.kt:90</ID>
+    <ID>MaximumLineLength:io.getstream.chat.ui.sample.feature.custom_login.CustomLoginViewModel.kt:73</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameFragment.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameMembersAdapter.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameViewModel.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
