@@ -41,6 +41,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param allowAccessButtonTextStyle The text style used for all the buttons used to request required permissions.
  * @param submitAttachmentsButtonIconDrawable The icon for the submit selected attachments button.
  * @param attachmentTabToggleButtonStateList The color selector that will be applied to each tab button.
+ * @param mediaAttachmentsTabEnabled If the media attachments tab is displayed in the picker.
  * @param mediaAttachmentsTabIconDrawable The icon for the image attachments tab.
  * @param allowAccessToMediaButtonText The text to request required permissions on the image attachments tab.
  * @param allowAccessToMediaIconDrawable The icon above the permissions text on the image attachments tab.
@@ -50,6 +51,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param videoIconDrawable The icon used for video files.
  * @param mediaAttachmentNoMediaText The text that will be displayed if there are no media files on the device.
  * @param mediaAttachmentNoMediaTextStyle The text style for the the no media files text.
+ * @param fileAttachmentsTabEnabled If the file attachments tab is displayed in the picker..
  * @param fileAttachmentsTabIconDrawable The icon for the file attachments tab.
  * @param allowAccessToFilesButtonText The text to request required permissions on the file attachments tab.
  * @param allowAccessToFilesIconDrawable The icon above the permissions text on the file attachments tab.
@@ -63,6 +65,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param fileAttachmentItemCheckboxSelectedDrawable The drawable for the selected state of the checkbox in file attachment item.
  * @param fileAttachmentItemCheckboxDeselectedDrawable The drawable for the deselected state of the checkbox in file attachment item.
  * @param fileAttachmentItemCheckboxTextColor The color of the checkbox  in file attachment item.
+ * @param cameraAttachmentsTabEnabled If the media capture tab is displayed in the picker.
  * @param cameraAttachmentsTabIconDrawable The icon for the camera attachments tab.
  * @param allowAccessToCameraButtonText The text to request required permissions on the camera attachments tab.
  * @param allowAccessToCameraIconDrawable The icon above the permissions text on the camera attachments tab.
@@ -74,6 +77,7 @@ public data class AttachmentsPickerDialogStyle(
     val submitAttachmentsButtonIconDrawable: Drawable,
     val attachmentTabToggleButtonStateList: ColorStateList?,
     // Media attachments tab
+    val mediaAttachmentsTabEnabled: Boolean,
     val mediaAttachmentsTabIconDrawable: Drawable,
     val allowAccessToMediaButtonText: String,
     val allowAccessToMediaIconDrawable: Drawable,
@@ -84,6 +88,7 @@ public data class AttachmentsPickerDialogStyle(
     val mediaAttachmentNoMediaText: String,
     val mediaAttachmentNoMediaTextStyle: TextStyle,
     // File attachments tab
+    val fileAttachmentsTabEnabled: Boolean,
     val fileAttachmentsTabIconDrawable: Drawable,
     val allowAccessToFilesButtonText: String,
     val allowAccessToFilesIconDrawable: Drawable,
@@ -98,6 +103,7 @@ public data class AttachmentsPickerDialogStyle(
     val fileAttachmentItemCheckboxDeselectedDrawable: Drawable,
     @ColorInt val fileAttachmentItemCheckboxTextColor: Int,
     // Camera attachments tab
+    val cameraAttachmentsTabEnabled: Boolean,
     val cameraAttachmentsTabIconDrawable: Drawable,
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
@@ -146,6 +152,11 @@ public data class AttachmentsPickerDialogStyle(
                 /**
                  * Media attachments tab
                  */
+                val mediaAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentsTabEnabled,
+                    true
+                )
+
                 val mediaAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
@@ -217,6 +228,11 @@ public data class AttachmentsPickerDialogStyle(
                 /**
                  * File attachments tab
                  */
+                val fileAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsTabEnabled,
+                    true
+                )
+
                 val fileAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsTabIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
@@ -333,6 +349,11 @@ public data class AttachmentsPickerDialogStyle(
                 /**
                  * Camera attachments tab
                  */
+                val cameraAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerCameraAttachmentsTabEnabled,
+                    true
+                )
+
                 val cameraAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
@@ -351,6 +372,7 @@ public data class AttachmentsPickerDialogStyle(
                     submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,
                     attachmentTabToggleButtonStateList = attachmentTabToggleButtonStateList,
                     // Media attachments tab
+                    mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
                     mediaAttachmentsTabIconDrawable = mediaAttachmentsTabIconDrawable,
                     allowAccessToMediaButtonText = allowAccessToMediaButtonText,
                     allowAccessToMediaIconDrawable = allowAccessToMediaIconDrawable,
@@ -361,6 +383,7 @@ public data class AttachmentsPickerDialogStyle(
                     mediaAttachmentNoMediaText = mediaAttachmentNoMediaText,
                     mediaAttachmentNoMediaTextStyle = mediaAttachmentNoMediaTextStyle,
                     // File attachments tab
+                    fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
                     fileAttachmentsTabIconDrawable = fileAttachmentsTabIconDrawable,
                     allowAccessToFilesButtonText = allowAccessToFilesButtonText,
                     allowAccessToFilesIconDrawable = allowAccessToFilesIconDrawable,
@@ -375,6 +398,7 @@ public data class AttachmentsPickerDialogStyle(
                     fileAttachmentItemCheckboxDeselectedDrawable = fileAttachmentItemCheckboxDeselectedDrawable,
                     fileAttachmentItemCheckboxTextColor = fileAttachmentItemCheckboxTextColor,
                     // Camera attachments tab
+                    cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
                     cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
                     allowAccessToCameraButtonText = allowAccessToCameraButtonText,
                     allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,

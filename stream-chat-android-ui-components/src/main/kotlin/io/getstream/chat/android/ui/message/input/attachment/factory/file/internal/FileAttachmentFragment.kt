@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.input.attachment.file.internal
+package io.getstream.chat.android.ui.message.input.attachment.factory.file.internal
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -38,12 +35,14 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Represents the second tab of the attachment picker with a list of files.
+ */
 internal class FileAttachmentFragment : Fragment() {
 
     private var _binding: StreamUiFragmentAttachmentFileBinding? = null
@@ -54,19 +53,32 @@ internal class FileAttachmentFragment : Fragment() {
     private val attachmentFilter: AttachmentFilter = AttachmentFilter()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
-    private val style: MessageInputViewStyle by lazy { staticStyle!! }
+    /**
+     * Style for the attachment picker dialog.
+     */
+    private lateinit var style: MessageInputViewStyle
 
-    private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter(style) {
-        updateFileAttachment(it)
+    /**
+     * A listener invoked when attachments are selected in the attachment tab.
+     */
+    private var attachmentsPickerTabListener: AttachmentsPickerTabListener? = null
+
+    /**
+     * Initializes the dialog with the style.
+     *
+     * @param style Style for the dialog.
+     */
+    fun setStyle(style: MessageInputViewStyle) {
+        this.style = style
+    }
+
+    private val fileAttachmentsAdapter: FileAttachmentAdapter by lazy {
+        FileAttachmentAdapter(style) {
+            updateFileAttachment(it)
+        }
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
-    private var attachmentSelectionListener: AttachmentSelectionListener? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        attachmentSelectionListener = parentFragment as? AttachmentSelectionListener
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,9 +91,11 @@ internal class FileAttachmentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        setupResultListener()
-        checkPermissions()
+        if (::style.isInitialized) {
+            setupViews()
+            setupResultListener()
+            checkPermissions()
+        }
     }
 
     override fun onDestroyView() {
@@ -92,7 +106,7 @@ internal class FileAttachmentFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        attachmentSelectionListener = null
+        attachmentsPickerTabListener = null
     }
 
     private fun updateFileAttachment(attachmentMetaData: AttachmentMetaData) {
@@ -105,7 +119,7 @@ internal class FileAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             fileAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.FILE)
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList(), AttachmentSource.FILE)
     }
 
     private fun setupViews() {
@@ -156,12 +170,20 @@ internal class FileAttachmentFragment : Fragment() {
                         ).show()
                     }
 
-                    setFragmentResult(
-                        AttachmentSelectionDialogFragment.REQUEST_KEY_FILE_MANAGER,
-                        bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to filteredAttachments.toSet())
+                    attachmentsPickerTabListener?.onSelectedAttachmentsChanged(
+                        filteredAttachments,
+                        AttachmentSource.FILE
                     )
+                    attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
                 }
             }
+    }
+
+    /**
+     * Sets the listener invoked when attachments are selected in the attachment tab.
+     */
+    fun setAttachmentsPickerTabListener(attachmentsPickerTabListener: AttachmentsPickerTabListener) {
+        this.attachmentsPickerTabListener = attachmentsPickerTabListener
     }
 
     private fun onPermissionGranted() {
@@ -198,11 +220,16 @@ internal class FileAttachmentFragment : Fragment() {
     }
 
     companion object {
-        internal var staticStyle: MessageInputViewStyle? = null
-
-        fun newInstance(style: MessageInputViewStyle): Fragment {
-            staticStyle = style
-            return FileAttachmentFragment()
+        /**
+         * Creates a new instance of [FileAttachmentFragment].
+         *
+         * @param style The style for the attachment picker dialog.
+         * @return A new instance of the Fragment.
+         */
+        fun newInstance(style: MessageInputViewStyle): FileAttachmentFragment {
+            return FileAttachmentFragment().apply {
+                setStyle(style)
+            }
         }
     }
 }

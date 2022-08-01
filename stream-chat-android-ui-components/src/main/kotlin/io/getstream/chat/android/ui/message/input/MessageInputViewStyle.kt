@@ -122,7 +122,7 @@ public data class MessageInputViewStyle(
     public val replyInputModeIcon: Drawable,
     @ColorInt public val commandButtonRippleColor: Int?,
     @ColorInt public val attachmentButtonRippleColor: Int?,
-    public val messageInputInputType: Int
+    public val messageInputInputType: Int,
 ) {
 
     public companion object {
@@ -384,6 +384,19 @@ public data class MessageInputViewStyle(
                     a.getColorStateList(R.styleable.MessageInputView_streamUiAttachmentTabButtonColorStateList)
                         ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
 
+                val mediaAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiMediaAttachmentsTabEnabled,
+                    true
+                )
+                val fileAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiFileAttachmentsTabEnabled,
+                    true
+                )
+                val cameraAttachmentsTabEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiCameraAttachmentsTabEnabled,
+                    true
+                )
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     fileAttachmentIcon = fileAttachmentIcon,
@@ -404,7 +417,10 @@ public data class MessageInputViewStyle(
                     videoIconVisible = videoIconVisible,
                     backgroundColor = attachmentSelectionBackgroundColor,
                     attachButtonIcon = attachmentSelectionAttachIcon,
-                    toggleButtonColorStateList = attachmentDialogTabButtonColorStateList
+                    toggleButtonColorStateList = attachmentDialogTabButtonColorStateList,
+                    mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
+                    fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
+                    cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

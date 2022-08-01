@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.input.attachment.camera.internal
+package io.getstream.chat.android.ui.message.input.attachment.factory.camera.internal
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 import java.io.File
 
+/**
+ * Represents the third tab of the attachment picker with media capture.
+ */
 internal class CameraAttachmentFragment : Fragment() {
 
     private var _binding: StreamUiFragmentAttachmentCameraBinding? = null
@@ -42,7 +45,15 @@ internal class CameraAttachmentFragment : Fragment() {
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
-    private val style by lazy { staticStyle!! }
+    /**
+     * Style for the attachment picker dialog.
+     */
+    private lateinit var style: MessageInputViewStyle
+
+    /**
+     * A listener invoked when attachments are selected in the attachment tab.
+     */
+    private var attachmentsPickerTabListener: AttachmentsPickerTabListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,16 +67,36 @@ internal class CameraAttachmentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        setupResultListener()
-        checkPermissions()
+        if (::style.isInitialized) {
+            setupViews()
+            setupResultListener()
+            checkPermissions()
+        }
+    }
+
+    /**
+     * Initializes the dialog with the style.
+     *
+     * @param style Style for the dialog.
+     */
+    fun setStyle(style: MessageInputViewStyle) {
+        this.style = style
+    }
+
+    /**
+     * Sets the listener invoked when attachments are selected in the attachment tab.
+     */
+    fun setAttachmentsPickerTabListener(attachmentsPickerTabListener: AttachmentsPickerTabListener) {
+        this.attachmentsPickerTabListener = attachmentsPickerTabListener
     }
 
     private fun setupViews() {
+        val dialogStyle = style.attachmentSelectionDialogStyle
+
         binding.grantPermissionsInclude.apply {
-            grantPermissionsImageView.setImageDrawable(style.allowAccessToCameraIcon)
-            grantPermissionsTextView.text = style.allowAccessToCameraText
-            style.grantPermissionsTextStyle.apply(grantPermissionsTextView)
+            grantPermissionsImageView.setImageDrawable(dialogStyle.allowAccessToCameraIcon)
+            grantPermissionsTextView.text = dialogStyle.allowAccessToCameraText
+            grantPermissionsTextView.setTextStyle(dialogStyle.grantPermissionsTextStyle)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
@@ -75,15 +106,14 @@ internal class CameraAttachmentFragment : Fragment() {
     private fun setupResultListener() {
         activityResultLauncher = activity?.activityResultRegistry
             ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
-                val result: Set<AttachmentMetaData> = if (file == null) {
-                    emptySet()
+                val result: List<AttachmentMetaData> = if (file == null) {
+                    emptyList()
                 } else {
-                    setOf(AttachmentMetaData(requireContext(), file))
+                    listOf(AttachmentMetaData(requireContext(), file))
                 }
-                setFragmentResult(
-                    AttachmentSelectionDialogFragment.REQUEST_KEY_CAMERA,
-                    bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to result)
-                )
+
+                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result, AttachmentSource.CAMERA)
+                attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
             }
     }
 
@@ -119,11 +149,16 @@ internal class CameraAttachmentFragment : Fragment() {
     }
 
     companion object {
-        internal var staticStyle: AttachmentSelectionDialogStyle? = null
-
-        fun newInstance(style: AttachmentSelectionDialogStyle): Fragment {
-            staticStyle = style
-            return CameraAttachmentFragment()
+        /**
+         * Creates a new instance of [CameraAttachmentFragment].
+         *
+         * @param style The style for the attachment picker dialog.
+         * @return A new instance of the Fragment.
+         */
+        fun newInstance(style: MessageInputViewStyle): CameraAttachmentFragment {
+            return CameraAttachmentFragment().apply {
+                setStyle(style)
+            }
         }
     }
 }
