@@ -113,6 +113,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -177,6 +178,7 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.days
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 
@@ -243,6 +245,14 @@ internal constructor(
     internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
+
+    @InternalStreamChatApi
+    public fun <T : Any> resolveDependency(klass: KClass<T>): T? {
+        for (plugin in plugins) {
+            return (plugin as? DependencyResolver)?.resolveDependency(klass) ?: continue
+        }
+        return null
+    }
 
     /**
      * Error handlers for API calls.

@@ -20,6 +20,10 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
@@ -34,20 +38,20 @@ import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager.Listener
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
 
@@ -58,64 +62,109 @@ private const val QUERIES_TO_RETRY = 3
 @Suppress("LongParameterList")
 internal class SyncManager(
     private val chatClient: ChatClient,
-    private val globalState: MutableGlobalState,
     private val clientState: ClientState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
-) {
+) : SyncHistoryManager {
 
-    private val entitiesRetryMutex = Mutex()
     private val logger = StreamLog.getLogger("Chat:SyncManager")
-    internal val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
-    private var firstConnect = true
 
-    internal suspend fun getSortedSyncHistory(cids: List<String>): Result<List<ChatEvent>> {
-        val lastSyncAt = syncStateFlow.value?.lastSyncedAt ?: Date()
-        return chatClient.getSyncHistory(cids, lastSyncAt).await()
-            .map { events -> events.sortedBy { it.createdAt } }
-            .onSuccessSuspend { sortedEvents ->
-                val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
-                updateLastSyncedDate(latestEventDate)
+    private val listener = AtomicReference<Listener>()
+    private val entitiesRetryMutex = Mutex()
+    private val syncState = MutableStateFlow<SyncState?>(null)
+    private val isFirstConnect = AtomicBoolean(true)
+
+    override fun setListener(listener: Listener?) {
+        this.listener.set(listener)
+    }
+
+    override suspend fun sync() {
+        logger.d { "[sync] no args" }
+        performSync()
+    }
+
+    override suspend fun handleEvent(event: ChatEvent) {
+        logger.d { "[handleEvent] event.type: ${event.type}" }
+        when (event) {
+            is ConnectedEvent -> {
+                logger.i { "[handleEvent] ConnectedEvent received" }
+                onConnectionEstablished(event.me.id)
             }
+            is DisconnectedEvent -> {
+                logger.i { "[handleEvent] DisconnectedEvent received" }
+                onConnectionLost()
+            }
+            is HealthEvent -> {
+                retryFailedEntities()
+            }
+            is MarkAllReadEvent -> {
+                updateAllReadStateForDate(event.user.id, event.createdAt)
+            }
+            else -> Unit
+        }
     }
 
     /**
-     * Handles connection recover in the SDK. This method will sync the data, retry failed entities, update channels data, etc.
+     * Handles connection recover in the SDK.
+     * This method will sync the data, retry failed entities, update channels data, etc.
      */
-    internal suspend fun connectionRecovered() {
-        logger.d { "[connectionRecovered] firstConnect: $firstConnect" }
-        if (firstConnect) {
-            firstConnect = false
-            connectionRecovered(false)
+    private suspend fun onConnectionEstablished(userId: String) {
+        logger.i { "[onConnectionEstablished] >>> isFirstConnect: $isFirstConnect" }
+        if (syncState.value == null && syncState.value?.userId != userId) {
+            updateAllReadStateForDate(userId, currentDate = Date())
+        }
+        performSync()
+
+        if (isFirstConnect.compareAndSet(true, false)) {
+            connectionRecovered(recoverAll = false)
         } else {
             // the second time (ie coming from background, or reconnecting we should recover all)
-            connectionRecovered(true)
+            connectionRecovered(recoverAll = true)
         }
-        logger.v { "[connectionRecovered] completed" }
+        logger.i { "[onConnectionEstablished] <<< completed" }
     }
 
     /**
-     * Clears the data of SDK. Total unread count, connection state, etc
+     * Stores the state to be request in a later moment.
+     * Should be used when SDK is disconnecting.
      */
-    internal fun clearState() {
-        globalState.run {
-            setTotalUnreadCount(0)
-            setChannelUnreadCount(0)
-            setBanned(false)
-            setMutedUsers(emptyList())
-        }
-    }
-
-    /**
-     * Store the state to be request in a later moment. Should be used when SDK is disconnecting.
-     */
-    internal suspend fun storeSyncState() {
-        syncStateFlow.value?.let { syncState ->
-            val newSyncState = syncState.copy(activeChannelIds = logicRegistry.getActiveChannelsLogic().map { it.cid })
+    private suspend fun onConnectionLost() {
+        logger.i { "[connectionLost] firstConnect: $isFirstConnect" }
+        syncState.value?.let { syncState ->
+            val activeCids = logicRegistry.getActiveChannelsLogic().map { it.cid }
+            val newSyncState = syncState.copy(activeChannelIds = activeCids)
             repos.insertSyncState(newSyncState)
-            syncStateFlow.value = newSyncState
+            this.syncState.value = newSyncState
+        }
+    }
+
+    private suspend fun performSync() {
+        val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
+            logger.w { "[performSync] no active cids found" }
+            repos.selectAllCids()
+        }
+        if (cids.isEmpty()) {
+            logger.w { "[performSync] rejected (cids is empty)" }
+            return
+        }
+        val lastSyncAt = syncState.value?.lastSyncedAt ?: Date()
+        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt" }
+        val result = chatClient.getSyncHistory(cids, lastSyncAt).await()
+        if (result.isSuccess) {
+            val sortedEvents = result.data().sortedBy { it.createdAt }
+            logger.d { "[performSync] succeed(${sortedEvents.size})" }
+            val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
+            updateLastSyncedDate(latestEventDate)
+            sortedEvents.forEach {
+                if (it is MarkAllReadEvent) {
+                    updateAllReadStateForDate(it.user.id, it.createdAt)
+                }
+            }
+            listener.get()?.onHistorySyncCompleted(sortedEvents)
+        } else {
+            logger.e { "[performSync] failed(${result.error().stringify()})" }
         }
     }
 
@@ -125,11 +174,12 @@ internal class SyncManager(
      *
      * @param latestEventDate The date of the last event returned by the sync endpoint.
      */
-    internal suspend fun updateLastSyncedDate(latestEventDate: Date) {
-        syncStateFlow.value?.let { syncState ->
+    private suspend fun updateLastSyncedDate(latestEventDate: Date) {
+        logger.d { "[updateLastSyncedDate] latestEventDate: $latestEventDate" }
+        syncState.value?.let { syncState ->
             val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
             repos.insertSyncState(newSyncState)
-            syncStateFlow.value = newSyncState
+            this.syncState.value = newSyncState
         }
     }
 
@@ -140,29 +190,22 @@ internal class SyncManager(
      * @param userId The id of the current user
      * @param currentDate the moment of the update.
      */
-    internal suspend fun updateAllReadStateForDate(userId: String, currentDate: Date) {
-        val selectedState = repos.selectSyncState(userId)
-
-        selectedState?.let { state ->
-            if (state.markedAllReadAt?.before(currentDate) == true) {
-                repos.insertSyncState(state.copy(markedAllReadAt = currentDate))
+    private suspend fun updateAllReadStateForDate(userId: String, currentDate: Date) {
+        logger.d { "[updateAllReadStateForDate] userId: $userId, currentDate: $currentDate" }
+        syncState.value = repos.selectSyncState(userId)?.let { selectedState ->
+            when (selectedState.markedAllReadAt?.before(currentDate)) {
+                true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
+                    repos.insertSyncState(newState)
+                }
+                else -> selectedState
             }
-        }
-
-        syncStateFlow.value = selectedState ?: SyncState(userId)
-    }
-
-    /**
-     * Loads te sync state for the user from the database.
-     */
-    internal suspend fun loadSyncStateForUser(userId: String) {
-        syncStateFlow.value = repos.selectSyncState(userId) ?: SyncState(userId)
+        } ?: SyncState(userId)
     }
 
     /**
      * Retry all entities that have failed. Channels, messages, reactions, etc.
      */
-    internal suspend fun retryFailedEntities() {
+    private suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {
             logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..

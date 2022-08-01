@@ -20,30 +20,38 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.withContext
 
 internal class StreamLifecycleObserver(
     private val lifecycle: Lifecycle,
     private val handler: LifecycleHandler,
 ) : DefaultLifecycleObserver {
+
+    private val logger = StreamLog.getLogger("Chat:LifecycleObserver")
+
     private var recurringResumeEvent = false
 
     @Volatile
     private var isObserving = false
 
     suspend fun observe() {
+        logger.d { "[observe] no args" }
         if (isObserving.not()) {
             isObserving = true
             withContext(DispatcherProvider.Main) {
                 lifecycle.addObserver(this@StreamLifecycleObserver)
+                logger.v { "[observe] subscribed" }
             }
         }
     }
 
     suspend fun dispose() {
+        logger.d { "[dispose] no args" }
         if (isObserving) {
             withContext(DispatcherProvider.Main) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
+                logger.v { "[dispose] unsubscribed" }
             }
         }
         isObserving = false
@@ -51,6 +59,7 @@ internal class StreamLifecycleObserver(
     }
 
     override fun onResume(owner: LifecycleOwner) {
+        logger.d { "[onResume] owner: $owner" }
         // ignore event when we just started observing the lifecycle
         if (recurringResumeEvent) {
             handler.resume()
@@ -59,6 +68,7 @@ internal class StreamLifecycleObserver(
     }
 
     override fun onStop(owner: LifecycleOwner) {
+        logger.d { "[onStop] owner: $owner" }
         handler.stopped()
     }
 }

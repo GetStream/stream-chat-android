@@ -159,10 +159,9 @@ internal class TotalUnreadCountTest {
         currentUser: User,
     ) {
         private val repos: RepositoryFacade = mock()
-        private val eventHandler = when (eventHandlerType) {
+        private val eventHandler: EventHandler = when (eventHandlerType) {
             EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
                 scope = testCoroutines.scope,
-                recoveryEnabled = true,
                 subscribeForEvents = { mock() },
                 logicRegistry = mock(),
                 stateRegistry = mock(),
@@ -173,12 +172,10 @@ internal class TotalUnreadCountTest {
             )
             EventHandlerType.DEFAULT -> EventHandlerImpl(
                 scope = testCoroutines.scope,
-                recoveryEnabled = true,
-                client = mock(),
+                subscribeForEvents = { mock() },
                 logic = mock(),
                 state = mock(),
                 mutableGlobalState = globalMutableState,
-                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = mock(),
             )

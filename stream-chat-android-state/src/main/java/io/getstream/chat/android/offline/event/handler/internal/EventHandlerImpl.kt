@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.event.handler.internal
 
 import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -84,11 +84,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.onError
-import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
@@ -96,12 +92,13 @@ import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurr
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import java.util.Date
+import kotlinx.coroutines.launch
 import java.util.InputMismatchException
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -110,19 +107,23 @@ private const val TAG = "Chat:EventHandlerOld"
 @Suppress("LongParameterList")
 internal class EventHandlerImpl(
     private val scope: CoroutineScope,
-    private val recoveryEnabled: Boolean,
-    private val client: ChatClient,
+    private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
-    private val clientMutableState: ClientState,
     private val repos: RepositoryFacade,
-    private val syncManager: SyncManager,
-) : EventHandler {
+    private val syncManager: SyncHistoryManager,
+) : EventHandler, SyncHistoryManager.Listener {
 
     private val logger = StreamLog.getLogger(TAG)
 
+    private val currentUserId = AtomicReference<String>()
+
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
+
+    init {
+        logger.d { "<init> no args" }
+    }
 
     /**
      * Start listening to chat events.
@@ -130,19 +131,25 @@ internal class EventHandlerImpl(
     override fun startListening(currentUser: User) {
         val isDisposed = eventSubscription.isDisposed
         logger.i { "[startListening] isDisposed: $isDisposed, user: $currentUser" }
+        currentUserId.set(currentUser.id)
         if (isDisposed) {
-            val initJob = scope.async {
-                syncManager.updateAllReadStateForDate(currentUser.id, Date())
-                syncManager.loadSyncStateForUser(currentUser.id)
-                replayEventsForAllChannels(currentUser)
+            syncManager.setListener(this)
+            val initJob = scope.launch {
+                repos.cacheChannelConfigs()
             }
-            eventSubscription = client.subscribe {
-                scope.async {
+            eventSubscription = subscribeForEvents {
+                scope.launch {
                     initJob.join()
+                    syncManager.handleEvent(it)
                     handleEvents(listOf(it))
                 }
             }
         }
+    }
+
+    override suspend fun onHistorySyncCompleted(events: List<ChatEvent>) {
+        logger.i { "[onHistorySyncCompleted] events.size: ${events.size}" }
+        handleEventsInternal(events, isFromSync = true)
     }
 
     /**
@@ -151,6 +158,8 @@ internal class EventHandlerImpl(
     override fun stopListening() {
         logger.i { "[stopListening] no args" }
         eventSubscription.dispose()
+        syncManager.setListener(null)
+        currentUserId.set(null)
     }
 
     /**
@@ -162,43 +171,6 @@ internal class EventHandlerImpl(
         val eventList = events.toList()
         handleConnectEvents(eventList)
         handleEventsInternal(eventList, isFromSync = false)
-    }
-
-    /**
-     * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
-     */
-    override suspend fun syncHistoryForActiveChannels() {
-        logger.i { "[replayEventsForActiveChannels] no args" }
-        val activeChannelsCid = activeChannelsCid()
-        replayEventsForChannels(activeChannelsCid)
-    }
-
-    private fun activeChannelsCid(): List<String> {
-        return logic.getActiveChannelsLogic().map { it.cid }
-    }
-
-    private suspend fun replayEventsForChannels(cids: List<String>) {
-        if (cids.isEmpty()) {
-            logger.w { "[replayEventsForChannels] rejected (cids is empty" }
-            return
-        }
-        logger.i { "[replayEventsForChannels] cids: $cids" }
-        queryEvents(cids)
-            .onSuccessSuspend { eventList ->
-                logger.d { "[replayEventsForChannels] eventList.size: ${eventList.size}" }
-                syncManager.updateLastSyncedDate(eventList.maxByOrNull { it.createdAt }?.createdAt ?: Date())
-                handleEventsInternal(eventList, isFromSync = true)
-            }.onError {
-                logger.e { "Could not replay events for the given channels. ${it.message}" }
-            }
-    }
-
-    private suspend fun replayEventsForAllChannels(user: User) {
-        repos.cacheChannelConfigs()
-
-        // Sync cached channels
-        val cachedChannelsCids = repos.selectAllCids()
-        replayEventsForChannels(cachedChannelsCids)
     }
 
     private suspend fun handleEvents(events: List<ChatEvent>) {
@@ -217,20 +189,11 @@ internal class EventHandlerImpl(
                     logger.i { "[handleConnectEvents] received DisconnectedEvent" }
                 }
                 is ConnectedEvent -> {
-                    logger.i { "[handleConnectEvents] received ConnectedEvent; recoveryEnabled: $recoveryEnabled" }
+                    logger.i { "[handleConnectEvents] received ConnectedEvent" }
                     updateCurrentUser(SelfUserFull(event.me))
-
-                    if (recoveryEnabled) {
-                        syncManager.connectionRecovered()
-                    }
-
-                    // 4. recover missing events
-                    val activeChannelsCid = activeChannelsCid()
-                    replayEventsForChannels(activeChannelsCid)
                 }
                 is HealthEvent -> {
                     logger.v { "[handleConnectEvents] received HealthEvent" }
-                    syncManager.retryFailedEntities()
                 }
 
                 is ConnectingEvent -> {
@@ -242,11 +205,8 @@ internal class EventHandlerImpl(
         }
     }
 
-    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncManager.syncStateFlow.value?.lastSyncedAt ?: Date()).await()
-
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
-        val currentUserId = client.getCurrentUser()?.id
+        val currentUserId = currentUserId.get()
         val batchId = Random.nextInt().absoluteValue
         val batchBuilder = EventBatchUpdate.Builder(batchId)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
@@ -486,12 +446,6 @@ internal class EventHandlerImpl(
                 is MarkAllReadEvent -> {
                     mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
                     mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
-
-                    // only update sync state if the incoming "mark all read" date is newer
-                    // this supports using event handler to restore mark all read state in setUser
-                    // without redundant db writes.
-
-                    syncManager.updateAllReadStateForDate(event.user.id, event.createdAt)
                 }
 
                 // get the channel, update reads, write the channel
@@ -523,7 +477,7 @@ internal class EventHandlerImpl(
                 }
                 is UserUpdatedEvent -> {
                     event.user
-                        .takeIf { it.id == clientMutableState.user.value?.id }
+                        .takeIf { it.id == currentUserId }
                         ?.let {
                             updateCurrentUser(SelfUserPart(it))
                         }
@@ -679,11 +633,12 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        ownReactions = if (user != null && clientMutableState.user.value?.id != user.id) {
+        val currentUserId = currentUserId.get()
+        ownReactions = if (user != null && currentUserId != user.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == (clientMutableState.user.value?.id ?: "") },
+                latestReactions.filter { it.userId == (currentUserId ?: "") },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
@@ -691,11 +646,11 @@ internal class EventHandlerImpl(
 
     private suspend fun updateCurrentUser(self: SelfUser) {
         val me = self.me
-        val currentUser = clientMutableState.user.value
-        if (me.id != currentUser?.id) {
+        val currentUserId = currentUserId.get()
+        if (me.id != currentUserId) {
             throw InputMismatchException(
                 "received connect event for user with id ${me.id} while for user configured " +
-                    "has id ${currentUser?.id}. Looks like there's a problem in the user set"
+                    "has id ${currentUserId}. Looks like there's a problem in the user set"
             )
         }
         mutableGlobalState.updateCurrentUser(self)

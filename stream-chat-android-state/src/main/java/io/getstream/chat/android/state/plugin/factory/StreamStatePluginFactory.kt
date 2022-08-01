@@ -24,13 +24,11 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
@@ -51,6 +49,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventLis
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
@@ -62,7 +61,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
@@ -77,7 +76,7 @@ public class StreamStatePluginFactory(
 
     private var cachedStatePluginInstance: StatePlugin? = null
 
-    private val logger = StreamLog.getLogger("Chat:StreamStatePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -122,6 +121,7 @@ public class StreamStatePluginFactory(
         user: User,
         scope: CoroutineScope,
     ): StatePlugin {
+        logger.i { "[createStatePlugin] no args" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState.also { clientState ->
@@ -174,15 +174,12 @@ public class StreamStatePluginFactory(
 
         val syncManager = SyncManager(
             chatClient = chatClient,
-            globalState = globalState,
             clientState = clientState,
             repos = repositoryFacade,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
-        ).also { syncManager ->
-            syncManager.clearState()
-        }
+        )
 
         val eventHandler: EventHandler = createEventHandler(
             useSequentialEventHandler = config.useSequentialEventHandler,
@@ -191,14 +188,11 @@ public class StreamStatePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
-            clientMutableState = clientState,
             repos = repositoryFacade,
             syncManager = syncManager,
-        ).also { eventHandler ->
-            EventHandlerProvider.eventHandler = eventHandler
-            eventHandler.startListening(user)
-        }
+        )
 
+        eventHandler.startListening(user)
         InitializationCoordinator.getOrCreate().run {
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
@@ -207,7 +201,6 @@ public class StreamStatePluginFactory(
                 logic.clear()
                 clientState.clearState()
                 globalState.clearState()
-                scope.launch { syncManager.storeSyncState() }
                 eventHandler.stopListening()
                 clearCachedInstance()
             }
@@ -220,13 +213,14 @@ public class StreamStatePluginFactory(
         }
 
         return StatePlugin(
+            activeUser = user,
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
-            markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
+            markAllReadListener = MarkAllReadListenerImpl(logic, scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repositoryFacade),
             sendReactionListener = SendReactionListenerImpl(logic, clientState, repositoryFacade),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
@@ -235,9 +229,23 @@ public class StreamStatePluginFactory(
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerImpl(stateRegistry),
-            activeUser = user
+            provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
     }
+
+    private fun createDependencyProvider(
+        syncManager: SyncManager,
+        eventHandler: EventHandler
+    ): (KClass<*>) -> Any? {
+        return { klass ->
+            when (klass) {
+                SyncHistoryManager::class -> syncManager
+                EventHandler::class -> eventHandler
+                else -> null
+            }
+        }
+    }
+
 
     @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
@@ -247,14 +255,12 @@ public class StreamStatePluginFactory(
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
-        clientMutableState: ClientState,
         repos: RepositoryFacade,
         syncManager: SyncManager,
     ): EventHandler {
         return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
-                recoveryEnabled = true,
                 subscribeForEvents = { listener -> client.subscribe(listener) },
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
@@ -264,12 +270,10 @@ public class StreamStatePluginFactory(
             )
             else -> EventHandlerImpl(
                 scope = scope,
-                recoveryEnabled = true,
-                client = client,
+                subscribeForEvents = { listener -> client.subscribe(listener) },
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
-                clientMutableState = clientMutableState,
                 repos = repos,
                 syncManager = syncManager,
             )

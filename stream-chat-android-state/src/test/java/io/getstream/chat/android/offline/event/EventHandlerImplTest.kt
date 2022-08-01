@@ -119,7 +119,6 @@ internal class EventHandlerImplTest {
         return when (type) {
             EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
                 scope = testCoroutines.scope,
-                recoveryEnabled = true,
                 subscribeForEvents = { listener -> chatClient.subscribe(listener) },
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
@@ -130,12 +129,10 @@ internal class EventHandlerImplTest {
             )
             EventHandlerType.DEFAULT -> EventHandlerImpl(
                 scope = testCoroutines.scope,
-                recoveryEnabled = true,
-                client = chatClient,
+                subscribeForEvents = { listener -> chatClient.subscribe(listener) },
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = globalState,
-                clientMutableState = clientState,
                 repos = repositoryFacade,
                 syncManager = syncManager,
             )

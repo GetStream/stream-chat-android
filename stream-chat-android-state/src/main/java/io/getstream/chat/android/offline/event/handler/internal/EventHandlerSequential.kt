@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasOwnUser
-import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -77,19 +76,16 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.onError
-import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
+import io.getstream.chat.android.offline.model.event.BatchEvent
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -100,7 +96,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import java.util.Date
 import java.util.InputMismatchException
 import java.util.concurrent.atomic.AtomicReference
 
@@ -115,30 +110,27 @@ private const val EVENTS_BUFFER = 100
 @Suppress("LongParameterList")
 internal class EventHandlerSequential(
     scope: CoroutineScope,
-    private val recoveryEnabled: Boolean,
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
-    private val syncManager: SyncManager,
-) : EventHandler {
+    private val syncManager: SyncHistoryManager,
+) : EventHandler, SyncHistoryManager.Listener {
 
     @VisibleForTesting
     @Suppress("LongParameterList")
     constructor(
         scope: CoroutineScope,
-        recoveryEnabled: Boolean,
         subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
-        syncManager: SyncManager,
+        syncManager: SyncHistoryManager,
         currentUserId: UserId
     ) : this(
         scope = scope,
-        recoveryEnabled = recoveryEnabled,
         subscribeForEvents = subscribeForEvents,
         logicRegistry = logicRegistry,
         stateRegistry = stateRegistry,
@@ -155,11 +147,15 @@ internal class EventHandlerSequential(
     }
     private val currentUserId = AtomicReference<UserId>()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
-    private val socketEventCollector = SocketEventCollector(scope) { pendingBatchEvent ->
-        handleBatchEvent(pendingBatchEvent)
+    private val socketEventCollector = SocketEventCollector(scope) { batchEvent ->
+        handleBatchEvent(batchEvent)
     }
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
+
+    init {
+        logger.d { "<init> no args" }
+    }
 
     /**
      * Start listening to chat events.
@@ -169,14 +165,16 @@ internal class EventHandlerSequential(
         logger.i { "[startListening] isDisposed: $isDisposed, currentUser: $currentUser" }
         currentUserId.set(currentUser.id)
         if (isDisposed) {
+            syncManager.setListener(this)
             val initJob = scope.launch {
-                initialize()
+                repos.cacheChannelConfigs()
                 logger.v { "[startListening] initialization completed" }
             }
             scope.launch {
                 socketEvents.collect { event ->
                     initJob.join()
-                    handleSocketEvent(event)
+                    syncManager.handleEvent(event)
+                    socketEventCollector.collect(event)
                 }
             }
             eventsDisposable = subscribeForEvents { event ->
@@ -189,69 +187,22 @@ internal class EventHandlerSequential(
         }
     }
 
+    override suspend fun onHistorySyncCompleted(events: List<ChatEvent>) {
+        StreamLog.i(TAG) { "[onHistorySyncCompleted] events.size: ${events.size}" }
+        handleBatchEvent(
+            BatchEvent(sortedEvents = events, isFromHistorySync = true)
+        )
+    }
+
     /**
      * Stop listening for events.
      */
     override fun stopListening() {
         logger.i { "[stopListening] no args" }
         eventsDisposable.dispose()
+        syncManager.setListener(null)
         scope.coroutineContext.job.cancelChildren()
         currentUserId.set(null)
-    }
-
-    /**
-     * Replay all the events for the active channels in the SDK. Use this to sync the data of the active channels.
-     */
-    override suspend fun syncHistoryForActiveChannels() {
-        logger.d { "[syncHistoryForActiveChannels] no args" }
-        val activeChannelsCid = activeChannelsCid()
-        syncHistory(activeChannelsCid)
-    }
-
-    private suspend fun initialize() {
-        try {
-            val currentUserId: UserId = currentUserId.get() ?: error("no current userId provided")
-            logger.d { "[initialize] currentUserId: $currentUserId" }
-            syncManager.updateAllReadStateForDate(currentUserId, Date())
-            syncManager.loadSyncStateForUser(currentUserId)
-            syncHistoryForCachedChannels()
-        } catch (e: Throwable) {
-            logger.e(e) { "[initialize] failed: $e" }
-        }
-    }
-
-    private suspend fun syncHistoryForCachedChannels() {
-        logger.d { "[syncHistoryForCachedChannels] no args" }
-        repos.cacheChannelConfigs()
-
-        // Sync cached channels
-        val cachedChannelsCids = repos.selectAllCids()
-        syncHistory(cachedChannelsCids)
-    }
-
-    private fun activeChannelsCid(): List<String> {
-        logger.v { "[activeChannelsCid] no args" }
-        return logicRegistry.getActiveChannelsLogic().map { it.cid }.also { cids ->
-            logger.v { "[activeChannelsCid] found: ${cids.size}" }
-        }
-    }
-
-    private suspend fun syncHistory(cids: List<String>) {
-        if (cids.isEmpty()) {
-            logger.w { "[syncHistory] rejected (cids is empty)" }
-            return
-        }
-        logger.i { "[syncHistory] cids.size: ${cids.size}" }
-        syncManager.getSortedSyncHistory(cids)
-            .onSuccessSuspend { sortedEvents ->
-                logger.d {
-                    "[syncHistory] succeed(${sortedEvents.size}): ${sortedEvents.joinToString(separator = ", \n")}"
-                }
-                val batchEvent = BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = true)
-                handleBatchEvent(batchEvent)
-            }.onError {
-                logger.e { "[syncHistory] failed: ${it.stringify()}" }
-            }
     }
 
     /**
@@ -263,51 +214,17 @@ internal class EventHandlerSequential(
         handleBatchEvent(batchEvent)
     }
 
-    private suspend fun handleSocketEvent(event: ChatEvent) {
-        logger.d { "[handleSocketEvent] event.type: '${event.type}', event: $event" }
-        if (socketEventCollector.add(event)) {
-            return
-        }
-        socketEventCollector.fireBatchEvent()
-        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
-        handleBatchEvent(batchEvent)
-    }
-
     private suspend fun handleBatchEvent(event: BatchEvent) = try {
         logger.d {
             "[handleBatchEvent] >>> id: ${event.id}, fromSocket: ${event.isFromSocketConnection}" +
                 ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.type }}'"
         }
         updateGlobalState(event)
-        updateSyncManager(event)
         updateOfflineStorage(event)
         updateChannelsState(event)
         logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
     } catch (e: Throwable) {
         logger.e(e) { "[handleBatchEvent] failed(${event.id}): ${e.message}" }
-    }
-
-    private suspend fun updateSyncManager(batchEvent: BatchEvent) {
-        logger.v { "[updateSyncManager] batchEvent.size: ${batchEvent.size}, recoveryEnabled: $recoveryEnabled" }
-        batchEvent.sortedEvents.forEach { event: ChatEvent ->
-            when (event) {
-                is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (recoveryEnabled) {
-                        syncManager.connectionRecovered()
-                    }
-                    val activeChannelCids = activeChannelsCid()
-                    logger.v { "[updateSyncManager] activeChannelCids.size: ${activeChannelCids.size}" }
-                    syncHistory(activeChannelCids)
-                }
-                is HealthEvent -> if (batchEvent.isFromSocketConnection) {
-                    syncManager.retryFailedEntities()
-                }
-                is MarkAllReadEvent -> {
-                    syncManager.updateAllReadStateForDate(event.user.id, event.createdAt)
-                }
-                else -> Unit
-            }
-        }
     }
 
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {

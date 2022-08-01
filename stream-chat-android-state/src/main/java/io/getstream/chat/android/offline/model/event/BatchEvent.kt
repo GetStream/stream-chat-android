@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.batch
+package io.getstream.chat.android.offline.model.event
 
 import io.getstream.chat.android.client.events.ChatEvent
 import kotlin.math.absoluteValue

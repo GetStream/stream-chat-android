@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
@@ -119,6 +120,8 @@ public class StateRegistry private constructor(
             ThreadMutableState(messageId, channelsState.toMutableState(), scope)
         }
     }
+
+    internal fun getActiveQueryChannelsStates(): List<QueryChannelsState> = queryChannels.values.toList()
 
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 

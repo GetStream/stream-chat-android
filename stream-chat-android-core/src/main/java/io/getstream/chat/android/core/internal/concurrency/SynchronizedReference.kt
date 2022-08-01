@@ -20,11 +20,13 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public class SynchronizedReference<T : Any>(
-    private var value: T? = null
+    @Volatile private var value: T? = null
 ) {
 
+    public fun get(): T? = value
+
     public fun getOrCreate(builder: () -> T): T {
-        return synchronized(this) {
+        return value ?: synchronized(this) {
             value ?: builder.invoke().also {
                 value = it
             }

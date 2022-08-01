@@ -36,11 +36,6 @@ internal interface EventHandler {
     fun stopListening()
 
     /**
-     * Starts event history syncing.
-     */
-    suspend fun syncHistoryForActiveChannels()
-
-    /**
      * For testing purpose only. Simulates socket event handling.
      */
     @VisibleForTesting
