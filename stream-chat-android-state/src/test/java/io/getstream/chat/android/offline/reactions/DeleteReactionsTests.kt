@@ -35,14 +35,12 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.argThat
@@ -53,9 +51,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class DeleteReactionsTests {
-
-    @Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     companion object {
         @JvmField

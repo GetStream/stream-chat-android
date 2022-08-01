@@ -30,7 +30,7 @@ import io.getstream.chat.android.offline.message.attachments.internal.Attachment
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
@@ -40,9 +40,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -55,8 +55,23 @@ import java.util.Date
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelStateLogicImplTest {
 
-    @Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    @BeforeEach
+    fun setup() {
+        channelStateLogicImpl = ChannelStateLogicImpl(
+            mutableState,
+            globalMutableState = globalMutableState,
+            clientState = clientState,
+            searchLogic = mock(),
+            attachmentUrlValidator = attachmentUrlValidator,
+            coroutineScope = testCoroutines.scope
+        )
+    }
 
     private val user = randomUser()
     private var _messages: Map<String, Message> = emptyMap()
@@ -126,15 +141,7 @@ internal class ChannelStateLogicImplTest {
         _watcherCount.value = 0
     }
 
-    private val channelStateLogicImpl =
-        ChannelStateLogicImpl(
-            mutableState,
-            globalMutableState = globalMutableState,
-            clientState = clientState,
-            searchLogic = mock(),
-            attachmentUrlValidator = attachmentUrlValidator,
-            coroutineScope = testCoroutines.scope
-        )
+    private lateinit var channelStateLogicImpl: ChannelStateLogicImpl
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
