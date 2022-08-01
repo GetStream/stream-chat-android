@@ -24,7 +24,7 @@ import android.widget.Toast
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.addSchemeToUrlIfNeeded
+import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 
 @InternalStreamChatApi
 public class WebLinkDestination(context: Context, private val url: String) : ChatDestination(context) {

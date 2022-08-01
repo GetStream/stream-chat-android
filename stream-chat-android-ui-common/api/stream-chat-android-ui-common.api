@@ -149,17 +149,12 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
+	public static final fun isDirectMessaging (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ContextKt {
 	public static final fun onPermissionRequested (Landroid/content/Context;Ljava/lang/String;)V
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/DateKt {
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibilityKt {
@@ -170,9 +165,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
-}
-
-public final class com/getstream/sdk/chat/utils/extensions/StringKt {
 }
 
 public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
@@ -196,7 +188,8 @@ public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView 
 }
 
 public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
-	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun clear ()V
 	public fun onKeystroke ()V
 }

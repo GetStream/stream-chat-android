@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils.extensions
+package com.getstream.sdk.chat
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
+import androidx.core.content.FileProvider
 
-private const val ONE_MINUTE_IN_MILISECONDS = 60000
-
-@InternalStreamChatApi
-public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILISECONDS < time)
+public class StreamFileProvider : FileProvider()

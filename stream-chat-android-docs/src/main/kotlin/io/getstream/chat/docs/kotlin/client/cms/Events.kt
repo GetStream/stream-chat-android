@@ -38,6 +38,7 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
                     is NewMessageEvent -> {
                         val message = event.message
                     }
+                    else -> Unit
                 }
             }
 
@@ -81,6 +82,7 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
                     is DisconnectedEvent -> {
                         // Socket is disconnected
                     }
+                    else -> Unit
                 }
             }
         }

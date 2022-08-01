@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -35,7 +34,6 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
  * a user. Under the hood, it persists the user so that we are able to connect automatically
  * next time the app is launched.
  */
-@OptIn(InternalStreamChatApi::class)
 object ChatHelper {
 
     private const val TAG = "ChatHelper"

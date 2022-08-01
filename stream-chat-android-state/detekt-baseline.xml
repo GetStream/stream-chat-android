@@ -33,8 +33,6 @@
     <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
-    <ID>LongMethod:StreamStatePluginFactory.kt$StreamStatePluginFactory$@InternalStreamChatApi public fun createStatePlugin( user: User, scope: CoroutineScope, repositoryFactory: RepositoryFactory, ): StatePlugin</ID>
-    <ID>LongParameterList:RepositoryFacade.kt$RepositoryFacade$( userRepository: UserRepository, configsRepository: ChannelConfigRepository, private val channelsRepository: ChannelRepository, queryChannelsRepository: QueryChannelsRepository, private val messageRepository: MessageRepository, private val reactionsRepository: ReactionRepository, syncStateRepository: SyncStateRepository, attachmentRepository: AttachmentRepository, private val scope: CoroutineScope, private val defaultConfig: Config, )</ID>
     <ID>LongParameterList:StatePlugin.kt$StatePlugin$( private val queryChannelsListener: QueryChannelsListener, private val queryChannelListener: QueryChannelListener, private val threadQueryListener: ThreadQueryListener, private val channelMarkReadListener: ChannelMarkReadListener, private val editMessageListener: EditMessageListener, private val hideChannelListener: HideChannelListener, private val markAllReadListener: MarkAllReadListener, private val deleteReactionListener: DeleteReactionListener, private val sendReactionListener: SendReactionListener, private val deleteMessageListener: DeleteMessageListener, private val sendGiphyListener: SendGiphyListener, private val shuffleGiphyListener: ShuffleGiphyListener, private val sendMessageListener: SendMessageListener, private val queryMembersListener: QueryMembersListener, private val typingEventListener: TypingEventListener, private val createChannelListener: CreateChannelListener, internal val activeUser: User, )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
@@ -61,12 +59,10 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
-    <ID>MaxLineLength:GlobalMutableState.kt$GlobalMutableState.Companion$*</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
-    <ID>MaxLineLength:RepositoryFacade.kt$RepositoryFacade.Companion$requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }</ID>
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:StatePlugin.kt$StatePlugin$*</ID>
     <ID>MaxLineLength:StatePluginConfig.kt$StatePluginConfig$*</ID>
@@ -87,9 +83,6 @@
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnusedPrivateMember:EventHandlerImpl.kt$EventHandlerImpl$user: User</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
-    <ID>UnusedPrivateMember:StreamStatePluginFactory.kt$StreamStatePluginFactory$context: Context</ID>
-    <ID>UnusedPrivateMember:StreamStatePluginFactory.kt$StreamStatePluginFactory$scope: CoroutineScope</ID>
-    <ID>UnusedPrivateMember:StreamStatePluginFactory.kt$StreamStatePluginFactory$user: User?</ID>
     <ID>UnusedPrivateMember:UploadAttachmentsIntegrationTests.kt$UploadAttachmentsIntegrationTests$private val currentUser = randomUser()</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _channels = MutableStateFlow&lt;Map&lt;String, Channel>?>(null)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
