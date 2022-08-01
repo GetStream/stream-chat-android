@@ -187,7 +187,15 @@ internal class SendReactionsTests {
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<MutableGlobalState>()
         private val clientState = mock<ClientState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client)
+        private val logicRegistry = LogicRegistry.create(
+            stateRegistry = stateRegistry,
+            globalState = globalState,
+            clientState = clientState,
+            userPresence = false,
+            repos = repos,
+            client = client,
+            coroutineScope = testCoroutines.scope
+        )
 
         suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
             whenever(repos.selectMessage(message.id)) doReturn message
