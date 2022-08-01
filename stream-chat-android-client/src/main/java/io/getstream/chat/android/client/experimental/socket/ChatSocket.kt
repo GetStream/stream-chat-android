@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.experimental.socket.lifecycle.ConnectionLifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.combine
@@ -62,6 +63,7 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
+        coroutineScope = coroutineScope,
         checkCallback = {
             (stateMachine.state as? State.Connected)?.let { state -> sendEvent(state.event) }
         },
@@ -150,7 +152,7 @@ internal open class ChatSocket constructor(
             state<State.Connected> {
                 onEnter {
                     if (it is Event.WebSocket.OnConnectedEventReceived) {
-                        healthMonitor.start()
+                        healthMonitor.ack()
                         callListeners { listener -> listener.onConnected(it.connectedEvent) }
                     }
                 }
@@ -292,7 +294,9 @@ internal open class ChatSocket constructor(
     }
 
     open fun onEvent(event: ChatEvent) {
-        healthMonitor.ack()
+        if (event is HealthEvent) {
+            healthMonitor.ack()
+        }
         callListeners { listener -> listener.onEvent(event) }
     }
 
