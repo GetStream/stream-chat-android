@@ -86,8 +86,8 @@ internal class ChannelMarkReadHelper(
                     return false
                 }
 
-                if (!clientState.isOnline) {
-                    logger.i { "Cannot mark read because user is offline!" }
+                if (!clientState.isNetworkAvailable) {
+                    logger.i { "Cannot mark as read because the network connection is unavailable." }
                     return false
                 }
 

@@ -52,16 +52,16 @@ public interface ClientState {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * If the user is online or not.
+     * If the WebSocket is connected.
      *
-     * @return True if the user is online otherwise False.
+     * @return True if the WebSocket is connected, otherwise false.
      */
     public val isOnline: Boolean
 
     /**
-     * If the user is offline or not.
+     * If the WebSocket is disconnected.
      *
-     * @return True if the user is offline otherwise False.
+     * @return True if the WebSocket is disconnected, otherwise false.
      */
     public val isOffline: Boolean
 
