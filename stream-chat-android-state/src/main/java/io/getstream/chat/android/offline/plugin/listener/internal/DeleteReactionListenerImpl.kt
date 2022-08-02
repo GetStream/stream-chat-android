@@ -89,8 +89,8 @@ internal class DeleteReactionListenerImpl(
      * @param message The [Message] to update.
      */
     private fun doOptimisticMessageUpdate(cid: String, message: Message) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessages(listOf(message))
+        logic.channelFromMessage(message)?.upsertMessages(listOf(message))
+        logic.threadFromMessage(message)?.upsertMessages(listOf(message))
     }
 
     /**
