@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
@@ -202,6 +202,8 @@ internal class SendReactionsTests {
         }
 
         fun get(): Pair<SendReactionListener, StateRegistry> =
-            SendReactionListenerImpl(logicRegistry, clientState, repos) to stateRegistry
+            io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase(logicRegistry,
+                clientState,
+                repos) to stateRegistry
     }
 }

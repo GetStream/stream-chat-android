@@ -17,18 +17,15 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
 /**
@@ -39,8 +36,7 @@ import java.util.Date
  * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
-internal class SendReactionListenerImpl(
-    private val logic: LogicRegistry,
+internal class SendReactionListenerDatabase(
     private val clientState: ClientState,
     private val repos: RepositoryFacade,
 ) : SendReactionListener {
@@ -81,22 +77,7 @@ internal class SendReactionListenerImpl(
         repos.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
             cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
             repos.insertMessage(cachedMessage)
-
-            if (cid != null) {
-                doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
-            }
         }
-    }
-
-    /**
-     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.messages].
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param message The [Message] to update.
-     */
-    private fun doOptimisticMessageUpdate(cid: String, message: Message) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessages(listOf(message))
     }
 
     /**
