@@ -27,8 +27,6 @@ import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.logging.StreamLog
 import java.util.Date
@@ -47,18 +45,10 @@ internal class SendMessageListenerImpl(
         message: Message,
     ) {
         val cid = "$channelType:$channelId"
-        val channel = if (message.parentId == null || message.showInChannel) {
-            logic.channel(channelType, channelId)
-        } else {
-            null
-        }
-        val thread = message.parentId?.let {
-            logic.thread(it)
-        }
         if (result.isSuccess) {
-            handleSendMessageSuccess(cid, channel, thread, result.data())
+            handleSendMessageSuccess(cid, logic, result.data())
         } else {
-            handleSendMessageFail(channel, thread, message, result.error())
+            handleSendMessageFail(logic, message, result.error())
         }
     }
 
@@ -70,13 +60,9 @@ internal class SendMessageListenerImpl(
      */
     private suspend fun handleSendMessageSuccess(
         cid: String,
-        channel: ChannelLogic?,
-        thread: ThreadLogic?,
+        logic: LogicRegistry,
         processedMessage: Message
     ) {
-        if (channel == null && thread == null) {
-            return
-        }
         // Don't update latest message with this id if it is already synced.
         val latestUpdatedMessage = repos.selectMessage(processedMessage.id)
         if (latestUpdatedMessage?.syncStatus == SyncStatus.COMPLETED) {
@@ -89,8 +75,8 @@ internal class SendMessageListenerImpl(
             )
             .also {
                 repos.insertMessage(it)
-                channel?.upsertMessage(it)
-                thread?.upsertMessage(it)
+                logic.channelFromMessage(it)?.upsertMessage(it)
+                logic.threadFromMessage(it)?.upsertMessage(it)
             }
     }
 
@@ -103,8 +89,7 @@ internal class SendMessageListenerImpl(
      * @return [Message] Updated message.
      */
     private suspend fun handleSendMessageFail(
-        channel: ChannelLogic?,
-        thread: ThreadLogic?,
+        logic: LogicRegistry,
         message: Message,
         error: ChatError
     ) {
@@ -131,8 +116,8 @@ internal class SendMessageListenerImpl(
         )
             .also {
                 repos.insertMessage(it)
-                channel?.upsertMessage(it)
-                thread?.upsertMessage(it)
+                logic.channelFromMessage(it)?.upsertMessage(it)
+                logic.threadFromMessage(it)?.upsertMessage(it)
             }
     }
 }
