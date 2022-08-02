@@ -52,7 +52,7 @@ internal class DeleteMessageListenerState(
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             if (isModerationFailed) {
-                channelLogic.deleteMessage(message)
+                deleteMessage(message)
                 Result.error(
                     MessageModerationDeletedException(
                         "Message with failed moderation has been deleted locally: $messageId"
@@ -78,7 +78,7 @@ internal class DeleteMessageListenerState(
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             if (isModerationFailed) {
-                channelLogic.stateLogic().deleteMessage(message)
+                deleteMessage(message)
             } else {
                 val networkAvailable = clientState.isNetworkAvailable
                 val messageToBeDeleted = message.copy(
@@ -117,9 +117,12 @@ internal class DeleteMessageListenerState(
     }
 
     private fun updateMessage(message: Message) {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-        logic.channel(channelType, channelId)
-            .stateLogic()
-            .upsertMessage(message)
+        logic.channelFromMessage(message)?.upsertMessage(message)
+        logic.threadFromMessage(message)?.upsertMessage(message)
+    }
+
+    private fun deleteMessage(message: Message) {
+        logic.channelFromMessage(message)?.deleteMessage(message)
+        logic.threadFromMessage(message)?.deleteMessage(message)
     }
 }
