@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.setup.state
 
 import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -44,7 +45,7 @@ public interface ClientMutableState : ClientState {
     /**
      * Sets initialized
      *
-     * @param initialized Boolean
+     * @param state [InitializationState]
      */
-    public fun setInitialized(initialized: Boolean)
+    public fun setInitializionState(state: InitializationState)
 }

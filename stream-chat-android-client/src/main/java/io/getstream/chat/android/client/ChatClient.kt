@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.ModelFields
@@ -156,6 +157,7 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
+import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -262,7 +264,6 @@ internal constructor(
 
                     clientState.toMutableState()?.run {
                         setConnectionState(ConnectionState.CONNECTED)
-                        setInitialized(true)
                         setUser(user)
                     }
                 }
@@ -429,7 +430,11 @@ internal constructor(
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
-        }.onError { disconnect() }
+        }.onError {
+            disconnect()
+        }.onSuccess {
+            clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
+        }
     }
 
     private fun initializeClientWithUser(
@@ -488,6 +493,7 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
+            clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
             logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
             setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.v {
@@ -1051,6 +1057,7 @@ internal constructor(
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             notifications.onLogout()
             clientState.toMutableState()?.clearState()
+            clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
             getCurrentUser().let(initializationCoordinator::userDisconnected)
             if (ToggleService.isSocketExperimental().not()) {
                 socketStateService.onDisconnectRequested()
