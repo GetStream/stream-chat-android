@@ -109,7 +109,7 @@ internal class LogicRegistry internal constructor(
     }
 
     fun channelFromMessage(message: Message): ChannelLogic? {
-        return if (message.parentId == null && message.showInChannel) {
+        return if (message.parentId == null || message.showInChannel) {
             val (channelType, channelId) = message.cid.cidToTypeAndId()
             channel(channelType, channelId)
         } else {

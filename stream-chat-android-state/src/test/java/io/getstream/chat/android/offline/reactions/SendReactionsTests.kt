@@ -70,7 +70,7 @@ internal class SendReactionsTests {
     @Test
     fun `When adding reaction Should add it to own and latest reactions`() = runTest {
         val cid = randomCID()
-        val message = Message().apply {
+        val message = Message(cid = cid).apply {
             myReactions.forEach(::addMyReaction)
         }
         val reactionToAdd = Reaction().apply {
@@ -99,7 +99,7 @@ internal class SendReactionsTests {
     @Test
     fun `When adding reaction with enforce unique Should remove current user's other reactions`() = runTest {
         val cid = randomCID()
-        val message = Message().apply {
+        val message = Message(cid = cid).apply {
             myReactions.forEach(::addMyReaction)
         }
         val reactionToAdd = Reaction().apply {
@@ -129,7 +129,7 @@ internal class SendReactionsTests {
     @Test
     fun `When adding reaction with enforce unique Should properly update reactions count`() = runTest {
         val cid = randomCID()
-        val message = Message().apply {
+        val message = Message(cid = cid).apply {
             myReactions.forEach(::addMyReaction)
         }
         val newReaction = Reaction().apply {
@@ -152,7 +152,7 @@ internal class SendReactionsTests {
     @Test
     fun `When adding reaction with enforce unique Should properly update reactions score`() = runTest {
         val cid = randomCID()
-        val message = Message().apply {
+        val message = Message(cid = cid).apply {
             myReactions.forEach(::addMyReaction)
         }
         val newReaction = Reaction().apply {

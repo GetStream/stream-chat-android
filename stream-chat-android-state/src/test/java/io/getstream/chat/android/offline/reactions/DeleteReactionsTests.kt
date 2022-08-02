@@ -87,7 +87,7 @@ internal class DeleteReactionsTests {
     @Test
     fun `When deleting reaction Should remove it from own and latest reactions`() = runTest {
         val cid = randomCID()
-        val message = Message().apply {
+        val message = Message(cid = cid).apply {
             myReactions.forEach(::addMyReaction)
         }
         val (sut, stateRegistry) = Fixture(testCoroutines.scope, currentUser)
