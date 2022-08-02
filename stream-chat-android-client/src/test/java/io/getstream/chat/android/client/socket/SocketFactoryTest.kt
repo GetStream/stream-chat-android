@@ -18,13 +18,13 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother.randomUser
-import io.getstream.chat.android.client.experimental.socket.ws.WebSocketEventObserver
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.test.randomString
 import okhttp3.OkHttpClient
+import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -72,7 +72,7 @@ internal class SocketFactoryTest {
             org.mockito.kotlin.check {
                 it.url.toString() `should be equal to` expectedUrl
             },
-            any< WebSocketEventObserver>()
+            any<WebSocketListener>()
         )
     }
 
