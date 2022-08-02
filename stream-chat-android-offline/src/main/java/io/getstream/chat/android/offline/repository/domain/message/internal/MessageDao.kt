@@ -158,6 +158,17 @@ internal interface MessageDao {
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
     @Query(
+        "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE parentId = :messageId OR id = :messageId " +
+            "ORDER BY CASE WHEN createdAt " +
+            "IS NULL THEN createdLocallyAt " +
+            "ELSE createdAt " +
+            "END DESC LIMIT :limit"
+    )
+    @Transaction
+    suspend fun messagesForThread(messageId: String, limit: Int = 100): List<MessageEntity>
+
+    @Query(
         "DELETE from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
             "AND createdAt < :deleteMessagesBefore"

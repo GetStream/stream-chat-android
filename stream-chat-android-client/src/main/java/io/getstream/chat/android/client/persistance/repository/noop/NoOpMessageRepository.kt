@@ -39,4 +39,5 @@ internal object NoOpMessageRepository : MessageRepository {
         cid: String,
         pagination: AnyChannelPaginationRequest?,
     ): List<Message> = emptyList()
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = emptyList()
 }

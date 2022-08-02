@@ -38,6 +38,17 @@ public interface MessageRepository {
     ): List<Message>
 
     /**
+     * Select messages for a thread in a desired page.
+     *
+     * @param messageId String.
+     * @param limit limit of messages
+     */
+    public suspend fun selectMessagesForThread(
+        messageId: String,
+        limit: Int,
+    ): List<Message>
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.

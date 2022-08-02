@@ -67,13 +67,20 @@ internal class ThreadLogic(
             logger.i { errorMsg }
             Result(ChatError(errorMsg))
         } else {
-            val result = client.getMessage(messageId).await()
-            if (result.isSuccess) {
-                upsertMessage(result.data())
-                repos.insertMessage(result.data())
+            val messages = repos.selectMessagesForThread(messageId, limit)
+            val parentMessage = messages.firstOrNull { it.id == messageId }
+            if (parentMessage != null) {
+                upsertMessages(messages)
                 Result.success(Unit)
             } else {
-                Result(result.error())
+                val result = client.getMessage(messageId).await()
+                if (result.isSuccess) {
+                    upsertMessage(result.data())
+                    repos.insertMessage(result.data())
+                    Result.success(Unit)
+                } else {
+                    Result(result.error())
+                }
             }
         }
     }
