@@ -256,6 +256,7 @@ public final class io/getstream/chat/android/offline/plugin/state/channel/Messag
 
 public abstract interface class io/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState {
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
