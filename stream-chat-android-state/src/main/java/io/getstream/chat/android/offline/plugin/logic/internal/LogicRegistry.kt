@@ -20,7 +20,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
@@ -104,6 +106,18 @@ internal class LogicRegistry internal constructor(
         return channels.values.find { channelLogic ->
             channelLogic.getMessage(messageId) != null
         }
+    }
+
+    fun channelFromMessage(message: Message): ChannelLogic? {
+        return if (message.parentId == null && message.showInChannel) {
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            channel(channelType, channelId)
+        } else {
+            null
+        }
+    }
+    fun threadFromMessage(message: Message): ThreadLogic? {
+        return message.parentId?.let { thread(it) }
     }
 
     /**
