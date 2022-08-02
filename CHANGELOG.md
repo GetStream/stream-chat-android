@@ -37,7 +37,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed preview for channels when sending messages offline. [3933](https://github.com/GetStream/stream-chat-android/pull/3933)
-- Fixed marking the channel as read when opening it from a push notification. [#3985](https://github.com/GetStream/stream-chat-android/pull/3985)
+- Fixed marking the channel as read when opening it from a push notification. Previously the SDK would fail to make that call. [#3985](https://github.com/GetStream/stream-chat-android/pull/3985)
 
 ### ⬆️ Improved
 
