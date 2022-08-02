@@ -32,6 +32,13 @@ internal interface ThreadStateLogic {
     fun writeThreadState(): ThreadMutableState
 
     /**
+     * Deletes a message for the thread
+     *
+     * @param message [Message]
+     */
+    fun deleteMessage(message: Message)
+
+    /**
      * Upsert message in the thread.
      *
      * @param message The message to be added or updated.
@@ -47,9 +54,9 @@ internal interface ThreadStateLogic {
     fun upsertMessages(messages: List<Message>)
 
     /**
-     * Removes message. Doesn't remove message in database.
+     * Removes local message. Doesn't remove message in database.
      *
      * @param message The [Message] to be deleted.
      */
-    fun removeMessage(message: Message)
+    fun removeLocalMessage(message: Message)
 }

@@ -41,6 +41,15 @@ internal class ThreadStateLogicImpl(
     }
 
     /**
+     * Deletes a message for the thread
+     *
+     * @param message [Message]
+     */
+    override fun deleteMessage(message: Message) {
+        mutableState.rawMessages -= message.id
+    }
+
+    /**
      * Upsert message in the thread.
      *
      * @param message The message to be added or updated.
@@ -59,12 +68,12 @@ internal class ThreadStateLogicImpl(
     }
 
     /**
-     * Removes message. Doesn't remove message in database.
+     * Removes local message. Doesn't remove message in database.
      *
      * @param message The [Message] to be deleted.
      */
-    override fun removeMessage(message: Message) {
-        mutableState.rawMessages = mutableState.rawMessages - message.id
+    override fun removeLocalMessage(message: Message) {
+        mutableState.rawMessages -= message.id
     }
 
     /**

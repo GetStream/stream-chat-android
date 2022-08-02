@@ -115,9 +115,36 @@ internal class ThreadLogic(
         onResult(result, limit)
     }
 
+    internal fun deleteMessage(message: Message) {
+        threadStateLogic.deleteMessage(message)
+    }
+
+    /**
+     * Updates the messages locally and saves it at database.
+     *
+     * @param messages The list of messages to be updated in the SDK and to be saved in database.
+     */
+    internal suspend fun updateAndSaveMessages(messages: List<Message>) {
+        threadStateLogic.upsertMessages(messages)
+        storeMessageLocally(messages)
+    }
+
+    /**
+     * Store the messages in the local cache.
+     *
+     * @param messages The messages to be stored. Check [Message].
+     */
+    private suspend fun storeMessageLocally(messages: List<Message>) {
+        repos.insertMessages(messages)
+    }
+
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
-    private fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+    internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+
+    internal fun removeLocalMessage(message: Message) {
+        threadStateLogic.removeLocalMessage(message)
+    }
 
     internal fun handleEvents(events: List<HasMessage>) {
         for (event in events) {
