@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.experimental.socket
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 
 /**
  * @startuml
@@ -57,13 +56,12 @@ internal sealed class State {
     /**
      * State of socket when connection is being established.
      */
-    data class Connecting internal constructor(val webSocket: OkHttpWebSocket) : State()
+    object Connecting : State()
 
     /**
      * State of socket when the connection is established.
      */
-    data class Connected internal constructor(val event: ConnectedEvent, internal val webSocket: OkHttpWebSocket) :
-        State()
+    data class Connected internal constructor(val event: ConnectedEvent) : State()
 
     /**
      * State of socket when connection is being disconnecting.
