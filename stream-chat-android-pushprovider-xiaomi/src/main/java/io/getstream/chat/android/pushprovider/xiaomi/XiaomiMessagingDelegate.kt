@@ -104,7 +104,7 @@ public object XiaomiMessagingDelegate {
             PushMessage(
                 channelId = it["channel_id"]!!,
                 messageId = it["message_id"]!!,
-                channelType = it["channel_type"]!!
+                channelType = it["channel_type"]!!,
             )
         }
 

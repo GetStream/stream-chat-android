@@ -40,7 +40,7 @@ public class FirebasePushDeviceGenerator(
         }
 
     override fun onPushDeviceGeneratorSelected() {
-        FirebaseMessagingDelegate.fallbackProviderName = providerName,
+        FirebaseMessagingDelegate.fallbackProviderName = providerName
     }
 
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {

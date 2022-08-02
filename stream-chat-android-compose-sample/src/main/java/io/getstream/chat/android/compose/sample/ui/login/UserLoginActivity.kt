@@ -223,7 +223,7 @@ class UserLoginActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() }
                 )
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier
