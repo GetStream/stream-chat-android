@@ -73,7 +73,15 @@ internal class SendMessageInterceptorImpl(
         }
 
         // Update flow in channel controller
-        channel.upsertMessage(preparedMessage)
+        val parentId = preparedMessage.parentId
+        if (parentId != null) {
+            logic.thread(parentId).upsertMessage(preparedMessage)
+            if (message.showInChannel) {
+                channel.upsertMessage(preparedMessage)
+            }
+        } else {
+            channel.upsertMessage(preparedMessage)
+        }
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(preparedMessage)
         channelRepository.updateLastMessageForChannel(message.cid, preparedMessage)

@@ -105,8 +105,8 @@ internal class ThreadLogic(
         limit: Int
     ) = onResult(result, limit)
 
-    private fun upsertMessage(message: Message) = upsertMessages(listOf(message))
-    private fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+    internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
 
     internal fun handleEvents(events: List<HasMessage>) {
         for (event in events) {
