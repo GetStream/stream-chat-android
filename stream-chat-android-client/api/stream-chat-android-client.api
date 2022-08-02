@@ -2819,6 +2819,14 @@ public final class io/getstream/chat/android/client/models/GuestUser {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/models/InitializationState : java/lang/Enum {
+	public static final field COMPLETE Lio/getstream/chat/android/client/models/InitializationState;
+	public static final field NOT_INITIALIZED Lio/getstream/chat/android/client/models/InitializationState;
+	public static final field RUNNING Lio/getstream/chat/android/client/models/InitializationState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/InitializationState;
+	public static fun values ()[Lio/getstream/chat/android/client/models/InitializationState;
+}
+
 public final class io/getstream/chat/android/client/models/Member : io/getstream/chat/android/client/api/models/querysort/ComparableFieldProvider, io/getstream/chat/android/client/models/UserEntity {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -3589,6 +3597,7 @@ public final class io/getstream/chat/android/client/setup/InitializationCoordina
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
 	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getInitializationState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z

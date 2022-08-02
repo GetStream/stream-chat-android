@@ -19,6 +19,7 @@
 ### ⬆️ Improved
 - Offline data is clear after the user is disconnect by calling `ChatClient.disconnect(true)`. [#3917](https://github.com/GetStream/stream-chat-android/pull/3917)
 - Adding logs to understand more about unrecoverable errors in socket connection. [#3946](https://github.com/GetStream/stream-chat-android/pull/3946)
+- Added the ClientState.initializationState. Now you can check when the current state of the initialization progress. [#3962](https://github.com/GetStream/stream-chat-android/pull/3962)
 
 ### ✅ Added
 - Added a check if `lastSyncedAt` is no later than 30 days when calling `ChatClient::getSyncHistory`. [#3934](https://github.com/GetStream/stream-chat-android/pull/3934)

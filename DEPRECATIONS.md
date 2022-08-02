@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ClientState.initialized` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use ClientState.initializationState instead. |
 | `MessageListViewModel.BlockUser` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Deprecated in order to make the action more explicit. Use `MessageListViewModel.ShadowBanUser` if you want to retain the same functionality, or `MessageListViewModel.BanUser` if you want to outright ban the user. The difference between banning and shadow banning can be found here: https://getstream.io/blog/feature-announcement-shadow-ban/ |
 | `MessageAction.MuteUser` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The option to mute users via a message option has been deprecated and will be removed. |
 | `MessageListView::setUserUnmuteHandler` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The option to unmute the user from `MessageListView` has been deprecated and will be removed. |
