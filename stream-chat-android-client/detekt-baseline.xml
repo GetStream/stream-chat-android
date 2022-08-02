@@ -6,9 +6,9 @@
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaximumLineLength:io.getstream.chat.android.client.ChannelsApiCallsTests.kt:434</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:157</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:170</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:176</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:184</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:197</ID>
+    <ID>MaximumLineLength:io.getstream.chat.android.client.ConnectUserTest.kt:203</ID>
     <ID>MaximumLineLength:io.getstream.chat.android.client.call.RetrofitCallTest.kt:67</ID>
     <ID>MaximumLineLength:io.getstream.chat.android.client.call.RetrofitCallTest.kt:80</ID>
     <ID>MaximumLineLength:io.getstream.chat.android.client.chatclient.WhenConnectUser.kt:67</ID>
