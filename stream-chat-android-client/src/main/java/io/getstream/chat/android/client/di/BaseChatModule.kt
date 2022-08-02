@@ -107,6 +107,9 @@ internal open class BaseChatModule(
     }
 
     val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(lifecycle) }
+    val networkStateProvider: NetworkStateProvider by lazy {
+        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+    }
     val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
@@ -237,7 +240,7 @@ internal open class BaseChatModule(
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
-        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+        networkStateProvider,
         parser,
         networkScope,
     )
@@ -253,9 +256,7 @@ internal open class BaseChatModule(
         networkScope,
         parser,
         lifecycleObserver,
-        listOf(
-            networkLifecyclePublisher(),
-        ),
+        networkStateProvider,
     )
 
     @Suppress("RemoveExplicitTypeArguments")

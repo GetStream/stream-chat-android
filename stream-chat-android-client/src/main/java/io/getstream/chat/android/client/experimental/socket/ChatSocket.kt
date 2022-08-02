@@ -28,10 +28,10 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.experimental.socket.lifecycle.ConnectionLifecyclePublisher
-import io.getstream.chat.android.client.experimental.socket.lifecycle.LifecyclePublisher
 import io.getstream.chat.android.client.experimental.socket.lifecycle.combine
 import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.HealthMonitor
 import io.getstream.chat.android.client.socket.SocketErrorMessage
@@ -57,7 +57,7 @@ internal class ChatSocket private constructor(
     private val coroutineScope: CoroutineScope,
     private val parser: ChatParser,
     private val lifecycleObserver: StreamLifecycleObserver,
-    private val lifecycleObservers: List<LifecyclePublisher>,
+    private val networkStateProvider: NetworkStateProvider,
 ) {
     private var pendingStartEvent: Event.Lifecycle.Started? = null
     private val logger = StreamLog.getLogger("Chat:Socket")
@@ -90,7 +90,15 @@ internal class ChatSocket private constructor(
             )
         }
     }
+    private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
+        override fun onConnected() {
+            stateMachine.sendEvent(Event.Lifecycle.Started)
+        }
 
+        override fun onDisconnected() {
+            stateMachine.sendEvent(Event.Lifecycle.Stopped.AndAborted(DisconnectCause.NetworkNotAvailable))
+        }
+    }
     private var reconnectionAttempts = 0
     private var connectionEventReceived = false
 
@@ -175,7 +183,7 @@ internal class ChatSocket private constructor(
         get() = stateMachine.state
 
     private fun initialize() {
-        (lifecycleObservers + connectLifecyclePublisher).combine()
+        listOf(connectLifecyclePublisher).combine()
             .onEach {
                 logger.d { "Received lifecycle event: $it and current state is: $state" }
                 stateMachine.sendEvent(it)
@@ -242,12 +250,12 @@ internal class ChatSocket private constructor(
 
     private suspend fun startObservers() {
         lifecycleObserver.observe(lifecycleHandler)
-        lifecycleObservers.forEach { it.observe() }
+        networkStateProvider.subscribe(networkStateListener)
     }
 
     private suspend fun disposeObservers() {
         lifecycleObserver.dispose(lifecycleHandler)
-        lifecycleObservers.forEach { it.dispose() }
+        networkStateProvider.unsubscribe(networkStateListener)
     }
 
     private fun State.Connected.initiateShutdown(state: Event.Lifecycle.Stopped) {
@@ -421,7 +429,7 @@ internal class ChatSocket private constructor(
             coroutineScope: CoroutineScope,
             parser: ChatParser,
             lifecycleObserver: StreamLifecycleObserver,
-            lifecycleObservers: List<LifecyclePublisher>,
+            networkStateProvider: NetworkStateProvider,
         ): ChatSocket =
             ChatSocket(
                 apiKey,
@@ -431,7 +439,7 @@ internal class ChatSocket private constructor(
                 coroutineScope,
                 parser,
                 lifecycleObserver,
-                lifecycleObservers
+                networkStateProvider,
             ).apply {
                 this.initialize()
             }
