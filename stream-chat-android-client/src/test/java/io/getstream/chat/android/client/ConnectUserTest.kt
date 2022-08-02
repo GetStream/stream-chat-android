@@ -97,7 +97,7 @@ internal class ConnectUserTest {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
