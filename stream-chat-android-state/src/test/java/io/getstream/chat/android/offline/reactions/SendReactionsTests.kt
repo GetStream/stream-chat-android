@@ -16,21 +16,18 @@
 
 package io.getstream.chat.android.offline.reactions
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.CoroutineScope
@@ -40,12 +37,13 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-internal class SendReactionsTests {
+internal class SendReactionsStateTests {
 
     companion object {
         @JvmField
@@ -182,30 +180,21 @@ internal class SendReactionsTests {
             latestUsers = MutableStateFlow(emptyMap()),
         )
 
-        private val client = mock<ChatClient>()
-
-        private var repos = mock<RepositoryFacade>()
-        private val globalState = mock<MutableGlobalState>()
         private val clientState = mock<ClientState>()
-        private val logicRegistry = LogicRegistry.create(
-            stateRegistry = stateRegistry,
-            globalState = globalState,
-            clientState = clientState,
-            userPresence = false,
-            repos = repos,
-            client = client,
-            coroutineScope = testCoroutines.scope
-        )
+        private val channelLogic: ChannelLogic = mock()
 
-        suspend fun givenMessageWithReactions(message: Message): Fixture = apply {
-            whenever(repos.selectMessage(message.id)) doReturn message
+        private val logicRegistry: LogicRegistry = mock {
+            on(it.channelFromMessageId(any())) doReturn channelLogic
         }
 
-        fun get(): Pair<SendReactionListener, StateRegistry> =
-            io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase(
+        fun givenMessageWithReactions(message: Message): Fixture = apply {
+            whenever(channelLogic.getMessage(message.id)) doReturn message
+        }
+
+        fun get(): Pair<SendReactionListenerState, StateRegistry> =
+            SendReactionListenerState(
                 logicRegistry,
                 clientState,
-                repos
             ) to stateRegistry
     }
 }

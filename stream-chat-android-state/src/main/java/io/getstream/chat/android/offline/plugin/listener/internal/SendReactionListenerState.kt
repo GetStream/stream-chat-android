@@ -44,7 +44,6 @@ internal class SendReactionListenerState(
         )
 
         val channelLogic = logic.channelFromMessageId(reaction.messageId)
-
         val cachedMessage = channelLogic?.getMessage(reaction.messageId)
             ?.apply {
                 addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)

@@ -22,7 +22,9 @@ import io.getstream.chat.android.client.extensions.internal.enrichWithDataBefore
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.ReactionRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
@@ -32,13 +34,16 @@ import java.util.Date
  * [SendReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles adding reaction offline, updates the database and does the optimistic UI update.
  *
- * @param logic [LogicRegistry]
  * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * @param repos [RepositoryFacade] to cache intermediate data and final result.
+ * @param reactionsRepository [ReactionRepository] to cache intermediate data and final result related to reactions.
+ * @param messageRepository [MessageRepository] to cache intermediate data and final result related to messages.
+ * @param userRepository [UserRepository] to cache intermediate data and final result related to User.
  */
 internal class SendReactionListenerDatabase(
     private val clientState: ClientState,
-    private val repos: RepositoryFacade,
+    private val reactionsRepository: ReactionRepository,
+    private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository
 ) : SendReactionListener {
 
     /**
@@ -66,17 +71,19 @@ internal class SendReactionListenerDatabase(
         // Update local storage
         if (enforceUnique) {
             // remove all user's reactions to the message
-            repos.updateReactionsForMessageByDeletedDate(
+            reactionsRepository.updateReactionsForMessageByDeletedDate(
                 userId = currentUser.id,
                 messageId = reactionToSend.messageId,
                 deletedAt = Date(),
             )
         }
-        repos.insertReaction(reaction = reactionToSend)
 
-        repos.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
+        reaction.user?.let { user -> userRepository.insertUser(user) }
+        reactionsRepository.insertReaction(reaction = reactionToSend)
+
+        messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
             cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            repos.insertMessage(cachedMessage)
+            messageRepository.insertMessage(cachedMessage)
         }
     }
 
@@ -97,14 +104,13 @@ internal class SendReactionListenerDatabase(
         currentUser: User,
         result: Result<Reaction>,
     ) {
-        repos.selectUserReactionToMessage(
+        reactionsRepository.selectUserReactionToMessage(
             reactionType = reaction.type,
             messageId = reaction.messageId,
             userId = currentUser.id,
-        )
-            ?.let { cachedReaction ->
-                repos.insertReaction(cachedReaction.updateSyncStatus(result))
-            }
+        )?.let { cachedReaction ->
+            reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
+        }
     }
 
     /**

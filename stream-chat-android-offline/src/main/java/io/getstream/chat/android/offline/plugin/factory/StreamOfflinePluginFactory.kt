@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
@@ -32,6 +33,8 @@ import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -120,6 +123,17 @@ public class StreamOfflinePluginFactory(
             listOf(statePlugin, deleteMessageListenerDatabase)
         )
 
+        val sendReactionListenerDatabase = SendReactionListenerDatabase(
+            clientState = chatClient.clientState,
+            messageRepository = chatClient.repositoryFacade,
+            reactionsRepository = chatClient.repositoryFacade,
+            userRepository = chatClient.repositoryFacade
+        )
+
+        val sendReactionListener: SendReactionListener = SendReactionListenerComposite(
+            listOf(statePlugin, sendReactionListenerDatabase)
+        )
+
         return OfflinePlugin(
             queryChannelsListener = statePlugin,
             queryChannelListener = statePlugin,
@@ -129,7 +143,7 @@ public class StreamOfflinePluginFactory(
             hideChannelListener = statePlugin,
             markAllReadListener = statePlugin,
             deleteReactionListener = statePlugin,
-            sendReactionListener = statePlugin,
+            sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = statePlugin,
             sendGiphyListener = statePlugin,
