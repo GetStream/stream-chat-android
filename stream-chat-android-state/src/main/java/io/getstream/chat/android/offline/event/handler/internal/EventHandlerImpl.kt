@@ -619,10 +619,9 @@ internal class EventHandlerImpl(
         // handle events for active threads
         sortedEvents.filterIsInstance<HasMessage>()
             .groupBy { it.message.parentId ?: it.message.id }
+            .filter { (messageId, _) -> logic.isActiveThread(messageId) }
             .forEach { (messageId, events) ->
-                if (logic.isActiveThread(messageId)) {
-                    logic.thread(messageId).handleEvents(events)
-                }
+                logic.thread(messageId).handleEvents(events)
             }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
