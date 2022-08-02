@@ -635,7 +635,6 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             request = MarkReadRequest(messageId),
         ).toUnitCall()
     }
