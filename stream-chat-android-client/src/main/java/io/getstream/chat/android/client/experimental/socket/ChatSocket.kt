@@ -27,7 +27,8 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.StreamWebSocket
+import io.getstream.chat.android.client.experimental.socket.ws.StreamWebSocketEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
@@ -40,6 +41,7 @@ import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,11 +59,13 @@ internal class ChatSocket private constructor(
     private val lifecycleObserver: StreamLifecycleObserver,
     private val networkStateProvider: NetworkStateProvider,
 ) {
+    private var streamWebSocket: StreamWebSocket? = null
     private var pendingStartEvent: Event.Lifecycle.Started? = null
     private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
+    private var listenerJob: Job? = null
     private val healthMonitor = HealthMonitor(
         coroutineScope = coroutineScope,
         checkCallback = {
@@ -111,8 +115,8 @@ internal class ChatSocket private constructor(
             state<State.Disconnected> {
                 onEvent<Event.Lifecycle.Started> {
                     connectionConf?.let {
-                        val webSocket = open(it)
-                        State.Connecting(webSocket = webSocket)
+                        open(it)
+                        null
                     } ?: this
                 }
                 onEvent<Event.Lifecycle.Stopped> {
@@ -237,12 +241,23 @@ internal class ChatSocket private constructor(
         )
     }
 
-    private fun open(connectionConf: SocketFactory.ConnectionConf): OkHttpWebSocket {
-        return with(connectionConf) {
-            val socket = socketFactory.createSocket(this)
-            socket.open()
-                .onEach { handleEvent(it) }.launchIn(coroutineScope)
-            socket
+    private fun open(connectionConf: SocketFactory.ConnectionConf) {
+        listenerJob?.cancel()
+        streamWebSocket = socketFactory.createSocket(connectionConf).apply {
+            listenerJob = listen().onEach {
+                when (it) {
+                    is StreamWebSocketEvent.Error -> handleError(it.chatError)
+                    is StreamWebSocketEvent.Message -> handleEvent(it.chatEvent)
+                }
+            }.launchIn(coroutineScope)
+        }
+    }
+
+    private fun handleEvent(chatEvent: ChatEvent) {
+        when (chatEvent) {
+            is ConnectedEvent -> stateMachine.sendEvent(Event.WebSocket.OnConnectedEventReceived(chatEvent))
+            is HealthEvent -> healthMonitor.ack()
+            else -> callListeners { listener -> listener.onEvent(chatEvent) }
         }
     }
 
@@ -263,7 +278,7 @@ internal class ChatSocket private constructor(
         }
     }
 
-    fun onSocketError(error: ChatError) {
+    private fun handleError(error: ChatError) {
         logger.e { error.stringify() }
         callListeners { it.onError(error) }
         (error as? ChatNetworkError)?.let(::onChatNetworkError)
@@ -332,12 +347,7 @@ internal class ChatSocket private constructor(
      *
      * @see [okhttp3.WebSocket.send]
      */
-    internal open fun sendEvent(event: ChatEvent): Boolean {
-        return when (val state = stateMachine.state) {
-            is State.Connected -> state.webSocket.send(event)
-            else -> false
-        }
-    }
+    internal fun sendEvent(event: ChatEvent): Boolean = streamWebSocket?.send(event) ?: false
 
     internal fun isConnected(): Boolean = state is State.Connected
 
@@ -375,13 +385,13 @@ internal class ChatSocket private constructor(
                 val errorData = errorMessage.data()
                 if (errorMessage.isSuccess && errorData.error != null) {
                     val error = errorData.error
-                    onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
+                    handleError(ChatNetworkError.create(error.code, error.message, error.statusCode))
                 } else {
                     handleChatEvent(text)
                 }
             } catch (t: Throwable) {
                 logger.e(t) { "[handleEvent] failed: $t" }
-                onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
+                handleError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
             }
         } else {
             stateMachine.sendEvent(event)
@@ -397,13 +407,13 @@ internal class ChatSocket private constructor(
                     connectionEventReceived = true
                     stateMachine.sendEvent(Event.WebSocket.OnConnectedEventReceived(event))
                 } else {
-                    onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
+                    handleError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
                 }
             } else {
                 onEvent(event)
             }
         } else {
-            onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))
+            handleError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))
         }
     }
 
