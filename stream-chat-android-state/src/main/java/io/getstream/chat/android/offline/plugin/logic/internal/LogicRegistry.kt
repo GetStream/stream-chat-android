@@ -122,6 +122,7 @@ internal class LogicRegistry internal constructor(
             val mutableState = stateRegistry.thread(messageId).toMutableState()
             val stateLogic = ThreadStateLogicImpl(mutableState)
             ThreadLogic(
+                repos,
                 client,
                 stateLogic
             )

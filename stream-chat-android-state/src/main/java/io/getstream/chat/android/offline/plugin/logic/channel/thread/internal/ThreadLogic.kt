@@ -27,13 +27,16 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.logging.StreamLog
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
 internal class ThreadLogic(
+    private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val threadStateLogic: ThreadStateLogic,
 ) : ThreadQueryListener {
@@ -42,9 +45,8 @@ internal class ThreadLogic(
     private val logger = StreamLog.getLogger("Chat:ThreadLogic")
 
     /** Runs side effect when a result is obtained. */
-    private fun onResult(result: Result<List<Message>>, limit: Int) {
+    private suspend fun onResult(result: Result<List<Message>>, limit: Int) {
         if (result.isSuccess) {
-            // Note that we don't handle offline storage for threads at the moment.
             val newMessages = result.data()
             upsertMessages(newMessages)
             mutableState.setEndOfOlderMessages(newMessages.size < limit)
@@ -53,6 +55,9 @@ internal class ThreadLogic(
                     .firstOrNull()
                     ?: mutableState.oldestInThread.value
             )
+        }
+        result.onSuccessSuspend {
+            repos.insertMessages(it)
         }
     }
 
@@ -65,6 +70,7 @@ internal class ThreadLogic(
             val result = client.getMessage(messageId).await()
             if (result.isSuccess) {
                 upsertMessage(result.data())
+                repos.insertMessage(result.data())
                 Result.success(Unit)
             } else {
                 Result(result.error())
