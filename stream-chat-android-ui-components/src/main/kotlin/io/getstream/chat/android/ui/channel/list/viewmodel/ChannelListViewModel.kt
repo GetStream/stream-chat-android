@@ -22,8 +22,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -45,7 +45,9 @@ import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
+import io.getstream.chat.android.ui.common.extensions.internal.addFlow
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
@@ -57,6 +59,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -96,14 +99,15 @@ public class ChannelListViewModel(
     /**
      * Represents the current state containing channel list information.
      */
-    public val state: LiveData<State> = stateMerger
+    public val state: LiveData<State> = stateMerger.distinctUntilChanged()
 
     /**
-     * Updates about currently typing users in active channels. See [TypingEvent].
+     * Updates about currently typing users in active channels.
+     *
+     * @see [GlobalState.typingChannels]
      */
-    public val typingEvents: LiveData<TypingEvent>
-        @Suppress("DEPRECATION_ERROR")
-        get() = globalState.typingUpdates.asLiveData()
+    public val typingEvents: LiveData<Map<String, TypingEvent>>
+        get() = globalState.typingChannels.asLiveData()
 
     /**
      * Represents the current pagination state that is a product
@@ -131,7 +135,7 @@ public class ChannelListViewModel(
     /**
      * The logger used to print information, warnings, errors, etc. to log.
      */
-    private val logger: TaggedLogger = StreamLog.getLogger("Chat:ChannelListViewModel")
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:ChannelList-VM")
 
     /**
      * Filters the requested channels.
@@ -192,11 +196,12 @@ public class ChannelListViewModel(
         /**
          * We clean up any previous loads to make sure the current one is the only one running.
          */
-        if (queryJob != null) {
-            queryJob?.cancel()
+        queryJob?.cancel()
+        val queryJob = Job(viewModelScope.coroutineContext.job).also {
+            this.queryJob = it
         }
 
-        queryJob = viewModelScope.launch {
+        viewModelScope.launch(queryJob) {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
                 if (!isActive) {
                     return@collectLatest
@@ -204,10 +209,10 @@ public class ChannelListViewModel(
 
                 queryChannelsState.chatEventHandler =
                     chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
-                stateMerger.addSource(queryChannelsState.channelsStateData.asLiveData()) { channelsState ->
+                stateMerger.addFlow(queryJob, queryChannelsState.channelsStateData) { channelsState ->
                     stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
                 }
-                stateMerger.addSource(globalState.channelMutes.asLiveData()) { channelMutes ->
+                stateMerger.addFlow(queryJob, globalState.channelMutes) { channelMutes ->
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
@@ -217,10 +222,10 @@ public class ChannelListViewModel(
                     }
                 }
 
-                paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
+                paginationStateMerger.addFlow(queryJob, queryChannelsState.loadingMore) { loadingMore ->
                     setPaginationState { copy(loadingMore = loadingMore) }
                 }
-                paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
+                paginationStateMerger.addFlow(queryJob, queryChannelsState.endOfChannels) { endOfChannels ->
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
             }
@@ -364,6 +369,7 @@ public class ChannelListViewModel(
      * @param filterObject The new filter to be applied to the query which lets us fetch different data.
      */
     public fun setFilters(filterObject: FilterObject) {
+        logger.d { "[setFilters] filterObject: $filterObject" }
         this.filterLiveData.value = filterObject
     }
 

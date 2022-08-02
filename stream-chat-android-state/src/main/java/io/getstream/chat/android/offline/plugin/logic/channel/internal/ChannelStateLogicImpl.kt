@@ -41,6 +41,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import kotlin.math.max
 
@@ -60,7 +61,18 @@ internal class ChannelStateLogicImpl(
     private val clientState: ClientState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    coroutineScope: CoroutineScope,
 ) : ChannelStateLogic {
+
+    /**
+     * Used to prune stale active typing events when the sender
+     * of these events was unable to send a stop typing event.
+     */
+    private val typingEventPruner = TypingEventPruner(
+        coroutineScope = coroutineScope,
+        channelId = mutableState.channelId,
+        onUpdated = ::updateTypingStates
+    )
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
@@ -131,7 +143,7 @@ internal class ChannelStateLogicImpl(
      * @param channel the data of [Channel] to be updated.
      */
     override fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value?.ownCapabilities ?: emptySet()
+        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
         mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
     }
 
@@ -195,22 +207,22 @@ internal class ChannelStateLogicImpl(
      * @param event The start typing event or null if user stops typing.
      */
     override fun setTyping(userId: String, event: TypingStartEvent?) {
-        val typingEventsCopy = mutableState.rawTyping.toMutableMap()
-        when {
-            event == null -> {
-                typingEventsCopy.remove(userId)
-            }
-            userId != clientState.user.value?.id -> {
-                typingEventsCopy[userId] = event
-            }
+        if (userId != clientState.user.value?.id) {
+            typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
+    }
 
-        val typingEvent = typingEventsCopy.values
-            .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
-            .map { typingStartEvent -> typingStartEvent.user }
-            .let { sortedUsers -> TypingEvent(channelId = mutableState.channelId, users = sortedUsers) }
-
-        mutableState.updateTypingEvents(eventsMap = typingEventsCopy, typingEvent = typingEvent)
+    /**
+     * Updates the typing events inside [ChannelMutableState] and [MutableGlobalState].
+     *
+     * @param rawTypingEvents A map of typing events used to update [ChannelMutableState].
+     * @param typingEvent A [TypingEvent] object used to update [MutableGlobalState].
+     */
+    private fun updateTypingStates(
+        rawTypingEvents: Map<String, TypingStartEvent>,
+        typingEvent: TypingEvent,
+    ) {
+        mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
         globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
@@ -348,7 +360,7 @@ internal class ChannelStateLogicImpl(
      * @param deleteDate The date when the channel was deleted.
      */
     override fun deleteChannel(deleteDate: Date) {
-        mutableState.setChannelData(mutableState.channelData.value?.copy(deletedAt = deleteDate))
+        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deleteDate))
     }
 
     /**
@@ -506,7 +518,7 @@ internal class ChannelStateLogicImpl(
     }
 
     /**
-     * Updates [ChannelMutableState._rawMessages] with new messages.
+     * Updates [ChannelMutableState.rawMessages] with new messages.
      * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
      *
      * @param messages The list of messages to update.

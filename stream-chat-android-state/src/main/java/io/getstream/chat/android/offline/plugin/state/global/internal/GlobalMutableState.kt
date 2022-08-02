@@ -44,7 +44,6 @@ public class GlobalMutableState private constructor(
 
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    private val _typingChannelsOld = MutableStateFlow(TypingEvent("", emptyList()))
     private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
 
     @Deprecated(
@@ -94,8 +93,6 @@ public class GlobalMutableState private constructor(
     override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
 
     override val banned: StateFlow<Boolean> = _banned
-
-    override val typingUpdates: StateFlow<TypingEvent> = _typingChannelsOld
 
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
@@ -200,9 +197,13 @@ public class GlobalMutableState private constructor(
     }
 
     override fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent) {
-        _typingChannelsOld.tryEmit(typingEvent)
         val typingChannelsCopy = _typingChannels.value.toMutableMap()
-        typingChannelsCopy[cid] = typingEvent
+
+        if (typingEvent.users.isEmpty()) {
+            typingChannelsCopy.remove(cid)
+        } else {
+            typingChannelsCopy[cid] = typingEvent
+        }
         _typingChannels.tryEmit(typingChannelsCopy)
     }
 }

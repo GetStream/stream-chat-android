@@ -231,7 +231,8 @@ internal class DeleteReactionsTests {
         private var repos = mock<RepositoryFacade>()
         private val globalState = mock<MutableGlobalState>()
         private val clientState = mock<ClientState>()
-        private val logicRegistry = LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client)
+        private val logicRegistry =
+            LogicRegistry.create(stateRegistry, globalState, clientState, false, repos, client, testCoroutines.scope)
 
         fun givenMockedRepos(repos: RepositoryFacade): Fixture = apply {
             this.repos = repos
@@ -252,7 +253,6 @@ internal class DeleteReactionsTests {
         }
 
         fun givenOfflineState(): Fixture = apply {
-            whenever(globalState.isOnline()) doReturn false
             whenever(clientState.isOnline) doReturn false
         }
 

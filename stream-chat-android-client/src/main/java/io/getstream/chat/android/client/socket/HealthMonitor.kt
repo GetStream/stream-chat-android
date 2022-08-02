@@ -16,94 +16,150 @@
 
 package io.getstream.chat.android.client.socket
 
-import android.os.Handler
-import android.os.Looper
+import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.logging.StreamLog
-import java.util.Date
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-private const val HEALTH_CHECK_INTERVAL = 10 * 1000L
-private const val MONITOR_INTERVAL = 1000L
-private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
-private const val MONITOR_START_DELAY = 1000L
+private const val HEALTH_CHECK_INTERVAL = 1_000L
+private const val MONITOR_INTERVAL = 10_000L
+private const val NO_EVENT_INTERVAL_THRESHOLD = 30_000L
 
-internal class HealthMonitor(private val checkCallback: () -> Unit, private val reconnectCallback: () -> Unit) {
+internal class HealthMonitor(
+    private val timeProvider: TimeProvider = TimeProvider,
+    private val retryInterval: RetryInterval = ExponencialRetryInterval,
+    private val coroutineScope: CoroutineScope,
+    private val checkCallback: () -> Unit,
+    private val reconnectCallback: () -> Unit,
+) {
 
-    private val delayHandler = Handler(Looper.getMainLooper())
     private var consecutiveFailures = 0
-    private var disconnected = false
-    private var lastEventDate: Date = Date()
+    private var lastAck: Long = 0
+    private var healthMonitorJob: Job? = null
+    private var healthCheckJob: Job? = null
+    private var reconnectJob: Job? = null
 
     private val logger = StreamLog.getLogger("Chat:SocketMonitor")
 
-    private val reconnectRunnable = Runnable {
-        if (needToReconnect()) {
-            reconnectCallback()
-        }
-    }
-
-    private val healthCheck: Runnable = Runnable {
-        checkCallback()
-        delayHandler.postDelayed(monitor, HEALTH_CHECK_INTERVAL)
-    }
-
-    private val monitor = Runnable {
-        if (needToReconnect()) {
-            reconnect()
-        } else {
-            delayHandler.postDelayed(healthCheck, MONITOR_INTERVAL)
-        }
-    }
-
-    fun start() {
-        logger.d { "Starting" }
-        lastEventDate = Date()
-        disconnected = false
-        resetHealthMonitor()
-    }
-
+    /**
+     * Stop monitoring connection.
+     */
     fun stop() {
-        delayHandler.removeCallbacks(monitor)
-        delayHandler.removeCallbacks(reconnectRunnable)
-        delayHandler.removeCallbacks(healthCheck)
+        stopAllJobs()
     }
 
+    /**
+     * Notify that connection keeps alive.
+     */
     fun ack() {
-        lastEventDate = Date()
-        delayHandler.removeCallbacks(reconnectRunnable)
-        disconnected = false
-        consecutiveFailures = 0
-    }
-
-    fun onDisconnected() {
-        disconnected = true
         resetHealthMonitor()
-        delayHandler.postDelayed(monitor, MONITOR_START_DELAY)
     }
 
+    /**
+     * Notify connection is disconnected.
+     */
+    fun onDisconnected() {
+        stopAllJobs()
+        lastAck = 0
+        postponeReconnect()
+    }
+
+    /**
+     * Reset health monitor process.
+     */
     private fun resetHealthMonitor() {
-        stop()
-        delayHandler.postDelayed(monitor, MONITOR_START_DELAY)
+        stopAllJobs()
+        lastAck = timeProvider.provideCurrentTimeInMilliseconds()
+        consecutiveFailures = 0
+        postponeHealthMonitor()
     }
 
-    private fun reconnect() {
-        stop()
-        val retryInterval = getRetryInterval(++consecutiveFailures)
-        logger.i { "Next connection attempt in $retryInterval ms" }
-        delayHandler.postDelayed(reconnectRunnable, retryInterval)
+    /**
+     * Postpone the action to check if connection keeps alive.
+     * If the connection is not alive anymore, an action to reconnect is postponed.
+     * In another case the healthCheck is postponed.
+     */
+    private fun postponeHealthMonitor() {
+        healthMonitorJob?.cancel()
+        healthMonitorJob = coroutineScope.launchDelayed(MONITOR_INTERVAL) {
+            if (needToReconnect()) {
+                postponeReconnect()
+            } else {
+                postponeHealthCheck()
+            }
+        }
     }
 
-    private fun needToReconnect() = disconnected || (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
+    /**
+     * Postpone the action to send an "echo event" that will keep the connection alive.
+     * Just after the event is sent, an action is postponed to verify the connection is alive.
+     */
+    private fun postponeHealthCheck() {
+        healthCheckJob?.cancel()
+        healthCheckJob = coroutineScope.launchDelayed(HEALTH_CHECK_INTERVAL) {
+            checkCallback()
+            postponeHealthMonitor()
+        }
+    }
 
-    @Suppress("MagicNumber")
-    private fun getRetryInterval(consecutiveFailures: Int): Long {
-        val max = min(500 + consecutiveFailures * 2000, 25000)
-        val min = min(
-            max(250, (consecutiveFailures - 1) * 2000),
-            25000
-        )
-        return floor(Math.random() * (max - min) + min).toLong()
+    /**
+     * Postpone the action to reconnect the socket.
+     * Just after the reconnection of the socket is started, an action to monitor the connection is started.
+     */
+    private fun postponeReconnect() {
+        reconnectJob?.cancel()
+        val retryIntervalTime = retryInterval.nextInterval(consecutiveFailures++)
+        logger.i { "Next connection attempt in $retryIntervalTime ms" }
+        reconnectJob = coroutineScope.launchDelayed(retryIntervalTime) {
+            reconnectCallback()
+            postponeHealthMonitor()
+        }
+    }
+
+    /**
+     * Stop all launched job on this health monitor.
+     */
+    private fun stopAllJobs() {
+        reconnectJob?.cancel()
+        healthCheckJob?.cancel()
+        healthMonitorJob?.cancel()
+    }
+
+    /**
+     * Check if time elapsed since the last received event is greater than [NO_EVENT_INTERVAL_THRESHOLD].
+     *
+     * @return True if time elapsed is bigger and we need to start reconnection process.
+     */
+    private fun needToReconnect(): Boolean =
+        (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
+
+    private fun CoroutineScope.launchDelayed(
+        delayMilliseconds: Long,
+        block: suspend CoroutineScope.() -> Unit
+    ): Job = launch {
+        delay(delayMilliseconds)
+        block()
+    }
+
+    internal fun interface RetryInterval {
+        fun nextInterval(consecutiveFailures: Int): Long
+    }
+
+    object ExponencialRetryInterval : RetryInterval {
+
+        @Suppress("MagicNumber")
+        override fun nextInterval(consecutiveFailures: Int): Long {
+            val max = min(500 + consecutiveFailures * 2000, 25000)
+            val min = min(
+                max(250, (consecutiveFailures - 1) * 2000),
+                25000
+            )
+            return floor(Math.random() * (max - min) + min).toLong()
+        }
     }
 }

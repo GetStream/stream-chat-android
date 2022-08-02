@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils.extensions
+package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
-
-private const val ONE_MINUTE_IN_MILISECONDS = 60000
-
-@InternalStreamChatApi
-public fun Date.isInLastMinute(): Boolean = (Date().time - ONE_MINUTE_IN_MILISECONDS < time)
+public object TimeProvider {
+    private const val MILLIS_TO_SECONDS_FACTOR = 1_000L
+    public fun provideCurrentTimeInSeconds(): Long = System.currentTimeMillis() / MILLIS_TO_SECONDS_FACTOR
+    public fun provideCurrentTimeInMilliseconds(): Long = System.currentTimeMillis()
+}

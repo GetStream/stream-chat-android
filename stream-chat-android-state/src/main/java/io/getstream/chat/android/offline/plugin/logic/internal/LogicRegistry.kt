@@ -38,6 +38,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -46,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap
  * 2. Query channel
  * 3. Query thread
  */
+@Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val globalState: MutableGlobalState,
@@ -53,6 +55,7 @@ internal class LogicRegistry internal constructor(
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
+    private val coroutineScope: CoroutineScope,
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -81,13 +84,25 @@ internal class LogicRegistry internal constructor(
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
             val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
-            val stateLogic = ChannelStateLogicImpl(mutableState, globalState, clientState, SearchLogic(mutableState))
+            val stateLogic = ChannelStateLogicImpl(
+                mutableState = mutableState,
+                globalMutableState = globalState,
+                searchLogic = SearchLogic(mutableState),
+                clientState = clientState,
+                coroutineScope = coroutineScope
+            )
 
             ChannelLogic(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
             )
+        }
+    }
+
+    fun channelFromMessageId(messageId: String): ChannelLogic? {
+        return channels.values.find { channelLogic ->
+            channelLogic.getMessage(messageId) != null
         }
     }
 
@@ -176,6 +191,7 @@ internal class LogicRegistry internal constructor(
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
+            coroutineScope: CoroutineScope,
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -184,12 +200,13 @@ internal class LogicRegistry internal constructor(
                 }
             }
             return LogicRegistry(
-                stateRegistry,
-                globalState,
-                clientState,
-                userPresence,
-                repos,
-                client
+                stateRegistry = stateRegistry,
+                globalState = globalState,
+                clientState = clientState,
+                userPresence = userPresence,
+                repos = repos,
+                client = client,
+                coroutineScope = coroutineScope
             )
                 .also { logicRegistry ->
                     instance = logicRegistry

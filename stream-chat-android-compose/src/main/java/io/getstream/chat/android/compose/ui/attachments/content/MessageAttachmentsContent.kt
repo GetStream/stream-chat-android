@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.hasLink
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Represents the content that's shown in message attachments. We decide if we need to show link previews or other

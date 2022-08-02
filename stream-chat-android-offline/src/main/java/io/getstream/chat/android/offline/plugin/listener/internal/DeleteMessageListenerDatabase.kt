@@ -18,24 +18,25 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
 /**
- * Listener for requests of message deletion and for message deletion results.
+ * Listener for requests of message deletion and for message deletion results responsible to
+ * change database.
  */
-internal class DeleteMessageListenerImpl(
-    private val logic: LogicRegistry,
+internal class DeleteMessageListenerDatabase(
     private val clientState: ClientState,
     private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository,
 ) : DeleteMessageListener {
 
     /**
@@ -45,16 +46,11 @@ internal class DeleteMessageListenerImpl(
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
-
             val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            val channelLogic = logic.channel(channelType, channelId)
-
             if (isModerationFailed) {
-                channelLogic.deleteMessage(message)
                 messageRepository.deleteChannelMessage(message)
                 Result.error(
                     MessageModerationDeletedException(
@@ -74,23 +70,20 @@ internal class DeleteMessageListenerImpl(
      */
     override suspend fun onMessageDeleteRequest(messageId: String) {
         messageRepository.selectMessage(messageId)?.let { message ->
-            val isOnline = clientState.isOnline
-
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            val channelLogic = logic.channel(channelType, channelId)
-
-            val messagesToBeDeleted = message.copy(
+            val networkAvailable = clientState.isNetworkAvailable
+            val messageToBeDeleted = message.copy(
                 deletedAt = Date(),
-                syncStatus = if (!isOnline) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
-            ).let(::listOf)
+                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+            )
 
-            channelLogic.updateAndSaveMessages(messagesToBeDeleted)
+            userRepository.insertUsers(messageToBeDeleted.users())
+            messageRepository.insertMessage(messageToBeDeleted, true)
         }
     }
 
     /**
-     * Method called when a request for message deletion return. Use it to update database, update messages or to present
-     * an error to the user.
+     * Method called when a request for message deletion return. Use it to update database, update messages or
+     * to present an error to the user.
      *
      * @param result the result of the API call.
      */
@@ -99,9 +92,7 @@ internal class DeleteMessageListenerImpl(
             val deletedMessage = result.data()
             deletedMessage.syncStatus = SyncStatus.COMPLETED
 
-            val (channelType, channelId) = deletedMessage.cid.cidToTypeAndId()
-            logic.channel(channelType, channelId)
-                .updateAndSaveMessages(deletedMessage.let(::listOf))
+            messageRepository.insertMessage(deletedMessage, true)
         } else {
             messageRepository.selectMessage(originalMessageId)?.let { originalMessage ->
                 val failureMessage = originalMessage.copy(
@@ -109,9 +100,7 @@ internal class DeleteMessageListenerImpl(
                     updatedLocallyAt = Date(),
                 )
 
-                val (channelType, channelId) = failureMessage.cid.cidToTypeAndId()
-                logic.channel(channelType, channelId)
-                    .updateAndSaveMessages(failureMessage.let(::listOf))
+                messageRepository.insertMessage(failureMessage, true)
             }
         }
     }
