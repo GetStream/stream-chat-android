@@ -30,6 +30,7 @@ internal class ThreadMutableStateImpl(
     scope: CoroutineScope,
 ) : ThreadMutableState {
     private val _messages = MutableStateFlow(emptyMap<String, Message>())
+    private val _loading = MutableStateFlow(false)
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
     private val _oldestInThread: MutableStateFlow<Message?> = MutableStateFlow(null)
@@ -48,9 +49,14 @@ internal class ThreadMutableStateImpl(
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val messages: StateFlow<List<Message>> = sortedMessages
+    override val loading: StateFlow<Boolean> = _loading
     override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val oldestInThread: StateFlow<Message?> = _oldestInThread
+
+    override fun setLoading(isLoading: Boolean) {
+        _loading.value = isLoading
+    }
 
     override fun setLoadingOlderMessages(isLoading: Boolean) {
         _loadingOlderMessages.value = isLoading

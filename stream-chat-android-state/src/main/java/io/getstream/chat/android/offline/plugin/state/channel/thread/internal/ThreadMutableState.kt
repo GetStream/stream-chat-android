@@ -38,6 +38,13 @@ internal interface ThreadMutableState : ThreadState {
     /** Sets the end for newer messages. */
     fun setEndOfOlderMessages(isEnd: Boolean)
 
+    /**
+     * Sets loadings.
+     *
+     * @param isLoading Boolean.
+     */
+    fun setLoading(isLoading: Boolean)
+
     /** Sets the oldest message in thread. */
     fun setOldestInThread(message: Message?)
 }
