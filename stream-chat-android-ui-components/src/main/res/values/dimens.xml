@@ -77,7 +77,6 @@
     <!--Attachment Dialog-->
     <dimen name="stream_ui_attachment_dialog_page_height">320dp</dimen>
     <dimen name="stream_ui_attachment_dialog_button_size">40dp</dimen>
-    <dimen name="stream_ui_attachment_dialog_button_margin">6dp</dimen>
     <dimen name="stream_ui_attachment_dialog_file_item_height">56dp</dimen>
     <dimen name="stream_ui_attachment_dialog_file_type_height">40dp</dimen>
     <dimen name="stream_ui_attachment_dialog_file_type_width">34dp</dimen>

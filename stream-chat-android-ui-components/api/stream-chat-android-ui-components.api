@@ -2565,6 +2565,11 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 }
 
+public final class io/getstream/chat/android/ui/message/input/attachment/factory/AttachmentsPickerTabFactories {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/message/input/attachment/factory/AttachmentsPickerTabFactories;
+	public final fun defaultFactories (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;)Ljava/util/List;
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/input/attachment/factory/AttachmentsPickerTabFactory {
 	public abstract fun createTabFragment (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;Lio/getstream/chat/android/ui/message/input/attachment/factory/AttachmentsPickerTabListener;)Landroidx/fragment/app/Fragment;
 	public abstract fun createTabIcon (Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;)Landroid/graphics/drawable/Drawable;

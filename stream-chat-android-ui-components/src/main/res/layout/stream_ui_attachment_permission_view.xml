@@ -35,7 +35,7 @@
         android:layout_width="@dimen/stream_ui_attachment_dialog_permission_image_size"
         android:layout_height="@dimen/stream_ui_attachment_dialog_permission_image_size"
         android:scaleType="centerCrop"
-        tools:src="@drawable/stream_ui_attachment_permission_camera"
+        tools:src="@drawable/stream_ui_attachment_tab_camera"
         tools:ignore="ContentDescription"
         />
 

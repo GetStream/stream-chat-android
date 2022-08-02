@@ -271,27 +271,27 @@ public data class MessageInputViewStyle(
 
                 val pictureAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiPictureAttachmentIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!
 
                 val fileAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiFileAttachmentIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!
 
                 val cameraAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!
 
                 val allowAccessToCameraIcon =
                     a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToCameraIcon)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!
 
                 val allowAccessToFilesIcon =
                     a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToFilesIcon)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!
 
                 val allowAccessToGalleryIcon =
                     a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToGalleryIcon)
-                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!
 
                 val allowAccessToGalleryText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToGalleryText)
                     ?: context.getString(R.string.stream_ui_message_input_gallery_access)

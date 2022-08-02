@@ -20,23 +20,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ToggleButton
-import androidx.appcompat.widget.AppCompatToggleButton
-import androidx.core.view.forEach
+import android.widget.CheckedTextView
+import android.widget.FrameLayout
+import androidx.core.view.descendants
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
-import io.getstream.chat.android.ui.message.input.attachment.factory.camera.AttachmentsPickerCameraTabFactory
-import io.getstream.chat.android.ui.message.input.attachment.factory.file.AttachmentsPickerFileTabFactory
-import io.getstream.chat.android.ui.message.input.attachment.factory.media.AttachmentsPickerMediaTabFactory
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
 /**
@@ -119,24 +115,22 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
      */
     private fun setupTabs() {
         attachmentsPickerTabFactories.forEachIndexed { index, factory ->
-            AppCompatToggleButton(requireContext()).apply {
-                val iconSize = requireContext().getDimension(R.dimen.stream_ui_attachment_dialog_button_size)
-                layoutParams = LinearLayout.LayoutParams(iconSize, iconSize).apply {
-                    marginStart = requireContext().getDimension(R.dimen.stream_ui_attachment_dialog_button_margin)
-                }
+            val frameLayout = layoutInflater.inflate(
+                R.layout.stream_ui_dialog_attachment_tab,
+                binding.attachmentButtonsContainer,
+                false
+            ) as FrameLayout
 
-                background = factory.createTabIcon(style)
-                backgroundTintList = style.attachmentSelectionDialogStyle.toggleButtonColorStateList
-                textOn = ""
-                textOff = ""
-                isChecked = index == 0
+            val checkedTextView = frameLayout.findViewById<CheckedTextView>(R.id.checkedTextView)
+            checkedTextView.background = factory.createTabIcon(style)
+            checkedTextView.backgroundTintList = style.attachmentSelectionDialogStyle.toggleButtonColorStateList
+            checkedTextView.isChecked = index == 0
 
-                setOnClickListener {
-                    setSelectedButton(this, index)
-                }
-
-                binding.attachmentButtonsContainer.addView(this)
+            frameLayout.setOnClickListener {
+                setSelectedTab(checkedTextView, index)
             }
+
+            binding.attachmentButtonsContainer.addView(frameLayout)
         }
     }
 
@@ -211,10 +205,10 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         }
     }
 
-    private fun setSelectedButton(selectedButton: ToggleButton, pagePosition: Int) {
+    private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {
         binding.attachmentPager.setCurrentItem(pagePosition, false)
-        binding.attachmentButtonsContainer.forEach {
-            (it as ToggleButton).isChecked = it == selectedButton
+        binding.attachmentButtonsContainer.descendants.forEach {
+            (it as? CheckedTextView)?.isChecked = it == checkedTextView
         }
     }
 
@@ -223,9 +217,8 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     }
 
     private fun setUnselectedButtonsEnabled(isEnabled: Boolean) {
-        binding.attachmentButtonsContainer.forEach {
-            it as ToggleButton
-            if (!it.isChecked) {
+        binding.attachmentButtonsContainer.descendants.forEach {
+            if (it is CheckedTextView && !it.isChecked) {
                 it.isEnabled = isEnabled
             }
         }
@@ -246,27 +239,13 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
          */
         public fun newInstance(
             style: MessageInputViewStyle,
-            attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = createDefaultTabFactories(style),
+            attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories
+                .defaultFactories(style),
         ): AttachmentSelectionDialogFragment {
             return AttachmentSelectionDialogFragment().apply {
                 setStyle(style)
                 setAttachmentsPickerTabFactories(attachmentsPickerTabFactories)
             }
-        }
-
-        /**
-         * Creates a list of factories for the tabs that will be displayed in the attachment picker.
-         *
-         * @param style Style for the dialog.
-         * @return The list factories for the tabs that will be displayed in the attachment picker.
-         */
-        private fun createDefaultTabFactories(style: MessageInputViewStyle): List<AttachmentsPickerTabFactory> {
-            val dialogStyle = style.attachmentSelectionDialogStyle
-            return listOfNotNull(
-                if (dialogStyle.mediaAttachmentsTabEnabled) AttachmentsPickerMediaTabFactory() else null,
-                if (dialogStyle.fileAttachmentsTabEnabled) AttachmentsPickerFileTabFactory() else null,
-                if (dialogStyle.cameraAttachmentsTabEnabled) AttachmentsPickerCameraTabFactory() else null,
-            )
         }
     }
 }
