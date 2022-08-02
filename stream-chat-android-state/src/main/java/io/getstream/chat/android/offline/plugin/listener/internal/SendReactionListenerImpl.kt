@@ -82,7 +82,7 @@ internal class SendReactionListenerImpl(
             repos.insertMessage(cachedMessage)
 
             if (cid != null) {
-                doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
+                doOptimisticMessageUpdate(message = cachedMessage)
             }
         }
     }
@@ -93,7 +93,7 @@ internal class SendReactionListenerImpl(
      * @param cid The full channel id, i.e. "messaging:123".
      * @param message The [Message] to update.
      */
-    private fun doOptimisticMessageUpdate(cid: String, message: Message) {
+    private fun doOptimisticMessageUpdate(message: Message) {
         logic.channelFromMessage(message)?.upsertMessages(listOf(message))
         logic.threadFromMessage(message)?.upsertMessages(listOf(message))
     }

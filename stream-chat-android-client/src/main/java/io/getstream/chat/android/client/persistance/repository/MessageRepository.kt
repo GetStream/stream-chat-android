@@ -24,6 +24,8 @@ import java.util.Date
 /**
  * Repository to read and write [Message] data.
  */
+
+@Suppress("TooManyFunctions")
 public interface MessageRepository {
 
     /**
