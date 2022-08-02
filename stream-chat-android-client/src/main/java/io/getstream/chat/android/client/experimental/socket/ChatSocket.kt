@@ -27,8 +27,6 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.experimental.socket.lifecycle.ConnectionLifecyclePublisher
-import io.getstream.chat.android.client.experimental.socket.lifecycle.combine
 import io.getstream.chat.android.client.experimental.socket.ws.OkHttpWebSocket
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -61,8 +59,7 @@ internal class ChatSocket private constructor(
 ) {
     private var pendingStartEvent: Event.Lifecycle.Started? = null
     private val logger = StreamLog.getLogger("Chat:Socket")
-
-    private var connectLifecyclePublisher = ConnectionLifecyclePublisher()
+    private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
@@ -73,7 +70,7 @@ internal class ChatSocket private constructor(
         reconnectCallback = {
             val state = stateMachine.state
             if (state is State.Disconnected && state.disconnectCause is DisconnectCause.Error) {
-                connectLifecyclePublisher.connectionConf?.let { connectUser(it.asReconnectionConf()) }
+                connectionConf?.let { connectUser(it.asReconnectionConf()) }
             }
         }
     )
@@ -113,7 +110,7 @@ internal class ChatSocket private constructor(
 
             state<State.Disconnected> {
                 onEvent<Event.Lifecycle.Started> {
-                    connectLifecyclePublisher.connectionConf?.let {
+                    connectionConf?.let {
                         val webSocket = open(it)
                         State.Connecting(webSocket = webSocket)
                     } ?: this
@@ -183,12 +180,6 @@ internal class ChatSocket private constructor(
         get() = stateMachine.state
 
     private fun initialize() {
-        listOf(connectLifecyclePublisher).combine()
-            .onEach {
-                logger.d { "Received lifecycle event: $it and current state is: $state" }
-                stateMachine.sendEvent(it)
-            }
-            .launchIn(coroutineScope)
         coroutineScope.launch {
             startObservers()
             stateMachine.stateFlow.collect {
@@ -229,14 +220,21 @@ internal class ChatSocket private constructor(
     }
 
     private fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
-        connectLifecyclePublisher.onConnect(connectionConf)
+        this.connectionConf = connectionConf
+        stateMachine.sendEvent(Event.Lifecycle.Started)
     }
 
     fun disconnect(cause: DisconnectCause? = null) {
         if (cause is DisconnectCause.UnrecoverableError) {
             reconnectionAttempts = 0
         }
-        connectLifecyclePublisher.onDisconnect(cause)
+        connectionConf = null
+        stateMachine.sendEvent(
+            Event.Lifecycle.Stopped.WithReason(
+                shutdownReason = ShutdownReason.GRACEFUL.copy(reason = "Disconnected by request"),
+                cause = cause ?: DisconnectCause.ConnectionReleased
+            )
+        )
     }
 
     private fun open(connectionConf: SocketFactory.ConnectionConf): OkHttpWebSocket {
@@ -285,7 +283,7 @@ internal class ChatSocket private constructor(
             -> {
                 if (reconnectionAttempts < RETRY_LIMIT) {
                     coroutineScope.launch {
-                        connectLifecyclePublisher.connectionConf?.let {
+                        connectionConf?.let {
                             delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
                             reconnect(it)
                             reconnectionAttempts += 1
