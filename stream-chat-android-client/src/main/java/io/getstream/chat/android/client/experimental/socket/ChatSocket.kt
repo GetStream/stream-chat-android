@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.experimental.socket
 
 import android.os.Handler
 import android.os.Looper
+import io.getstream.chat.android.client.LifecycleHandler
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
@@ -54,6 +56,7 @@ internal class ChatSocket private constructor(
     private val socketFactory: SocketFactory,
     private val coroutineScope: CoroutineScope,
     private val parser: ChatParser,
+    private val lifecycleObserver: StreamLifecycleObserver,
     private val lifecycleObservers: List<LifecyclePublisher>,
 ) {
     private var pendingStartEvent: Event.Lifecycle.Started? = null
@@ -74,6 +77,19 @@ internal class ChatSocket private constructor(
             }
         }
     )
+    private val lifecycleHandler = object : LifecycleHandler {
+        override fun resume() {
+            stateMachine.sendEvent(Event.Lifecycle.Started)
+        }
+        override fun stopped() {
+            stateMachine.sendEvent(
+                Event.Lifecycle.Stopped.WithReason(
+                    shutdownReason = ShutdownReason.GRACEFUL.copy(reason = "App is paused"),
+                    cause = DisconnectCause.ConnectionReleased
+                )
+            )
+        }
+    }
 
     private var reconnectionAttempts = 0
     private var connectionEventReceived = false
@@ -225,10 +241,12 @@ internal class ChatSocket private constructor(
     }
 
     private suspend fun startObservers() {
+        lifecycleObserver.observe(lifecycleHandler)
         lifecycleObservers.forEach { it.observe() }
     }
 
     private suspend fun disposeObservers() {
+        lifecycleObserver.dispose(lifecycleHandler)
         lifecycleObservers.forEach { it.dispose() }
     }
 
@@ -402,9 +420,19 @@ internal class ChatSocket private constructor(
             socketFactory: SocketFactory,
             coroutineScope: CoroutineScope,
             parser: ChatParser,
+            lifecycleObserver: StreamLifecycleObserver,
             lifecycleObservers: List<LifecyclePublisher>,
         ): ChatSocket =
-            ChatSocket(apiKey, wssUrl, tokenManager, socketFactory, coroutineScope, parser, lifecycleObservers).apply {
+            ChatSocket(
+                apiKey,
+                wssUrl,
+                tokenManager,
+                socketFactory,
+                coroutineScope,
+                parser,
+                lifecycleObserver,
+                lifecycleObservers
+            ).apply {
                 this.initialize()
             }
     }
