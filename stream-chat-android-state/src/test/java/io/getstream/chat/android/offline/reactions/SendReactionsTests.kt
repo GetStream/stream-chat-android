@@ -202,8 +202,10 @@ internal class SendReactionsTests {
         }
 
         fun get(): Pair<SendReactionListener, StateRegistry> =
-            io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase(logicRegistry,
+            io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase(
+                logicRegistry,
                 clientState,
-                repos) to stateRegistry
+                repos
+            ) to stateRegistry
     }
 }
