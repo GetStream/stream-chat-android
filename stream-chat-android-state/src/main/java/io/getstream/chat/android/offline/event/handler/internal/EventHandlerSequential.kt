@@ -422,10 +422,9 @@ internal class EventHandlerSequential(
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
         sortedEvents.filterIsInstance<HasMessage>()
             .groupBy { it.message.parentId ?: it.message.id }
+            .filterKeys(logicRegistry::isActiveThread)
             .forEach { (messageId, events) ->
-                if (logicRegistry.isActiveThread(messageId)) {
-                    logicRegistry.thread(messageId).handleEvents(events)
-                }
+                logicRegistry.thread(messageId).handleEvents(events)
             }
     }
 

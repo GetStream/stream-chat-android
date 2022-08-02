@@ -67,26 +67,27 @@ internal class ThreadLogic(
             logger.i { errorMsg }
             Result(ChatError(errorMsg))
         } else {
-            val messages = repos.selectMessagesForThread(messageId, limit)
-            val parentMessage = messages.firstOrNull { it.id == messageId }
-            if (parentMessage != null) {
-                upsertMessages(messages)
-                Result.success(Unit)
-            } else {
-                val result = client.getMessage(messageId).await()
-                if (result.isSuccess) {
-                    upsertMessage(result.data())
-                    repos.insertMessage(result.data())
-                    Result.success(Unit)
-                } else {
-                    Result(result.error())
-                }
-            }
+            Result.success(Unit)
         }
     }
 
     override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
         mutableState.setLoading(true)
+        val messages = repos.selectMessagesForThread(messageId, limit)
+        val parentMessage = messages.firstOrNull { it.id == messageId }
+        if (parentMessage != null) {
+            upsertMessages(messages)
+            Result.success(Unit)
+        } else {
+            val result = client.getMessage(messageId).await()
+            if (result.isSuccess) {
+                upsertMessage(result.data())
+                repos.insertMessage(result.data())
+                Result.success(Unit)
+            } else {
+                Result(result.error())
+            }
+        }
     }
 
     override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {

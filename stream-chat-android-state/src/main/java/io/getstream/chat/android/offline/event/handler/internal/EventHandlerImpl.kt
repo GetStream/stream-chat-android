@@ -619,7 +619,7 @@ internal class EventHandlerImpl(
         // handle events for active threads
         sortedEvents.filterIsInstance<HasMessage>()
             .groupBy { it.message.parentId ?: it.message.id }
-            .filter { (messageId, _) -> logic.isActiveThread(messageId) }
+            .filterKeys(logic::isActiveThread)
             .forEach { (messageId, events) ->
                 logic.thread(messageId).handleEvents(events)
             }
