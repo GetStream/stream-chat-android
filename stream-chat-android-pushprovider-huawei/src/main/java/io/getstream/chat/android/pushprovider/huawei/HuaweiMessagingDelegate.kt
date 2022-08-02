@@ -63,13 +63,13 @@ public object HuaweiMessagingDelegate {
     @JvmStatic
     public fun registerHuaweiToken(
         token: String,
-        providerName: String? = fallbackProviderName
+        providerName: String? = fallbackProviderName,
     ) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.HUAWEI,
-                providerName = providerName
+                providerName = providerName,
             )
         )
     }
@@ -79,7 +79,7 @@ private fun RemoteMessage.toPushMessage() =
     PushMessage(
         channelId = dataOfMap["channel_id"]!!,
         messageId = dataOfMap["message_id"]!!,
-        channelType = dataOfMap["channel_type"]!!
+        channelType = dataOfMap["channel_type"]!!,
     )
 
 private fun RemoteMessage.isValid() =

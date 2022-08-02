@@ -62,7 +62,7 @@ public class HuaweiPushDeviceGenerator(
                         Device(
                             token = this,
                             pushProvider = PushProvider.HUAWEI,
-                            providerName = providerName
+                            providerName = providerName,
                         )
                     )
                 }

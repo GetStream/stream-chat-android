@@ -62,13 +62,13 @@ public object FirebaseMessagingDelegate {
     @JvmStatic
     public fun registerFirebaseToken(
         token: String,
-        providerName: String? = fallbackProviderName
+        providerName: String? = fallbackProviderName,
     ) {
         ChatClient.setDevice(
             Device(
                 token = token,
                 pushProvider = PushProvider.FIREBASE,
-                providerName = providerName
+                providerName = providerName,
             )
         )
     }

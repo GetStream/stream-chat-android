@@ -73,7 +73,7 @@ object ChatHelper {
     fun connectUser(
         userCredentials: UserCredentials,
         onSuccess: () -> Unit = {},
-        onError: (ChatError) -> Unit = {}
+        onError: (ChatError) -> Unit = {},
     ) {
         ChatClient.instance().run {
             if (getCurrentUser() == null) {

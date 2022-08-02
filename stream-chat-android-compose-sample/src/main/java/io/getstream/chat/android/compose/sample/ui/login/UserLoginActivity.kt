@@ -90,7 +90,7 @@ class UserLoginActivity : AppCompatActivity() {
     @Composable
     fun UserLoginScreen(
         onUserItemClick: (UserCredentials) -> Unit,
-        onCustomLoginClick: () -> Unit
+        onCustomLoginClick: () -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -102,7 +102,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.size(width = 80.dp, height = 40.dp),
                 painter = painterResource(id = R.drawable.ic_stream),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -129,7 +129,7 @@ class UserLoginActivity : AppCompatActivity() {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f),
             ) {
                 items(items = PredefinedUserCredentials.availableUsers) { userCredentials ->
                     UserLoginItem(
@@ -160,7 +160,7 @@ class UserLoginActivity : AppCompatActivity() {
     @Composable
     fun UserLoginItem(
         userCredentials: UserCredentials,
-        onItemClick: (UserCredentials) -> Unit
+        onItemClick: (UserCredentials) -> Unit,
     ) {
         Row(
             modifier = Modifier
@@ -172,18 +172,18 @@ class UserLoginActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() }
                 )
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(
                 modifier = Modifier.size(40.dp),
-                user = userCredentials.user
+                user = userCredentials.user,
             )
 
             Column(
                 modifier = Modifier
                     .wrapContentHeight()
                     .weight(1f)
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
             ) {
                 Text(
                     text = userCredentials.user.name,
@@ -232,7 +232,7 @@ class UserLoginActivity : AppCompatActivity() {
                     .background(ChatTheme.colors.disabled)
                     .padding(8.dp),
                 painter = painterResource(id = R.drawable.ic_settings),
-                contentDescription = null
+                contentDescription = null,
             )
 
             Column(

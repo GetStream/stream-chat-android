@@ -83,7 +83,7 @@ public interface Call<T : Any> {
         @SuppressWarnings("TooGenericExceptionCaught")
         public suspend fun <T : Any> runCatching(
             errorMap: suspend (originalResultError: Result<T>) -> Result<T> = { it },
-            block: suspend () -> Result<T>
+            block: suspend () -> Result<T>,
         ): Result<T> = try {
             block().also { yield() }
         } catch (t: Throwable) {
@@ -128,7 +128,7 @@ public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.withPrecondition(
     scope: CoroutineScope,
-    precondition: suspend () -> Result<Unit>
+    precondition: suspend () -> Result<Unit>,
 ): Call<T> =
     WithPreconditionCall(this, scope, precondition)
 
@@ -142,7 +142,7 @@ public fun <T : Any> Call<T>.withPrecondition(
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
-    function: suspend (originalError: ChatError) -> Result<T>
+    function: suspend (originalError: ChatError) -> Result<T>,
 ): ReturnOnErrorCall<T> = ReturnOnErrorCall(this, scope, function)
 
 @InternalStreamChatApi
@@ -154,7 +154,7 @@ private val onErrorStub: (ChatError) -> Unit = {}
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.enqueue(
     onSuccess: (T) -> Unit = onSuccessStub,
-    onError: (ChatError) -> Unit = onErrorStub
+    onError: (ChatError) -> Unit = onErrorStub,
 ) {
     enqueue {
         if (it.isSuccess) {

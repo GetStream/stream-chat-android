@@ -24,7 +24,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 public class Result<T : Any> private constructor(
     private val data: T?,
-    private val error: ChatError?
+    private val error: ChatError?,
 ) {
 
     @Suppress("DEPRECATION")
@@ -140,7 +140,7 @@ public fun Result<*>.toUnitResult(): Result<Unit> = map {}
  */
 @JvmSynthetic
 public inline fun <T : Any> Result<T>.onSuccess(
-    crossinline successSideEffect: (T) -> Unit
+    crossinline successSideEffect: (T) -> Unit,
 ): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
@@ -156,7 +156,7 @@ public inline fun <T : Any> Result<T>.onSuccess(
  */
 @JvmSynthetic
 public suspend inline fun <T : Any> Result<T>.onSuccessSuspend(
-    crossinline successSideEffect: suspend (T) -> Unit
+    crossinline successSideEffect: suspend (T) -> Unit,
 ): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
@@ -242,7 +242,7 @@ public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (Chat
  */
 @JvmSynthetic
 public inline fun <T : Any> Result<T>.onError(
-    crossinline errorSideEffect: (ChatError) -> Unit
+    crossinline errorSideEffect: (ChatError) -> Unit,
 ): Result<T> = apply {
     if (isError) {
         errorSideEffect(error())
@@ -258,7 +258,7 @@ public inline fun <T : Any> Result<T>.onError(
  */
 @JvmSynthetic
 public suspend inline fun <T : Any> Result<T>.onErrorSuspend(
-    crossinline errorSideEffect: suspend (ChatError) -> Unit
+    crossinline errorSideEffect: suspend (ChatError) -> Unit,
 ): Result<T> = apply {
     if (isError) {
         errorSideEffect(error())
