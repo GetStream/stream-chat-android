@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
-import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -253,8 +252,8 @@ internal open class BaseChatModule(
         SocketFactory(parser, tokenManager),
         networkScope,
         parser,
+        lifecycleObserver,
         listOf(
-            StreamLifecyclePublisher(lifecycle),
             networkLifecyclePublisher(),
         ),
     )
