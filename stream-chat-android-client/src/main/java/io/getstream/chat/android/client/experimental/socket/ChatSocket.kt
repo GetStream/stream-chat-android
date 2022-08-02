@@ -134,7 +134,7 @@ internal class ChatSocket private constructor(
                     this
                 }
                 onEvent<Event.WebSocket.OnConnectedEventReceived> {
-                    State.Connected(event = it.connectedEvent, webSocket = this.webSocket)
+                    State.Connected(event = it.connectedEvent)
                 }
                 onEvent<Event.WebSocket.Terminate> {
                     // We do transition to Disconnected state here because the connection can be
@@ -150,11 +150,9 @@ internal class ChatSocket private constructor(
                     this
                 }
                 onEvent<Event.Lifecycle.Stopped> { event ->
-                    initiateShutdown(event)
                     State.Disconnecting(event.disconnectCause)
                 }
                 onEvent<Event.Lifecycle.Terminate> {
-                    webSocket.cancel()
                     State.Destroyed
                 }
                 onEvent<Event.WebSocket.Terminate> {
@@ -269,13 +267,6 @@ internal class ChatSocket private constructor(
     private suspend fun disposeObservers() {
         lifecycleObserver.dispose(lifecycleHandler)
         networkStateProvider.unsubscribe(networkStateListener)
-    }
-
-    private fun State.Connected.initiateShutdown(state: Event.Lifecycle.Stopped) {
-        when (state) {
-            is Event.Lifecycle.Stopped.WithReason -> webSocket.close(state.shutdownReason)
-            is Event.Lifecycle.Stopped.AndAborted -> webSocket.cancel()
-        }
     }
 
     private fun handleError(error: ChatError) {
