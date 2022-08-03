@@ -38,7 +38,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -131,7 +130,6 @@ internal class SendMessageInterceptorImplTest {
         logic.channelFromMessage(messageToSend) `should be` null
 
         whenever(logic.threadFromMessage(messageToSend)) doReturn threadLogic
-
 
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
