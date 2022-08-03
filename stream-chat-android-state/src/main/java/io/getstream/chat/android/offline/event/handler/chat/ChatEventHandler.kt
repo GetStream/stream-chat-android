@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.event.handler.chat
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -33,27 +32,28 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
- * Events handler computes which kind of action [EventHandlingResult] should be applied to this set.
+ * Handler responsible for deciding whether the set of channels should be updated after receiving the particular event.
+ *
+ * @see [EventHandlingResult]
  */
 public fun interface ChatEventHandler {
     /**
-     * Function that computes result of handling event. It runs in background.
+     * Computes the event handling result.
      *
-     * @param event ChatEvent that may contain updates for the set of channels. See more [ChatEvent]
-     * @param filter [FilterObject] that can be used to define result of handling.
-     * @param cachedChannel optional [Channel] object cached in database
+     * @param event [ChatEvent] that may contain updates for the set of channels.
+     * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
+     * @param cachedChannel optional cached [Channel] object.
      *
      * @return [EventHandlingResult] Result of handling.
      */
     public fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult
 }
 
-/** Class representing possible outcome of chat event handling. */
+/**
+ * Represent possible outcomes of handling a chat event.
+ */
 public sealed class EventHandlingResult {
     /**
      * Add a channel to a query channels collection.
@@ -77,22 +77,40 @@ public sealed class EventHandlingResult {
      */
     public data class Remove(public val cid: String) : EventHandlingResult()
 
-    /** Skip handling of this event. */
+    /**
+     * Skip the event.
+     */
     public object Skip : EventHandlingResult()
 }
 
 /**
- * Basic implementation of [ChatEventHandler]. It handles following channel events: [NotificationAddedToChannelEvent],
- * [MemberAddedEvent], [NotificationRemovedFromChannelEvent], [MemberRemovedEvent], [ChannelUpdatedByUserEvent],
- * [ChannelUpdatedEvent], [NotificationMessageNewEvent].
+ * More specific [ChatEventHandler] implementation that gives you a separation
+ * between [CidEvent] and [HasChannel] events.
+ *
+ * The channel will be removed from the set after receiving
+ * [ChannelDeletedEvent], [NotificationChannelDeletedEvent], [ChannelHiddenEvent] events.
+ *
+ * The channel will be watched and added to the set after receiving [ChannelVisibleEvent] event.
+ *
+ * Other events will be skipped.
  */
 public abstract class BaseChatEventHandler : ChatEventHandler {
+    @Deprecated(
+        message = "Use handleChatEvent() instead.",
+        replaceWith = ReplaceWith("this.handleChatEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [NotificationAddedToChannelEvent] event. It runs in background. */
     public abstract fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
+    @Deprecated(
+        message = "Use handleCidEvent() instead.",
+        replaceWith = ReplaceWith("this.handleCidEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [MemberAddedEvent] event. It runs in background. */
     public open fun handleMemberAddedEvent(
         event: MemberAddedEvent,
@@ -100,6 +118,11 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         cachedChannel: Channel?,
     ): EventHandlingResult = EventHandlingResult.Skip
 
+    @Deprecated(
+        message = "Use handleCidEvent() instead.",
+        replaceWith = ReplaceWith("this.handleCidEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [MemberRemovedEvent] event. It runs in background. */
     public open fun handleMemberRemovedEvent(
         event: MemberRemovedEvent,
@@ -107,12 +130,22 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         cachedChannel: Channel?,
     ): EventHandlingResult = EventHandlingResult.Skip
 
+    @Deprecated(
+        message = "Use handleChatEvent() instead.",
+        replaceWith = ReplaceWith("this.handleChatEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
+    @Deprecated(
+        message = "Use handleChatEvent() instead.",
+        replaceWith = ReplaceWith("this.handleChatEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [ChannelUpdatedEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
 
@@ -123,29 +156,52 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
      * @param event [ChannelVisibleEvent] to handle.
      * @param filter [FilterObject] for query channels collection.
      */
+    @Deprecated(
+        message = "Use handleCidEvent() instead.",
+        replaceWith = ReplaceWith("this.handleCidEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun handleChannelVisibleEvent(
         event: ChannelVisibleEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
 
+    @Deprecated(
+        message = "Use handleChatEvent() instead.",
+        replaceWith = ReplaceWith("this.handleChatEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [NotificationMessageNewEvent] event. It runs in background. */
     public open fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
+    ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
 
+    @Deprecated(
+        message = "Use handleChatEvent() instead.",
+        replaceWith = ReplaceWith("this.handleChatEvent()"),
+        level = DeprecationLevel.WARNING,
+    )
     /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
     public open fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
 
+    /**
+     * Handles [HasChannel] event which contains specific [Channel] object.
+     *
+     * @param event [ChatEvent] that may contain updates for the set of channels.
+     * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
+
+     * @return [EventHandlingResult] Result of handling.
+     */
     public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
-            is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+            is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
+            is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
             is ChannelUpdatedByUserEvent -> handleChannelUpdatedByUserEvent(event, filter)
             is ChannelUpdatedEvent -> handleChannelUpdatedEvent(event, filter)
             is NotificationMessageNewEvent -> handleNotificationMessageNewEvent(event, filter)
@@ -153,6 +209,15 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         }
     }
 
+    /**
+     * Handles [CidEvent] event which is associated with a specific [Channel] which can be tracked using [CidEvent.cid].
+     *
+     * @param event [ChatEvent] that may contain updates for the set of channels.
+     * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
+     * @param cachedChannel optional cached [Channel] object if exists.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
     public open fun handleCidEvent(
         event: CidEvent,
         filter: FilterObject,
@@ -167,58 +232,20 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         }
     }
 
+    /**
+     * Computes the event handling result.
+     *
+     * @param event [ChatEvent] that may contain updates for the set of channels.
+     * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
+     * @param cachedChannel optional cached [Channel] object.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
     override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {
             is HasChannel -> handleChannelEvent(event, filter)
             is CidEvent -> handleCidEvent(event, filter, cachedChannel)
             else -> EventHandlingResult.Skip
         }
-    }
-}
-
-/**
- * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
- * adds the channel.
- */
-internal fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
-    val channelsList = channels.value
-    return if (channel == null || channelsList == null || channelsList.any { it.cid == channel.cid }) {
-        EventHandlingResult.Skip
-    } else {
-        EventHandlingResult.Add(channel)
-    }
-}
-
-/**
- * Checks if the channel collection contains a channel, if yes then it removes it. Otherwise, it simply skips the event.
- */
-internal fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
-    val channelsList = channels.value
-    return if (channel != null && channelsList != null && channelsList.any { it.cid == channel.cid }) {
-        EventHandlingResult.Remove(channel.cid)
-    } else {
-        EventHandlingResult.Skip
-    }
-}
-
-/**
- * Checks if the current user has left the channel, if yes then it removes it. Otherwise, it simply skips the event.
- */
-internal fun removeIfCurrentUserLeftChannel(
-    channels: StateFlow<List<Channel>?>,
-    channel: Channel?,
-    member: Member,
-): EventHandlingResult {
-    val currentUserId: String? = if (ChatClient.isInitialized) {
-        ChatClient.instance().getCurrentUser()?.id
-    } else {
-        null
-    }
-    val removedMemberId = member.getUserId()
-
-    return if (currentUserId == removedMemberId) {
-        removeIfChannelIsPresent(channels, channel)
-    } else {
-        EventHandlingResult.Skip
     }
 }
