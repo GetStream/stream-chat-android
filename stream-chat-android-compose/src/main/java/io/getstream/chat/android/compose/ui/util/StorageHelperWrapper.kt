@@ -96,8 +96,17 @@ public class StorageHelperWrapper(
      * @return List of [Attachment]s with files prepared for uploading.
      */
     public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
+        return getAttachmentsMetadataFromUris(uris).let(::getAttachmentsFromMetaData)
+    }
+
+    /**
+     * Takes a list of file Uris and transforms them into a list of [AttachmentMetaData].
+     *
+     * @param uris Selected file Uris, to be transformed.
+     * @return List of [AttachmentMetaData] that describe the files.
+     */
+    public fun getAttachmentsMetadataFromUris(uris: List<Uri>): List<AttachmentMetaData> {
         return storageHelper.getAttachmentsFromUriList(context, uris)
             .let(attachmentFilter::filterAttachments)
-            .let(::getAttachmentsFromMetaData)
     }
 }
