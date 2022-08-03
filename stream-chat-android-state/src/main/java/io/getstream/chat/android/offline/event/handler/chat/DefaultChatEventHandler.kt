@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -49,7 +48,6 @@ public open class DefaultChatEventHandler(
      * Handles additional events:
      * - [MemberRemovedEvent] - removes the channel from the set if a current user left
      * - [MemberAddedEvent] - adds the channel to the set if a current user was added.
-     * - [NewMessageEvent] - adds the channel to the set if was not added yet.
      *
      * @see [BaseChatEventHandler.handleCidEvent]
      *
@@ -63,7 +61,6 @@ public open class DefaultChatEventHandler(
         return when (event) {
             is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(channels, event.cid, event.member)
             is MemberAddedEvent -> addIfCurrentUserJoinedChannel(channels, cachedChannel, event.member)
-            is NewMessageEvent -> addIfChannelIsAbsent(channels, cachedChannel)
             else -> super.handleCidEvent(event, filter, cachedChannel)
         }
     }
