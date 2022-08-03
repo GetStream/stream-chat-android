@@ -32,7 +32,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -68,6 +71,8 @@ public fun AttachmentsPicker(
     tabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -90,15 +95,16 @@ public fun AttachmentsPicker(
         ) {
             Column {
                 AttachmentPickerOptions(
-                    selectedAttachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
                     hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
-                    onOptionClick = {
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(it) { false }
+                    tabFactories = tabFactories,
+                    tabIndex = selectedTabIndex,
+                    onTabClick = { index, attachmentPickerMode ->
+                        selectedTabIndex = index
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
                     },
-                    tabFactories = tabFactories
                 )
 
                 Surface(
@@ -106,8 +112,7 @@ public fun AttachmentsPicker(
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     color = ChatTheme.colors.barsBackground,
                 ) {
-                    tabFactories
-                        .firstOrNull { it.attachmentsPickerMode == attachmentsPickerViewModel.attachmentsPickerMode }
+                    tabFactories.getOrNull(selectedTabIndex)
                         ?.pickerTabContent(
                             attachments = attachmentsPickerViewModel.attachments,
                             onAttachmentSelected = attachmentsPickerViewModel::changeSelectedAttachments,
@@ -134,42 +139,36 @@ public fun AttachmentsPicker(
  */
 @Composable
 private fun AttachmentPickerOptions(
-    selectedAttachmentsPickerMode: AttachmentsPickerMode,
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
-    onOptionClick: (AttachmentsPickerMode) -> Unit,
+    tabIndex: Int,
+    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
     Row(
-        Modifier
-            .fillMaxWidth(),
+        Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+            tabFactories.forEachIndexed { index, tabFactory ->
 
-        Row(
-            Modifier.weight(4f),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            tabFactories.forEach {
-                val attachmentsPickerMode = it.attachmentsPickerMode
-
-                val isSelected = selectedAttachmentsPickerMode == attachmentsPickerMode
+                val isSelected = index == tabIndex
                 val isEnabled = isSelected || (!isSelected && !hasPickedAttachments)
 
                 IconButton(
                     enabled = isEnabled,
                     content = {
-                        it.pickerTabIcon(
+                        tabFactory.pickerTabIcon(
                             isEnabled = isEnabled,
                             isSelected = isSelected
                         )
                     },
-                    onClick = { onOptionClick(attachmentsPickerMode) }
+                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.weight(5f))
+        Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
             enabled = hasPickedAttachments,
