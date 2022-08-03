@@ -31,8 +31,8 @@ public abstract interface class io/getstream/chat/android/offline/event/handler/
 }
 
 public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEventHandler : io/getstream/chat/android/offline/event/handler/chat/BaseChatEventHandler {
-	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;)V
+	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
@@ -96,8 +96,8 @@ public final class io/getstream/chat/android/offline/event/handler/chat/NonMembe
 
 public class io/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory {
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;
 }
 

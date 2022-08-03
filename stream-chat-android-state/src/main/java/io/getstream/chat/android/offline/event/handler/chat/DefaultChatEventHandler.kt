@@ -31,17 +31,18 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.setup.state.ClientState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Default implementation of [ChatEventHandler] which is based on the current user membership.
  *
  * @param channels The list of visible channels.
- * @param chatClient The client used to communicate to the API.
+ * @param clientState The client state used to obtain current user.
  */
 public open class DefaultChatEventHandler(
     private val channels: StateFlow<List<Channel>?>,
-    private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = ChatClient.instance().clientState,
 ) : BaseChatEventHandler() {
 
     /**
@@ -101,7 +102,7 @@ public open class DefaultChatEventHandler(
         member: Member,
     ): EventHandlingResult {
         val channelsList = channels.value
-        val isCurrentUserRelated = member.getUserId() == chatClient.getCurrentUser()?.id
+        val isCurrentUserRelated = member.getUserId() == clientState.user.value?.id
 
         return when {
             channelsList == null || !isCurrentUserRelated -> EventHandlingResult.Skip
@@ -119,7 +120,7 @@ public open class DefaultChatEventHandler(
         channel: Channel?,
         member: Member,
     ): EventHandlingResult {
-        return if (chatClient.getCurrentUser()?.id == member.getUserId()) {
+        return if (clientState.user.value?.id == member.getUserId()) {
             addIfChannelIsAbsent(channels, channel)
         } else {
             EventHandlingResult.Skip
