@@ -65,19 +65,24 @@ internal class SendReactionListenerDatabaseTest {
 
         sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, currentUser)
 
-        verify(reactionsRepository).insertReaction(argThat { reaction ->
-            reaction.messageId == testReaction.messageId
-        })
+        verify(reactionsRepository).insertReaction(
+            argThat { reaction ->
+                reaction.messageId == testReaction.messageId
+            }
+        )
 
         verify(userRepository).insertUser(testReaction.user!!)
 
-        verify(messageRepository).insertMessage(argThat { message ->
-            message.latestReactions.any { reaction ->
-                reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
-            } && message.ownReactions.any { reaction ->
-                reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
-            }
-        }, any())
+        verify(messageRepository).insertMessage(
+            argThat { message ->
+                message.latestReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                } && message.ownReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                }
+            },
+            any()
+        )
     }
 
     @Test
@@ -89,19 +94,24 @@ internal class SendReactionListenerDatabaseTest {
 
         sendReactionListenerState.onSendReactionRequest(randomCID(), testReaction, false, currentUser)
 
-        verify(reactionsRepository).insertReaction(argThat { reaction ->
-            reaction.messageId == testReaction.messageId
-        })
+        verify(reactionsRepository).insertReaction(
+            argThat { reaction ->
+                reaction.messageId == testReaction.messageId
+            }
+        )
 
         verify(userRepository).insertUser(testReaction.user!!)
 
-        verify(messageRepository).insertMessage(argThat { message ->
-            message.latestReactions.any { reaction ->
-                reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
-            } && message.ownReactions.any { reaction ->
-                reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
-            }
-        }, any())
+        verify(messageRepository).insertMessage(
+            argThat { message ->
+                message.latestReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
+                } && message.ownReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
+                }
+            },
+            any()
+        )
     }
 
     @Test
