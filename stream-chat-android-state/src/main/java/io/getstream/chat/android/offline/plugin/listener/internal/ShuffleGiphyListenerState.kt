@@ -29,7 +29,7 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
  *
  * @param logic [LogicRegistry]
  */
-internal class ShuffleGiphyListenerImpl(private val logic: LogicRegistry) : ShuffleGiphyListener {
+internal class ShuffleGiphyListenerState(private val logic: LogicRegistry) : ShuffleGiphyListener {
 
     /**
      * Added a new message to the DB and the state if request was successful.
@@ -44,8 +44,7 @@ internal class ShuffleGiphyListenerImpl(private val logic: LogicRegistry) : Shuf
                 syncStatus = SyncStatus.COMPLETED
             }
 
-            logic.channel(channelType = channelType, channelId = channelId)
-                .updateAndSaveMessages(listOf(processedMessage))
+            logic.channel(channelType = channelType, channelId = channelId).upsertMessage(processedMessage)
         }
     }
 }
