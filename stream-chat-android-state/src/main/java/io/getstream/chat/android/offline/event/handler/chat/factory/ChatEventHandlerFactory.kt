@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.event.handler.chat.factory
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
@@ -23,8 +24,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
 * A [ChatEventHandler] factory. Allows passing visible channels` list.
+ *
+ * @param chatClient The client used to communicate to the API.
 */
-public open class ChatEventHandlerFactory {
+public open class ChatEventHandlerFactory(private val chatClient: ChatClient = ChatClient.instance()) {
 
     /**
      * Creates a [ChatEventHandler] instance.
@@ -32,6 +35,6 @@ public open class ChatEventHandlerFactory {
      * @param channels The visible channels` list.
      */
     public open fun chatEventHandler(channels: StateFlow<List<Channel>?>): ChatEventHandler {
-        return DefaultChatEventHandler(channels = channels)
+        return DefaultChatEventHandler(channels = channels, chatClient = chatClient)
     }
 }

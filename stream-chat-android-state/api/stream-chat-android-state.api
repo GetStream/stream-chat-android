@@ -96,6 +96,8 @@ public final class io/getstream/chat/android/offline/event/handler/chat/NonMembe
 
 public class io/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory {
 	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;
 }
 
