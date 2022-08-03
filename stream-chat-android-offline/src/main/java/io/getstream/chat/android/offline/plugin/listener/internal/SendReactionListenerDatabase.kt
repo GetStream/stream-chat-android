@@ -32,7 +32,7 @@ import java.util.Date
 
 /**
  * [SendReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * Handles adding reaction offline, updates the database and does the optimistic UI update.
+ * Handles adding reaction offline, updates the database.
  *
  * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * @param reactionsRepository [ReactionRepository] to cache intermediate data and final result related to reactions.
@@ -49,7 +49,6 @@ internal class SendReactionListenerDatabase(
     /**
      * A method called before making an API call to send the reaction.
      * Fills the reaction with necessary data, updates reactions' database
-     * and runs optimistic update if [cid] is specified.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param reaction The [Reaction] to send.

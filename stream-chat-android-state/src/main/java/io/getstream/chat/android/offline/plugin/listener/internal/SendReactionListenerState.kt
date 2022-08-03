@@ -26,11 +26,26 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
+/**
+ * State implementation for SendReactionListener. It updates the state accordingly and does the optimistic UI update.
+ *
+ * @param logic [LogicRegistry] Handles the state of channels.
+ * @param clientState [ClientState] Check the state of the SDK.
+ */
 internal class SendReactionListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
 ) : SendReactionListener {
 
+    /**
+     * A method called before making an API call to send the reaction.
+     * runs optimistic update if the message and channel can be found in memory.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param currentUser The currently logged in user.
+     */
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
@@ -62,6 +77,12 @@ internal class SendReactionListenerState(
         // Nothing to do here.
     }
 
+    /**
+     * Checks if current user is set and reaction contains required data.
+     *
+     * @param currentUser The currently logged in user.
+     * @param reaction The [Reaction] to send.
+     */
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {

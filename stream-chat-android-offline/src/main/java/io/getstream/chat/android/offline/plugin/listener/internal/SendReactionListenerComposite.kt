@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.utils.Result
 
 /**
- * This class act as an composition of multiple DeleteMessageListener. This is only necessary
+ * This class act as an composition of multiple SendReactionListener. This is only necessary
  * along StatePlugin lives inside OfflinePlugin. When both plugins are separated, this class can
  * and should be deleted.
  */
