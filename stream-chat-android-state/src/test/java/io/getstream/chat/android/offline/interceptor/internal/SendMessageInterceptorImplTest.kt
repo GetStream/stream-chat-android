@@ -40,6 +40,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageInterceptorImplTest {
@@ -91,16 +92,22 @@ internal class SendMessageInterceptorImplTest {
 
     @Test
     fun `when send message in thread with show in channel, message should be added to channelState and threadState`() = runTest {
+        val messageToSend = randomMessage(text = randomString(), parentId = randomString(), showInChannel = true)
+
+        whenever(logic.channelFromMessage(messageToSend)) doReturn channelLogic
+        whenever(logic.threadFromMessage(messageToSend)) doReturn threadLogic
+
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
             randomString(),
-            randomMessage(text = randomString(), parentId = randomString(), showInChannel = true),
+            messageToSend,
             isRetrying = false
         )
 
         result.isSuccess `should be` true
 
         val resultMessage = result.data()
+
         verify(threadLogic).upsertMessage(
             argThat {
                 this.id == resultMessage.id &&
@@ -119,16 +126,24 @@ internal class SendMessageInterceptorImplTest {
 
     @Test
     fun `when send message in thread without show in channel, message should be added to threadState`() = runTest {
+        val messageToSend = randomMessage(text = randomString(), parentId = randomString(), showInChannel = false)
+
+        logic.channelFromMessage(messageToSend) `should be` null
+
+        whenever(logic.threadFromMessage(messageToSend)) doReturn threadLogic
+
+
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
             randomString(),
-            randomMessage(text = randomString(), parentId = randomString(), showInChannel = false),
+            messageToSend,
             isRetrying = false
         )
 
         result.isSuccess `should be` true
 
         val resultMessage = result.data()
+
         verify(threadLogic).upsertMessage(
             argThat {
                 this.id == resultMessage.id &&
@@ -136,22 +151,27 @@ internal class SendMessageInterceptorImplTest {
                     this.text == resultMessage.text
             }
         )
-        verify(channelLogic, never()).upsertMessage(any())
     }
 
     @Test
     fun `when send message in channel, message should be added to channelState`() = runTest {
+        val messageToSend = randomMessage(text = randomString(), parentId = null)
+
+        whenever(logic.channelFromMessage(messageToSend)) doReturn channelLogic
+
+        logic.threadFromMessage(messageToSend) `should be` null
+
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
             randomString(),
-            randomMessage(text = randomString(), parentId = null),
+            messageToSend,
             isRetrying = false
         )
 
         result.isSuccess `should be` true
 
         val resultMessage = result.data()
-        verify(threadLogic, never()).upsertMessage(any())
+
         verify(channelLogic).upsertMessage(
             argThat {
                 this.id == resultMessage.id &&
