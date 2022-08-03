@@ -32,7 +32,10 @@ public abstract interface class io/getstream/chat/android/offline/event/handler/
 
 public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEventHandler : io/getstream/chat/android/offline/event/handler/chat/BaseChatEventHandler {
 	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;)V
-	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected final fun addIfChannelIsAbsent (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
+	protected final fun addIfCurrentUserJoinedChannel (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
+	protected final fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
+	protected final fun getClientState ()Lio/getstream/chat/android/client/setup/state/ClientState;
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
@@ -41,6 +44,8 @@ public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEve
 	public fun handleMemberRemovedEvent (Lio/getstream/chat/android/client/events/MemberRemovedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleNotificationAddedToChannelEvent (Lio/getstream/chat/android/client/events/NotificationAddedToChannelEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleNotificationRemovedFromChannelEvent (Lio/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
+	protected final fun removeIfChannelExists (Ljava/lang/String;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
+	protected final fun removeIfCurrentUserLeftChannel (Ljava/lang/String;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 }
 
 public abstract class io/getstream/chat/android/offline/event/handler/chat/EventHandlingResult {
@@ -114,8 +119,9 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun loadOlderMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lkotlinx/coroutines/flow/StateFlow;
-	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
-	public static synthetic fun queryChannelsAsState$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
+	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)Lkotlinx/coroutines/flow/StateFlow;
+	public static final fun queryChannelsAsState (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;Lkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
+	public static synthetic fun queryChannelsAsState$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;Lkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
@@ -320,6 +326,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/q
 	public abstract fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelsStateData ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChatEventHandler ()Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;
+	public abstract fun getChatEventHandlerFactory ()Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;
 	public abstract fun getCurrentRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
@@ -329,6 +336,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/q
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public abstract fun setChatEventHandler (Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;)V
+	public abstract fun setChatEventHandlerFactory (Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)V
 }
 
 public class io/getstream/chat/android/offline/utils/Event {

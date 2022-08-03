@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -51,6 +52,16 @@ public interface QueryChannelsState {
     public val channels: StateFlow<List<Channel>?>
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
+
+    @Deprecated(
+        message = "Use chatEventHandlerFactory instead",
+        level = DeprecationLevel.WARNING,
+    )
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
     public var chatEventHandler: ChatEventHandler?
+
+    /**
+     * [ChatEventHandler] factory, responsible for deciding whether the set of channels should be updated.
+     */
+    public var chatEventHandlerFactory: ChatEventHandlerFactory?
 }

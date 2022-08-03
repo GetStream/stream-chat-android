@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.event.handler.chat
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -37,12 +36,12 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * Default implementation of [ChatEventHandler] which is based on the current user membership.
  *
- * @param channels The list of visible channels.
+ * @param channels The map of visible channels.
  * @param clientState The client state used to obtain current user.
  */
 public open class DefaultChatEventHandler(
-    private val channels: StateFlow<List<Channel>?>,
-    private val clientState: ClientState = ChatClient.instance().clientState,
+    protected val channels: StateFlow<Map<String, Channel>?>,
+    protected val clientState: ClientState,
 ) : BaseChatEventHandler() {
 
     /**
@@ -55,15 +54,15 @@ public open class DefaultChatEventHandler(
      *
      * @param event [ChatEvent] that may contain updates for the set of channels.
      * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
-     * @param cachedChannel optional cached [Channel] object if exists.
+     * @param cachedChannel Optional cached [Channel] object if exists.
      *
      * @return [EventHandlingResult] Result of handling.
      */
     override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {
-            is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(channels, event.cid, event.member)
-            is MemberAddedEvent -> addIfCurrentUserJoinedChannel(channels, cachedChannel, event.member)
-            is NewMessageEvent -> addIfChannelIsAbsent(channels, cachedChannel)
+            is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
+            is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
+            is NewMessageEvent -> addIfChannelIsAbsent(cachedChannel)
             else -> super.handleCidEvent(event, filter, cachedChannel)
         }
     }
@@ -83,61 +82,78 @@ public open class DefaultChatEventHandler(
         return when (event) {
             is NotificationMessageNewEvent -> EventHandlingResult.WatchAndAdd(event.cid)
             is NotificationAddedToChannelEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(
-                channels,
-                event.cid,
-                event.member,
-            )
+            is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
             else -> super.handleChannelEvent(event, filter)
         }
     }
 
     /**
-     * Checks if the current user has left the channel and the channel is in the collection.
+     * Checks if the current user has left the channel and the channel is visible.
      * If yes then it removes it. Otherwise, it simply skips the event.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param member The member who left the channel.
+     *
+     * @return [EventHandlingResult] Result of handling.
      */
-    private fun removeIfCurrentUserLeftChannel(
-        channels: StateFlow<List<Channel>?>,
-        channelCid: String,
-        member: Member,
-    ): EventHandlingResult {
-        val channelsList = channels.value
-        val isCurrentUserRelated = member.getUserId() == clientState.user.value?.id
+    protected fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
+        return if (member.getUserId() != clientState.user.value?.id) {
+            EventHandlingResult.Skip
+        } else {
+            removeIfChannelExists(cid)
+        }
+    }
+
+    /**
+     * Checks if the channel with given id is visible.
+     * If yes then it removes it. Otherwise, it simply skips the event.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
+    protected fun removeIfChannelExists(cid: String): EventHandlingResult {
+        val channelsMap = channels.value
 
         return when {
-            channelsList == null || !isCurrentUserRelated -> EventHandlingResult.Skip
-            channelsList.any { it.cid == channelCid } -> EventHandlingResult.Remove(channelCid)
+            channelsMap == null -> EventHandlingResult.Skip
+            channelsMap.containsKey(cid) -> EventHandlingResult.Remove(cid)
             else -> EventHandlingResult.Skip
         }
     }
 
     /**
-     * Checks if the current user joined the channel and the channel wasn't added yet.
+     * Checks if the current user joined the channel and the channel is not visible yet.
      * If yes then it adds it. Otherwise, it simply skips the event.
+     *
+     * @param channel Optional cached channel object.
+     * @param member The member who joined the channel.
+     *
+     * @return [EventHandlingResult] Result of handling.
      */
-    private fun addIfCurrentUserJoinedChannel(
-        channels: StateFlow<List<Channel>?>,
-        channel: Channel?,
-        member: Member,
-    ): EventHandlingResult {
+    protected fun addIfCurrentUserJoinedChannel(channel: Channel?, member: Member): EventHandlingResult {
         return if (clientState.user.value?.id == member.getUserId()) {
-            addIfChannelIsAbsent(channels, channel)
+            addIfChannelIsAbsent(channel)
         } else {
             EventHandlingResult.Skip
         }
     }
 
     /**
-     * Checks if the channel is not present in the collection yet.
+     * Checks if the cached channel exists and is not visible yet.
      * If yes then it adds it. Otherwise, it simply skips the event.
+     *
+     * @param channel Optional cached channel object.
+     *
+     * @return [EventHandlingResult] Result of handling.
      */
-    private fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
-        val channelsList = channels.value ?: return EventHandlingResult.Skip
+    protected fun addIfChannelIsAbsent(channel: Channel?): EventHandlingResult {
+        val channelsMap = channels.value
 
-        return if (channel == null || channelsList.any { it.cid == channel.cid }) {
-            EventHandlingResult.Skip
-        } else {
-            EventHandlingResult.Add(channel)
+        return when {
+            channelsMap == null || channel == null -> EventHandlingResult.Skip
+            channelsMap.containsKey(channel.cid) -> EventHandlingResult.Skip
+            else -> EventHandlingResult.Add(channel)
         }
     }
 
@@ -152,7 +168,7 @@ public open class DefaultChatEventHandler(
         event: MemberRemovedEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, event.cid, event.member)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(event.cid, event.member)
 
     /**
      *  Handles [MemberAddedEvent] event. It adds the channel if it is absent.
@@ -165,7 +181,7 @@ public open class DefaultChatEventHandler(
         event: MemberAddedEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult = addIfCurrentUserJoinedChannel(channels, cachedChannel, event.member)
+    ): EventHandlingResult = addIfCurrentUserJoinedChannel(cachedChannel, event.member)
 
     /**
      * Handles [NotificationRemovedFromChannelEvent]. It removes the channel if it's present in the list.
@@ -176,7 +192,7 @@ public open class DefaultChatEventHandler(
     override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = removeIfCurrentUserLeftChannel(channels, event.cid, event.member)
+    ): EventHandlingResult = removeIfCurrentUserLeftChannel(event.cid, event.member)
 
     /**
      *  Handles [NotificationAddedToChannelEvent] event. It adds the channel if it is absent.

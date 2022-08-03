@@ -191,7 +191,10 @@ public class ChannelListViewModel(
                 )
 
                 logger.d { "Querying channels as state" }
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+                queryChannelsState = chatClient.queryChannelsAsState(
+                    request = queryChannelsRequest,
+                    coroutineScope = viewModelScope,
+                )
                 observeChannels(searchQuery = query)
             }
     }
