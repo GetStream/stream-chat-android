@@ -19,6 +19,12 @@ package io.getstream.chat.android.client.models
 import io.getstream.chat.android.client.errors.ChatError
 import java.io.File
 
+/**
+ *@param originalHeight The original height of the attachment.
+ * Provided if the attachment is of type "image".
+ *@param originalWidth The original width of the attachment.
+ * Provided if the attachment is of type "image".
+ */
 public data class Attachment(
 
     var authorName: String? = null,
@@ -37,6 +43,8 @@ public data class Attachment(
     var url: String? = null,
     var name: String? = null,
     var fallback: String? = null,
+    var originalHeight: Int? = null,
+    var originalWidth: Int? = null,
 
     /**
      * The local file to upload when the attachment is sent. The [url] property

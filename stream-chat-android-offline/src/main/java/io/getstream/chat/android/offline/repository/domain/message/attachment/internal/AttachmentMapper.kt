@@ -44,6 +44,8 @@ internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntit
     fallback = fallback,
     uploadFilePath = upload?.absolutePath,
     uploadState = uploadState?.toEntity(),
+    originalHeight = originalHeight,
+    originalWidth = originalWidth,
     extraData = extraData,
 )
 
@@ -66,6 +68,8 @@ internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     fallback = fallback,
     upload = uploadFilePath?.let(::File),
     uploadState = uploadState?.toModel(uploadFilePath?.let(::File)),
+    originalHeight = originalHeight,
+    originalWidth = originalWidth,
     extraData = extraData.toMutableMap(),
 )
 
