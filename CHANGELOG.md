@@ -25,10 +25,14 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved updating channels after receiving new message related events. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `NonMemberChatEventHandler`. Use `BaseChatEventHandler` or `DefaultChatEventHandler` for custom implementation. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
+- Deprecated multiple event specific `BaseChatEventHandler` methods . Use `handleChatEvent()` or `handleCidEvent()` instead. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
+- Made `DefaultChatEventHandler` open. You can extend it to change default member-based events handling. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
 
 ### ❌ Removed
 

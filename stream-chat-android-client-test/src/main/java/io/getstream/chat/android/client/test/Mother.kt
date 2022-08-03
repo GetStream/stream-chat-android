@@ -692,7 +692,8 @@ public fun randomNotificationAddedToChannelEvent(
 
 public fun randomNotificationRemovedFromChannelEvent(
     cid: String = randomString(),
-    channel: Channel = randomChannel()
+    channel: Channel = randomChannel(),
+    member: Member = randomMember(),
 ): NotificationRemovedFromChannelEvent {
     return NotificationRemovedFromChannelEvent(
         type = randomString(),
@@ -702,7 +703,7 @@ public fun randomNotificationRemovedFromChannelEvent(
         channelType = randomString(),
         channelId = randomString(),
         channel = channel,
-        member = randomMember()
+        member = member,
     )
 }
 
@@ -735,7 +736,7 @@ public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEven
     )
 }
 
-public fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemovedEvent {
+public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member = randomMember()): MemberRemovedEvent {
     return MemberRemovedEvent(
         type = randomString(),
         createdAt = Date(),
@@ -743,6 +744,6 @@ public fun randomMemberRemovedEvent(cid: String = randomString()): MemberRemoved
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
-        member = randomMember()
+        member = member
     )
 }
