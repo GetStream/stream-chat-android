@@ -24,11 +24,24 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 
+/**
+* [ShuffleGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+* Handles updating the database.
+*
+* @param userRepository [UserRepository]
+* @param messageRepository [MessageRepository]
+*/
 internal class ShuffleGiphyListenerDatabase(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository
 ) : ShuffleGiphyListener {
 
+    /**
+     * Added a new message to the DB if request was successful.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param result The API call result.
+     */
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
         if (result.isSuccess) {
             val processedMessage = result.data().apply {

@@ -25,14 +25,14 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 /**
  * [ShuffleGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * Handles updating the DB and state.
+ * Handles updating the state.
  *
  * @param logic [LogicRegistry]
  */
 internal class ShuffleGiphyListenerState(private val logic: LogicRegistry) : ShuffleGiphyListener {
 
     /**
-     * Added a new message to the DB and the state if request was successful.
+     * Added a new message to the state if request was successful.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param result The API call result.
