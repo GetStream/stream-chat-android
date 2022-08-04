@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments.facotry
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,6 +54,9 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
 
     /**
      * Emits a camera icon for this tab.
+     *
+     * @param isEnabled If the tab is enabled.
+     * @param isSelected If the tab is selected.
      */
     @Composable
     override fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
@@ -71,16 +73,19 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
 
     /**
      * Emits a content for this tab.
+     *
+     * @param attachments The list of attachments to display.
+     * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
+     * @param onAttachmentItemSelected Handler when the item selection state changes.
+     * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun pickerTabContent(
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentSelected: (AttachmentPickerItemState) -> Unit,
-        onStart: () -> Unit,
-
-        onAttachmentsSelected: (List<AttachmentMetaData>) -> Unit,
-        helper: (List<Uri>) -> List<AttachmentMetaData>,
+        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         val context = LocalContext.current
 
@@ -91,14 +96,13 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
 
         val mediaCaptureResultLauncher =
             rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
-                val attachments =
-                    if (file == null) {
-                        emptyList()
-                    } else {
-                        listOf(AttachmentMetaData(context, file))
-                    }
+                val attachments = if (file == null) {
+                    emptyList()
+                } else {
+                    listOf(AttachmentMetaData(context, file))
+                }
 
-                onAttachmentsSelected(attachments)
+                onAttachmentsSubmitted(attachments)
             }
 
         if (cameraPermissionState == null || cameraPermissionState.status == PermissionStatus.Granted) {

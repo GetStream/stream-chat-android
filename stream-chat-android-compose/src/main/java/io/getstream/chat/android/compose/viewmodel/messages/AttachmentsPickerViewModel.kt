@@ -189,16 +189,6 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Takes a list of file Uris and transforms them into a list of [AttachmentMetaData].
-     *
-     * @param uris Selected file Uris, to be transformed.
-     * @return List of [AttachmentMetaData] that describe the files.
-     */
-    public fun getAttachmentsMetadataFromUris(uris: List<Uri>): List<AttachmentMetaData> {
-        return storageHelper.getAttachmentsMetadataFromUris(uris)
-    }
-
-    /**
      * Transforms the selected meta data into a list of [Attachment]s we can upload.
      *
      * @param metaData List of attachment meta data items.

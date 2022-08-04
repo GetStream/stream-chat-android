@@ -115,12 +115,11 @@ public fun AttachmentsPicker(
                     tabFactories.getOrNull(selectedTabIndex)
                         ?.pickerTabContent(
                             attachments = attachmentsPickerViewModel.attachments,
-                            onAttachmentSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                            onStart = attachmentsPickerViewModel::loadData,
-                            onAttachmentsSelected = {
+                            onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                            onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                            onAttachmentsSubmitted = {
                                 onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
                             },
-                            helper = attachmentsPickerViewModel::getAttachmentsMetadataFromUris
                         )
                 }
             }
