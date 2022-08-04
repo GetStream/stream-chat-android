@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
@@ -33,16 +32,14 @@ import java.util.Date
 
 /**
  * [DeleteReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * Handles adding reaction offline, updates the database and does the optimistic UI update.
+ * Handles adding reaction to the state of the SDK.
  *
  * @param logic [LogicRegistry]
  * @param clientState [ClientState]
- * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
 internal class DeleteReactionListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    // private val repos: RepositoryFacade,
 ) : DeleteReactionListener {
 
     /**
