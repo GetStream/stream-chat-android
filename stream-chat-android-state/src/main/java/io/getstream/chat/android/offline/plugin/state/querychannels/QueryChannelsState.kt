@@ -61,7 +61,7 @@ public interface QueryChannelsState {
     public var chatEventHandler: ChatEventHandler?
 
     /**
-     * Factory that produces [ChatEventHandler], which is responsible for deciding whether the set of channels should be updated.
+     * Factory that produces [ChatEventHandler], which decides whether the set of channels should be updated.
      */
     public var chatEventHandlerFactory: ChatEventHandlerFactory?
 }
