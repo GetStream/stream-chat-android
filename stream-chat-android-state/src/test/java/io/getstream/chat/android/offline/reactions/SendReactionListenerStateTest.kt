@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
@@ -55,11 +56,13 @@ internal class SendReactionListenerStateTest {
             userId = currentUser.id
             type = "type1"
             score = 123
+            syncStatus = SyncStatus.SYNC_NEEDED
         },
         Reaction().apply {
             userId = currentUser.id
             type = "type2"
             score = 234
+            syncStatus = SyncStatus.SYNC_NEEDED
         },
     )
 
@@ -93,4 +96,35 @@ internal class SendReactionListenerStateTest {
             }
         )
     }
+
+    @Test
+    fun `when sending reactions, messages with reactions should be upserted with correct sync status after request`() =
+        runTest {
+            val testReaction = myReactions[0]
+
+            val testMessage = randomMessage(
+                ownReactions = mutableListOf(testReaction),
+                latestReactions = mutableListOf(testReaction),
+            )
+
+            whenever(channelLogic.getMessage(any())) doReturn testMessage
+
+            sendReactionListenerState.onSendReactionResult(
+                randomCID(),
+                testReaction,
+                false,
+                currentUser,
+                Result.success(testReaction)
+            )
+
+            verify(channelLogic).upsertMessage(
+                argThat { message ->
+                    message.latestReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                    } && message.ownReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                    }
+                }
+            )
+        }
 }

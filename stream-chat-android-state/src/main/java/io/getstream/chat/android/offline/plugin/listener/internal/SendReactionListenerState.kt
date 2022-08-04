@@ -19,11 +19,13 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 /**
@@ -74,7 +76,18 @@ internal class SendReactionListenerState(
         currentUser: User,
         result: Result<Reaction>,
     ) {
-        // Nothing to do here.
+        val channelLogic = logic.channelFromMessageId(reaction.messageId)
+        channelLogic?.getMessage(reaction.messageId)?.let { message ->
+            message.ownReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            message.latestReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            channelLogic.upsertMessage(message)
+        }
     }
 
     /**
@@ -94,6 +107,22 @@ internal class SendReactionListenerState(
             else -> {
                 Result.success(Unit)
             }
+        }
+    }
+
+    private fun Reaction.updateSyncStatus(result: Result<*>) {
+        if (result.isSuccess) {
+            syncStatus = SyncStatus.COMPLETED
+        } else {
+            updateFailedReactionSyncStatus(result.error())
+        }
+    }
+
+    private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError) {
+        syncStatus = if (chatError.isPermanent()) {
+            SyncStatus.FAILED_PERMANENTLY
+        } else {
+            SyncStatus.SYNC_NEEDED
         }
     }
 }
