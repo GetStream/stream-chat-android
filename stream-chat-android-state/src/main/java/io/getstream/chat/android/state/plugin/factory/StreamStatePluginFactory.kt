@@ -35,7 +35,7 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequ
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerImpl
@@ -227,7 +227,7 @@ public class StreamStatePluginFactory(
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
             markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
-            deleteReactionListener = DeleteReactionListenerImpl(logic, clientState, repositoryFacade),
+            deleteReactionListener = DeleteReactionListenerState(logic, clientState, repositoryFacade),
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
             sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),

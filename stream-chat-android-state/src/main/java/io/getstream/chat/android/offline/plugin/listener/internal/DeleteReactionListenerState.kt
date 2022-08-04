@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
-import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -39,10 +38,10 @@ import java.util.Date
  * @param clientState [ClientState]
  * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
-internal class DeleteReactionListenerImpl(
+internal class DeleteReactionListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    private val repos: RepositoryFacade,
+    // private val repos: RepositoryFacade,
 ) : DeleteReactionListener {
 
     /**
@@ -66,19 +65,18 @@ internal class DeleteReactionListenerImpl(
             type = reactionType,
             user = currentUser,
             userId = currentUser.id,
-            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            syncStatus = if (clientState.isNetworkAvailable) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
             deletedAt = Date(),
         )
 
-        repos.insertReaction(reaction)
-
-        repos.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.removeMyReaction(reaction)
-            repos.insertMessage(cachedMessage)
-
-            if (cid != null) {
-                doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
+        val channelLogic = logic.channelFromMessageId(reaction.messageId)
+        val cachedMessage = channelLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                removeMyReaction(reaction = reaction)
             }
+
+        if (cid != null && cachedMessage != null) {
+            doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
         }
     }
 
@@ -90,7 +88,7 @@ internal class DeleteReactionListenerImpl(
      */
     private fun doOptimisticMessageUpdate(cid: String, message: Message) {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessages(listOf(message))
+        logic.channel(channelType = channelType, channelId = channelId).upsertMessage(message)
     }
 
     /**
@@ -110,10 +108,11 @@ internal class DeleteReactionListenerImpl(
         currentUser: User,
         result: Result<Message>,
     ) {
-        repos.selectUserReactionToMessage(reactionType = reactionType, messageId = messageId, userId = currentUser.id)
-            ?.let { cachedReaction ->
-                repos.insertReaction(cachedReaction.updateSyncStatus(result))
-            }
+        
+        // repos.selectUserReactionToMessage(reactionType = reactionType, messageId = messageId, userId = currentUser.id)
+        //     ?.let { cachedReaction ->
+        //         repos.insertReaction(cachedReaction.updateSyncStatus(result))
+        //     }
     }
 
     /**

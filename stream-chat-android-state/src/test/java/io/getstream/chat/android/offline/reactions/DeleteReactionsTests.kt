@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
@@ -256,7 +256,7 @@ internal class DeleteReactionsTests {
             whenever(clientState.isOnline) doReturn false
         }
 
-        fun get(): Pair<DeleteReactionListenerImpl, StateRegistry> =
-            DeleteReactionListenerImpl(logicRegistry, clientState, repos) to stateRegistry
+        fun get(): Pair<DeleteReactionListenerState, StateRegistry> =
+            DeleteReactionListenerState(logicRegistry, clientState, repos) to stateRegistry
     }
 }
