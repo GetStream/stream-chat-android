@@ -191,7 +191,8 @@ public class ChannelListViewModel(
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
             )
-        queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+        queryChannelsState =
+            chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope)
 
         /**
          * We clean up any previous loads to make sure the current one is the only one running.
@@ -206,9 +207,6 @@ public class ChannelListViewModel(
                 if (!isActive) {
                     return@collectLatest
                 }
-
-                queryChannelsState.chatEventHandler =
-                    chatEventHandlerFactory.chatEventHandler(queryChannelsState.channels)
                 stateMerger.addFlow(queryJob, queryChannelsState.channelsStateData) { channelsState ->
                     stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
                 }
