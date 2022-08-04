@@ -21,10 +21,15 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DeleteReactionListenerStateTest {
-    private val defaultReaction = randomReaction()
+    private val user = randomUser()
+    private val defaultReaction = randomReaction(
+        userId = user.id,
+        user = user
+    )
     private val defaultMessage = randomMessage(
         ownReactions = mutableListOf(defaultReaction),
-        latestReactions = mutableListOf(defaultReaction)
+        latestReactions = mutableListOf(defaultReaction),
+        user = user
     )
 
     private val clientState = mock<ClientState>()
@@ -43,14 +48,14 @@ internal class DeleteReactionListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
 
         deleteReactionListenerDatabase.onDeleteReactionRequest(
-            randomCID(),
-            randomString(),
-            randomString(),
-            randomUser()
+            cid = randomCID(),
+            messageId = defaultMessage.id,
+            reactionType = defaultReaction.type,
+            currentUser = user
         )
 
         verify(channelLogic).upsertMessage(argThat { message ->
-            reaction.deletedAt != null && reaction.syncStatus == SyncStatus.IN_PROGRESS
+            message.ownReactions.isEmpty() && message.latestReactions.isEmpty()
         })
 
         whenever(clientState.isNetworkAvailable) doReturn false
