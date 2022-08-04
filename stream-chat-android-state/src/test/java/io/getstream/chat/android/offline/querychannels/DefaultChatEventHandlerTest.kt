@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
-import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
@@ -121,30 +120,6 @@ internal class DefaultChatEventHandlerTest {
         val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
 
         result `should be equal to` EventHandlingResult.Add(channel)
-    }
-
-    @Test
-    fun `Given the channel is not present When received NewMessageEvent Should add the channel`() {
-        val channel = randomChannel()
-        val clientState = mock<ClientState>()
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
-        val event = randomNewMessageEvent(cid = channel.cid)
-
-        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
-
-        result `should be equal to` EventHandlingResult.Add(channel)
-    }
-
-    @Test
-    fun `Given the channel is present When received NewMessageEvent Should skip the update`() {
-        val channel = randomChannel()
-        val clientState = mock<ClientState>()
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
-        val event = randomNewMessageEvent(cid = channel.cid)
-
-        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
-
-        result `should be equal to` EventHandlingResult.Skip
     }
 
     @Test
