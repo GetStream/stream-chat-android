@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -60,7 +61,8 @@ internal class SendReactionListenerState(
             enforceUnique = enforceUnique,
         )
 
-        val channelLogic = logic.channelFromMessageId(reaction.messageId)
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
         val cachedMessage = channelLogic?.getMessage(reaction.messageId)
             ?.apply {
                 addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
@@ -76,7 +78,8 @@ internal class SendReactionListenerState(
         currentUser: User,
         result: Result<Reaction>,
     ) {
-        val channelLogic = logic.channelFromMessageId(reaction.messageId)
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
         channelLogic?.getMessage(reaction.messageId)?.let { message ->
             message.ownReactions
                 .find { ownReaction -> ownReaction == reaction }
