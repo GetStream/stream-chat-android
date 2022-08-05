@@ -178,7 +178,6 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.days
 import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
 

@@ -113,7 +113,6 @@ internal class SocketEventCollector(
     }
 
     private companion object {
-        private const val EVENTS_BUFFER = 100
         private const val TIMEOUT = 300L
         private const val TIME_LIMIT = 2000L
         private const val ITEM_COUNT_LIMIT = 100

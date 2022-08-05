@@ -33,6 +33,7 @@ import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
 import io.getstream.logging.StreamLog
 
+@Suppress("TooGenericExceptionCaught")
 internal class SyncMessagesWork(
     appContext: Context,
     workerParams: WorkerParameters,

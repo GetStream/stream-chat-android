@@ -61,6 +61,7 @@ import kotlin.reflect.KClass
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  */
+@Suppress("LongParameterList")
 internal class OfflinePlugin(
     internal val activeUser: User,
     private val queryChannelsListener: QueryChannelsListener,
@@ -81,7 +82,8 @@ internal class OfflinePlugin(
     private val createChannelListener: CreateChannelListener,
     private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
-) : StateAwarePlugin, DependencyResolver,
+) : StateAwarePlugin,
+    DependencyResolver,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,

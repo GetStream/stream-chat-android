@@ -71,7 +71,7 @@ private const val QUERIES_TO_RETRY = 3
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary, when connection
  * is reestabilished or when a health check even happens.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught")
 internal class SyncManager(
     private val currentUserId: String,
     private val chatClient: ChatClient,

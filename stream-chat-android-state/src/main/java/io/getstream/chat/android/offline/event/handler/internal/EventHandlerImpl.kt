@@ -644,7 +644,7 @@ internal class EventHandlerImpl(
         if (me.id != currentUserId) {
             throw InputMismatchException(
                 "received connect event for user with id ${me.id} while for user configured " +
-                    "has id ${currentUserId}. Looks like there's a problem in the user set"
+                    "has id $currentUserId. Looks like there's a problem in the user set"
             )
         }
         mutableGlobalState.updateCurrentUser(self)

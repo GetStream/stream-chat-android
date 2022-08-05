@@ -616,5 +616,3 @@ internal class EventHandlerSequential(
         }
     }
 }
-
-
