@@ -37,6 +37,8 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -64,6 +66,7 @@ import kotlinx.coroutines.launch
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
@@ -72,6 +75,7 @@ public class ChannelListViewModel(
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
 ) : ViewModel() {
 
     /**
@@ -191,7 +195,11 @@ public class ChannelListViewModel(
                 )
 
                 logger.d { "Querying channels as state" }
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+                queryChannelsState = chatClient.queryChannelsAsState(
+                    request = queryChannelsRequest,
+                    chatEventHandlerFactory = chatEventHandlerFactory,
+                    coroutineScope = viewModelScope,
+                )
                 observeChannels(searchQuery = query)
             }
     }

@@ -171,7 +171,6 @@ internal interface ChannelApi {
     fun markRead(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: MarkReadRequest,
     ): RetrofitCall<CompletableResponse>
 
