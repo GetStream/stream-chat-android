@@ -105,7 +105,7 @@ internal class DeleteReactionListenerState(
         currentUser: User,
         result: Result<Message>,
     ) {
-        // Nothing to be done. The Reaction is deleted optimistically. 
+        // Nothing to be done. The Reaction is deleted optimistically.
     }
 
     /**
