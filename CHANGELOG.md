@@ -26,6 +26,7 @@
 
 ### ⬆️ Improved
 - Improved updating channels after receiving `NotificationMessageNew` event. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
+- Improved updating channels after receiving `NewMessageEvent`. The channel will be added to the list if the message is not a system message. [#3999](https://github.com/GetStream/stream-chat-android/pull/3999)
 
 ### ✅ Added
 
