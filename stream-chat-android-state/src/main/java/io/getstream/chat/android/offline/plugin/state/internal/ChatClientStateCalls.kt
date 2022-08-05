@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.launch
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -35,15 +36,19 @@ import kotlinx.coroutines.CoroutineScope
 internal class ChatClientStateCalls(
     private val chatClient: ChatClient,
     private val state: StateRegistry,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) {
     private val logger = StreamLog.getLogger("ChatClientState")
 
     /** Reference request of the channels query. */
-    internal fun queryChannels(request: QueryChannelsRequest): QueryChannelsState {
+    internal fun queryChannels(
+        request: QueryChannelsRequest,
+        chatEventHandlerFactory: ChatEventHandlerFactory,
+    ): QueryChannelsState {
         logger.d { "querying state for channels" }
         chatClient.queryChannels(request).launch(scope)
         return state.queryChannels(request.filter, request.querySort)
+            .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
     }
 
     /** Reference request of the channel query. */
