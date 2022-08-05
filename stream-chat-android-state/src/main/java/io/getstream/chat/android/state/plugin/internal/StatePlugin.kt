@@ -78,7 +78,7 @@ public class StatePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
-) : Plugin, DependencyResolver,
+) : StateAwarePlugin, DependencyResolver,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,

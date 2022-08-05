@@ -1,16 +1,17 @@
 package io.getstream.chat.android.offline.sync.internal
 
 import io.getstream.chat.android.client.events.ChatEvent
+import kotlinx.coroutines.flow.Flow
 
 internal interface SyncHistoryManager {
 
-    fun setListener(listener: Listener?)
+    val syncedEvents: Flow<List<ChatEvent>>
 
-    suspend fun handleEvent(event: ChatEvent)
+    fun start()
 
     suspend fun sync()
 
-    fun interface Listener {
-        suspend fun onHistorySyncCompleted(events: List<ChatEvent>)
-    }
+    suspend fun awaitSyncing()
+
+    fun stop()
 }

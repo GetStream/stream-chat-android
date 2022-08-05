@@ -88,17 +88,16 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
+import io.getstream.chat.android.offline.event.handler.internal.model.UserId
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.InputMismatchException
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -106,18 +105,17 @@ private const val TAG = "Chat:EventHandlerOld"
 
 @Suppress("LongParameterList")
 internal class EventHandlerImpl(
+    private val currentUserId: UserId,
     private val scope: CoroutineScope,
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logic: LogicRegistry,
     private val state: StateRegistry,
     private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
-    private val syncManager: SyncHistoryManager,
-) : EventHandler, SyncHistoryManager.Listener {
+    private val syncedEvents: Flow<List<ChatEvent>>,
+) : EventHandler {
 
     private val logger = StreamLog.getLogger(TAG)
-
-    private val currentUserId = AtomicReference<String>()
 
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
@@ -128,28 +126,27 @@ internal class EventHandlerImpl(
     /**
      * Start listening to chat events.
      */
-    override fun startListening(currentUser: User) {
+    override fun startListening() {
         val isDisposed = eventSubscription.isDisposed
-        logger.i { "[startListening] isDisposed: $isDisposed, user: $currentUser" }
-        currentUserId.set(currentUser.id)
+        logger.i { "[startListening] isDisposed: $isDisposed, user: $currentUserId" }
         if (isDisposed) {
-            syncManager.setListener(this)
             val initJob = scope.launch {
                 repos.cacheChannelConfigs()
+            }
+            scope.launch {
+                syncedEvents.collect {
+                    logger.i { "[onSyncEventsReceived] events.size: ${it.size}" }
+                    handleEventsInternal(it, isFromSync = true)
+                    logger.i { "[onSyncEventsReceived] processed" }
+                }
             }
             eventSubscription = subscribeForEvents {
                 scope.launch {
                     initJob.join()
-                    syncManager.handleEvent(it)
                     handleEvents(listOf(it))
                 }
             }
         }
-    }
-
-    override suspend fun onHistorySyncCompleted(events: List<ChatEvent>) {
-        logger.i { "[onHistorySyncCompleted] events.size: ${events.size}" }
-        handleEventsInternal(events, isFromSync = true)
     }
 
     /**
@@ -158,8 +155,6 @@ internal class EventHandlerImpl(
     override fun stopListening() {
         logger.i { "[stopListening] no args" }
         eventSubscription.dispose()
-        syncManager.setListener(null)
-        currentUserId.set(null)
     }
 
     /**
@@ -206,7 +201,6 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>, isFromSync: Boolean) {
-        val currentUserId = currentUserId.get()
         val batchId = Random.nextInt().absoluteValue
         val batchBuilder = EventBatchUpdate.Builder(batchId)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
@@ -271,6 +265,7 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is NotificationMessageNewEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is ReactionUpdateEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                else -> Unit
             }
         }
         // actually fetch the data
@@ -495,6 +490,7 @@ internal class EventHandlerImpl(
                 is UserPresenceChangedEvent,
                 is ConnectedEvent,
                 -> Unit
+                else -> Unit
             }
         }
 
@@ -633,7 +629,6 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        val currentUserId = currentUserId.get()
         ownReactions = if (user != null && currentUserId != user.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
@@ -646,7 +641,6 @@ internal class EventHandlerImpl(
 
     private suspend fun updateCurrentUser(self: SelfUser) {
         val me = self.me
-        val currentUserId = currentUserId.get()
         if (me.id != currentUserId) {
             throw InputMismatchException(
                 "received connect event for user with id ${me.id} while for user configured " +

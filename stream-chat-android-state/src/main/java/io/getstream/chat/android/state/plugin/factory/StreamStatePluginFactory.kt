@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -60,6 +61,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
 import kotlin.reflect.KClass
 
@@ -173,6 +175,8 @@ public class StreamStatePluginFactory(
         }
 
         val syncManager = SyncManager(
+            currentUserId = user.id,
+            scope = scope,
             chatClient = chatClient,
             clientState = clientState,
             repos = repositoryFacade,
@@ -180,8 +184,10 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
         )
+        syncManager.start()
 
         val eventHandler: EventHandler = createEventHandler(
+            user = user,
             useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
@@ -189,10 +195,11 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
             repos = repositoryFacade,
-            syncManager = syncManager,
+            syncedEvents = syncManager.syncedEvents,
+            sideEffect = syncManager::awaitSyncing
         )
+        eventHandler.startListening()
 
-        eventHandler.startListening(user)
         InitializationCoordinator.getOrCreate().run {
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
@@ -201,6 +208,7 @@ public class StreamStatePluginFactory(
                 logic.clear()
                 clientState.clearState()
                 globalState.clearState()
+                syncManager.stop()
                 eventHandler.stopListening()
                 clearCachedInstance()
             }
@@ -235,7 +243,7 @@ public class StreamStatePluginFactory(
 
     private fun createDependencyProvider(
         syncManager: SyncManager,
-        eventHandler: EventHandler
+        eventHandler: EventHandler,
     ): (KClass<*>) -> Any? {
         return { klass ->
             when (klass) {
@@ -246,9 +254,9 @@ public class StreamStatePluginFactory(
         }
     }
 
-
     @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
+        user: User,
         useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
@@ -256,26 +264,30 @@ public class StreamStatePluginFactory(
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
         repos: RepositoryFacade,
-        syncManager: SyncManager,
+        sideEffect: suspend () -> Unit,
+        syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
         return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
+                currentUserId = user.id,
                 subscribeForEvents = { listener -> client.subscribe(listener) },
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
                 repos = repos,
-                syncManager = syncManager,
+                syncedEvents = syncedEvents,
+                sideEffect = sideEffect,
             )
             else -> EventHandlerImpl(
                 scope = scope,
+                currentUserId = user.id,
                 subscribeForEvents = { listener -> client.subscribe(listener) },
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
                 repos = repos,
-                syncManager = syncManager,
+                syncedEvents = syncedEvents
             )
         }
     }

@@ -242,14 +242,18 @@ internal constructor(
      *
      * @see [Plugin]
      */
+    @PublishedApi
     internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
 
     @InternalStreamChatApi
-    public fun <T : Any> resolveDependency(klass: KClass<T>): T? {
+    public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T? {
         for (plugin in plugins) {
-            return (plugin as? DependencyResolver)?.resolveDependency(klass) ?: continue
+            when (plugin is P && plugin is DependencyResolver) {
+                true -> return plugin.resolveDependency(T::class)
+                else -> continue
+            }
         }
         return null
     }

@@ -19,8 +19,9 @@ package io.getstream.chat.android.offline.sync.internal
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -38,15 +39,26 @@ import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager.Listener
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
@@ -61,45 +73,82 @@ private const val QUERIES_TO_RETRY = 3
  */
 @Suppress("LongParameterList")
 internal class SyncManager(
+    private val currentUserId: String,
     private val chatClient: ChatClient,
     private val clientState: ClientState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
+    scope: CoroutineScope,
 ) : SyncHistoryManager {
 
     private val logger = StreamLog.getLogger("Chat:SyncManager")
 
-    private val listener = AtomicReference<Listener>()
+    private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
+        CoroutineExceptionHandler { context, throwable ->
+            logger.e(throwable) { "[uncaughtCoroutineException] throwable: $throwable, context: $context" }
+        }
+
     private val entitiesRetryMutex = Mutex()
     private val syncState = MutableStateFlow<SyncState?>(null)
     private val isFirstConnect = AtomicBoolean(true)
 
-    override fun setListener(listener: Listener?) {
-        this.listener.set(listener)
+    private var eventsDisposable: Disposable? = null
+
+    private val _syncEvents = Tube<List<ChatEvent>>()
+    private val state = MutableStateFlow(State.Idle)
+
+    override val syncedEvents: Flow<List<ChatEvent>> = _syncEvents
+
+    override fun start() {
+        logger.d { "[start] no args" }
+        val isDisposed = eventsDisposable?.isDisposed ?: true
+        if (!isDisposed) return
+        eventsDisposable = chatClient.subscribe { event ->
+            onEvent(event)
+        }
+    }
+
+    override fun stop() {
+        logger.d { "[stop] no args" }
+        eventsDisposable?.dispose()
+        syncScope.coroutineContext.job.cancelChildren()
     }
 
     override suspend fun sync() {
         logger.d { "[sync] no args" }
+        state.value = State.Syncing
         performSync()
+        state.value = State.Idle
     }
 
-    override suspend fun handleEvent(event: ChatEvent) {
-        logger.d { "[handleEvent] event.type: ${event.type}" }
+    override suspend fun awaitSyncing() {
+        if (state.value == State.Idle) {
+            return
+        }
+        logger.i { "[awaitSyncing] no args" }
+        state.first { it == State.Idle }
+        logger.v { "[awaitSyncing] completed" }
+    }
+
+    private fun onEvent(event: ChatEvent) {
         when (event) {
-            is ConnectedEvent -> {
-                logger.i { "[handleEvent] ConnectedEvent received" }
-                onConnectionEstablished(event.me.id)
+            is ConnectingEvent -> syncScope.launch {
+                logger.i { "[onEvent] ConnectingEvent received" }
+                onConnectionEstablished(currentUserId)
             }
-            is DisconnectedEvent -> {
-                logger.i { "[handleEvent] DisconnectedEvent received" }
+            is DisconnectedEvent -> syncScope.launch {
+                logger.i { "[onEvent] DisconnectedEvent received" }
                 onConnectionLost()
+                syncScope.coroutineContext.job.cancelChildren()
             }
-            is HealthEvent -> {
+            is HealthEvent -> syncScope.launch {
+                logger.v { "[onEvent] HealthEvent received" }
                 retryFailedEntities()
             }
-            is MarkAllReadEvent -> {
+            is MarkAllReadEvent -> syncScope.launch {
+                logger.i { "[onEvent] MarkAllReadEvent received" }
                 updateAllReadStateForDate(event.user.id, event.createdAt)
             }
             else -> Unit
@@ -110,40 +159,48 @@ internal class SyncManager(
      * Handles connection recover in the SDK.
      * This method will sync the data, retry failed entities, update channels data, etc.
      */
-    private suspend fun onConnectionEstablished(userId: String) {
+    private suspend fun onConnectionEstablished(userId: String) = try {
         logger.i { "[onConnectionEstablished] >>> isFirstConnect: $isFirstConnect" }
+        state.value = State.Syncing
         if (syncState.value == null && syncState.value?.userId != userId) {
             updateAllReadStateForDate(userId, currentDate = Date())
         }
         performSync()
+        restoreActiveChannels()
+        state.value = State.Idle
 
-        if (isFirstConnect.compareAndSet(true, false)) {
-            connectionRecovered(recoverAll = false)
-        } else {
-            // the second time (ie coming from background, or reconnecting we should recover all)
-            connectionRecovered(recoverAll = true)
+        val online = clientState.isOnline
+        logger.v { "[onConnectionEstablished] online: $online" }
+        if (online) {
+            retryFailedEntities()
         }
         logger.i { "[onConnectionEstablished] <<< completed" }
+    } catch (e: Throwable) {
+        logger.e { "[onConnectionEstablished] failed: $e" }
     }
 
     /**
      * Stores the state to be request in a later moment.
      * Should be used when SDK is disconnecting.
      */
-    private suspend fun onConnectionLost() {
+    private suspend fun onConnectionLost() = try {
         logger.i { "[connectionLost] firstConnect: $isFirstConnect" }
+        state.value = State.Idle
         syncState.value?.let { syncState ->
             val activeCids = logicRegistry.getActiveChannelsLogic().map { it.cid }
+            logger.d { "[connectionLost] activeCids.size: ${activeCids.size}" }
             val newSyncState = syncState.copy(activeChannelIds = activeCids)
             repos.insertSyncState(newSyncState)
             this.syncState.value = newSyncState
         }
+    } catch (e: Throwable) {
+        logger.i { "[connectionLost] failed: $e" }
     }
 
     private suspend fun performSync() {
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
-            repos.selectAllCids()
+            repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         if (cids.isEmpty()) {
             logger.w { "[performSync] rejected (cids is empty)" }
@@ -162,7 +219,12 @@ internal class SyncManager(
                     updateAllReadStateForDate(it.user.id, it.createdAt)
                 }
             }
-            listener.get()?.onHistorySyncCompleted(sortedEvents)
+            if (sortedEvents.isNotEmpty()) {
+                _syncEvents.emit(sortedEvents)
+                logger.v { "[performSync] events emission completed" }
+            } else {
+                logger.v { "[performSync] no events to emit" }
+            }
         } else {
             logger.e { "[performSync] failed(${result.error().stringify()})" }
         }
@@ -191,8 +253,14 @@ internal class SyncManager(
      * @param currentDate the moment of the update.
      */
     private suspend fun updateAllReadStateForDate(userId: String, currentDate: Date) {
+        if (currentUserId != userId) {
+            return
+        }
         logger.d { "[updateAllReadStateForDate] userId: $userId, currentDate: $currentDate" }
         syncState.value = repos.selectSyncState(userId)?.let { selectedState ->
+            logger.v {
+                "[updateAllReadStateForDate] selectedState.activeCids.zie: ${selectedState.activeChannelIds.size}"
+            }
             when (selectedState.markedAllReadAt?.before(currentDate)) {
                 true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
                     repos.insertSyncState(newState)
@@ -205,7 +273,7 @@ internal class SyncManager(
     /**
      * Retry all entities that have failed. Channels, messages, reactions, etc.
      */
-    private suspend fun retryFailedEntities() {
+    private suspend fun retryFailedEntities() = try {
         entitiesRetryMutex.withLock {
             logger.d { "[retryFailedEntities] no args" }
             // retry channels, messages and reactions in that order..
@@ -214,32 +282,31 @@ internal class SyncManager(
             retryReactions()
             logger.v { "[retryFailedEntities] completed" }
         }
+    } catch (e: Throwable) {
+        logger.e { "[retryFailedEntities] failed: $e" }
     }
 
     @SuppressWarnings("LongMethod")
     /**
      * This method needs to be refactored. It's too long.
      */
-    private suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        logger.d { "[connectionRecovered] recoverAll: $recoverAll" }
-        // 0. ensure load is complete
-        val online = clientState.isOnline
-
-        // 1. Retry any failed requests first (synchronous)
-        logger.v { "[connectionRecovered] online: $online" }
-        if (online) {
-            retryFailedEntities()
+    private suspend fun restoreActiveChannels() {
+        val recoverAll = !isFirstConnect.compareAndSet(true, false)
+        logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
+        val result = updateActiveQueryChannels(recoverAll)
+        if (result.isError) {
+            logger.e { "[restoreActiveChannels] failed: ${result.error()}" }
+            return
         }
-        val updatedCids = updateActiveQueryChannels(recoverAll)
-        logger.v { "[connectionRecovered] updatedCids.size: ${updatedCids.size}" }
+        val updatedCids = result.data()
+        logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
         updateActiveChannels(
             recoverAll,
-            online,
             updatedCids
         )
     }
 
-    private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Set<String> {
+    private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
         // 2. update the results for queries that are actively being shown right now (synchronous)
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
@@ -249,16 +316,18 @@ internal class SyncManager(
             .toList()
         if (queryLogicsToRestore.isEmpty()) {
             logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
-            return emptySet()
+            return Result.success(emptySet())
         }
         logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
 
+        val failed = AtomicReference<ChatError>()
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
             logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.state().filter}" }
             queryLogic.queryFirstPage()
                 .onError {
                     logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
+                    failed.set(it)
                 }
                 .onSuccessSuspend { foundChannels ->
                     logger.v {
@@ -268,17 +337,17 @@ internal class SyncManager(
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }
         }
-        return updatedCids
+        return when (val chatError = failed.get()) {
+            null -> Result.success(updatedCids)
+            else -> Result.error(chatError)
+        }
     }
 
     private suspend fun updateActiveChannels(
         recoverAll: Boolean,
-        online: Boolean,
         cidsToExclude: Set<String>,
     ) {
-        // 3. update the data for all channels that are being show right now...
-        // exclude ones we just updated
-        // (synchronous)
+        val online = clientState.isOnline
         logger.d {
             "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
         }
@@ -450,5 +519,9 @@ internal class SyncManager(
                 "${users.size} users " +
                 "and ${messages.size} messages"
         }
+    }
+
+    private enum class State {
+        Idle, Syncing
     }
 }

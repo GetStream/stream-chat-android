@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
 import kotlin.reflect.KClass
 
 /**
@@ -80,7 +81,7 @@ internal class OfflinePlugin(
     private val createChannelListener: CreateChannelListener,
     private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
-) : Plugin, DependencyResolver,
+) : StateAwarePlugin, DependencyResolver,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,

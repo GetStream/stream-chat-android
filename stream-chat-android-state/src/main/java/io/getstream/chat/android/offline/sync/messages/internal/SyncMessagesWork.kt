@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
+import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
 import io.getstream.logging.StreamLog
 
 internal class SyncMessagesWork(
@@ -48,8 +49,8 @@ internal class SyncMessagesWork(
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
 
-            val syncManager = client.resolveDependency(SyncHistoryManager::class) ?: error(
-                "No SyncHistoryManager found in StatePlugin graph."
+            val syncManager = client.resolveDependency<StateAwarePlugin, SyncHistoryManager>() ?: error(
+                "No SyncHistoryManager found in StatePlugin."
             )
             syncManager.sync()
 
