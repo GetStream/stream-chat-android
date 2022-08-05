@@ -269,7 +269,7 @@ internal class EventHandlerImpl(
             }
         }
         // actually fetch the data
-        val batch = batchBuilder.build(repos, currentUserId)
+        val batch = batchBuilder.build(mutableGlobalState, repos, currentUserId)
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {

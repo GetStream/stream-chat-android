@@ -132,7 +132,8 @@ internal class SyncManager(
         logger.v { "[awaitSyncing] completed" }
     }
 
-    private fun onEvent(event: ChatEvent) {
+    @VisibleForTesting
+    internal fun onEvent(event: ChatEvent) {
         when (event) {
             is ConnectingEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectingEvent received" }

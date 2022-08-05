@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event
+package io.getstream.chat.android.offline.sync.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.HealthEvent
@@ -25,27 +25,23 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.event.model.EventHandlerType
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -55,7 +51,7 @@ import java.util.Date
 
 @ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class EventHandlerImplTest {
+internal class SyncManagerTest {
 
     companion object {
         @JvmField
@@ -91,16 +87,19 @@ internal class EventHandlerImplTest {
             on(it.user) doReturn MutableStateFlow(user)
             on(it.connectionState) doReturn connectionState
         }
-        repositoryFacade = mock()
+        repositoryFacade = mock {
+            runBlocking {
+                on(it.selectChannelCidsBySyncNeeded()) doReturn emptyList()
+                on(it.selectMessageIdsBySyncState(any())) doReturn emptyList()
+                on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
+            }
+        }
         syncManager = mock()
     }
 
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `when a health check event happens, a request to retry failed entities should happen`(
-        type: EventHandlerType,
-    ) = runTest {
-        val eventHandler = buildEventHandler(type)
+    @Test
+    fun `when a health check event happens, a request to retry failed entities should happen`() = runTest {
+        val syncManager = buildSyncManager()
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
@@ -110,32 +109,24 @@ internal class EventHandlerImplTest {
             connectionId = randomString()
         )
 
-        eventHandler.handleEvents(connectingEvent)
+        syncManager.onEvent(connectingEvent)
 
-        verify(syncManager).retryFailedEntities()
+        verify(repositoryFacade).selectChannelCidsBySyncNeeded()
+        verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
+        verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
+        verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
     }
 
-    private fun buildEventHandler(type: EventHandlerType): EventHandler {
-        return when (type) {
-            EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
-                scope = testCoroutines.scope,
-                subscribeForEvents = { listener -> chatClient.subscribe(listener) },
-                logicRegistry = logicRegistry,
-                stateRegistry = stateRegistry,
-                mutableGlobalState = globalState,
-                repos = repositoryFacade,
-                syncManager = syncManager,
-                currentUserId = user.id
-            )
-            EventHandlerType.DEFAULT -> EventHandlerImpl(
-                scope = testCoroutines.scope,
-                subscribeForEvents = { listener -> chatClient.subscribe(listener) },
-                logic = logicRegistry,
-                state = stateRegistry,
-                mutableGlobalState = globalState,
-                repos = repositoryFacade,
-                syncManager = syncManager,
-            )
-        }
+    private fun buildSyncManager(): SyncManager {
+        return SyncManager(
+            currentUserId = user.id,
+            scope = testCoroutines.scope,
+            logicRegistry = logicRegistry,
+            stateRegistry = stateRegistry,
+            repos = repositoryFacade,
+            chatClient = chatClient,
+            clientState = clientState,
+            userPresence = true,
+        )
     }
 }
