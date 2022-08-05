@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import kotlin.reflect.KClass
 
 /**
@@ -60,6 +61,9 @@ import kotlin.reflect.KClass
  * @param typingEventListener [TypingEventListener]
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
+ * @param provideDependency Resolves dependency within [OfflinePlugin].
+ * @param childResolver Resolves dependency within [StatePlugin]. Will be removed when [StatePlugin]
+ * gets separated from [OfflinePlugin].
  */
 @Suppress("LongParameterList")
 internal class OfflinePlugin(
@@ -80,6 +84,7 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
+    @Deprecated("Delete this when StatePlugin will be separated from OfflinePlugin")
     private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : StateAwarePlugin,
