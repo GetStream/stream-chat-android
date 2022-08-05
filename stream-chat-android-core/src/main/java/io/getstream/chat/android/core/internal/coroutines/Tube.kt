@@ -17,26 +17,34 @@
 package io.getstream.chat.android.core.internal.coroutines
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+/**
+ * A synchronous data stream that emits values and completes normally.
+ */
 @InternalStreamChatApi
 public class Tube<T> : Flow<T>, FlowCollector<T> {
 
     private val mutex = Mutex()
     private val collectors = hashSetOf<FlowCollector<T>>()
 
+    /**
+     * Adds the given [collector] into [collectors] and suspends until cancellation.
+     *
+     * This method is **thread-safe** and can be safely invoked from concurrent coroutines without
+     * external synchronization.
+     */
     override suspend fun collect(collector: FlowCollector<T>) {
         try {
             mutex.withLock {
                 collectors.add(collector)
             }
             awaitCancellation()
-        } catch (_: CancellationException) {
+        } catch (_: Throwable) {
             /* no-op */
         } finally {
             mutex.withLock {
@@ -45,10 +53,20 @@ public class Tube<T> : Flow<T>, FlowCollector<T> {
         }
     }
 
+    /**
+     * Emits a [value] to the [collectors], suspending until the [value] is fully consumed.
+     *
+     * This method is **thread-safe** and can be safely invoked from concurrent coroutines without
+     * external synchronization.
+     */
     override suspend fun emit(value: T) {
         mutex.withLock {
             collectors.forEach {
-                it.emit(value)
+                try {
+                    it.emit(value)
+                } catch (_: Throwable) {
+                    /* no-op */
+                }
             }
         }
     }
