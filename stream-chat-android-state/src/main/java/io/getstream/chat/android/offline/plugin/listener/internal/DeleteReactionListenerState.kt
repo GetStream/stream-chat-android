@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -106,24 +105,7 @@ internal class DeleteReactionListenerState(
         currentUser: User,
         result: Result<Message>,
     ) {
-        val channelLogic = logic.channelFromMessageId(messageId)
-        channelLogic?.getMessage(messageId)?.let { message ->
-            message.ownReactions
-                .find { ownReaction ->
-                    ownReaction.run {
-                        this.type == reactionType && this.messageId == messageId && this.user == currentUser
-                    }
-                }?.updateSyncStatus(result)
-
-            message.latestReactions
-                .find { latestReaction ->
-                    latestReaction.run {
-                        this.type == reactionType && this.messageId == messageId && this.user == currentUser
-                    }
-                }?.updateSyncStatus(result)
-
-            channelLogic.upsertMessage(message)
-        }
+        // Nothing to be done. The Reaction is deleted optimistically. 
     }
 
     /**
@@ -136,22 +118,6 @@ internal class DeleteReactionListenerState(
             Result.success(Unit)
         } else {
             Result.error(ChatError(message = "Current user is null!"))
-        }
-    }
-
-    private fun Reaction.updateSyncStatus(result: Result<*>) {
-        if (result.isSuccess) {
-            syncStatus = SyncStatus.COMPLETED
-        } else {
-            updateFailedReactionSyncStatus(result.error())
-        }
-    }
-
-    private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError) {
-        syncStatus = if (chatError.isPermanent()) {
-            SyncStatus.FAILED_PERMANENTLY
-        } else {
-            SyncStatus.SYNC_NEEDED
         }
     }
 }
