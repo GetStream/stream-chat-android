@@ -41,7 +41,6 @@
     <ID>MaxLineLength:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$channelState.lastMarkReadEvent == null || lastMessageDate?.after(channelState.lastMarkReadEvent) == true</ID>
     <ID>MaxLineLength:ChannelsStateData.kt$ChannelsStateData.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:ChatClient.kt$*</ID>
-    <ID>MaxLineLength:ChatEventHandler.kt$ChatEventHandler$*</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt; 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt;= 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
