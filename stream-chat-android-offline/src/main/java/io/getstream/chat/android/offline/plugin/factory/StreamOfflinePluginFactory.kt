@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
@@ -33,6 +34,8 @@ import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
@@ -113,6 +116,15 @@ public class StreamOfflinePluginFactory(
             userRepository = chatClient.repositoryFacade
         )
 
+        val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
+            userRepository = chatClient.repositoryFacade,
+            messageRepository = chatClient.repositoryFacade
+        )
+
+        val shuffleGiphyListener: ShuffleGiphyListener = ShuffleGiphyListenerComposite(
+            listOf(shuffleGiphyListenerDatabase, statePlugin)
+        )
+
         val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
             clientState = chatClient.clientState,
             messageRepository = chatClient.repositoryFacade,
@@ -147,7 +159,7 @@ public class StreamOfflinePluginFactory(
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = statePlugin,
             sendGiphyListener = statePlugin,
-            shuffleGiphyListener = statePlugin,
+            shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = statePlugin,
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
