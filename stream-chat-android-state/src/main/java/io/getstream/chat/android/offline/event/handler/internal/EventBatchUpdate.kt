@@ -49,6 +49,7 @@ import io.getstream.logging.StreamLog
  * fourth, execute the batch using
  * batch.execute()
  */
+@Suppress("LongParameterList")
 internal class EventBatchUpdate private constructor(
     private val id: Int,
     private val currentUserId: String?,
