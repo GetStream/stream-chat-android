@@ -22,25 +22,6 @@
     <ID>MaxLineLength:OfflinePlugin.kt$OfflinePlugin$*</ID>
     <ID>MaxLineLength:TestUtils.kt$val connectivityManager = getApplicationContext&lt;Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager</ID>
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelTests.kt:137</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:240</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:251</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:262</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:455</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:467</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverterTest.kt:478</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.database.converter.internal.FilterObjectConverter.kt:65</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeIntegrationTests.kt:112</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeIntegrationTests.kt:148</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeIntegrationTests.kt:80</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.TestUtils.kt:55</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:85</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:86</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:87</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:88</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:89</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:90</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ValidationKtTest.kt:91</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
     <ID>UnusedPrivateMember:UserRepositoryTests.kt$UserRepositoryTests$private val currentUser: User = randomUser(id = "currentUserId")</ID>

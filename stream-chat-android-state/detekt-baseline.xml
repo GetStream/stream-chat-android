@@ -68,47 +68,6 @@
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$*</ID>
     <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$else</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.AttachmentUrlValidatorTests.kt:114</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.AttachmentUrlValidatorTests.kt:142</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.AttachmentUrlValidatorTests.kt:77</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.controller.WhenHandleEvent.kt:97</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.controller.attachment.WhenUploadAttachmentsTests.kt:160</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.controller.attachment.WhenUploadAttachmentsTests.kt:201</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.channel.controller.attachment.WhenUploadAttachmentsTests.kt:249</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.event.TotalUnreadCountTest.kt:94</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl.kt:674</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential.kt:687</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.events.TypingEventsTest.kt:104</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.events.TypingEventsTest.kt:65</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.internal.TypingEventPrunerTest.kt:83</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.model.querychannels.pagination.internal.Mapper.kt:34</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerImpl.kt:102</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImplTest.kt:223</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImplTest.kt:257</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState.kt:44</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.querychannels.DefaultChatEventHandlerTest.kt:84</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.querychannels.NonMemberChatEventHandlerTest.kt:106</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.querychannels.QueryChannelsSortTest.kt:352</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.querychannels.QueryChannelsSortTest.kt:367</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:149</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:228</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:54</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:71</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:94</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.RepositoryFacadeTests.kt:95</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.WhenEnrichChannel.kt:60</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.WhenEnrichChannel.kt:77</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.repository.facade.WhenEnrichChannel.kt:96</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.CustomObjectFilteringTest.kt:1468</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.CustomObjectFilteringTest.kt:160</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.CustomObjectFilteringTest.kt:163</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.CustomObjectFilteringTest.kt:206</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper.kt:72</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.CustomObjectFiltering.kt:123</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.CustomObjectFiltering.kt:66</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.CustomObjectFiltering.kt:68</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.CustomObjectFiltering.kt:70</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.offline.utils.internal.CustomObjectFiltering.kt:72</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>

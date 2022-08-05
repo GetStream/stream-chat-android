@@ -41,19 +41,6 @@
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions.kt:202</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions.kt:204</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelTest.kt:140</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelTest.kt:191</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelTest.kt:221</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelTest.kt:56</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModelTest.kt:79</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModelTest.kt:106</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModelTest.kt:142</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModelTest.kt:241</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModelTest.kt:291</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModelTest.kt:309</ID>
-    <ID>MaximumLineLength:io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory.kt:62</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$public fun updateLastSeenMessage(message: Message)</ID>
   </CurrentIssues>
 </SmellBaseline>
