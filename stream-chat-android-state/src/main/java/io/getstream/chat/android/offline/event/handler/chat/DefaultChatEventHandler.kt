@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -45,7 +46,8 @@ public open class DefaultChatEventHandler(
 
     /**
      * Handles additional events:
-     * - [MemberRemovedEvent] - removes the channel from the set if a current user left
+     * - [NewMessageEvent] - adds the channel to the set if its not a system message.
+     * - [MemberRemovedEvent] - removes the channel from the set if a current user left.
      * - [MemberAddedEvent] - adds the channel to the set if a current user was added.
      *
      * @see [BaseChatEventHandler.handleCidEvent]
@@ -58,6 +60,7 @@ public open class DefaultChatEventHandler(
      */
     override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {
+            is NewMessageEvent -> handleNewMessageEvent(event, cachedChannel)
             is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
             is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
             else -> super.handleCidEvent(event, filter, cachedChannel)
@@ -81,6 +84,23 @@ public open class DefaultChatEventHandler(
             is NotificationAddedToChannelEvent -> EventHandlingResult.WatchAndAdd(event.cid)
             is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
             else -> super.handleChannelEvent(event, filter)
+        }
+    }
+
+    /**
+     * Checks if the message is a system message.
+     * If yes it skips the event. Otherwise, it adds the channel cached channel exists and was not added yet.
+     *
+     * @param event [NewMessageEvent] that may contain updates for the set of channels.
+     * @param cachedChannel Optional cached [Channel] object if exists.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
+    private fun handleNewMessageEvent(event: NewMessageEvent, cachedChannel: Channel?): EventHandlingResult {
+        return if (event.message.type == SYSTEM_MESSAGE) {
+            EventHandlingResult.Skip
+        } else {
+            addIfChannelIsAbsent(cachedChannel)
         }
     }
 
@@ -213,4 +233,8 @@ public open class DefaultChatEventHandler(
         event: ChannelUpdatedEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.Skip
+
+    private companion object {
+        private const val SYSTEM_MESSAGE = "system"
+    }
 }
