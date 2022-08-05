@@ -248,13 +248,9 @@ internal constructor(
 
     @InternalStreamChatApi
     public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T? {
-        for (plugin in plugins) {
-            when (plugin is P && plugin is DependencyResolver) {
-                true -> return plugin.resolveDependency(T::class)
-                else -> continue
-            }
-        }
-        return null
+        return (plugins.find { plugin ->
+            plugin is P && plugin is DependencyResolver
+        } as? DependencyResolver)?.resolveDependency(T::class)
     }
 
     /**
