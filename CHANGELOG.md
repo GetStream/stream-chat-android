@@ -66,6 +66,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added additional `chatEventHandlerFactory` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows customizing `ChatEventHandler`. [#3997](https://github.com/GetStream/stream-chat-android/pull/3997)
 
 ### ⚠️ Changed
 
