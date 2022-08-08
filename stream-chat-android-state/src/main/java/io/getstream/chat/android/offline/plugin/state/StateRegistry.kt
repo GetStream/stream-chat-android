@@ -113,6 +113,8 @@ public class StateRegistry private constructor(
         }
     }
 
+    internal fun getActiveQueryChannelsStates(): List<QueryChannelsState> = queryChannels.values.toList()
+
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 
     /**

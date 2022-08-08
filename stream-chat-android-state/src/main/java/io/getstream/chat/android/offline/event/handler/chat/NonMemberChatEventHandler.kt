@@ -32,6 +32,11 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param channels The list of visible channels.
  */
+@Deprecated(
+    message = "This class has been deprecated and will be removed." +
+        "You can either use BaseChatEventHandler or DefaultChatEventHandler for custom implementation.",
+    level = DeprecationLevel.WARNING,
+)
 public class NonMemberChatEventHandler(
     private val channels: StateFlow<List<Channel>?>,
 ) : BaseChatEventHandler() {
@@ -99,4 +104,30 @@ public class NonMemberChatEventHandler(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = addIfChannelIsAbsent(channels, event.channel)
+
+    /**
+     * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
+     * adds the channel.
+     */
+    private fun addIfChannelIsAbsent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
+        val channelsList = channels.value
+        return if (channel == null || channelsList == null || channelsList.any { it.cid == channel.cid }) {
+            EventHandlingResult.Skip
+        } else {
+            EventHandlingResult.Add(channel)
+        }
+    }
+
+    /**
+     * Checks if the channel collection contains a channel, if yes then it removes it.
+     * Otherwise, it simply skips the event.
+     */
+    private fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
+        val channelsList = channels.value
+        return if (channel != null && channelsList != null && channelsList.any { it.cid == channel.cid }) {
+            EventHandlingResult.Remove(channel.cid)
+        } else {
+            EventHandlingResult.Skip
+        }
+    }
 }

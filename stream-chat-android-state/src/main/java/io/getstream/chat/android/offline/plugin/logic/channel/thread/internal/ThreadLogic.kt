@@ -123,6 +123,17 @@ internal class ThreadLogic(
         onResult(result, limit)
     }
 
+    /**
+     * Returns message stored in [ThreadMutableState] if exists
+     *
+     * @param messageId The id of the message.
+     *
+     * @return [Message] if exists, null otherwise.
+     */
+    internal fun getMessage(messageId: String): Message? {
+        return mutableState.rawMessages[messageId]?.copy()
+    }
+
     internal fun deleteMessage(message: Message) {
         threadStateLogic.deleteMessage(message)
     }

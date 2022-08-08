@@ -14,29 +14,40 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal
+package io.getstream.chat.android.offline.sync.internal
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.ChatEvent
+import kotlinx.coroutines.flow.Flow
 
 /**
- * Handles WebSocket and/or Synced events to update states and offline storage.
+ * Tries to sync, if necessary, when connection is reestablished or when a health check event happens.
+ *
+ * In addition it is responsible to sync messages, reactions and channel data.
  */
-internal interface EventHandler {
+internal interface SyncHistoryManager {
 
     /**
-     * Triggers WebSocket event subscription.
+     * History synced events.
      */
-    fun startListening()
+    val syncedEvents: Flow<List<ChatEvent>>
 
     /**
-     * Cancels WebSocket event subscription.
+     * Starts history syncing based on WS events.
      */
-    fun stopListening()
+    fun start()
 
     /**
-     * For testing purpose only. Simulates socket event handling.
+     * Forces immediate history syncing.
      */
-    @VisibleForTesting
-    suspend fun handleEvents(vararg events: ChatEvent)
+    suspend fun sync()
+
+    /**
+     * Awaits until history syncing process gets finished.
+     */
+    suspend fun awaitSyncing()
+
+    /**
+     * Stops history syncing based on WS events.
+     */
+    fun stop()
 }

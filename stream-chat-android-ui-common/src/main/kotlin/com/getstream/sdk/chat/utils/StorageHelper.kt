@@ -22,7 +22,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import androidx.core.database.getLongOrNull
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -37,13 +36,6 @@ import java.util.Locale
 @Suppress("TooManyFunctions")
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
-    private val projection = arrayOf(
-        MediaStore.Files.FileColumns._ID,
-        MediaStore.Files.FileColumns.DISPLAY_NAME,
-        MediaStore.Files.FileColumns.MIME_TYPE,
-        MediaStore.Files.FileColumns.SIZE,
-        MediaStore.Video.Media.DURATION
-    )
 
     public fun getCachedFileFromUri(
         context: Context,
@@ -89,9 +81,16 @@ public class StorageHelper {
     }
 
     private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
+        val columns = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.SIZE,
+            MediaStore.Files.FileColumns.DURATION
+        )
         context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
-            projection,
+            columns,
             selection,
             null,
             "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
@@ -105,37 +104,87 @@ public class StorageHelper {
         return emptyList()
     }
 
+    /**
+     * Queries the given list of content URI and returns the parsed metadata.
+     *
+     * @param uriList The list of URIs, using the content:// scheme.
+     * @return A list of objects with parsed metadata for the list of URIs.
+     */
     public fun getAttachmentsFromUriList(context: Context, uriList: List<Uri>): List<AttachmentMetaData> {
         return uriList.mapNotNull { uri ->
-            context.contentResolver.query(
-                uri,
-                projection,
-                null,
-                null,
-                null
-            )?.use { cursor ->
-                cursor.moveToFirst()
-                getAttachmentFromCursor(cursor, uri)
-            }
+            val columns = arrayOf(
+                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.SIZE,
+            )
+            context.contentResolver.query(uri, columns, null, null, null)
+                ?.use { cursor ->
+                    if (cursor != null && cursor.moveToFirst()) {
+                        val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
+                        val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+                        val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+
+                        val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
+                            cursor.getString(displayNameIndex)
+                        } else null
+
+                        val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+                            cursor.getLong(fileSizeIndex)
+                        } else 0L
+
+                        val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
+                            cursor.getString(mimeTypeIndex)
+                        } else {
+                            context.contentResolver.getType(uri)
+                        }
+
+                        AttachmentMetaData(
+                            uri = uri,
+                            type = getModelType(mimeType),
+                            mimeType = mimeType,
+                            title = displayName
+                        ).apply {
+                            size = fileSize
+                        }
+                    } else {
+                        null
+                    }
+                }
         }
     }
 
-    private fun getAttachmentFromCursor(cursor: Cursor, contentUri: Uri? = null): AttachmentMetaData {
+    private fun getAttachmentFromCursor(cursor: Cursor): AttachmentMetaData {
+        val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
+        val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+        val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+        val durationIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DURATION)
 
-        with(cursor) {
-            val id = getLong(getColumnIndex(MediaStore.Files.FileColumns._ID))
-            val mimeType = getString(getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE))
-            val title = getString(getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
-            val size = getLong(getColumnIndex(MediaStore.Files.FileColumns.SIZE))
-            val videoLength = getLongOrNull(getColumnIndex(MediaStore.Video.Media.DURATION)) ?: 0
+        val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID))
 
-            val uri = contentUri ?: getContentUri(mimeType, id)
-            return AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
-                this.type = getModelType(mimeType)
-                this.size = size
-                this.title = title
-                this.videoLength = videoLength / MILISECOND_IN_A_SECOND
-            }
+        val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
+            cursor.getString(displayNameIndex)
+        } else null
+
+        val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+            cursor.getLong(fileSizeIndex)
+        } else 0L
+
+        val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
+            cursor.getString(mimeTypeIndex)
+        } else null
+
+        val duration = if (durationIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+            cursor.getLong(durationIndex)
+        } else 0L
+
+        return AttachmentMetaData(
+            uri = getContentUri(mimeType, id),
+            mimeType = mimeType
+        ).apply {
+            this.type = getModelType(mimeType)
+            this.size = fileSize
+            this.title = displayName
+            this.videoLength = duration / MILISECOND_IN_A_SECOND
         }
     }
 

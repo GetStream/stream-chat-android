@@ -116,6 +116,13 @@ internal class LogicRegistry internal constructor(
             null
         }
     }
+
+    fun threadFromMessageId(messageId: String): ThreadLogic? {
+        return threads.values.find { threadLogic ->
+            threadLogic.getMessage(messageId) != null
+        }
+    }
+
     fun threadFromMessage(message: Message): ThreadLogic? {
         return message.parentId?.let { thread(it) }
     }
