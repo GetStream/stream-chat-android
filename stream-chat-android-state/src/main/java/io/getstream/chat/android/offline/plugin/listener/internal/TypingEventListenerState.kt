@@ -103,7 +103,8 @@ internal class TypingEventListenerState(
         return if (!channelState.channelConfig.value.typingEventsEnabled)
             Result.error(ChatError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent != null &&
-            eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY) {
+            eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
+        ) {
             Result.error(
                 ChatError(
                     "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
