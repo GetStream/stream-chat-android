@@ -27,12 +27,12 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import java.util.Date
 
 /**
- * [TypingEventListenerImpl] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [TypingEventListenerState] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles and sends typing events such as when user starts or stop typing a message.
  *
  * @param state [StateRegistry] having state of the offline plugin.
  */
-internal class TypingEventListenerImpl(
+internal class TypingEventListenerState(
     private val state: StateRegistry,
 ) : TypingEventListener {
 
