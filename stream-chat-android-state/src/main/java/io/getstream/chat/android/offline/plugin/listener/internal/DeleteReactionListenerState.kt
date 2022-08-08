@@ -66,7 +66,8 @@ internal class DeleteReactionListenerState(
             deletedAt = Date(),
         )
 
-        val channelLogic = logic.channelFromMessageId(reaction.messageId)
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+                ?: logic.channelFromMessageId(reaction.messageId)
         val cachedMessage = channelLogic?.getMessage(reaction.messageId)
             ?.apply {
                 removeMyReaction(reaction = reaction)
@@ -90,7 +91,7 @@ internal class DeleteReactionListenerState(
 
     /**
      * A method called after receiving the response from the delete reaction call.
-     * Updates reaction's sync status stored in the database based on API result.
+     * It doesn't have any behaviour in this implementation, because the reactions were deleted optimistically.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param messageId The id of the message to which reaction belongs.
