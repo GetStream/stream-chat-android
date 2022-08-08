@@ -72,7 +72,7 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
     }
 
     /**
-     * Emits a content for this tab.
+     * Emits content that allows users to start media capture.
      *
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
