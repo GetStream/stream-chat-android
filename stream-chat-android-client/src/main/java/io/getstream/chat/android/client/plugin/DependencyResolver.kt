@@ -19,9 +19,17 @@ package io.getstream.chat.android.client.plugin
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.reflect.KClass
 
+/**
+ * Resolves dependencies.
+ */
 @InternalStreamChatApi
 public interface DependencyResolver {
 
+    /**
+     * Resolves dependencies to [T] objects.
+     *
+     * @see [KClass] to look for.
+     */
     @InternalStreamChatApi
     public fun <T : Any> resolveDependency(klass: KClass<T>): T?
 }

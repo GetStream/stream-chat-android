@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.event.handler.internal.batch
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.offline.model.event.BatchEvent
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

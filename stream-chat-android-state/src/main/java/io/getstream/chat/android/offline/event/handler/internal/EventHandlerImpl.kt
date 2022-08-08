@@ -83,12 +83,12 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUser
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
-import io.getstream.chat.android.offline.event.handler.internal.model.UserId
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -633,7 +633,7 @@ internal class EventHandlerImpl(
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             mergeReactions(
-                latestReactions.filter { it.userId == (currentUserId ?: "") },
+                latestReactions.filter { it.userId == currentUserId },
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }

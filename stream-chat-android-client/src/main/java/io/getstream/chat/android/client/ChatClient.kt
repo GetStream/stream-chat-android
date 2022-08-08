@@ -246,11 +246,17 @@ internal constructor(
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
 
+    /**
+     * Resolves dependency [T] within the provided plugin [P].
+     *
+     * @see [Plugin]
+     */
     @InternalStreamChatApi
     public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T? {
-        return (plugins.find { plugin ->
+        val resolver = plugins.find { plugin ->
             plugin is P && plugin is DependencyResolver
-        } as? DependencyResolver)?.resolveDependency(T::class)
+        } as? DependencyResolver
+        return resolver?.resolveDependency(T::class)
     }
 
     /**

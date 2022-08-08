@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.model
+package io.getstream.chat.android.offline.event.handler.internal.batch
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.events.ChatEvent
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 /**
- * Represents [User.id] String.
+ * Events container to represent the source of the received events.
  */
-internal typealias UserId = String
+internal class BatchEvent(
+    val id: Int = Random.nextInt().absoluteValue,
+    val sortedEvents: List<ChatEvent>,
+    val isFromHistorySync: Boolean,
+) {
+    val size: Int = sortedEvents.size
+    val isFromSocketConnection: Boolean = !isFromHistorySync
+}
