@@ -115,17 +115,17 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
             MissingPermissionContent(cameraPermissionState)
         }
     }
-}
 
-/**
- * Returns if we need to check for the camera permission or not.
- *
- * @param context The context of the app.
- * @return If the camera permission is declared in the manifest or not.
- */
-private fun isCameraPermissionDeclared(context: Context): Boolean {
-    return context.packageManager
-        .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-        .requestedPermissions
-        .contains(Manifest.permission.CAMERA)
+    /**
+     * Returns if we need to check for the camera permission or not.
+     *
+     * @param context The context of the app.
+     * @return If the camera permission is declared in the manifest or not.
+     */
+    private fun isCameraPermissionDeclared(context: Context): Boolean {
+        return context.packageManager
+            .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+            .requestedPermissions
+            .contains(Manifest.permission.CAMERA)
+    }
 }
