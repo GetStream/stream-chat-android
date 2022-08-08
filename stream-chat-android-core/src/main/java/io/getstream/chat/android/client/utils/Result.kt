@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -277,6 +278,14 @@ public suspend inline fun <T : Any> Result<T>.onErrorSuspend(
 public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
+    } else {
+        Result.error(error())
+    }
+}
+
+public fun <T : Any, R : Any> Result<T>.flapMapCall(func: (T) -> Call<R>): Result<R> {
+    return if (isSuccess) {
+        func(data()).execute()
     } else {
         Result.error(error())
     }

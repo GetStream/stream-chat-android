@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
+import io.getstream.chat.android.client.call.flatMap
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
@@ -225,9 +226,9 @@ internal constructor(
     public val repositoryFacade: RepositoryFacade
         get() = _repositoryFacade
             ?: (getCurrentUser() ?: getStoredUser())
-                ?.let {
-                    createRepositoryFacade(createReposotiryFactory(it))
-                        .also { _repositoryFacade = it }
+                ?.let { user ->
+                    createRepositoryFacade(createReposotiryFactory(user))
+                        .also { facade -> _repositoryFacade = facade }
                 }
             ?: createRepositoryFacade()
 
@@ -450,6 +451,26 @@ internal constructor(
         }.onSuccess {
             clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
         }
+    }
+
+    public fun switchUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
+        flushPersistence: Boolean,
+    ): Call<ConnectionData> {
+        return disconnect(flushPersistence = flushPersistence).flatMap {
+            connectUser(user, tokenProvider, timeoutMilliseconds)
+        }
+    }
+
+    public fun switchUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long?,
+        flushPersistence: Boolean,
+    ): Call<ConnectionData> {
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, flushPersistence)
     }
 
     private fun initializeClientWithUser(
