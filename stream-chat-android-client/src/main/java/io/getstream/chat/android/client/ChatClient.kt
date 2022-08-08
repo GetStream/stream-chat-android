@@ -456,7 +456,7 @@ internal constructor(
     public fun switchUser(
         user: User,
         tokenProvider: TokenProvider,
-        timeoutMilliseconds: Long?,
+        timeoutMilliseconds: Long? = null,
         flushPersistence: Boolean,
     ): Call<ConnectionData> {
         return disconnect(flushPersistence = flushPersistence).flatMap {
@@ -467,8 +467,8 @@ internal constructor(
     public fun switchUser(
         user: User,
         token: String,
-        timeoutMilliseconds: Long?,
-        flushPersistence: Boolean,
+        timeoutMilliseconds: Long? = null,
+        flushPersistence: Boolean = false,
     ): Call<ConnectionData> {
         return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, flushPersistence)
     }

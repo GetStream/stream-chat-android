@@ -52,6 +52,10 @@ class UserRepository(context: Context) {
         prefs.edit().clear().apply()
     }
 
+    fun clearUserCommit() {
+        prefs.edit().clear().commit()
+    }
+
     private companion object {
         private const val USER_PREFS_NAME = "logged_in_user"
         private const val KEY_API_KEY = "api_key"
