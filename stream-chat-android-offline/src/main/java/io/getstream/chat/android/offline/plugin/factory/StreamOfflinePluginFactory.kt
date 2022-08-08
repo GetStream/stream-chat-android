@@ -145,6 +145,7 @@ public class StreamOfflinePluginFactory(
         val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
 
         return OfflinePlugin(
+            activeUser = user,
             queryChannelsListener = statePlugin,
             queryChannelListener = statePlugin,
             threadQueryListener = statePlugin,
@@ -161,7 +162,7 @@ public class StreamOfflinePluginFactory(
             queryMembersListener = statePlugin,
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
-            activeUser = user
+            childResolver = statePlugin
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 

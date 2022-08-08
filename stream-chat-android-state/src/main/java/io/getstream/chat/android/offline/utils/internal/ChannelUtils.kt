@@ -16,20 +16,17 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 
 /**
  * Checks the given CID against the CIDs of channels muted for the current user.
  * Returns true for a muted channel, returns false otherwise.
  *
  * @param cid CID of the channel currently being checked.
- * @param clientState Represents the current state of the SDK.
  */
-internal fun isChannelMutedForCurrentUser(cid: String, clientState: ClientState): Boolean {
-    return GlobalMutableState.get(clientState)
-        .channelMutes.value.any { mutedChannel -> mutedChannel.channel.cid == cid }
+internal fun MutableGlobalState.isChannelMutedForCurrentUser(cid: String): Boolean {
+    return channelMutes.value.any { mutedChannel -> mutedChannel.channel.cid == cid }
 }
 
 /**
