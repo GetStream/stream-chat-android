@@ -53,14 +53,17 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 
 /**
- * Represents the bottom bar UI that allows users to pick attachments. It allows for different options
- * and enables/disables options based on currently selected items.
+ * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
+ * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
+ * files and media capture tabs.
  *
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
- * @param modifier Modifier for styling.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onDismiss Handler when the user dismisses the UI.
+ * @param modifier Modifier for styling.
+ * @param tabFactories Th list of attachment picker tab factories.
+ * @param shape The shape of the dialog.
  */
 @Composable
 public fun AttachmentsPicker(
@@ -128,12 +131,13 @@ public fun AttachmentsPicker(
 }
 
 /**
- * The options for the Attachment picker. Shows three options:
- * - Images
- * - Files
- * - Media
+ * The options for the Attachment picker. Shows tabs based on the provided list of [tabFactories]
+ * and a button to submit the selected attachments.
  *
- * @param onOptionClick Handler for clicking on any of the options, to change the shown attachments.
+ * @param hasPickedAttachments If we selected any attachments in the currently selected tab.
+ * @param tabFactories The list of factories to build tab icons.
+ * @param tabIndex The index of the tab that we selected.
+ * @param onTabClick Handler for clicking on any of the tabs, to change the shown attachments.
  * @param onSendAttachmentsClick Handler when confirming the picked attachments.
  */
 @Composable
