@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -71,7 +70,7 @@ public fun AttachmentsPicker(
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    tabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
+    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
