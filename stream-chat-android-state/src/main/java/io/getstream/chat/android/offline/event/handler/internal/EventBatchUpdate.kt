@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.event.handler.internal
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.internal.incrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.updateLastMessage
@@ -27,6 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.message.latestOrNull
+import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
 
@@ -49,9 +49,11 @@ import io.getstream.logging.StreamLog
  * fourth, execute the batch using
  * batch.execute()
  */
+@Suppress("LongParameterList")
 internal class EventBatchUpdate private constructor(
     private val id: Int,
     private val currentUserId: String?,
+    private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
@@ -77,7 +79,7 @@ internal class EventBatchUpdate private constructor(
                 if (message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastReadDate,
-                        isChannelMuted = isChannelMutedForCurrentUser(channel.cid, ChatClient.instance().clientState)
+                        isChannelMuted = mutableGlobalState.isChannelMutedForCurrentUser(channel.cid)
                     )
                 ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
@@ -174,7 +176,11 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
-        suspend fun build(repos: RepositoryFacade, currentUserId: String?): EventBatchUpdate {
+        suspend fun build(
+            mutableGlobalState: MutableGlobalState,
+            repos: RepositoryFacade,
+            currentUserId: String?
+        ): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =
@@ -188,6 +194,7 @@ internal class EventBatchUpdate private constructor(
             return EventBatchUpdate(
                 id,
                 currentUserId,
+                mutableGlobalState,
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),

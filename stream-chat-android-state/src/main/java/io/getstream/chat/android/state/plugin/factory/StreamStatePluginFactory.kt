@@ -18,19 +18,18 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
@@ -51,6 +50,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventLis
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
@@ -61,8 +61,9 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
@@ -77,7 +78,7 @@ public class StreamStatePluginFactory(
 
     private var cachedStatePluginInstance: StatePlugin? = null
 
-    private val logger = StreamLog.getLogger("Chat:StreamStatePluginFactory")
+    private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
 
     /**
      * Creates a [Plugin]
@@ -122,6 +123,7 @@ public class StreamStatePluginFactory(
         user: User,
         scope: CoroutineScope,
     ): StatePlugin {
+        logger.i { "[createStatePlugin] no args" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState.also { clientState ->
@@ -173,31 +175,30 @@ public class StreamStatePluginFactory(
         }
 
         val syncManager = SyncManager(
+            currentUserId = user.id,
+            scope = scope,
             chatClient = chatClient,
-            globalState = globalState,
             clientState = clientState,
             repos = repositoryFacade,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
-        ).also { syncManager ->
-            syncManager.clearState()
-        }
+        )
+        syncManager.start()
 
         val eventHandler: EventHandler = createEventHandler(
+            user = user,
             useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             mutableGlobalState = globalState,
-            clientMutableState = clientState,
             repos = repositoryFacade,
-            syncManager = syncManager,
-        ).also { eventHandler ->
-            EventHandlerProvider.eventHandler = eventHandler
-            eventHandler.startListening(user)
-        }
+            syncedEvents = syncManager.syncedEvents,
+            sideEffect = syncManager::awaitSyncing
+        )
+        eventHandler.startListening()
 
         InitializationCoordinator.getOrCreate().run {
             addUserDisconnectedListener {
@@ -207,7 +208,7 @@ public class StreamStatePluginFactory(
                 logic.clear()
                 clientState.clearState()
                 globalState.clearState()
-                scope.launch { syncManager.storeSyncState() }
+                syncManager.stop()
                 eventHandler.stopListening()
                 clearCachedInstance()
             }
@@ -220,58 +221,73 @@ public class StreamStatePluginFactory(
         }
 
         return StatePlugin(
+            activeUser = user,
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
             channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
-            markAllReadListener = MarkAllReadListenerImpl(logic, stateRegistry.scope, channelMarkReadHelper),
-            sendReactionListener = SendReactionListenerState(logic, clientState),
+            markAllReadListener = MarkAllReadListenerImpl(logic, scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
+            sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
             sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerState(stateRegistry),
-            activeUser = user
+            provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
+    }
+
+    private fun createDependencyProvider(
+        syncManager: SyncManager,
+        eventHandler: EventHandler,
+    ): (KClass<*>) -> Any? {
+        return { klass ->
+            when (klass) {
+                SyncHistoryManager::class -> syncManager
+                EventHandler::class -> eventHandler
+                else -> null
+            }
+        }
     }
 
     @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
+        user: User,
         useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
         mutableGlobalState: GlobalMutableState,
-        clientMutableState: ClientState,
         repos: RepositoryFacade,
-        syncManager: SyncManager,
+        sideEffect: suspend () -> Unit,
+        syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
         return when (BuildConfig.DEBUG || useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
-                recoveryEnabled = true,
+                currentUserId = user.id,
                 subscribeForEvents = { listener -> client.subscribe(listener) },
                 logicRegistry = logicRegistry,
                 stateRegistry = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
                 repos = repos,
-                syncManager = syncManager,
+                syncedEvents = syncedEvents,
+                sideEffect = sideEffect,
             )
             else -> EventHandlerImpl(
                 scope = scope,
-                recoveryEnabled = true,
-                client = client,
+                currentUserId = user.id,
+                subscribeForEvents = { listener -> client.subscribe(listener) },
                 logic = logicRegistry,
                 state = stateRegistry,
                 mutableGlobalState = mutableGlobalState,
-                clientMutableState = clientMutableState,
                 repos = repos,
-                syncManager = syncManager,
+                syncedEvents = syncedEvents
             )
         }
     }
