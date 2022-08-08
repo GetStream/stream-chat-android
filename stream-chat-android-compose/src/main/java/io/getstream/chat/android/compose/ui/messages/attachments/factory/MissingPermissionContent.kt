@@ -41,6 +41,8 @@ import io.getstream.chat.android.uiutils.extension.openSystemSettings
 /**
  * Shows the UI if we're missing permissions to fetch data for attachments.
  * The UI explains to the user which permission is missing and why we need it.
+ *
+ * @param permissionState A state object to control and observe permission status changes.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

@@ -16,8 +16,20 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+/**
+ * Provides different attachment picker tab factories that build tab icons and tab contents for
+ * the attachment picker.
+ */
 public object AttachmentsPickerTabFactories {
 
+    /**
+     * Builds the default list of attachment picker tab factories.
+     *
+     * @param imagesTabEnabled If the factory that allows users to pick images is included in the resulting list.
+     * @param filesTabEnabled If the factory that allows users to pick files is included in the resulting list.
+     * @param mediaCaptureTabEnabled If the factory that allows users to start media capture is included in the resulting list.
+     * @return The default list of attachment picker tab factories.
+     */
     public fun defaultFactories(
         imagesTabEnabled: Boolean = true,
         filesTabEnabled: Boolean = true,

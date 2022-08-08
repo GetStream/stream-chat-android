@@ -5,13 +5,10 @@
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.shouldShowFooter || messageItem.groupPosition == Bottom || messageItem.groupPosition == None )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
-    <ID>ComplexMethod:AttachmentsPicker.kt$ @OptIn(ExperimentalPermissionsApi::class) @Composable public fun AttachmentsPicker( attachmentsPickerViewModel: AttachmentsPickerViewModel, onAttachmentsSelected: (List&lt;Attachment>) -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.bottomSheet, )</ID>
     <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel$ private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, ): List&lt;MessageListItemState></ID>
     <ID>ComplexMethod:MessageOptions.kt$ @Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
-    <ID>LongMethod:AttachmentsPicker.kt$ @Composable private fun AttachmentPickerOptions( attachmentsPickerMode: AttachmentsPickerMode, hasPickedImages: Boolean, hasPickedFiles: Boolean, onOptionClick: (AttachmentsPickerMode) -> Unit, onSendAttachmentsClick: () -> Unit, )</ID>
-    <ID>LongMethod:AttachmentsPicker.kt$ @OptIn(ExperimentalPermissionsApi::class) @Composable public fun AttachmentsPicker( attachmentsPickerViewModel: AttachmentsPickerViewModel, onAttachmentsSelected: (List&lt;Attachment>) -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.bottomSheet, )</ID>
     <ID>LongMethod:GiphyMessageContent.kt$ @Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$ @Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:ImageAttachmentContent.kt$ @OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
@@ -25,8 +22,6 @@
     <ID>LongParameterList:MessageList.kt$( messageListItem: MessageListItemState, onImagePreviewResult: (ImagePreviewResult?) -> Unit, onThreadClick: (Message) -> Unit, onLongItemClick: (Message) -> Unit, onReactionsClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit, onQuotedMessageClick: (Message) -> Unit, )</ID>
     <ID>LongParameterList:Messages.kt$( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( context: Context, channelId: String, enforceUniqueReactions: Boolean, messageLimit: Int, showDateSeparators: Boolean, showSystemMessages: Boolean, deletedMessageVisibility: DeletedMessageVisibility, messageFooterVisibility: MessageFooterVisibility, )</ID>
-    <ID>MagicNumber:AttachmentsPicker.kt$4f</ID>
-    <ID>MagicNumber:AttachmentsPicker.kt$5f</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
@@ -37,6 +32,7 @@
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
+    <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
