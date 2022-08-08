@@ -28,9 +28,12 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.internal.validateCid
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerProvider
 import io.getstream.chat.android.offline.extensions.internal.logic
+import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
+import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
+import io.getstream.logging.StreamLog
 
+@Suppress("TooGenericExceptionCaught")
 internal class SyncMessagesWork(
     appContext: Context,
     workerParams: WorkerParameters,
@@ -40,19 +43,27 @@ internal class SyncMessagesWork(
         val cid = inputData.getString(DATA_CID)!!
         val client = ChatClient.instance()
 
+        StreamLog.i(TAG) { "[doWork] cid: $cid" }
+
         return try {
             val (type, id) = validateCid(cid).cidToTypeAndId()
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
-            EventHandlerProvider.eventHandler.syncHistoryForActiveChannels()
+
+            val syncManager = client.resolveDependency<StateAwarePlugin, SyncHistoryManager>() ?: error(
+                "No SyncHistoryManager found in StatePlugin."
+            )
+            syncManager.sync()
 
             Result.success()
-        } catch (_: IllegalArgumentException) {
+        } catch (e: Throwable) {
+            StreamLog.e(TAG) { "[doWork] failed: $e" }
             Result.failure()
         }
     }
 
     companion object {
+        private const val TAG = "Chat:SyncMessagesWork"
         private const val DATA_CID = "DATA_CID"
         private const val SYNC_MESSAGES_WORK_NAME = "SYNC_MESSAGES_WORK_NAME"
 
