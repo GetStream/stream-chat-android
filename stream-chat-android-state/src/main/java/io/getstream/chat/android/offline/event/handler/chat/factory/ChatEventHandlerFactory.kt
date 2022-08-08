@@ -24,7 +24,8 @@ import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHand
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * A [ChatEventHandler] factory. Allows passing visible channels` list.
+ * A [ChatEventHandler] factory.
+ * Allows to create chat event handler instance with visible channels map.
  *
  * @param clientState The client used to obtain current user.
  */
@@ -33,9 +34,9 @@ public open class ChatEventHandlerFactory(private val clientState: ClientState =
     /**
      * Creates a [ChatEventHandler] instance.
      *
-     * @param channels The visible channels` list.
+     * @param channels The visible channels map.
      */
-    public open fun chatEventHandler(channels: StateFlow<List<Channel>?>): ChatEventHandler {
+    public open fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
         return DefaultChatEventHandler(channels = channels, clientState = clientState)
     }
 }
