@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments.facotry
+package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 public object AttachmentsPickerTabFactories {
 

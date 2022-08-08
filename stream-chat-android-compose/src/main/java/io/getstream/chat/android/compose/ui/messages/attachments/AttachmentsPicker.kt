@@ -46,8 +46,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.facotry.AttachmentsPickerTabFactories
-import io.getstream.chat.android.compose.ui.messages.attachments.facotry.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
