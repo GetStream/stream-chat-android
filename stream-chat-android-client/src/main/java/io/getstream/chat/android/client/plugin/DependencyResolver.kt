@@ -20,7 +20,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.reflect.KClass
 
 /**
- * Resolves dependencies.
+ * Resolves requested dependencies.
  */
 @InternalStreamChatApi
 public interface DependencyResolver {
