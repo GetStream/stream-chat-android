@@ -75,7 +75,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     }
 
     /**
-     * Emits a content for this tab.
+     * Emits content that allows users to pick files in this tab.
      *
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
