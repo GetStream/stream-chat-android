@@ -18,6 +18,7 @@ package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -77,14 +78,14 @@ fun NavController.navigateSafely(directions: NavDirections) {
     currentDestination?.getAction(directions.actionId)?.let { navigate(directions) }
 }
 
-fun NavController.navigateSafely(@IdRes resId: Int) {
+fun NavController.navigateSafely(@IdRes resId: Int, args: Bundle? = null) {
     if (currentDestination?.id != resId) {
-        navigate(resId, null)
+        navigate(resId, args)
     }
 }
 
-fun Fragment.navigateSafely(@IdRes resId: Int) {
-    findNavController().navigateSafely(resId)
+fun Fragment.navigateSafely(@IdRes resId: Int, args: Bundle? = null) {
+    findNavController().navigateSafely(resId, args)
 }
 
 fun Fragment.navigateSafely(directions: NavDirections) {

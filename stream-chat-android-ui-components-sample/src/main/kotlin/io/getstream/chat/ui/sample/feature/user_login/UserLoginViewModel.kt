@@ -90,4 +90,8 @@ class UserLoginViewModel : ViewModel() {
         object RedirectToComponentBrowser : UiEvent()
         data class Error(val errorMessage: String?) : UiEvent()
     }
+
+    internal companion object {
+        internal const val EXTRA_SWITCH_USER = "EXTRA_SWITCH_USER"
+    }
 }
