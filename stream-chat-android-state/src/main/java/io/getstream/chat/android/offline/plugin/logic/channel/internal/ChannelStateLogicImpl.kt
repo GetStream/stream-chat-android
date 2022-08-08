@@ -111,7 +111,7 @@ internal class ChannelStateLogicImpl(
                 message.shouldIncrementUnreadCount(
                     currentUserId = currentUserId,
                     lastMessageAtDate = lastMessageSeenDate,
-                    isChannelMuted = isChannelMutedForCurrentUser(mutableState.cid, clientState)
+                    isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
                 )
 
             if (shouldIncrementUnreadCount) {

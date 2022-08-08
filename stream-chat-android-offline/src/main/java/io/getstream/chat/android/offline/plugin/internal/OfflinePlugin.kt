@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.plugin.internal
 
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
@@ -34,6 +35,10 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import kotlin.reflect.KClass
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
@@ -56,8 +61,13 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
  * @param typingEventListener [TypingEventListener]
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
+ * @param provideDependency Resolves dependency within [OfflinePlugin].
+ * @param childResolver Resolves dependency within [StatePlugin]. Will be removed when [StatePlugin]
+ * gets separated from [OfflinePlugin].
  */
+@Suppress("LongParameterList")
 internal class OfflinePlugin(
+    internal val activeUser: User,
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
     private val threadQueryListener: ThreadQueryListener,
@@ -74,8 +84,11 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
-    internal val activeUser: User,
-) : Plugin,
+    @Deprecated("Delete this when StatePlugin will be separated from OfflinePlugin")
+    private val childResolver: DependencyResolver,
+    private val provideDependency: (KClass<*>) -> Any? = { null },
+) : StateAwarePlugin,
+    DependencyResolver,
     QueryChannelsListener by queryChannelsListener,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,
@@ -94,6 +107,11 @@ internal class OfflinePlugin(
     CreateChannelListener by createChannelListener {
 
     override val name: String = MODULE_NAME
+
+    @Suppress("UNCHECKED_CAST")
+    @InternalStreamChatApi
+    public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = provideDependency(klass) as? T
+        ?: childResolver.resolveDependency(klass)
 
     private companion object {
         /**

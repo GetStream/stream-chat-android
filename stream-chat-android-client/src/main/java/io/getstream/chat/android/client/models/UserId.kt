@@ -14,29 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal
+package io.getstream.chat.android.client.models
 
-import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- * Handles WebSocket and/or Synced events to update states and offline storage.
+ * Represents [User.id] String.
  */
-internal interface EventHandler {
-
-    /**
-     * Triggers WebSocket event subscription.
-     */
-    fun startListening()
-
-    /**
-     * Cancels WebSocket event subscription.
-     */
-    fun stopListening()
-
-    /**
-     * For testing purpose only. Simulates socket event handling.
-     */
-    @VisibleForTesting
-    suspend fun handleEvents(vararg events: ChatEvent)
-}
+@InternalStreamChatApi
+public typealias UserId = String
