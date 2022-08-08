@@ -212,6 +212,9 @@ class HomeFragment : Fragment() {
             }
         }
 
+        binding.switchUserTextView.setOnClickListener {
+            homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.SwitchUserClicked)
+        }
         binding.signOutTextView.setOnClickListener {
             homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
         }
