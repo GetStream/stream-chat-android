@@ -58,8 +58,12 @@ class HomeFragmentViewModel : ViewModel() {
                 viewModelScope.launch {
                     ChatClient.instance().disconnect(false).await()
                     App.instance.userRepository.clearUser()
-                    _events.value = Event(UiEvent.NavigateToLoginScreen)
+                    _events.value = Event(UiEvent.NavigateToLoginScreenLogout)
                 }
+            }
+
+            is UiAction.SwitchUserClicked -> {
+                _events.value = Event(UiEvent.NavigateToLoginScreenSwitchUser)
             }
         }
     }
@@ -73,10 +77,12 @@ class HomeFragmentViewModel : ViewModel() {
 
     sealed class UiAction {
         object LogoutClicked : UiAction()
+        object SwitchUserClicked : UiAction()
     }
 
     sealed class UiEvent {
-        object NavigateToLoginScreen : UiEvent()
+        object NavigateToLoginScreenLogout : UiEvent()
+        object NavigateToLoginScreenSwitchUser : UiEvent()
     }
 
     companion object {
