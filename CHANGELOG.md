@@ -52,6 +52,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 
 ### ⬆️ Improved
 
@@ -63,6 +64,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed a crash when passing content URIs without duration metadata to the `StorageHelperWrapper::.getAttachmentsFromUris` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 
 ### ⬆️ Improved
 
