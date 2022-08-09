@@ -151,6 +151,12 @@ If you want you can take a look at the [class documentation](https://github.com/
 
 You can customize file previews by creating your own list of `AttachmentPreviewHandler`s and overriding `ChatTheme.attachmentPreviewHandlers` with it.
 
+### Quoted AttachmentFactories
+
+`StreamAttachmentFactories.defaultQuotedFactories()` provides default attachment factories for quoted messages.
+
+If you want to know more you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories.kt) or read the detailed guide on [Custom Attachments](../07-guides/01-adding-custom-attachments.mdx).
+
 ### ReactionIconFactory
 
 Used for defining reactions the user can add to messages. `ReactionIconFactory.defaultFactory()` provides our default basic reactions out of the box.
@@ -206,6 +212,12 @@ Determines the alignment of the reaction icon inside user reactions. By default,
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/MessageOptionsUserReactionAlignment.kt).
 
 You can also align the reactions to the start of the user avatar or align them depending on the user who left them.
+
+### PermissionHandlers
+
+`StreamPermissionHandlers.defaultHandlers()` provides default handler for storage permission that automatically downloads files after the permission has been granted.
+
+If you want to know more you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/handlers/StreamPermissionHandlers.kt).
 
 ### AttachmentsPickerTabFactories
 
