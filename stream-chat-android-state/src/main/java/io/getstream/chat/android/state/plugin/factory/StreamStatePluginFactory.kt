@@ -32,12 +32,12 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerImpl
@@ -160,7 +160,6 @@ public class StreamStatePluginFactory(
         )
 
         val channelMarkReadHelper = ChannelMarkReadHelper(
-            chatClient = chatClient,
             logic = logic,
             state = stateRegistry,
             clientState = clientState,
@@ -225,10 +224,10 @@ public class StreamStatePluginFactory(
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerImpl(logic),
-            channelMarkReadListener = ChannelMarkReadListenerImpl(channelMarkReadHelper),
+            channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
-            markAllReadListener = MarkAllReadListenerImpl(logic, scope, channelMarkReadHelper),
+            markAllReadListener = MarkAllReadListenerState(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
