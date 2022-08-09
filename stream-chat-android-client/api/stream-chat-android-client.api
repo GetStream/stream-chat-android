@@ -149,6 +149,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun switchUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun switchUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
