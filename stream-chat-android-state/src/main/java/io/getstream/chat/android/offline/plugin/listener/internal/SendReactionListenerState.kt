@@ -20,35 +20,29 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
-import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import java.util.Date
 
 /**
- * [SendReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * Handles adding reaction offline, updates the database and does the optimistic UI update.
+ * State implementation for SendReactionListener. It updates the state accordingly and does the optimistic UI update.
  *
- * @param logic [LogicRegistry]
- * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * @param repos [RepositoryFacade] to cache intermediate data and final result.
+ * @param logic [LogicRegistry] Handles the state of channels.
+ * @param clientState [ClientState] Check the state of the SDK.
  */
-internal class SendReactionListenerImpl(
+internal class SendReactionListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    private val repos: RepositoryFacade,
 ) : SendReactionListener {
 
     /**
      * A method called before making an API call to send the reaction.
-     * Fills the reaction with necessary data, updates reactions' database
-     * and runs optimistic update if [cid] is specified.
+     * runs optimistic update if the message and channel can be found in memory.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param reaction The [Reaction] to send.
@@ -63,52 +57,26 @@ internal class SendReactionListenerImpl(
     ) {
         val reactionToSend = reaction.enrichWithDataBeforeSending(
             currentUser = currentUser,
-            isOnline = clientState.isOnline,
+            isOnline = clientState.isNetworkAvailable,
             enforceUnique = enforceUnique,
         )
 
-        // Update local storage
-        if (enforceUnique) {
-            // remove all user's reactions to the message
-            repos.updateReactionsForMessageByDeletedDate(
-                userId = currentUser.id,
-                messageId = reactionToSend.messageId,
-                deletedAt = Date(),
-            )
-        }
-        repos.insertReaction(reaction = reactionToSend)
-
-        repos.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            repos.insertMessage(cachedMessage)
-
-            if (cid != null) {
-                doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
+        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
             }
-        }
+        cachedChannelMessage?.let(channelLogic::upsertMessage)
+
+        val threadLogic = logic.threadFromMessageId(reaction.messageId)
+        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+            }
+        cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
-    /**
-     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.messages].
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param message The [Message] to update.
-     */
-    private fun doOptimisticMessageUpdate(cid: String, message: Message) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessages(listOf(message))
-    }
-
-    /**
-     * A method called after receiving the response from the send reaction call.
-     * Updates reaction's sync status stored in the database based on API result.
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param reaction The [Reaction] to send.
-     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
-     * @param currentUser The currently logged in user.
-     * @param result The API call result.
-     */
     override suspend fun onSendReactionResult(
         cid: String?,
         reaction: Reaction,
@@ -116,14 +84,32 @@ internal class SendReactionListenerImpl(
         currentUser: User,
         result: Result<Reaction>,
     ) {
-        repos.selectUserReactionToMessage(
-            reactionType = reaction.type,
-            messageId = reaction.messageId,
-            userId = currentUser.id,
-        )
-            ?.let { cachedReaction ->
-                repos.insertReaction(cachedReaction.updateSyncStatus(result))
-            }
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
+        channelLogic?.getMessage(reaction.messageId)?.let { message ->
+            message.ownReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            message.latestReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            channelLogic.upsertMessage(message)
+        }
+
+        val threadLogic = logic.threadFromMessageId(reaction.messageId)
+        threadLogic?.getMessage(reaction.messageId)?.let { message ->
+            message.ownReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            message.latestReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            threadLogic.upsertMessage(message)
+        }
     }
 
     /**
@@ -143,6 +129,22 @@ internal class SendReactionListenerImpl(
             else -> {
                 Result.success(Unit)
             }
+        }
+    }
+
+    private fun Reaction.updateSyncStatus(result: Result<*>) {
+        if (result.isSuccess) {
+            syncStatus = SyncStatus.COMPLETED
+        } else {
+            updateFailedReactionSyncStatus(result.error())
+        }
+    }
+
+    private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError) {
+        syncStatus = if (chatError.isPermanent()) {
+            SyncStatus.FAILED_PERMANENTLY
+        } else {
+            SyncStatus.SYNC_NEEDED
         }
     }
 }

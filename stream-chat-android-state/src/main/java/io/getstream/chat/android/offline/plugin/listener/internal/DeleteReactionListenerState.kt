@@ -19,11 +19,9 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
-import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
@@ -33,16 +31,14 @@ import java.util.Date
 
 /**
  * [DeleteReactionListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * Handles adding reaction offline, updates the database and does the optimistic UI update.
+ * Handles adding reaction to the state of the SDK.
  *
  * @param logic [LogicRegistry]
  * @param clientState [ClientState]
- * @param repos [RepositoryFacade] to cache intermediate data and final result.
  */
-internal class DeleteReactionListenerImpl(
+internal class DeleteReactionListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    private val repos: RepositoryFacade,
 ) : DeleteReactionListener {
 
     /**
@@ -66,36 +62,29 @@ internal class DeleteReactionListenerImpl(
             type = reactionType,
             user = currentUser,
             userId = currentUser.id,
-            syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+            syncStatus = if (clientState.isNetworkAvailable) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
             deletedAt = Date(),
         )
 
-        repos.insertReaction(reaction)
-
-        repos.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.removeMyReaction(reaction)
-            repos.insertMessage(cachedMessage)
-
-            if (cid != null) {
-                doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
+        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                removeMyReaction(reaction = reaction)
             }
-        }
-    }
+        cachedChannelMessage?.let(channelLogic::upsertMessage)
 
-    /**
-     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.messages].
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param message The [Message] to update.
-     */
-    private fun doOptimisticMessageUpdate(cid: String, message: Message) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessages(listOf(message))
+        val threadLogic = logic.threadFromMessageId(messageId)
+        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                removeMyReaction(reaction = reaction)
+            }
+        cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
     /**
      * A method called after receiving the response from the delete reaction call.
-     * Updates reaction's sync status stored in the database based on API result.
+     * It doesn't have any behaviour in this implementation, because the reactions were deleted optimistically.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param messageId The id of the message to which reaction belongs.
@@ -110,10 +99,7 @@ internal class DeleteReactionListenerImpl(
         currentUser: User,
         result: Result<Message>,
     ) {
-        repos.selectUserReactionToMessage(reactionType = reactionType, messageId = messageId, userId = currentUser.id)
-            ?.let { cachedReaction ->
-                repos.insertReaction(cachedReaction.updateSyncStatus(result))
-            }
+        // Nothing to be done. The Reaction is deleted optimistically.
     }
 
     /**

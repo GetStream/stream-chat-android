@@ -17,128 +17,213 @@
 package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomChannelVisibleEvent
+import io.getstream.chat.android.client.test.randomMember
+import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 internal class DefaultChatEventHandlerTest {
 
     @Test
-    fun `Given the channel is not present When received NotificationAddedToChannelEvent Should channel be added`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
+    fun `Given the channel is present When received MemberRemovedEvent concerning current user Should remove the channel`() {
+        val channel = randomChannel()
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(currentUser)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
+        val event = randomMemberRemovedEvent(channel.cid, member)
 
-        val event = randomNotificationAddedToChannelEvent(cid, channel)
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
-        val result = eventHandler.handleNotificationAddedToChannelEvent(
-            event,
-            Filters.neutral()
-        )
+        result `should be equal to` EventHandlingResult.Remove(channel.cid)
+    }
+
+    @Test
+    fun `Given the channel is present When received MemberRemovedEvent concerning different member Should skip the update`() {
+        val channel = randomChannel()
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(randomUser())
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
+        val event = randomMemberRemovedEvent(channel.cid)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received MemberRemovedEvent Should skip the update`() {
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(null)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomMemberRemovedEvent()
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received MemberAddedEvent Should skip the update`() {
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(null)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomMemberAddedEvent()
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received MemberAddedEvent concerning different member Should skip the update`() {
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(randomUser())
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomMemberAddedEvent()
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received MemberAddedEvent concerning current user Should add the channel`() {
+        val channel = randomChannel()
+        val currentUser = randomUser()
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(currentUser)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomMemberAddedEvent(cid = channel.cid, member = randomMember(user = currentUser))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
 
         result `should be equal to` EventHandlingResult.Add(channel)
     }
 
     @Test
-    fun `Given the channel is present When received NotificationAddedToChannelEvent Should skip the event`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
-
-        val event = randomNotificationAddedToChannelEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationAddedToChannelEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Skip
-    }
-
-    @Test
-    fun `Given the channel is not present When received NotificationRemovedFromChannelEvent Should skip the event`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
-
-        val event = randomNotificationRemovedFromChannelEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationRemovedFromChannelEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Skip
-    }
-
-    @Test
-    fun `Given the channel is present When received NotificationRemovedFromChannelEvent for some other member Should skip the event`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
-
-        val event = randomNotificationRemovedFromChannelEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationRemovedFromChannelEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Skip
-    }
-
-    @Test
-    fun `Given the channel is not present When received NotificationMessageNewEvent Should add the channel`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
-
-        val event = randomNotificationMessageNewEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationMessageNewEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Add(channel)
-    }
-
-    @Test
-    fun `Given the channel is not present When received NotificationMessageNewEvent Should skip the event`() {
-        val cid = randomString()
-        val channel = randomChannel(cid = cid)
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(listOf(channel)))
-
-        val event = randomNotificationMessageNewEvent(cid, channel)
-
-        val result = eventHandler.handleNotificationMessageNewEvent(
-            event,
-            Filters.neutral()
-        )
-
-        result `should be equal to` EventHandlingResult.Skip
-    }
-
-    @Test
-    fun `When received ChannelVisibleEvent Should watch and add a channel`() {
+    fun `When received NotificationMessageNewEvent Should watch and add the channel`() {
         val cid = randomCID()
-        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyList()))
-        val event = randomChannelVisibleEvent(cid = cid)
+        val clientState = mock<ClientState>()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomNotificationMessageNewEvent(cid = cid)
 
-        val result = eventHandler.handleChannelVisibleEvent(
-            event,
-            Filters.neutral(),
-        )
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
         result `should be equal to` EventHandlingResult.WatchAndAdd(cid)
+    }
+
+    @Test
+    fun `When received NotificationAddedToChannelEvent Should watch and add the channel`() {
+        val cid = randomCID()
+        val clientState = mock<ClientState>()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomNotificationAddedToChannelEvent(cid = cid)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.WatchAndAdd(cid)
+    }
+
+    @Test
+    fun `Given the channel is present When received NotificationRemovedFromChannelEvent concerning current user Should remove the channel`() {
+        val channel = randomChannel()
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(currentUser)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
+        val event = randomNotificationRemovedFromChannelEvent(channel.cid, member = member)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Remove(channel.cid)
+    }
+
+    @Test
+    fun `Given the channel is present When received NotificationRemovedFromChannelEvent concerning different member Should skip the update`() {
+        val channel = randomChannel()
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(randomUser())
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
+        val event = randomNotificationRemovedFromChannelEvent(channel.cid)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received NotificationRemovedFromChannelEvent Should skip the update`() {
+        val clientState = mock<ClientState> {
+            whenever(it.user) doReturn MutableStateFlow(null)
+        }
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomNotificationRemovedFromChannelEvent()
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is not present When received NewMessageEvent with not system message Should add the channel`() {
+        val channel = randomChannel()
+        val clientState = mock<ClientState>()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomNewMessageEvent(cid = channel.cid, message = randomMessage(type = "regular"))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Add(channel)
+    }
+
+    @Test
+    fun `Given the channel is not present When received NewMessageEvent with system message Should skip the update`() {
+        val channel = randomChannel()
+        val clientState = mock<ClientState>()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), clientState)
+        val event = randomNewMessageEvent(cid = channel.cid, message = randomMessage(type = "system"))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given the channel is present When received NewMessageEvent with not system message Should skip the update`() {
+        val channel = randomChannel()
+        val clientState = mock<ClientState>()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
+        val event = randomNewMessageEvent(cid = channel.cid, message = randomMessage(type = "regular"))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
     }
 }

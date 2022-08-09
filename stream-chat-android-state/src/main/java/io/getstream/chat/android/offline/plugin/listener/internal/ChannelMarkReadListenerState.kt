@@ -27,7 +27,7 @@ import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
  *
  * @param channelMarkReadHelper [ChannelMarkReadHelper]
  */
-internal class ChannelMarkReadListenerImpl(private val channelMarkReadHelper: ChannelMarkReadHelper) :
+internal class ChannelMarkReadListenerState(private val channelMarkReadHelper: ChannelMarkReadHelper) :
     ChannelMarkReadListener {
 
     /**

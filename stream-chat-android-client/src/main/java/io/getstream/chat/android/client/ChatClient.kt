@@ -113,6 +113,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -240,9 +241,23 @@ internal constructor(
      *
      * @see [Plugin]
      */
+    @PublishedApi
     internal var plugins: List<Plugin> = emptyList()
 
     private var interceptors: MutableList<Interceptor> = mutableListOf()
+
+    /**
+     * Resolves dependency [T] within the provided plugin [P].
+     *
+     * @see [Plugin]
+     */
+    @InternalStreamChatApi
+    public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T? {
+        val resolver = plugins.find { plugin ->
+            plugin is P && plugin is DependencyResolver
+        } as? DependencyResolver
+        return resolver?.resolveDependency(T::class)
+    }
 
     /**
      * Error handlers for API calls.

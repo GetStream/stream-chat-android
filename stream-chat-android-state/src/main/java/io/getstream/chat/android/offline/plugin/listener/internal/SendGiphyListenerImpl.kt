@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.utils.Result
@@ -38,8 +37,9 @@ internal class SendGiphyListenerImpl(private val logic: LogicRegistry) : SendGip
      */
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result.isSuccess) {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(result.data())
+            val message = result.data()
+            logic.channelFromMessage(message)?.removeLocalMessage(message)
+            logic.threadFromMessage(message)?.removeLocalMessage(message)
         }
     }
 }
