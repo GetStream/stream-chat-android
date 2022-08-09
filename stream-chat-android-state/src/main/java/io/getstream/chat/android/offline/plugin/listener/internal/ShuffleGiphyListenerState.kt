@@ -41,8 +41,8 @@ internal class ShuffleGiphyListenerState(private val logic: LogicRegistry) : Shu
             val processedMessage = result.data().apply {
                 syncStatus = SyncStatus.COMPLETED
             }
-            logic.channelFromMessage(processedMessage)?.updateAndSaveMessages(listOf(processedMessage))
-            logic.threadFromMessage(processedMessage)?.updateAndSaveMessages(listOf(processedMessage))
+            logic.channelFromMessage(processedMessage)?.upsertMessage(processedMessage)
+            logic.threadFromMessage(processedMessage)?.upsertMessage(processedMessage)
         }
     }
 }
