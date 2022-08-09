@@ -981,12 +981,12 @@
         <item name="streamUiCommandsEnabled">true</item>
         <item name="streamUiMessageInputEditTextBackgroundDrawable">@drawable/stream_ui_shape_edit_text_round</item>
         <item name="streamUiMessageInputDividerBackgroundDrawable">@drawable/stream_ui_divider</item>
-        <item name="streamUiPictureAttachmentIcon">@drawable/stream_ui_attachment_tab_media</item>
-        <item name="streamUiFileAttachmentIcon">@drawable/stream_ui_attachment_tab_file</item>
-        <item name="streamUiCameraAttachmentIcon">@drawable/stream_ui_attachment_tab_camera</item>
-        <item name="streamUiAllowAccessToCameraIcon">@drawable/stream_ui_attachment_tab_camera</item>
-        <item name="streamUiAllowAccessToFilesIcon">@drawable/stream_ui_attachment_tab_file</item>
-        <item name="streamUiAllowAccessToGalleryIcon">@drawable/stream_ui_attachment_tab_media</item>
+        <item name="streamUiPictureAttachmentIcon">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiFileAttachmentIcon">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiCameraAttachmentIcon">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiAllowAccessToCameraIcon">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiAllowAccessToFilesIcon">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiAllowAccessToGalleryIcon">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAllowAccessToGalleryText">@string/stream_ui_message_input_gallery_access</item>
         <item name="streamUiAllowAccessToFilesText">@string/stream_ui_message_input_files_access</item>
         <item name="streamUiAllowAccessToCameraText">@string/stream_ui_message_input_camera_access</item>
@@ -1148,9 +1148,9 @@
         <item name="streamUiAttachmentsPickerAttachmentTabToggleButtonStateList">@color/stream_ui_attachment_tab_button</item>
 
         <!-- Media attachments tab -->
-        <item name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_tab_media</item>
+        <item name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAttachmentsPickerAllowAccessToMediaButtonText">@string/stream_ui_message_composer_gallery_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_tab_media</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextVisible">true</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_white</item>
@@ -1161,9 +1161,9 @@
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>
 
         <!-- File attachments tab -->
-        <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_tab_file</item>
+        <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
         <item name="streamUiAttachmentsPickerAllowAccessToFilesButtonText">@string/stream_ui_message_composer_files_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToFilesIconDrawable">@drawable/stream_ui_attachment_tab_file</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToFilesIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
         <item name="streamUiAttachmentsPickerRecentFilesText">@string/stream_ui_message_composer_recent_files</item>
         <item name="streamUiAttachmentsPickerRecentFilesTextSize">@dimen/stream_ui_spacing_medium</item>
         <item name="streamUiAttachmentsPickerRecentFilesTextColor">@color/stream_ui_black</item>
@@ -1180,8 +1180,8 @@
         <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxTextColor">@color/stream_ui_literal_white</item>
 
         <!-- Camera attachments tab -->
-        <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_tab_camera</item>
+        <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
         <item name="streamUiAttachmentsPickerAllowAccessToCameraButtonText">@string/stream_ui_message_composer_camera_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable">@drawable/stream_ui_attachment_tab_camera</item>
+        <item name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
     </style>
 </resources>

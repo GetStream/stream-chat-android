@@ -86,12 +86,12 @@ public data class AttachmentSelectionDialogStyle(
          */
         public fun createDefault(context: Context): AttachmentSelectionDialogStyle {
             return AttachmentSelectionDialogStyle(
-                pictureAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!,
-                fileAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!,
-                cameraAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!,
-                allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!,
-                allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!,
-                allowAccessToFilesIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!,
+                pictureAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
+                fileAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!,
+                cameraAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!,
+                allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
+                allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!,
+                allowAccessToFilesIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!,
                 allowAccessToGalleryText = context.getString(R.string.stream_ui_message_input_gallery_access),
                 allowAccessToFilesText = context.getString(R.string.stream_ui_message_input_files_access),
                 allowAccessToCameraText = context.getString(R.string.stream_ui_message_input_camera_access),

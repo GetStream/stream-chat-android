@@ -159,7 +159,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val mediaAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
                 val allowAccessToMediaButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToMediaButtonText
@@ -167,7 +167,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToMediaIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToMediaIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_media)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
                 val videoLengthTextVisible = a.getBoolean(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerVideoLengthTextVisible,
@@ -235,7 +235,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val fileAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsTabIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
                 val allowAccessToFilesButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToFilesButtonText
@@ -243,7 +243,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToFilesIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToFilesIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_file)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
                 val recentFilesText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerRecentFilesText
@@ -356,7 +356,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val cameraAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
                 val allowAccessToCameraButtonText = a.getText(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToCameraButtonText
@@ -364,7 +364,7 @@ public data class AttachmentsPickerDialogStyle(
 
                 val allowAccessToCameraIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerAllowAccessToCameraIconDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_tab_camera)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
                 return AttachmentsPickerDialogStyle(
                     attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
