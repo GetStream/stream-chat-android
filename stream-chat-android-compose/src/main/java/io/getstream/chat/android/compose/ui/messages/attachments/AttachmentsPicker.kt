@@ -61,7 +61,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onDismiss Handler when the user dismisses the UI.
  * @param modifier Modifier for styling.
- * @param tabFactories Th list of attachment picker tab factories.
+ * @param tabFactories The list of attachment picker tab factories.
  * @param shape The shape of the dialog.
  */
 @Composable
