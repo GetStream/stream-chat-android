@@ -20,8 +20,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ToggleButton
-import androidx.core.view.forEach
+import android.widget.CheckedTextView
+import android.widget.FrameLayout
+import androidx.core.view.descendants
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -29,8 +30,14 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
+/**
+ * Represent the bottom sheet dialog that allows users to pick attachments.
+ */
 @ExperimentalStreamChatApi
 public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
@@ -41,6 +48,11 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
      * Style for the dialog.
      */
     private lateinit var style: MessageInputViewStyle
+
+    /**
+     * The list of factories for the tabs that will be displayed in the attachment picker.
+     */
+    private lateinit var attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
 
     /**
      * A listener that is invoked when attachment picking has been completed
@@ -66,18 +78,9 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && ::style.isInitialized) {
-            setupResultListeners()
-        } else {
-            dismiss()
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null && ::style.isInitialized) {
+        if (savedInstanceState == null && ::style.isInitialized && ::attachmentsPickerTabFactories.isInitialized) {
             setupDialog()
         } else {
             dismiss()
@@ -88,49 +91,74 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
      * Initializes the dialog.
      */
     private fun setupDialog() {
-        binding.apply {
-            val attachmentSelectionDialogStyle = style.attachmentSelectionDialogStyle
+        binding.container.setBackgroundColor(style.attachmentSelectionDialogStyle.backgroundColor)
 
-            container.setBackgroundColor(attachmentSelectionDialogStyle.backgroundColor)
+        setupAttachButton()
+        setupTabs()
+        setupPages()
+    }
 
-            attachButton.setImageDrawable(attachmentSelectionDialogStyle.attachButtonIcon)
-            attachButton.isEnabled = false
-            attachButton.setOnClickListener {
+    /**
+     * Initializes the submit attachments button.
+     */
+    private fun setupAttachButton() {
+        binding.attachButton.setImageDrawable(style.attachmentSelectionDialogStyle.attachButtonIcon)
+        binding.attachButton.isEnabled = false
+        binding.attachButton.setOnClickListener {
+            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
+            dismiss()
+        }
+    }
+
+    /**
+     * Initializes the tabs of the picker.
+     */
+    private fun setupTabs() {
+        attachmentsPickerTabFactories.forEachIndexed { index, factory ->
+            val frameLayout = layoutInflater.inflate(
+                R.layout.stream_ui_dialog_attachment_tab,
+                binding.attachmentButtonsContainer,
+                false
+            ) as FrameLayout
+
+            val checkedTextView = frameLayout.findViewById<CheckedTextView>(R.id.checkedTextView)
+            checkedTextView.background = factory.createTabIcon(style)
+            checkedTextView.backgroundTintList = style.attachmentSelectionDialogStyle.toggleButtonColorStateList
+            checkedTextView.isChecked = index == 0
+
+            frameLayout.setOnClickListener {
+                setSelectedTab(checkedTextView, index)
+            }
+
+            binding.attachmentButtonsContainer.addView(frameLayout)
+        }
+    }
+
+    /**
+     * Initializes the content of the picker.
+     */
+    private fun setupPages() {
+        val attachmentsPickerTabListener: AttachmentsPickerTabListener = object : AttachmentsPickerTabListener {
+            override fun onSelectedAttachmentsChanged(
+                attachments: List<AttachmentMetaData>,
+                attachmentSource: AttachmentSource,
+            ) {
+                onAttachmentsSelected(attachments.toSet(), attachmentSource)
+            }
+
+            override fun onSelectedAttachmentsSubmitted() {
                 attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
                 dismiss()
             }
-
-            mediaAttachmentButton.run {
-                background = attachmentSelectionDialogStyle.pictureAttachmentIcon
-                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
-
-                isChecked = true
-                setOnClickListener {
-                    setSelectedButton(this, AttachmentDialogPagerAdapter.PAGE_MEDIA_ATTACHMENT)
-                }
-            }
-
-            fileAttachmentButton.run {
-                background = attachmentSelectionDialogStyle.fileAttachmentIcon
-                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
-
-                setOnClickListener {
-                    setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
-                }
-            }
-
-            cameraAttachmentButton.run {
-                background = attachmentSelectionDialogStyle.cameraAttachmentIcon
-                backgroundTintList = attachmentSelectionDialogStyle.toggleButtonColorStateList
-
-                setOnClickListener {
-                    setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)
-                }
-            }
-
-            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment, style)
-            attachmentPager.isUserInputEnabled = false
         }
+
+        binding.attachmentPager.adapter = AttachmentDialogPagerAdapter(
+            fragment = this,
+            style = style,
+            attachmentsPickerTabFactories = attachmentsPickerTabFactories,
+            attachmentsPickerTabListener = attachmentsPickerTabListener
+        )
+        binding.attachmentPager.isUserInputEnabled = false
     }
 
     override fun onDestroyView() {
@@ -155,6 +183,13 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     }
 
     /**
+     * Sets the list of factories for the tabs that will be displayed in the attachment picker.
+     */
+    public fun setAttachmentsPickerTabFactories(attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>) {
+        this.attachmentsPickerTabFactories = attachmentsPickerTabFactories
+    }
+
+    /**
      * Sets the listener that will be notified when picking attachments has been completed.
      */
     public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
@@ -170,10 +205,10 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         }
     }
 
-    private fun setSelectedButton(selectedButton: ToggleButton, pagePosition: Int) {
+    private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {
         binding.attachmentPager.setCurrentItem(pagePosition, false)
-        binding.attachmentButtonsContainer.forEach {
-            (it as ToggleButton).isChecked = it == selectedButton
+        binding.attachmentButtonsContainer.descendants.forEach {
+            (it as? CheckedTextView)?.isChecked = it == checkedTextView
         }
     }
 
@@ -182,43 +217,34 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     }
 
     private fun setUnselectedButtonsEnabled(isEnabled: Boolean) {
-        binding.attachmentButtonsContainer.forEach {
-            it as ToggleButton
-            if (!it.isChecked) {
+        binding.attachmentButtonsContainer.descendants.forEach {
+            if (it is CheckedTextView && !it.isChecked) {
                 it.isEnabled = isEnabled
             }
-        }
-    }
-
-    private fun setupResultListeners() {
-        childFragmentManager.setFragmentResultListener(REQUEST_KEY_CAMERA, this) { _, bundle ->
-            val result = bundle.getSerializable(BUNDLE_KEY) as Set<AttachmentMetaData>
-            attachmentSelectionListener?.onAttachmentsSelected(result, AttachmentSource.CAMERA)
-            dismiss()
-        }
-        childFragmentManager.setFragmentResultListener(REQUEST_KEY_FILE_MANAGER, this) { _, bundle ->
-            val result = bundle.getSerializable(BUNDLE_KEY) as Set<AttachmentMetaData>
-            attachmentSelectionListener?.onAttachmentsSelected(result, AttachmentSource.FILE)
-            dismiss()
         }
     }
 
     public companion object {
         public const val TAG: String = "attachment_dialog_fragment"
 
-        internal const val REQUEST_KEY_CAMERA = "key_camera"
-        internal const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
-        internal const val BUNDLE_KEY = "bundle_attachments"
-
         /**
          * Creates a new instance of [AttachmentSelectionDialogFragment].
          *
          * See [AttachmentSelectionDialogStyle.createDefault] to load a default set of icons
          * to be used for the attachment dialog's tabs.
+         *
+         * @param style Style for the dialog.
+         * @param attachmentsPickerTabFactories The list of factories for the tabs in the attachment picker.
+         * @return A new instance of [AttachmentSelectionDialogFragment].
          */
-        public fun newInstance(style: MessageInputViewStyle): AttachmentSelectionDialogFragment {
+        public fun newInstance(
+            style: MessageInputViewStyle,
+            attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories
+                .defaultFactories(style),
+        ): AttachmentSelectionDialogFragment {
             return AttachmentSelectionDialogFragment().apply {
                 setStyle(style)
+                setAttachmentsPickerTabFactories(attachmentsPickerTabFactories)
             }
         }
     }

@@ -27,37 +27,14 @@
         android:id="@+id/attachmentButtonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/stream_ui_attachment_dialog_button_section_height"
-        android:layout_marginStart="4dp"
+        android:layout_marginHorizontal="4dp"
         android:checkedButton="@+id/mediaAttachmentsButton"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/pagerContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <ToggleButton
-            android:id="@+id/mediaAttachmentButton"
-            style="@style/StreamUiAttachmentDialogToggleButton"
-            android:layout_marginStart="6dp"
-            android:background="@drawable/stream_ui_attachment_permission_media"
-            />
-
-        <ToggleButton
-            android:id="@+id/fileAttachmentButton"
-            style="@style/StreamUiAttachmentDialogToggleButton"
-            android:layout_marginStart="6dp"
-            android:background="@drawable/stream_ui_attachment_permission_file"
-            />
-
-        <ToggleButton
-            android:id="@+id/cameraAttachmentButton"
-            style="@style/StreamUiAttachmentDialogToggleButton"
-            android:layout_marginStart="6dp"
-            android:background="@drawable/stream_ui_attachment_permission_camera"
-            />
-
-    </RadioGroup>
+        />
 
     <ImageButton
         android:id="@+id/attachButton"

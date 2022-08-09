@@ -36,6 +36,7 @@ internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Conte
             attachButtonIcon = submitAttachmentsButtonIconDrawable,
             toggleButtonColorStateList = attachmentTabToggleButtonStateList,
             // Media attachments tab
+            mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
             pictureAttachmentIcon = mediaAttachmentsTabIconDrawable,
             allowAccessToGalleryText = allowAccessToMediaButtonText,
             allowAccessToGalleryIcon = allowAccessToMediaIconDrawable,
@@ -44,6 +45,7 @@ internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Conte
             videoIconVisible = videoIconVisible,
             videoIconDrawable = videoIconDrawable,
             // File attachments tab
+            fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
             fileAttachmentIcon = fileAttachmentsTabIconDrawable,
             allowAccessToFilesText = allowAccessToFilesButtonText,
             allowAccessToFilesIcon = allowAccessToFilesIconDrawable,
@@ -51,6 +53,7 @@ internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Conte
             recentFilesTextStyle = recentFilesTextStyle,
             fileManagerIcon = fileManagerIconDrawable,
             // Camera attachments tab
+            cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
             cameraAttachmentIcon = cameraAttachmentsTabIconDrawable,
             allowAccessToCameraText = allowAccessToCameraButtonText,
             allowAccessToCameraIcon = allowAccessToCameraIconDrawable,

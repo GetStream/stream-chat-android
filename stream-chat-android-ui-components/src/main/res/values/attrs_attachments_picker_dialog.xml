@@ -32,6 +32,7 @@
         <attr name="streamUiAttachmentsPickerAttachmentTabToggleButtonStateList" format="color|reference" />
 
         <!-- Media attachments tab -->
+        <attr name="streamUiAttachmentsPickerMediaAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiAttachmentsPickerAllowAccessToMediaButtonText" format="string" />
         <attr name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable" format="reference" />
@@ -62,6 +63,7 @@
         </attr>
 
         <!-- File attachments tab -->
+        <attr name="streamUiAttachmentsPickerFileAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiAttachmentsPickerAllowAccessToFilesButtonText" format="string" />
         <attr name="streamUiAttachmentsPickerAllowAccessToFilesIconDrawable" format="reference" />
@@ -115,6 +117,7 @@
         <attr name="streamUiAttachmentsPickerFileAttachmentItemCheckboxTextColor" format="reference|color" />
 
         <!-- Camera attachments tab -->
+        <attr name="streamUiAttachmentsPickerCameraAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiAttachmentsPickerAllowAccessToCameraButtonText" format="string" />
         <attr name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable" format="reference" />
