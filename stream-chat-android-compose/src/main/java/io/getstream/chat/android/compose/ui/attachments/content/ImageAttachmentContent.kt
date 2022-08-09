@@ -62,7 +62,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * and the onLongItemClick handler.
  */
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LongMethod")
 @Composable
 public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
