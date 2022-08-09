@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Represents the second tab of the attachment picker with a list of files.
+ * Represents the tab of the attachment picker with a list of files.
  */
 internal class FileAttachmentFragment : Fragment() {
 

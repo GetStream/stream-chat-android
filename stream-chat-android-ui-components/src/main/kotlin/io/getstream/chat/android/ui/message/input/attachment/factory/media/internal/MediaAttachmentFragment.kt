@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Represents the first tab of the attachment picker with the media grid.
+ * Represents the tab of the attachment picker with the media grid.
  */
 internal class MediaAttachmentFragment : Fragment() {
 

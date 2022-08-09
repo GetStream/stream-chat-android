@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.message.input.attachment.factory.Attachments
 import java.io.File
 
 /**
- * Represents the third tab of the attachment picker with media capture.
+ * Represents the tab of the attachment picker with media capture.
  */
 internal class CameraAttachmentFragment : Fragment() {
 
