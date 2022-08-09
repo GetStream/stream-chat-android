@@ -33,7 +33,7 @@ import kotlinx.coroutines.awaitAll
  * @param scope [CoroutineScope]]
  * @param channelMarkReadHelper [ChannelMarkReadHelper]
  */
-internal class MarkAllReadListenerImpl(
+internal class MarkAllReadListenerState(
     private val logic: LogicRegistry,
     private val scope: CoroutineScope,
     private val channelMarkReadHelper: ChannelMarkReadHelper,

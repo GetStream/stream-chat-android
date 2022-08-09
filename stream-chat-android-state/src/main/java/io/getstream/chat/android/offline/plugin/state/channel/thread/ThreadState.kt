@@ -28,6 +28,9 @@ public interface ThreadState {
     /** The sorted list of messages for this thread. */
     public val messages: StateFlow<List<Message>>
 
+    /** If we are currently loading messages. */
+    public val loading: StateFlow<Boolean>
+
     /** If we are currently loading older messages. */
     public val loadingOlderMessages: StateFlow<Boolean>
 

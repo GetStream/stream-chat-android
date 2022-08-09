@@ -39,7 +39,17 @@ internal class SocketEventCollector(
     private val postponed = Postponed()
     private val timeoutJob = TimeoutJob()
 
-    internal suspend fun add(event: ChatEvent): Boolean {
+    internal suspend fun collect(event: ChatEvent) {
+        logger.d { "[collect] event.type: '${event.type}', event: $event" }
+        if (add(event)) {
+            return
+        }
+        firePostponed()
+        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
+        fireEvent(batchEvent)
+    }
+
+    private suspend fun add(event: ChatEvent): Boolean {
         if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
             logger.d { "[add] event.type: ${event.type}(${event.hashCode()})" }
             mutex.withLock {
@@ -57,8 +67,8 @@ internal class SocketEventCollector(
         return false
     }
 
-    internal suspend fun fireBatchEvent() {
-        logger.d { "[fireBatchEvent] no args" }
+    private suspend fun firePostponed() {
+        logger.d { "[firePostponed] no args" }
         mutex.withLock {
             timeoutJob.cancel()
             doFire()
