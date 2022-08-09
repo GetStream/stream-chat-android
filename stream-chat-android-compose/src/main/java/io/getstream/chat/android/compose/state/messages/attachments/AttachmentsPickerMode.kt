@@ -35,3 +35,12 @@ public object Files : AttachmentsPickerMode()
  * Represents the mode with media capture.
  */
 public object MediaCapture : AttachmentsPickerMode()
+
+/**
+ * User-customizable picker mode, with any number of extra properties.
+ *
+ * @param extraProperties Map of key-value pairs that let you store extra data for this picker mode.
+ */
+public class CustomPickerMode(
+    public val extraProperties: Map<String, Any> = emptyMap(),
+) : AttachmentsPickerMode()
