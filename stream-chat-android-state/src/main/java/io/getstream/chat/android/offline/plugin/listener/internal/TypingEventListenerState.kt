@@ -27,19 +27,21 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import java.util.Date
 
 /**
- * [TypingEventListenerImpl] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [TypingEventListenerState] implementation for [StatePlugin].
  * Handles and sends typing events such as when user starts or stop typing a message.
  *
  * @param state [StateRegistry] having state of the offline plugin.
  */
-internal class TypingEventListenerImpl(
+internal class TypingEventListenerState(
     private val state: StateRegistry,
 ) : TypingEventListener {
 
     /**
-     * Method called before original api request is invoked. If this methods returns [Result.error], API request is not invoked.
+     * Method called before original api request is invoked. If this methods returns [Result.error],
+     * API request is not invoked.
      *
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
@@ -70,7 +72,8 @@ internal class TypingEventListenerImpl(
      * Precondition method when user stops typing.
      *
      * To send stop typing event ([EventType.TYPING_STOP]), typing events must be enabled
-     * and there should be a typing start event ([EventType.TYPING_START]) sent before [EventType.TYPING_STOP] can be sent.
+     * and there should be a typing start event ([EventType.TYPING_START]) sent before [EventType.TYPING_STOP]
+     * can be sent.
      *
      * @param channelState State of the channel.
      */
@@ -99,11 +102,13 @@ internal class TypingEventListenerImpl(
     private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
             Result.error(ChatError("Typing events are not enabled"))
-        else if (channelState.lastStartTypingEvent != null && eventTime.time - channelState.lastStartTypingEvent!!.time < 3000) {
+        else if (channelState.lastStartTypingEvent != null &&
+            eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
+        ) {
             Result.error(
                 ChatError(
                     "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
-                        "There must be a delay of 3 seconds before sending new event"
+                        "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event"
                 )
             )
         } else Result.success(Unit)
@@ -113,7 +118,8 @@ internal class TypingEventListenerImpl(
      * Side effect method which is called before sending any event.
      * Updates the local channel state about last typing event.
      *
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
@@ -141,7 +147,8 @@ internal class TypingEventListenerImpl(
      * Updates the local channel state about last typing event if original result is successful.
      *
      * @param result Result of the original request.
-     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or [EventType.TYPING_STOP] etc.
+     * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
+     * [EventType.TYPING_STOP] etc.
      * @param channelType Type of the channel in which the event is sent.
      * @param channelId Id of the channel in which the event is sent.
      * @param extraData Any extra data such as parent id.
@@ -169,5 +176,8 @@ internal class TypingEventListenerImpl(
 
     private companion object {
         private const val ARG_TYPING_PARENT_ID = "parent_id"
+        private const val MILLI_SEC = 1000
+        private const val TYPING_DELAY_SECS = 3
+        private const val TYPING_DELAY = TYPING_DELAY_SECS * MILLI_SEC
     }
 }

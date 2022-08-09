@@ -46,7 +46,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageLis
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -235,7 +235,7 @@ public class StreamStatePluginFactory(
             sendGiphyListener = SendGiphyListenerImpl(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
-            typingEventListener = TypingEventListenerImpl(stateRegistry),
+            typingEventListener = TypingEventListenerState(stateRegistry),
             provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
     }
