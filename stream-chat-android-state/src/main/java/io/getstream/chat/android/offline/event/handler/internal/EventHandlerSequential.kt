@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -111,7 +112,7 @@ private const val EVENTS_BUFFER = 100
  * Processes events sequentially. That means a new event will not be processed
  * until the previous event processing is not completed.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class EventHandlerSequential(
     private val currentUserId: UserId,
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
@@ -204,6 +205,7 @@ internal class EventHandlerSequential(
             updateGlobalState(event)
             updateChannelsState(event)
             updateOfflineStorage(event)
+            updateThreadState(event)
             logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
         } catch (e: Throwable) {
             logger.e(e) { "[handleBatchEvent] failed(${event.id}): ${e.message}" }
@@ -312,6 +314,17 @@ internal class EventHandlerSequential(
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
             scope.async { channelsLogic.handleEvents(sortedEvents) }
         }.awaitAll()
+    }
+
+    private fun updateThreadState(batchEvent: BatchEvent) {
+        logger.v { "[updateThreadState] batchEvent.size: ${batchEvent.size}" }
+        val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
+        sortedEvents.filterIsInstance<HasMessage>()
+            .groupBy { it.message.parentId ?: it.message.id }
+            .filterKeys(logicRegistry::isActiveThread)
+            .forEach { (messageId, events) ->
+                logicRegistry.thread(messageId).handleEvents(events)
+            }
     }
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {

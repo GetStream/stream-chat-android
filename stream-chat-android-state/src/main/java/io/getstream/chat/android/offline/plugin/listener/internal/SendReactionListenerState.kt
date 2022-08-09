@@ -63,12 +63,18 @@ internal class SendReactionListenerState(
 
         val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
             ?: logic.channelFromMessageId(reaction.messageId)
-        val cachedMessage = channelLogic?.getMessage(reaction.messageId)
+        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
             ?.apply {
                 addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
             }
+        cachedChannelMessage?.let(channelLogic::upsertMessage)
 
-        cachedMessage?.let(channelLogic::upsertMessage)
+        val threadLogic = logic.threadFromMessageId(reaction.messageId)
+        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+            }
+        cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
     override suspend fun onSendReactionResult(
@@ -90,6 +96,19 @@ internal class SendReactionListenerState(
                 ?.updateSyncStatus(result)
 
             channelLogic.upsertMessage(message)
+        }
+
+        val threadLogic = logic.threadFromMessageId(reaction.messageId)
+        threadLogic?.getMessage(reaction.messageId)?.let { message ->
+            message.ownReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            message.latestReactions
+                .find { ownReaction -> ownReaction == reaction }
+                ?.updateSyncStatus(result)
+
+            threadLogic.upsertMessage(message)
         }
     }
 

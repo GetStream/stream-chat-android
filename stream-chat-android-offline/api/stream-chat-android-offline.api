@@ -109,6 +109,7 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun messagesForChannelEqualOrOlderThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun messagesForChannelNewerThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun messagesForChannelOlderThan (Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun messagesForThread (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectBySyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
