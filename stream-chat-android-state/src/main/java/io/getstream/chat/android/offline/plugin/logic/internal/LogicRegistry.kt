@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
@@ -29,6 +30,7 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
@@ -39,7 +41,6 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableS
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -107,6 +108,25 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    fun channelFromMessage(message: Message): ChannelLogic? {
+        return if (message.parentId == null || message.showInChannel) {
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            channel(channelType, channelId)
+        } else {
+            null
+        }
+    }
+
+    fun threadFromMessageId(messageId: String): ThreadLogic? {
+        return threads.values.find { threadLogic ->
+            threadLogic.getMessage(messageId) != null
+        }
+    }
+
+    fun threadFromMessage(message: Message): ThreadLogic? {
+        return message.parentId?.let { thread(it) }
+    }
+
     /**
      * Provides [ChannelStateLogic] for the channelType and channelId
      *
@@ -120,14 +140,12 @@ internal class LogicRegistry internal constructor(
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {
         return threads.getOrPut(messageId) {
-            val (channelType, channelId) = runBlocking {
-                repos.selectMessage(messageId)?.cid?.cidToTypeAndId()
-                    ?: error("There is not such message with messageId = $messageId")
-            }
+            val mutableState = stateRegistry.thread(messageId).toMutableState()
+            val stateLogic = ThreadStateLogicImpl(mutableState)
             ThreadLogic(
                 repos,
-                stateRegistry.thread(messageId).toMutableState(),
-                channel(channelType, channelId)
+                client,
+                stateLogic
             )
         }
     }
@@ -156,6 +174,9 @@ internal class LogicRegistry internal constructor(
      * @return List of [ChannelLogic].
      */
     fun getActiveChannelsLogic(): List<ChannelLogic> = channels.values.toList()
+
+    fun isActiveThread(messageId: String): Boolean =
+        threads.containsKey(messageId)
 
     /**
      * Clears all stored logic objects.

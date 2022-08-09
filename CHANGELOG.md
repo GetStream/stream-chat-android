@@ -12,7 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-
+- Rename of field for optional multi bundle push provider. Now projects with multiple push providers will correct correctly. [#4008](https://github.com/GetStream/stream-chat-android/pull/4008)
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -27,8 +27,10 @@
 ### ⬆️ Improved
 - Improved updating channels after receiving `NotificationMessageNew` event. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
 - Improved updating channels after receiving `NewMessageEvent`. The channel will be added to the list if the message is not a system message. [#3999](https://github.com/GetStream/stream-chat-android/pull/3999)
+- `ThreadState` is now independent from `ChannelState`. [#3959]
 
 ### ✅ Added
+- `loading` is added to `ThreadState`. [#3959]
 
 ### ⚠️ Changed
 - Deprecated `NonMemberChatEventHandler`. Use `BaseChatEventHandler` or `DefaultChatEventHandler` for custom implementation. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)

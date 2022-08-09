@@ -16,27 +16,86 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.thread.internal
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.HasMessage
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.logging.StreamLog
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
 internal class ThreadLogic(
     private val repos: RepositoryFacade,
-    private val mutableState: ThreadMutableState,
-    private val channelLogic: ChannelLogic
+    private val client: ChatClient,
+    private val threadStateLogic: ThreadStateLogic,
 ) : ThreadQueryListener {
 
+    private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
     private val logger = StreamLog.getLogger("Chat:ThreadLogic")
 
-    /** Runs precondition for loading more messages for thread. */
-    private fun precondition(): Result<Unit> {
+    /** Runs side effect when a result is obtained. */
+    private suspend fun onResult(result: Result<List<Message>>, limit: Int) {
+        if (result.isSuccess) {
+            val newMessages = result.data()
+            upsertMessages(newMessages)
+            mutableState.setEndOfOlderMessages(newMessages.size < limit)
+            mutableState.setOldestInThread(
+                newMessages.sortedBy { it.createdAt }
+                    .firstOrNull()
+                    ?: mutableState.oldestInThread.value
+            )
+        }
+        result.onSuccessSuspend {
+            repos.insertMessages(it)
+        }
+    }
+
+    override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> {
+        return if (mutableState.loading.value) {
+            val errorMsg = "already loading messages for this thread, ignoring the load requests."
+            logger.i { errorMsg }
+            Result(ChatError(errorMsg))
+        } else {
+            Result.success(Unit)
+        }
+    }
+
+    override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
+        mutableState.setLoading(true)
+        val messages = repos.selectMessagesForThread(messageId, limit)
+        val parentMessage = messages.firstOrNull { it.id == messageId }
+        if (parentMessage != null) {
+            upsertMessages(messages)
+            Result.success(Unit)
+        } else {
+            val result = client.getMessage(messageId).await()
+            if (result.isSuccess) {
+                upsertMessage(result.data())
+                repos.insertMessage(result.data())
+                Result.success(Unit)
+            } else {
+                Result(result.error())
+            }
+        }
+    }
+
+    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {
+        mutableState.setLoading(false)
+        onResult(result, limit)
+    }
+
+    override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> {
         return if (mutableState.loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
@@ -46,50 +105,88 @@ internal class ThreadLogic(
         }
     }
 
-    /** Runs side effect when a request is going to be launched. */
-    @Suppress("UnusedPrivateMember")
-    private suspend fun onRequest(messageId: String, firstId: String?, limit: Int) {
-        mutableState._loadingOlderMessages.value = true
-        // TODO implement thread replies loading from DB
-    }
-
-    /** Runs side effect when a result is obtained. */
-    private suspend fun onResult(result: Result<List<Message>>, limit: Int) {
-        if (result.isSuccess) {
-            // Note that we don't handle offline storage for threads at the moment.
-            val newMessages = result.data()
-            channelLogic.upsertMessages(newMessages)
-            mutableState._endOfOlderMessages.value = newMessages.size < limit
-            mutableState._oldestInThread.value =
-                newMessages.sortedBy { it.createdAt }.firstOrNull() ?: mutableState._oldestInThread.value
-        }
-
-        mutableState._loadingOlderMessages.value = false
-
-        result.onSuccessSuspend {
-            repos.insertMessages(it)
-        }
-    }
-
-    override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> = precondition()
-
-    override suspend fun onGetRepliesRequest(messageId: String, limit: Int) = onRequest(messageId, null, limit)
-
-    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) =
-        onResult(result, limit)
-
-    override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int) = precondition()
-
     override suspend fun onGetRepliesMoreRequest(
         messageId: String,
         firstId: String,
         limit: Int
-    ) = onRequest(messageId, firstId, limit)
+    ) {
+        mutableState.setLoadingOlderMessages(true)
+    }
 
     override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
         messageId: String,
         firstId: String,
         limit: Int
-    ) = onResult(result, limit)
+    ) {
+        mutableState.setLoadingOlderMessages(false)
+        onResult(result, limit)
+    }
+
+    /**
+     * Returns message stored in [ThreadMutableState] if exists
+     *
+     * @param messageId The id of the message.
+     *
+     * @return [Message] if exists, null otherwise.
+     */
+    internal fun getMessage(messageId: String): Message? {
+        return mutableState.rawMessages[messageId]?.copy()
+    }
+
+    internal fun deleteMessage(message: Message) {
+        threadStateLogic.deleteMessage(message)
+    }
+
+    /**
+     * Updates the messages locally and saves it at database.
+     *
+     * @param messages The list of messages to be updated in the SDK and to be saved in database.
+     */
+    internal suspend fun updateAndSaveMessages(messages: List<Message>) {
+        threadStateLogic.upsertMessages(messages)
+        storeMessageLocally(messages)
+    }
+
+    /**
+     * Store the messages in the local cache.
+     *
+     * @param messages The messages to be stored. Check [Message].
+     */
+    private suspend fun storeMessageLocally(messages: List<Message>) {
+        repos.insertMessages(messages)
+    }
+
+    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+
+    internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+
+    internal fun removeLocalMessage(message: Message) {
+        threadStateLogic.removeLocalMessage(message)
+    }
+
+    internal fun handleEvents(events: List<HasMessage>) {
+        for (event in events) {
+            handleEvent(event)
+        }
+    }
+
+    private fun handleEvent(event: HasMessage) {
+        when (event) {
+            is MessageUpdatedEvent -> {
+                event.message.apply {
+                    replyTo = mutableState.messages.value.firstOrNull { it.id == replyMessageId }
+                }.let(::upsertMessage)
+            }
+            is NewMessageEvent,
+            is MessageDeletedEvent,
+            is NotificationMessageNewEvent,
+            is ReactionNewEvent,
+            is ReactionUpdateEvent,
+            is ReactionDeletedEvent -> {
+                upsertMessage(event.message)
+            }
+            else -> Unit
+        }
+    }
 }

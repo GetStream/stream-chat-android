@@ -51,6 +51,18 @@ internal class DatabaseMessageRepository(
     }
 
     /**
+     * Select messages for a thread in a desired page.
+     *
+     * @param messageId String.
+     * @param limit limit of messages
+     */
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
+        return messageDao.messagesForThread(messageId, limit)
+            .map { it.toModel(getUser, ::selectMessage) }
+            .filterReactions()
+    }
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
