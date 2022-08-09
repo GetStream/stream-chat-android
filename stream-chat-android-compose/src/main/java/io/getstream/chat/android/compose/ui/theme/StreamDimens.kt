@@ -111,7 +111,8 @@ public data class StreamDimens(
     public val quotedMessageAttachmentStartPadding: Dp,
     public val quotedMessageAttachmentEndPadding: Dp,
     public val groupAvatarInitialsXOffset: Dp,
-    public val groupAvatarInitialsYOffset: Dp
+    public val groupAvatarInitialsYOffset: Dp,
+    public val attachmentsContentImageMaxHeight: Dp,
 ) {
     public companion object {
         /**
@@ -162,7 +163,8 @@ public data class StreamDimens(
             quotedMessageAttachmentStartPadding = 8.dp,
             quotedMessageAttachmentEndPadding = 0.dp,
             groupAvatarInitialsXOffset = 1.5.dp,
-            groupAvatarInitialsYOffset = 2.5.dp
+            groupAvatarInitialsYOffset = 2.5.dp,
+            attachmentsContentImageMaxHeight = 600.dp,
         )
     }
 }
