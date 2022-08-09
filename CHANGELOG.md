@@ -76,6 +76,7 @@
 
 ### ✅ Added
 - Added additional `chatEventHandlerFactory` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows customizing `ChatEventHandler`. [#3997](https://github.com/GetStream/stream-chat-android/pull/3997)
+- Added the `tabFactories` parameter to `AttachmentsPicker` that allows to control the list of tabs displayed in the picker. [#3994](https://github.com/GetStream/stream-chat-android/pull/3994)
 
 ### ⚠️ Changed
 

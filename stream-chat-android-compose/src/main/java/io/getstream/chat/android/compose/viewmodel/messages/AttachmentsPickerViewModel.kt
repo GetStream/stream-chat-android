@@ -57,6 +57,11 @@ public class AttachmentsPickerViewModel(
     public var files: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
+     * List of attachments available, from the system.
+     */
+    public var attachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
+
+    /**
      * Gives us info if there are any file items that are selected.
      */
     public val hasPickedFiles: Boolean
@@ -67,6 +72,12 @@ public class AttachmentsPickerViewModel(
      */
     public val hasPickedImages: Boolean
         get() = images.any { it.isSelected }
+
+    /**
+     * Gives us info if there are any attachment items that are selected.
+     */
+    public val hasPickedAttachments: Boolean
+        get() = attachments.any { it.isSelected }
 
     /**
      * Gives us information if we're showing the attachments picker or not.
@@ -117,11 +128,15 @@ public class AttachmentsPickerViewModel(
      */
     private fun loadAttachmentsData(attachmentsPickerMode: AttachmentsPickerMode) {
         if (attachmentsPickerMode == Images) {
-            images = storageHelper.getMedia().map { AttachmentPickerItemState(it, false) }
-            files = emptyList()
+            val images = storageHelper.getMedia().map { AttachmentPickerItemState(it, false) }
+            this.images = images
+            this.attachments = images
+            this.files = emptyList()
         } else if (attachmentsPickerMode == Files) {
-            files = storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
-            images = emptyList()
+            val files = storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
+            this.files = files
+            this.attachments = files
+            this.images = emptyList()
         }
     }
 
@@ -132,7 +147,7 @@ public class AttachmentsPickerViewModel(
      * @param attachmentItem The selected item.
      */
     public fun changeSelectedAttachments(attachmentItem: AttachmentPickerItemState) {
-        val dataSet = if (attachmentsPickerMode == Files) files else images
+        val dataSet = attachments
 
         val itemIndex = dataSet.indexOf(attachmentItem)
         val newFiles = dataSet.toMutableList()
@@ -144,9 +159,10 @@ public class AttachmentsPickerViewModel(
 
         if (attachmentsPickerMode == Files) {
             files = newFiles
-        } else {
+        } else if (attachmentsPickerMode == Images) {
             images = newFiles
         }
+        attachments = newFiles
     }
 
     /**

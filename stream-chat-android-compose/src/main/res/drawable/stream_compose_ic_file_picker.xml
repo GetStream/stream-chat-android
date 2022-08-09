@@ -18,9 +18,10 @@
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
-    android:viewportHeight="24">
-  <path
-      android:pathData="M23,2H14.2424C13.712,2 13.2033,1.7893 12.8282,1.4142L11.9998,0.5858C11.6247,0.2107 11.116,0 10.5856,0H1C0.4477,0 0,0.4477 0,1V21C0,21.5523 0.4477,22 1,22H23C23.5523,22 24,21.5523 24,21V3C24,2.4477 23.5523,2 23,2ZM2,20V4H22V20H2Z"
-      android:fillColor="#000000"
-      android:fillType="evenOdd"/>
+    android:viewportHeight="24"
+    >
+    <path
+        android:fillColor="#000000"
+        android:pathData="M20,6H12L10,4H4C2.9,4 2.01,4.9 2.01,6L2,18C2,19.1 2.9,20 4,20H20C21.1,20 22,19.1 22,18V8C22,6.9 21.1,6 20,6ZM20,18H4V8H20V18Z"
+        />
 </vector>
