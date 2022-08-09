@@ -46,9 +46,29 @@ internal class LinkAttachmentView : FrameLayout {
         defStyleAttr
     )
 
+    /**
+     * Displays the given attachment.
+     *
+     * @param attachment The attachment to be displayed.
+     * @param style The style used for applying various things such as text styles.
+     */
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
-        previewUrl = attachment.titleLink ?: attachment.ogUrl
+        previewUrl = attachment.thumbUrl
+        showTitle(attachment, style)
+        showDescription(attachment, style)
+        showLabel(attachment, style)
+        showAttachmentImage(attachment)
+    }
 
+    /**
+     * Sets up the style for the link title text and displays it
+     * if it exists.
+     *
+     * @param attachment The attachment used to obtain the title.
+     * @param style The style which contains the title text style that
+     * will be applied.
+     */
+    private fun showTitle(attachment: Attachment, style: MessageListItemStyle) {
         val title = attachment.title
         if (title != null) {
             binding.titleTextView.isVisible = true
@@ -57,7 +77,17 @@ internal class LinkAttachmentView : FrameLayout {
             binding.titleTextView.isVisible = false
         }
         style.textStyleLinkTitle.apply(binding.titleTextView)
+    }
 
+    /**
+     * Sets up the style for the link description text and displays it
+     * if it exists.
+     *
+     * @param attachment The attachment used to obtain the description.
+     * @param style The style which contains the description text style that
+     * will be applied.
+     */
+    private fun showDescription(attachment: Attachment, style: MessageListItemStyle) {
         val description = attachment.text
         if (description != null) {
             binding.descriptionTextView.isVisible = true
@@ -66,7 +96,17 @@ internal class LinkAttachmentView : FrameLayout {
             binding.descriptionTextView.isVisible = false
         }
         style.textStyleLinkDescription.apply(binding.descriptionTextView)
+    }
 
+    /**
+     * Sets up the style for the link label text and displays it
+     * if it exists.
+     *
+     * @param attachment The attachment used to obtain the label.
+     * @param style The style which contains the label text style that
+     * will be applied.
+     */
+    private fun showLabel(attachment: Attachment, style: MessageListItemStyle) {
         val label = attachment.authorName
         if (label != null) {
             binding.labelContainer.isVisible = true
@@ -74,7 +114,13 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.labelContainer.isVisible = false
         }
+        style.textStyleLinkLabel.apply(binding.labelTextView)
+    }
 
+    /**
+     * Shows the attachment preview image if it is not null.
+     */
+    private fun showAttachmentImage(attachment: Attachment) {
         if (attachment.imagePreviewUrl != null) {
             binding.linkPreviewImageView.load(
                 data = attachment.imagePreviewUrl,
@@ -84,7 +130,7 @@ internal class LinkAttachmentView : FrameLayout {
                 transformation = RoundedCorners(LINK_PREVIEW_CORNER_RADIUS),
             )
         } else {
-            binding.linkPreviewImageView.isVisible = false
+            binding.linkPreviewContainer.isVisible = false
             binding.progressBar.isVisible = false
         }
     }
