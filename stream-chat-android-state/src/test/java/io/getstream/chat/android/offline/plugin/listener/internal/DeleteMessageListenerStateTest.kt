@@ -51,6 +51,7 @@ internal class DeleteMessageListenerStateTest {
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
         on(it.channelFromMessageId(any())) doReturn channelLogic
+        on(it.channelFromMessage(any())) doReturn channelLogic
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =
@@ -66,9 +67,9 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(randomCID())
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
@@ -86,9 +87,9 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteRequest(randomCID())
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
@@ -106,9 +107,9 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.success(testMessage))
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
@@ -126,9 +127,9 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Companion.error(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Companion.error(ChatError()))
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED

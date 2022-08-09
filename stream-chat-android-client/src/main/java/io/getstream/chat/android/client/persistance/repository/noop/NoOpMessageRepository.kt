@@ -25,6 +25,8 @@ import java.util.Date
 /**
  * No-Op MessageRepository.
  */
+
+@Suppress("TooManyFunctions")
 internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> = emptyList()
     override suspend fun selectMessage(messageId: String): Message? = null
@@ -39,4 +41,5 @@ internal object NoOpMessageRepository : MessageRepository {
         cid: String,
         pagination: AnyChannelPaginationRequest?,
     ): List<Message> = emptyList()
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = emptyList()
 }
