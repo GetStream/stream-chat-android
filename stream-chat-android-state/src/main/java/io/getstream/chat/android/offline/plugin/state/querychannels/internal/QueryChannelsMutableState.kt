@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.logging.StreamLog
@@ -83,14 +83,17 @@ internal class QueryChannelsMutableState(
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
 
+    override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
+
     override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded
 
     /**
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
      * handler set by user or default one if there is no.
      */
-    internal val eventHandler: ChatEventHandler
-        get() = chatEventHandler ?: DefaultChatEventHandler(_sortedChannels)
+    internal val eventHandler: ChatEventHandler by lazy {
+        chatEventHandler ?: (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(_channels)
+    }
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading

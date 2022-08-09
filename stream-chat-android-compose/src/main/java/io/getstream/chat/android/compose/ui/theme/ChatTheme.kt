@@ -40,6 +40,8 @@ import io.getstream.chat.android.compose.handlers.StreamPermissionHandlers
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -95,6 +97,9 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
 private val LocalPermissionManagerProvider = compositionLocalOf<List<PermissionHandler>> {
     error("No PermissionHandlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
+    error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -117,6 +122,7 @@ private val LocalPermissionManagerProvider = compositionLocalOf<List<PermissionH
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param permissionHandlers Handlers for various permissions.
+ * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param content The content shown within the theme wrapper.
  */
 @OptIn(ExperimentalPermissionsApi::class)
@@ -147,6 +153,7 @@ public fun ChatTheme(
         LocalContext.current,
         listOf(rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE))
     ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
+    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -169,7 +176,8 @@ public fun ChatTheme(
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
-        LocalPermissionManagerProvider provides permissionHandlers
+        LocalPermissionManagerProvider provides permissionHandlers,
+        LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
     ) {
         content()
     }
@@ -291,4 +299,13 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalPermissionManagerProvider.current
+
+    /**
+     *
+     * Retrieves the current list of [AttachmentsPickerTabFactory] at the call site's position in the hierarchy.
+     */
+    public val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAttachmentsPickerTabFactories.current
 }

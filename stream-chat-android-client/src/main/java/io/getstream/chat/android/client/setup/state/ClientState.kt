@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.setup.state
 
 import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.StateFlow
 
@@ -32,9 +33,18 @@ public interface ClientState {
     public val user: StateFlow<User?>
 
     /**
-     * If the client connection has been initialized.
+     * The state of the initialization process of the SDK.
      */
+    @Deprecated(
+        "Use ClientState.initializationState instead",
+        ReplaceWith("initializationState")
+    )
     public val initialized: StateFlow<Boolean>
+
+    /**
+     * The state of the initialization process of the SDK.
+     */
+    public val initializationState: StateFlow<InitializationState>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
@@ -42,16 +52,16 @@ public interface ClientState {
     public val connectionState: StateFlow<ConnectionState>
 
     /**
-     * If the user is online or not.
+     * If the WebSocket is connected.
      *
-     * @return True if the user is online otherwise False.
+     * @return True if the WebSocket is connected, otherwise false.
      */
     public val isOnline: Boolean
 
     /**
-     * If the user is offline or not.
+     * If the WebSocket is disconnected.
      *
-     * @return True if the user is offline otherwise False.
+     * @return True if the WebSocket is disconnected, otherwise false.
      */
     public val isOffline: Boolean
 

@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.event.handler.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.User
 
 /**
  * Handles WebSocket and/or Synced events to update states and offline storage.
@@ -28,17 +27,12 @@ internal interface EventHandler {
     /**
      * Triggers WebSocket event subscription.
      */
-    fun startListening(currentUser: User)
+    fun startListening()
 
     /**
      * Cancels WebSocket event subscription.
      */
     fun stopListening()
-
-    /**
-     * Starts event history syncing.
-     */
-    suspend fun syncHistoryForActiveChannels()
 
     /**
      * For testing purpose only. Simulates socket event handling.

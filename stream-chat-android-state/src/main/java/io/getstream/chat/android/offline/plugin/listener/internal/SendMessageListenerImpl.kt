@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.logging.StreamLog
 import java.util.Date
@@ -45,11 +44,11 @@ internal class SendMessageListenerImpl(
         channelId: String,
         message: Message,
     ) {
-        val channel = logic.channel(channelType, channelId)
+        val cid = "$channelType:$channelId"
         if (result.isSuccess) {
-            handleSendMessageSuccess(channel, result.data())
+            handleSendMessageSuccess(cid, logic, result.data())
         } else {
-            handleSendMessageFail(channel, message, result.error())
+            handleSendMessageFail(logic, message, result.error())
         }
     }
 
@@ -59,20 +58,25 @@ internal class SendMessageListenerImpl(
      * @param processedMessage [Message] returned from API response.
      * @return [Message] Updated message.
      */
-    private suspend fun handleSendMessageSuccess(channel: ChannelLogic, processedMessage: Message) {
+    private suspend fun handleSendMessageSuccess(
+        cid: String,
+        logic: LogicRegistry,
+        processedMessage: Message
+    ) {
         // Don't update latest message with this id if it is already synced.
         val latestUpdatedMessage = repos.selectMessage(processedMessage.id)
         if (latestUpdatedMessage?.syncStatus == SyncStatus.COMPLETED) {
             return
         }
-        processedMessage.enrichWithCid(channel.cid)
+        processedMessage.enrichWithCid(cid)
             .copy(
                 syncStatus = SyncStatus.COMPLETED,
                 syncDescription = null
             )
             .also {
                 repos.insertMessage(it)
-                channel.upsertMessage(it)
+                logic.channelFromMessage(it)?.upsertMessage(it)
+                logic.threadFromMessage(it)?.upsertMessage(it)
             }
     }
 
@@ -84,7 +88,11 @@ internal class SendMessageListenerImpl(
      *
      * @return [Message] Updated message.
      */
-    private suspend fun handleSendMessageFail(channel: ChannelLogic, message: Message, error: ChatError) {
+    private suspend fun handleSendMessageFail(
+        logic: LogicRegistry,
+        message: Message,
+        error: ChatError
+    ) {
         // Don't update latest message with this id if it is already synced.
         val latestUpdatedMessage = repos.selectMessage(message.id) ?: message
         if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
@@ -108,7 +116,8 @@ internal class SendMessageListenerImpl(
         )
             .also {
                 repos.insertMessage(it)
-                channel.upsertMessage(it)
+                logic.channelFromMessage(it)?.upsertMessage(it)
+                logic.threadFromMessage(it)?.upsertMessage(it)
             }
     }
 }

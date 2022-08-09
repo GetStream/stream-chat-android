@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.channel
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
@@ -121,6 +120,7 @@ internal class ChannelMarkReadHelperTests {
         }
         val sut = Fixture()
             .givenChannelState(channelType = channelType, channelId = channelId, channelMutableState)
+            .givenCurrentUser(randomUser())
             .get()
 
         val result = sut.markChannelReadLocallyIfNeeded(channelType = channelType, channelId = channelId)
@@ -196,7 +196,6 @@ internal class ChannelMarkReadHelperTests {
 
     private class Fixture {
 
-        private val chatClient = mock<ChatClient>()
         private val logic = mock<LogicRegistry>()
         private val state = mock<StateRegistry>()
         private val clientState = mock<ClientState>()
@@ -210,13 +209,13 @@ internal class ChannelMarkReadHelperTests {
         }
 
         fun givenCurrentUser(user: User) = apply {
-            whenever(chatClient.getCurrentUser()) doReturn user
+            whenever(clientState.user) doReturn MutableStateFlow(user)
         }
 
         fun givenOnlineUser() = apply {
-            whenever(clientState.isOnline) doReturn true
+            whenever(clientState.isNetworkAvailable) doReturn true
         }
 
-        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(chatClient, logic, state, clientState)
+        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(logic, state, clientState)
     }
 }

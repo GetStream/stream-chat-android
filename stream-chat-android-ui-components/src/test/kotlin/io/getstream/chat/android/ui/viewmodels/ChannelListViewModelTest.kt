@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -306,6 +307,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState)
             )
         }
     }

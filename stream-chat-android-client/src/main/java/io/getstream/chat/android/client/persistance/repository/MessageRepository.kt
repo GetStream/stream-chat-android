@@ -24,6 +24,8 @@ import java.util.Date
 /**
  * Repository to read and write [Message] data.
  */
+
+@Suppress("TooManyFunctions")
 public interface MessageRepository {
 
     /**
@@ -35,6 +37,17 @@ public interface MessageRepository {
     public suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
+    ): List<Message>
+
+    /**
+     * Select messages for a thread in a desired page.
+     *
+     * @param messageId String.
+     * @param limit limit of messages
+     */
+    public suspend fun selectMessagesForThread(
+        messageId: String,
+        limit: Int,
     ): List<Message>
 
     /**

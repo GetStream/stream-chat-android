@@ -38,6 +38,8 @@ import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -79,7 +81,12 @@ public val ChatClient.globalState: GlobalState
  * The [QueryChannelsState] cannot be created before connecting the user therefore, the method returns a StateFlow
  * that emits a null when the user has not been connected yet and the new value every time the user changes.
  *
+ * You can pass option [chatEventHandlerFactory] parameter which will be associated with this query channels request.
+ *
+ * @see [ChatEventHandler]
+ *
  * @param request The request's parameters combined into [QueryChannelsRequest] class.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
  * @return A StateFlow object that emits a null when the user has not been connected yet and the new [QueryChannelsState] when the user changes.
@@ -87,10 +94,11 @@ public val ChatClient.globalState: GlobalState
 @JvmOverloads
 public fun ChatClient.queryChannelsAsState(
     request: QueryChannelsRequest,
+    chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(clientState),
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryChannels(request)
+        requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory)
     }
 }
 
@@ -264,8 +272,8 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
         if (cidValidationResult.isSuccess) {
             try {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-                val (channelType, channelId) = message.cid.cidToTypeAndId()
-                logic.channel(channelType = channelType, channelId = channelId).removeLocalMessage(message)
+                logic.channelFromMessage(message)?.removeLocalMessage(message)
+                logic.threadFromMessage(message)?.removeLocalMessage(message)
                 repositoryFacade.deleteChannelMessage(message)
 
                 Result.success(true)

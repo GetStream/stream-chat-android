@@ -214,6 +214,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
         return messages.filter { (messageId, _) ->
             messageIds.contains(messageId)

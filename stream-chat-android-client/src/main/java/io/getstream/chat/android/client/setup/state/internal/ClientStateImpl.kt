@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.setup.state.internal
 
 import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -25,9 +26,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ClientStateImpl(
-    private val networkLifecyclePublisher: NetworkLifecyclePublisher
+    private val networkLifecyclePublisher: NetworkLifecyclePublisher,
 ) : ClientMutableState {
 
+    private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
     private val _initialized = MutableStateFlow(false)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val _user = MutableStateFlow<User?>(null)
@@ -44,9 +46,16 @@ internal class ClientStateImpl(
         get() = _connectionState.value == ConnectionState.CONNECTING
 
     override val isInitialized: Boolean
-        get() = _initialized.value
+        get() = _initializationState.value == InitializationState.COMPLETE
 
+    @Deprecated(
+        "Use initializationState instead",
+        ReplaceWith("initializationState")
+    )
     override val initialized: StateFlow<Boolean> = _initialized
+
+    override val initializationState: StateFlow<InitializationState>
+        get() = _initializationState
 
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
@@ -54,7 +63,7 @@ internal class ClientStateImpl(
         get() = networkLifecyclePublisher.isConnected()
 
     override fun clearState() {
-        _initialized.value = false
+        _initializationState.value = InitializationState.NOT_INITIALIZED
         _connectionState.value = ConnectionState.OFFLINE
         _user.value = null
     }
@@ -67,8 +76,9 @@ internal class ClientStateImpl(
         _connectionState.value = connectionState
     }
 
-    override fun setInitialized(initialized: Boolean) {
-        _initialized.value = initialized
+    override fun setInitializionState(state: InitializationState) {
+        _initializationState.value = state
+        _initialized.value = state == InitializationState.COMPLETE
     }
 }
 
