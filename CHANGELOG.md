@@ -13,9 +13,11 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Rename of field for optional multi bundle push provider. Now projects with multiple push providers will correct correctly. [#4008](https://github.com/GetStream/stream-chat-android/pull/4008)
+
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added properties `originalHeight` and `originalWidth` to `Attachment`. These represent the original dimensions of an image attachment. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
 
 ### ⚠️ Changed
 
@@ -55,12 +57,14 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
+- Image attachment containers now posses the correct fixed size prior to loading, avoiding message items around messages containing images from "jumping". This is applicable only to image attachments which contain non-null values`Attachment.originalWidth` and `Attachment.originalHeight` properties. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Link attachment previews now feature a more compact image preview container. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
 
 ### ❌ Removed
 
