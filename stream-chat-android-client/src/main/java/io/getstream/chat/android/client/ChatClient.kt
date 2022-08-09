@@ -467,7 +467,7 @@ internal constructor(
                 cancelCoroutines = false
             ).execute()
 
-            scope.coroutineContext.cancelChildren()
+            // scope.coroutineContext.cancelChildren()
         }.flatMap {
             connectUser(user, tokenProvider, timeoutMilliseconds)
         }
