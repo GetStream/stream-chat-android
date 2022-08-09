@@ -37,7 +37,7 @@ internal class ShuffleGiphyListenerStateTest {
 
     private val channelLogic: ChannelLogic = mock()
     private val logic: LogicRegistry = mock {
-        on(it.channel(any(), any())) doReturn channelLogic
+        on(it.channelFromMessage(any())) doReturn channelLogic
     }
     private val shuffleGiphyListenerState = ShuffleGiphyListenerState(logic)
 

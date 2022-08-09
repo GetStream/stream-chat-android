@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -25,7 +24,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
@@ -41,13 +39,11 @@ internal class EditMessageListenerImpl(
      * @param message [Message].
      */
     override suspend fun onMessageEditRequest(message: Message) {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-        val channelLogic = logic.channel(channelType, channelId)
-
         val isOnline = clientState.isOnline
         val messagesToEdit = message.updateMessageOnlineState(isOnline).let(::listOf)
 
-        channelLogic.updateAndSaveMessages(messagesToEdit)
+        logic.channelFromMessage(message)?.updateAndSaveMessages(messagesToEdit)
+        logic.threadFromMessage(message)?.updateAndSaveMessages(messagesToEdit)
     }
 
     /**
@@ -58,26 +54,16 @@ internal class EditMessageListenerImpl(
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
         if (result.isSuccess) {
             val message = result.data()
-            val channelLogic = channelLogicForMessage(message)
             val messages = message.copy(syncStatus = SyncStatus.COMPLETED).let(::listOf)
 
-            channelLogic.updateAndSaveMessages(messages)
+            logic.channelFromMessage(message)?.updateAndSaveMessages(messages)
+            logic.threadFromMessage(message)?.updateAndSaveMessages(messages)
         } else {
-            val channelLogic = channelLogicForMessage(originalMessage)
             val failedMessage = originalMessage.updateFailedMessage(result.error()).let(::listOf)
 
-            channelLogic.updateAndSaveMessages(failedMessage)
+            logic.channelFromMessage(originalMessage)?.updateAndSaveMessages(failedMessage)
+            logic.threadFromMessage(originalMessage)?.updateAndSaveMessages(failedMessage)
         }
-    }
-
-    /**
-     * Gets the channel logic for the channel of a message.
-     *
-     * @param message [Message].
-     */
-    private fun channelLogicForMessage(message: Message): ChannelLogic {
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
-        return logic.channel(channelType, channelId)
     }
 
     /**

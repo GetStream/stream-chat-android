@@ -68,25 +68,18 @@ internal class DeleteReactionListenerState(
 
         val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
             ?: logic.channelFromMessageId(reaction.messageId)
-        val cachedMessage = channelLogic?.getMessage(reaction.messageId)
+        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
             ?.apply {
                 removeMyReaction(reaction = reaction)
             }
+        cachedChannelMessage?.let(channelLogic::upsertMessage)
 
-        if (cid != null && cachedMessage != null) {
-            doOptimisticMessageUpdate(cid = cid, message = cachedMessage)
-        }
-    }
-
-    /**
-     * Updates [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.messages].
-     *
-     * @param cid The full channel id, i.e. "messaging:123".
-     * @param message The [Message] to update.
-     */
-    private fun doOptimisticMessageUpdate(cid: String, message: Message) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        logic.channel(channelType = channelType, channelId = channelId).upsertMessage(message)
+        val threadLogic = logic.threadFromMessageId(messageId)
+        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
+            ?.apply {
+                removeMyReaction(reaction = reaction)
+            }
+        cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
     /**
