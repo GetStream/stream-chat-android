@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.ThreadCall
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.flatMap
@@ -459,7 +460,15 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
         flushPersistence: Boolean,
     ): Call<ConnectionData> {
-        return disconnect(flushPersistence = flushPersistence).flatMap {
+        return ThreadCall {
+            disconnect(
+                flushPersistence = flushPersistence,
+                disposeLifecycleInThread = true,
+                cancelCoroutines = false
+            ).execute()
+
+            scope.coroutineContext.cancelChildren()
+        }.flatMap {
             connectUser(user, tokenProvider, timeoutMilliseconds)
         }
     }
@@ -534,7 +543,7 @@ internal constructor(
             setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
                 logger.v {
                     "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 }
             }
@@ -610,7 +619,7 @@ internal constructor(
             ).also { result ->
                 logger.v {
                     "[connectAnonymousUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                     }"
                 }
             }
@@ -638,7 +647,7 @@ internal constructor(
                 .also { result ->
                     logger.v {
                         "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                         }"
                     }
                 }
@@ -1089,6 +1098,13 @@ internal constructor(
      */
     @CheckResult
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
+        disconnect(flushPersistence, false, cancelCoroutines = true)
+
+    private fun disconnect(
+        flushPersistence: Boolean,
+        disposeLifecycleInThread: Boolean,
+        cancelCoroutines: Boolean,
+    ): Call<Unit> =
         CoroutineCall(scope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             notifications.onLogout()
@@ -1107,10 +1123,17 @@ internal constructor(
                 repositoryFacade.clear()
                 userCredentialStorage.clear()
             }
-            lifecycleObserver.dispose()
+
+            if (disposeLifecycleInThread) {
+                lifecycleObserver.disposeInThread()
+            } else {
+                lifecycleObserver.dispose()
+            }
             appSettingsManager.clear()
             _repositoryFacade = null
-            postponeCancelScope()
+            if (cancelCoroutines) {
+                postponeCancelScope()
+            }
             Result.success(Unit)
         }
 

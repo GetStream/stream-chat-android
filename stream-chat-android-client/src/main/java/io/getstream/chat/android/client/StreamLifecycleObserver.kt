@@ -58,6 +58,16 @@ internal class StreamLifecycleObserver(
         recurringResumeEvent = false
     }
 
+    fun disposeInThread() {
+        logger.d { "[dispose] no args" }
+        if (isObserving) {
+            lifecycle.removeObserver(this@StreamLifecycleObserver)
+            logger.v { "[dispose] unsubscribed" }
+        }
+        isObserving = false
+        recurringResumeEvent = false
+    }
+
     override fun onResume(owner: LifecycleOwner) {
         logger.d { "[onResume] owner: $owner" }
         // ignore event when we just started observing the lifecycle

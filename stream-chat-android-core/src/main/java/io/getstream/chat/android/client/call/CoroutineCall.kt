@@ -37,6 +37,7 @@ public class CoroutineCall<T : Any>(
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
     override fun execute(): Result<T> = runBlocking { await() }
+
     override suspend fun await(): Result<T> = Call.runCatching {
         withContext(callScope.coroutineContext) { suspendingTask() }
     }
