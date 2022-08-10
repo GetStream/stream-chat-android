@@ -109,4 +109,6 @@ dependencies {
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
+
+    detektPlugins(Dependencies.detektFormatting)
 }

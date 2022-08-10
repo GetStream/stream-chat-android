@@ -43,8 +43,9 @@ public interface SuggestionListControllerListener {
  *
  * @param onInputStateChanged Used to react to the input state change to enable or disable attachments.
  */
-internal class DefaultSuggestionListControllerListener(private val onInputStateChanged: (shouldEnableAttachments: Boolean) -> Unit) :
-    SuggestionListControllerListener {
+internal class DefaultSuggestionListControllerListener(
+    private val onInputStateChanged: (shouldEnableAttachments: Boolean) -> Unit
+) : SuggestionListControllerListener {
 
     /**
      * Shows if the suggestion list popup is visible.

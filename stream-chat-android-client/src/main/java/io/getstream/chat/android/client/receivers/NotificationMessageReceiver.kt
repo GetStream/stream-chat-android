@@ -142,7 +142,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 )
             }
             ACTION_REPLY -> {
-                RemoteInput.getResultsFromIntent(intent).getCharSequence(KEY_TEXT_REPLY)?.let { message ->
+                RemoteInput.getResultsFromIntent(intent)?.getCharSequence(KEY_TEXT_REPLY)?.let { message ->
                     replyText(
                         channelId,
                         channelType,

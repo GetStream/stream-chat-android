@@ -39,7 +39,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
         }
     }
 }
@@ -112,4 +112,6 @@ dependencies {
     androidTestImplementation Dependencies.kluent
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
+
+    detektPlugins(Dependencies.detektFormatting)
 }

@@ -281,7 +281,8 @@ class MessagesActivity : BaseConnectedActivity() {
 
                                     composerViewModel.sendMessage(
                                         composerViewModel.buildNewMessage(
-                                            state.inputValue, state.attachments
+                                            state.inputValue,
+                                            state.attachments
                                         )
                                     )
                                 },

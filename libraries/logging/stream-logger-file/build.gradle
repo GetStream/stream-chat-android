@@ -34,4 +34,6 @@ dependencies {
     implementation project(":libraries:logging:stream-logger")
 
     testImplementation Dependencies.junit4
+
+    detektPlugins(Dependencies.detektFormatting)
 }

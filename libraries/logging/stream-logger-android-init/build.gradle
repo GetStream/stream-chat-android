@@ -75,4 +75,6 @@ dependencies {
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.coroutinesTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }
