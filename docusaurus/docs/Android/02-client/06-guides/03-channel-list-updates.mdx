@@ -5,7 +5,7 @@ We update the `ChannelList` and `ChannelListView` components based on data from 
 - Channel-related events that come from the `WebSocket` when the socket is connected
 
 Unlike query channel requests, where you can filter particular channels, channel-related events are not being filtered and need additional attention to handle the list updates correctly.
-By default, the SDK updates the list based on membership - the channel will be added if the currentUser is a member and will be removed otherwise.
+By default, the SDK updates the list based on membership - the channel will be added if the `currentUser` is a member and will be removed otherwise.
 
 ## Custom ChatEventHandler
 
