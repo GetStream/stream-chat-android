@@ -83,7 +83,6 @@
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsNoFilesTextFontAssets</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentNoMediaTextFontAssets</ID>
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
-    <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$public</ID>
     <ID>MaxLineLength:AvatarView.kt$AvatarView$*</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
     <ID>MaxLineLength:ChannelListPayloadDiff.kt$ChannelListPayloadDiff$return nameChanged || avatarViewChanged || usersChanged || lastMessageChanged || readStateChanged || unreadCountChanged || extraDataChanged</ID>
@@ -140,7 +139,6 @@
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorTheirs in 0.75..1.0) { "messageMaxWidthFactorTheirs cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorTheirs" }</ID>
     <ID>MaxLineLength:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$*</ID>
     <ID>MaxLineLength:MessageListListenerContainerImpl.kt$MessageListListenerContainerImpl$attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM)</ID>
-    <ID>MaxLineLength:MessageListView.kt$MessageListView$public</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.MessagesStart.Companion$?:</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.NewMessagesBehaviour.Companion$?:</ID>
     <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$if</ID>
@@ -161,7 +159,6 @@
     <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }</ID>
     <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$private</ID>
     <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$suggestionListControllerListener?.onSuggestionListUiVisibilityChanged(suggestionListUi.isSuggestionListVisible())</ID>
-    <ID>MaxLineLength:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener$internal</ID>
     <ID>MaxLineLength:SuggestionListViewStyle.kt$SuggestionListViewStyle$*</ID>
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var attachmentGalleryOptionsStyleTransformer: StyleTransformer&lt;AttachmentGalleryOptionsViewStyle> = noopTransformer()</ID>
@@ -169,10 +166,6 @@
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
-    <ID>ParameterListWrapping:io.getstream.chat.android.ui.message.list.MessageListView.kt:1217</ID>
-    <ID>ParameterListWrapping:io.getstream.chat.android.ui.message.list.MessageListView.kt:1529</ID>
-    <ID>ParameterListWrapping:io.getstream.chat.android.ui.suggestion.list.SuggestionListControllerListener.kt:46</ID>
-    <ID>ParameterListWrapping:io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer.kt:28</ID>
     <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>

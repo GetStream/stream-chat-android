@@ -1214,7 +1214,9 @@ public class MessageListView : ConstraintLayout {
      *
      * @param moderatedMessageLongClickListener The listener to use. If null, the default will be used instead.
      */
-    public fun setModeratedMessageLongClickListener(moderatedMessageLongClickListener: ModeratedMessageLongClickListener?) {
+    public fun setModeratedMessageLongClickListener(
+        moderatedMessageLongClickListener: ModeratedMessageLongClickListener?,
+    ) {
         this.moderatedMessageLongClickListener = moderatedMessageLongClickListener
     }
 
@@ -1526,7 +1528,9 @@ public class MessageListView : ConstraintLayout {
      *
      * @param handler The handler to use.
      */
-    public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
+    public fun setAttachmentShowInChatOptionClickHandler(
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+    ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
 
