@@ -9,7 +9,7 @@ By default, the SDK updates the list based on membership - the channel will be a
 
 ## Custom ChatEventHandler
 
-The default event handling logic might not fit into your use case and you can spot that `ChannelListView` is not updated properly.  This means you should provide a custom `ChatEventHandler`.
+The default event handling logic might not fit into your use case and you can spot that `ChannelListView` is not updated properly. This means you should provide a custom `ChatEventHandler`.
 You can choose between overriding:
 - `DefaultChatEventHandler` - when you need to extend member-based behavior by adding additional logic
 - `BaseChatEventHandler` - when you need to support different use cases, for example, non-member based but still a separation between `CidEvent` and `HasChannel` events is useful
