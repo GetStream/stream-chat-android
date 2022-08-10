@@ -32,4 +32,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     testImplementation Dependencies.junit4
+
+    detektPlugins(Dependencies.detektFormatting)
 }

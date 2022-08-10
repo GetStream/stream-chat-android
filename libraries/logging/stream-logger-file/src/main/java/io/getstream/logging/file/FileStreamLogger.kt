@@ -139,7 +139,8 @@ public class FileStreamLogger(
             |Android API level: ${device.androidApiLevel}
             |Device: ${device.model}
             |======================================================================
-            |""".trimMargin()
+            |
+    """.trimMargin()
 
     public data class Config(
         val maxLogSize: Int = DEFAULT_SIZE,

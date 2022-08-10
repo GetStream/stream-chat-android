@@ -57,7 +57,7 @@ android {
         debug {
             versionNameSuffix "-DEBUG"
             applicationIdSuffix ".debug"
-            testCoverageEnabled true
+            testCoverageEnabled false
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -173,4 +173,6 @@ dependencies {
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
     androidTestImplementation Dependencies.navigationTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }

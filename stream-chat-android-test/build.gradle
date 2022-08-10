@@ -24,4 +24,6 @@ dependencies {
     implementation Dependencies.androidxArchCoreTest
     implementation Dependencies.junitJupiterApi
     implementation Dependencies.junit4
+
+    detektPlugins(Dependencies.detektFormatting)
 }
