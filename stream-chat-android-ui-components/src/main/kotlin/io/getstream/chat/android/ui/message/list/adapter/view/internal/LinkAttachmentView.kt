@@ -76,7 +76,7 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.titleTextView.isVisible = false
         }
-        style.textStyleLinkTitle.apply(binding.titleTextView)
+        binding.titleTextView.setTextStyle(style.textStyleLinkTitle)
     }
 
     /**
@@ -95,7 +95,7 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.descriptionTextView.isVisible = false
         }
-        style.textStyleLinkDescription.apply(binding.descriptionTextView)
+        binding.descriptionTextView.setTextStyle(style.textStyleLinkDescription)
     }
 
     /**
@@ -114,7 +114,7 @@ internal class LinkAttachmentView : FrameLayout {
         } else {
             binding.labelContainer.isVisible = false
         }
-        style.textStyleLinkLabel.apply(binding.labelTextView)
+        binding.labelTextView.setTextStyle(style.textStyleLinkLabel)
     }
 
     /**
