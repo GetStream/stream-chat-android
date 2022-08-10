@@ -1,8 +1,8 @@
 # Channel List Updates
 
 We update the `ChannelList` and `ChannelListView` components based on data from two sources:
-- Query channels request, with given filter and query sort, when the component is initialized
-- Channel-related events that come from the `WebSocket` when the socket is connected
+- Query channels request, with given filter and query sort, when the component is initialized.
+- Channel-related events that come from the `WebSocket` when the socket is connected.
 
 Unlike query channel requests, where you can filter particular channels, channel-related events are not being filtered and need additional attention to handle the list updates correctly.
 By default, the SDK updates the list based on membership - the channel will be added if the `currentUser` is a member and will be removed otherwise.
@@ -11,9 +11,9 @@ By default, the SDK updates the list based on membership - the channel will be a
 
 The default event handling logic might not fit into your use case and you can spot that `ChannelListView` is not updated properly. This means you should provide a custom `ChatEventHandler`.
 You can choose between overriding:
-- `DefaultChatEventHandler` - when you need to extend member-based behavior by adding additional logic
-- `BaseChatEventHandler` - when you need to support different use cases, for example, non-member based but still a separation between `CidEvent` and `HasChannel` events is useful
-- `ChatEventHandler` - if you want to have full control over events' types
+- `DefaultChatEventHandler` - when you need to extend member-based behavior by adding additional logic.
+- `BaseChatEventHandler` - when you need to support different use cases, for example, non-member based but still a separation between `CidEvent` and `HasChannel` events is useful.
+- `ChatEventHandler` - if you want to have full control over events' types.
 
 In each case, you need to decide what to do with the particular event by returning `EventHandlingResult` that matches an action.
 You can find more details about the result class [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-state/src/main/java/io/getstream/chat/android/offline/event/handler/chat/ChatEventHandler.kt#L57).
@@ -122,3 +122,7 @@ After that, we just need to apply the handlers to the proper `ChannelListViewMod
 ```kotlin
 val factory = ChannelListViewModelFactory(chatEventHandlerFactory = chatEventHandlerFactory)
 ```
+
+With this approach, you can make sure each list in your app only receives and handles the events it should be aware of. The `public` channel list will ignore `private` channel events and vice-versa.
+
+You can use this for many different use cases, like handling different channel categories, groups, or custom types of metadata that describe your channels.
