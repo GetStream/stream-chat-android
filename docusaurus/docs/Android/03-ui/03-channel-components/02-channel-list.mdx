@@ -45,7 +45,10 @@ val viewModel: ChannelListViewModel by viewModels {
 // Bind the ViewModel with ChannelListView
 viewModel.bindView(channelListView, viewLifecycleOwner)
 ```
-To instantiate `ChannelListViewModel` you may want to pass an instance of the `ChatEventHandler` interface. See [this point](#ChatEventHandler) to read more.
+
+:::note
+You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/03-channel-list-updates.mdx) section to read more.
+:::
 
 All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
 
@@ -406,91 +409,3 @@ channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PAREN
 These changes should have the following results:
 
 ![Light mode](../../assets/channel_list_shimmer.png)
-
-
-## ChatEventHandler
-
-When `ChannelListViewModel` is instantiated it makes a query channels request to get the list of channels. Starting from this point, the list is being synced through WebSocket events. The SDK includes a `ChatEventHandler` that decides whether to include or exclude the channel from the list after receiving some events. Sometimes desired behavior differs from the default one and you can notice that for example - the channel doesn't disappear from the list after removing a member. In that case, you should provide a custom `ChatEventHandler` implementation, which has the following interface:
-
-```kotlin
-public fun interface ChatEventHandler {
-    /**
-     * Function that computes result of handling event. It runs in background.
-     *
-     * @param event ChatEvent that may contain updates for the set of channels. See more [ChatEvent]
-     * @param filter [FilterObject] that can be used to define result of handling.
-     *
-     * @return [EventHandlingResult] Result of handling.
-     */
-    public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
-}
-
-/** Class representing possible outcome of chat event handling. */
-public sealed class EventHandlingResult {
-    /**
-     * Add a channel to a query channels collection.
-     *
-     * @param channel Channel to be added.
-     */
-    public class Add(public val channel: Channel) : EventHandlingResult()
-
-    /**
-     * Call watch and add the channel to a query channels collection.
-     *
-     * @param cid cid of the channel to watch and add.
-     */
-    public data class WatchAndAdd(public val cid: String) : EventHandlingResult()
-
-    /**
-     * Remove a channel from a query channels collection.
-     *
-     * @param cid cid of channel to remove.
-     *
-     */
-    public class Remove(public val cid: String) : EventHandlingResult()
-
-    /** Skip handling of this event. */
-    public object Skip : EventHandlingResult()
-}
-```
-
-You can also use `BaseChatEventHandler` - a more detailed implementation that covers the most generic cases and forces you to implement the required ones.
-
-To inject the `ChatEventHandler` to `ChannelListViewModel`, use `ChatEventHandlerFactory` inside `ChannelListViewModelFactory`: 
-
-```
-public class ChannelListViewModelFactory @JvmOverloads constructor(
-    private val filter: FilterObject? = null,
-    private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
-    private val limit: Int = 30,
-    private val messageLimit: Int = 1,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
-) 
-```
-
-A default `ChatEventHandlerFactory` implementation provides a `ChatEventHandler` that updates the `ChannelListView` based on membership - the channel will be added if the current user is a member and it will be removed otherwise.  You can override the factory, like in the example below:
-
-```
-public open class NonMemberChatEventHandlerFactory : ChatEventHandlerFactory() {
-
-    public override fun chatEventHandler(channels: StateFlow<List<Channel>>): ChatEventHandler {
-        return NonMemberChatEventHandler(channels = channels)
-    }
-}
-```
-
-Make sure to pass the factory to the `ChannelListViewModel`:
-
-```
-private val viewModel: ChannelListViewModel by viewModels {
-    ChannelListViewModelFactory(
-        filter = Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
-            Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-        ),
-        chatEventHandlerFactory = NonMemberChatEventHandlerFactory()
-    )
-}
-
-```
