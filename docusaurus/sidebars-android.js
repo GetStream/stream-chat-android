@@ -12,7 +12,7 @@ module.exports = {
     },
     {
         type: 'category',
-        label: 'Client',
+        label: 'Guides',
             items: [
                 {
                     type: 'category',
@@ -30,11 +30,19 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'client/guides/channel-list-updates',
+                },
+                {
+                  type: 'doc',
                   id: 'client/guides/offline-support',
                 },
                 {
                   type: 'doc',
                   id: 'client/guides/chatdomain-migration',
+                },
+                {
+                  type: 'doc',
+                  id: 'client/guides/optimizations',
                 },
             ]
 //        items: [
