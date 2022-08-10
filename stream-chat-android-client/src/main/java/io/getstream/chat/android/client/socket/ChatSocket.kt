@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.socket
 
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
