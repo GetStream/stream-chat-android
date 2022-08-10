@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
+/**
+ * Call that uses Thread instead of Coroutines.
+ */
 public class ThreadCall<T : Any>(
     private val task: () -> T,
 ) : Call<T> {
