@@ -87,4 +87,6 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
+
+    detektPlugins(Dependencies.detektFormatting)
 }

@@ -55,4 +55,6 @@ dependencies {
     implementation project(':stream-chat-android-client')
 
     implementation Dependencies.androidxAnnotations
+
+    detektPlugins(Dependencies.detektFormatting)
 }

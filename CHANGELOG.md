@@ -7,7 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-
+- Updated external libraries version. Check the PR to get more details.[#3976](https://github.com/GetStream/stream-chat-android/pull/3976)
 ### ❌ Removed
 
 ## stream-chat-android-client

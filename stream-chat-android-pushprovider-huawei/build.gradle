@@ -27,7 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
         }
     }
 
@@ -91,4 +91,6 @@ dependencies {
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
+
+    detektPlugins(Dependencies.detektFormatting)
 }
