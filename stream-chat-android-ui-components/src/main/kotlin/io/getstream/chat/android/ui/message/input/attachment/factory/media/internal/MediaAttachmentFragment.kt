@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.input.attachment.media.internal
+package io.getstream.chat.android.ui.message.input.attachment.factory.media.internal
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,16 +31,18 @@ import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Represents the tab of the attachment picker with the media grid.
+ */
 internal class MediaAttachmentFragment : Fragment() {
 
     private var _binding: StreamUiFragmentAttachmentMediaBinding? = null
@@ -53,22 +54,26 @@ internal class MediaAttachmentFragment : Fragment() {
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
-    private val style by lazy { staticStyle }
+
+    /**
+     * Style for the attachment picker dialog.
+     */
+    private lateinit var style: MessageInputViewStyle
+
     private val dialogStyle: AttachmentSelectionDialogStyle by lazy {
-        style?.attachmentSelectionDialogStyle ?: AttachmentSelectionDialogStyle.createDefault(requireContext())
+        style.attachmentSelectionDialogStyle
     }
 
     private val mediaAttachmentsAdapter: MediaAttachmentAdapter by lazy {
-        MediaAttachmentAdapter(style = dialogStyle, ::updateMediaAttachment)
+        MediaAttachmentAdapter(style = style.attachmentSelectionDialogStyle, ::updateMediaAttachment)
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
-    private var attachmentSelectionListener: AttachmentSelectionListener? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        attachmentSelectionListener = parentFragment as? AttachmentSelectionListener
-    }
+    /**
+     * A listener invoked when attachments are selected in the attachment tab.
+     */
+    private var attachmentsPickerTabListener: AttachmentsPickerTabListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,8 +87,10 @@ internal class MediaAttachmentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        checkPermissions()
+        if (::style.isInitialized) {
+            setupViews()
+            checkPermissions()
+        }
     }
 
     override fun onDestroyView() {
@@ -93,7 +100,23 @@ internal class MediaAttachmentFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        attachmentSelectionListener = null
+        attachmentsPickerTabListener = null
+    }
+
+    /**
+     * Sets the listener invoked when attachments are selected in the attachment tab.
+     */
+    fun setAttachmentsPickerTabListener(attachmentsPickerTabListener: AttachmentsPickerTabListener) {
+        this.attachmentsPickerTabListener = attachmentsPickerTabListener
+    }
+
+    /**
+     * Initializes the dialog with the style.
+     *
+     * @param style Style for the dialog.
+     */
+    fun setStyle(style: MessageInputViewStyle) {
+        this.style = style
     }
 
     private fun setupViews() {
@@ -143,7 +166,7 @@ internal class MediaAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             mediaAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, AttachmentSource.MEDIA)
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList(), AttachmentSource.MEDIA)
     }
 
     private fun populateAttachments() {
@@ -158,7 +181,6 @@ internal class MediaAttachmentFragment : Fragment() {
             if (filteredAttachments.isEmpty()) {
                 style?.mediaAttachmentEmptyStateTextStyle?.apply(binding.emptyPlaceholderTextView)
                 binding.emptyPlaceholderTextView.text = style?.mediaAttachmentEmptyStateText
-                    ?: requireContext().getString(R.string.stream_ui_message_input_no_files)
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 mediaAttachmentsAdapter.setAttachments(filteredAttachments)
@@ -168,11 +190,16 @@ internal class MediaAttachmentFragment : Fragment() {
     }
 
     companion object {
-        internal var staticStyle: MessageInputViewStyle? = null
-
-        fun newInstance(style: MessageInputViewStyle): Fragment {
-            staticStyle = style
-            return MediaAttachmentFragment()
+        /**
+         * Creates a new instance of [MediaAttachmentFragment].
+         *
+         * @param style The style for the attachment picker dialog.
+         * @return A new instance of the Fragment.
+         */
+        fun newInstance(style: MessageInputViewStyle): MediaAttachmentFragment {
+            return MediaAttachmentFragment().apply {
+                setStyle(style)
+            }
         }
 
         private const val SPAN_COUNT: Int = 3

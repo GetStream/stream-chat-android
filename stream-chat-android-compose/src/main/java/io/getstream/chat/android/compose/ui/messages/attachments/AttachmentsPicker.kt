@@ -16,11 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,94 +26,54 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.CaptureMediaContract
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
-import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
-import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.uiutils.extension.openSystemSettings
-import java.io.File
 
 /**
- * Represents the bottom bar UI that allows users to pick attachments. It allows for different options
- * and enables/disables options based on currently selected items.
+ * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
+ * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
+ * files and media capture tabs.
  *
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
- * @param modifier Modifier for styling.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onDismiss Handler when the user dismisses the UI.
+ * @param modifier Modifier for styling.
+ * @param tabFactories The list of attachment picker tab factories.
+ * @param shape The shape of the dialog.
  */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val context = LocalContext.current
-    var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
-    val storagePermissionState =
-        rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE) {
-            storagePermissionRequested = true
-        }
-    val requiresCameraPermission = isCameraPermissionDeclared(context)
-
-    val cameraPermissionState =
-        if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
-
-    val mediaCaptureResultLauncher =
-        rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
-            val attachments =
-                if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(context, file))
-                }
-
-            onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(attachments))
-        }
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     Box(
         modifier = Modifier
@@ -142,17 +97,16 @@ public fun AttachmentsPicker(
         ) {
             Column {
                 AttachmentPickerOptions(
-                    attachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
-                    hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
-                    hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
-                    onOptionClick = {
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(it) {
-                            storagePermissionState.status.isGranted
-                        }
+                    hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
+                    tabFactories = tabFactories,
+                    tabIndex = selectedTabIndex,
+                    onTabClick = { index, attachmentPickerMode ->
+                        selectedTabIndex = index
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
-                    }
+                    },
                 )
 
                 Surface(
@@ -160,73 +114,15 @@ public fun AttachmentsPicker(
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     color = ChatTheme.colors.barsBackground,
                 ) {
-                    val pickerMode = attachmentsPickerViewModel.attachmentsPickerMode
-
-                    val permissionState = when (pickerMode) {
-                        Images, Files -> storagePermissionState
-                        MediaCapture -> cameraPermissionState
-                    }
-
-                    val hasPermission = permissionState?.status?.isGranted ?: true
-
-                    val content = @Composable {
-                        when (pickerMode) {
-                            Files -> FilesPicker(
-                                files = attachmentsPickerViewModel.files,
-                                onItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                                onBrowseFilesResult = { uris ->
-                                    val attachments = attachmentsPickerViewModel.getAttachmentsFromUris(uris)
-
-                                    // Check if some of the files were filtered out due to upload config
-                                    if (uris.size != attachments.size) {
-                                        Toast.makeText(
-                                            context,
-                                            R.string.stream_compose_message_composer_file_not_supported,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
-                                    onAttachmentsSelected(attachments)
-                                }
-                            )
-                            Images -> ImagesPicker(
-                                modifier = Modifier.padding(
-                                    top = 16.dp,
-                                    start = 2.dp,
-                                    end = 2.dp,
-                                    bottom = 2.dp
-                                ),
-                                images = attachmentsPickerViewModel.images,
-                                onImageSelected = attachmentsPickerViewModel::changeSelectedAttachments
-                            )
-                            MediaCapture -> Box(modifier = Modifier.fillMaxSize()) {
-                                LaunchedEffect(Unit) {
-                                    mediaCaptureResultLauncher.launch(Unit)
-                                }
-                            }
-                        }
-                    }
-
-                    if (pickerMode == MediaCapture && permissionState == null) {
-                        content()
-                    } else if (permissionState != null) {
-                        when (permissionState.status) {
-                            PermissionStatus.Granted -> content()
-                            is PermissionStatus.Denied -> MissingPermissionContent(permissionState)
-                        }
-                    }
-
-                    LaunchedEffect(storagePermissionState.status.isGranted) {
-                        if (storagePermissionState.status.isGranted) {
-                            attachmentsPickerViewModel.loadData()
-                        }
-                    }
-
-                    LaunchedEffect(pickerMode) {
-                        if (!hasPermission && !storagePermissionRequested) {
-                            storagePermissionState.launchPermissionRequest()
-                        }
-                    }
+                    tabFactories.getOrNull(selectedTabIndex)
+                        ?.pickerTabContent(
+                            attachments = attachmentsPickerViewModel.attachments,
+                            onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                            onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                            onAttachmentsSubmitted = {
+                                onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
+                            },
+                        )
                 }
             }
         }
@@ -234,151 +130,50 @@ public fun AttachmentsPicker(
 }
 
 /**
- * Returns if we need to check for the camera permission or not.
+ * The options for the Attachment picker. Shows tabs based on the provided list of [tabFactories]
+ * and a button to submit the selected attachments.
  *
- * @param context The context of the app.
- * @return If the camera permission is declared in the manifest or not.
- */
-private fun isCameraPermissionDeclared(context: Context): Boolean {
-    return context.packageManager
-        .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-        .requestedPermissions
-        .contains(Manifest.permission.CAMERA)
-}
-
-/**
- * Shows the UI if we're missing permissions to fetch data for attachments.
- * The UI explains to the user which permission is missing and why we need it.
- */
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun MissingPermissionContent(permissionState: PermissionState) {
-    val title = when (permissionState.permission) {
-        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_title
-        else -> R.string.stream_ui_message_input_permission_camera_title
-    }
-
-    val message = when (permissionState.permission) {
-        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_message
-        else -> R.string.stream_ui_message_input_permission_camera_message
-    }
-
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            style = ChatTheme.typography.title3Bold,
-            text = stringResource(id = title),
-            color = ChatTheme.colors.textHighEmphasis,
-        )
-
-        Spacer(modifier = Modifier.size(16.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = ChatTheme.typography.body,
-            text = stringResource(id = message),
-            textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
-        )
-
-        Spacer(modifier = Modifier.size(16.dp))
-
-        TextButton(
-            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-            onClick = { context.openSystemSettings() }
-        ) {
-            Text(stringResource(id = R.string.stream_compose_grant_permission))
-        }
-    }
-}
-
-/**
- * The options for the Attachment picker. Shows three options:
- * - Images
- * - Files
- * - Media
- *
- * @param hasPickedImages If the user picked any images. Used to disable other options.
- * @param hasPickedFiles If the user picked any files. Used to disable other options.
- * @param onOptionClick Handler for clicking on any of the options, to change the shown attachments.
+ * @param hasPickedAttachments If we selected any attachments in the currently selected tab.
+ * @param tabFactories The list of factories to build tab icons.
+ * @param tabIndex The index of the tab that we selected.
+ * @param onTabClick Handler for clicking on any of the tabs, to change the shown attachments.
  * @param onSendAttachmentsClick Handler when confirming the picked attachments.
  */
 @Composable
 private fun AttachmentPickerOptions(
-    attachmentsPickerMode: AttachmentsPickerMode,
-    hasPickedImages: Boolean,
-    hasPickedFiles: Boolean,
-    onOptionClick: (AttachmentsPickerMode) -> Unit,
+    hasPickedAttachments: Boolean,
+    tabFactories: List<AttachmentsPickerTabFactory>,
+    tabIndex: Int,
+    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
     Row(
-        Modifier
-            .fillMaxWidth(),
+        Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+            tabFactories.forEachIndexed { index, tabFactory ->
 
-        Row(
-            Modifier.weight(4f),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(
-                enabled = !hasPickedFiles,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
-                        contentDescription = stringResource(id = R.string.stream_compose_images_option),
-                        tint = when {
-                            attachmentsPickerMode == Images -> ChatTheme.colors.primaryAccent
-                            hasPickedFiles -> ChatTheme.colors.disabled
-                            else -> ChatTheme.colors.textLowEmphasis
-                        },
-                    )
-                },
-                onClick = { onOptionClick(Images) }
-            )
+                val isSelected = index == tabIndex
+                val isEnabled = isSelected || (!isSelected && !hasPickedAttachments)
 
-            IconButton(
-                enabled = !hasPickedImages,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
-                        contentDescription = stringResource(id = R.string.stream_compose_files_option),
-                        tint = when {
-                            attachmentsPickerMode == Files -> ChatTheme.colors.primaryAccent
-                            hasPickedImages -> ChatTheme.colors.disabled
-                            else -> ChatTheme.colors.textLowEmphasis
-                        },
-                    )
-                },
-                onClick = { onOptionClick(Files) }
-            )
-
-            IconButton(
-                enabled = !hasPickedFiles && !hasPickedImages,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
-                        contentDescription = stringResource(id = R.string.stream_compose_capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) {
-                            ChatTheme.colors.textLowEmphasis
-                        } else {
-                            ChatTheme.colors.disabled
-                        }
-                    )
-                },
-                onClick = { onOptionClick(MediaCapture) }
-            )
+                IconButton(
+                    enabled = isEnabled,
+                    content = {
+                        tabFactory.pickerTabIcon(
+                            isEnabled = isEnabled,
+                            isSelected = isSelected
+                        )
+                    },
+                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) }
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.weight(5f))
+        Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
-            enabled = hasPickedFiles || hasPickedImages,
+            enabled = hasPickedAttachments,
             onClick = onSendAttachmentsClick,
             content = {
                 val layoutDirection = LocalLayoutDirection.current
@@ -389,7 +184,7 @@ private fun AttachmentPickerOptions(
                         .mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) {
+                    tint = if (hasPickedAttachments) {
                         ChatTheme.colors.primaryAccent
                     } else {
                         ChatTheme.colors.textLowEmphasis

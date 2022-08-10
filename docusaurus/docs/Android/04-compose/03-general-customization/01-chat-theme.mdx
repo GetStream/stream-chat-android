@@ -19,6 +19,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **MessageAlignmentProvider**: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 * **MessageOptionsUserReactionAlignment**: Used to define how message reactions are aligned when browsing all reactions for a given message.
 * **PermissionHandlers**: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
+* **AttachmentsPickerTabFactories**: Used to display different tabs in the attachments picker dialog.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
@@ -150,6 +151,12 @@ If you want you can take a look at the [class documentation](https://github.com/
 
 You can customize file previews by creating your own list of `AttachmentPreviewHandler`s and overriding `ChatTheme.attachmentPreviewHandlers` with it.
 
+### Quoted AttachmentFactories
+
+`StreamAttachmentFactories.defaultQuotedFactories()` provides default attachment factories for quoted messages.
+
+If you want to know more you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories.kt) or read the detailed guide on [Custom Attachments](../07-guides/01-adding-custom-attachments.mdx).
+
 ### ReactionIconFactory
 
 Used for defining reactions the user can add to messages. `ReactionIconFactory.defaultFactory()` provides our default basic reactions out of the box.
@@ -197,3 +204,25 @@ Used for aligning messages. The default message alignment provider is `DefaultMe
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider.kt).
 
 As with all of the other `ChatTheme` properties, you can easily customize how the messages are aligned by overriding `ChatTheme.messageAlignmentProvider` with your own implementation of `MessageAlignmentProvider`.
+
+### MessageOptionsUserReactionAlignment
+
+Determines the alignment of the reaction icon inside user reactions. By default, they are aligned to the end.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/MessageOptionsUserReactionAlignment.kt).
+
+You can also align the reactions to the start of the user avatar or align them depending on the user who left them.
+
+### PermissionHandlers
+
+`StreamPermissionHandlers.defaultHandlers()` provides default handler for storage permission that automatically downloads files after the permission has been granted.
+
+If you want to know more you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/handlers/StreamPermissionHandlers.kt).
+
+### AttachmentsPickerTabFactories
+
+`AttachmentsPickerTabFactories.defaultFactories()` provides default factories for image, files and media capture tabs of the attachment picker dialog.
+
+If you want to know more you can take a look at the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories.kt).
+
+You can pass a different set of factories to enable/disable a particular tab or introduce a custom one.

@@ -59,6 +59,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `streamUiAttachmentsPickerMediaAttachmentsTabEnabled`, `streamUiAttachmentsPickerFileAttachmentsTabEnabled` and `streamUiAttachmentsPickerCameraAttachmentsTabEnabled` attributes to `MessageComposerView` that allow to show/hide particular tabs in the attachment picker. [#3977](https://github.com/GetStream/stream-chat-android/pull/3977)
+- Add `streamUiMediaAttachmentsTabEnabled`, `streamUiFileAttachmentsTabEnabled` and `streamUiCameraAttachmentsTabEnabled` attributes to `MessageInputView` that allow to show/hide particular tabs in the attachment picker.. [#3977](https://github.com/GetStream/stream-chat-android/pull/3977)
+- Add the `attachmentsPickerTabFactories` parameter to `AttachmentSelectionDialogFragment` that allows to create a custom tab for the attachment picker. [#3977](https://github.com/GetStream/stream-chat-android/pull/3977)
 
 ### ⚠️ Changed
 
@@ -72,6 +75,7 @@
 
 ### ✅ Added
 - Added additional `chatEventHandlerFactory` parameter to `ChannelListViewModel` and `ChannelListViewModelFactory` that allows customizing `ChatEventHandler`. [#3997](https://github.com/GetStream/stream-chat-android/pull/3997)
+- Added the `tabFactories` parameter to `AttachmentsPicker` that allows to control the list of tabs displayed in the picker. [#3994](https://github.com/GetStream/stream-chat-android/pull/3994)
 
 ### ⚠️ Changed
 
