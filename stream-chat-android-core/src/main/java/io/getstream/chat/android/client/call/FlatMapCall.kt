@@ -42,19 +42,18 @@ internal class FlatMapCall<T : Any, K : Any>(
 
     override fun enqueue(callback: Call.Callback<K>) {
         call.enqueue { result ->
-            result
-                // .takeUnless { canceled.get() }
-                .flapMapCall(mapper)
-                .let(callback::onResult)
+            result.takeUnless { canceled.get() }
+                ?.flapMapCall(mapper)
+                ?.let(callback::onResult)
         }
     }
 
     override suspend fun await(): Result<K> = withContext(DispatcherProvider.IO) {
         call.await()
-            // .takeUnless { canceled.get() }
-            .map(mapper)
-            // .takeUnless { canceled.get() }
-            .flatMapSuspend { call -> call.await() }
-            // ?: callCanceledError()
+            .takeUnless { canceled.get() }
+            ?.map(mapper)
+            ?.takeUnless { canceled.get() }
+            ?.flatMapSuspend { call -> call.await() }
+            ?: callCanceledError()
     }
 }

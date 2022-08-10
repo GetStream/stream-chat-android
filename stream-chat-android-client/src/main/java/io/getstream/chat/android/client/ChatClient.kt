@@ -466,8 +466,6 @@ internal constructor(
                 disposeLifecycleInThread = true,
                 cancelCoroutines = false
             ).execute()
-
-            scope.coroutineContext.cancelChildren()
         }.flatMap {
             connectUser(user, tokenProvider, timeoutMilliseconds)
         }
