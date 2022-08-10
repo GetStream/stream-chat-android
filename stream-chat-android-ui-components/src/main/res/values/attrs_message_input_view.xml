@@ -181,6 +181,9 @@
         <attr name="streamUiAttachmentSelectionBackgroundColor" format="color|reference" />
         <attr name="streamUiAttachmentSelectionAttachIcon" format="reference" />
         <attr name="streamUiAttachmentTabButtonColorStateList" format="color|reference" />
+        <attr name="streamUiMediaAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiFileAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiCameraAttachmentsTabEnabled" format="boolean" />
 
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />

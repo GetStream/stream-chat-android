@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.input.attachment.media.internal
+package io.getstream.chat.android.ui.message.input.attachment.factory.media.internal
 
 import android.graphics.Color
 import android.view.ViewGroup

@@ -80,14 +80,6 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
-    <style name="StreamUiAttachmentDialogToggleButton">
-        <item name="android:layout_width">@dimen/stream_ui_attachment_dialog_button_size</item>
-        <item name="android:layout_height">@dimen/stream_ui_attachment_dialog_button_size</item>
-        <item name="android:backgroundTint">@color/stream_ui_attachment_tab_button</item>
-        <item name="android:textOff"/>
-        <item name="android:textOn"/>
-    </style>
-
     <style name="StreamUiBadgeStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">16dp</item>
