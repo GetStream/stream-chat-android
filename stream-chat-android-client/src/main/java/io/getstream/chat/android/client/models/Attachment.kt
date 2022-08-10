@@ -90,7 +90,7 @@ public data class Attachment(
 
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
-    ) : CustomObject {
+) : CustomObject {
 
     /**
      * Represents various states in attachment upload lifecycle.
