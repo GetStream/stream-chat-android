@@ -122,6 +122,8 @@ internal class LinkAttachmentView : FrameLayout {
      */
     private fun showAttachmentImage(attachment: Attachment) {
         if (attachment.imagePreviewUrl != null) {
+            binding.linkPreviewContainer.isVisible = true
+
             binding.linkPreviewImageView.load(
                 data = attachment.imagePreviewUrl,
                 placeholderResId = R.drawable.stream_ui_picture_placeholder,
