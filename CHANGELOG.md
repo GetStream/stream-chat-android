@@ -8,14 +8,17 @@
 
 ### ⚠️ Changed
 - Updated external libraries version. Check the PR to get more details.[#3976](https://github.com/GetStream/stream-chat-android/pull/3976)
+
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Rename of field for optional multi bundle push provider. Now projects with multiple push providers will correct correctly. [#4008](https://github.com/GetStream/stream-chat-android/pull/4008)
+
 ### ⬆️ Improved
 
 ### ✅ Added
+- Method to switch between users `ChatClient.switchUser`. Can user use when switching between user to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
 
 ### ⚠️ Changed
 
