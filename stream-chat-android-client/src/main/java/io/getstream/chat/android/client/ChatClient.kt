@@ -1148,11 +1148,8 @@ internal constructor(
                 userCredentialStorage.clear()
             }
 
-            if (disposeLifecycleInThread) {
-                lifecycleObserver.disposeInThread()
-            } else {
-                lifecycleObserver.dispose()
-            }
+            lifecycleObserver.dispose(disposeLifecycleInThread)
+
             appSettingsManager.clear()
             _repositoryFacade = null
             if (cancelCoroutines) {

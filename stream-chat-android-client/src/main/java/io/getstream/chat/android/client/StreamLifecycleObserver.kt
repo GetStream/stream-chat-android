@@ -46,23 +46,18 @@ internal class StreamLifecycleObserver(
         }
     }
 
-    suspend fun dispose() {
+    suspend fun dispose(inThread: Boolean) {
         logger.d { "[dispose] no args" }
         if (isObserving) {
-            withContext(DispatcherProvider.Main) {
+            if (inThread) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
                 logger.v { "[dispose] unsubscribed" }
+            } else {
+                withContext(DispatcherProvider.Main) {
+                    lifecycle.removeObserver(this@StreamLifecycleObserver)
+                    logger.v { "[dispose] unsubscribed" }
+                }
             }
-        }
-        isObserving = false
-        recurringResumeEvent = false
-    }
-
-    fun disposeInThread() {
-        logger.d { "[dispose] no args" }
-        if (isObserving) {
-            lifecycle.removeObserver(this@StreamLifecycleObserver)
-            logger.v { "[dispose] unsubscribed" }
         }
         isObserving = false
         recurringResumeEvent = false
