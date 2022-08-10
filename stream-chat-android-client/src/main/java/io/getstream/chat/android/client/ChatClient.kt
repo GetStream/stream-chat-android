@@ -454,15 +454,29 @@ internal constructor(
         }
     }
 
+    /**
+     * Changes the user. Disconnects the current user and connects to a new one.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
+     *
+     * This method disconnects from the SDK and right after connects to it with the new User.
+     *
+     * @see TokenProvider
+     *
+     * @param user The user to set.
+     * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
     public fun switchUser(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
-        flushPersistence: Boolean,
     ): Call<ConnectionData> {
         return ThreadCall {
             disconnect(
-                flushPersistence = flushPersistence,
+                flushPersistence = true,
                 disposeLifecycleInThread = true,
                 cancelCoroutines = false
             ).execute()
@@ -475,9 +489,8 @@ internal constructor(
         user: User,
         token: String,
         timeoutMilliseconds: Long? = null,
-        flushPersistence: Boolean = false,
     ): Call<ConnectionData> {
-        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, flushPersistence)
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
     }
 
     private fun initializeClientWithUser(
