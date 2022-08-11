@@ -102,7 +102,7 @@ public interface Call<T : Any> {
  */
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.launch(scope: CoroutineScope) {
-    scope.launch {
+    scope.launch scopeLaunch@{
         this@launch.await()
     }
 }

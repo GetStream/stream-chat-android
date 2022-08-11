@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecif
 import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.models.CustomObject
+import io.getstream.chat.android.core.internal.asComparable
 import io.getstream.logging.StreamLog
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
@@ -79,7 +80,7 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         }
 
     private fun comparableFromExtraData(any: Any, field: String): Comparable<Any>? {
-        return (any as? CustomObject)?.extraData?.get(field) as? Comparable<Any>
+        return (any as? CustomObject)?.extraData?.get(field).asComparable()
     }
 
     internal open fun add(sortSpecification: SortSpecification<T>): QuerySortByReflection<T> {

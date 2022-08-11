@@ -42,9 +42,9 @@ public class FSMBuilder<STATE : Any, EVENT : Any> {
 
     @FSMBuilderMarker
     public inline fun <reified S : STATE> state(stateHandlerBuilder: StateHandlerBuilder<STATE, EVENT, S>.() -> Unit) {
-        val stateHandlerBuilder = StateHandlerBuilder<STATE, EVENT, S>().apply(stateHandlerBuilder)
-        stateFunctions[S::class] = stateHandlerBuilder.get()
-        enterListeners[S::class] = stateHandlerBuilder.getEnterListeners()
+        val newStateHandlerBuilder = StateHandlerBuilder<STATE, EVENT, S>().apply(stateHandlerBuilder)
+        stateFunctions[S::class] = newStateHandlerBuilder.get()
+        enterListeners[S::class] = newStateHandlerBuilder.getEnterListeners()
     }
 
     internal fun build(): FiniteStateMachine<STATE, EVENT> {

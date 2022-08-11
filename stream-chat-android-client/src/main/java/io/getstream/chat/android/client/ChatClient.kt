@@ -446,7 +446,7 @@ internal constructor(
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
         }.onError {
-            disconnect()
+            disconnect(true).execute()
         }.onSuccess {
             clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
         }

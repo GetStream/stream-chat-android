@@ -144,7 +144,7 @@ internal class ClientConnectionTests {
         client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
-        client.disconnect()
+        client.disconnect(true).enqueue()
 
         verify(socket, times(1)).disconnect()
     }

@@ -19,3 +19,9 @@ package io.getstream.chat.android.core.internal
 @InternalStreamChatApi
 public inline val <T> T.exhaustive: T
     get() = this
+
+@Suppress("UNCHECKED_CAST")
+@InternalStreamChatApi
+public fun Any?.asComparable(): Comparable<Any>? {
+    return this as? Comparable<Any>
+}

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.querysort.internal.SortAttrib
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+import io.getstream.chat.android.core.internal.asComparable
 import io.getstream.logging.StreamLog
 
 /**
@@ -53,8 +54,8 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
         Comparator { o1, o2 ->
             val fieldName = this.snakeToLowerCamelCase()
             logger.v { "[compare] fieldName: $fieldName" }
-            val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
-            val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
+            val fieldOne = o1.getComparableField(fieldName).asComparable()
+            val fieldTwo = o2.getComparableField(fieldName).asComparable()
 
             compare(fieldOne, fieldTwo, sortDirection)
         }
