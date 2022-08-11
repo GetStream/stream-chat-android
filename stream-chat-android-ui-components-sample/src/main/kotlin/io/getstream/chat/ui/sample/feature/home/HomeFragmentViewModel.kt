@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.application.App
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 class HomeFragmentViewModel : ViewModel() {
@@ -41,6 +42,17 @@ class HomeFragmentViewModel : ViewModel() {
         _state.value = State(
             user = ChatClient.instance().getCurrentUser() ?: unauthorizedUser,
         )
+
+        ChatClient.instance()
+            .clientState
+            .user
+            .filterNotNull()
+            .asLiveData()
+            .let { userLiveData ->
+                _state.addSource(userLiveData) { user ->
+                    setState { copy(user = user) }
+                }
+            }
 
         val totalUnreadCount = ChatClient.instance().globalState.totalUnreadCount.asLiveData()
         _state.addSource(totalUnreadCount) { count ->
