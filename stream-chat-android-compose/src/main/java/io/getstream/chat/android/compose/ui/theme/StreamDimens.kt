@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.dp
  */
 @Immutable
 public data class StreamDimens
-
 @Deprecated(
     "This constructor has been deprecated. Parameter 'attachmentsContentImageHeight' has been deprecated in" +
         " favor of 'attachmentsContentImageMaxHeight'. Please use the constructor which does not contain " +
@@ -125,7 +124,6 @@ constructor(
     public val attachmentsContentImageMaxHeight: Dp,
 ) {
 
-
     /**
      * Contains all the dimens we provide for our components.
      *
@@ -172,7 +170,7 @@ constructor(
      * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
      * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
      * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
-     * re-sizing itself in order to obey its aspect ratio.
+     *  re-sizing itself in order to obey its aspect ratio.
      */
     public constructor(
         channelItemVerticalPadding: Dp,
