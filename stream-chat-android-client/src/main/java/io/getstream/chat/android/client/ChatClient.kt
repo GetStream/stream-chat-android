@@ -282,21 +282,6 @@ internal constructor(
                         setUser(user)
                     }
                 }
-                is DisconnectedEvent -> {
-                    when (event.disconnectCause) {
-                        DisconnectCause.ConnectionReleased,
-                        DisconnectCause.NetworkNotAvailable,
-                        is DisconnectCause.Error,
-                        -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
-                        is DisconnectCause.UnrecoverableError -> {
-                            userStateService.onSocketUnrecoverableError()
-                            if (ToggleService.isSocketExperimental().not()) {
-                                socketStateService.onSocketUnrecoverableError()
-                            }
-                        }
-                    }
-                    clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
-                }
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
                 }
@@ -315,7 +300,30 @@ internal constructor(
                 )
             }
         }
+
+        eventsObservable.subscribe { event ->
+            if (event is DisconnectedEvent) {
+                handleDisconnectionEvent(event)
+            }
+        }
+
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
+    }
+
+    private fun handleDisconnectionEvent(disconnectedEvent: DisconnectedEvent) {
+        when (disconnectedEvent.disconnectCause) {
+            DisconnectCause.ConnectionReleased,
+            DisconnectCause.NetworkNotAvailable,
+            is DisconnectCause.Error,
+            -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
+            is DisconnectCause.UnrecoverableError -> {
+                userStateService.onSocketUnrecoverableError()
+                if (ToggleService.isSocketExperimental().not()) {
+                    socketStateService.onSocketUnrecoverableError()
+                }
+            }
+        }
+        clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
     }
 
     /**
@@ -517,6 +525,19 @@ internal constructor(
                     }"
                 }
             }
+        }
+    }
+
+    public fun switchUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            disconnect(flushPersistence = true).await()
+                .flatMapSuspend {
+                    connectUser(user, tokenProvider, timeoutMilliseconds).await()
+                }
         }
     }
 

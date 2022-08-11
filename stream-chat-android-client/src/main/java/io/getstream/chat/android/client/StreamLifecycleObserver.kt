@@ -49,10 +49,10 @@ internal class StreamLifecycleObserver(
     suspend fun dispose() {
         logger.d { "[dispose] no args" }
         if (isObserving) {
-            withContext(DispatcherProvider.Main) {
+            // withContext(DispatcherProvider.Main) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
                 logger.v { "[dispose] unsubscribed" }
-            }
+            // }
         }
         isObserving = false
         recurringResumeEvent = false

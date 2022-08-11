@@ -127,7 +127,12 @@ internal open class ChatSocket constructor(
                     connectionConf = null
                     networkStateProvider.unsubscribe(networkStateListener)
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
+
+                    callListeners(forceSync = true) { listener ->
+                        listener.onDisconnected(
+                            DisconnectCause.UnrecoverableError(newState.error)
+                        )
+                    }
                 }
             }
         }
@@ -295,10 +300,14 @@ internal open class ChatSocket constructor(
         socket = null
     }
 
-    private fun callListeners(call: (SocketListener) -> Unit) {
+    private fun callListeners(forceSync: Boolean = false, call: (SocketListener) -> Unit) {
         synchronized(listeners) {
-            listeners.forEach { listener ->
-                eventUiHandler.post { call(listener) }
+            if (forceSync) {
+                listeners.forEach(call)
+            } else {
+                listeners.forEach { listener ->
+                    eventUiHandler.post { call(listener) }
+                }
             }
         }
     }
