@@ -21,6 +21,7 @@
 
 ### ✅ Added
 - Added properties `originalHeight` and `originalWidth` to `Attachment`. These represent the original dimensions of an image attachment. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
+- Method to switch between users `ChatClient.switchUser`. Can user use when switching between user to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
 
 ### ⚠️ Changed
 
