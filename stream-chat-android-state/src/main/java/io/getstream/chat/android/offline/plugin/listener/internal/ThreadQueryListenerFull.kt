@@ -18,8 +18,10 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -27,18 +29,28 @@ import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.Th
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.logging.StreamLog
 
-internal class ThreadQueryListenerImpl(
-    private val logic: LogicRegistry,
-    private val repos: RepositoryFacade,
-    private val chatClient: ChatClient
+/**
+ * ThreadQueryListenerFull handles both state and database. It uses, if available, the database
+ * to update, if available, the state.
+ *
+ * @param logic [LogicRegistry] Optional class to handle state updates
+ * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
+ * @param userRepository [UserRepository]  Optional to handle database updates related to user
+ * @param chatClient [ChatClient]
+ */
+internal class ThreadQueryListenerFull(
+    private val logic: LogicRegistry?,
+    private val messageRepository: MessageRepository?,
+    private val userRepository: UserRepository?,
+    private val chatClient: ChatClient,
 ) : ThreadQueryListener {
 
     private val logger = StreamLog.getLogger("Chat:ThreadQueryListener")
 
     override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> {
-        val loadingMoreMessage = logic.thread(messageId).isLoadingMessages()
+        val loadingMoreMessage = logic?.thread(messageId)?.isLoadingMessages()
 
-        return if (loadingMoreMessage) {
+        return if (loadingMoreMessage == true) {
             val errorMsg = "already loading messages for this thread, ignoring the load requests."
             logger.i { errorMsg }
             Result(ChatError(errorMsg))
@@ -48,20 +60,22 @@ internal class ThreadQueryListenerImpl(
     }
 
     override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
-        val threadLogic = logic.thread(messageId)
+        val threadLogic = logic?.thread(messageId)
 
-        threadLogic.setLoading(true)
-        val messages = repos.selectMessagesForThread(messageId, limit)
-        val parentMessage = messages.firstOrNull { it.id == messageId }
+        threadLogic?.setLoading(true)
+        val messages = messageRepository?.selectMessagesForThread(messageId, limit)
+        val parentMessage = messages?.firstOrNull { it.id == messageId } ?: threadLogic?.getMessage(messageId)
 
         if (parentMessage != null) {
-            threadLogic.upsertMessages(messages)
+            messages?.let { threadLogic?.upsertMessages(it) }
             Result.success(Unit)
         } else {
             val result = chatClient.getMessage(messageId).await()
             if (result.isSuccess) {
-                threadLogic.upsertMessage(result.data())
-                repos.insertMessage(result.data())
+                val message = result.data()
+                threadLogic?.upsertMessage(result.data())
+                userRepository?.insertUsers(message.users())
+                messageRepository?.insertMessage(message)
                 Result.success(Unit)
             } else {
                 Result(result.error())
@@ -70,15 +84,15 @@ internal class ThreadQueryListenerImpl(
     }
 
     override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {
-        val threadLogic = logic.thread(messageId)
-        threadLogic.setLoading(false)
+        val threadLogic = logic?.thread(messageId)
+        threadLogic?.setLoading(false)
         onResult(threadLogic, result, limit)
     }
 
     override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> {
-        val loadingMoreMessage = logic.thread(messageId).isLoadingOlderMessages()
+        val loadingMoreMessage = logic?.thread(messageId)?.isLoadingOlderMessages()
 
-        return if (loadingMoreMessage) {
+        return if (loadingMoreMessage == true) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
             Result(ChatError(errorMsg))
@@ -88,7 +102,7 @@ internal class ThreadQueryListenerImpl(
     }
 
     override suspend fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int) {
-        logic.thread(messageId).setLoadingOlderMessages(true)
+        logic?.thread(messageId)?.setLoadingOlderMessages(true)
     }
 
     override suspend fun onGetRepliesMoreResult(
@@ -97,22 +111,25 @@ internal class ThreadQueryListenerImpl(
         firstId: String,
         limit: Int,
     ) {
-        val threadLogic = logic.thread(messageId)
+        val threadLogic = logic?.thread(messageId)
 
-        threadLogic.setLoadingOlderMessages(false)
+        threadLogic?.setLoadingOlderMessages(false)
         onResult(threadLogic, result, limit)
     }
 
-    private suspend fun onResult(threadLogic: ThreadLogic, result: Result<List<Message>>, limit: Int) {
+    private suspend fun onResult(threadLogic: ThreadLogic?, result: Result<List<Message>>, limit: Int) {
         if (result.isSuccess) {
             val newMessages = result.data()
-            threadLogic.upsertMessages(newMessages)
-            threadLogic.setEndOfOlderMessages(newMessages.size < limit)
-            threadLogic.updateOldestMessageInThread(newMessages)
+            threadLogic?.run {
+                upsertMessages(newMessages)
+                setEndOfOlderMessages(newMessages.size < limit)
+                updateOldestMessageInThread(newMessages)
+            }
         }
 
         result.onSuccessSuspend { messages ->
-            repos.insertMessages(messages)
+            userRepository?.insertUsers(messages.flatMap(Message::users))
+            messageRepository?.insertMessages(messages)
         }
     }
 }
