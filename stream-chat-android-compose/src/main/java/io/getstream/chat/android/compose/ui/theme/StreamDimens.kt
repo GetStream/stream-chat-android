@@ -66,15 +66,19 @@ import androidx.compose.ui.unit.dp
  * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
  * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
  * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
+ * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
+ * re-sizing itself in order to obey its aspect ratio.
  */
 @Immutable
+public data class StreamDimens
+
 @Deprecated(
     "This constructor has been deprecated. Parameter 'attachmentsContentImageHeight' has been deprecated in" +
         " favor of 'attachmentsContentImageMaxHeight'. Please use the constructor which does not contain " +
         "`attachmentsContentImageHeight`",
     level = DeprecationLevel.WARNING
 )
-public data class StreamDimens(
+constructor(
     public val channelItemVerticalPadding: Dp,
     public val channelItemHorizontalPadding: Dp,
     public val channelAvatarSize: Dp,
@@ -121,6 +125,55 @@ public data class StreamDimens(
     public val attachmentsContentImageMaxHeight: Dp,
 ) {
 
+
+    /**
+     * Contains all the dimens we provide for our components.
+     *
+     * @param channelItemVerticalPadding The vertical content padding inside channel list item.
+     * @param channelItemHorizontalPadding The horizontal content padding inside channel list item.
+     * @param channelAvatarSize The size of channel avatar.
+     * @param selectedChannelMenuUserItemWidth The width of a member tile in the selected channel menu.
+     * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel menu.
+     * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
+     * @param attachmentsContentImageWidth The width of image attachments in the message list.
+     * @param attachmentsContentImageGridSpacing The spacing between image tiles in the message list.
+     * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
+     * @param attachmentsContentGiphyHeight The height of Giphy attachments in the message list.
+     * @param attachmentsContentLinkWidth The with of link attachments in the message list.
+     * @param attachmentsContentFileWidth The width of file attachments in the message list.
+     * @param attachmentsContentFileUploadWidth The width of uploading file attachments in the message list.
+     * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
+     * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
+     * @param messageOptionsItemHeight The height of a message option item.
+     * @param suggestionListMaxHeight The maximum height of the suggestion list popup.
+     * @param suggestionListPadding The outer padding of the suggestion list popup.
+     * @param suggestionListElevation THe elevation of the suggestion list popup.
+     * @param mentionSuggestionItemHorizontalPadding The horizontal content padding inside mention list item.
+     * @param mentionSuggestionItemVerticalPadding The vertical content padding inside mention list item.
+     * @param mentionSuggestionItemAvatarSize The size of a channel avatar in the suggestion list popup.
+     * @param commandSuggestionItemHorizontalPadding The horizontal content padding inside command list item.
+     * @param commandSuggestionItemVerticalPadding The vertical content padding inside command list item.
+     * @param commandSuggestionItemIconSize The size of a command icon in the suggestion list popup.
+     * @param threadParticipantItemSize The size of thread participant avatar items.
+     * @param userReactionsMaxHeight The max height of the message reactions section when we click on message reactions.
+     * @param userReactionItemWidth The width of user reaction item.
+     * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
+     * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
+     * @param reactionOptionItemIconSize The size of a reaction option icon in the reaction options menu.
+     * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
+     * @param messageItemMaxWidth The max width of message items inside message list.
+     * @param quotedMessageTextVerticalPadding The vertical padding of text inside quoted message.
+     * @param quotedMessageTextHorizontalPadding The horizontal padding of text inside quoted message.
+     * @param quotedMessageAttachmentPreviewSize The size of the quoted message attachment preview.
+     * @param quotedMessageAttachmentTopPadding The top padding of the quoted message attachment preview.
+     * @param quotedMessageAttachmentBottomPadding The bottom padding of the quoted message attachment preview.
+     * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
+     * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
+     * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
+     * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
+     * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
+     * re-sizing itself in order to obey its aspect ratio.
+     */
     public constructor(
         channelItemVerticalPadding: Dp,
         channelItemHorizontalPadding: Dp,
