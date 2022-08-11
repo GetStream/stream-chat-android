@@ -2,9 +2,9 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable fun UserList( onUserCredentialsClick: (UserCredentials) -> Unit, modifier: Modifier = Modifier, )</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun LoginScreen()</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun SdkTypeList( sdkType: SdkType, onSdkTypeClick: (SdkType) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable fun UserList( onUserCredentialsClick: (UserCredentials) -> Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun LoginScreen()</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun SdkTypeList( sdkType: SdkType, onSdkTypeClick: (SdkType) -> Unit, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
     <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>

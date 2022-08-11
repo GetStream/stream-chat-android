@@ -7,6 +7,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated external libraries version. Check the PR to get more details.[#3976](https://github.com/GetStream/stream-chat-android/pull/3976)
+- Updated Compose Compiler version to `1.3.0`, Compose UI version to `1.2.1`,  and Kotlin version to `1.7.10`. [#4019](https://github.com/GetStream/stream-chat-android/pull/4019)
 
 ### ❌ Removed
 

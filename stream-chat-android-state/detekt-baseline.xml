@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
     <ID>ComplexMethod:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
@@ -20,7 +20,7 @@
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
     <ID>ForbiddenComment:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$// TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
-    <ID>LongMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>LongMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun distinctFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
@@ -35,7 +35,6 @@
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
-    <ID>MagicNumber:TypingEventListenerImpl.kt$TypingEventListenerImpl$3000</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$*</ID>
     <ID>MaxLineLength:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$channelState.lastMarkReadEvent == null || lastMessageDate?.after(channelState.lastMarkReadEvent) == true</ID>
@@ -62,15 +61,12 @@
     <ID>MaxLineLength:StatePlugin.kt$StatePlugin$*</ID>
     <ID>MaxLineLength:StatePluginConfig.kt$StatePluginConfig$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
-    <ID>MaxLineLength:ThreadMutableState.kt$ThreadMutableState$channelMutableState.messageList.map { messageList -> messageList.filter { it.id == parentId || it.parentId == parentId } }</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
-    <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$*</ID>
-    <ID>MaxLineLength:TypingEventListenerImpl.kt$TypingEventListenerImpl$else</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
-    <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
+    <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
@@ -81,8 +77,5 @@
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loading = MutableStateFlow(false)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loadingMore = MutableStateFlow(false)</ID>
     <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _recoveryNeeded: MutableStateFlow&lt;Boolean> = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _endOfOlderMessages = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _loadingOlderMessages = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:ThreadMutableState.kt$ThreadMutableState$internal val _oldestInThread: MutableStateFlow&lt;Message?> = MutableStateFlow(null)</ID>
   </CurrentIssues>
 </SmellBaseline>

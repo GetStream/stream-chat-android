@@ -20,6 +20,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
+import com.moczul.ok2curl.logger.Logger
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
@@ -205,9 +206,13 @@ internal open class BaseChatModule(
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
                     addInterceptor(
-                        CurlInterceptor { message ->
-                            StreamLog.i("CURL") { message }
-                        }
+                        CurlInterceptor(
+                            logger = object : Logger {
+                                override fun log(message: String) {
+                                    StreamLog.i("CURL") { message }
+                                }
+                            },
+                        )
                     )
                 }
             }

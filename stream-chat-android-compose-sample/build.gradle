@@ -67,7 +67,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE
+        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
     }
 
     lintOptions {
@@ -109,4 +109,6 @@ dependencies {
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
+
+    detektPlugins(Dependencies.detektFormatting)
 }
