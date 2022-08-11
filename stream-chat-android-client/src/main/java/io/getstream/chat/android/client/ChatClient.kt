@@ -541,6 +541,19 @@ internal constructor(
         }
     }
 
+    public fun switchUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            disconnect(flushPersistence = true).await()
+                .flatMapSuspend {
+                    connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds).await()
+                }
+        }
+    }
+
     /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      * Check [ChatClient.connectUser] with [TokenProvider] parameter for advanced use cases.
