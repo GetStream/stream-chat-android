@@ -131,7 +131,8 @@ constructor(
      * @param channelItemHorizontalPadding The horizontal content padding inside channel list item.
      * @param channelAvatarSize The size of channel avatar.
      * @param selectedChannelMenuUserItemWidth The width of a member tile in the selected channel menu.
-     * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel menu.
+     * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel
+     * menu.
      * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
      * @param attachmentsContentImageWidth The width of image attachments in the message list.
      * @param attachmentsContentImageGridSpacing The spacing between image tiles in the message list.
@@ -158,7 +159,8 @@ constructor(
      * @param userReactionItemAvatarSize The size of a user avatar in the user reaction item.
      * @param userReactionItemIconSize The size of a reaction icon in the user reaction item.
      * @param reactionOptionItemIconSize The size of a reaction option icon in the reaction options menu.
-     * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message screens.
+     * @param headerElevation The elevation of the headers, such as the ones appearing on the Channel or Message
+     * screens.
      * @param messageItemMaxWidth The max width of message items inside message list.
      * @param quotedMessageTextVerticalPadding The vertical padding of text inside quoted message.
      * @param quotedMessageTextHorizontalPadding The horizontal padding of text inside quoted message.
@@ -167,8 +169,10 @@ constructor(
      * @param quotedMessageAttachmentBottomPadding The bottom padding of the quoted message attachment preview.
      * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
      * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
-     * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
-     * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
+     * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two
+     * users.
+     * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two
+     * users.
      * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
      *  re-sizing itself in order to obey its aspect ratio.
      */
