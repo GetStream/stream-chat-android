@@ -65,6 +65,7 @@ import kotlin.math.abs
  * meaning that the each Giphy pixel will take exactly 1 screen pixel.
  */
 @OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
 @Composable
 public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
