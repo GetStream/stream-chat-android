@@ -20,9 +20,11 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -93,13 +95,32 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         addView(imageAttachmentView)
         state = State.OneView(imageAttachmentView)
         ConstraintSet().apply {
-            constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
             constrainMaxHeight(imageAttachmentView.id, maxImageAttachmentHeight)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.TOP)
+            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.BOTTOM)
+
+            val imageWidth = first.originalWidth?.toFloat()
+            val imageHeight = first.originalHeight?.toFloat()
+
+            // Used to set a dimension ratio before we load an image
+            // so that message positions don't jump after we load it.
+            if (imageWidth != null && imageHeight != null) {
+                val ratio = (imageWidth / imageHeight).toString()
+                this.setDimensionRatio(imageAttachmentView.id, ratio)
+            }
+
             applyTo(this@ImageAttachmentsGroupView)
         }
+
+        // Setting the dimen ratio above makes it narrow the width
+        // of the container, this way we force the width to match the parent
+        // and clip the height if needed.
+        imageAttachmentView.updateLayoutParams {
+            this.width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+
         imageAttachmentView.showAttachment(first)
     }
 

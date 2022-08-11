@@ -19,6 +19,43 @@ package io.getstream.chat.android.client.models
 import io.getstream.chat.android.client.errors.ChatError
 import java.io.File
 
+/**
+ * Represents an attachment. Most commonly these are files, images,
+ *  videos and audio recordings, but the class is flexible enough
+ *  that it can represent other things as well such as a date,
+ *  a given location or other things.
+ *
+ *  If you want to create a custom attachment we suggest you
+ *   use [extraData] to store the information you need.
+ *
+ * @param authorName The name of the site the URL leads to.
+ * @param authorLink The link to the website.
+ * @param titleLink The link to the URL or the resource linked.
+ * @param thumbUrl The URL for the thumbnail version of the attachment,
+ *  given the attachment has a visual quality, e.g. is a video, an image,
+ *  a link to a website or similar.
+ * @param imageUrl The URL for the raw version of the attachment.
+ * @param assetUrl The URL for the asset.
+ * @param ogUrl The original link that was enriched.
+ * @param mimeType The mime type of the given attachment. e.g. "image/jpeg"
+ * @param fileSize The size of the given attachment.
+ * @param title The title of the attachment.
+ * @param text The page description.
+ * @param type The type of the attachment. e.g "file", "image, "audio".
+ * @param image The image attachment.
+ * @param fallback Alternative description in the case on an image attachment
+ * (img alt in HTML).
+ * @param originalHeight The original height of the attachment.
+ * Provided if the attachment is of type "image".
+ * @param originalWidth The original width of the attachment.
+ * Provided if the attachment is of type "image".
+ * @param upload The local file that will be uploaded when the attachment
+ * is sent.
+ * @param uploadState The state of the upload, i.e. the current progress
+ * of uploading the file.
+ * @param extraData Stores various extra information that can be sent
+ * when uploading the attachment or read when downloading it.
+ */
 public data class Attachment(
 
     var authorName: String? = null,
@@ -37,6 +74,8 @@ public data class Attachment(
     var url: String? = null,
     var name: String? = null,
     var fallback: String? = null,
+    var originalHeight: Int? = null,
+    var originalWidth: Int? = null,
 
     /**
      * The local file to upload when the attachment is sent. The [url] property
