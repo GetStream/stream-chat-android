@@ -223,7 +223,7 @@ public class StreamStatePluginFactory(
             activeUser = user,
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
-            threadQueryListener = ThreadQueryListenerImpl(logic),
+            threadQueryListener = ThreadQueryListenerImpl(logic, repositoryFacade, chatClient),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
