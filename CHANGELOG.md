@@ -15,6 +15,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Rename of field for optional multi bundle push provider. Now projects with multiple push providers will correct correctly. [#4008](https://github.com/GetStream/stream-chat-android/pull/4008)
+- Fixed for of blinking unread count indicator. [#4030](https://github.com/GetStream/stream-chat-android/pull/4030)
 
 ### ⬆️ Improved
 
