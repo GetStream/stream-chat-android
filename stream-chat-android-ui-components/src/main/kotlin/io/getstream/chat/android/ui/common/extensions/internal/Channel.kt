@@ -32,7 +32,7 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
         usersChanged = usersChanged,
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
-        unreadCountChanged = unreadCount != other.unreadCount,
+        unreadCountChanged = unreadCount != other.unreadCount && other.unreadCount != null,
         extraDataChanged = extraData != other.extraData
     )
 }
