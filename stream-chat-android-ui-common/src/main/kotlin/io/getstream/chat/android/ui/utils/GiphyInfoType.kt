@@ -20,6 +20,7 @@ import androidx.annotation.Px
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Enum class that holds a value used to obtain Giphy images of different quality level.
@@ -47,12 +48,14 @@ public enum class GiphyInfoType(public val value: String) {
 /**
  * Default width used for Giphy Images if no width metadata is available.
  */
-internal const val GIPHY_INFO_DEFAULT_WIDTH_DP: Int = 200
+@InternalStreamChatApi
+public const val GIPHY_INFO_DEFAULT_WIDTH_DP: Int = 200
 
 /**
  * Default height used for Giphy Images if no width metadata is available.
  */
-internal const val GIPHY_INFO_DEFAULT_HEIGHT_DP: Int = 200
+@InternalStreamChatApi
+public const val GIPHY_INFO_DEFAULT_HEIGHT_DP: Int = 200
 
 /**
  * Returns an object containing extra information about the Giphy image based

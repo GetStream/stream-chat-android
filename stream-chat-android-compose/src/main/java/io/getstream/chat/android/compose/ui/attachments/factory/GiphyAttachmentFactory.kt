@@ -16,28 +16,35 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.utils.GiphyInfoType
 
 /**
  * An [AttachmentFactory] that validates and shows Giphy attachments using [GiphyAttachmentContent].
  *
  * Has no "preview content", given that this attachment only exists after being sent.
+ *
+ * @param giphyInfoType Used to modify the quality of the rendered Giphy attachments.
+ * @param upscaleFactor The amount the Giphy will upscaled. By default this is set to 1,
+ * meaning that the each Giphy pixel will take exactly 1 screen pixel.
  */
 @Suppress("FunctionName")
-public fun GiphyAttachmentFactory(): AttachmentFactory = AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
-    content = @Composable { modifier, state ->
-        GiphyAttachmentContent(
-            modifier = modifier.size(
-                width = ChatTheme.dimens.attachmentsContentGiphyWidth,
-                height = ChatTheme.dimens.attachmentsContentGiphyHeight
-            ),
-            attachmentState = state
-        )
-    },
-)
+public fun GiphyAttachmentFactory(
+    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    upscaleFactor: Float = 1f,
+): AttachmentFactory =
+    AttachmentFactory(
+        canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
+        content = @Composable { modifier, state ->
+            GiphyAttachmentContent(
+                modifier = modifier.wrapContentSize(),
+                attachmentState = state,
+                giphyInfoType = giphyInfoType,
+                upscaleFactor = upscaleFactor
+            )
+        },
+    )

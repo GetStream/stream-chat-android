@@ -100,6 +100,7 @@ public fun GiphyMessageContent(
         }
 
         MessageAttachmentsContent(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             message = message,
             onLongItemClick = {},
             onImagePreviewResult = {},

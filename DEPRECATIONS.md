@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `StreamDimens` constructor containing params: `attachmentsContentGiphyWidth` and `attachmentsContentGiphyWidth`  | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |
 | `NonMemberChatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `BaseChatEventHandler` or `DefaultChatEventHandler` instead. |

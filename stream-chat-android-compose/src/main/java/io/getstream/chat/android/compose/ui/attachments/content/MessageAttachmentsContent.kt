@@ -39,6 +39,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 public fun MessageAttachmentsContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
+    modifier: Modifier = Modifier,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
     if (message.attachments.isNotEmpty()) {
@@ -63,9 +64,9 @@ public fun MessageAttachmentsContent(
         )
 
         if (attachmentFactory != null) {
-            attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
+            attachmentFactory.content(modifier.padding(2.dp), attachmentState)
         } else if (linkFactory != null) {
-            linkFactory.content(Modifier.padding(8.dp), attachmentState)
+            linkFactory.content(modifier.padding(8.dp), attachmentState)
         }
     }
 }
