@@ -16,11 +16,9 @@
 
 package com.getstream.sdk.chat.utils.typing
 
-import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer.Companion.DEFAULT_SEND_TYPING_UPDATES_INTERVAL
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ import kotlinx.coroutines.launch
     message = "This class has been deprecated and will be removed." +
         "Should you wish to implement your own buffer, you can create " +
         "a custom implementation of `TypingUpdatesBuffer`.",
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public class DefaultTypingUpdatesBuffer(
     private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),

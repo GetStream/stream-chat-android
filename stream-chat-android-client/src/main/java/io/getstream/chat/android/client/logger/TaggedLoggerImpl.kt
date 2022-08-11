@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
+@Suppress("DEPRECATION_ERROR")
 internal class TaggedLoggerImpl(
     private val tag: Any,
     private val logger: ChatLogger,

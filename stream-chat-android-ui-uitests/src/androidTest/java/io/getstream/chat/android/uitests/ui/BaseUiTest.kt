@@ -61,7 +61,7 @@ internal abstract class BaseUiTest {
 
     @After
     fun tearDown() {
-        ChatClient.instance().disconnect()
+        ChatClient.instance().disconnect(flushPersistence = false).execute()
     }
 
     private fun setupStreamSdk() {

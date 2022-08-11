@@ -594,33 +594,6 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun withWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 }
 
-public final class io/getstream/chat/android/client/api/models/QuerySort : io/getstream/chat/android/client/api/models/querysort/QuerySortByReflection {
-	public static final field Companion Lio/getstream/chat/android/client/api/models/QuerySort$Companion;
-	public fun <init> ()V
-	public synthetic fun add$stream_chat_android_client_release (Lio/getstream/chat/android/client/api/models/querysort/internal/SortSpecification;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun asc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun asc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun asc (Ljava/lang/String;Ljava/lang/Class;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun asc (Ljava/lang/String;Ljava/lang/Class;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun asc (Ljava/lang/String;Lkotlin/reflect/KClass;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun asc (Ljava/lang/String;Lkotlin/reflect/KClass;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun asc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun asc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun desc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun desc (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun desc (Ljava/lang/String;Ljava/lang/Class;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun desc (Ljava/lang/String;Ljava/lang/Class;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun desc (Ljava/lang/String;Lkotlin/reflect/KClass;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun desc (Ljava/lang/String;Lkotlin/reflect/KClass;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-	public fun desc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public synthetic fun desc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/querysort/QuerySortByReflection;
-}
-
-public final class io/getstream/chat/android/client/api/models/QuerySort$Companion {
-	public final fun asc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/QuerySort;
-	public final fun desc (Lkotlin/reflect/KProperty1;)Lio/getstream/chat/android/client/api/models/QuerySort;
-}
-
 public final class io/getstream/chat/android/client/api/models/QueryUsersRequest {
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;II)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V

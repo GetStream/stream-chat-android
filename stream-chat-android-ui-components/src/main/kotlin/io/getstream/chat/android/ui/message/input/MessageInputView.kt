@@ -113,7 +113,6 @@ public class MessageInputView : ConstraintLayout {
     private var commandsEnabled: Boolean = true
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
-    private var typingListener: TypingListener? = null
 
     /**
      * Used to buffer typing updates in order to conserve API calls.
@@ -279,22 +278,6 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setOnSendButtonClickListener(listener: OnMessageSendButtonClickListener?) {
         this.onSendButtonClickListener = listener
-    }
-
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use MessageInputView.setTypingListener(TypingUpdatesBuffer) instead to set a buffer " +
-            "which internally manages buffering " +
-            "start typing events and sending stop typing events.\n\n" +
-            "For the default implementation see DefaultTypingUpdatesBuffer.",
-        replaceWith = ReplaceWith(
-            "setTypingUpdatesBuffer(DefaultTypingUpdatesBuffer())",
-            "io.getstream.chat.android.ui.message.input.MessageInputView",
-            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
-        )
-    )
-    public fun setTypingListener(listener: TypingListener?) {
-        this.typingListener = listener
     }
 
     /**
@@ -900,10 +883,7 @@ public class MessageInputView : ConstraintLayout {
     private fun handleKeyStroke() {
         if (canSendTypingUpdates) {
             if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-                typingListener?.onKeystroke()
                 typingUpdatesBuffer?.onKeystroke()
-            } else {
-                typingListener?.onStopTyping()
             }
         }
     }
@@ -1281,22 +1261,6 @@ public class MessageInputView : ConstraintLayout {
             maxMessageLength: Int,
             maxMessageLengthExceeded: Boolean,
         )
-    }
-
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use TypingUpdatesBuffer which internally manages buffering " +
-            "start typing events and sending stop typing events.\n\n" +
-            "For the default implementation see DefaultTypingUpdatesBuffer.",
-        replaceWith = ReplaceWith(
-            "TypingUpdatesBuffer",
-            "com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer",
-            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
-        )
-    )
-    public interface TypingListener {
-        public fun onKeystroke()
-        public fun onStopTyping()
     }
 
     @FunctionalInterface
