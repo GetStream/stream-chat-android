@@ -19,15 +19,11 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.BlockedTask
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
@@ -55,9 +51,11 @@ internal class CoroutineCallTest {
 
     @BeforeEach
     fun setup() {
-        StreamLog.setLogger(KotlinStreamLogger(now = {
-            testCoroutines.dispatcher.scheduler.currentTime
-        }))
+        StreamLog.setLogger(
+            KotlinStreamLogger(now = {
+                testCoroutines.dispatcher.scheduler.currentTime
+            })
+        )
         StreamLog.setValidator { _, _ -> true }
     }
 

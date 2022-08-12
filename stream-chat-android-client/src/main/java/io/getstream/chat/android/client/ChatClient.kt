@@ -170,12 +170,9 @@ import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
@@ -1078,7 +1075,7 @@ internal constructor(
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
-        logger.d { "[disconnect] flushPersistence: $flushPersistence" }
+        logger.d { "[disconnectSuspend] flushPersistence: $flushPersistence" }
         notifications.onLogout()
         clientState.toMutableState()?.clearState()
         clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
@@ -2838,7 +2835,6 @@ internal constructor(
         @JvmStatic
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
-        private const val DELAY_TIME_TO_CANCEL_CHILDREN = 100L
         private const val MAX_COOLDOWN_TIME_SECONDS = 120
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"

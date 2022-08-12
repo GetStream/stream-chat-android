@@ -36,7 +36,9 @@ import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
@@ -47,8 +49,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.plus
 
 internal class ConnectUserTest {
 
