@@ -42,7 +42,7 @@ internal class ThreadQueryListenerFull(
     private val logic: LogicRegistry?,
     private val messageRepository: MessageRepository?,
     private val userRepository: UserRepository?,
-    private val chatClient: ChatClient,
+    private val getRemoteMessage: suspend (messageId: String) -> Result<Message>
 ) : ThreadQueryListener {
 
     private val logger = StreamLog.getLogger("Chat:ThreadQueryListener")
@@ -64,21 +64,17 @@ internal class ThreadQueryListenerFull(
 
         threadLogic?.setLoading(true)
         val messages = messageRepository?.selectMessagesForThread(messageId, limit)
-        val parentMessage = messages?.firstOrNull { it.id == messageId } ?: threadLogic?.getMessage(messageId)
+        val parentMessage = threadLogic?.getMessage(messageId) ?: messages?.firstOrNull { it.id == messageId }
 
-        if (parentMessage != null) {
-            messages?.let { threadLogic?.upsertMessages(it) }
-            Result.success(Unit)
+        if (parentMessage != null && messages?.isNotEmpty() == true) {
+            threadLogic?.upsertMessages(messages)
         } else {
-            val result = chatClient.getMessage(messageId).await()
+            val result = getRemoteMessage(messageId)
             if (result.isSuccess) {
                 val message = result.data()
                 threadLogic?.upsertMessage(result.data())
                 userRepository?.insertUsers(message.users())
                 messageRepository?.insertMessage(message)
-                Result.success(Unit)
-            } else {
-                Result(result.error())
             }
         }
     }
