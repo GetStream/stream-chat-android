@@ -45,6 +45,8 @@ internal data class AttachmentDto(
     val title_link: String?,
     val type: String?,
     val url: String?,
+    val original_height: Int?,
+    val original_width: Int?,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

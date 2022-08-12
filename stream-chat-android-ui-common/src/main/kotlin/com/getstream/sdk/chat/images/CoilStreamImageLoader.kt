@@ -69,7 +69,13 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val context = target.context
         val disposable = target.load(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
-            placeholderResId?.let(::placeholder)
+
+            if (placeholderResId != null) {
+                placeholder(placeholderResId)
+                fallback(placeholderResId)
+                error(placeholderResId)
+            }
+
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },
@@ -93,7 +99,13 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val context = target.context
         val disposable = target.load(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
-            placeholderDrawable?.let(::placeholder)
+
+            if (placeholderDrawable != null) {
+                placeholder(placeholderDrawable)
+                fallback(placeholderDrawable)
+                error(placeholderDrawable)
+            }
+
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },
@@ -132,6 +144,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
                 ImageRequest.Builder(context)
                     .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
                     .placeholder(placeholderDrawable)
+                    .fallback(placeholderDrawable)
+                    .error(placeholderDrawable)
                     .data(data)
                     .listener(
                         onStart = { onStart() },
@@ -168,7 +182,13 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val context = target.context
         val disposable = target.load(uri, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
-            placeholderResId?.let(::placeholder)
+
+            if (placeholderResId != null) {
+                placeholder(placeholderResId)
+                fallback(placeholderResId)
+                error(placeholderResId)
+            }
+
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },
