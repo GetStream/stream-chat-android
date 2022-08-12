@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
+@Suppress("DEPRECATION_ERROR")
 internal class ChatSilentLogger : ChatLogger {
 
     override fun getLevel(): ChatLogLevel {
