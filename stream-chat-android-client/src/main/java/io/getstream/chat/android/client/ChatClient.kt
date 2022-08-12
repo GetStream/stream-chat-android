@@ -175,6 +175,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
+import okhttp3.internal.wait
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -549,10 +550,8 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
-            disconnect(flushPersistence = true).await()
-                .flatMapSuspend {
-                    connectUser(user, tokenProvider, timeoutMilliseconds).await()
-                }
+            disconnectSuspend(flushPersistence = true).wait()
+            connectUser(user, tokenProvider, timeoutMilliseconds).await()
         }
     }
 
@@ -1159,8 +1158,8 @@ internal constructor(
         lifecycleObserver.dispose()
         appSettingsManager.clear()
         _repositoryFacade = null
-        val currentJob = currentCoroutineContext()[Job]
-        scope.coroutineContext.cancelChildrenExcept(currentJob)
+        // val currentJob = currentCoroutineContext()[Job]
+        // scope.coroutineContext.cancelChildrenExcept(currentJob)
     }
 
     /**
