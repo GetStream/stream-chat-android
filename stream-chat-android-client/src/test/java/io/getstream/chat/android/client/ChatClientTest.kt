@@ -30,8 +30,6 @@ import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -92,7 +90,7 @@ internal class ChatClientTest {
             "cdn.http",
             "socket.url",
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
+            Mother.chatLoggerConfig(),
             false,
             false
         )

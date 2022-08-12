@@ -31,9 +31,8 @@ If your application contains more than one `ChannelListView`, each of them shoul
 Let's say we want to have two `ChannelListView`:
 - The first displays `public` channels
 - The second displays `private` channels
-Both channel types require a user to be a member to interact with the channel
 
-As mentioned above, by default, channel-related events are not filtered, so if you would use the default `ChatEventHandler`, both lists would be updated regardless of the event's channel type.
+Both channel types require a user to be a member to interact with the channel. As mentioned above, by default, channel-related events are not filtered, so if you would use the default `ChatEventHandler`, both lists would be updated regardless of the event's channel type.
 
 You can fix that by providing two different event handlers.
 

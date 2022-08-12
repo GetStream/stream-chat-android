@@ -994,7 +994,6 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Cool
 
 public final class io/getstream/chat/android/compose/ui/components/composer/InputFieldKt {
 	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZILandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun InputField-0vH8DBg (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ZLandroidx/compose/ui/Modifier;ILandroidx/compose/foundation/BorderStroke;FLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/MessageInputKt {
