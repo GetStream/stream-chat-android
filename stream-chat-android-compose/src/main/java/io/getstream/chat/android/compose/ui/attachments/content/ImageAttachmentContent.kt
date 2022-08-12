@@ -62,7 +62,6 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * and the onLongItemClick handler.
  */
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("MagicNumber", "LongMethod")
 @Composable
 public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
@@ -107,7 +106,7 @@ public fun ImageAttachmentContent(
                 attachment = attachment,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(ratio ?: 1f),
+                    .aspectRatio(ratio ?: EQUAL_DIMENSIONS_RATIO),
                 message = message,
                 attachmentPosition = 0,
                 onImagePreviewResult = onImagePreviewResult,
@@ -117,7 +116,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .aspectRatio(0.5f),
+                    .aspectRatio(TWICE_AS_TALL_AS_IS_WIDE_RATIO),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 0..3 step 2) {
@@ -137,7 +136,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .aspectRatio(0.5f),
+                    .aspectRatio(TWICE_AS_TALL_AS_IS_WIDE_RATIO),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 1..4 step 2) {
@@ -263,3 +262,15 @@ internal fun ImageAttachmentViewMoreOverlay(
         )
     }
 }
+
+/**
+ * Produces the same height as the width of the
+ * Composable when calling [Modifier.aspectRatio].
+ */
+private const val EQUAL_DIMENSIONS_RATIO = 1f
+
+/**
+ * Produces a height value that is twice the width of the
+ * Composable when calling [Modifier.aspectRatio].
+ */
+private const val TWICE_AS_TALL_AS_IS_WIDE_RATIO = 0.5f
