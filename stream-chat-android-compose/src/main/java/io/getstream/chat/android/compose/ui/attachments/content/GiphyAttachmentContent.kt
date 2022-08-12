@@ -101,7 +101,7 @@ public fun GiphyAttachmentContent(
                     when {
                         giphyInfoType == GiphyInfoType.FIXED_HEIGHT ||
                             giphyInfoType == GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED -> DpSize(
-                            width = minOf(giphyWidth, maxWidth),
+                            width = giphyWidth,
                             height = giphyHeight
                         )
                         giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
