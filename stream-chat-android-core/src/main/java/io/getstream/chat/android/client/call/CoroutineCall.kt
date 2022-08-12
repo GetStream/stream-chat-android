@@ -19,37 +19,63 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.job
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
-    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
+    private val logger = StreamLog.getLogger("Chat:CoroutineCall")
+
+    private val jobs = hashSetOf<Job>()
 
     override fun execute(): Result<T> = runBlocking { await() }
+
     override suspend fun await(): Result<T> = Call.runCatching {
-        withContext(callScope.coroutineContext) { suspendingTask() }
+        logger.d { "[await] no args" }
+        withContext(scope.coroutineContext) {
+            jobs.addFrom(coroutineContext)
+            suspendingTask()
+        }
     }
 
     override fun cancel() {
-        callScope.coroutineContext.cancelChildren()
+        logger.d { "[cancel] no args" }
+        jobs.cancelAll()
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        callScope.launch {
-            val result = await()
+        logger.d { "[enqueue] no args" }
+        scope.launch {
+            jobs.addFrom(coroutineContext)
+            val result = suspendingTask()
             withContext(DispatcherProvider.Main) {
                 callback.onResult(result)
+            }
+        }
+    }
+
+    private fun HashSet<Job>.cancelAll() {
+        synchronized(this) {
+            forEach {
+                it.cancel()
+            }
+            clear()
+        }
+    }
+
+    private fun HashSet<Job>.addFrom(context: CoroutineContext) {
+        synchronized(this) {
+            context[Job]?.also {
+                add(it)
             }
         }
     }
