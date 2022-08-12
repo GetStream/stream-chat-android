@@ -151,6 +151,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.coroutine.cancelChildrenExcept
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
@@ -1152,8 +1153,8 @@ internal constructor(
         lifecycleObserver.dispose()
         _repositoryFacade = null
         appSettingsManager.clear()
-        // val currentJob = currentCoroutineContext()[Job]
-        // scope.coroutineContext.cancelChildrenExcept(currentJob)
+        val currentJob = currentCoroutineContext()[Job]
+        scope.coroutineContext.cancelChildrenExcept(currentJob)
     }
 
     /**

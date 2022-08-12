@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
@@ -37,6 +38,7 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
@@ -161,6 +163,36 @@ internal class WhenConnectUser : BaseChatClientTest() {
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
         delay(100L)
         verify(connectionDataCallback).onResult(argThat { isError })
+    }
+
+    @Test
+    fun `switchUser should return correctly`() = runTest {
+        val timeout = 10L
+        val connectionDataCallback: Call.Callback<ConnectionData> = mock()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenUserNotSetState()
+            .get()
+
+        sut.connectUser(Mother.randomUser { id = "userId" }, "token", timeout).enqueue(connectionDataCallback)
+
+        delay(100L)
+        verify(connectionDataCallback).onResult(
+            argThat {
+                isError && error().message == "Connection wasn't established in ${timeout}ms"
+            }
+        )
+
+        reset(connectionDataCallback)
+
+        sut.switchUser(Mother.randomUser { id = "userId" }, "token", timeout).enqueue(connectionDataCallback)
+
+        delay(100L)
+        verify(connectionDataCallback).onResult(
+            argThat {
+                isError && error().message == "Connection wasn't established in ${timeout}ms"
+            }
+        )
     }
 
     inner class Fixture {
