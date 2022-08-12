@@ -34,11 +34,11 @@ internal class BlockedTask<T : Any>(private val result: Result<T>) {
         isBlocked.set(false)
     }
 
-    fun getSyncTask(): () -> Result<T> = { runBlocking { getResult() } }
+    fun getSyncTask(): () -> Result<T> = { runBlocking { awaitResult() } }
 
-    fun getSuspendTask(): suspend CoroutineScope.() -> Result<T> = { getResult() }
+    fun getSuspendTask(): suspend CoroutineScope.() -> Result<T> = { awaitResult() }
 
-    private suspend fun getResult() = withContext(DispatcherProvider.IO) {
+    private suspend fun awaitResult() = withContext(DispatcherProvider.IO) {
         started.set(true)
         while (isBlocked.get()) {
             delay(10)

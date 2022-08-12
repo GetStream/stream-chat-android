@@ -20,10 +20,15 @@ import io.getstream.chat.android.client.BlockedTask
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
@@ -43,6 +48,16 @@ internal class CoroutineCallTest {
 
     val resultValue = Mother.randomString()
     val validResult: Result<String> = Result.success(resultValue)
+
+    @BeforeEach
+    fun setup() {
+        StreamLog.setLogger(
+            KotlinStreamLogger(now = {
+                testCoroutines.dispatcher.scheduler.currentTime
+            })
+        )
+        StreamLog.setValidator { _, _ -> true }
+    }
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {
@@ -105,11 +120,14 @@ internal class CoroutineCallTest {
         val blockedTask = BlockedTask(validResult)
         val call = CoroutineCall(testCoroutines.scope, blockedTask.getSuspendTask())
 
-        val deferedResult = async { call.await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferredResult = localScope.async {
+            call.await()
+        }
         delay(10)
         call.cancel()
         blockedTask.unblock()
-        val result = deferedResult.await()
+        val result = deferredResult.await()
 
         result `should be equal to` Call.callCanceledError()
         blockedTask.isStarted() `should be equal to` true

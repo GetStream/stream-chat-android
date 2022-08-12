@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentContent
@@ -40,10 +42,10 @@ public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     },
     content = @Composable { modifier, state ->
         ImageAttachmentContent(
-            modifier = modifier.size(
-                width = ChatTheme.dimens.attachmentsContentImageWidth,
-                height = ChatTheme.dimens.attachmentsContentImageHeight
-            ),
+            modifier = modifier
+                .width(ChatTheme.dimens.attachmentsContentImageWidth)
+                .wrapContentHeight()
+                .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
             attachmentState = state
         )
     },
