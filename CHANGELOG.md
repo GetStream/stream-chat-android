@@ -61,6 +61,7 @@
 ### 🐞 Fixed
 - Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 - Image attachment containers now posses the correct fixed size prior to loading, avoiding message items around messages containing images from "jumping". This is applicable only to image attachments which contain non-null values`Attachment.originalWidth` and `Attachment.originalHeight` properties. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
+- Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [4035#](https://github.com/GetStream/stream-chat-android/pull/4035)
 
 ### ⬆️ Improved
 
@@ -77,6 +78,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed a crash when passing content URIs without duration metadata to the `StorageHelperWrapper::.getAttachmentsFromUris` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
+- Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [4035#](https://github.com/GetStream/stream-chat-android/pull/4035)
 
 ### ⬆️ Improved
 - `ImageAttachmentContent` is no longer statically sized. It now auto-sizes itself according to the image attachment dimension ratio. If you wish to limit the maximum height of image attachments, please use `StreamDimens.attachmentsContentImageMaxHeight`.  [#4013](https://github.com/GetStream/stream-chat-android/pull/4013)
