@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messagecomposer
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer
 
 import android.content.Context
 import android.content.Intent
@@ -49,6 +49,9 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 import java.text.DateFormat
 import java.util.Date
 
+/**
+ * An Activity representing a self-contained chat screen with custom attachment factories.
+ */
 @OptIn(ExperimentalStreamChatApi::class)
 class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMessagesBinding
@@ -189,6 +192,13 @@ class MessagesActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_CID: String = "extra_cid"
 
+        /**
+         * Creates an [Intent] to start [MessagesActivity].
+         *
+         * @param context The context used to create the intent.
+         * @param cid The id of the channel.
+         * @return The [Intent] to start [MessagesActivity].
+         */
         fun createIntent(context: Context, cid: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(EXTRA_CID, cid)

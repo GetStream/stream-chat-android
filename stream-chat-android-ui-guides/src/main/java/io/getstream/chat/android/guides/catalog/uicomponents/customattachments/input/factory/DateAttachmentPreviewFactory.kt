@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messageinput.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentPreviewBinding
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.BaseSelectedCustomAttachmentViewHolder
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentViewHolderFactory
 
+/**
+ * A custom [SelectedCustomAttachmentViewHolderFactory] that adds support for date attachments
+ * in [MessageInputView].
+ */
 class DateAttachmentPreviewFactory : SelectedCustomAttachmentViewHolderFactory {
 
     override fun createAttachmentViewHolder(

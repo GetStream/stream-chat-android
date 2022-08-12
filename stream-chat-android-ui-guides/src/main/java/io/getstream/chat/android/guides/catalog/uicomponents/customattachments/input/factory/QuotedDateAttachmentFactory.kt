@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messageinput.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -29,6 +29,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * A custom [QuotedAttachmentFactory] that adds support for quoted date attachments.
+ */
 class QuotedDateAttachmentFactory : QuotedAttachmentFactory {
     override fun canHandle(message: Message): Boolean {
         return message.attachments.any { it.type == "date" }

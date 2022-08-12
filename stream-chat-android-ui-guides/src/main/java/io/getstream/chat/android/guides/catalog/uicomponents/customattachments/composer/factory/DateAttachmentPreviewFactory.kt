@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messagecomposer.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentPreviewBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.message.composer.attachment.factory.AttachmentPreviewFactory
 
+/**
+ * A custom [AttachmentPreviewFactory] that adds support for date attachments in [MessageComposerView].
+ */
 class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
 
     override fun canHandle(attachment: Attachment): Boolean {

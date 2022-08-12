@@ -36,16 +36,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
-import io.getstream.chat.android.guides.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
-import io.getstream.chat.android.guides.uicomponents.customattachments.messagecomposer.ChannelsActivity as CustomAttachmentsWithMessageComposerActivity
-import io.getstream.chat.android.guides.uicomponents.customattachments.messageinput.ChannelsActivity as CustomAttachmentsWithMessageInputActivity
+import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity as MessageComposerCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity as MessageInputCustomAttachmentsActivity
 
+/**
+ * An Activity with a list of guides and samples.
+ */
 class CatalogActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +62,9 @@ class CatalogActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * A Composable that represents a screen with a list of guides and samples.
+     */
     @Composable
     private fun CatalogScreen() {
         Column(
@@ -77,29 +84,29 @@ class CatalogActivity : AppCompatActivity() {
                 )
             }
 
-            GuideSection("Compose guides")
+            GuideSection(stringResource(R.string.catalog_section_compose))
 
             GuideItem(
-                titleText = "Custom attachments",
-                subtitleText = "Description"
+                titleText = stringResource(R.string.custom_attachments_guide_compose_title),
+                descriptionText = stringResource(R.string.custom_attachments_guide_compose_description)
             ) {
                 startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
 
-            GuideSection("UI Components guides")
+            GuideSection(stringResource(R.string.catalog_section_uicomponents))
 
             GuideItem(
-                titleText = "Custom attachments (MessageInputView)",
-                subtitleText = "Description"
+                titleText = stringResource(R.string.custom_attachments_guide_message_input_title),
+                descriptionText = stringResource(R.string.custom_attachments_guide_message_input_description)
             ) {
-                startActivity(CustomAttachmentsWithMessageInputActivity.createIntent(this@CatalogActivity))
+                startActivity(MessageInputCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
 
             GuideItem(
-                titleText = "Custom attachments (MessageComposerView)",
-                subtitleText = "Description"
+                titleText = stringResource(R.string.custom_attachments_guide_message_composer_title),
+                descriptionText = stringResource(R.string.custom_attachments_guide_message_composer_description)
             ) {
-                startActivity(CustomAttachmentsWithMessageComposerActivity.createIntent(this@CatalogActivity))
+                startActivity(MessageComposerCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
         }
     }
@@ -117,8 +124,8 @@ class CatalogActivity : AppCompatActivity() {
     @Composable
     private fun GuideItem(
         titleText: String,
-        subtitleText: String,
-        onClick: () -> Unit
+        descriptionText: String,
+        onClick: () -> Unit,
     ) {
         Card(
             modifier = Modifier
@@ -142,7 +149,7 @@ class CatalogActivity : AppCompatActivity() {
                 )
 
                 Text(
-                    text = subtitleText,
+                    text = descriptionText,
                     style = ChatTheme.typography.body,
                     color = ChatTheme.colors.textHighEmphasis,
                 )

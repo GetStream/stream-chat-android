@@ -47,34 +47,34 @@
             />
 
         <activity
-            android:name=".compose.customattachments.ChannelsActivity"
+            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name=".compose.customattachments.MessagesActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            />
-
-        <activity
-            android:name=".uicomponents.customattachments.messageinput.ChannelsActivity"
-            android:exported="false"
-            />
-
-        <activity
-            android:name=".uicomponents.customattachments.messageinput.MessagesActivity"
+            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
 
         <activity
-            android:name=".uicomponents.customattachments.messagecomposer.ChannelsActivity"
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name=".uicomponents.customattachments.messagecomposer.MessagesActivity"
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />

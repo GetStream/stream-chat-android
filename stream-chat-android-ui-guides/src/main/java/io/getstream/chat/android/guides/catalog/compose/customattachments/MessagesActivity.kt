@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.compose.customattachments
+package io.getstream.chat.android.guides.catalog.compose.customattachments
 
 import android.content.Context
 import android.content.Intent
@@ -55,11 +55,14 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.guides.R
-import io.getstream.chat.android.guides.compose.customattachments.factory.dateAttachmentFactory
-import io.getstream.chat.android.guides.compose.customattachments.factory.quotedDateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.quotedDateAttachmentFactory
 import java.text.DateFormat
 import java.util.Date
 
+/**
+ * An Activity representing a self-contained chat screen with custom attachment factories.
+ */
 class MessagesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -206,6 +209,13 @@ class MessagesActivity : AppCompatActivity() {
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
+        /**
+         * Creates an [Intent] to start [MessagesActivity].
+         *
+         * @param context The context used to create the intent.
+         * @param channelId The id of the channel.
+         * @return The [Intent] to start [MessagesActivity].
+         */
         fun getIntent(context: Context, channelId: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)

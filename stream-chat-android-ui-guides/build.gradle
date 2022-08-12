@@ -4,7 +4,6 @@ import io.getstream.chat.android.Versions
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'shot'
 }
 
 apply from: "${rootDir}/scripts/android.gradle"
@@ -12,8 +11,8 @@ apply from: "${rootDir}/scripts/android.gradle"
 android {
     defaultConfig {
         applicationId "io.getstream.chat.android.guides"
-        versionCode 1
-        versionName "1.0"
+        versionCode sampleAppVersionCode
+        versionName sampleAppVersionName
     }
 
     buildTypes {

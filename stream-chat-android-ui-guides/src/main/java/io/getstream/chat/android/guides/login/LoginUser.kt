@@ -21,6 +21,9 @@ import io.getstream.chat.android.client.models.User
 /**
  * A data class that encapsulates all the information needed to initialize
  * the SDK and connect to Stream servers.
+ *
+ * @param user The user that will be used for authentication.
+ * @param token An instance of JWT token that will be used for authentication.
  */
 data class LoginUser(
     val user: User,

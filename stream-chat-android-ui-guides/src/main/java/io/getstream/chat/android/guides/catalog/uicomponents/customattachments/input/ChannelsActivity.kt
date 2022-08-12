@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messageinput
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.guides.uicomponents.customattachments.messageinput.factory.DateAttachmentFactory
-import io.getstream.chat.android.guides.uicomponents.customattachments.messageinput.factory.QuotedDateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory.DateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory.QuotedDateAttachmentFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
@@ -29,15 +29,20 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 
+/**
+ * An Activity representing a self-contained channel list screen.
+ */
 class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
-
+        ChatUI.attachmentFactoryManager = AttachmentFactoryManager(
+            attachmentFactories = listOf(
+                DateAttachmentFactory()
+            )
+        )
         ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
-            listOf(
+            quotedAttachmentFactories = listOf(
                 QuotedDateAttachmentFactory(),
                 DefaultQuotedAttachmentMessageFactory()
             )
@@ -46,21 +51,27 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
 
     override fun onDestroy() {
         super.onDestroy()
-
         // Reset to the default values not to affect other samples
-
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager()
-
-        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
-            listOf(DefaultQuotedAttachmentMessageFactory())
-        )
+        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager()
     }
 
+    /**
+     * A callback that handles channel item clicks.
+     *
+     * @param channel The selected channel.
+     */
     override fun onChannelClick(channel: Channel) {
         startActivity(MessagesActivity.createIntent(this, channel.cid))
     }
 
     companion object {
+        /**
+         * Creates an [Intent] to start [ChannelsActivity].
+         *
+         * @param context The context used to create the intent.
+         * @return The [Intent] to start [ChannelsActivity].
+         */
         fun createIntent(context: Context): Intent {
             return Intent(context, ChannelsActivity::class.java)
         }

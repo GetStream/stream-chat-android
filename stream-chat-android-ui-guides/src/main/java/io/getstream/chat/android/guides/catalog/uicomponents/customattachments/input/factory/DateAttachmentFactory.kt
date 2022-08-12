@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.uicomponents.customattachments.messagecomposer.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,6 +24,9 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 
+/**
+ * A custom [AttachmentFactory] that adds support for date attachments.
+ */
 class DateAttachmentFactory : AttachmentFactory {
 
     override fun canHandle(message: Message): Boolean {

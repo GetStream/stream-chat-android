@@ -3,14 +3,14 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexMethod:LoginUsers.kt$LoginUsers$fun createUsers(): List&lt;LoginUser></ID>
-    <ID>FunctionNaming:CatalogActivity.kt$CatalogActivity$@Composable private fun CatalogScreen()</ID>
-    <ID>FunctionNaming:CatalogActivity.kt$CatalogActivity$@Composable private fun GuideItem( titleText: String, subtitleText: String, onClick: () -> Unit )</ID>
+    <ID>FunctionNaming:CatalogActivity.kt$CatalogActivity$ @Composable private fun CatalogScreen()</ID>
+    <ID>FunctionNaming:CatalogActivity.kt$CatalogActivity$@Composable private fun GuideItem( titleText: String, descriptionText: String, onClick: () -> Unit, )</ID>
     <ID>FunctionNaming:CatalogActivity.kt$CatalogActivity$@Composable private fun GuideSection(text: String)</ID>
     <ID>FunctionNaming:DateAttachmentFactory.kt$ @Composable fun DateAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:DateAttachmentFactory.kt$ @Composable fun DateAttachmentPreviewContent( attachments: List&lt;Attachment>, onAttachmentRemoved: (Attachment) -> Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable fun UserItem(loginUser: LoginUser)</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun DividerItem()</ID>
-    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$@Composable private fun LoginScreen()</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun DividerItem()</ID>
+    <ID>FunctionNaming:LoginActivity.kt$LoginActivity$ @Composable private fun LoginScreen()</ID>
     <ID>FunctionNaming:MessagesActivity.kt$MessagesActivity$ @Composable fun CustomMessagesScreen( channelId: String, onBackPressed: () -> Unit = {} )</ID>
     <ID>FunctionNaming:MessagesActivity.kt$MessagesActivity$ @Composable private fun CustomMessageComposer( viewModel: MessageComposerViewModel, onDateSelected: (Long) -> Unit, )</ID>
     <ID>FunctionNaming:QuotedDateAttachmentFactory.kt$ @Composable fun QuotedDateAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>

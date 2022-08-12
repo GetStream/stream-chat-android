@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.compose.customattachments
+package io.getstream.chat.android.guides.catalog.compose.customattachments
 
 import android.content.Context
 import android.content.Intent
@@ -24,8 +24,11 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.guides.compose.customattachments.factory.dateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
 
+/**
+ * An Activity representing a self-contained channel list screen with custom attachment factories.
+ */
 class ChannelsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +50,12 @@ class ChannelsActivity : AppCompatActivity() {
     }
 
     companion object {
+        /**
+         * Creates an [Intent] to start [ChannelsActivity].
+         *
+         * @param context The context used to create the intent.
+         * @return The [Intent] to start [ChannelsActivity].
+         */
         fun createIntent(context: Context): Intent {
             return Intent(context, ChannelsActivity::class.java)
         }

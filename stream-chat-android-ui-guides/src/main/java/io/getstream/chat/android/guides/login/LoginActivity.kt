@@ -69,6 +69,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * A Composable that represents the entire login screen.
+     */
     @Composable
     private fun LoginScreen() {
         Column(
@@ -102,6 +105,8 @@ class LoginActivity : AppCompatActivity() {
 
     /**
      * Represents a user whose credentials will be used for login.
+     *
+     * @param loginUser The user credentials to login with.
      */
     @Composable
     fun UserItem(loginUser: LoginUser) {
@@ -151,6 +156,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Represents a separator between user items.
+     */
     @Composable
     private fun DividerItem() {
         Spacer(
@@ -162,7 +170,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /**
-     * Initializes the SDK with the given user and navigates to the channel list screen.
+     * Initializes the SDK with the given user and navigates to the catalog screen.
      *
      * @param loginUser The user credentials to login with.
      */
@@ -178,7 +186,7 @@ class LoginActivity : AppCompatActivity() {
 
     companion object {
         /**
-         * Create an [Intent] to start [LoginActivity].
+         * Creates an [Intent] to start [LoginActivity].
          *
          * @param context The context used to create the intent.
          * @return The [Intent] to start [LoginActivity].

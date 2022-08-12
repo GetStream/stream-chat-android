@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.compose.customattachments.factory
+package io.getstream.chat.android.guides.catalog.compose.customattachments.factory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
