@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -235,6 +236,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         fun givenUserAndToken(user: User, token: String) = apply {
             whenever(tokenUtils.getUserId(token)) doReturn user.id
+            whenever(clientState.user) doReturn MutableStateFlow(user)
         }
 
         fun clearSocketInvocations() = apply {

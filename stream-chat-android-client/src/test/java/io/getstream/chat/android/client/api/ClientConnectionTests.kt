@@ -31,13 +31,18 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -50,6 +55,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ClientConnectionTests {
 
     companion object {
@@ -89,6 +95,7 @@ internal class ClientConnectionTests {
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
+    private val clientState = mock<ClientState>()
 
     @BeforeEach
     fun before() {
@@ -109,6 +116,8 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
+        whenever(clientState.user) doReturn MutableStateFlow(randomUser())
+
         client = ChatClient(
             config,
             api,
@@ -127,7 +136,7 @@ internal class ClientConnectionTests {
             lifecycle = lifecycleOwner.lifecycle,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            clientState = clientState
         )
     }
 
@@ -139,11 +148,11 @@ internal class ClientConnectionTests {
     }
 
     @Test
-    fun connectAndDisconnect() {
+    fun connectAndDisconnect() = runTest {
         client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
-        client.disconnect(flushPersistence = false).execute()
+        client.disconnect(flushPersistence = false).await()
 
         verify(socket, times(1)).disconnect()
     }
