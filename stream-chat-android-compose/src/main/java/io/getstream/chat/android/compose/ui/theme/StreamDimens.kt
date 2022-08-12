@@ -326,7 +326,7 @@ constructor(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentGiphyMaxWidth = 250.dp,
-            attachmentsContentGiphyMaxHeight = 200.dp
+            attachmentsContentGiphyMaxHeight = 250.dp
         )
     }
 }

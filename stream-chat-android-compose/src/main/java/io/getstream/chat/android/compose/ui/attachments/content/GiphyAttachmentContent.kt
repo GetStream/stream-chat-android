@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
@@ -89,9 +88,9 @@ public fun GiphyAttachmentContent(
 
     val density = LocalDensity.current
 
-    val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
-
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
+
+    val painter = rememberStreamImagePainter(giphyInfo?.url)
 
     val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
     val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
@@ -100,8 +99,8 @@ public fun GiphyAttachmentContent(
         derivedStateOf {
             if (giphyInfo != null) {
                 with(density) {
-                    val giphyWidth = (giphyInfo.width * abs(upscaleFactor)).toDp()
-                    val giphyHeight = (giphyInfo.height * abs(upscaleFactor)).toDp()
+                    val giphyWidth = (giphyInfo.width * abs(upscaleFactor)).dp
+                    val giphyHeight = (giphyInfo.height * abs(upscaleFactor)).dp
 
                     when {
                         upscaleFactor == StreamAttachmentFactories.GIPHY_FILL_MAX_SPACE -> calculateResultingDimensions(
