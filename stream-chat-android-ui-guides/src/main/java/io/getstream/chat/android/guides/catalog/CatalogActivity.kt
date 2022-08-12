@@ -22,8 +22,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
@@ -130,16 +132,16 @@ class CatalogActivity : AppCompatActivity() {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp)
+                .padding(16.dp)
                 .clickable(
                     onClick = onClick,
                     indication = rememberRipple(),
                     interactionSource = remember { MutableInteractionSource() }
                 ),
-            elevation = 10.dp
+            elevation = 4.dp
         ) {
             Column(
-                modifier = Modifier.padding(15.dp)
+                modifier = Modifier.padding(16.dp)
             ) {
                 Text(
                     text = titleText,
@@ -147,6 +149,8 @@ class CatalogActivity : AppCompatActivity() {
                     fontSize = 16.sp,
                     color = ChatTheme.colors.textHighEmphasis,
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = descriptionText,
