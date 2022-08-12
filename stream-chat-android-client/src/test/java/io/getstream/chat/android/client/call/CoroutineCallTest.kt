@@ -19,11 +19,17 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.BlockedTask
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
@@ -43,6 +49,14 @@ internal class CoroutineCallTest {
 
     val resultValue = Mother.randomString()
     val validResult: Result<String> = Result.success(resultValue)
+
+    @BeforeEach
+    fun setup() {
+        StreamLog.setLogger(KotlinStreamLogger(now = {
+            testCoroutines.dispatcher.scheduler.currentTime
+        }))
+        StreamLog.setValidator { _, _ -> true }
+    }
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {
@@ -102,17 +116,46 @@ internal class CoroutineCallTest {
 
     @Test
     fun `Canceled Call should be executed asynchronous and return a cancel error`() = runTest {
-        val blockedTask = BlockedTask(validResult)
+        val blockedTask = MockRetrofitCall(testCoroutines.scope, validResult) {
+            delay(2000L)
+        }
+        val call = CoroutineCall(testCoroutines.scope) {
+            blockedTask.await()
+        }
+
+        val localScope = testCoroutines.scope + Job()
+        val deferredResult = localScope.async {
+            try {
+                StreamLog.d("Coroutine-Test") { "[test] #1" }
+                call.await().also {
+                    StreamLog.d("Coroutine-Test") { "[test] #2" }
+                }
+            } catch (e: Throwable) {
+                StreamLog.e("Coroutine-Test") { "[test] failed: $e" }
+                null
+            }
+        }
+        StreamLog.d("Coroutine-Test") { "[test] #3" }
+        delay(10)
+        StreamLog.d("Coroutine-Test") { "[test] #4" }
+        call.cancel()
+        StreamLog.d("Coroutine-Test") { "[test] #5" }
+        val result = deferredResult.await()
+        StreamLog.d("Coroutine-Test") { "[test] #6" }
+        result `should be equal to` Call.callCanceledError()
+
+        /*val blockedTask = BlockedTask(validResult)
         val call = CoroutineCall(testCoroutines.scope, blockedTask.getSuspendTask())
 
-        val deferedResult = async { call.await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferredResult = localScope.async { call.await() }
         delay(10)
         call.cancel()
         blockedTask.unblock()
-        val result = deferedResult.await()
+        val result = deferredResult.await()
 
         result `should be equal to` Call.callCanceledError()
         blockedTask.isStarted() `should be equal to` true
-        blockedTask.isCompleted() `should be equal to` false
+        blockedTask.isCompleted() `should be equal to` false*/
     }
 }

@@ -47,6 +47,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.plus
 
 internal class ConnectUserTest {
 
@@ -166,7 +168,10 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
-        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async {
+            client.connectUser(user, jwt).await()
+        }
         socket.sendEvent(event)
         val result = deferred.await()
 
@@ -224,7 +229,8 @@ internal class ConnectUserTest {
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
-        val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async { client.connectGuestUser(user.id, user.name).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
@@ -252,7 +258,8 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
 
-        val deferred = testCoroutines.scope.async { client.connectAnonymousUser().await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async { client.connectAnonymousUser().await() }
         socket.sendEvent(event)
         val result = deferred.await()
 

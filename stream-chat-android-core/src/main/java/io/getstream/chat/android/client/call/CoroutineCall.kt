@@ -19,38 +19,57 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.job
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.coroutines.resume
 
 @InternalStreamChatApi
 public class CoroutineCall<T : Any>(
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
-    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
+    private val logger = StreamLog.getLogger("Chat:CoroutineCall")
+
+    private val jobRef = AtomicReference<Job>()
 
     override fun execute(): Result<T> = runBlocking { await() }
     override suspend fun await(): Result<T> = Call.runCatching {
-        withContext(callScope.coroutineContext) { suspendingTask() }
+        logger.d { "[await] no args" }
+        suspendCancellableCoroutine { cont ->
+            logger.v { "[await] started" }
+            cont.invokeOnCancellation {
+                logger.v { "[await] cancelled: $it" }
+                jobRef.get()?.cancel()
+            }
+            enqueue {
+                logger.v { "[await] completed: $it" }
+                cont.resume(it)
+            }
+        }
     }
 
     override fun cancel() {
-        callScope.coroutineContext.cancelChildren()
+        logger.d { "[cancel] no args" }
+        jobRef.get()?.cancel()
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        callScope.launch {
-            val result = await()
+        logger.d { "[enqueue] no args" }
+        jobRef.get()?.cancel()
+        jobRef.set(scope.launch {
+            logger.d { "[enqueue] start" }
+            val result = suspendingTask()
+            logger.d { "[enqueue] finished" }
             withContext(DispatcherProvider.Main) {
                 callback.onResult(result)
             }
-        }
+        })
     }
 }

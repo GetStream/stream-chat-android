@@ -19,6 +19,7 @@ package io.getstream.chat.android.test
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -35,11 +36,14 @@ public class MockRetrofitCall<T : Any>(
     public val doWork: suspend () -> Unit,
 ) : Call<T> {
 
+    private val logger = StreamLog.getLogger("Chat:MockRetrofitCall")
+
     private val executed = AtomicBoolean(false)
     private val job = AtomicReference<Job>()
     private val pendingCallback = AtomicReference<Call.Callback<T>>()
 
     override fun cancel() {
+        logger.d { "[cancel] no args" }
         job.get()?.cancel()
         job.set(null)
         pendingCallback.get()?.onResult(Result.error(AsyncTestCallCanceledException()))
@@ -47,7 +51,9 @@ public class MockRetrofitCall<T : Any>(
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
+        logger.d { "[enqueue] no args" }
         if (executed.get()) {
+            logger.w { "[enqueue] rejected (already executed)" }
             callback.onResult(Result.error(ChatError(message = "Already executed.")))
             return
         }
@@ -55,19 +61,27 @@ public class MockRetrofitCall<T : Any>(
         executed.set(true)
         job.set(
             scope.launch {
+                logger.w { "[enqueue] start work" }
                 doWork()
+                logger.w { "[enqueue] work completed" }
                 callback.onResult(result)
             }
         )
     }
 
-    override fun execute(): Result<T> = runBlocking { await() }
+    override fun execute(): Result<T> = runBlocking {
+        logger.d { "[execute] no args" }
+        await()
+    }
 
     override suspend fun await(): Result<T> = suspendCancellableCoroutine { continuation ->
+        logger.d { "[await] no args" }
         enqueue { result ->
+            logger.v { "[await] result: $result" }
             continuation.resume(result)
         }
         continuation.invokeOnCancellation {
+            logger.v { "[await] canceled: $it" }
             cancel()
         }
     }
