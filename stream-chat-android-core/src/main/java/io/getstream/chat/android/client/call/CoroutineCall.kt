@@ -42,7 +42,7 @@ public class CoroutineCall<T : Any>(
     override suspend fun await(): Result<T> = Call.runCatching {
         logger.d { "[await] no args" }
         withContext(scope.coroutineContext) {
-            jobs.addFrom(scope.coroutineContext)
+            jobs.addFrom(coroutineContext)
             suspendingTask()
         }
     }
