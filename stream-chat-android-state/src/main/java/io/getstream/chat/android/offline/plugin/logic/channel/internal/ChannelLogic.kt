@@ -544,13 +544,13 @@ internal class ChannelLogic(
                 channelStateLogic.setHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 channelStateLogic.deleteMember(event.user.id)
