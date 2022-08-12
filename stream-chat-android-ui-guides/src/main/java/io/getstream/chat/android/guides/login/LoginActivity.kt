@@ -89,6 +89,16 @@ class LoginActivity : AppCompatActivity() {
 
             Spacer(modifier = Modifier.height(28.dp))
 
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = stringResource(R.string.login_screen_title),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = ChatTheme.colors.textHighEmphasis
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()

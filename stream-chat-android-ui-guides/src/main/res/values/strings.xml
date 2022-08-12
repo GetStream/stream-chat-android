@@ -18,6 +18,7 @@
     <string name="app_name">UI Guides</string>
 
     <!-- Login Screen -->
+    <string name="login_screen_title">Guides and Samples</string>
     <string name="login_user_subtitle">Stream test account</string>
 
     <!-- Catalog Screen -->
