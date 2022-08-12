@@ -151,7 +151,6 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.coroutine.cancelChildrenExcept
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
@@ -550,7 +549,7 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
-            disconnectSuspend(flushPersistence = true).wait()
+            disconnectSuspend(flushPersistence = true)
             connectUser(user, tokenProvider, timeoutMilliseconds).await()
         }
     }
@@ -575,12 +574,7 @@ internal constructor(
         token: String,
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
-        return CoroutineCall(scope) {
-            disconnect(flushPersistence = true).await()
-                .flatMapSuspend {
-                    connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds).await()
-                }
-        }
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
     }
 
     /**
@@ -1156,8 +1150,8 @@ internal constructor(
             userCredentialStorage.clear()
         }
         lifecycleObserver.dispose()
-        appSettingsManager.clear()
         _repositoryFacade = null
+        appSettingsManager.clear()
         // val currentJob = currentCoroutineContext()[Job]
         // scope.coroutineContext.cancelChildrenExcept(currentJob)
     }
