@@ -99,8 +99,10 @@ public fun GiphyAttachmentContent(
                     val giphyHeight = (giphyInfo.height).dp
 
                     when {
-                        giphyInfoType == GiphyInfoType.FIXED_HEIGHT || giphyInfoType == GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED -> DpSize(
-                            minOf(giphyWidth, maxWidth), giphyHeight
+                        giphyInfoType == GiphyInfoType.FIXED_HEIGHT ||
+                            giphyInfoType == GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED -> DpSize(
+                            width = minOf(giphyWidth, maxWidth),
+                            height = giphyHeight
                         )
                         giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
                         else -> calculateResultingDimensions(
