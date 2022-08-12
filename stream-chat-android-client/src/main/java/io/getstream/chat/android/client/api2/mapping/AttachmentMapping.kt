@@ -37,6 +37,8 @@ internal fun Attachment.toDto(): AttachmentDto =
         author_link = authorLink,
         type = type,
         url = url,
+        original_height = originalHeight,
+        original_width = originalWidth,
         extraData = extraData,
     )
 
@@ -58,5 +60,7 @@ internal fun AttachmentDto.toDomain(): Attachment =
         titleLink = title_link,
         type = type,
         url = url,
+        originalHeight = original_height,
+        originalWidth = original_width,
         extraData = extraData.toMutableMap(),
     )

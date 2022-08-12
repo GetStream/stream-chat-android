@@ -32,7 +32,7 @@ android {
         debug {
             versionNameSuffix "-DEBUG"
             applicationIdSuffix ".debug"
-            testCoverageEnabled true
+            testCoverageEnabled false
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -68,7 +68,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE
+        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
     }
 }
 

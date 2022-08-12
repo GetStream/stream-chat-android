@@ -37,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE
+        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
     }
 }
 
@@ -87,4 +87,6 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
+
+    detektPlugins(Dependencies.detektFormatting)
 }

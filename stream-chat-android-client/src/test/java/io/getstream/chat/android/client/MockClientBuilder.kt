@@ -23,8 +23,6 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -79,7 +77,7 @@ internal class MockClientBuilder(
             "cdn.http",
             "socket.url",
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
+            Mother.chatLoggerConfig(),
             false,
             false
         )

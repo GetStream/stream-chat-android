@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
     <ID>ComplexMethod:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
@@ -20,7 +20,7 @@
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
     <ID>ForbiddenComment:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$// TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
-    <ID>LongMethod:ChannelLogic.kt$ChannelLogic$ internal fun handleEvent(event: ChatEvent)</ID>
+    <ID>LongMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun distinctFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
@@ -66,7 +66,7 @@
     <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
-    <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$ internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
+    <ID>ReturnCount:ChannelMarkReadHelper.kt$ChannelMarkReadHelper$internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>

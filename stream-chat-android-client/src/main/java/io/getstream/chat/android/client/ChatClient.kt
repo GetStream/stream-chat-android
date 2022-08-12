@@ -446,6 +446,7 @@ internal constructor(
                 Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
         }.onError {
+            @Suppress("DEPRECATION_ERROR")
             disconnect()
         }.onSuccess {
             clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
@@ -1101,7 +1102,7 @@ internal constructor(
             "Instead of that, you can use `ChatClient.disconnect(true)` that return a `Call` " +
             "and run it safe using coroutines.",
         replaceWith = ReplaceWith("this.disconnect(true).await()"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     @WorkerThread
     public fun disconnect() {

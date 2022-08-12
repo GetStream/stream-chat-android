@@ -1,11 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
   <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>ComplexCondition:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$prevMessage != null &amp;&amp; nextMessage != null &amp;&amp; prevUser == user &amp;&amp; nextUser == user</ID>
-    <ID>ComplexCondition:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator</ID>
-    <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$ internal fun defaultHandler(): MessagePositionHandler</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$if</ID>
-    <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$return</ID>
-  </CurrentIssues>
+  <CurrentIssues/>
 </SmellBaseline>
