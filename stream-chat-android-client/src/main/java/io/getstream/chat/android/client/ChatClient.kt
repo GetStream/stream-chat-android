@@ -466,6 +466,7 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'" }
         _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
@@ -517,14 +518,22 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
-            clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
-            logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
-            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
-                logger.v {
-                    "[connectUser] completed: ${
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
+        }
+    }
+
+    private suspend fun connectUserSuspend(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
+    ): Result<ConnectionData> {
+        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
+        logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
+        return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
+            logger.v {
+                "[connectUserSuspend] completed: ${
                     result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                    }"
-                }
+                }"
             }
         }
     }
@@ -550,8 +559,11 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
+            logger.d { "[switchUser] user.id: '${user.id}'" }
             disconnectSuspend(flushPersistence = true)
-            connectUser(user, tokenProvider, timeoutMilliseconds).await()
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
+                logger.v { "[switchUser] completed('${user.id}')" }
+            }
         }
     }
 
@@ -1133,7 +1145,11 @@ internal constructor(
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
-        logger.d { "[disconnectSuspend] flushPersistence: $flushPersistence" }
+        val userId = clientState.user.value?.id
+        logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
+        val currentJob = currentCoroutineContext()[Job]
+        scope.coroutineContext.cancelChildrenExcept(currentJob)
+
         notifications.onLogout()
         clientState.toMutableState()?.clearState()
         clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
@@ -1153,8 +1169,8 @@ internal constructor(
         lifecycleObserver.dispose()
         _repositoryFacade = null
         appSettingsManager.clear()
-        val currentJob = currentCoroutineContext()[Job]
-        scope.coroutineContext.cancelChildrenExcept(currentJob)
+
+        logger.v { "[disconnectSuspend] completed('$userId')" }
     }
 
     /**
@@ -1695,6 +1711,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+        logger.d { "[queryChannels] no args" }
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
@@ -1708,6 +1725,7 @@ internal constructor(
                 logger.v { "[queryChannels] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsResult(result, request)
             }
+            logger.v { "[queryChannels] completed: ${result.stringify { "channels(count=${it.size})" }}" }
         }.precondition(relevantPluginsLazy()) {
             onQueryChannelsPrecondition(request)
         }
