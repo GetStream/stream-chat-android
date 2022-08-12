@@ -22,7 +22,7 @@ import java.util.Date
 
 @Deprecated(
     message = "The class is unused and will be removed",
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public abstract class LegacyDateFormatter : DateFormatter {
     /**

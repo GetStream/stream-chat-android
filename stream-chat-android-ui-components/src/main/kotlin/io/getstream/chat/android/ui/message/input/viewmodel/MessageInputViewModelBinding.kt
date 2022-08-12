@@ -138,14 +138,6 @@ public fun MessageInputViewModel.bindView(
         }
     )
 
-    @Suppress("DEPRECATION_ERROR")
-    view.setTypingListener(
-        object : MessageInputView.TypingListener {
-            override fun onKeystroke() = keystroke()
-            override fun onStopTyping() = stopTyping()
-        }
-    )
-
     view.setTypingUpdatesBuffer(typingUpdatesBuffer)
 
     repliedMessage.observe(lifecycleOwner) {

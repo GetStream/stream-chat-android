@@ -64,11 +64,11 @@ class ComposeChannelsActivity : AppCompatActivity() {
      * Logs out and navigated to the login screen.
      */
     private fun logout() {
-        ChatClient.instance().disconnect()
-
-        finish()
-        startActivity(LoginActivity.createIntent(this))
-        overridePendingTransition(0, 0)
+        ChatClient.instance().disconnect(flushPersistence = false).enqueue {
+            finish()
+            startActivity(LoginActivity.createIntent(this))
+            overridePendingTransition(0, 0)
+        }
     }
 
     companion object {
