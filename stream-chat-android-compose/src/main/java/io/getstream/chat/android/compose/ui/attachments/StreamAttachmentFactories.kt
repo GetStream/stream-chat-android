@@ -36,30 +36,22 @@ public object StreamAttachmentFactories {
     private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 5
 
     /**
-     * Instructs the Giphy to fill all of the available space.
-     */
-    public const val GIPHY_FILL_MAX_SPACE: Float = -1f
-
-    /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
      *
      * @param linkDescriptionMaxLines - The limit of how long the link attachment descriptions can be.
-     * @param giphyInfoType Used to modify the quality of the rendered Giphy attachments.
-     * @param giphyUpscaleFactor The amount the Giphy will upscaled. By default this is set to 1,
-     * meaning that the each Giphy pixel will take exactly 1 screen pixel.
+     * @param giphyInfoType Used to modify the quality and dimensions of the rendered
+     * Giphy attachments.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
-        giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-        giphyUpscaleFactor: Float = 1f
+        giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
-            upscaleFactor = giphyUpscaleFactor
         ),
         ImageAttachmentFactory(),
         FileAttachmentFactory(),

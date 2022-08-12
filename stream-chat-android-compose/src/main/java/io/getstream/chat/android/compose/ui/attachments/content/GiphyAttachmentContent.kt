@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -45,12 +46,10 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.ui.utils.GiphyInfoType
 import io.getstream.chat.android.ui.utils.giphyInfo
-import kotlin.math.abs
 
 /**
  * Builds a Giphy attachment message.
@@ -59,9 +58,8 @@ import kotlin.math.abs
  *
  * @param attachmentState - The attachment to show.
  * @param modifier Modifier for styling.
- * @param giphyInfoType Used to modify the quality of the rendered Giphy attachments.
- * @param upscaleFactor The amount the Giphy will upscaled. By default this is set to 1,
- * meaning that the each Giphy pixel will take exactly 1 screen pixel.
+ * @param giphyInfoType Used to modify the quality and dimensions of the rendered
+ * Giphy attachments.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -70,7 +68,6 @@ public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-    upscaleFactor: Float = 1f,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -95,19 +92,16 @@ public fun GiphyAttachmentContent(
     val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
     val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
 
-    val giphyDimensions: DpSize by remember(key1 = giphyInfo, key2 = upscaleFactor) {
+    val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
         derivedStateOf {
             if (giphyInfo != null) {
                 with(density) {
-                    val giphyWidth = (giphyInfo.width * abs(upscaleFactor)).dp
-                    val giphyHeight = (giphyInfo.height * abs(upscaleFactor)).dp
+                    val giphyWidth = (giphyInfo.width).dp
+                    val giphyHeight = (giphyInfo.height).dp
 
                     when {
-                        upscaleFactor == StreamAttachmentFactories.GIPHY_FILL_MAX_SPACE -> calculateResultingDimensions(
-                            maxWidth = maxWidth,
-                            maxHeight = maxHeight,
-                            giphyWidth = giphyWidth,
-                            giphyHeight = giphyHeight
+                        giphyInfoType == GiphyInfoType.FIXED_HEIGHT || giphyInfoType == GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED -> DpSize(
+                            minOf(giphyWidth, maxWidth), giphyHeight
                         )
                         giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
                         else -> calculateResultingDimensions(

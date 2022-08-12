@@ -28,14 +28,12 @@ import io.getstream.chat.android.ui.utils.GiphyInfoType
  *
  * Has no "preview content", given that this attachment only exists after being sent.
  *
- * @param giphyInfoType Used to modify the quality of the rendered Giphy attachments.
- * @param upscaleFactor The amount the Giphy will upscaled. By default this is set to 1,
- * meaning that the each Giphy pixel will take exactly 1 screen pixel.
+ * @param giphyInfoType Used to modify the quality and dimensions of the rendered
+ * Giphy attachments.
  */
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-    upscaleFactor: Float = 1f,
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
@@ -44,7 +42,6 @@ public fun GiphyAttachmentFactory(
                 modifier = modifier.wrapContentSize(),
                 attachmentState = state,
                 giphyInfoType = giphyInfoType,
-                upscaleFactor = upscaleFactor
             )
         },
     )
