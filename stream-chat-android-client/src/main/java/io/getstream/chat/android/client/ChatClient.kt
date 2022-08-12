@@ -175,7 +175,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
-import okhttp3.internal.wait
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -532,7 +531,7 @@ internal constructor(
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
             logger.v {
                 "[connectUserSuspend] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
                 }"
             }
         }
