@@ -166,36 +166,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verify(connectionDataCallback).onResult(argThat { isError })
     }
 
-    @Test
-    fun `switchUser should return correctly`() = runTest {
-        val timeout = 10L
-        val connectionDataCallback: Call.Callback<ConnectionData> = mock()
-        val sut = Fixture()
-            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
-            .givenUserNotSetState()
-            .get()
-
-        sut.connectUser(Mother.randomUser { id = "userId" }, "token", timeout).enqueue(connectionDataCallback)
-
-        delay(100L)
-        verify(connectionDataCallback).onResult(
-            argThat {
-                isError && error().message == "Connection wasn't established in ${timeout}ms"
-            }
-        )
-
-        reset(connectionDataCallback)
-
-        sut.switchUser(Mother.randomUser { id = "userId" }, "token", timeout).enqueue(connectionDataCallback)
-
-        delay(100L)
-        verify(connectionDataCallback).onResult(
-            argThat {
-                isError && error().message == "Connection wasn't established in ${timeout}ms"
-            }
-        )
-    }
-
     inner class Fixture {
         fun givenIdleConnectionState() = apply {
             whenever(socketStateService.state) doReturn SocketState.Idle

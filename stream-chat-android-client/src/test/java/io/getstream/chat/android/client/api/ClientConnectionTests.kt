@@ -41,17 +41,21 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -116,7 +120,7 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
-        whenever(clientState.user) doReturn MutableStateFlow(randomUser())
+        whenever(clientState.user) doReturn MutableStateFlow(user)
 
         client = ChatClient(
             config,
@@ -155,5 +159,20 @@ internal class ClientConnectionTests {
         client.disconnect(flushPersistence = false).await()
 
         verify(socket, times(1)).disconnect()
+    }
+
+    @Test
+    fun `switchUser should return and also connect the socket`() = runTest {
+        val timeout = 10L
+
+        val result = client.connectUser(user, token, timeout).await()
+        result.isError `should be equal to` true
+        result.error().message `should be equal to` "Connection wasn't established in ${timeout}ms"
+
+        val result2 = client.switchUser(user, token, timeout).await()
+        result2.isError `should be equal to` true
+        result2.error().message `should be equal to` "Connection wasn't established in ${timeout}ms"
+
+        verify(socket, times(2)).connectUser(user, false)
     }
 }
