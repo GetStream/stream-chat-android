@@ -106,7 +106,7 @@ public fun ImageAttachmentContent(
                 attachment = attachment,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(ratio ?: EQUAL_DIMENSIONS_RATIO),
+                    .aspectRatio(ratio ?: EqualDimensionsRatio),
                 message = message,
                 attachmentPosition = 0,
                 onImagePreviewResult = onImagePreviewResult,
@@ -116,7 +116,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .aspectRatio(TWICE_AS_TALL_AS_IS_WIDE_RATIO),
+                    .aspectRatio(TwiceAsTallAsIsWideRatio),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 0..3 step 2) {
@@ -136,7 +136,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .aspectRatio(TWICE_AS_TALL_AS_IS_WIDE_RATIO),
+                    .aspectRatio(TwiceAsTallAsIsWideRatio),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 1..4 step 2) {
@@ -267,10 +267,10 @@ internal fun ImageAttachmentViewMoreOverlay(
  * Produces the same height as the width of the
  * Composable when calling [Modifier.aspectRatio].
  */
-private const val EQUAL_DIMENSIONS_RATIO = 1f
+private const val EqualDimensionsRatio = 1f
 
 /**
  * Produces a height value that is twice the width of the
  * Composable when calling [Modifier.aspectRatio].
  */
-private const val TWICE_AS_TALL_AS_IS_WIDE_RATIO = 0.5f
+private const val TwiceAsTallAsIsWideRatio = 0.5f

@@ -39,7 +39,5 @@
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$public fun updateLastSeenMessage(message: Message)</ID>
-    <ID>TopLevelPropertyNaming:ImageAttachmentContent.kt$/** * Produces a height value that is twice the width of the * Composable when calling [Modifier.aspectRatio]. */ private const val TWICE_AS_TALL_AS_IS_WIDE_RATIO = 0.5f</ID>
-    <ID>TopLevelPropertyNaming:ImageAttachmentContent.kt$/** * Produces the same height as the width of the * Composable when calling [Modifier.aspectRatio]. */ private const val EQUAL_DIMENSIONS_RATIO = 1f</ID>
   </CurrentIssues>
 </SmellBaseline>
