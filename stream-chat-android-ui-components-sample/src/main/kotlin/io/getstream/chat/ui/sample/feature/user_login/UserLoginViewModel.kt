@@ -19,14 +19,18 @@ package io.getstream.chat.ui.sample.feature.user_login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionData
+import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.subscribe
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
@@ -72,13 +76,14 @@ class UserLoginViewModel : ViewModel() {
 
         ChatClient.instance().run {
             if (switchUser) {
-                switchUser(chatUser, user.token).enqueue(::handleUserConnection)
+                switchUser(chatUser, user.token) {
+                    _events.postValue(Event(UiEvent.RedirectToChannels))
+                }.enqueue(::handleUserConnection)
             } else if (getCurrentUser() == null) {
                 connectUser(chatUser, user.token).enqueue(::handleUserConnection)
+                _events.postValue(Event(UiEvent.RedirectToChannels))
             }
         }
-
-        _events.postValue(Event(UiEvent.RedirectToChannels))
     }
 
     private fun handleUserConnection(result: Result<ConnectionData>) {

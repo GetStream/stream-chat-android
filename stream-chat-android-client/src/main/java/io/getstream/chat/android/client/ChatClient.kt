@@ -557,10 +557,12 @@ internal constructor(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
             disconnectSuspend(flushPersistence = true)
+            onDisconnectionComplete()
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
                 logger.v { "[switchUser] completed('${user.id}')" }
             }
@@ -586,8 +588,9 @@ internal constructor(
         user: User,
         token: String,
         timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
     ): Call<ConnectionData> {
-        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
     }
 
     /**
@@ -1151,8 +1154,6 @@ internal constructor(
         scope.coroutineContext.cancelChildrenExcept(currentJob)
 
         notifications.onLogout()
-        clientState.toMutableState()?.clearState()
-        clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
         getCurrentUser().let(initializationCoordinator::userDisconnected)
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
@@ -1169,6 +1170,9 @@ internal constructor(
         lifecycleObserver.dispose()
         _repositoryFacade = null
         appSettingsManager.clear()
+
+        clientState.toMutableState()?.clearState()
+        clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
 
         logger.v { "[disconnectSuspend] completed('$userId')" }
     }
