@@ -31,6 +31,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:src="@drawable/ic_calendar"
+        app:tint="@color/stream_ui_grey"
         tools:ignore="ContentDescription"
         />
 

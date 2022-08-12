@@ -40,6 +40,7 @@
                 android:layout_height="24dp"
                 android:layout_margin="4dp"
                 android:src="@drawable/ic_calendar"
+                app:tint="@color/stream_ui_grey"
                 tools:ignore="ContentDescription"
                 />
 
