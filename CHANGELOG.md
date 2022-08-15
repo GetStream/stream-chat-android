@@ -59,10 +59,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
+- Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [#4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 - Image attachment containers now posses the correct fixed size prior to loading, avoiding message items around messages containing images from "jumping". This is applicable only to image attachments which contain non-null values`Attachment.originalWidth` and `Attachment.originalHeight` properties. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
-- Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [4035#](https://github.com/GetStream/stream-chat-android/pull/4035)
-- The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. []()
+- Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [#4035](https://github.com/GetStream/stream-chat-android/pull/4035)
+- The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
 
 ### ⬆️ Improved
 
