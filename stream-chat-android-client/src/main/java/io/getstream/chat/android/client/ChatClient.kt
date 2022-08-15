@@ -226,7 +226,7 @@ internal constructor(
         get() = _repositoryFacade
             ?: (getCurrentUser() ?: getStoredUser())
                 ?.let {
-                    createRepositoryFacade(createReposotiryFactory(it))
+                    createRepositoryFacade(createRepositoryFactory(it))
                         .also { _repositoryFacade = it }
                 }
             ?: createRepositoryFacade()
@@ -457,7 +457,7 @@ internal constructor(
         isAnonymous: Boolean,
     ) {
         userStateService.onSetUser(user, isAnonymous)
-        _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
+        _repositoryFacade = createRepositoryFacade(createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
@@ -466,11 +466,11 @@ internal constructor(
         warmUp()
     }
 
-    private fun createReposotiryFactory(user: User): RepositoryFactory =
+    private fun createRepositoryFactory(user: User): RepositoryFactory =
         repositoryFactoryProvider.createRepositoryFactory(user)
 
-    private fun createRepositoryFacade(repositoFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
-        RepositoryFacade.create(repositoFactory, scope)
+    private fun createRepositoryFacade(repositoryFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
+        RepositoryFacade.create(repositoryFactory, scope)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -561,9 +561,12 @@ internal constructor(
         }
     }
 
-    public fun setUserState() {
+    private fun setUserStateIfNeeded() {
+        if (clientState.user.value != null) return
+
         userCredentialStorage.get()?.let { config ->
-            clientState.toMutableState()?.setUser(User(id = config.userId, name = config.userName))
+            val user = User(id = config.userId, name = config.userName)
+            clientState.toMutableState()?.setUser(user)
         }
     }
 
@@ -2883,6 +2886,8 @@ internal constructor(
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
                 setUserWithoutConnectingIfNeeded()
+                setUserStateIfNeeded()
+
                 notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
             }
         }
