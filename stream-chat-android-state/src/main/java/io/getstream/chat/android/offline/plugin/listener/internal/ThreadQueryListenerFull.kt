@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
@@ -36,7 +35,7 @@ import io.getstream.logging.StreamLog
  * @param logic [LogicRegistry] Optional class to handle state updates
  * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
  * @param userRepository [UserRepository]  Optional to handle database updates related to user
- * @param chatClient [ChatClient]
+ * @param getRemoteMessage Returns a remote message from backend side.
  */
 internal class ThreadQueryListenerFull(
     private val logic: LogicRegistry?,
