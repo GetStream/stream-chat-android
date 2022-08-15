@@ -59,7 +59,7 @@ class UserLoginViewModel : ViewModel() {
 
     private fun authenticateUser(user: SampleUser) {
         if (switchUser) {
-            App.instance.userRepository.clearUserCommit()
+            App.instance.userRepository.clearUser()
         }
 
         App.instance.userRepository.setUser(user)
