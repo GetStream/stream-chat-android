@@ -561,6 +561,12 @@ internal constructor(
         }
     }
 
+    public fun setUserState() {
+        userCredentialStorage.get()?.let { config ->
+            clientState.toMutableState()?.setUser(User(id = config.userId, name = config.userName))
+        }
+    }
+
     @InternalStreamChatApi
     public fun containsStoredCredentials(): Boolean {
         return userCredentialStorage.get() != null
