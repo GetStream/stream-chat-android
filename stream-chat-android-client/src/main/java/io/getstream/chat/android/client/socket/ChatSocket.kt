@@ -101,26 +101,26 @@ internal open class ChatSocket constructor(
             when (newState) {
                 is State.Connecting -> {
                     healthMonitor.stop()
-                    callListeners { it.onConnecting() }
+                    callListenersOnUiThread { it.onConnecting() }
                 }
                 is State.Connected -> {
                     healthMonitor.ack()
-                    callListeners { it.onConnected(newState.event) }
+                    callListenersOnUiThread { it.onConnected(newState.event) }
                 }
                 is State.NetworkDisconnected -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                 }
                 is State.DisconnectedByRequest -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
                 is State.DisconnectedTemporarily -> {
                     shutdownSocketConnection()
                     healthMonitor.onDisconnected()
-                    callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                 }
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
@@ -128,7 +128,7 @@ internal open class ChatSocket constructor(
                     networkStateProvider.unsubscribe(networkStateListener)
                     healthMonitor.stop()
 
-                    callListeners(forceSync = true) { listener ->
+                    callListeners { listener ->
                         listener.onDisconnected(
                             DisconnectCause.UnrecoverableError(newState.error)
                         )
@@ -300,15 +300,15 @@ internal open class ChatSocket constructor(
         socket = null
     }
 
-    private fun callListeners(forceSync: Boolean = false, call: (SocketListener) -> Unit) {
+    private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
-            if (forceSync) {
-                listeners.forEach(call)
-            } else {
-                listeners.forEach { listener ->
-                    eventUiHandler.post { call(listener) }
-                }
-            }
+            listeners.forEach(call)
+        }
+    }
+
+    private fun callListenersOnUiThread(call: (SocketListener) -> Unit) {
+        eventUiHandler.post {
+            callListeners(call)
         }
     }
 
