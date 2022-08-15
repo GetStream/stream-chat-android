@@ -402,6 +402,7 @@ internal constructor(
                 logger.v { "[setUser] user is NotSet" }
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
                 clientState.toMutableState()?.setUser(user)
+                userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     chatSocketExperimental.connectUser(user, isAnonymous)
                 } else {
@@ -456,7 +457,6 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
-        userStateService.onSetUser(user, isAnonymous)
         _repositoryFacade = createRepositoryFacade(createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
