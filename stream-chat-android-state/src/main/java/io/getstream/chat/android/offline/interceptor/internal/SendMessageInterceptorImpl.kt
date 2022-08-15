@@ -72,8 +72,10 @@ internal class SendMessageInterceptorImpl(
             message.populateMentions(channel.toChannel())
         }
 
-        logic.channelFromMessage(message)?.upsertMessage(preparedMessage)
-        logic.threadFromMessage(message)?.upsertMessage(preparedMessage)
+
+        logic.channel(channelType, channelId).upsertMessage(preparedMessage)
+        logic.thread(message.id).upsertMessage(preparedMessage)
+
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(preparedMessage)
         channelRepository.updateLastMessageForChannel(message.cid, preparedMessage)

@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.logging.StreamLog
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
@@ -134,14 +135,15 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         val channelType = intent.getStringExtra(KEY_CHANNEL_TYPE) ?: return
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
         when (intent.action) {
-            ACTION_READ -> intent.getStringExtra(KEY_MESSAGE_ID)?.let { messageId ->
-                markAsRead(
-                    messageId,
-                    channelId,
-                    channelType,
-                )
-            }
-            ACTION_REPLY -> {
+            ACTION_READ ->
+                intent.getStringExtra(KEY_MESSAGE_ID)?.let { messageId ->
+                    markAsRead(
+                        messageId,
+                        channelId,
+                        channelType,
+                    )
+                }
+            ACTION_REPLY ->
                 RemoteInput.getResultsFromIntent(intent)?.getCharSequence(KEY_TEXT_REPLY)?.let { message ->
                     replyText(
                         channelId,
@@ -149,7 +151,6 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                         message,
                     )
                 }
-            }
         }
         cancelNotification(channelType, channelId)
     }
@@ -165,11 +166,24 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         type: String,
         messageChars: CharSequence,
     ) {
-        if (!ChatClient.isInitialized) return
+        if (!ChatClient.isInitialized) {
+            StreamLog.d("MessageReceiver") {
+                "ChatClient is not initialized, returning..."
+            }
+            return
+        }
 
-        val currentUser = ChatClient.instance().getCurrentUser() ?: return
+        val chatClient = ChatClient.instance()
+        chatClient.setUserWithoutConnectingIfNeeded()
 
-        ChatClient.instance().sendMessage(
+        val currentUser = chatClient.getCurrentUser() ?: run {
+            StreamLog.d("MessageReceiver") {
+                "ChatClient.instance().clientState.user.value is null, returning..."
+            }
+            return
+        }
+
+        chatClient.sendMessage(
             channelType = type,
             channelId = channelId,
             message = Message().apply {
