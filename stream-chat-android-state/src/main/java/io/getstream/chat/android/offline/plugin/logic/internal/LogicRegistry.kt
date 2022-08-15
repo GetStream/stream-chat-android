@@ -142,11 +142,7 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.thread(messageId).toMutableState()
             val stateLogic = ThreadStateLogicImpl(mutableState)
-            ThreadLogic(
-                repos,
-                client,
-                stateLogic
-            )
+            ThreadLogic(repos, stateLogic)
         }
     }
 
