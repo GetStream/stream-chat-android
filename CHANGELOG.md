@@ -79,6 +79,7 @@
 ### 🐞 Fixed
 - Fixed a crash when passing content URIs without duration metadata to the `StorageHelperWrapper::.getAttachmentsFromUris` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 - Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [4035#](https://github.com/GetStream/stream-chat-android/pull/4035)
+- Fixed the display of online member count in the message list header. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
 
 ### ⬆️ Improved
 - `ImageAttachmentContent` is no longer statically sized. It now auto-sizes itself according to the image attachment dimension ratio. If you wish to limit the maximum height of image attachments, please use `StreamDimens.attachmentsContentImageMaxHeight`.  [#4013](https://github.com/GetStream/stream-chat-android/pull/4013)
