@@ -40,7 +40,7 @@ class HomeFragmentViewModel : ViewModel() {
 
     init {
         _state.value = State(
-            user = ChatClient.instance().getCurrentUser() ?: unauthorizedUser,
+            user = ChatClient.instance().clientState.user.value ?: unauthorizedUser,
         )
 
         ChatClient.instance()
