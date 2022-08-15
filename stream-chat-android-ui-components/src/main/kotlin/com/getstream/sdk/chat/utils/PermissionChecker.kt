@@ -66,7 +66,14 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
             view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
             view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
-            listOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                true -> listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                )
+                else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            },
             onPermissionDenied,
             onPermissionGranted
         )
@@ -82,7 +89,14 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
             view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
             view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
-            listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                true -> listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                )
+                else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            },
             onPermissionDenied,
             onPermissionGranted
         )

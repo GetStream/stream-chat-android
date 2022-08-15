@@ -72,4 +72,8 @@ public interface NotificationHandler {
      * Dismiss all notifications.
      */
     public fun dismissAllNotifications()
+
+    public fun onNotificationPermissionGranted() { /* no-op */ }
+
+    public fun onNotificationPermissionDenied() { /* no-op */ }
 }

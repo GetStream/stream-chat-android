@@ -59,6 +59,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(':stream-chat-android-core')
     api project(":libraries:logging:stream-logger-android")
+    implementation 'com.google.android.material:material:1.6.1'
     debugApi project(":libraries:logging:stream-logger-android-init")
 
     implementation Dependencies.kotlinReflect
