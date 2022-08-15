@@ -382,9 +382,6 @@ public class MessageListViewModel(
      * Sets the current channel, used to show info in the UI.
      */
     private fun setCurrentChannel(channel: Channel) {
-        StreamLog.e("ABC") {
-            "ABC setCurrentChannel()"
-        }
         this.channel = channel
     }
 
