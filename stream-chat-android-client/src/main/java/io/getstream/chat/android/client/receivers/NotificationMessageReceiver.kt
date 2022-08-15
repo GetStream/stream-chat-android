@@ -174,7 +174,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         }
 
         val chatClient = ChatClient.instance()
-        val currentUser = chatClient.getCurrentUser() ?: run {
+        val currentUser = chatClient.clientState.user.value ?: run {
             StreamLog.d("MessageReceiver") {
                 "ChatClient.instance().clientState.user.value is null, returning..."
             }
