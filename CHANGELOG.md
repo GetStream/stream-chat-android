@@ -1,16 +1,8 @@
-# UNRELEASED CHANGELOG
+# August 16th, 2022 - 5.8.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Updated external libraries version. Check the PR to get more details.[#3976](https://github.com/GetStream/stream-chat-android/pull/3976)
 - Updated Compose Compiler version to `1.3.0`, Compose UI version to `1.2.1`,  and Kotlin version to `1.7.10`. [#4019](https://github.com/GetStream/stream-chat-android/pull/4019)
-
-### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -18,18 +10,10 @@
 - Fixed blinking unread count indicator. [#4030](https://github.com/GetStream/stream-chat-android/pull/4030)
 - Fixed push notification reply action. [#4046](https://github.com/GetStream/stream-chat-android/pull/4046)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added properties `originalHeight` and `originalWidth` to `Attachment`. These represent the original dimensions of an image attachment. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improved updating channels after receiving `NotificationMessageNew` event. [#3991](https://github.com/GetStream/stream-chat-android/pull/3991)
 - Improved updating channels after receiving `NewMessageEvent`. The channel will be added to the list if the message is not a system message. [#3999](https://github.com/GetStream/stream-chat-android/pull/3999)
@@ -45,26 +29,11 @@
 - 🚨 Breaking change: `ChatEventHandlerFactory::chatEventHandler` signature was changed. It now requires `StateFlow<Map<String, Channel>?>` instead of `StateFlow<List<Channel>?>` [#3992](https://github.com/GetStream/stream-chat-android/pull/3992)
 - Added additional `chatEventHandlerFactory` parameter to `ChatClient.queryChannelsAsState` which allows you to customize `chatEventHandler` associated with the query. [#3992](https://github.com/GetStream/stream-chat-android/pull/3992)
 
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed a crash when passing content URIs without duration metadata to the `StorageHelper::.getAttachmentsFromUriList` method. [4002](https://github.com/GetStream/stream-chat-android/pull/4002)
 - Image attachment containers now posses the correct fixed size prior to loading, avoiding message items around messages containing images from "jumping". This is applicable only to image attachments which contain non-null values`Attachment.originalWidth` and `Attachment.originalHeight` properties. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
 - Fixed a bug when a reaction left by the current user appears as a reaction left by some other user. [4035#](https://github.com/GetStream/stream-chat-android/pull/4035)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `streamUiAttachmentsPickerMediaAttachmentsTabEnabled`, `streamUiAttachmentsPickerFileAttachmentsTabEnabled` and `streamUiAttachmentsPickerCameraAttachmentsTabEnabled` attributes to `MessageComposerView` that allow to show/hide particular tabs in the attachment picker. [#3977](https://github.com/GetStream/stream-chat-android/pull/3977)
@@ -73,8 +42,6 @@
 
 ### ⚠️ Changed
 - Link attachment previews now feature a more compact image preview container. [#4011](https://github.com/GetStream/stream-chat-android/pull/4011)
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -91,52 +58,6 @@
 
 ### ⚠️ Changed
 - `StreamDimens` constructor containing parameter `attachmentsContentImageHeight` has been deprecated. Please use the one without it. This has been done because images displayed by `ImageAttachmentContent` inside the message list now auto-size themselves intelligently according to their aspect ratio. If you wish to limit the maximum vertical height of such images, use `StreamDimens.attachmentsContentImageMaxHeight`.  [#4013](https://github.com/GetStream/stream-chat-android/pull/4013)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # August 02th, 2022 - 5.7.0
 ## Common changes for all artifacts
