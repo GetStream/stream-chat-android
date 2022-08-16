@@ -250,7 +250,6 @@ internal open class BaseChatModule(
         tokenManager,
         SocketFactory(parser, tokenManager),
         networkScope,
-        parser,
         lifecycleObserver,
         networkStateProvider,
     )

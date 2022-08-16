@@ -231,6 +231,11 @@ internal constructor(
     internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
+
+    @Deprecated(
+        message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
+            "The new Socket Implementation handle it internally"
+    )
     private val lifecycleHandler = object : LifecycleHandler {
         override fun resume() = reconnectSocket()
         override fun stopped() {
@@ -303,6 +308,7 @@ internal constructor(
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
+                        DisconnectCause.WebSocketNotAvailable,
                         is DisconnectCause.Error,
                         -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
@@ -910,7 +916,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         } else {
             socket.disconnect()
         }
@@ -929,15 +935,12 @@ internal constructor(
                 false -> Unit
             }
         } else {
-            when (chatSocketExperimental.isDisconnected()) {
-                true -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
-                }
-                false -> Unit
+            when (val userState = userStateService.state) {
+                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet
+                )
+                else -> error("Invalid user state $userState without user being set!")
             }
         }
     }
@@ -1108,7 +1111,7 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         }
         if (flushPersistence) {
             repositoryFacade.clear()
