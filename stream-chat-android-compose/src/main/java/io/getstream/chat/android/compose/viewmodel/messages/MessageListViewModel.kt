@@ -568,7 +568,7 @@ public class MessageListViewModel(
      * @param messageId The id of the newest [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String) {
-        if (chatClient.globalState.isOffline() || messagesState.startOfMessages) return
+        if (chatClient.clientState.isOffline || messagesState.startOfMessages) return
 
         if (messageMode is MessageMode.Normal) {
             messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
@@ -581,7 +581,7 @@ public class MessageListViewModel(
      * of a thread.
      */
     public fun loadOlderMessages() {
-        if (chatClient.globalState.isOffline() || messagesState.endOfMessages) return
+        if (chatClient.clientState.isOffline || messagesState.endOfMessages) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {

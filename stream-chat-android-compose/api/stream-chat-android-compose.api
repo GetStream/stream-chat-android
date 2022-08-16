@@ -1987,10 +1987,10 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun isShowingOverlay ()Z
 	public final fun leaveThread ()V
 	public final fun loadMore ()V
-	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)V
-	public static synthetic fun muteUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun loadNewerMessages (Ljava/lang/String;)V
 	public final fun loadOlderMessages ()V
+	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)V
+	public static synthetic fun muteUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun openMessageThread (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun performGiphyAction (Lio/getstream/chat/android/compose/state/messages/list/GiphyAction;)V
 	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
