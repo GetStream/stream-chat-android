@@ -26,14 +26,27 @@ jobs:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: main
   update_changelog:
-    name: Create develop Pull request
+    name: Update Changelog - Model
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: release-squash
+          ref: release
+      - name: Update changelog
+        run: ./gradlew changelog-add-model-section
+      - name: Commit changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add CHANGELOG.md
+          git commit -m "AUTOMATION: Changelog update"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: release-squash
       - name: Create Pull Request
         uses: repo-sync/pull-request@v2
         with: 
