@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.experimental.socket
+package io.getstream.chat.android.client.socket.experimental
 
 import android.os.Handler
 import android.os.Looper
@@ -27,14 +27,14 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.experimental.socket.ChatSocketStateService.State
-import io.getstream.chat.android.client.experimental.socket.ws.StreamWebSocket
-import io.getstream.chat.android.client.experimental.socket.ws.StreamWebSocketEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.socket.HealthMonitor
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.socket.experimental.ChatSocketStateService.State
+import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
+import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocketEvent
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.logging.StreamLog

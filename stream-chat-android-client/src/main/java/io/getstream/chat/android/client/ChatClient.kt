@@ -198,7 +198,7 @@ import java.io.File
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
