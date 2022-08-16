@@ -119,8 +119,9 @@ constructor(
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
-    val logger = StreamLog.getLogger("Chat:MoshiChatApi")
+    private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
 
+    @Volatile
     private var userId: String = ""
         get() {
             if (field == "") {
@@ -128,6 +129,8 @@ constructor(
             }
             return field
         }
+
+    @Volatile
     private var connectionId: String = ""
         get() {
             if (field == "") {
@@ -137,6 +140,7 @@ constructor(
         }
 
     override fun setConnection(userId: String, connectionId: String) {
+        logger.d { "[setConnection] userId: '$userId', connectionId: '$connectionId'" }
         this.userId = userId
         this.connectionId = connectionId
     }
@@ -808,8 +812,10 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        if (connectionId.isEmpty()) return noConnectionIdError()
-
+        if (connectionId.isEmpty()) {
+            logger.w { "[queryChannels] rejected (no connectionId)" }
+            return noConnectionIdError()
+        }
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
             filter_conditions = query.filter.toMap(),
             offset = query.offset,
