@@ -5,7 +5,6 @@
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.type == ModelType.attach_file || attachment.type == ModelType.attach_video || attachment.type == ModelType.attach_audio || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
-    <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
     <ID>ComplexCondition:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$prevMessage != null &amp;&amp; nextMessage != null &amp;&amp; prevUser == user &amp;&amp; nextUser == user</ID>
     <ID>ComplexCondition:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
