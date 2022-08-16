@@ -29,6 +29,11 @@ public sealed class DisconnectCause {
     public object NetworkNotAvailable : DisconnectCause()
 
     /**
+     * Happens when Web Socket connection is not available.
+     */
+    public object WebSocketNotAvailable : DisconnectCause()
+
+    /**
      * Happens when some non critical error occurs.
      * @param error Instance of [ChatNetworkError] as a reason of it.
      */

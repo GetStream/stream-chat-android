@@ -917,6 +917,10 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
 }
 
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable;
+}
+
 public final class io/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler$DefaultImpls {
 	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
 }
