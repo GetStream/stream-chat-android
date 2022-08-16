@@ -56,6 +56,8 @@ internal class MessageListScrollHelper(
 
     internal var unreadCountEnabled: Boolean = true
 
+    private var areNewestMessagesLoaded: Boolean = false
+
     /**
      * True when the latest message is visible.
      *
@@ -121,17 +123,22 @@ internal class MessageListScrollHelper(
                         refreshUnreadCount()
                     }
 
-                    val hasInvisibleUnreadMessage = unreadCount > 0 && !isAtBottom
-                    val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
-                    if (hasInvisibleUnreadMessage || hasScrolledUpEnough) {
+                    scrollButtonView.isVisible = shouldScrollToBottomBeVisible(bottomOffset)
+                    if (scrollButtonView.isVisible) {
                         scrollButtonView.setUnreadCount(unreadCount)
-                        scrollButtonView.isVisible = true
-                    } else {
-                        scrollButtonView.isVisible = false
                     }
                 }
             }
         )
+    }
+
+    private fun shouldScrollToBottomBeVisible(bottomOffset: Int): Boolean {
+        if (!areNewestMessagesLoaded) return true
+
+        val hasInvisibleUnreadMessage = unreadCount > 0 && !isAtBottom
+        val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
+
+        return hasInvisibleUnreadMessage || hasScrolledUpEnough
     }
 
     /**
@@ -184,6 +191,7 @@ internal class MessageListScrollHelper(
         isInitialList: Boolean,
         areNewestMessagesLoaded: Boolean,
     ) {
+        this.areNewestMessagesLoaded = areNewestMessagesLoaded
         if (shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
             return
         }
