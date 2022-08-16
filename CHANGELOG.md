@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Method to switch between users `ChatClient.switchUser`. Can user use when switching between user to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
 
 ### ⚠️ Changed
 
