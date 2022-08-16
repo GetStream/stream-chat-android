@@ -44,6 +44,9 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
  * in the events.
  * @param membership Represents relationship of the current user to the channel.
+ * @param cachedMessages The list of cached messages if the regular list does not contain the newest loaded messages.
+ * @param insideSearch When the channel is inside search, eg. searching from the channel list for a message or when
+ * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
 public data class ChannelData(
     var channelId: String,

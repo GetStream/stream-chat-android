@@ -132,6 +132,13 @@ internal class MessageListScrollHelper(
         )
     }
 
+    /**
+     * Determines whether the scroll to bottom button should be visible or not.
+     *
+     * @param bottomOffset The offset of last visible item and the last potentially visible item.
+     *
+     * @return Whether the scroll to bottom button should be visible or not.
+     */
     private fun shouldScrollToBottomBeVisible(bottomOffset: Int): Boolean {
         if (!areNewestMessagesLoaded) return true
 

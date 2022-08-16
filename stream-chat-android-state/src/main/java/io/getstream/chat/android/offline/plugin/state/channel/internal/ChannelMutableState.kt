@@ -183,6 +183,9 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
 
+    /** The newest cached messages for channel if the newest items are not contained inside [messageList]. */
+    val cachedMessages: StateFlow<Map<String, Message>>
+
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean = false
 
@@ -451,8 +454,9 @@ internal class ChannelMutableState(
     }
     fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent)
 
-    // TODO
-    val cachedMessages: StateFlow<Map<String, Message>>
+    /**
+     * Updates the cached messages with new messages.
+     */
     fun updateCachedMessages(messages: Map<String, Message>)
 
 }
