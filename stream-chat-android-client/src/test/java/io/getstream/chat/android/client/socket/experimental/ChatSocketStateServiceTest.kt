@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.experimental.socket
+package io.getstream.chat.android.client.socket.experimental
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.experimental.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.client.socket.experimental.ChatSocketStateService.State
 import io.getstream.chat.android.test.randomBoolean
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
