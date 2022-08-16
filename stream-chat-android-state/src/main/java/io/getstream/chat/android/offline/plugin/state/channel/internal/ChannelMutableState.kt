@@ -449,4 +449,10 @@ internal class ChannelMutableState(
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
     }
+    fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent)
+
+    // TODO
+    val cachedMessages: StateFlow<Map<String, Message>>
+    fun updateCachedMessages(messages: Map<String, Message>)
+
 }

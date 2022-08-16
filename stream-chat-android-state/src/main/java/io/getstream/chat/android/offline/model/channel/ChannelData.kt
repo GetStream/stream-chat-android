@@ -62,6 +62,8 @@ public data class ChannelData(
     var extraData: MutableMap<String, Any> = mutableMapOf(),
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
+    var cachedMessages: List<Message> = emptyList(),
+    var insideSearch: Boolean = false
 ) {
 
     /**
@@ -88,6 +90,8 @@ public data class ChannelData(
         ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
             ?: currentOwnCapabilities,
         membership = channel.membership,
+        cachedMessages = channel.cachedMessages,
+        insideSearch = channel.isInsideSearch
     )
 
     /**
@@ -130,7 +134,9 @@ public data class ChannelData(
             team = team,
             memberCount = memberCount,
             ownCapabilities = ownCapabilities,
-            membership = membership
+            membership = membership,
+            cachedMessages = cachedMessages,
+            isInsideSearch = insideSearch
         )
     }
 

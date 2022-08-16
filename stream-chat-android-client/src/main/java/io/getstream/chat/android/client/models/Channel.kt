@@ -82,6 +82,8 @@ public data class Channel(
     var pinnedMessages: List<Message> = mutableListOf(),
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
+    var cachedMessages: List<Message> = emptyList(),
+    var isInsideSearch: Boolean = false,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
