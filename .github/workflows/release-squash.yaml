@@ -1,0 +1,33 @@
+name: SquashRelease
+
+on:
+  workflow_run:
+    workflows: ["Publish"]
+    types:
+      - completed
+
+jobs:
+  release_to_main:
+    name: Sync main with release
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps: 
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: release
+      - name: Update changelog
+        run: ./gradlew changelog-add-model-section
+      - name: Create squashed branch
+        run: | 
+          git fetch
+          git checkout -b release-squash
+          git reset $(git merge-base origin/develop $(git rev-parse --abbrev-ref HEAD))
+          git add .
+          git commit -m "Release changes"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: release-squash
+  

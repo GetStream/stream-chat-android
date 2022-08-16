@@ -2,7 +2,7 @@ name: ReleasePost
 
 on:
   workflow_run:
-    workflows: ["Publish"]
+    workflows: ["SquashRelease"]
     types:
       - completed
 
@@ -19,38 +19,25 @@ jobs:
       - name: Sync main
         run: | 
           git pull
-          git merge --ff-only origin/release
+          git merge --ff-only origin/release-squash
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: main
   update_changelog:
-    name: Update Changelog - Model
+    name: Create develop Pull request
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          ref: release
-      - name: Update changelog
-        run: ./gradlew changelog-add-model-section
-      - name: Commit changes
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add CHANGELOG.md
-          git commit -m "AUTOMATION: Changelog update"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          branch: release
+          ref: release-squash
       - name: Create Pull Request
         uses: repo-sync/pull-request@v2
         with: 
-          source_branch: "release"
+          source_branch: "release-squash"
           destination_branch: "develop"
           pr_title: "Release sync"
           pr_body: "Sync with release branch after the release happened"
