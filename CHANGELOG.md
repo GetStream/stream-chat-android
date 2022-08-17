@@ -43,10 +43,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
+- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
-- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3818](https://github.com/GetStream/stream-chat-android/pull/3818)
+- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ❌ Removed
 
