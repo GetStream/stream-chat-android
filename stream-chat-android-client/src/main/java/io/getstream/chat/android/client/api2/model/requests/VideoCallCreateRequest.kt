@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.client.api2.model.requests
 
-/**
- * Represents currently available call information for Agora and HMS video calls.
- *
- * @property callId The call id, which indicates a dedicated video call id on the channel.
- * @property provider The provider.
- * @property agoraChannel The available channel info of Agora.
- * @property hmsRoom The available room info of HMS.
- */
-public data class VideoCallInfo(
-    val callId: String,
-    val provider: String,
-    val agoraChannel: AgoraChannel,
-    val hmsRoom: HMSRoom,
-    val videoCallToken: VideoCallToken,
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+internal data class VideoCallCreateRequest(
+    val id: String,
+    val type: String,
 )

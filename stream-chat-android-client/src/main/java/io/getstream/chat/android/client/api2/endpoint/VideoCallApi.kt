@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
+import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
@@ -32,6 +33,7 @@ internal interface VideoCallApi {
     fun createCall(
         @Path("type") callType: String,
         @Path("id") channelId: String,
+        @Body request: VideoCallCreateRequest,
     ): RetrofitCall<CreateVideoCallResponse>
 
     @POST("/calls")

@@ -363,7 +363,7 @@ internal interface ChatApi {
     ): Call<List<BannedUser>>
 
     @CheckResult
-    fun createVideoCall(callType: String, channelId: String): Call<VideoCallInfo>
+    fun createVideoCall(channelId: String, callId: String, callType: String): Call<VideoCallInfo>
 
     @CheckResult
     fun getVideoCallToken(callId: String): Call<VideoCallToken>

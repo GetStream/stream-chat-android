@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartial
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -907,10 +908,11 @@ constructor(
         ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
     }
 
-    override fun createVideoCall(callType: String, channelId: String): Call<VideoCallInfo> {
+    override fun createVideoCall(channelId: String, callId: String, callType: String): Call<VideoCallInfo> {
         return callApi.createCall(
             callType = callType,
-            channelId = channelId
+            channelId = channelId,
+            request = VideoCallCreateRequest(id = callId, type = callType)
         ).map(CreateVideoCallResponse::toDomain)
     }
 

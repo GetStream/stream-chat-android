@@ -2481,14 +2481,14 @@ internal constructor(
      * @param channelId The channel id that will a create video call.
      */
     @CheckResult
-    public fun createVideoCall(callType: String, channelId: String): Call<VideoCallInfo> {
-        return api.createVideoCall(callType = callType, channelId = channelId)
+    public fun createVideoCall(channelId: String, callId: String, callType: String): Call<VideoCallInfo> {
+        return api.createVideoCall(channelId = channelId, callId = callId, callType = callType)
     }
 
     /**
      * Returns the currently available video call token.
      *
-     * @param callId The call id that was delivered when you crate a video call.
+     * @param callId The call id, which indicates a dedicated video call id on the channel.
      */
     @CheckResult
     public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
