@@ -17,4 +17,4 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 /** A generic dto interface for video integrations. */
-internal interface CallDto
+internal interface VideoCallDto

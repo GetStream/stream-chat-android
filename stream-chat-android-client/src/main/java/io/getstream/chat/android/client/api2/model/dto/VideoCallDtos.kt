@@ -22,15 +22,15 @@ import com.squareup.moshi.JsonClass
 internal data class HMSDto(
     val roomId: String,
     val roomName: String,
-) : CallDto
+) : VideoCallDto
 
 @JsonClass(generateAdapter = true)
 internal data class AgoraDto(
     val channel: String,
-) : CallDto
+) : VideoCallDto
 
 @JsonClass(generateAdapter = true)
-internal data class CallInfoDto(
+internal data class VideoCallInfoDto(
     val id: String,
     val provider: String,
     val agora: AgoraDto,

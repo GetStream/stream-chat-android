@@ -24,9 +24,10 @@ package io.getstream.chat.android.client.models
  * @property agoraChannel The available channel info of Agora.
  * @property hmsRoom The available room info of HMS.
  */
-public data class CallInfo(
+public data class VideoCallInfo(
     val callId: String,
     val provider: String,
     val agoraChannel: AgoraChannel,
     val hmsRoom: HMSRoom,
+    val videoCallToken: VideoCallToken,
 )

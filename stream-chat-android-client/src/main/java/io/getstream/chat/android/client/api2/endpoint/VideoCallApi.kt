@@ -17,25 +17,25 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.CallTokenRequest
-import io.getstream.chat.android.client.api2.model.response.CallTokenResponse
-import io.getstream.chat.android.client.api2.model.response.CreateCallResponse
+import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
+import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
+import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 @AuthenticatedApi
-internal interface CallApi {
+internal interface VideoCallApi {
 
     @POST("/channels/{type}/{id}/call")
     fun createCall(
         @Path("type") callType: String,
         @Path("id") channelId: String,
-    ): RetrofitCall<CreateCallResponse>
+    ): RetrofitCall<CreateVideoCallResponse>
 
     @POST("/calls")
     fun getCallToken(
-        @Body request: CallTokenRequest,
-    ): RetrofitCall<CallTokenResponse>
+        @Body request: VideoCallTokenRequest,
+    ): RetrofitCall<VideoCallTokenResponse>
 }

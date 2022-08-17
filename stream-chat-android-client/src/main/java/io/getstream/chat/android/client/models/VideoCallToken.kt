@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.client.models
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.CallInfoDto
-
-@JsonClass(generateAdapter = true)
-internal data class CreateCallResponse(
-    val call: CallInfoDto,
+/**
+ * A call token that is used in currently available video call integrations.
+ *
+ * @property token An available call token.
+ * @property agoraUid The Uid of Agora.
+ * @property agoraAppId The App Id of Agora.
+ */
+public data class VideoCallToken(
     val token: String,
     val agoraUid: Int?,
     val agoraAppId: String?,

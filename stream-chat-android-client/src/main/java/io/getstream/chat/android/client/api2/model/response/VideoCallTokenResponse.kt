@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.api2.model.response
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class CallTokenResponse(
+internal data class VideoCallTokenResponse(
     val token: String,
     val agoraUid: Int?,
     val agoraAppId: String?,
