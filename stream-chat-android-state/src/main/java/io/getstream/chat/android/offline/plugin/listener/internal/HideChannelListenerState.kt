@@ -24,11 +24,7 @@ import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
-internal class HideChannelListenerState(
-    private val logic: LogicRegistry,
-    // private val channelRepository: ChannelRepository,
-    // private val messageRepository: MessageRepository
-) : HideChannelListener {
+internal class HideChannelListenerState(private val logic: LogicRegistry) : HideChannelListener {
 
     override suspend fun onHideChannelPrecondition(
         channelType: String,
@@ -48,21 +44,14 @@ internal class HideChannelListenerState(
     ) {
         val channelStateLogic = logic.channel(channelType, channelId).stateLogic()
         if (result.isSuccess) {
-            val cid = Pair(channelType, channelId).toCid()
             if (clearHistory) {
                 val now = Date()
                 channelStateLogic.run {
                     hideMessagesBefore(now)
                     removeMessagesBefore(now)
                 }
-                // channelRepository.evictChannel(cid)
-                // messageRepository.deleteChannelMessagesBefore(cid, now)
-                // channelRepository.setHiddenForChannel(cid, true, now)
-            } else {
-                // channelRepository.setHiddenForChannel(cid, true)
             }
         } else {
-            // Hides the channel if request fails.
             channelStateLogic.setHidden(false)
         }
     }
