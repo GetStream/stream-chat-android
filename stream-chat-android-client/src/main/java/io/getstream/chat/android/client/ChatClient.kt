@@ -105,6 +105,8 @@ import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
@@ -2466,6 +2468,31 @@ internal constructor(
             .precondition(relevantPlugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
+    }
+
+    /**
+     * Creates a newly available video call, which belongs to a channel.
+     * The video call will be created based on the third-party video integration (Agora and 100ms) on your
+     * [Stream Dashboard](https://dashboard.getstream.io/).
+     *
+     * You can set the call type by passing [callType] like `video` or `audio`.
+     *
+     * @param callType Represents call type such as `video` or `audio`.
+     * @param channelId The channel id that will a create video call.
+     */
+    @CheckResult
+    public fun createVideoCall(callType: String, channelId: String): Call<VideoCallInfo> {
+        return api.createVideoCall(callType = callType, channelId = channelId)
+    }
+
+    /**
+     * Returns the currently available video call token.
+     *
+     * @param callId The call id that was delivered when you crate a video call.
+     */
+    @CheckResult
+    public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
+        return api.getVideoCallToken(callId = callId)
     }
 
     private fun warmUp() {
