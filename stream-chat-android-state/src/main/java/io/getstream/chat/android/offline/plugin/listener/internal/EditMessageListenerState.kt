@@ -16,25 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.extensions.updateFailedMessage
+import io.getstream.chat.android.client.extensions.updateMessageOnlineState
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import java.util.Date
 
-internal class EditMessageListenerImpl(
+internal class EditMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    private val userRepository: UserRepository,
-    private val messageRepository: MessageRepository
 ) : EditMessageListener {
 
     /**
@@ -46,9 +39,6 @@ internal class EditMessageListenerImpl(
     override suspend fun onMessageEditRequest(message: Message) {
         val isOnline = clientState.isOnline
         val messagesToEdit = message.updateMessageOnlineState(isOnline)
-
-        userRepository.insertUsers(messagesToEdit.users())
-        messageRepository.insertMessage(messagesToEdit, false)
 
         logic.channelFromMessage(messagesToEdit)?.stateLogic()?.upsertMessage(messagesToEdit)
         logic.threadFromMessage(messagesToEdit)?.threadStateLogic?.upsertMessage(messagesToEdit)
@@ -67,39 +57,7 @@ internal class EditMessageListenerImpl(
             originalMessage.updateFailedMessage(result.error())
         }
 
-        userRepository.insertUsers(parsedMessage.users())
-        messageRepository.insertMessage(parsedMessage, false)
-
         logic.channelFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
         logic.threadFromMessage(parsedMessage)?.threadStateLogic?.upsertMessage(parsedMessage)
-    }
-
-    /**
-     * Updates a message that whose request (Edition/Delete/Reaction update...) has failed.
-     *
-     * @param chatError [ChatError].
-     */
-    private fun Message.updateFailedMessage(chatError: ChatError): Message {
-        return this.copy(
-            syncStatus = if (chatError.isPermanent()) {
-                SyncStatus.FAILED_PERMANENTLY
-            } else {
-                SyncStatus.SYNC_NEEDED
-            },
-            syncDescription = chatError.toMessageSyncDescription(),
-            updatedLocallyAt = Date(),
-        )
-    }
-
-    /**
-     * Update the online state of a message.
-     *
-     * @param isOnline [Boolean].
-     */
-    private fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
-        return this.copy(
-            syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-            updatedLocallyAt = Date()
-        )
     }
 }

@@ -42,6 +42,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReaction
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
@@ -130,7 +132,7 @@ public class StreamOfflinePluginFactory(
             channelRepository = repositoryFactory,
             userRepository = repositoryFactory
         )
-
+        val editMessageListener = getEditMessageListener(chatClient, statePlugin)
         val queryMembersListener: QueryMembersListener =
             QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
 
@@ -140,7 +142,7 @@ public class StreamOfflinePluginFactory(
             queryChannelListener = statePlugin,
             threadQueryListener = statePlugin,
             channelMarkReadListener = statePlugin,
-            editMessageListener = statePlugin,
+            editMessageListener = editMessageListener,
             hideChannelListener = hideChannelListener,
             markAllReadListener = statePlugin,
             deleteReactionListener = deleteReactionListener,
@@ -201,6 +203,16 @@ public class StreamOfflinePluginFactory(
         return SendReactionListenerComposite(
             listOf(statePlugin, sendReactionListenerDatabase)
         )
+    }
+
+    private fun getEditMessageListener(chatClient: ChatClient, statePlugin: StatePlugin): EditMessageListenerComposite {
+        val editMessageListenerDatabase = EditMessageListenerDatabase(
+            userRepository = chatClient.repositoryFacade,
+            messageRepository = chatClient.repositoryFacade,
+            clientState = chatClient.clientState
+        )
+
+        return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
     }
 
     private fun getDeleteMessageListenerDatabase(
