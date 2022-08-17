@@ -29,15 +29,16 @@ import retrofit2.http.Path
 @AuthenticatedApi
 internal interface VideoCallApi {
 
-    @POST("/channels/{type}/{id}/call")
+    @POST("/channels/{channelType}/{channelId}/call")
     fun createCall(
-        @Path("type") callType: String,
-        @Path("id") channelId: String,
+        @Path("channelType") channelType: String,
+        @Path("channelId") channelId: String,
         @Body request: VideoCallCreateRequest,
     ): RetrofitCall<CreateVideoCallResponse>
 
-    @POST("/calls")
+    @POST("/calls/{callId}")
     fun getCallToken(
+        @Path("callId") callId: String,
         @Body request: VideoCallTokenRequest,
     ): RetrofitCall<VideoCallTokenResponse>
 }

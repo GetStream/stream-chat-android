@@ -908,16 +908,21 @@ constructor(
         ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
     }
 
-    override fun createVideoCall(channelId: String, callId: String, callType: String): Call<VideoCallInfo> {
+    override fun createVideoCall(
+        channelId: String,
+        channelType: String,
+        callId: String,
+        callType: String,
+    ): Call<VideoCallInfo> {
         return callApi.createCall(
-            callType = callType,
             channelId = channelId,
+            channelType = channelType,
             request = VideoCallCreateRequest(id = callId, type = callType)
         ).map(CreateVideoCallResponse::toDomain)
     }
 
     override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return callApi.getCallToken(VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
+        return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
     }
 
     override fun sendEvent(

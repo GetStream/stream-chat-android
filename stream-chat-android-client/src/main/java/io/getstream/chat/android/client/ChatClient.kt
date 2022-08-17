@@ -2481,8 +2481,18 @@ internal constructor(
      * @param channelId The channel id that will a create video call.
      */
     @CheckResult
-    public fun createVideoCall(channelId: String, callId: String, callType: String): Call<VideoCallInfo> {
-        return api.createVideoCall(channelId = channelId, callId = callId, callType = callType)
+    public fun createVideoCall(
+        channelId: String,
+        channelType: String,
+        callId: String,
+        callType: String,
+    ): Call<VideoCallInfo> {
+        return api.createVideoCall(
+            channelId = channelId,
+            channelType = channelType,
+            callId = callId,
+            callType = callType
+        )
     }
 
     /**
