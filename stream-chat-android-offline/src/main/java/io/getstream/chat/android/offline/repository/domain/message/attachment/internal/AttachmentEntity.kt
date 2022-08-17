@@ -60,6 +60,8 @@ internal data class AttachmentEntity(
     val name: String?,
     val fallback: String?,
     val uploadFilePath: String?,
+    var originalHeight: Int?,
+    var originalWidth: Int?,
     @Embedded
     var uploadState: UploadStateEntity? = null,
     val extraData: Map<String, Any>,

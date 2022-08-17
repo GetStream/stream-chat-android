@@ -2248,7 +2248,6 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setSendMessageButtonEnabledDrawable (Landroid/graphics/drawable/Drawable;)V
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListViewHolderFactory (Lio/getstream/chat/android/ui/suggestion/list/adapter/SuggestionListItemViewHolderFactory;)V
-	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
 	public final fun setTypingUpdatesBuffer (Lcom/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer;)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
@@ -2358,11 +2357,6 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$SelectedAttachmentsCountListener {
 	public abstract fun attachmentsCountChanged (II)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$TypingListener {
-	public abstract fun onKeystroke ()V
-	public abstract fun onStopTyping ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {

@@ -26,13 +26,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,9 +88,25 @@ public fun ImageAttachmentContent(
         if (imageCount == 1) {
             val attachment = attachments.first()
 
+            // Depending on the CDN, images might not contain their original dimensions
+            val ratio: Float? by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
+                derivedStateOf {
+                    val width = attachment.originalWidth?.toFloat()
+                    val height = attachment.originalHeight?.toFloat()
+
+                    if (width != null && height != null) {
+                        width / height
+                    } else {
+                        null
+                    }
+                }
+            }
+
             ImageAttachmentContentItem(
                 attachment = attachment,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(ratio ?: EqualDimensionsRatio),
                 message = message,
                 attachmentPosition = 0,
                 onImagePreviewResult = onImagePreviewResult,
@@ -98,7 +116,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight(),
+                    .aspectRatio(TwiceAsTallAsIsWideRatio),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 0..3 step 2) {
@@ -118,7 +136,7 @@ public fun ImageAttachmentContent(
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .fillMaxHeight(),
+                    .aspectRatio(TwiceAsTallAsIsWideRatio),
                 verticalArrangement = Arrangement.spacedBy(gridSpacing)
             ) {
                 for (imageIndex in 1..4 step 2) {
@@ -244,3 +262,15 @@ internal fun ImageAttachmentViewMoreOverlay(
         )
     }
 }
+
+/**
+ * Produces the same height as the width of the
+ * Composable when calling [Modifier.aspectRatio].
+ */
+private const val EqualDimensionsRatio = 1f
+
+/**
+ * Produces a height value that is twice the width of the
+ * Composable when calling [Modifier.aspectRatio].
+ */
+private const val TwiceAsTallAsIsWideRatio = 0.5f

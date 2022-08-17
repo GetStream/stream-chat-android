@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -25,8 +26,6 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
@@ -70,7 +69,7 @@ internal class ClientConnectionTests {
         "cdn.http",
         "socket.url",
         false,
-        ChatLogger.Config(ChatLogLevel.NOTHING, null),
+        Mother.chatLoggerConfig(),
         false,
         false
     )
@@ -144,7 +143,7 @@ internal class ClientConnectionTests {
         client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
-        client.disconnect()
+        client.disconnect(flushPersistence = false).execute()
 
         verify(socket, times(1)).disconnect()
     }

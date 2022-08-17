@@ -19,6 +19,9 @@ package io.getstream.chat.android.client
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLoggerConfig
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
@@ -103,5 +106,10 @@ internal object Mother {
                 // Nothing to do
             }
         }
+    }
+
+    fun chatLoggerConfig(): ChatLoggerConfig = object : ChatLoggerConfig {
+        override val level: ChatLogLevel = ChatLogLevel.NOTHING
+        override val handler: ChatLoggerHandler? = null
     }
 }
