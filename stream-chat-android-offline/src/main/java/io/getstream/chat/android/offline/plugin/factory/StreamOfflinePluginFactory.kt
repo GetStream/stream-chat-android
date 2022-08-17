@@ -116,47 +116,18 @@ public class StreamOfflinePluginFactory(
         }
 
         val chatClient = ChatClient.instance()
-
         val repositoryFactory = chatClient.repositoryFacade
 
-        val hideChannelListenerDatabase = HideChannelListenerDatabase(
-            channelRepository = repositoryFactory,
-            messageRepository = repositoryFactory
-        )
-
-        val hideChannelListener: HideChannelListener = HideChannelListenerComposite(
-            listOf(statePlugin, hideChannelListenerDatabase)
-        )
-
+        val hideChannelListener: HideChannelListener = getHideChannelListener(chatClient, statePlugin)
+        val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(chatClient, statePlugin)
+        val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
+        val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
+        val deleteMessageListener: DeleteMessageListener = getDeleteMessageListenerDatabase(chatClient, statePlugin)
         val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = chatClient.clientState,
             channelRepository = repositoryFactory,
             userRepository = repositoryFactory
         )
-
-        val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
-            clientState = chatClient.clientState,
-            reactionsRepository = repositoryFactory,
-            messageRepository = repositoryFactory
-        )
-
-        val deleteReactionListener: DeleteReactionListener = DeleteReactionListenerComposite(
-            listOf(deleteReactionListenerDatabase, statePlugin)
-        )
-
-        val shuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
-
-        val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
-            clientState = chatClient.clientState,
-            messageRepository = repositoryFactory,
-            userRepository = repositoryFactory
-        )
-
-        val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerComposite(
-            listOf(statePlugin, deleteMessageListenerDatabase)
-        )
-
-        val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
 
         return OfflinePlugin(
             activeUser = user,
@@ -180,6 +151,29 @@ public class StreamOfflinePluginFactory(
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 
+    private fun getHideChannelListener(chatClient: ChatClient, statePlugin: StatePlugin): HideChannelListener {
+        val hideChannelListenerDatabase = HideChannelListenerDatabase(
+            channelRepository = chatClient.repositoryFacade,
+            messageRepository = chatClient.repositoryFacade
+        )
+
+        return HideChannelListenerComposite(
+            listOf(statePlugin, hideChannelListenerDatabase)
+        )
+    }
+
+    private fun getDeleteReactionListener(chatClient: ChatClient, statePlugin: StatePlugin): DeleteReactionListener {
+        val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
+            clientState = chatClient.clientState,
+            reactionsRepository = chatClient.repositoryFacade,
+            messageRepository = chatClient.repositoryFacade
+        )
+
+        return DeleteReactionListenerComposite(
+            listOf(deleteReactionListenerDatabase, statePlugin)
+        )
+    }
+
     private fun getShuffleGiphyListener(chatClient: ChatClient, statePlugin: StatePlugin): ShuffleGiphyListener {
         val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
             userRepository = chatClient.repositoryFacade,
@@ -201,6 +195,21 @@ public class StreamOfflinePluginFactory(
 
         return SendReactionListenerComposite(
             listOf(statePlugin, sendReactionListenerDatabase)
+        )
+    }
+
+    private fun getDeleteMessageListenerDatabase(
+        chatClient: ChatClient,
+        statePlugin: StatePlugin,
+    ): DeleteMessageListener {
+        val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
+            clientState = chatClient.clientState,
+            messageRepository = chatClient.repositoryFacade,
+            userRepository = chatClient.repositoryFacade
+        )
+
+        return DeleteMessageListenerComposite(
+            listOf(statePlugin, deleteMessageListenerDatabase)
         )
     }
 
