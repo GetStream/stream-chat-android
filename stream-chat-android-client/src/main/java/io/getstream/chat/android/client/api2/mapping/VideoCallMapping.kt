@@ -37,6 +37,7 @@ internal fun CreateVideoCallResponse.toDomain(): VideoCallInfo {
     return VideoCallInfo(
         callId = call.id,
         provider = call.provider,
+        type = call.type,
         agoraChannel = call.agora.toDomain(),
         hmsRoom = call.hms.toDomain(),
         videoCallToken = VideoCallToken(

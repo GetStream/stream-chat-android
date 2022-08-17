@@ -3285,19 +3285,21 @@ public final class io/getstream/chat/android/client/models/UserEntity$DefaultImp
 }
 
 public final class io/getstream/chat/android/client/models/VideoCallInfo {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lio/getstream/chat/android/client/models/AgoraChannel;
-	public final fun component4 ()Lio/getstream/chat/android/client/models/HMSRoom;
-	public final fun component5 ()Lio/getstream/chat/android/client/models/VideoCallToken;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;)Lio/getstream/chat/android/client/models/VideoCallInfo;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/VideoCallInfo;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/VideoCallInfo;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/getstream/chat/android/client/models/AgoraChannel;
+	public final fun component5 ()Lio/getstream/chat/android/client/models/HMSRoom;
+	public final fun component6 ()Lio/getstream/chat/android/client/models/VideoCallToken;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;)Lio/getstream/chat/android/client/models/VideoCallInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/VideoCallInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/AgoraChannel;Lio/getstream/chat/android/client/models/HMSRoom;Lio/getstream/chat/android/client/models/VideoCallToken;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/VideoCallInfo;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAgoraChannel ()Lio/getstream/chat/android/client/models/AgoraChannel;
 	public final fun getCallId ()Ljava/lang/String;
 	public final fun getHmsRoom ()Lio/getstream/chat/android/client/models/HMSRoom;
 	public final fun getProvider ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
 	public final fun getVideoCallToken ()Lio/getstream/chat/android/client/models/VideoCallToken;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

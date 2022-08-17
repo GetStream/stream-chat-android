@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.model.response
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.VideoCallInfoDto
 
@@ -23,6 +24,6 @@ import io.getstream.chat.android.client.api2.model.dto.VideoCallInfoDto
 internal data class CreateVideoCallResponse(
     val call: VideoCallInfoDto,
     val token: String,
-    val agoraUid: Int?,
-    val agoraAppId: String?,
+    @field:Json(name = "agora_uid") val agoraUid: Int?,
+    @field:Json(name = "agora_app_id") val agoraAppId: String?,
 )

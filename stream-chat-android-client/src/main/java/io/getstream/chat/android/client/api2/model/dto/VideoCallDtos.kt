@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class HMSDto(
-    val roomId: String,
-    val roomName: String,
+    @field:Json(name = "room_id") val roomId: String,
+    @field:Json(name = "room_name") val roomName: String,
 ) : VideoCallDto
 
 @JsonClass(generateAdapter = true)
@@ -33,6 +34,7 @@ internal data class AgoraDto(
 internal data class VideoCallInfoDto(
     val id: String,
     val provider: String,
+    val type: String,
     val agora: AgoraDto,
     val hms: HMSDto,
 )
