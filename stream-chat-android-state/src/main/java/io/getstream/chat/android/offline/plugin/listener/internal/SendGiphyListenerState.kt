@@ -16,18 +16,19 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 /**
- * [SendGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [SendGiphyListener] implementation for [StatePlugin].
  * Handles removing ephemeral message from the state.
  *
  * @param logic [LogicRegistry]
  */
-internal class SendGiphyListenerImpl(private val logic: LogicRegistry) : SendGiphyListener {
+internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGiphyListener {
 
     /**
      * Removes ephemeral message from the state if the request was successful.
@@ -38,8 +39,9 @@ internal class SendGiphyListenerImpl(private val logic: LogicRegistry) : SendGip
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result.isSuccess) {
             val message = result.data()
-            logic.channelFromMessage(message)?.removeLocalMessage(message)
-            logic.threadFromMessage(message)?.removeLocalMessage(message)
+            val (type, id) = cid.cidToTypeAndId()
+            logic.channel(type, id).stateLogic().removeLocalMessage(message)
+            logic.thread(message.id).threadStateLogic.removeLocalMessage(message)
         }
     }
 }
