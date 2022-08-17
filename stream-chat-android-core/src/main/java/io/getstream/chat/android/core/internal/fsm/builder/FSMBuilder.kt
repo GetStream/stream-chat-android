@@ -26,7 +26,6 @@ public class FSMBuilder<STATE : Any, EVENT : Any> {
     private lateinit var _initialState: STATE
     public val stateFunctions: MutableMap<KClass<out STATE>, Map<KClass<out EVENT>, StateFunction<STATE, EVENT>>> =
         mutableMapOf()
-    public val enterListeners: MutableMap<KClass<out STATE>, List<(STATE, EVENT) -> Unit>> = mutableMapOf()
 
     private var _defaultHandler: (STATE, EVENT) -> STATE = { s, _ -> s }
 
@@ -42,13 +41,11 @@ public class FSMBuilder<STATE : Any, EVENT : Any> {
 
     @FSMBuilderMarker
     public inline fun <reified S : STATE> state(stateHandlerBuilder: StateHandlerBuilder<STATE, EVENT, S>.() -> Unit) {
-        val stateHandlerBuilder = StateHandlerBuilder<STATE, EVENT, S>().apply(stateHandlerBuilder)
-        stateFunctions[S::class] = stateHandlerBuilder.get()
-        enterListeners[S::class] = stateHandlerBuilder.getEnterListeners()
+        stateFunctions[S::class] = StateHandlerBuilder<STATE, EVENT, S>().apply(stateHandlerBuilder).get()
     }
 
     internal fun build(): FiniteStateMachine<STATE, EVENT> {
         check(this::_initialState.isInitialized) { "Initial state must be set!" }
-        return FiniteStateMachine(_initialState, stateFunctions, enterListeners, _defaultHandler)
+        return FiniteStateMachine(_initialState, stateFunctions, _defaultHandler)
     }
 }
