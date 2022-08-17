@@ -2477,21 +2477,23 @@ internal constructor(
      *
      * You can set the call type by passing [callType] like `video` or `audio`.
      *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The id of the channel.
      * @param callType Represents call type such as `video` or `audio`.
-     * @param channelId The channel id that will a create video call.
+     * @param callId A unique identifier to assign to the call. The id is case-insensitive.
      */
     @CheckResult
     public fun createVideoCall(
-        channelId: String,
         channelType: String,
-        callId: String,
+        channelId: String,
         callType: String,
+        callId: String,
     ): Call<VideoCallInfo> {
         return api.createVideoCall(
-            channelId = channelId,
             channelType = channelType,
-            callId = callId,
-            callType = callType
+            channelId = channelId,
+            callType = callType,
+            callId = callId
         )
     }
 
