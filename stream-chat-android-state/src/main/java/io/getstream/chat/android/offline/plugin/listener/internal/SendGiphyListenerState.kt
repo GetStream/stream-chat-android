@@ -39,9 +39,8 @@ internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGi
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result.isSuccess) {
             val message = result.data()
-            val (type, id) = cid.cidToTypeAndId()
-            logic.channel(type, id).stateLogic().removeLocalMessage(message)
-            logic.thread(message.id).threadStateLogic.removeLocalMessage(message)
+            logic.channelFromMessage(message)?.stateLogic()?.removeLocalMessage(message)
+            logic.threadFromMessage(message)?.threadStateLogic?.removeLocalMessage(message)
         }
     }
 }
