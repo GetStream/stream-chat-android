@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.socket.experimental
 
-import android.os.Handler
-import android.os.Looper
 import io.getstream.chat.android.client.LifecycleHandler
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -37,6 +35,7 @@ import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
 import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocketEvent
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -58,7 +57,6 @@ internal class ChatSocket private constructor(
     private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
-    private val eventUiHandler = Handler(Looper.getMainLooper())
     private val chatSocketStateService = ChatSocketStateService()
     private var socketStateObserverJob: Job? = null
     private val healthMonitor = HealthMonitor(
@@ -265,7 +263,7 @@ internal class ChatSocket private constructor(
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
             listeners.forEach { listener ->
-                eventUiHandler.post { call(listener) }
+                coroutineScope.launch(DispatcherProvider.Main) { call(listener) }
             }
         }
     }
