@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomMessage
@@ -160,7 +161,9 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val result = Result<String>(ChatError())
+            val imageResult = Result<String>(ChatError())
+            val fileResult = Result<UploadedFile>(ChatError())
+
             whenever(
                 chatClient.sendFile(
                     eq(channelType),
@@ -168,7 +171,7 @@ internal class UploadAttachmentsIntegrationTests {
                     same(file),
                     anyOrNull(),
                 )
-            ) doReturn TestCall(result)
+            ) doReturn TestCall(fileResult)
             whenever(
                 chatClient.sendImage(
                     eq(channelType),
@@ -176,13 +179,15 @@ internal class UploadAttachmentsIntegrationTests {
                     same(file),
                     anyOrNull(),
                 )
-            ) doReturn TestCall(result)
+            ) doReturn TestCall(imageResult)
         }
     }
 
     private fun mockFileUploadsSuccess(files: List<File>) {
         for (file in files) {
-            val result = Result("file")
+            val imageResult = Result("file")
+            val fileResult = Result(UploadedFile(file = "file", thumbUrl = "thumbUrl"))
+
             whenever(
                 chatClient.sendFile(
                     eq(channelType),
@@ -190,7 +195,7 @@ internal class UploadAttachmentsIntegrationTests {
                     any(),
                     anyOrNull(),
                 )
-            ) doReturn TestCall(result)
+            ) doReturn TestCall(fileResult)
             whenever(
                 chatClient.sendImage(
                     eq(channelType),
@@ -198,7 +203,7 @@ internal class UploadAttachmentsIntegrationTests {
                     any(),
                     anyOrNull(),
                 )
-            ) doReturn TestCall(result)
+            ) doReturn TestCall(imageResult)
         }
     }
 }
