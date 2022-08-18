@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 
@@ -49,6 +50,8 @@ internal class QueryMembersListenerDatabaseTest {
 
     @Test
     fun `when query members fails database should not be updated`() = runTest {
+        reset(userRepository, channelRepository)
+
         val memberList = randomMember().let(::listOf)
         val cid = randomCID()
         val (type, id) = cid.cidToTypeAndId()
