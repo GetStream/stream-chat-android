@@ -1,7 +1,25 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
@@ -44,12 +62,16 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id
-        })
-        verify(threadStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id
-        })
+        verify(channelStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id
+            }
+        )
+        verify(threadStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id
+            }
+        )
     }
 
     @Test
@@ -71,12 +93,16 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
-        })
-        verify(threadStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
-        })
+        verify(channelStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
+            }
+        )
+        verify(threadStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
+            }
+        )
     }
 
     @Test
@@ -98,13 +124,77 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-        })
-        verify(threadStateLogic).upsertMessage(argThat { message ->
-            message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-        })
+        verify(channelStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            }
+        )
+        verify(threadStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            }
+        )
     }
 
+    @Test
+    fun `when messages edit completes, sync status is updated correctly when successful`() = runTest {
+        val channelStateLogic: ChannelStateLogic = mock()
+        val channelLogic: ChannelLogic = mock {
+            on(it.stateLogic()) doReturn channelStateLogic
+        }
 
+        val threadStateLogic: ThreadStateLogic = mock()
+        val threadLogic: ThreadLogic = mock {
+            on(it.stateLogic()) doReturn threadStateLogic
+        }
+
+        whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
+        whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
+
+        val testMessage = randomMessage()
+
+        editMessageListenerState.onMessageEditResult(testMessage, Result.success(testMessage))
+
+        verify(channelStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            }
+        )
+        verify(threadStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            }
+        )
+    }
+
+    @Test
+    fun `when messages edit completes, sync status is updated correctly when failing`() = runTest {
+        val channelStateLogic: ChannelStateLogic = mock()
+        val channelLogic: ChannelLogic = mock {
+            on(it.stateLogic()) doReturn channelStateLogic
+        }
+
+        val threadStateLogic: ThreadStateLogic = mock()
+        val threadLogic: ThreadLogic = mock {
+            on(it.stateLogic()) doReturn threadStateLogic
+        }
+
+        whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
+        whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
+
+        val testMessage = randomMessage()
+
+        editMessageListenerState.onMessageEditResult(testMessage, Result.error(ChatError()))
+
+        verify(channelStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            }
+        )
+        verify(threadStateLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            }
+        )
+    }
 }

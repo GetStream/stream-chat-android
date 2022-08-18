@@ -46,7 +46,7 @@ internal class EditMessageListenerDatabase(
      * @param message [Message].
      */
     override suspend fun onMessageEditRequest(message: Message) {
-        val isOnline = clientState.isOnline
+        val isOnline = clientState.isNetworkAvailable
         val messagesToEdit = message.updateMessageOnlineState(isOnline)
 
         saveMessage(messagesToEdit)
