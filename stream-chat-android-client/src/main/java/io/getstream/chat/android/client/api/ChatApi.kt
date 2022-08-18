@@ -53,7 +53,12 @@ internal interface ChatApi {
     fun appSettings(): Call<AppSettings>
 
     @CheckResult
-    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<UploadedFile>
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedFile>
 
     @CheckResult
     fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
