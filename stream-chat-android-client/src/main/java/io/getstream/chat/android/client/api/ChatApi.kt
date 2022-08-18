@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
@@ -52,7 +53,7 @@ internal interface ChatApi {
     fun appSettings(): Call<AppSettings>
 
     @CheckResult
-    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
+    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<UploadedFile>
 
     @CheckResult
     fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>

@@ -85,6 +85,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -425,7 +426,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<String> {
+    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
         return client.sendFile(channelType, channelId, file, callback)
     }
 
