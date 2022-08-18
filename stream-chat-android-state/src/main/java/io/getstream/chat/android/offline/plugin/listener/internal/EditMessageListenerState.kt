@@ -19,8 +19,6 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
@@ -44,11 +42,11 @@ internal class EditMessageListenerState(
      * @param message [Message].
      */
     override suspend fun onMessageEditRequest(message: Message) {
-        val isOnline = clientState.isOnline
+        val isOnline = clientState.isNetworkAvailable
         val messagesToEdit = message.updateMessageOnlineState(isOnline)
 
         logic.channelFromMessage(messagesToEdit)?.stateLogic()?.upsertMessage(messagesToEdit)
-        logic.threadFromMessage(messagesToEdit)?.threadStateLogic?.upsertMessage(messagesToEdit)
+        logic.threadFromMessage(messagesToEdit)?.stateLogic()?.upsertMessage(messagesToEdit)
     }
 
     /**
@@ -66,6 +64,6 @@ internal class EditMessageListenerState(
         }
 
         logic.channelFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
-        logic.threadFromMessage(parsedMessage)?.threadStateLogic?.upsertMessage(parsedMessage)
+        logic.threadFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
     }
 }
