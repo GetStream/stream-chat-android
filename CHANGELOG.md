@@ -38,6 +38,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `hasCommands` field to `MessageComposerState` to set commands button visibility. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ⚠️ Changed
 
@@ -48,6 +49,7 @@
 - Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
 
 ### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
 
@@ -59,6 +61,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
 
