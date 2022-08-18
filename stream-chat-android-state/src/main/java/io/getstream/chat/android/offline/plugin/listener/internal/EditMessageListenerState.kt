@@ -19,20 +19,27 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
+/**
+ * Implementation of [EditMessageListener] that deals with state read and write.
+ *
+ * @param logic [LogicRegistry]
+ * @param clientState [ClientState]
+ */
 internal class EditMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
 ) : EditMessageListener {
 
     /**
-     * Method called when a message edit request happens. This method should be used to update messages locally and
-     * update the cache.
+     * Method called when a message edit request happens. This method should be used to update messages locally.
      *
      * @param message [Message].
      */
@@ -45,8 +52,9 @@ internal class EditMessageListenerState(
     }
 
     /**
-     * Method called when an edition in a message returns from the API.
+     * Method called when an edition in a message returns from the API. Updates the local messages accordingly.
      *
+     * @param originalMessage [Message].
      * @param result the result of the API call.
      */
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {

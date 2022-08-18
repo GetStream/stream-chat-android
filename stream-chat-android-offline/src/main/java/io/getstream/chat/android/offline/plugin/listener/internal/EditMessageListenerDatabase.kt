@@ -27,6 +27,13 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 
+/**
+ * Implementation of [EditMessageListener] that deals with database read and write.
+ *
+ * @param userRepository [UserRepository]
+ * @param messageRepository [MessageRepository]
+ * @param clientState [ClientState]
+ */
 internal class EditMessageListenerDatabase(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
@@ -34,8 +41,7 @@ internal class EditMessageListenerDatabase(
 ) : EditMessageListener {
 
     /**
-     * Method called when a message edit request happens. This method should be used to update messages locally and
-     * update the cache.
+     * Method called when a message edit request happens. This method should be used to update the database.
      *
      * @param message [Message].
      */
@@ -47,8 +53,9 @@ internal class EditMessageListenerDatabase(
     }
 
     /**
-     * Method called when an edition in a message returns from the API.
+     * Method called when an edition in a message returns from the API. Updates the database accordingly.
      *
+     * @param originalMessage [Message].
      * @param result the result of the API call.
      */
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
