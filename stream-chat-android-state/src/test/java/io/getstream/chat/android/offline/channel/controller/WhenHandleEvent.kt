@@ -112,7 +112,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).upsertMessages(listOf(newMessage))
         verify(channelStateLogic).incrementUnreadCountIfNecessary(newMessage)
-        verify(channelStateLogic).setHidden(false)
+        verify(channelStateLogic).toggleHidden(false)
     }
 
     // Message update

@@ -33,7 +33,7 @@ internal class HideChannelListenerState(private val logic: LogicRegistry) : Hide
     ): Result<Unit> = validateCidWithResult(Pair(channelType, channelId).toCid()).toUnitResult()
 
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
-        logic.channel(channelType, channelId).stateLogic().setHidden(true)
+        logic.channel(channelType, channelId).stateLogic().toggleHidden(true)
     }
 
     override suspend fun onHideChannelResult(
@@ -52,7 +52,7 @@ internal class HideChannelListenerState(private val logic: LogicRegistry) : Hide
                 }
             }
         } else {
-            channelStateLogic.setHidden(false)
+            channelStateLogic.toggleHidden(false)
         }
     }
 }
