@@ -19,6 +19,13 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
 
+/**
+ * This class act as an composition of multiple [HideChannelListener]. This is only necessary
+ * along StatePlugin lives inside OfflinePlugin. When both plugins are separated, this class can
+ * and should be deleted.
+ *
+ * @param hideChannelListenerList List<HideChannelListener>
+ */
 internal class HideChannelListenerComposite(
     private val hideChannelListenerList: List<HideChannelListener>,
 ) : HideChannelListener {
