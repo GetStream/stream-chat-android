@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 public fun Message.enrichWithCid(cid: String): Message = apply {
@@ -32,6 +33,7 @@ public fun Message.enrichWithCid(cid: String): Message = apply {
  *
  * @param chatError [ChatError].
  */
+@InternalStreamChatApi
 public fun Message.updateFailedMessage(chatError: ChatError): Message {
     return this.copy(
         syncStatus = if (chatError.isPermanent()) {
@@ -49,6 +51,7 @@ public fun Message.updateFailedMessage(chatError: ChatError): Message {
  *
  * @param isOnline [Boolean].
  */
+@InternalStreamChatApi
 public fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
     return this.copy(
         syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
