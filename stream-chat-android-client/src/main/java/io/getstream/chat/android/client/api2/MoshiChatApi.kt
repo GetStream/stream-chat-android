@@ -92,6 +92,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -312,7 +313,7 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<String> {
+    ): Call<UploadedFile> {
         return CoroutineCall(coroutineScope) {
             if (callback != null) {
                 fileUploader.sendFile(

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.uploader
 
+import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
@@ -42,7 +43,7 @@ public interface FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<String>
+    ): Result<UploadedFile>
 
     /**
      * Uploads a file for the given channel.
@@ -59,7 +60,7 @@ public interface FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): Result<String>
+    ): Result<UploadedFile>
 
     /**
      * Uploads an image for the given channel. Progress can be accessed via [callback].

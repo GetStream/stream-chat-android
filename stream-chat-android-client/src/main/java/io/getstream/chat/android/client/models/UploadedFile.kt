@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.models
 
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
-internal data class UploadFileResponse(
+/**
+ * Represents a successfully uploaded file.
+ *
+ * @param file The URL of the uploaded file.
+ * @param thumbUrl The URL of the thumbnail of the uploaded file.
+ * This property is usually reserved for video files.
+ */
+public data class UploadedFile(
     val file: String,
-    val thumb_url: String?,
+    val thumbUrl: String? = null,
 )
