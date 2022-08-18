@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -37,6 +38,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageL
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
@@ -114,35 +116,27 @@ public class StreamOfflinePluginFactory(
 
         val chatClient = ChatClient.instance()
 
-        val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
-            clientState = chatClient.clientState,
-            channelRepository = chatClient.repositoryFacade,
-            userRepository = chatClient.repositoryFacade
-        )
-
         val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
             clientState = chatClient.clientState,
             reactionsRepository = chatClient.repositoryFacade,
             messageRepository = chatClient.repositoryFacade
         )
-
         val deleteReactionListener: DeleteReactionListener = DeleteReactionListenerComposite(
             listOf(deleteReactionListenerDatabase, statePlugin)
         )
-
         val shuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
-
         val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
             clientState = chatClient.clientState,
             messageRepository = chatClient.repositoryFacade,
             userRepository = chatClient.repositoryFacade
         )
-
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerComposite(
             listOf(statePlugin, deleteMessageListenerDatabase)
         )
-
         val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
+        val queryMembersListener: QueryMembersListener =
+            QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
+        val createChannelListener: CreateChannelListener = getCreateChannelListener(chatClient)
 
         return OfflinePlugin(
             activeUser = user,
@@ -159,7 +153,7 @@ public class StreamOfflinePluginFactory(
             sendMessageListener = statePlugin,
             sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
-            queryMembersListener = statePlugin,
+            queryMembersListener = queryMembersListener,
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
             childResolver = statePlugin
@@ -187,6 +181,14 @@ public class StreamOfflinePluginFactory(
 
         return SendReactionListenerComposite(
             listOf(statePlugin, sendReactionListenerDatabase)
+        )
+    }
+
+    private fun getCreateChannelListener(chatClient: ChatClient): CreateChannelListener {
+        return CreateChannelListenerImpl(
+            clientState = chatClient.clientState,
+            channelRepository = chatClient.repositoryFacade,
+            userRepository = chatClient.repositoryFacade
         )
     }
 
