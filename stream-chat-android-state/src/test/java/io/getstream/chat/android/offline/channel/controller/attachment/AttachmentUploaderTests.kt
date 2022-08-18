@@ -184,7 +184,6 @@ internal class AttachmentUploaderTests {
                     anyOrNull()
                 )
             ) doReturn TestCall(result)
-
         }
 
         fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<String>) {
