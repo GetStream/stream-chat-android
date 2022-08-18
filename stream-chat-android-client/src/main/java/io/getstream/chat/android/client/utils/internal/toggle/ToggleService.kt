@@ -59,7 +59,9 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
         public fun init(appContext: Context, predefinedValues: Map<String, Boolean> = emptyMap()): ToggleService {
             val sp = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).also {
                 predefinedValues.entries.forEach { (key, value) ->
-                    it.edit().putBoolean(key, value).apply()
+                    if (it.contains(key).not()) {
+                        it.edit().putBoolean(key, value).apply()
+                    }
                 }
             }
 
