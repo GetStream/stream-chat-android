@@ -32,7 +32,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.Th
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
 internal class ThreadLogic(
     private val repos: RepositoryFacade,
-    internal val threadStateLogic: ThreadStateLogic,
+    private val threadStateLogic: ThreadStateLogic,
 ) {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
@@ -58,6 +58,10 @@ internal class ThreadLogic(
      */
     internal fun getMessage(messageId: String): Message? {
         return mutableState.rawMessages[messageId]?.copy()
+    }
+
+    internal fun stateLogic(): ThreadStateLogic {
+        return threadStateLogic
     }
 
     internal fun deleteMessage(message: Message) {
