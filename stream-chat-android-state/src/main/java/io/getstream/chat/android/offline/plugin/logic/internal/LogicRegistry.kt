@@ -129,7 +129,7 @@ internal class LogicRegistry internal constructor(
      * updating [ThreadLogic] for a messages that is only inside [ChannelLogic]. If you get null as a result,
      * that means that no update is necessary.
      *
-     * @param message [Message]
+     * @param messageId String
      */
     fun threadFromMessageId(messageId: String): ThreadLogic? {
         return threads.values.find { threadLogic ->
@@ -156,7 +156,7 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.thread(messageId).toMutableState()
             val stateLogic = ThreadStateLogicImpl(mutableState)
-            ThreadLogic(repos, stateLogic)
+            ThreadLogic(stateLogic)
         }
     }
 

@@ -25,21 +25,13 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-internal class ThreadLogic(
-    private val repos: RepositoryFacade,
-    private val threadStateLogic: ThreadStateLogic,
-) {
+internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
-
-    fun stateLogic(): ThreadStateLogic {
-        return threadStateLogic
-    }
 
     fun isLoadingOlderMessages(): Boolean = mutableState.loadingOlderMessages.value
 
@@ -70,25 +62,6 @@ internal class ThreadLogic(
 
     internal fun deleteMessage(message: Message) {
         threadStateLogic.deleteMessage(message)
-    }
-
-    /**
-     * Updates the messages locally and saves it at database.
-     *
-     * @param messages The list of messages to be updated in the SDK and to be saved in database.
-     */
-    internal suspend fun updateAndSaveMessages(messages: List<Message>) {
-        threadStateLogic.upsertMessages(messages)
-        storeMessageLocally(messages)
-    }
-
-    /**
-     * Store the messages in the local cache.
-     *
-     * @param messages The messages to be stored. Check [Message].
-     */
-    private suspend fun storeMessageLocally(messages: List<Message>) {
-        repos.insertMessages(messages)
     }
 
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
