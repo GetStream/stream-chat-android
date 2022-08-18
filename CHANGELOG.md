@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
 
 ### ⬆️ Improved
 
