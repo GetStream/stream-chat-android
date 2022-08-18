@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -499,20 +500,22 @@ internal fun DefaultComposerIntegrations(
                 ChatTheme.colors.disabled
             }
 
-            IconButton(
-                modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp),
-                enabled = isCommandsButtonEnabled,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                        contentDescription = null,
-                        tint = commandsButtonTint,
-                    )
-                },
-                onClick = onCommandsClick
-            )
+            AnimatedVisibility(visible = messageInputState.hasCommands) {
+                IconButton(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(4.dp),
+                    enabled = isCommandsButtonEnabled,
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                            contentDescription = null,
+                            tint = commandsButtonTint,
+                        )
+                    },
+                    onClick = onCommandsClick
+                )
+            }
         }
     } else {
         Spacer(modifier = Modifier.width(12.dp))
