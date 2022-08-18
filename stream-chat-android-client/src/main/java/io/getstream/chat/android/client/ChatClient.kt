@@ -271,11 +271,11 @@ internal constructor(
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
+                    api.setConnection(user.id, connectionId)
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
                         lifecycleObserver.observe()
                     }
-                    api.setConnection(user.id, connectionId)
                     notifications.onSetUser()
 
                     clientState.toMutableState()?.run {

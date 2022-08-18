@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -137,6 +138,9 @@ internal class SyncManager(
         when (event) {
             is ConnectingEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectingEvent received" }
+            }
+            is ConnectedEvent -> syncScope.launch {
+                logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
             }
             is DisconnectedEvent -> syncScope.launch {
@@ -163,6 +167,10 @@ internal class SyncManager(
     private suspend fun onConnectionEstablished(userId: String) = try {
         logger.i { "[onConnectionEstablished] >>> isFirstConnect: $isFirstConnect" }
         state.value = State.Syncing
+        val online = clientState.isOnline
+        logger.v { "[onConnectionEstablished] online: $online" }
+        retryFailedEntities()
+
         if (syncState.value == null && syncState.value?.userId != userId) {
             updateAllReadStateForDate(userId, currentDate = Date())
         }
@@ -170,11 +178,6 @@ internal class SyncManager(
         restoreActiveChannels()
         state.value = State.Idle
 
-        val online = clientState.isOnline
-        logger.v { "[onConnectionEstablished] online: $online" }
-        if (online) {
-            retryFailedEntities()
-        }
         logger.i { "[onConnectionEstablished] <<< completed" }
     } catch (e: Throwable) {
         logger.e { "[onConnectionEstablished] failed: $e" }
