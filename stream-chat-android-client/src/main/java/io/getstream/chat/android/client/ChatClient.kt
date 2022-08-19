@@ -226,7 +226,7 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
-    private val scope = scope + SharedCalls()
+    internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
     private val lifecycleObserver = StreamLifecycleObserver(
