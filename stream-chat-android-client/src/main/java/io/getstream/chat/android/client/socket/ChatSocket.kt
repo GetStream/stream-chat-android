@@ -101,26 +101,26 @@ internal open class ChatSocket constructor(
             when (newState) {
                 is State.Connecting -> {
                     healthMonitor.stop()
-                    callListenersOnUiThread { it.onConnecting() }
+                    callListeners { it.onConnecting() }
                 }
                 is State.Connected -> {
                     healthMonitor.ack()
-                    callListenersOnUiThread { it.onConnected(newState.event) }
+                    callListeners { it.onConnected(newState.event) }
                 }
                 is State.NetworkDisconnected -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
+                    callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                 }
                 is State.DisconnectedByRequest -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.ConnectionReleased) }
+                    callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
                 is State.DisconnectedTemporarily -> {
                     shutdownSocketConnection()
                     healthMonitor.onDisconnected()
-                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.Error(newState.error)) }
+                    callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                 }
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
@@ -302,13 +302,9 @@ internal open class ChatSocket constructor(
 
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
-            listeners.forEach(call)
-        }
-    }
-
-    private fun callListenersOnUiThread(call: (SocketListener) -> Unit) {
-        eventUiHandler.post {
-            callListeners(call)
+            eventUiHandler.post {
+                listeners.forEach(call)
+            }
         }
     }
 
