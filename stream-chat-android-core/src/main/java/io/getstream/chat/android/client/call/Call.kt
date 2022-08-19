@@ -152,7 +152,7 @@ public fun <T : Any> Call<T>.onErrorReturn(
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.share(
     scope: CoroutineScope,
-    identifier: () -> String,
+    identifier: () -> Int,
 ): Call<T> {
     return SharedCall(this, identifier, scope)
 }

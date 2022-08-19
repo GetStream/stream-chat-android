@@ -27,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
 @Suppress("FunctionName", "UNCHECKED_CAST")
 internal fun <T : Any> SharedCall(
     origin: Call<T>,
-    originIdentifier: () -> String,
+    originIdentifier: () -> Int,
     scope: CoroutineScope,
 ): Call<T> {
     val sharedCalls = scope.coroutineContext[SharedCalls] ?: return origin
@@ -54,26 +54,26 @@ public class SharedCalls : CoroutineContext.Element {
     /**
      * A collection of uncompleted calls.
      */
-    private val calls = ConcurrentHashMap<String, Call<out Any>>()
+    private val calls = ConcurrentHashMap<Int, Call<out Any>>()
 
     /**
      * Provides a [Call] based of specified [identifier] if available.
      */
-    internal operator fun get(identifier: String): Call<out Any>? {
+    internal operator fun get(identifier: Int): Call<out Any>? {
         return calls[identifier]
     }
 
     /**
      * Puts a [Call] behind of specified [identifier].
      */
-    internal fun put(identifier: String, value: Call<out Any>) {
+    internal fun put(identifier: Int, value: Call<out Any>) {
         calls[identifier] = value
     }
 
     /**
      * Removes a [Call] based of specified [identifier].
      */
-    internal fun remove(identifier: String) {
+    internal fun remove(identifier: Int) {
         calls.remove(identifier)
     }
 

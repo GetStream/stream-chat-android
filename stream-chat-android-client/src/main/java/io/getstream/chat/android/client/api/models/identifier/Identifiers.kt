@@ -34,21 +34,24 @@ internal fun QueryChannelIdentifier(
     channelType: String,
     channelId: String,
     request: QueryChannelRequest,
-): String {
-    var result = channelType.hashCode()
+): Int {
+    var result = "QueryChannel".hashCode()
+    result = 31 * result + channelType.hashCode()
     result = 31 * result + channelId.hashCode()
     result = 31 * result + request.hashCode()
-    return "QueryChannel($result)"
+    return result
 }
 
 /**
  * Identifier for a [ChatClient.queryChannels] call.
  */
-@Suppress("FunctionName")
+@Suppress("FunctionName", "MagicNumber")
 internal fun QueryChannelsIdentifier(
     request: QueryChannelsRequest,
-): String {
-    return "QueryChannels(${request.hashCode()})"
+): Int {
+    var result = "QueryChannels".hashCode()
+    result = 31 * result + request.hashCode()
+    return result
 }
 
 /**
@@ -63,15 +66,16 @@ internal fun QueryMembersIdentifier(
     filter: FilterObject,
     sort: QuerySorter<Member>,
     members: List<Member> = emptyList()
-): String {
-    var result = channelType.hashCode()
+): Int {
+    var result = "QueryMembers".hashCode()
+    result = 31 * result + channelType.hashCode()
     result = 31 * result + channelId.hashCode()
     result = 31 * result + offset.hashCode()
     result = 31 * result + limit.hashCode()
     result = 31 * result + filter.hashCode()
     result = 31 * result + sort.hashCode()
     result = 31 * result + members.hashCode()
-    return "QueryMembers($result)"
+    return result
 }
 
 /**
@@ -82,11 +86,12 @@ internal fun DeleteReactionIdentifier(
     messageId: String,
     reactionType: String,
     cid: String?
-): String {
-    var result = messageId.hashCode()
+): Int {
+    var result = "DeleteReaction".hashCode()
+    result = 31 * result + messageId.hashCode()
     result = 31 * result + reactionType.hashCode()
     result = 31 * result + (cid?.hashCode() ?: 0)
-    return "DeleteReaction($result)"
+    return result
 }
 
 /**
@@ -97,11 +102,12 @@ internal fun SendReactionIdentifier(
     reaction: Reaction,
     enforceUnique: Boolean,
     cid: String?
-): String {
-    var result = reaction.hashCode()
+): Int {
+    var result = "SendReaction".hashCode()
+    result = 31 * result + reaction.hashCode()
     result = 31 * result + enforceUnique.hashCode()
     result = 31 * result + cid.hashCode()
-    return "SendReaction($result)"
+    return result
 }
 
 /**
@@ -111,10 +117,11 @@ internal fun SendReactionIdentifier(
 internal fun GetRepliesIdentifier(
     messageId: String,
     limit: Int
-): String {
-    var result = messageId.hashCode()
+): Int {
+    var result = "GetReplies".hashCode()
+    result = 31 * result + messageId.hashCode()
     result = 31 * result + limit.hashCode()
-    return "GetReplies($result)"
+    return result
 }
 
 /**
@@ -125,31 +132,36 @@ internal fun GetRepliesMoreIdentifier(
     messageId: String,
     firstId: String,
     limit: Int
-): String {
-    var result = messageId.hashCode()
+): Int {
+    var result = "GetRepliesMore".hashCode()
+    result = 31 * result + messageId.hashCode()
     result = 31 * result + firstId.hashCode()
     result = 31 * result + limit.hashCode()
-    return "GetRepliesMore($result)"
+    return result
 }
 
 /**
  * Identifier for a [ChatClient.sendGiphy] call.
  */
-@Suppress("FunctionName")
+@Suppress("FunctionName", "MagicNumber")
 internal fun SendGiphyIdentifier(
     request: SendActionRequest
-): String {
-    return "SendGiphy(${request.hashCode()})"
+): Int {
+    var result = "SendGiphy".hashCode()
+    result = 31 * result + request.hashCode()
+    return result
 }
 
 /**
  * Identifier for a [ChatClient.shuffleGiphy] call.
  */
-@Suppress("FunctionName")
+@Suppress("FunctionName", "MagicNumber")
 internal fun ShuffleGiphyIdentifier(
     request: SendActionRequest
-): String {
-    return "ShuffleGiphy(${request.hashCode()})"
+): Int {
+    var result = "ShuffleGiphy".hashCode()
+    result = 31 * result + request.hashCode()
+    return result
 }
 
 /**
@@ -159,10 +171,11 @@ internal fun ShuffleGiphyIdentifier(
 internal fun DeleteMessageIdentifier(
     messageId: String,
     hard: Boolean
-): String {
-    var result = messageId.hashCode()
+): Int {
+    var result = "DeleteMessage".hashCode()
+    result = 31 * result + messageId.hashCode()
     result = 31 * result + hard.hashCode()
-    return "DeleteMessage($result)"
+    return result
 }
 
 /**
@@ -174,22 +187,25 @@ internal fun SendEventIdentifier(
     channelType: String,
     channelId: String,
     parentId: String?
-): String {
-    var result = eventType.hashCode()
+): Int {
+    var result = "SendEvent".hashCode()
+    result = 31 * result + eventType.hashCode()
     result = 31 * result + channelType.hashCode()
     result = 31 * result + channelId.hashCode()
     result = 31 * result + parentId.hashCode()
-    return "SendEvent($result)"
+    return result
 }
 
 /**
  * Identifier for a [ChatClient.updateMessage] call.
  */
-@Suppress("FunctionName")
+@Suppress("FunctionName", "MagicNumber")
 internal fun UpdateMessageIdentifier(
     message: Message
-): String {
-    return "UpdateMessage(${message.hashCode()})"
+): Int {
+    var result = "UpdateMessage".hashCode()
+    result = 31 * result + message.hashCode()
+    return result
 }
 
 /**
@@ -200,17 +216,18 @@ internal fun HideChannelIdentifier(
     channelType: String,
     channelId: String,
     clearHistory: Boolean
-): String {
-    var result = channelType.hashCode()
+): Int {
+    var result = "HideChannel".hashCode()
+    result = 31 * result + channelType.hashCode()
     result = 31 * result + channelId.hashCode()
     result = 31 * result + clearHistory.hashCode()
-    return "HideChannel($result)"
+    return result
 }
 
 /**
  * Identifier for a [ChatClient.markAllRead] call.
  */
 @Suppress("FunctionName", "FunctionOnlyReturningConstant")
-internal fun MarkAllReadIdentifier(): String {
-    return "MarkAllRead"
+internal fun MarkAllReadIdentifier(): Int {
+    return "MarkAllRead".hashCode()
 }
