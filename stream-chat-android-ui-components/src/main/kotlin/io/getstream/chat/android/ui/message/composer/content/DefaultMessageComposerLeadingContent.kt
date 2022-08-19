@@ -120,12 +120,13 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
         val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
         val isInEditMode = state.action is Edit
+        val hasCommands = state.hasCommands
 
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 
         binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
-        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode
+        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode && hasCommands
         binding.commandsButton.isSelected = hasCommandSuggestions
     }
 }

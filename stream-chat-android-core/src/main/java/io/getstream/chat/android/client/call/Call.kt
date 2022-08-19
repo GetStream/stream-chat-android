@@ -137,13 +137,25 @@ public fun <T : Any> Call<T>.withPrecondition(
  * an error.
  *
  * @param scope Scope of coroutine in which to execute side effect function.
- * @param onError Function that returns data in the case of error.
+ * @param function Function that returns data in the case of error.
  */
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
     function: suspend (originalError: ChatError) -> Result<T>,
 ): ReturnOnErrorCall<T> = ReturnOnErrorCall(this, scope, function)
+
+/**
+ * Shares the existing [Call] instance for the specified [identifier].
+ * If no existing call found the new [Call] instance will be provided.
+ */
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.share(
+    scope: CoroutineScope,
+    identifier: () -> Int,
+): Call<T> {
+    return SharedCall(this, identifier, scope)
+}
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}
