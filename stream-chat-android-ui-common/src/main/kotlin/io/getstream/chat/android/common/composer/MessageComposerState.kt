@@ -37,6 +37,7 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * @param hasCommands Whether there are any commands available.
  */
 public data class MessageComposerState(
     val inputValue: String = "",
@@ -48,5 +49,6 @@ public data class MessageComposerState(
     val coolDownTime: Int = 0,
     val messageMode: MessageMode = MessageMode.Normal,
     val alsoSendToChannel: Boolean = false,
-    val ownCapabilities: Set<String> = setOf()
+    val ownCapabilities: Set<String> = setOf(),
+    val hasCommands: Boolean = false,
 )
