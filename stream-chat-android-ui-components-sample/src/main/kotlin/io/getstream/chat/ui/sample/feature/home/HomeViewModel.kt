@@ -92,10 +92,14 @@ class HomeViewModel(
         when (action) {
             is UiAction.LogoutClicked -> {
                 viewModelScope.launch {
-                    chatClient.disconnect(false).await()
+                    ChatClient.instance().disconnect(false).await()
                     App.instance.userRepository.clearUser()
-                    _events.value = Event(UiEvent.NavigateToLoginScreen)
+                    _events.value = Event(UiEvent.NavigateToLoginScreenLogout)
                 }
+            }
+
+            is UiAction.SwitchUserClicked -> {
+                _events.value = Event(UiEvent.NavigateToLoginScreenSwitchUser)
             }
         }
     }
@@ -131,6 +135,7 @@ class HomeViewModel(
          * A click on logout button in navigation drawer.
          */
         object LogoutClicked : UiAction()
+        object SwitchUserClicked : UiAction()
     }
 
     /**
@@ -140,6 +145,7 @@ class HomeViewModel(
         /**
          * An event to redirect the user to login screen.
          */
-        object NavigateToLoginScreen : UiEvent()
+        object NavigateToLoginScreenLogout : UiEvent()
+        object NavigateToLoginScreenSwitchUser : UiEvent()
     }
 }

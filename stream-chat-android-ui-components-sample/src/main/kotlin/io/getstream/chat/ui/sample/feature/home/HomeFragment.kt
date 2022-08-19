@@ -120,9 +120,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun handleHomeEvents(uiEvent: HomeFragmentViewModel.UiEvent) {
+    private fun handleHomeEvents(uiEvent: HomeViewModel.UiEvent) {
         when (uiEvent) {
-            HomeFragmentViewModel.UiEvent.NavigateToLoginScreenLogout -> {
+            HomeViewModel.UiEvent.NavigateToLoginScreenLogout -> {
                 navigateSafely(
                     R.id.action_to_userLoginFragment,
                     Bundle().apply {
@@ -130,7 +130,7 @@ class HomeFragment : Fragment() {
                     }
                 )
             }
-            HomeFragmentViewModel.UiEvent.NavigateToLoginScreenSwitchUser -> {
+            HomeViewModel.UiEvent.NavigateToLoginScreenSwitchUser -> {
                 navigateSafely(
                     R.id.action_to_userLoginFragment,
                     Bundle().apply {
@@ -213,7 +213,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.switchUserTextView.setOnClickListener {
-            homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.SwitchUserClicked)
+            homeViewModel.onUiAction(HomeViewModel.UiAction.SwitchUserClicked)
         }
         binding.signOutTextView.setOnClickListener {
             homeViewModel.onUiAction(HomeViewModel.UiAction.LogoutClicked)
