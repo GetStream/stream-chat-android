@@ -297,7 +297,6 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public fun setCommands(commands: List<Command>) {
-        println("commands: ${commands.map { it.name }}")
         suggestionListController?.commands = commands
         hasCommands = commands.isNotEmpty()
         refreshControlsState()
