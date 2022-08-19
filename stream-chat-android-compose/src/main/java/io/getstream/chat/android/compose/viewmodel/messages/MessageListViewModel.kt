@@ -338,12 +338,6 @@ public class MessageListViewModel(
     }
 
     /**
-     * Starts observing the current channel. We observe the 'messagesState', 'user' and 'endOfOlderMessages'
-     * states, as well as build the `newMessageState` using [getNewMessageState] and combine it
-     * into a [MessagesState] that holds all the information required for the screen.
-     */
-
-    /**
      * Starts observing the list of typing users.
      */
     private fun observeTypingUsers() {
