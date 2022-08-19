@@ -62,7 +62,12 @@ internal interface ChatApi {
     ): Call<UploadedFile>
 
     @CheckResult
-    fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<UploadedImage>
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedImage>
 
     @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
