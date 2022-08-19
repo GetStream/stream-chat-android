@@ -7,6 +7,10 @@ public final class io/getstream/chat/android/guides/BuildConfig {
 	public fun <init> ()V
 }
 
+public final class io/getstream/chat/android/guides/ChatUIKt {
+	public static final fun cleanup (Lio/getstream/chat/android/ui/ChatUI;)V
+}
+
 public final class io/getstream/chat/android/guides/GuidesApp : android/app/Application {
 	public static final field $stable I
 	public fun <init> ()V

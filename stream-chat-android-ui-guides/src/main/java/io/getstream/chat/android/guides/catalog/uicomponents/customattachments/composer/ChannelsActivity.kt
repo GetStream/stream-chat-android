@@ -20,9 +20,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.DateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.DateAttachmentPreviewFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.QuotedDateAttachmentFactory
+import io.getstream.chat.android.guides.cleanup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
@@ -38,6 +40,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.Q
  */
 class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListItemClickListener {
 
+    @OptIn(ExperimentalStreamChatApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(
@@ -62,10 +65,7 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
 
     override fun onDestroy() {
         super.onDestroy()
-        // Reset to the default values not to affect other samples
-        ChatUI.attachmentFactoryManager = AttachmentFactoryManager()
-        ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager()
-        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager()
+        ChatUI.cleanup()
     }
 
     /**

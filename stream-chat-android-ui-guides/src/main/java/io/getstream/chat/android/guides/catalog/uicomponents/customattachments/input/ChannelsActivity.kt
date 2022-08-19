@@ -22,6 +22,7 @@ import android.os.Bundle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory.DateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory.QuotedDateAttachmentFactory
+import io.getstream.chat.android.guides.cleanup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
@@ -51,9 +52,7 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
 
     override fun onDestroy() {
         super.onDestroy()
-        // Reset to the default values not to affect other samples
-        ChatUI.attachmentFactoryManager = AttachmentFactoryManager()
-        ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager()
+        ChatUI.cleanup()
     }
 
     /**
