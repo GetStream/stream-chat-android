@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api2.mapping.toUploadedFile
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
@@ -82,7 +83,7 @@ internal class StreamFileUploader(
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<String> {
+    ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
@@ -92,7 +93,9 @@ internal class StreamFileUploader(
             file = part,
             connectionId = connectionId,
             progressCallback = callback,
-        ).execute().map { it.file }
+        ).execute().map {
+            UploadedImage(file = it.file)
+        }
     }
 
     override fun sendImage(
@@ -101,7 +104,7 @@ internal class StreamFileUploader(
         userId: String,
         connectionId: String,
         file: File,
-    ): Result<String> {
+    ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
@@ -111,7 +114,9 @@ internal class StreamFileUploader(
             file = part,
             connectionId = connectionId,
             progressCallback = null,
-        ).execute().map { it.file }
+        ).execute().map {
+            UploadedImage(file = it.file)
+        }
     }
 
     override fun deleteFile(
