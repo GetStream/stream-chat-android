@@ -18,8 +18,8 @@ package io.getstream.chat.android.compose.ui.attachments
 
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 
@@ -46,7 +46,7 @@ public object StreamAttachmentFactories {
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(),
-        ImageAttachmentFactory(),
+        MediaAttachmentFactory(),
         FileAttachmentFactory(),
     )
 
