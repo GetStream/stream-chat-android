@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -161,7 +162,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
-        result.data() shouldBeEqualTo file
+        result.data() shouldBeEqualTo UploadedImage(file = file)
     }
 
     @Test

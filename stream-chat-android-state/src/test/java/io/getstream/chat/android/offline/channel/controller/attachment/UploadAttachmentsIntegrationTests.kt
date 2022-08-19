@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomMessage
@@ -161,7 +162,7 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val imageResult = Result<String>(ChatError())
+            val imageResult = Result<UploadedImage>(ChatError())
             val fileResult = Result<UploadedFile>(ChatError())
 
             whenever(
@@ -185,7 +186,7 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsSuccess(files: List<File>) {
         for (file in files) {
-            val imageResult = Result("file")
+            val imageResult = Result(UploadedImage(file = "file"))
             val fileResult = Result(UploadedFile(file = "file", thumbUrl = "thumbUrl"))
 
             whenever(
