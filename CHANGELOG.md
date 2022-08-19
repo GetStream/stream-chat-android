@@ -57,6 +57,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
 
 ### ⬆️ Improved
 
