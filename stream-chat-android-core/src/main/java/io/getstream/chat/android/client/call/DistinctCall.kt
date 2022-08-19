@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.concurrency.SynchronizedReference
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +35,8 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Reusable wrapper around [Call] which delivers a single result to all subscribers.
  */
-internal class DistinctCall<T : Any>(
+@InternalStreamChatApi
+public class DistinctCall<T : Any>(
     scope: CoroutineScope,
     private val callBuilder: () -> Call<T>,
     private val onFinished: () -> Unit,
@@ -44,7 +46,8 @@ internal class DistinctCall<T : Any>(
     private val deferred = SynchronizedReference<Deferred<Result<T>>>()
     private val delegateCall = AtomicReference<Call<T>>()
 
-    internal fun originCall(): Call<T> = callBuilder()
+    @InternalStreamChatApi
+    public fun originCall(): Call<T> = callBuilder()
 
     override fun execute(): Result<T> = runBlocking { await() }
 
