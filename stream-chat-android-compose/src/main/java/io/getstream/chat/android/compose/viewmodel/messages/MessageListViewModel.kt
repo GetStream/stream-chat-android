@@ -355,7 +355,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Starts observing the current [Channel] created from [ChannelState]. It emits new data either when
+     * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
      * channel data, member count or online member count updates.
      */
     private fun observeChannel() {
