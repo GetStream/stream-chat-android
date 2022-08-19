@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -40,6 +41,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReaction
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
@@ -129,6 +131,9 @@ public class StreamOfflinePluginFactory(
             userRepository = repositoryFactory
         )
 
+        val queryMembersListener: QueryMembersListener =
+            QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
+
         return OfflinePlugin(
             activeUser = user,
             queryChannelsListener = statePlugin,
@@ -144,7 +149,7 @@ public class StreamOfflinePluginFactory(
             sendMessageListener = statePlugin,
             sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
-            queryMembersListener = statePlugin,
+            queryMembersListener = queryMembersListener,
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
             childResolver = statePlugin
