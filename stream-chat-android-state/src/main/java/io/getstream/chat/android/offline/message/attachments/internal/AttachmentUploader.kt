@@ -123,7 +123,7 @@ internal class AttachmentUploader(
     }
 
     /**
-     * Uploads an image attachment.
+     * Uploads a file attachment.
      *
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
