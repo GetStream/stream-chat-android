@@ -270,7 +270,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Starts observing messages of the current channel. We observe the 'messagesState', 'user' and
+     * Starts observing the messages in the current channel. We observe the 'messagesState', 'user' and
      * 'endOfOlderMessages' states, as well as build the `newMessageState` using [getNewMessageState]
      * and combine it into a [MessagesState] that holds all the information required for the screen.
      */
