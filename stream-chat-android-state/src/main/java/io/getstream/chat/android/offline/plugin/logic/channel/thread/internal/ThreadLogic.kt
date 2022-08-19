@@ -60,6 +60,10 @@ internal class ThreadLogic(
         return mutableState.rawMessages[messageId]?.copy()
     }
 
+    internal fun stateLogic(): ThreadStateLogic {
+        return threadStateLogic
+    }
+
     internal fun deleteMessage(message: Message) {
         threadStateLogic.deleteMessage(message)
     }

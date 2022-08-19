@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.toCid
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
@@ -25,44 +24,65 @@ import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
-internal class HideChannelListenerImpl(
-    private val logic: LogicRegistry,
-    private val repositoryFacade: RepositoryFacade,
-) : HideChannelListener {
+/**
+ * Implementation of [HideChannelListener] that handles read and write of the state of the SDK.
+ *
+ * @param logic [LogicRegistry]
+ */
+internal class HideChannelListenerState(private val logic: LogicRegistry) : HideChannelListener {
 
+    /**
+     * Run precondition for the request. If it returns [Result.isSuccess] then the request is run otherwise it returns
+     * [Result.error] and no request is made.
+     *
+     * @param channelType Type of the requested channel.
+     * @param channelId Id of the requested channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     *
+     * @return [Result.success] if precondition passes otherwise [Result.error]
+     */
     override suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
     ): Result<Unit> = validateCidWithResult(Pair(channelType, channelId).toCid()).toUnitResult()
 
+    /**
+     * Runs side effect before the request is launched.
+     *
+     * @param channelType Type of the requested channel.
+     * @param channelId Id of the requested channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     */
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
-        logic.channel(channelType, channelId).setHidden(true)
+        logic.channel(channelType, channelId).stateLogic().toggleHidden(true)
     }
 
+    /**
+     * Runs this function on the result of the request.
+     *
+     * @param result Result of this request.
+     * @param channelType Type of the requested channel.
+     * @param channelId Id of the requested channel.
+     * @param clearHistory Boolean, if you want to clear the history of this channel or not.
+     */
     override suspend fun onHideChannelResult(
         result: Result<Unit>,
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
     ) {
-        val channelLogic = logic.channel(channelType, channelId)
+        val channelStateLogic = logic.channel(channelType, channelId).stateLogic()
         if (result.isSuccess) {
-            val cid = Pair(channelType, channelId).toCid()
             if (clearHistory) {
                 val now = Date()
-                channelLogic.run {
+                channelStateLogic.run {
                     hideMessagesBefore(now)
                     removeMessagesBefore(now)
                 }
-                repositoryFacade.deleteChannelMessagesBefore(cid, now)
-                repositoryFacade.setHiddenForChannel(cid, true, now)
-            } else {
-                repositoryFacade.setHiddenForChannel(cid, true)
             }
         } else {
-            // Hides the channel if request fails.
-            channelLogic.setHidden(false)
+            channelStateLogic.toggleHidden(false)
         }
     }
 }

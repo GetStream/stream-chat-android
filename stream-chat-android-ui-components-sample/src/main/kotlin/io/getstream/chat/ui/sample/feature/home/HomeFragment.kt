@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeFragmentViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
     private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 
     private lateinit var avatarView: AvatarView
@@ -216,12 +216,12 @@ class HomeFragment : Fragment() {
             homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.SwitchUserClicked)
         }
         binding.signOutTextView.setOnClickListener {
-            homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
+            homeViewModel.onUiAction(HomeViewModel.UiAction.LogoutClicked)
         }
         binding.versionName.text = BuildConfig.VERSION_NAME
     }
 
-    private fun renderState(state: HomeFragmentViewModel.State) {
+    private fun renderState(state: HomeViewModel.UiState) {
         binding.bottomNavigationView.apply {
             setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
             setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
