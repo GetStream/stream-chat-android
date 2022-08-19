@@ -106,7 +106,7 @@ internal class AttachmentUploader(
                 file = file,
                 mimeType = mimeType,
                 attachmentType = attachmentType,
-                url = result.data()
+                url = result.data().file
             )
 
             onSuccessfulUpload(
