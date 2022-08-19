@@ -29,8 +29,8 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -48,8 +48,8 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel.
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
