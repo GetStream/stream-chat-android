@@ -50,5 +50,5 @@ public data class MessageComposerState(
     val messageMode: MessageMode = MessageMode.Normal,
     val alsoSendToChannel: Boolean = false,
     val ownCapabilities: Set<String> = setOf(),
-    val hasCommands: Boolean = false
+    val hasCommands: Boolean = false,
 )
