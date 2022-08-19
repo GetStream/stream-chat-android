@@ -37,10 +37,8 @@ import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterce
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl

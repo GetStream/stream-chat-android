@@ -39,11 +39,11 @@ import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageL
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
-import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerComposite
-import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
