@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
 
 ### ✅ Added
 
