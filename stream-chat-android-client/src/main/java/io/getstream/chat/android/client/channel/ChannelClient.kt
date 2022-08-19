@@ -418,7 +418,7 @@ public class ChannelClient internal constructor(
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
      *
      * @see FileUploader
