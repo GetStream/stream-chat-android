@@ -289,6 +289,7 @@ public class MessageComposerController(
         channelState.flatMapLatest { it.channelConfig }.onEach {
             maxMessageLength = it.maxMessageLength
             commands = it.commands
+            state.value = state.value.copy(hasCommands = commands.isNotEmpty())
         }.launchIn(scope)
 
         channelState.flatMapLatest { it.members }.onEach { members ->

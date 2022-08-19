@@ -20,11 +20,13 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -41,11 +43,11 @@ import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadLis
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerFull
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -219,11 +221,15 @@ public class StreamStatePluginFactory(
             }
         }
 
+        val getMessageFun: suspend (String) -> Result<Message> = { messageId: String ->
+            chatClient.getMessage(messageId).await()
+        }
+
         return StatePlugin(
             activeUser = user,
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
-            threadQueryListener = ThreadQueryListenerImpl(logic),
+            threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
             hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
@@ -232,7 +238,7 @@ public class StreamStatePluginFactory(
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
             sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
-            sendGiphyListener = SendGiphyListenerImpl(logic),
+            sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerState(stateRegistry),

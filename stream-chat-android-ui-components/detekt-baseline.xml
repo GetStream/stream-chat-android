@@ -170,6 +170,7 @@
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
     <ID>ReturnCount:DefaultUserLookupHandler.kt$private fun levenshtein(search: CharSequence, target: CharSequence): Int</ID>
+    <ID>ReturnCount:MessageComposerView.kt$MessageComposerView.SuggestionPopupTouchListener$override fun onTouch(v: View?, event: MotionEvent?): Boolean</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
