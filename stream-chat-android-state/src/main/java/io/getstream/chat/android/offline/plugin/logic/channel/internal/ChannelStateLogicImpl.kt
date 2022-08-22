@@ -164,7 +164,8 @@ internal class ChannelStateLogicImpl(
              * to show in the channel list.
              */
             incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
-                incomingUserRead.lastMessageSeenDate = mutableState.read.value?.lastMessageSeenDate
+                incomingUserRead.lastMessageSeenDate =
+                    mutableState.read.value?.lastMessageSeenDate ?: Date(Long.MIN_VALUE)
 
                 // the previous last Read date that is most current
                 val previousLastRead =
@@ -176,7 +177,6 @@ internal class ChannelStateLogicImpl(
                     previousLastRead,
                     OFFSET_EVENT_TIME
                 ) == true
-
                 if (shouldUpdateByIncoming) {
                     mutableState.setRead(incomingUserRead)
                     mutableState.setUnreadCount(incomingUserRead.unreadMessages)

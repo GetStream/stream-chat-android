@@ -127,7 +127,7 @@ public fun Message.shouldIncrementUnreadCount(
     val isMoreRecent = if (createdAt != null && lastMessageAtDate != null) {
         createdAt!! > lastMessageAtDate
     } else {
-        true
+        false
     }
 
     return user.id != currentUserId && !silent && !shadowed && isMoreRecent
