@@ -1,12 +1,13 @@
 package io.getstream.chat.android.common.messagelist
 
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+ import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
@@ -34,6 +35,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -45,6 +47,7 @@ import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -65,7 +68,7 @@ public class MessageListController(
     private val showSystemMessages: Boolean,
     private val showDateSeparators: Boolean,
     private val dateSeparatorThresholdMillis: Long,
-    private val messageFooterVisibility: MessageFooterVisibility,
+    private val messageFooterVisibility: MessageFooterVisibility
 ) {
 
     /**
@@ -98,6 +101,12 @@ public class MessageListController(
      */
     public val user: StateFlow<User?>
         get() = chatClient.clientState.user
+
+    /**
+     * Gives us information about the online state of the device.
+     */
+    public val isOnline: Flow<Boolean>
+        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Holds information about the abilities the current user
@@ -551,7 +560,6 @@ public class MessageListController(
      *  directly. The data is observed by using [ThreadState].
      *
      * @param parentMessage The message with the thread we want to observe.
-     * @param onMessagesResult Handler when the messages get loaded.
      */
     public fun enterThreadMode(parentMessage: Message) {
         val channelState = channelState.value ?: return
@@ -573,6 +581,15 @@ public class MessageListController(
         _threadListState.value = MessageListState()
         lastLoadedThreadMessage = null
         threadJob?.cancel()
+    }
+
+    /**
+     * Loads a given [Message] with a single page around it.
+     *
+     * @param message [Message] which we want to load.
+     */
+    public fun loadMessageWithPage(message: Message) {
+        chatClient.loadMessageById(cid, message.id).enqueue()
     }
 
     /**

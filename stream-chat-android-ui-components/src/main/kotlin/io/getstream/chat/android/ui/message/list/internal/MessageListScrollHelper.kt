@@ -29,7 +29,6 @@ import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
-import kotlin.math.max
 import kotlin.properties.Delegates
 
 internal class MessageListScrollHelper(
@@ -45,9 +44,6 @@ internal class MessageListScrollHelper(
         get() = recyclerView.layoutManager as LinearLayoutManager
     private val adapter: MessageListItemAdapter
         get() = recyclerView.adapter as MessageListItemAdapter
-
-    private var lastSeenMessageInChannel: MessageListItem? = null
-    private var lastSeenMessageInThread: MessageListItem? = null
 
     private var onScrollToBottomHandler: MessageListView.OnScrollToBottomHandler =
         MessageListView.OnScrollToBottomHandler {
@@ -71,8 +67,6 @@ internal class MessageListScrollHelper(
             }
             field = value
         }
-
-    private var unreadCount = 0
 
     private val currentList: List<MessageListItem>
         get() {
@@ -110,23 +104,7 @@ internal class MessageListScrollHelper(
                     val bottomOffset = lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
                     isAtBottom = bottomOffset == 0
 
-                    max(lastVisibleItemPosition, getLastSeenItemPosition())
-                        .coerceIn(0, currentList.lastIndex)
-                        .let { currentList[it] }.let {
-                            when {
-                                adapter.isThread -> lastSeenMessageInThread = it
-                                else -> lastSeenMessageInChannel = it
-                            }
-                        }
-
-                    if (unreadCount > 0) {
-                        refreshUnreadCount()
-                    }
-
                     scrollButtonView.isVisible = shouldScrollToBottomBeVisible(bottomOffset)
-                    if (scrollButtonView.isVisible) {
-                        scrollButtonView.setUnreadCount(unreadCount)
-                    }
                 }
             }
         )
@@ -142,7 +120,7 @@ internal class MessageListScrollHelper(
     private fun shouldScrollToBottomBeVisible(bottomOffset: Int): Boolean {
         if (!areNewestMessagesLoaded) return true
 
-        val hasInvisibleUnreadMessage = unreadCount > 0 && !isAtBottom
+        val hasInvisibleUnreadMessage = !isAtBottom
         val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
 
         return hasInvisibleUnreadMessage || hasScrolledUpEnough
@@ -209,8 +187,6 @@ internal class MessageListScrollHelper(
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
         } else {
-            refreshUnreadCount()
-            scrollButtonView.setUnreadCount(unreadCount)
             scrollButtonView.isVisible = true
         }
     }
@@ -228,27 +204,6 @@ internal class MessageListScrollHelper(
         areNewestMessagesLoaded: Boolean,
     ): Boolean {
         return areNewestMessagesLoaded && (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
-    }
-
-    private fun refreshUnreadCount() {
-        if (!unreadCountEnabled) return
-
-        var unreadCount = 0
-        for (i in currentList.lastIndex downTo getLastSeenItemPosition() + 1) {
-            if (currentList[i].isValid()) {
-                unreadCount++
-            }
-        }
-        this.unreadCount = unreadCount
-    }
-
-    private fun getLastSeenItemPosition(): Int {
-        val lastMessageId = if (adapter.isThread) {
-            lastSeenMessageInThread
-        } else {
-            lastSeenMessageInChannel
-        }?.getStableId()
-        return currentList.indexOfLast { it.getStableId() == lastMessageId }
     }
 
     private fun isLastMessageMine(): Boolean {

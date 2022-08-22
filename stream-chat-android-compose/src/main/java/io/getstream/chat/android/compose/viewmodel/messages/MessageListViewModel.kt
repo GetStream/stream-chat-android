@@ -68,16 +68,12 @@ import io.getstream.chat.android.compose.state.messages.toMessagesState
 import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.compose.util.extensions.asState
-import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
-import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -111,16 +107,15 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val messageListController: MessageListController =
-        MessageListController(
-            channelId,
-            chatClient,
-            deletedMessageVisibility,
-            showSystemMessages,
-            showDateSeparators,
-            dateSeparatorThresholdMillis,
-            messageFooterVisibility
-        ),
+    private val messageListController: MessageListController = MessageListController(
+        cid = channelId,
+        chatClient = chatClient,
+        deletedMessageVisibility = deletedMessageVisibility,
+        showSystemMessages = showSystemMessages,
+        showDateSeparators = showDateSeparators,
+        dateSeparatorThresholdMillis = dateSeparatorThresholdMillis,
+        messageFooterVisibility = messageFooterVisibility
+    ),
 ) : ViewModel() {
 
     /**
@@ -192,14 +187,12 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val isOnline: Flow<Boolean>
-        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
+    public val isOnline: Flow<Boolean> = messageListController.isOnline
 
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?>
-        get() = chatClient.clientState.user
+    public val user: StateFlow<User?> = messageListController.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -223,11 +216,6 @@ public class MessageListViewModel(
     private var scrollToMessage: Message? = null
 
     /**
-     * Instance of [TaggedLogger] to log exceptional and warning cases in behavior.
-     */
-    private val logger = StreamLog.getLogger("Chat:MessageListViewModel")
-
-    /**
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
      */
@@ -242,11 +230,11 @@ public class MessageListViewModel(
      */
     private fun observeMessageListState() {
         viewModelScope.launch {
-            messageListController.messageListState.collect {
-                messagesState = it.toMessagesState()
+            messageListController.messageListState.collect { state ->
+                messagesState = state.toMessagesState()
                 if (scrollToMessage != null) {
-                    messagesState.messageItems.firstOrNull {
-                        it is MessageItemState && it.message.id == scrollToMessage?.id
+                    messagesState.messageItems.firstOrNull { itemState ->
+                        itemState is MessageItemState && itemState.message.id == scrollToMessage?.id
                     }?.let { focusMessage((it as MessageItemState).message.id) }
                 }
             }
@@ -255,8 +243,8 @@ public class MessageListViewModel(
 
     private fun observeThreadListState() {
         viewModelScope.launch {
-            messageListController.threadListState.collect {
-                threadMessagesState = it.toMessagesState()
+            messageListController.threadListState.collect { state ->
+                threadMessagesState = state.toMessagesState()
             }
         }
     }
@@ -365,14 +353,7 @@ public class MessageListViewModel(
         level = DeprecationLevel.WARNING
     )
     public fun loadMore() {
-        if (chatClient.clientState.isOffline) return
-        val messageMode = messageMode
-
-        if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
-        } else {
-            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
-        }
+        loadOlderMessages()
     }
 
     /**
@@ -420,26 +401,8 @@ public class MessageListViewModel(
      * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
      * of a thread.
      */
-    public fun loadOlderMessages(): Unit = messageListController.loadOlderMessages(DefaultMessageLimit)
-
-    /**
-     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
-     *
-     * @param threadMode Current thread mode.
-     */
-    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
-        threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-        if (threadMode.threadState != null) {
-            chatClient.getRepliesMore(
-                messageId = threadMode.parentMessage.id,
-                firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
-                limit = DefaultMessageLimit,
-            ).enqueue()
-        } else {
-            threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
-            logger.w { "Thread state must be not null for offline plugin thread load more!" }
-        }
-    }
+    public fun loadOlderMessages(messageLimit: Int = DefaultMessageLimit): Unit =
+        messageListController.loadOlderMessages(messageLimit)
 
     /**
      * Loads the selected message we wish to scroll to when the message can't be found in the current list.
@@ -447,7 +410,7 @@ public class MessageListViewModel(
      * @param message The selected message we wish to scroll to.
      */
     private fun loadMessage(message: Message) {
-        chatClient.loadMessageById(channelId, message.id).enqueue()
+        messageListController.loadMessageWithPage(message)
     }
 
     /**

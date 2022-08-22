@@ -1124,6 +1124,11 @@ public class MessageListView : ConstraintLayout {
         this.messageListItemTransformer = messageListItemTransformer
     }
 
+    // TODO
+    public fun setUnreadCount(unreadCount: Int) {
+        binding.scrollToBottomButton.setUnreadCount(unreadCount)
+    }
+
     /**
      * Allows clients to set an instance of [AttachmentFactoryManager] that holds
      * a list of custom attachment factories. Use this method to create a custom

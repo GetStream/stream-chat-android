@@ -111,16 +111,16 @@ public class MessageListViewModel(
      * information about the message list.
      * TODO
      */
-    private var messageListData: LiveData<MessageListItemWrapper> = messageListController.messageListState.map {
+    private val messageListData: LiveData<MessageListItemWrapper> = messageListController.messageListState.map {
         it.toMessageListItemWrapper()
     }.asLiveData()
 
     /**
      * Contains a list of messages along with additional
-     * information about the message list. Sets the
+     * information about the message list.
      * TODO
      */
-    private var threadListData: LiveData<MessageListItemWrapper> = messageListController.threadListState.map {
+    private val threadListData: LiveData<MessageListItemWrapper> = messageListController.threadListState.map {
         it.toMessageListItemWrapper()
     }.asLiveData()
 
@@ -207,6 +207,9 @@ public class MessageListViewModel(
      * The currently logged in user.
      */
     public val user: LiveData<User?> = clientState.user.asLiveData()
+
+    // TODO
+    public val unreadCount: LiveData<Int> = messageListController.messageListState.map { it.unreadCount }.asLiveData()
 
     /**
      * The logger used to print to errors, warnings, information
