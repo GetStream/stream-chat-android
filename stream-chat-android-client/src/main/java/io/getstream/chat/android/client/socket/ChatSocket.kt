@@ -312,7 +312,6 @@ internal open class ChatSocket constructor(
         }
     }
 
-
     private companion object {
         private const val RETRY_LIMIT = 3
         private const val DEFAULT_DELAY = 500
