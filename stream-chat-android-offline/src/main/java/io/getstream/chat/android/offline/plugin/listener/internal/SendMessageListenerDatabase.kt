@@ -34,11 +34,23 @@ import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandlerDB"
 
+/**
+ * Implementation of [SendMessageListener] that deals with updates of the database of the SDK.
+ */
 internal class SendMessageListenerDatabase(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
 ) : SendMessageListener {
 
+    /**
+     * Side effect to be invoked when the original request is completed with a response. This method updates the
+     * database of the SDK.
+     *
+     * @param result [Result] response from the original request.
+     * @param channelType The type of the channel in which message is sent.
+     * @param channelId The id of the the channel in which message is sent.
+     * @param message [Message] to be sent.
+     */
     override suspend fun onMessageSendResult(
         result: Result<Message>,
         channelType: String,

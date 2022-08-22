@@ -32,8 +32,20 @@ import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandler"
 
+/**
+ * Implementation of [SendMessageListener] that deals with updates of state of the SDK.
+ */
 internal class SendMessageListenerState(private val logic: LogicRegistry) : SendMessageListener {
 
+    /**
+     * Side effect to be invoked when the original request is completed with a response. This method updates the state
+     * of the SDK.
+     *
+     * @param result [Result] response from the original request.
+     * @param channelType The type of the channel in which message is sent.
+     * @param channelId The id of the the channel in which message is sent.
+     * @param message [Message] to be sent.
+     */
     override suspend fun onMessageSendResult(
         result: Result<Message>,
         channelType: String,
