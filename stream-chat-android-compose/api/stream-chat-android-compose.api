@@ -568,6 +568,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Medi
 	public static final fun MediaAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentPreviewContentKt {
+	public static final fun MediaAttachmentPreviewContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/attachments/content/MessageAttachmentsContentKt {
 	public static final fun MessageAttachmentsContent (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
@@ -604,10 +608,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$MediaAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$MediaAttachmentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function5;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$QuotedAttachmentFactoryKt {
@@ -641,8 +645,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Link
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/MediaAttachmentFactoryKt {
-	public static final fun MediaAttachmentFactory (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun MediaAttachmentFactory$default (Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static final fun MediaAttachmentFactory (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static synthetic fun MediaAttachmentFactory$default (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactoryKt {

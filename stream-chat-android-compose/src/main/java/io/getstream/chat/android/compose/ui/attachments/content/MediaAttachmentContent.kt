@@ -30,9 +30,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -42,14 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -328,17 +323,15 @@ internal fun MediaAttachmentContentItem(
 /**
  * A simple play button that is overlaid above
  * video attachments.
+ *
+ * @param modifier The modifier used for styling.
  */
 @Composable
-internal fun PlayButton() {
+internal fun PlayButton(
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
-            .shadow(10.dp, shape = CircleShape)
-            .background(color = Color.White, shape = CircleShape)
-            .size(
-                width = 42.dp,
-                height = 42.dp
-            ),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Column {
@@ -347,7 +340,7 @@ internal fun PlayButton() {
                     .alignBy { measured ->
                         // emulated offset as seen in the design specs,
                         // otherwise the button is visibly off to the start of the screen
-                        -(measured.measuredWidth * 1 / 9)
+                        -(measured.measuredWidth * 1 / 8)
                     },
                 painter = painterResource(id = R.drawable.stream_compose_ic_play),
                 contentDescription = null,
