@@ -1,35 +1,7 @@
 # August 22nd, 2022 - 5.8.1
-## Common changes for all artifacts
-### ⚠️ Changed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ✅ Added
-
-## stream-chat-android-offline
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed loading of image attachments with null values of `Attachment.originalWidth` and `Attachment.originalHeight`. A bug was introduced in the previous release that made these image attachments not load as their container height would remain set to 0. [#4067](https://github.com/GetStream/stream-chat-android/pull/4067)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
 
 # August 16th, 2022 - 5.8.0
 ## Common changes for all artifacts
