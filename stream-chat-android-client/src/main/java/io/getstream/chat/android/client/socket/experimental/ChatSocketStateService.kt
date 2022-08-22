@@ -305,22 +305,22 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             /**
              * State of socket when is stopped.
              */
-            object Stopped : Disconnected()
+            object Stopped : Disconnected() { override fun toString() = "Disconnected.Stopped" }
 
             /**
              * State of socket when network is disconnected.
              */
-            object NetworkDisconnected : Disconnected()
+            object NetworkDisconnected : Disconnected() { override fun toString() = "Disconnected.Network" }
 
             /**
              * State of socket when HealthEvent is lost.
              */
-            object WebSocketEventLost : Disconnected()
+            object WebSocketEventLost : Disconnected() { override fun toString() = "Disconnected.InactiveWS" }
 
             /**
              * State of socket when is disconnected by customer request.
              */
-            object DisconnectedByRequest : Disconnected()
+            object DisconnectedByRequest : Disconnected() { override fun toString() = "Disconnected.ByRequest" }
 
             /**
              * State of socket when a [ChatError] happens.
