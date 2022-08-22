@@ -265,15 +265,16 @@ public class MessageListViewModel(
      */
     init {
         observeTypingUsers()
+        observeMessages()
         observeChannel()
     }
 
     /**
-     * Starts observing the current channel. We observe the 'messagesState', 'user' and 'endOfOlderMessages'
-     * states, as well as build the `newMessageState` using [getNewMessageState] and combine it
-     * into a [MessagesState] that holds all the information required for the screen.
+     * Starts observing the messages in the current channel. We observe the 'messagesState', 'user' and
+     * 'endOfOlderMessages' states, as well as build the `newMessageState` using [getNewMessageState]
+     * and combine it into a [MessagesState] that holds all the information required for the screen.
      */
-    private fun observeChannel() {
+    private fun observeMessages() {
         viewModelScope.launch {
             channelState.filterNotNull().collectLatest { channelState ->
                 combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
@@ -331,13 +332,6 @@ public class MessageListViewModel(
                         }
 
                         lastLoadedMessage = newLastMessage
-                        channelState.toChannel().let { channel ->
-                            chatClient.notifications.dismissChannelNotifications(
-                                channelType = channel.type,
-                                channelId = channel.id
-                            )
-                            setCurrentChannel(channel)
-                        }
                     }
             }
         }
@@ -350,6 +344,30 @@ public class MessageListViewModel(
         viewModelScope.launch {
             channelState.filterNotNull().flatMapLatest { it.typing }.collect {
                 typingUsers = it.users
+            }
+        }
+    }
+
+    /**
+     * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
+     * channel data, member count or online member count updates.
+     */
+    private fun observeChannel() {
+        viewModelScope.launch {
+            channelState.filterNotNull().flatMapLatest { state ->
+                combine(
+                    state.channelData,
+                    state.membersCount,
+                    state.watcherCount,
+                ) { _, _, _ ->
+                    state.toChannel()
+                }
+            }.collect { channel ->
+                chatClient.notifications.dismissChannelNotifications(
+                    channelType = channel.type,
+                    channelId = channel.id
+                )
+                setCurrentChannel(channel)
             }
         }
     }

@@ -201,7 +201,7 @@ internal interface ChannelStateLogic {
      *
      * @param hidden Boolean.
      */
-    fun setHidden(hidden: Boolean)
+    fun toggleHidden(hidden: Boolean)
 
     /**
      * Sets a replied message.

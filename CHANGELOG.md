@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
 
 ### ✅ Added
 - Added `UploadedFile` which represents an uploaded file. It contains the url to the file under the property `file`, and a thumbnail of the file under the property `thumbUrl`. Thumbnails are usually returned when uploading a video file. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
@@ -47,6 +48,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `hasCommands` field to `MessageComposerState` to set commands button visibility. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ⚠️ Changed
 
@@ -55,8 +57,10 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
+- The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
 
 ### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
 
@@ -66,8 +70,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
 
 ### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
 

@@ -138,6 +138,7 @@ public class MessageInputView : ConstraintLayout {
     private var canUseCommands = false
     private var canSendLinks = false
     private var canSendTypingUpdates = false
+    private var hasCommands: Boolean = false
 
     /**
      * Changes value only when the new value
@@ -297,6 +298,7 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
+        hasCommands = commands.isNotEmpty()
         refreshControlsState()
     }
 
@@ -448,7 +450,7 @@ public class MessageInputView : ConstraintLayout {
 
         setBackgroundColor(messageInputViewStyle.backgroundColor)
         configAttachmentButton()
-        configLightningButton()
+        configCommandsButton()
         configTextInput()
         configSendButton()
         configSendAlsoToChannelCheckbox()
@@ -717,7 +719,7 @@ public class MessageInputView : ConstraintLayout {
         binding.sendMessageButtonDisabled.setImageDrawable(drawable)
     }
 
-    private fun configLightningButton() {
+    private fun configCommandsButton() {
         binding.commandsButton.setImageDrawable(messageInputViewStyle.commandsButtonIcon)
         binding.commandsButton.setBorderlessRipple(messageInputViewStyle.commandButtonRippleColor)
 
@@ -913,7 +915,7 @@ public class MessageInputView : ConstraintLayout {
 
             attachmentsButton.isVisible =
                 messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
+            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands && hasCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
@@ -949,7 +951,7 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send messages.
      */
     private fun setCanSendMessages(canSend: Boolean) {
-        binding.commandsButton.isVisible = canSend
+        binding.commandsButton.isVisible = canSend && hasCommands
         binding.attachmentsButton.isVisible = canSend
 
         canSendAttachments = canSend
@@ -985,7 +987,6 @@ public class MessageInputView : ConstraintLayout {
     private fun shouldShowCommandsButton(): Boolean {
         val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 
-        val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
         return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
     }
 

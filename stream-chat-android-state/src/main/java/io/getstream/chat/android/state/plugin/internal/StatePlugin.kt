@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -54,7 +53,6 @@ import kotlin.reflect.KClass
  * @param sendGiphyListener [SendGiphyListener]
  * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
- * @param queryMembersListener [QueryMembersListener]
  * @param typingEventListener [TypingEventListener]
  * @param activeUser User associated with [StatePlugin] instance.
  */
@@ -75,7 +73,6 @@ public class StatePlugin(
     private val sendGiphyListener: SendGiphyListener,
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
-    private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : StateAwarePlugin,
@@ -93,7 +90,6 @@ public class StatePlugin(
     SendGiphyListener by sendGiphyListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
-    QueryMembersListener by queryMembersListener,
     TypingEventListener by typingEventListener {
 
     override val name: String = MODULE_NAME
