@@ -132,7 +132,7 @@ internal open class ChatSocket constructor(
             state<State.Connecting> {
                 onEnter {
                     healthMonitor.stop()
-                    callListeners { listener -> listener.onConnecting() }
+                    callListenersOnUiThread { listener -> listener.onConnecting() }
                 }
                 onEvent<Event.WebSocket.OnConnectionOpened<*>> {
                     connectionEventReceived = false
@@ -153,7 +153,7 @@ internal open class ChatSocket constructor(
                 onEnter {
                     if (it is Event.WebSocket.OnConnectedEventReceived) {
                         healthMonitor.ack()
-                        callListeners { listener -> listener.onConnected(it.connectedEvent) }
+                        callListenersOnUiThread { listener -> listener.onConnected(it.connectedEvent) }
                     }
                 }
                 onEvent<Event.Lifecycle.Started> {
@@ -239,7 +239,7 @@ internal open class ChatSocket constructor(
 
     open fun onSocketError(error: ChatError) {
         logger.e { error.stringify() }
-        callListeners { it.onError(error) }
+        callListenersOnUiThread { it.onError(error) }
         (error as? ChatNetworkError)?.let(::onChatNetworkError)
     }
 
@@ -297,7 +297,7 @@ internal open class ChatSocket constructor(
         if (event is HealthEvent) {
             healthMonitor.ack()
         }
-        callListeners { listener -> listener.onEvent(event) }
+        callListenersOnUiThread { listener -> listener.onEvent(event) }
     }
 
     /**
@@ -383,9 +383,13 @@ internal open class ChatSocket constructor(
 
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
-            listeners.forEach { listener ->
-                eventUiHandler.post { call(listener) }
-            }
+            listeners.forEach(call)
+        }
+    }
+
+    private fun callListenersOnUiThread(call: (SocketListener) -> Unit) {
+        eventUiHandler.post {
+            callListeners(call)
         }
     }
 

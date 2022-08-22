@@ -101,16 +101,16 @@ internal open class ChatSocket constructor(
             when (newState) {
                 is State.Connecting -> {
                     healthMonitor.stop()
-                    callListeners { it.onConnecting() }
+                    callListenersOnUiThread { it.onConnecting() }
                 }
                 is State.Connected -> {
                     healthMonitor.ack()
-                    callListeners { it.onConnected(newState.event) }
+                    callListenersOnUiThread { it.onConnected(newState.event) }
                 }
                 is State.NetworkDisconnected -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                 }
                 is State.DisconnectedByRequest -> {
                     shutdownSocketConnection()
@@ -120,7 +120,7 @@ internal open class ChatSocket constructor(
                 is State.DisconnectedTemporarily -> {
                     shutdownSocketConnection()
                     healthMonitor.onDisconnected()
-                    callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                 }
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
@@ -143,7 +143,7 @@ internal open class ChatSocket constructor(
         logger.e { "[onSocketError] error: ${error.stringify()}" }
         if (state !is State.DisconnectedPermanently) {
             logger.e { error.stringify() }
-            callListeners { it.onError(error) }
+            callListenersOnUiThread { it.onError(error) }
             (error as? ChatNetworkError)?.let(::onChatNetworkError)
         }
     }
@@ -246,7 +246,7 @@ internal open class ChatSocket constructor(
         if (event is HealthEvent) {
             healthMonitor.ack()
         }
-        callListeners { listener -> listener.onEvent(event) }
+        callListenersOnUiThread { listener -> listener.onEvent(event) }
     }
 
     internal open fun sendEvent(event: ChatEvent) {
@@ -302,11 +302,16 @@ internal open class ChatSocket constructor(
 
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
-            eventUiHandler.post {
-                listeners.forEach(call)
-            }
+            listeners.forEach(call)
         }
     }
+
+    private fun callListenersOnUiThread(call: (SocketListener) -> Unit) {
+        eventUiHandler.post {
+            callListeners(call)
+        }
+    }
+
 
     private companion object {
         private const val RETRY_LIMIT = 3
