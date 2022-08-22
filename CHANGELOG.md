@@ -55,6 +55,7 @@
 - Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
+- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 ### ⚠️ Changed
 
@@ -68,6 +69,7 @@
 - Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
+- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 ### ⚠️ Changed
 

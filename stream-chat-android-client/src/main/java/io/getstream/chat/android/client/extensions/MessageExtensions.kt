@@ -16,9 +16,45 @@
 
 package io.getstream.chat.android.client.extensions
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import java.util.Date
 
 public fun Message.enrichWithCid(cid: String): Message = apply {
     replyTo?.enrichWithCid(cid)
     this.cid = cid
+}
+
+/**
+ * Updates a message that whose request (Edition/Delete/Reaction update...) has failed.
+ *
+ * @param chatError [ChatError].
+ */
+@InternalStreamChatApi
+public fun Message.updateFailedMessage(chatError: ChatError): Message {
+    return this.copy(
+        syncStatus = if (chatError.isPermanent()) {
+            SyncStatus.FAILED_PERMANENTLY
+        } else {
+            SyncStatus.SYNC_NEEDED
+        },
+        syncDescription = chatError.toMessageSyncDescription(),
+        updatedLocallyAt = Date(),
+    )
+}
+
+/**
+ * Update the online state of a message.
+ *
+ * @param isOnline [Boolean].
+ */
+@InternalStreamChatApi
+public fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
+    return this.copy(
+        syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
+        updatedLocallyAt = Date()
+    )
 }
