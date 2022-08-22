@@ -93,7 +93,9 @@ public fun MediaAttachmentContent(
         horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         val attachments =
-            message.attachments.filter { !it.hasLink() && it.type == AttachmentType.IMAGE || it.type == AttachmentType.VIDEO }
+            message.attachments.filter {
+                !it.hasLink() && it.type == AttachmentType.IMAGE || it.type == AttachmentType.VIDEO
+            }
         val attachmentCount = attachments.size
 
         if (attachmentCount == 1) {
@@ -178,6 +180,7 @@ internal fun ShowSingleMediaAttachment(
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun RowScope.ShowMultipleMediaAttachments(
     attachments: List<Attachment>,
@@ -271,6 +274,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
  */
+@Suppress("LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MediaAttachmentContentItem(
