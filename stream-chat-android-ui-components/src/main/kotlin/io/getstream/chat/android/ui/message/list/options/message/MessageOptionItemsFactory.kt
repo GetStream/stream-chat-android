@@ -111,7 +111,8 @@ public open class DefaultMessageOptionItemsFactory(
         val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
         // user capabilities
-        val canReplyToMessage = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+        val canQuoteMessage = ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
+        val canThreadReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
         val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
         val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
         val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
@@ -126,14 +127,14 @@ public open class DefaultMessageOptionItemsFactory(
                     messageAction = Resend(selectedMessage),
                 )
             } else null,
-            if (style.replyEnabled && isMessageSynced && canReplyToMessage) {
+            if (style.replyEnabled && isMessageSynced && canQuoteMessage) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_reply),
                     optionIcon = context.getDrawableCompat(style.replyIcon)!!,
                     messageAction = Reply(selectedMessage),
                 )
             } else null,
-            if (style.threadsEnabled && !isInThread && isMessageSynced && canReplyToMessage) {
+            if (style.threadsEnabled && !isInThread && isMessageSynced && canThreadReply) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_thread_reply),
                     optionIcon = context.getDrawableCompat(style.threadReplyIcon)!!,
