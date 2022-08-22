@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -96,6 +95,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         state = State.OneView(imageAttachmentView)
         ConstraintSet().apply {
             constrainMaxHeight(imageAttachmentView.id, maxImageAttachmentHeight)
+            constrainWidth(imageAttachmentView.id, ViewGroup.LayoutParams.MATCH_PARENT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.TOP)
@@ -109,16 +109,11 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             if (imageWidth != null && imageHeight != null) {
                 val ratio = (imageWidth / imageHeight).toString()
                 this.setDimensionRatio(imageAttachmentView.id, ratio)
+            } else {
+                constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
             }
 
             applyTo(this@ImageAttachmentsGroupView)
-        }
-
-        // Setting the dimen ratio above makes it narrow the width
-        // of the container, this way we force the width to match the parent
-        // and clip the height if needed.
-        imageAttachmentView.updateLayoutParams {
-            this.width = ViewGroup.LayoutParams.MATCH_PARENT
         }
 
         imageAttachmentView.showAttachment(first)
