@@ -54,7 +54,7 @@ internal class ChatSocket private constructor(
     private val networkStateProvider: NetworkStateProvider,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger = StreamLog.getLogger("Chat:Socket")
+    private val logger = StreamLog.getLogger("Chat:Experimental-Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
