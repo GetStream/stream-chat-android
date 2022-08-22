@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
+import kotlin.reflect.full.primaryConstructor
 
 /**
  * Factory for default [NotificationHandler].
@@ -46,7 +47,7 @@ public object NotificationHandlerFactory {
         context: Context,
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
-        avatarIconCompactLoader: AvatarIconCompatLoader = DefaultAvatarIconCompatLoader(context),
+        avatarIconCompactLoader: AvatarIconCompatLoader = provideDefaultAvatarIconCompatLoader(context),
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
@@ -81,5 +82,14 @@ public object NotificationHandlerFactory {
                 NotificationManager.IMPORTANCE_DEFAULT,
             )
         }
+    }
+
+    private fun provideDefaultAvatarIconCompatLoader(context: Context): AvatarIconCompatLoader {
+        val appContext = context.applicationContext
+        return runCatching {
+            Class.forName("io.getstream.chat.android.common.notifications.StreamCoilAvatarIconCompatLoader")
+                .kotlin.primaryConstructor
+                ?.call(appContext) as AvatarIconCompatLoader
+        }.getOrDefault(DefaultAvatarIconCompatLoader(appContext))
     }
 }

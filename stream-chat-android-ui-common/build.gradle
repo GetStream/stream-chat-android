@@ -17,6 +17,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+        consumerProguardFiles 'consumer-proguard-rules.pro'
     }
 
     resourcePrefix 'stream_'
