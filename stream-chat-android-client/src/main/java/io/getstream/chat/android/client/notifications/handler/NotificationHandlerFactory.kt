@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
 
 /**
@@ -38,17 +39,24 @@ public object NotificationHandlerFactory {
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
      * Used in SDK_INT >= VERSION_CODES.O.
+     * @param avatarIconCompactLoader to generate [IconCompat] to be shown on notifications.
      */
     @SuppressLint("NewApi")
     public fun createNotificationHandler(
         context: Context,
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
+        avatarIconCompactLoader: AvatarIconCompatLoader = DefaultAvatarIconCompatLoader(context),
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                MessagingStyleNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
+                MessagingStyleNotificationHandler(
+                    context,
+                    newMessageIntentFun,
+                    notificationChannelFun,
+                    avatarIconCompactLoader
+                )
             } else {
                 ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
             }
