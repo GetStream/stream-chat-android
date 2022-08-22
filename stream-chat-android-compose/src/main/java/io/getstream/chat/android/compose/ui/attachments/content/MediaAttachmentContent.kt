@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
@@ -64,17 +63,20 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
- * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
- * currently uploading images.
+ * Displays a preview of single or multiple video or attachments.
  *
  * @param attachmentState The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
+ * @param modifier The modifier used for styling.
+ * @param playButton Represents the play button that is overlaid above video attachment
+ * previews.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MediaAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    playButton: @Composable () -> Unit = { PlayButton() },
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
@@ -97,31 +99,45 @@ public fun MediaAttachmentContent(
         if (attachmentCount == 1) {
             val attachment = attachments.first()
 
-            ShowSingleAttachment(
+            ShowSingleMediaAttachment(
                 attachment = attachment,
                 message = message,
                 onImagePreviewResult = onImagePreviewResult,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                playButton = playButton
             )
         } else {
-            ShowMultipleAttachments(
+            ShowMultipleMediaAttachments(
                 attachments = attachments,
                 attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
                 message = message,
                 onImagePreviewResult = onImagePreviewResult,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                playButton = playButton
             )
         }
     }
 }
 
+/**
+ * Displays a preview of a single image or video attachment.
+ *
+ * @param attachment The attachment that is previewed.
+ * @param message The original message containing the attachment.
+ * @param onImagePreviewResult The result of the activity used for propagating
+ * actions such as image selection, deletion, etc.
+ * @param onLongItemClick Lambda that gets called when an item is long clicked.
+ * @param playButton Represents the play button that is overlaid above video attachment
+ * previews.
+ */
 @Composable
-internal fun ShowSingleAttachment(
+internal fun ShowSingleMediaAttachment(
     attachment: Attachment,
     message: Message,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
+    playButton: @Composable () -> Unit,
 ) {
     // Depending on the CDN, images might not contain their original dimensions
     val ratio: Float? by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
@@ -144,18 +160,33 @@ internal fun ShowSingleAttachment(
         message = message,
         attachmentPosition = 0,
         onImagePreviewResult = onImagePreviewResult,
-        onLongItemClick = onLongItemClick
+        onLongItemClick = onLongItemClick,
+        playButton = playButton
     )
 }
 
+/**
+ * Displays previews of multiple image and video attachment laid out in a grid.
+ *
+ * @param attachments The list of attachments that are to be previewed.
+ * @param attachmentCount The number of attachments that are to be previewed.
+ * @param gridSpacing Determines the spacing strategy between items.
+ * @param message The original message containing the attachments.
+ * @param onImagePreviewResult The result of the activity used for propagating
+ * actions such as image selection, deletion, etc.
+ * @param onLongItemClick Lambda that gets called when an item is long clicked.
+ * @param playButton Represents the play button that is overlaid above video attachment
+ * previews.
+ */
 @Composable
-internal fun RowScope.ShowMultipleAttachments(
+internal fun RowScope.ShowMultipleMediaAttachments(
     attachments: List<Attachment>,
     attachmentCount: Int,
     gridSpacing: Dp,
     message: Message,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
+    playButton: @Composable () -> Unit,
 ) {
 
     Column(
@@ -172,7 +203,8 @@ internal fun RowScope.ShowMultipleAttachments(
                     message = message,
                     attachmentPosition = imageIndex,
                     onImagePreviewResult = onImagePreviewResult,
-                    onLongItemClick = onLongItemClick
+                    onLongItemClick = onLongItemClick,
+                    playButton = playButton
                 )
             }
         }
@@ -196,7 +228,8 @@ internal fun RowScope.ShowMultipleAttachments(
                             message = message,
                             attachmentPosition = imageIndex,
                             onImagePreviewResult = onImagePreviewResult,
-                            onLongItemClick = onLongItemClick
+                            onLongItemClick = onLongItemClick,
+                            playButton = playButton
                         )
 
                         if (!isUploading) {
@@ -214,7 +247,8 @@ internal fun RowScope.ShowMultipleAttachments(
                         message = message,
                         attachmentPosition = imageIndex,
                         onImagePreviewResult = onImagePreviewResult,
-                        onLongItemClick = onLongItemClick
+                        onLongItemClick = onLongItemClick,
+                        playButton = playButton
                     )
                 }
             }
@@ -222,6 +256,21 @@ internal fun RowScope.ShowMultipleAttachments(
     }
 }
 
+/**
+ * Displays previews of image and video attachments.
+ *
+ * @param message The original message containing the attachments.
+ * @param attachmentPosition The position of the attachment in the list
+ * of attachments. Used to remember the item position when viewing it in a separate
+ * activity.
+ * @param attachment The attachment that is previewed.
+ * @param onImagePreviewResult The result of the activity used for propagating
+ * actions such as image selection, deletion, etc.
+ * @param onLongItemClick Lambda that gets called when the item is long clicked.
+ * @param modifier Modifier used for styling.
+ * @param playButton Represents the play button that is overlaid above video attachment
+ * previews.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MediaAttachmentContentItem(
@@ -231,6 +280,7 @@ internal fun MediaAttachmentContentItem(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    playButton: @Composable () -> Unit,
 ) {
     val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
@@ -266,26 +316,38 @@ internal fun MediaAttachmentContentItem(
         )
 
         if (attachment.type == AttachmentType.VIDEO) {
-            // TODO add attributes such as play button shape and size to ChatTheme
-            Box(
+            playButton()
+        }
+    }
+}
+
+/**
+ * A simple play button that is overlaid above
+ * video attachments.
+ */
+@Composable
+internal fun PlayButton() {
+    Box(
+        modifier = Modifier
+            .shadow(10.dp, shape = CircleShape)
+            .background(color = Color.White, shape = CircleShape)
+            .size(
+                width = 42.dp,
+                height = 42.dp
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column {
+            Image(
                 modifier = Modifier
-                    .shadow(10.dp, shape = CircleShape)
-                    .background(color = Color.White, shape = CircleShape)
-                    .width(ChatTheme.dimens.attachmentsContentImageWidth / 6)
-                    .aspectRatio(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column {
-                    Image(
-                        modifier = Modifier
-                            .alignBy { measured ->
-                                -(measured.measuredWidth * 1 / 9)
-                            },
-                        painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                        contentDescription = null,
-                    )
-                }
-            }
+                    .alignBy { measured ->
+                        // emulated offset as seen in the design specs,
+                        // otherwise the button is visibly off to the start of the screen
+                        -(measured.measuredWidth * 1 / 9)
+                    },
+                painter = painterResource(id = R.drawable.stream_compose_ic_play),
+                contentDescription = null,
+            )
         }
     }
 }

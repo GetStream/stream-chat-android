@@ -22,22 +22,32 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
+import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 
+/**
+ * An [AttachmentFactory] that is able to handle Image and Video attachments.
+ *
+ * @param playButton Displays a play button above video attachments.
+ */
 @Suppress("FunctionName")
-public fun MediaAttachmentFactory(): AttachmentFactory = AttachmentFactory(
-    canHandle = {
-        it.none { attachment -> attachment.type != AttachmentType.IMAGE && attachment.type != AttachmentType.VIDEO }
-    },
-    previewContent = { modifier, attachments, onAttachmentRemoved -> },
-    content = @Composable { modifier, state ->
-        MediaAttachmentContent(
-            modifier = modifier
-                .width(ChatTheme.dimens.attachmentsContentImageWidth)
-                .wrapContentHeight()
-                .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
-            attachmentState = state
-        )
-    }
-)
+public fun MediaAttachmentFactory(
+    playButton: @Composable () -> Unit = { PlayButton() },
+): AttachmentFactory =
+    AttachmentFactory(
+        canHandle = {
+            it.none { attachment -> attachment.type != AttachmentType.IMAGE && attachment.type != AttachmentType.VIDEO }
+        },
+        previewContent = { modifier, attachments, onAttachmentRemoved -> },
+        content = @Composable { modifier, state ->
+            MediaAttachmentContent(
+                modifier = modifier
+                    .width(ChatTheme.dimens.attachmentsContentImageWidth)
+                    .wrapContentHeight()
+                    .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
+                attachmentState = state,
+                playButton = { playButton() }
+            )
+        }
+    )
