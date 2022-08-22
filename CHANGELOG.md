@@ -52,6 +52,7 @@
 
 ### ⬆️ Improved
 - Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
+- Revert workaround for setting `ChatUI::imageHeadersProvider` introduced in [#3237](https://github.com/GetStream/stream-chat-android/pull/3237). [#4065](https://github.com/GetStream/stream-chat-android/pull/4065)
 
 ### ✅ Added
 
