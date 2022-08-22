@@ -386,7 +386,7 @@ internal class ChannelStateLogicImpl(
      *
      * @param hidden Boolean.
      */
-    override fun setHidden(hidden: Boolean) {
+    override fun toggleHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 

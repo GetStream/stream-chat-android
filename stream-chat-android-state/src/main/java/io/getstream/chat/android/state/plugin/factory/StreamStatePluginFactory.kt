@@ -38,11 +38,10 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkRea
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
@@ -232,7 +231,7 @@ public class StreamStatePluginFactory(
             threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerImpl(logic, clientState),
-            hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
+            hideChannelListener = HideChannelListenerState(logic),
             markAllReadListener = MarkAllReadListenerState(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
             sendReactionListener = SendReactionListenerState(logic, clientState),
@@ -240,7 +239,6 @@ public class StreamStatePluginFactory(
             sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
             sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
-            queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerState(stateRegistry),
             provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
