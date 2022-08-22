@@ -180,7 +180,7 @@ internal fun ShowSingleMediaAttachment(
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun RowScope.ShowMultipleMediaAttachments(
     attachments: List<Attachment>,
