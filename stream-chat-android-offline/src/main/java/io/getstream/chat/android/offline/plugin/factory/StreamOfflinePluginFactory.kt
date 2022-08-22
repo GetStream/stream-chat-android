@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -44,6 +45,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageLis
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
@@ -124,17 +127,18 @@ public class StreamOfflinePluginFactory(
 
         val hideChannelListener: HideChannelListener = getHideChannelListener(chatClient, statePlugin)
         val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(chatClient, statePlugin)
-        val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
         val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
+        val sendMessageListener: SendMessageListener = getSendMessageListener(chatClient, statePlugin)
         val deleteMessageListener: DeleteMessageListener = getDeleteMessageListenerDatabase(chatClient, statePlugin)
+        val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
+        val queryMembersListener: QueryMembersListener =
+            QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
         val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = chatClient.clientState,
             channelRepository = repositoryFactory,
             userRepository = repositoryFactory
         )
         val editMessageListener = getEditMessageListener(chatClient, statePlugin)
-        val queryMembersListener: QueryMembersListener =
-            QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
 
         return OfflinePlugin(
             activeUser = user,
@@ -148,7 +152,7 @@ public class StreamOfflinePluginFactory(
             deleteReactionListener = deleteReactionListener,
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
-            sendMessageListener = statePlugin,
+            sendMessageListener = sendMessageListener,
             sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
@@ -213,6 +217,16 @@ public class StreamOfflinePluginFactory(
         )
 
         return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
+    }
+
+    private fun getSendMessageListener(
+        chatClient: ChatClient,
+        statePlugin: StatePlugin,
+    ): SendMessageListener {
+        val repositoryFacade = chatClient.repositoryFacade
+
+        val sendMessageListenerDatabase = SendMessageListenerDatabase(repositoryFacade, repositoryFacade)
+        return SendMessageListenerComposite(listOf(statePlugin, sendMessageListenerDatabase))
     }
 
     private fun getDeleteMessageListenerDatabase(
