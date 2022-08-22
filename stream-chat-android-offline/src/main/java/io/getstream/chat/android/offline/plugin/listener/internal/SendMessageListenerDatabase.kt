@@ -89,9 +89,9 @@ internal class SendMessageListenerDatabase(
             },
             syncDescription = error.toMessageSyncDescription(),
             updatedLocallyAt = Date(),
-        ).also {
-            userRepository.insertUsers(message.users())
-            messageRepository.insertMessage(message, cache = false)
+        ).also { parsedMessage ->
+            userRepository.insertUsers(parsedMessage.users())
+            messageRepository.insertMessage(parsedMessage, cache = false)
         }
     }
 }
