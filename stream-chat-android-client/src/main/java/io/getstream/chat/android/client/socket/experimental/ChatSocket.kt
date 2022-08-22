@@ -118,37 +118,31 @@ internal class ChatSocket private constructor(
                         }
                     }
                     is State.Disconnected -> {
-                        val disconnectCause: DisconnectCause = when (state) {
+                        when (state) {
                             is State.Disconnected.DisconnectedByRequest -> {
                                 healthMonitor.stop()
                                 coroutineScope.launch { disposeObservers() }
                                 streamWebSocket?.close()
-                                DisconnectCause.ConnectionReleased
                             }
                             is State.Disconnected.NetworkDisconnected -> {
                                 healthMonitor.stop()
-                                DisconnectCause.NetworkNotAvailable
                             }
                             is State.Disconnected.Stopped -> {
                                 healthMonitor.stop()
                                 disposeNetworkStateObserver()
-                                DisconnectCause.ConnectionReleased
                             }
                             is State.Disconnected.DisconnectedPermanently -> {
                                 healthMonitor.stop()
                                 coroutineScope.launch { disposeObservers() }
-                                DisconnectCause.UnrecoverableError(state.error)
                             }
                             is State.Disconnected.DisconnectedTemporarily -> {
                                 healthMonitor.onDisconnected()
-                                DisconnectCause.Error(state.error)
                             }
                             is State.Disconnected.WebSocketEventLost -> {
                                 connectionConf?.let { chatSocketStateService.onReconnect(it) }
-                                DisconnectCause.WebSocketNotAvailable
                             }
                         }
-                        callListeners { listener -> listener.onDisconnected(cause = disconnectCause) }
+                        callListeners { listener -> listener.onDisconnected(cause = state.cause) }
                     }
                 }
             }
@@ -267,6 +261,16 @@ internal class ChatSocket private constructor(
             }
         }
     }
+
+    private val State.Disconnected.cause
+        get() = when (this) {
+            is State.Disconnected.DisconnectedByRequest,
+            is State.Disconnected.Stopped -> DisconnectCause.ConnectionReleased
+            is State.Disconnected.NetworkDisconnected -> DisconnectCause.NetworkNotAvailable
+            is State.Disconnected.DisconnectedPermanently -> DisconnectCause.UnrecoverableError(error)
+            is State.Disconnected.DisconnectedTemporarily -> DisconnectCause.Error(error)
+            is State.Disconnected.WebSocketEventLost -> DisconnectCause.WebSocketNotAvailable
+        }
 
     companion object {
 
