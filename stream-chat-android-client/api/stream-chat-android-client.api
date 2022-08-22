@@ -3289,6 +3289,10 @@ public final class io/getstream/chat/android/client/models/UserEntity$DefaultImp
 	public static fun getUserId (Lio/getstream/chat/android/client/models/UserEntity;)Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/notifications/handler/AvatarIconCompatLoader {
+	public abstract fun loadAvatar (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
 	public fun <init> (ZLjava/util/List;Lkotlin/jvm/functions/Function0;)V
