@@ -120,6 +120,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
@@ -778,7 +780,7 @@ internal constructor(
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -791,7 +793,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<String> {
+    ): Call<UploadedFile> {
         return api.sendFile(channelType, channelId, file, callback)
     }
 
@@ -807,7 +809,7 @@ internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -821,7 +823,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<String> {
+    ): Call<UploadedImage> {
         return api.sendImage(channelType, channelId, file, callback)
     }
 

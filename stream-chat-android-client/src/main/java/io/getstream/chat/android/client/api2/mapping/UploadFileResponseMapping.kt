@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.api2.mapping
 
-import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.client.api.models.UploadFileResponse
+import io.getstream.chat.android.client.models.UploadedFile
 
-@JsonClass(generateAdapter = true)
-internal data class UploadFileResponse(
-    val file: String,
-    val thumb_url: String?,
-)
+internal fun UploadFileResponse.toUploadedFile() =
+    UploadedFile(
+        file = this.file,
+        thumbUrl = this.thumb_url
+    )

@@ -33,6 +33,7 @@
     <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
+    <ID>LongParameterList:AttachmentUploader.kt$AttachmentUploader$( channelType: String, channelId: String, file: File, progressCallback: ProgressCallback?, attachment: Attachment, mimeType: String, attachmentType: AttachmentType, )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
