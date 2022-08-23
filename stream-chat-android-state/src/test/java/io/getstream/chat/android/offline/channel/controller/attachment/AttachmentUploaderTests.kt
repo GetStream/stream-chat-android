@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.test.TestCall
@@ -91,7 +93,7 @@ internal class AttachmentUploaderTests {
         val url = "url"
 
         val sut = Fixture()
-            .givenMockedFileUploads(channelType, channelId, Result(url))
+            .givenMockedFileUploads(channelType, channelId, Result(UploadedFile(file = url)))
             .get()
 
         val result = sut.uploadAttachment(channelType, channelId, attachment)
@@ -174,15 +176,7 @@ internal class AttachmentUploaderTests {
     private class Fixture {
         private var clientMock: ChatClient = mock()
 
-        fun givenMockedFileUploads(channelType: String, channelId: String, result: Result<String>) = apply {
-            whenever(
-                clientMock.sendImage(
-                    eq(channelType),
-                    eq(channelId),
-                    any(),
-                    anyOrNull()
-                )
-            ) doReturn TestCall(result)
+        fun givenMockedFileUploads(channelType: String, channelId: String, result: Result<UploadedFile>) = apply {
             whenever(
                 clientMock.sendFile(
                     eq(channelType),
@@ -193,9 +187,22 @@ internal class AttachmentUploaderTests {
             ) doReturn TestCall(result)
         }
 
+        fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<UploadedImage>) {
+            whenever(
+                clientMock.sendImage(
+                    eq(channelType),
+                    eq(channelId),
+                    any(),
+                    anyOrNull()
+                )
+            ) doReturn TestCall(result)
+        }
+
         fun givenMockedFileUploads(channelType: String, channelId: String, files: List<File>) = apply {
             for (file in files) {
-                val result = Result(file.absolutePath)
+                val imageResult = Result(UploadedImage(file.absolutePath))
+                val fileResult = Result(UploadedFile(file = file.absolutePath))
+
                 whenever(
                     clientMock.sendFile(
                         eq(channelType),
@@ -203,7 +210,7 @@ internal class AttachmentUploaderTests {
                         same(file),
                         anyOrNull(),
                     )
-                ) doReturn TestCall(result)
+                ) doReturn TestCall(fileResult)
                 whenever(
                     clientMock.sendImage(
                         eq(channelType),
@@ -211,7 +218,7 @@ internal class AttachmentUploaderTests {
                         same(file),
                         anyOrNull(),
                     )
-                ) doReturn TestCall(result)
+                ) doReturn TestCall(imageResult)
             }
         }
 
