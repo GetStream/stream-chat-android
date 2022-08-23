@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -139,7 +140,7 @@ class CatalogActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             elevation = 4.dp,
-            backgroundColor = ChatTheme.colors.appBackground
+            backgroundColor = ChatTheme.colors.inputBackground
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
