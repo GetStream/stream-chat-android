@@ -17,8 +17,17 @@
 - Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
 
 ### ✅ Added
+- Added `UploadedFile` which represents an uploaded file. It contains the url to the file under the property `file`, and a thumbnail of the file under the property `thumbUrl`. Thumbnails are usually returned when uploading a video file. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `ChatClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChannelClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `FileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedFile`. If you have extended this interface and only need the previous return functionality, you can assign a value to `UploadedFile.file` while keeping `UploadedFile.thumbUrl` `null`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they now return `UploadedFile`. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChatClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChannelClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `FileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedImage`. To mitigate these changes, you can wrap your previously returned file URL inside `UploadedImage`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they now return `UploadedImage`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
 
 ### ❌ Removed
 
@@ -49,6 +58,7 @@
 ### 🐞 Fixed
 - Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
 - The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
+- Fixed stale online member count in `MessageListHeaderView` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
 
 ### ⬆️ Improved
 - Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
@@ -64,6 +74,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
+- Fixed stale online member count in `MessageListHeader` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
 
 ### ⬆️ Improved
 - Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)

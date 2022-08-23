@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -69,7 +71,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should send file to api when sending file without progress callback`() {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
@@ -86,13 +88,15 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return result containing file when successfully sent file without progress callback`() {
         val file = "file"
+        val thumbUrl = "thumb_url"
+
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = file, thumb_url = thumbUrl)).toRetrofitCall()
         )
 
         val result = streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
-        result.data() shouldBeEqualTo file
+        result.data() shouldBeEqualTo UploadedFile(file = file, thumbUrl = thumbUrl)
     }
 
     @Test
@@ -109,7 +113,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should send file to api when sending file with progress callback`() {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendFile(
@@ -133,7 +137,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should send image to api when sending image without progress callback`() {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
@@ -150,13 +154,15 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return result containing file when successfully sent image without progress callback`() {
         val file = "file"
+        val thumbUrl: String? = null
+
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = file, thumb_url = thumbUrl)).toRetrofitCall()
         )
 
         val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
-        result.data() shouldBeEqualTo file
+        result.data() shouldBeEqualTo UploadedImage(file = file)
     }
 
     @Test
@@ -173,7 +179,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should send image to api when sending image with progress callback`() {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendImage(

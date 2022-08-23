@@ -1,5 +1,7 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -13,9 +15,9 @@ class MyFileUploader : FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<String> {
+    ): Result<UploadedFile> {
         return try {
-            Result.success("url")
+            Result.success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
             Result.error(e)
         }
@@ -27,9 +29,9 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): Result<String> {
+    ): Result<UploadedFile> {
         return try {
-            Result.success("url")
+            Result.success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
             Result.error(e)
         }
@@ -42,9 +44,9 @@ class MyFileUploader : FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<String> {
+    ): Result<UploadedImage> {
         return try {
-            Result.success("url")
+            Result.success(UploadedImage(file = "url"))
         } catch (e: Exception) {
             Result.error(e)
         }
@@ -56,9 +58,9 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): Result<String> {
+    ): Result<UploadedImage> {
         return try {
-            Result.success("url")
+            Result.success(UploadedImage(file = "url"))
         } catch (e: Exception) {
             Result.error(e)
         }
