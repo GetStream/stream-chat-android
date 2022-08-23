@@ -86,7 +86,7 @@ public data class StreamColors(
             appBackground = colorResource(R.color.stream_compose_app_background),
             barsBackground = colorResource(R.color.stream_compose_bars_background),
             linkBackground = colorResource(R.color.stream_compose_link_background),
-            overlay = colorResource(R.color.stream_compose_overlay_regular),
+            overlay = colorResource(R.color.stream_compose_bars_background),
             overlayDark = colorResource(R.color.stream_compose_overlay_dark),
             primaryAccent = colorResource(R.color.stream_compose_primary_accent),
             errorAccent = colorResource(R.color.stream_compose_error_accent),
