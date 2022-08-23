@@ -139,7 +139,7 @@ class CatalogActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             elevation = 4.dp,
-            backgroundColor = ChatTheme.colors.overlay
+            backgroundColor = ChatTheme.colors.appBackground
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
