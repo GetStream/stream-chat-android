@@ -55,7 +55,6 @@ import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
-import io.getstream.chat.android.state.BuildConfig
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.logging.StreamLog
@@ -270,7 +269,7 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
-        return when (BuildConfig.DEBUG || useSequentialEventHandler) {
+        return when (useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
                 currentUserId = user.id,
