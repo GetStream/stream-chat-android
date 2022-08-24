@@ -49,9 +49,9 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.constant.AttachmentType
@@ -73,7 +73,8 @@ public fun MediaAttachmentContent(
     modifier: Modifier = Modifier,
     playButton: @Composable () -> Unit = { PlayButton() },
 ) {
-    val (message, onLongItemClick, onImagePreviewResult) = attachmentState
+    val (message, onLongItemClick, _, onMediaGalleryPreviewResult) = attachmentState
+    // TODO add media grid spacing to chat theme
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
 
     Row(
@@ -99,7 +100,7 @@ public fun MediaAttachmentContent(
             ShowSingleMediaAttachment(
                 attachment = attachment,
                 message = message,
-                onImagePreviewResult = onImagePreviewResult,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 playButton = playButton
             )
@@ -109,7 +110,7 @@ public fun MediaAttachmentContent(
                 attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
                 message = message,
-                onImagePreviewResult = onImagePreviewResult,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 playButton = playButton
             )
@@ -122,8 +123,8 @@ public fun MediaAttachmentContent(
  *
  * @param attachment The attachment that is previewed.
  * @param message The original message containing the attachment.
- * @param onImagePreviewResult The result of the activity used for propagating
- * actions such as image selection, deletion, etc.
+ * @param onMediaGalleryPreviewResult The result of the activity used for propagating
+ * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
@@ -132,7 +133,7 @@ public fun MediaAttachmentContent(
 internal fun ShowSingleMediaAttachment(
     attachment: Attachment,
     message: Message,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
     playButton: @Composable () -> Unit,
 ) {
@@ -156,7 +157,7 @@ internal fun ShowSingleMediaAttachment(
             .aspectRatio(ratio ?: EqualDimensionsRatio),
         message = message,
         attachmentPosition = 0,
-        onImagePreviewResult = onImagePreviewResult,
+        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onLongItemClick = onLongItemClick,
         playButton = playButton
     )
@@ -169,8 +170,8 @@ internal fun ShowSingleMediaAttachment(
  * @param attachmentCount The number of attachments that are to be previewed.
  * @param gridSpacing Determines the spacing strategy between items.
  * @param message The original message containing the attachments.
- * @param onImagePreviewResult The result of the activity used for propagating
- * actions such as image selection, deletion, etc.
+ * @param onMediaGalleryPreviewResult The result of the activity used for propagating
+ * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
@@ -182,7 +183,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
     attachmentCount: Int,
     gridSpacing: Dp,
     message: Message,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
     playButton: @Composable () -> Unit,
 ) {
@@ -193,14 +194,14 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (imageIndex in 0..3 step 2) {
-            if (imageIndex < attachmentCount) {
+        for (attachmentIndex in 0..3 step 2) {
+            if (attachmentIndex < attachmentCount) {
                 MediaAttachmentContentItem(
-                    attachment = attachments[imageIndex],
+                    attachment = attachments[attachmentIndex],
                     modifier = Modifier.weight(1f),
                     message = message,
-                    attachmentPosition = imageIndex,
-                    onImagePreviewResult = onImagePreviewResult,
+                    attachmentPosition = attachmentIndex,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onLongItemClick = onLongItemClick,
                     playButton = playButton
                 )
@@ -214,26 +215,26 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (imageIndex in 1..4 step 2) {
-            if (imageIndex < attachmentCount) {
-                val attachment = attachments[imageIndex]
+        for (attachmentIndex in 1..4 step 2) {
+            if (attachmentIndex < attachmentCount) {
+                val attachment = attachments[attachmentIndex]
                 val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
 
-                if (imageIndex == 3 && attachmentCount > 4) {
+                if (attachmentIndex == 3 && attachmentCount > 4) {
                     Box(modifier = Modifier.weight(1f)) {
                         MediaAttachmentContentItem(
                             attachment = attachment,
                             message = message,
-                            attachmentPosition = imageIndex,
-                            onImagePreviewResult = onImagePreviewResult,
+                            attachmentPosition = attachmentIndex,
+                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                             onLongItemClick = onLongItemClick,
                             playButton = playButton
                         )
 
                         if (!isUploading) {
                             MediaAttachmentViewMoreOverlay(
-                                imageCount = attachmentCount,
-                                imageIndex = imageIndex,
+                                mediaCount = attachmentCount,
+                                mediaIndex = attachmentIndex,
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }
@@ -243,8 +244,8 @@ internal fun RowScope.ShowMultipleMediaAttachments(
                         attachment = attachment,
                         modifier = Modifier.weight(1f),
                         message = message,
-                        attachmentPosition = imageIndex,
-                        onImagePreviewResult = onImagePreviewResult,
+                        attachmentPosition = attachmentIndex,
+                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
                         playButton = playButton
                     )
@@ -262,8 +263,8 @@ internal fun RowScope.ShowMultipleMediaAttachments(
  * of attachments. Used to remember the item position when viewing it in a separate
  * activity.
  * @param attachment The attachment that is previewed.
- * @param onImagePreviewResult The result of the activity used for propagating
- * actions such as image selection, deletion, etc.
+ * @param onMediaGalleryPreviewResult The result of the activity used for propagating
+ * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when the item is long clicked.
  * @param modifier Modifier used for styling.
  * @param playButton Represents the play button that is overlaid above video attachment
@@ -276,16 +277,16 @@ internal fun MediaAttachmentContentItem(
     message: Message,
     attachmentPosition: Int,
     attachment: Attachment,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     playButton: @Composable () -> Unit,
 ) {
     val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
-    val imagePreviewLauncher = rememberLauncherForActivityResult(
-        contract = ImagePreviewContract(),
-        onResult = { result -> onImagePreviewResult(result) }
+    val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
+        contract = MediaGalleryPreviewContract(),
+        onResult = { result -> onMediaGalleryPreviewResult(result) }
     )
 
     Box(
@@ -295,8 +296,8 @@ internal fun MediaAttachmentContentItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
-                    imagePreviewLauncher.launch(
-                        ImagePreviewContract.Input(
+                    mixedMediaPreviewLauncher.launch(
+                        MediaGalleryPreviewContract.Input(
                             messageId = message.id,
                             initialPosition = attachmentPosition
                         )
@@ -337,6 +338,7 @@ internal fun PlayButton(
         Column {
             Image(
                 modifier = Modifier
+                    .fillMaxSize(0.8f)
                     .alignBy { measured ->
                         // emulated offset as seen in the design specs,
                         // otherwise the button is visibly off to the start of the screen
@@ -350,19 +352,20 @@ internal fun PlayButton(
 }
 
 /**
- * Represents an overlay that's shown on the last image in the image attachment item gallery.
+ * Represents an overlay that's shown on the last media attachment preview in the media attachment
+ * item gallery.
  *
- * @param imageCount The number of total images.
- * @param imageIndex The current image index.
+ * @param mediaCount The number of total media attachments.
+ * @param mediaIndex The current media attachment index.
  * @param modifier Modifier for styling.
  */
 @Composable
 internal fun MediaAttachmentViewMoreOverlay(
-    imageCount: Int,
-    imageIndex: Int,
+    mediaCount: Int,
+    mediaIndex: Int,
     modifier: Modifier = Modifier,
 ) {
-    val remainingImagesCount = imageCount - (imageIndex + 1)
+    val remainingMediaCount = mediaCount - (mediaIndex + 1)
 
     Box(
         modifier = Modifier
@@ -373,8 +376,8 @@ internal fun MediaAttachmentViewMoreOverlay(
             modifier = modifier
                 .wrapContentSize(),
             text = stringResource(
-                id = R.string.stream_compose_remaining_images_count,
-                remainingImagesCount
+                id = R.string.stream_compose_remaining_media_attachments_count,
+                remainingMediaCount
             ),
             color = ChatTheme.colors.barsBackground,
             style = ChatTheme.typography.title1,
