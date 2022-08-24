@@ -46,7 +46,6 @@ import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
-import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
@@ -75,7 +74,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Date
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
@@ -201,16 +199,6 @@ public class MessageListViewModel(
     private var threadJob: Job? = null
 
     /**
-     * Represents the latest message we've seen in the channel.
-     */
-    private var lastSeenChannelMessage: Message? by mutableStateOf(null)
-
-    /**
-     * Represents the latest message we've seen in the active thread.
-     */
-    private var lastSeenThreadMessage: Message? by mutableStateOf(null)
-
-    /**
      * Represents the message we wish to scroll to.
      */
     private var scrollToMessage: Message? = null
@@ -250,93 +238,17 @@ public class MessageListViewModel(
     }
 
     /**
-     * Counts how many messages the user hasn't read already. This is based on what the last message they've seen is,
-     * and the current message state.
-     *
-     * @param newMessageState The state that tells us if there are new messages in the list.
-     * @return [Int] which describes how many messages come after the last message we've seen in the list.
-     */
-    private fun getUnreadMessageCount(newMessageState: NewMessageState? = currentMessagesState.newMessageState): Int {
-        if (newMessageState == null || newMessageState == MyOwn) return 0
-
-        val messageItems = currentMessagesState.messageItems
-        val lastSeenMessagePosition =
-            getLastSeenMessagePosition(if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage)
-        var unreadCount = 0
-
-        for (i in 0..lastSeenMessagePosition) {
-            val messageItem = messageItems[i]
-
-            if (messageItem is MessageItemState && !messageItem.isMine && messageItem.message.deletedAt == null) {
-                unreadCount++
-            }
-        }
-
-        return unreadCount
-    }
-
-    /**
-     * Gets the list position of the last seen message in the list.
-     *
-     * @param lastSeenMessage - The last message we saw in the list.
-     * @return [Int] list position of the last message we've seen.
-     */
-    private fun getLastSeenMessagePosition(lastSeenMessage: Message?): Int {
-        if (lastSeenMessage == null) return 0
-
-        return currentMessagesState.messageItems.indexOfFirst {
-            it is MessageItemState && it.message.id == lastSeenMessage.id
-        }
-    }
-
-    /**
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
      * time the data loads and whenever we see a message that's newer than the current last seen message.
      *
      * @param message The message that is currently seen by the user.
      */
     public fun updateLastSeenMessage(message: Message) {
-        val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
-
-        if (lastSeenMessage == null) {
-            updateLastSeenMessageState(message)
-            return
-        }
-
-        if (message.id == lastSeenMessage.id) {
-            return
-        }
-
-        val lastSeenMessageDate = lastSeenMessage.createdAt ?: Date()
-        val currentMessageDate = message.createdAt ?: Date()
-
-        if (currentMessageDate < lastSeenMessageDate) {
-            return
-        }
-        updateLastSeenMessageState(message)
-    }
-
-    /**
-     * Updates the state of the last seen message. Updates corresponding state based on [isInThread].
-     *
-     * @param currentMessage The current message the user sees.
-     */
-    private fun updateLastSeenMessageState(currentMessage: Message) {
-        if (isInThread) {
-            lastSeenThreadMessage = currentMessage
-
-            threadMessagesState = threadMessagesState.copy(unreadCount = getUnreadMessageCount())
-        } else {
-            lastSeenChannelMessage = currentMessage
-
-            messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
-        }
-
         val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
             messageItem is MessageItemState
         } as? MessageItemState
 
-        if (currentMessage.id == latestMessage?.message?.id) {
+        if (message.id == latestMessage?.message?.id) {
             messageListController.markLastMessageRead()
         }
     }

@@ -209,7 +209,7 @@ public class MessageListViewModel(
     public val user: LiveData<User?> = clientState.user.asLiveData()
 
     // TODO
-    public val unreadCount: LiveData<Int> = messageListController.messageListState.map { it.unreadCount }.asLiveData()
+    public val unreadCount: LiveData<Int> = messageListController.unreadCount.asLiveData()
 
     /**
      * The logger used to print to errors, warnings, information

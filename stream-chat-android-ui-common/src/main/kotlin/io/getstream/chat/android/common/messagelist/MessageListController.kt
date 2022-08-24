@@ -1,6 +1,6 @@
 package io.getstream.chat.android.common.messagelist
 
- import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
@@ -68,7 +68,7 @@ public class MessageListController(
     private val showSystemMessages: Boolean,
     private val showDateSeparators: Boolean,
     private val dateSeparatorThresholdMillis: Long,
-    private val messageFooterVisibility: MessageFooterVisibility
+    private val messageFooterVisibility: MessageFooterVisibility,
 ) {
 
     /**
@@ -135,6 +135,27 @@ public class MessageListController(
      */
     private val _mode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
     public val mode: StateFlow<MessageMode> = _mode
+
+    // TODO
+    public val channelUnreadCount: StateFlow<Int> = channelState.filterNotNull().flatMapLatest { it.channelUnreadCount }
+        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+
+    public val threadUnreadCount: StateFlow<Int> = channelState.filterNotNull().flatMapLatest { it.threadsUnreadCount }
+        .combine(_mode) { threadCounts, mode ->
+            if (mode is MessageMode.MessageThread) {
+                threadCounts[mode.parentMessage.id] ?: 0
+            } else {
+                0
+            }
+        }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+
+    public val unreadCount: StateFlow<Int> = _mode.flatMapLatest {
+        if (it is MessageMode.Normal) {
+            channelUnreadCount
+        } else {
+            threadUnreadCount
+        }
+    }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
 
     /**
      * Gives us information if we're currently in the [Thread] message mode.
@@ -203,7 +224,7 @@ public class MessageListController(
                 combine(
                     channelState.messagesState,
                     channelState.reads,
-                    channelState.unreadCount,
+                    unreadCount,
                     user,
                     _mode,
                 ) { state, reads, unreadCount, user, _ ->
@@ -271,7 +292,11 @@ public class MessageListController(
         reads: StateFlow<List<ChannelUserRead>>,
     ) {
         threadJob = scope.launch {
-            combine(user, endOfOlderMessages, messages, reads) { user, endOfOlderMessages, messages, reads ->
+            combine(user,
+                endOfOlderMessages,
+                messages,
+                reads,
+                unreadCount) { user, endOfOlderMessages, messages, reads, unreadCount ->
                 _threadListState.value.copy(
                     isLoading = false,
                     messages = groupMessages(
@@ -283,7 +308,8 @@ public class MessageListController(
                     currentUser = user,
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
-                    isLoadingOlderMessages = false
+                    isLoadingOlderMessages = false,
+                    unreadCount = unreadCount
                 )
             }.collect { newState ->
                 val newLastMessage =
@@ -617,14 +643,19 @@ public class MessageListController(
      */
     public fun markLastMessageRead() {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.markRead(channelType, channelId).enqueue(
-                onError = { chatError ->
-                    logger.e {
-                        "Could not mark cid: $channelId as read. Error message: ${chatError.message}. " +
-                            "Cause message: ${chatError.cause?.message}"
+            val mode = _mode.value
+            if (mode is MessageMode.MessageThread) {
+                chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
+            } else {
+                chatClient.markRead(channelType, channelId).enqueue(
+                    onError = { chatError ->
+                        logger.e {
+                            "Could not mark cid: $channelId as read. Error message: ${chatError.message}. " +
+                                "Cause message: ${chatError.cause?.message}"
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 

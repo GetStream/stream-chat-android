@@ -103,7 +103,14 @@ public interface ChannelState {
     /** Channel config data */
     public val channelConfig: StateFlow<Config>
 
+    /** If the user is inside search or not. */
     public val insideSearch: StateFlow<Boolean>
+
+    // TODO
+    public val channelUnreadCount: StateFlow<Int>
+
+    // TODO
+    public val threadsUnreadCount: StateFlow<Map<String, Int>>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
