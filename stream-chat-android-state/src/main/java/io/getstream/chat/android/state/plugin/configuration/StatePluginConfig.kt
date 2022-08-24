@@ -30,5 +30,5 @@ public data class StatePluginConfig @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    public val useSequentialEventHandler: Boolean = false,
+    public val useSequentialEventHandler: Boolean = true,
 )
