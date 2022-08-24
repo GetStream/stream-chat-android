@@ -31,6 +31,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+- `EventHandlerSequential` is now in use by default.
+
+### ❌ Removed
+
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
