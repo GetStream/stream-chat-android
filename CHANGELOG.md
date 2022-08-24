@@ -3,6 +3,14 @@
 ### 🐞 Fixed
 - Fixed `useSequentialEventHandler` config parameter that was passed to `StreamOfflinePluginFactory` but had no effect. [#4089](https://github.com/GetStream/stream-chat-android/pull/4089)
 
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed stale online member count in `MessageListHeaderView` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed stale online member count in `MessageListHeader` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
+
 # August 22nd, 2022 - 5.8.1
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
