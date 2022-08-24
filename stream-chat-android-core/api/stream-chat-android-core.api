@@ -27,6 +27,9 @@ public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/
 	public fun execute ()Lio/getstream/chat/android/client/utils/Result;
 }
 
+public final class io/getstream/chat/android/client/call/SharedCalls$Key : kotlin/coroutines/CoroutineContext$Key {
+}
+
 public class io/getstream/chat/android/client/errors/ChatError {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V

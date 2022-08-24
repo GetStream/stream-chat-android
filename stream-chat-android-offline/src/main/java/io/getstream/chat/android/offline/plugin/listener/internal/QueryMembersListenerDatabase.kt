@@ -20,7 +20,8 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.utils.Result
 
@@ -28,10 +29,12 @@ import io.getstream.chat.android.client.utils.Result
  * [QueryMembersListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles updating members in the database.
  *
- * @param repos [RepositoryFacade] to cache intermediate data and final result.
+ * @param userRepository [UserRepository] to cache intermediate data and final result related to users.
+ * @param channelRepository [ChannelRepository] to cache intermediate data and final result related to channels.
  */
-internal class QueryMembersListenerImpl(
-    private val repos: RepositoryFacade,
+internal class QueryMembersListenerDatabase(
+    private val userRepository: UserRepository,
+    private val channelRepository: ChannelRepository
 ) : QueryMembersListener {
 
     override suspend fun onQueryMembersResult(
@@ -45,7 +48,10 @@ internal class QueryMembersListenerImpl(
         members: List<Member>,
     ) {
         if (result.isSuccess) {
-            repos.updateMembersForChannel(Pair(channelType, channelId).toCid(), result.data())
+            val resultMembers = result.data()
+
+            userRepository.insertUsers(resultMembers.map(Member::user))
+            channelRepository.updateMembersForChannel(Pair(channelType, channelId).toCid(), resultMembers)
         }
     }
 }

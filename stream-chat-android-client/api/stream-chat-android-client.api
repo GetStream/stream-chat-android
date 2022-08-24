@@ -509,6 +509,7 @@ public final class io/getstream/chat/android/client/api/models/PinnedMessagesPag
 
 public class io/getstream/chat/android/client/api/models/QueryChannelRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
 	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun filteringOlderMessages ()Z
 	public final fun getData ()Ljava/util/Map;
 	public final fun getMembers ()Ljava/util/Map;
@@ -517,6 +518,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getState ()Z
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
+	public fun hashCode ()I
 	public final fun isFilteringAroundIdMessages ()Z
 	public final fun isFilteringNewerMessages ()Z
 	public final fun membersLimit ()I
@@ -3207,6 +3209,31 @@ public final class io/getstream/chat/android/client/models/TypingEvent {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getUsers ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/UploadedFile {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/models/UploadedFile;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/UploadedFile;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/UploadedFile;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFile ()Ljava/lang/String;
+	public final fun getThumbUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/UploadedImage {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/models/UploadedImage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/UploadedImage;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/UploadedImage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFile ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -152,8 +152,8 @@ public class Messages {
             channelClient.sendImage(imageFile).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Successful upload, you can now attach this image
-                    // to an message that you then send to a channel
-                    String imageUrl = result.data();
+                    // to a message that you then send to a channel
+                    String imageUrl = result.data().getFile();
 
                     Attachment attachment = new Attachment();
                     attachment.setType("image");
