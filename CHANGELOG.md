@@ -1,3 +1,8 @@
+# August 24th, 2022 - 5.8.2
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed `useSequentialEventHandler` config parameter that was passed to `StreamOfflinePluginFactory` but had no effect. [#4089](https://github.com/GetStream/stream-chat-android/pull/4089)
+
 # August 22nd, 2022 - 5.8.1
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
