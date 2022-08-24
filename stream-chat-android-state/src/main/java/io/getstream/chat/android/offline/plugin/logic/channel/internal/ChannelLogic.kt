@@ -553,10 +553,10 @@ internal class ChannelLogic(
                 upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
-                channelStateLogic.deleteMember(event.user.id)
+                channelStateLogic.deleteMember(event.member)
             }
             is NotificationRemovedFromChannelEvent -> {
-                channelStateLogic.deleteMember(event.member.user.id)
+                channelStateLogic.deleteMember(event.member)
             }
             is MemberAddedEvent -> {
                 channelStateLogic.upsertMember(event.member)
