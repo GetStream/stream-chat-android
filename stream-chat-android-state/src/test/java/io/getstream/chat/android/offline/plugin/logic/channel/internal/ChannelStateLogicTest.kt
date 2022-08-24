@@ -53,7 +53,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ChannelStateLogicImplTest {
+internal class ChannelStateLogicTest {
 
     companion object {
         @JvmField
@@ -63,7 +63,7 @@ internal class ChannelStateLogicImplTest {
 
     @BeforeEach
     fun setup() {
-        channelStateLogicImpl = ChannelStateLogicImpl(
+        channelStateLogic = ChannelStateLogic(
             mutableState,
             globalMutableState = globalMutableState,
             clientState = clientState,
@@ -141,7 +141,7 @@ internal class ChannelStateLogicImplTest {
         _watcherCount.value = 0
     }
 
-    private lateinit var channelStateLogicImpl: ChannelStateLogicImpl
+    private lateinit var channelStateLogic: ChannelStateLogic
 
     @Test
     fun `given a message is outdated it should not be upserted`() {
@@ -171,8 +171,8 @@ internal class ChannelStateLogicImplTest {
             showInChannel = true
         )
 
-        channelStateLogicImpl.upsertMessage(recentMessage)
-        channelStateLogicImpl.upsertMessage(oldMessage)
+        channelStateLogic.upsertMessage(recentMessage)
+        channelStateLogic.upsertMessage(oldMessage)
 
         // Only the new message is available
         _messages `should not be equal to` mapOf(recentMessage.id to recentMessage)
@@ -201,7 +201,7 @@ internal class ChannelStateLogicImplTest {
             showInChannel = true
         )
 
-        channelStateLogicImpl.incrementUnreadCountIfNecessary(oldMessage)
+        channelStateLogic.incrementUnreadCountIfNecessary(oldMessage)
         verify(mutableState).setUnreadCount(newUnreadCount + 1)
     }
 
@@ -213,7 +213,7 @@ internal class ChannelStateLogicImplTest {
         )
 
         repeat(3) {
-            channelStateLogicImpl.incrementUnreadCountIfNecessary(randomMessage())
+            channelStateLogic.incrementUnreadCountIfNecessary(randomMessage())
         }
 
         _unreadCount.value `should be equal to` 0
@@ -246,10 +246,10 @@ internal class ChannelStateLogicImplTest {
             showInChannel = true
         )
 
-        channelStateLogicImpl.upsertMessage(oldMessage)
+        channelStateLogic.upsertMessage(oldMessage)
         _lastMessageAt `should be equal to` oldCreatedAt
 
-        channelStateLogicImpl.upsertMessage(recentMessage)
+        channelStateLogic.upsertMessage(recentMessage)
         _lastMessageAt `should be equal to` createdAt
     }
 
@@ -280,10 +280,10 @@ internal class ChannelStateLogicImplTest {
             showInChannel = true
         )
 
-        channelStateLogicImpl.upsertMessage(recentMessage)
+        channelStateLogic.upsertMessage(recentMessage)
         _lastMessageAt `should be equal to` createdAt
 
-        channelStateLogicImpl.upsertMessage(oldMessage)
+        channelStateLogic.upsertMessage(oldMessage)
         _lastMessageAt `should be equal to` createdAt
     }
 
@@ -293,7 +293,7 @@ internal class ChannelStateLogicImplTest {
 
         val message = randomMessage()
 
-        channelStateLogicImpl.updateDataFromChannel(
+        channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
             scrollUpdate = false
@@ -308,7 +308,7 @@ internal class ChannelStateLogicImplTest {
 
         val message = randomMessage()
 
-        channelStateLogicImpl.updateDataFromChannel(
+        channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
             scrollUpdate = true
@@ -322,13 +322,13 @@ internal class ChannelStateLogicImplTest {
         val message = randomMessage()
         val message2 = randomMessage()
 
-        channelStateLogicImpl.updateDataFromChannel(
+        channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
             scrollUpdate = true
         )
 
-        channelStateLogicImpl.updateDataFromChannel(
+        channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message2)),
             shouldRefreshMessages = true,
             scrollUpdate = true
@@ -341,7 +341,7 @@ internal class ChannelStateLogicImplTest {
     fun `Given TypingStartEvent contains the currently logged in userId Should not update typing events`() {
         val typingStartEvent = randomTypingStartEvent(user = user)
 
-        channelStateLogicImpl.setTyping(typingStartEvent.user.id, typingStartEvent)
+        channelStateLogic.setTyping(typingStartEvent.user.id, typingStartEvent)
 
         verify(mutableState, times(0)).updateTypingEvents(any(), any())
         verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
