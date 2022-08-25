@@ -63,6 +63,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 
+@Suppress("LargeClass")
 public class TestDataHelper {
 
     private val streamFormatter = StreamDateFormatter()
@@ -195,27 +196,38 @@ public class TestDataHelper {
     }
 
     public val message1: Message = Message().apply {
-        cid = channel1.cid; text = "hi there"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+        cid = channel1.cid
+        text = "hi there"
+        id = "message-1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public val message1WithoutChannelAndCid: Message = Message().apply {
-        text = "hi there"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+        text = "hi there"
+        id = "message -1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public fun createMessage(): Message {
         val messageId = UUID.randomUUID().toString()
         val text = "hi there $messageId"
         return Message().apply {
-            cid = channel1.cid; this.text = text; id = messageId; user =
-            user1; createdAt = Date()
+            cid = channel1.cid
+            this.text = text
+            id = messageId
+            user = user1
+            createdAt = Date()
         }
     }
 
     public val message1Updated: Message = Message().apply {
-        cid = channel1.cid; text = "im update now"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+        cid = channel1.cid
+        text = "im update now"
+        id = "message-1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public val message1Deleted: Message = message1.copy(deletedAt = Date())
@@ -439,14 +451,16 @@ public class TestDataHelper {
     public val channelUpdatedEvent2: ChannelUpdatedEvent by lazy {
         val createdAt = Date()
 
-        ChannelUpdatedEvent(EventType.CHANNEL_UPDATED,
+        ChannelUpdatedEvent(
+            EventType.CHANNEL_UPDATED,
             createdAt,
             streamFormatter.format(createdAt),
             channel5.cid,
             channel5.type,
             channel5.id,
             null,
-            channel5)
+            channel5
+        )
     }
 
     public val user1TypingStarted: TypingStartEvent by lazy {
@@ -675,7 +689,6 @@ public class TestDataHelper {
             0,
             0
         )
-
     }
     public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
         val createdAt = Date()
@@ -775,4 +788,3 @@ public class TestDataHelper {
         return calendar.time
     }
 }
-

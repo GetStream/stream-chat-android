@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDateUpstream
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDateUpstream
 import io.getstream.chat.android.client.errors.ChatError
 import java.util.Date
 
