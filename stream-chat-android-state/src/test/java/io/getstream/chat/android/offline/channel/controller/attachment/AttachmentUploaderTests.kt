@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
 import io.getstream.chat.android.test.TestCall
@@ -186,7 +187,7 @@ internal class AttachmentUploaderTests {
             ) doReturn TestCall(result)
         }
 
-        fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<String>) {
+        fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<UploadedImage>) {
             whenever(
                 clientMock.sendImage(
                     eq(channelType),
@@ -199,7 +200,7 @@ internal class AttachmentUploaderTests {
 
         fun givenMockedFileUploads(channelType: String, channelId: String, files: List<File>) = apply {
             for (file in files) {
-                val imageResult = Result(file.absolutePath)
+                val imageResult = Result(UploadedImage(file.absolutePath))
                 val fileResult = Result(UploadedFile(file = file.absolutePath))
 
                 whenever(

@@ -142,8 +142,8 @@ class Messages(
             channelClient.sendImage(imageFile).enqueue { result ->
                 if (result.isSuccess) {
                     // Successful upload, you can now attach this image
-                    // to an message that you then send to a channel
-                    val imageUrl = result.data()
+                    // to a message that you then send to a channel
+                    val imageUrl = result.data().file
                     val attachment = Attachment(
                         type = "image",
                         imageUrl = imageUrl,

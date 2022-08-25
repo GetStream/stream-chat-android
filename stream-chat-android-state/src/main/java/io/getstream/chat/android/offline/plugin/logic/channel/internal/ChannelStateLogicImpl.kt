@@ -232,7 +232,7 @@ internal class ChannelStateLogicImpl(
      * @param watcherCount the count of watchers.
      */
     override fun setWatcherCount(watcherCount: Int) {
-        if (watcherCount != mutableState.watcherCount.value) {
+        if (watcherCount >= 0 && watcherCount != mutableState.watcherCount.value) {
             mutableState.setWatcherCount(watcherCount)
         }
     }
@@ -346,12 +346,19 @@ internal class ChannelStateLogicImpl(
     /**
      * Deletes a member. Doesn't delete in the database.
      *
-     * @param userId Id of the user.
+     * @param member The member to be removed.
      */
-    override fun deleteMember(userId: String) {
-        mutableState.rawMembers = mutableState.rawMembers - userId
+    override fun deleteMember(member: Member) {
+        val user = member.user
+
+        mutableState.rawMembers = mutableState.rawMembers - user.id
 
         mutableState.setMembersCount(mutableState.membersCount.value - 1)
+
+        if (user.online) {
+            deleteWatcher(user)
+            setWatcherCount(mutableState.watcherCount.value - 1)
+        }
     }
 
     /**
@@ -386,7 +393,7 @@ internal class ChannelStateLogicImpl(
      *
      * @param hidden Boolean.
      */
-    override fun setHidden(hidden: Boolean) {
+    override fun toggleHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 

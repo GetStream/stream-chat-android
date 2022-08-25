@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
@@ -29,8 +30,8 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -48,8 +49,8 @@ public interface FileUploader {
     /**
      * Uploads a file for the given channel.
      *
-     * @return The [Result] object with the URL of the uploaded file, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -65,8 +66,8 @@ public interface FileUploader {
     /**
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
-     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedImage] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -79,13 +80,13 @@ public interface FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<String>
+    ): Result<UploadedImage>
 
     /**
      * Uploads an image for the given channel.
      *
-     * @return The [Result] object with the URL of the uploaded image, or [Result] object with exception if the
-     * upload failed.
+     * @return The [Result] object containing an instance of [UploadedImage] in the case of a successful upload
+     * or an exception if the upload had failed.
      *
      * @see [Result.success]
      * @see [Result.error]
@@ -96,7 +97,7 @@ public interface FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): Result<String>
+    ): Result<UploadedImage>
 
     /**
      * Deletes the file represented by [url] from the given channel.

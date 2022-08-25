@@ -34,13 +34,29 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
+import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
+import io.getstream.chat.android.client.api.models.identifier.GetRepliesIdentifier
+import io.getstream.chat.android.client.api.models.identifier.GetRepliesMoreIdentifier
+import io.getstream.chat.android.client.api.models.identifier.HideChannelIdentifier
+import io.getstream.chat.android.client.api.models.identifier.MarkAllReadIdentifier
+import io.getstream.chat.android.client.api.models.identifier.QueryChannelIdentifier
+import io.getstream.chat.android.client.api.models.identifier.QueryChannelsIdentifier
+import io.getstream.chat.android.client.api.models.identifier.QueryMembersIdentifier
+import io.getstream.chat.android.client.api.models.identifier.SendEventIdentifier
+import io.getstream.chat.android.client.api.models.identifier.SendGiphyIdentifier
+import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
+import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
+import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.call.SharedCalls
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.call.share
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -105,6 +121,7 @@ import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
@@ -174,13 +191,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -199,28 +217,31 @@ internal constructor(
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    internal val scope: CoroutineScope,
+    scope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    lifecycle: Lifecycle,
+    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
+    internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
-    private val lifecycleObserver = StreamLifecycleObserver(
-        lifecycle,
-        object : LifecycleHandler {
-            override fun resume() = reconnectSocket()
-            override fun stopped() {
-                socket.releaseConnection()
-            }
-        }
+
+    @Deprecated(
+        message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
+            "The new Socket Implementation handle it internally"
     )
+    private val lifecycleHandler = object : LifecycleHandler {
+        override fun resume() = reconnectSocket()
+        override fun stopped() {
+            socket.releaseConnection()
+        }
+    }
 
     @InternalStreamChatApi
     public val repositoryFacade: RepositoryFacade
@@ -274,7 +295,7 @@ internal constructor(
                     api.setConnection(user.id, connectionId)
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe()
+                        lifecycleObserver.observe(lifecycleHandler)
                     }
                     notifications.onSetUser()
 
@@ -287,6 +308,7 @@ internal constructor(
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
+                        DisconnectCause.WebSocketNotAvailable,
                         is DisconnectCause.Error,
                         -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
@@ -654,12 +676,13 @@ internal constructor(
         sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
+        logger.d { "[queryMembers] cid: $channelType:$channelId, offset: $offset, limit: $limit" }
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onQueryMembersResult" }
+                    logger.v { "[queryMembers] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryMembersResult(
                         result,
                         channelType,
@@ -670,9 +693,11 @@ internal constructor(
                         sort,
                         members
                     )
+                    logger.v { "[queryMembers] result: ${result.stringify { "Members(count=${it.size})" }}" }
                 }
             }
             .onQueryMembersError(errorHandlers, channelType, channelId, offset, limit, filter, sort, members)
+            .share(scope) { QueryMembersIdentifier(channelType, channelId, offset, limit, filter, sort, members) }
     }
 
     /**
@@ -686,7 +711,7 @@ internal constructor(
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -715,7 +740,7 @@ internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -729,7 +754,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<String> {
+    ): Call<UploadedImage> {
         return api.sendImage(channelType, channelId, file, callback)
     }
 
@@ -804,7 +829,7 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onDeleteReactionRequest" }
+                    logger.v { "[deleteReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionRequest(
                         cid = cid,
                         messageId = messageId,
@@ -815,7 +840,7 @@ internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onDeleteReactionResult" }
+                    logger.v { "[deleteReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionResult(
                         cid = cid,
                         messageId = messageId,
@@ -827,6 +852,7 @@ internal constructor(
             }
             .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
             .onMessageError(relevantErrorHandlers, cid, messageId)
+            .share(scope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
     }
 
     /**
@@ -859,7 +885,7 @@ internal constructor(
             .doOnStart(scope) {
                 relevantPlugins
                     .forEach { plugin ->
-                        logger.d { "Applying ${plugin::class.qualifiedName}.onSendReactionRequest" }
+                        logger.v { "[sendReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                         plugin.onSendReactionRequest(
                             cid = cid,
                             reaction = reaction,
@@ -870,7 +896,7 @@ internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onSendReactionResult" }
+                    logger.v { "[sendReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onSendReactionResult(
                         cid = cid,
                         reaction = reaction,
@@ -882,6 +908,7 @@ internal constructor(
             }
             .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
+            .share(scope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
     //endregion
 
@@ -889,7 +916,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         } else {
             socket.disconnect()
         }
@@ -908,15 +935,12 @@ internal constructor(
                 false -> Unit
             }
         } else {
-            when (chatSocketExperimental.isDisconnected()) {
-                true -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
-                }
-                false -> Unit
+            when (val userState = userStateService.state) {
+                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet
+                )
+                else -> error("Invalid user state $userState without user being set!")
             }
         }
     }
@@ -1087,13 +1111,13 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         }
         if (flushPersistence) {
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
-        lifecycleObserver.dispose()
+        lifecycleObserver.dispose(lifecycleHandler)
         appSettingsManager.clear()
         _repositoryFacade = null
         val currentJob = currentCoroutineContext()[Job]
@@ -1270,22 +1294,24 @@ internal constructor(
 
     @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
+        logger.d { "[getReplies] messageId: $messageId, limit: $limit" }
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getReplies(messageId, limit)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onGetRepliesRequest" }
+                    logger.v { "[getReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesRequest(messageId, limit)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onGetRepliesResult" }
+                    logger.v { "[getReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
             .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
+            .share(scope) { GetRepliesIdentifier(messageId, limit) }
     }
 
     @CheckResult
@@ -1294,22 +1320,24 @@ internal constructor(
         firstId: String,
         limit: Int,
     ): Call<List<Message>> {
+        logger.d { "[getRepliesMore] messageId: $messageId, firstId: $firstId, limit: $limit" }
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getRepliesMore(messageId, firstId, limit)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onGetRepliesMoreRequest" }
+                    logger.v { "[getRepliesMore] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreRequest(messageId, firstId, limit)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onGetRepliesMoreResults" }
+                    logger.v { "[getRepliesMore] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
             .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+            .share(scope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 
     @CheckResult
@@ -1336,10 +1364,11 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    logger.d { "Applying ${listener::class.qualifiedName}.onGiphySendResult" }
+                    logger.v { "[sendGiphy] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onGiphySendResult(cid = message.cid, result = result)
                 }
             }
+            .share(scope) { SendGiphyIdentifier(request) }
     }
 
     /**
@@ -1362,33 +1391,36 @@ internal constructor(
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    logger.d { "Applying ${listener::class.qualifiedName}.onShuffleGiphyResult" }
+                    logger.v { "[shuffleGiphy] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onShuffleGiphyResult(cid = message.cid, result = result)
                 }
             }
+            .share(scope) { ShuffleGiphyIdentifier(request) }
     }
 
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
+        logger.d { "[deleteMessage] messageId: $messageId, hard: $hard" }
         val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>().also(::logPlugins)
 
         return api.deleteMessage(messageId, hard)
             .doOnStart(scope) {
                 relevantPlugins.forEach { listener ->
-                    logger.d { "Applying ${listener::class.qualifiedName}.onMessageDeleteRequest" }
+                    logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteRequest(messageId)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { listener ->
-                    logger.d { "Applying ${listener::class.qualifiedName}.onMessageDeleteResult" }
+                    logger.v { "[deleteMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
             .precondition(relevantPlugins) {
                 onMessageDeletePrecondition(messageId)
             }
+            .share(scope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
     @CheckResult
@@ -1430,7 +1462,7 @@ internal constructor(
                     .doOnResult(scope) { result ->
                         logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
                         relevantPlugins.forEach { listener ->
-                            logger.d { "Applying ${listener::class.qualifiedName}.onMessageSendResult" }
+                            logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                             listener.onMessageSendResult(
                                 result,
                                 channelType,
@@ -1456,16 +1488,17 @@ internal constructor(
         return api.updateMessage(message)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onMessageEditRequest" }
+                    logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMessageEditRequest(message)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onMessageEditResult" }
+                    logger.v { "[updateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMessageEditResult(message, result)
                 }
             }
+            .share(scope) { UpdateMessageIdentifier(message) }
     }
 
     /**
@@ -1607,6 +1640,7 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
+        logger.d { "[queryChannel] cid: $channelType:$channelId" }
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
@@ -1622,6 +1656,8 @@ internal constructor(
                 }
             }.precondition(relevantPlugins) {
                 onQueryChannelPrecondition(channelType, channelId, request)
+            }.share(scope) {
+                QueryChannelIdentifier(channelType, channelId, request)
             }
     }
 
@@ -1638,6 +1674,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+        logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
@@ -1653,6 +1690,8 @@ internal constructor(
             }
         }.precondition(relevantPluginsLazy()) {
             onQueryChannelsPrecondition(request)
+        }.share(scope) {
+            QueryChannelsIdentifier(request)
         }
     }
 
@@ -1692,21 +1731,23 @@ internal constructor(
         channelId: String,
         clearHistory: Boolean = false,
     ): Call<Unit> {
+        logger.d { "[hideChannel] cid: $channelType:$channelId, clearHistory: $clearHistory" }
         val relevantPlugins = plugins.filterIsInstance<HideChannelListener>().also(::logPlugins)
         return api.hideChannel(channelType, channelId, clearHistory)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onHideChannelRequest" }
+                    logger.v { "[hideChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelRequest(channelType, channelId, clearHistory)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onHideChannelResult" }
+                    logger.v { "[hideChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelResult(result, channelType, channelId, clearHistory)
                 }
             }
             .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
+            .share(scope) { HideChannelIdentifier(channelType, channelId, clearHistory) }
     }
 
     /**
@@ -1885,10 +1926,11 @@ internal constructor(
         return api.markAllRead()
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onMarkAllReadRequest" }
+                    logger.v { "[markAllRead] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMarkAllReadRequest()
                 }
             }
+            .share(scope) { MarkAllReadIdentifier() }
     }
 
     /**
@@ -1957,9 +1999,7 @@ internal constructor(
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         val isConnectionRequired = query.presence
-        logger.d {
-            "[queryUsers]  request: $query, isConnectionRequired: $isConnectionRequired"
-        }
+        logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
 
         return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
             api.queryUsers(query)
@@ -2303,15 +2343,16 @@ internal constructor(
         val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
+        val request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds))
         return queryChannelInternal(
             channelType = channelType,
             channelId = channelId,
-            request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds)),
+            request = request,
         )
             .retry(scope = scope, retryPolicy = retryPolicy)
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onCreateChannelRequest" }
+                    logger.v { "[createChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelRequest(
                         channelType = channelType,
                         channelId = channelId,
@@ -2323,7 +2364,7 @@ internal constructor(
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onCreateChannelResult" }
+                    logger.v { "[createChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelResult(
                         channelType = channelType,
                         channelId = channelId,
@@ -2346,6 +2387,7 @@ internal constructor(
                     memberIds = memberIds,
                 )
             }
+            .share(scope) { QueryChannelIdentifier(channelType, channelId, request) }
     }
 
     /**
@@ -2413,19 +2455,20 @@ internal constructor(
         )
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onTypingEventRequest" }
+                    logger.v { "[keystroke] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onTypingEventResult" }
+                    logger.v { "[keystroke] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .precondition(relevantPlugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
+            .share(scope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
     }
 
     /**
@@ -2454,19 +2497,20 @@ internal constructor(
         )
             .doOnStart(scope) {
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onTypingEventRequest" }
+                    logger.v { "[stopTyping] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(scope) { result ->
                 relevantPlugins.forEach { plugin ->
-                    logger.d { "Applying ${plugin::class.qualifiedName}.onTypingEventResult" }
+                    logger.v { "[stopTyping] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .precondition(relevantPlugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
+            .share(scope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
     }
 
     private fun warmUp() {
@@ -2774,14 +2818,14 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle,
+                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkLifecyclePublisher())
+                clientState = ClientStateImpl(module.networkStateProvider)
             )
         }
 
