@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -194,7 +195,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (attachmentIndex in 0..3 step 2) {
+        for (attachmentIndex in 0 until MaximumNumberOfItemsInAGrid step 2) {
             if (attachmentIndex < attachmentCount) {
                 MediaAttachmentContentItem(
                     attachment = attachments[attachmentIndex],
@@ -215,12 +216,12 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (attachmentIndex in 1..4 step 2) {
+        for (attachmentIndex in 1..MaximumNumberOfItemsInAGrid step 2) {
             if (attachmentIndex < attachmentCount) {
                 val attachment = attachments[attachmentIndex]
                 val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
 
-                if (attachmentIndex == 3 && attachmentCount > 4) {
+                if (attachmentIndex == 3 && attachmentCount > MaximumNumberOfItemsInAGrid) {
                     Box(modifier = Modifier.weight(1f)) {
                         MediaAttachmentContentItem(
                             attachment = attachment,
@@ -291,6 +292,7 @@ internal fun MediaAttachmentContentItem(
 
     Box(
         modifier = modifier
+            .background(Color.Black)
             .fillMaxWidth()
             .combinedClickable(
                 interactionSource = MutableInteractionSource(),
@@ -338,7 +340,7 @@ internal fun PlayButton(
         Column {
             Image(
                 modifier = Modifier
-                    .fillMaxSize(0.8f)
+                    .fillMaxSize(0.85f)
                     .alignBy { measured ->
                         // emulated offset as seen in the design specs,
                         // otherwise the button is visibly off to the start of the screen
@@ -397,3 +399,9 @@ private const val EqualDimensionsRatio = 1f
  * Composable when calling [Modifier.aspectRatio].
  */
 private const val TwiceAsTallAsIsWideRatio = 0.5f
+
+/**
+ * The maximum numbers of items that can be tiled inside
+ * [MediaAttachmentContent]
+ */
+internal const val MaximumNumberOfItemsInAGrid = 4

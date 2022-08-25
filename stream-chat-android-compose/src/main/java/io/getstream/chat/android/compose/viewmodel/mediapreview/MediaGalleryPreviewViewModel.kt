@@ -20,19 +20,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**
  * A ViewModel capable of loading images, playing videos.
  */
 public class MediaGalleryPreviewViewModel(
     private val chatClient: ChatClient,
-    messageId: String,
+    private val clientState: ClientState,
+    private val messageId: String,
 ) : ViewModel() {
 
     /**
@@ -44,6 +50,12 @@ public class MediaGalleryPreviewViewModel(
      * Represents the message that we observe to show the UI data.
      */
     public var message: Message by mutableStateOf(Message())
+        private set
+
+    /**
+     * Represent the header title of the gallery screen.
+     */
+    public var headerTitle: String by mutableStateOf("")
         private set
 
     /**
@@ -62,10 +74,42 @@ public class MediaGalleryPreviewViewModel(
      * Loads the message data, which then updates the UI state to show media.
      */
     init {
-        chatClient.getMessage(messageId).enqueue { result ->
-            if (result.isSuccess) {
-                this.message = result.data()
+        viewModelScope.launch(DispatcherProvider.IO) {
+            fetchMessage()
+            observeConnectionStateChanges()
+        }
+    }
+
+    /**
+     * Fetches the message according to the message ID.
+     */
+    private suspend fun fetchMessage() {
+        val result = chatClient.getMessage(messageId).await()
+
+        if (result.isSuccess) {
+            this.message = result.data()
+            headerTitle = message.user.name
+        }
+    }
+
+    /**
+     * Attempts to fetch the message again if it was not
+     * successfully fetched the previous time
+     */
+    private suspend fun observeConnectionStateChanges() {
+        clientState.connectionState.collect { connectionState ->
+            // TODO finish
+            when (connectionState) {
+                ConnectionState.CONNECTED -> onConnected()
+                ConnectionState.CONNECTING -> {}
+                ConnectionState.OFFLINE -> {}
             }
+        }
+    }
+
+    private suspend fun onConnected() {
+        if (message.id.isEmpty()) {
+            fetchMessage()
         }
     }
 

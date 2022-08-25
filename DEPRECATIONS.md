@@ -4,6 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| Lambda parameter `AttachmentState.onImagePreviewResult` | 2022.09.17 <br/>5.8.2 | 2022.10.01 ⌛ | 2022.10.15 ⌛ | Replace it with lambda parameter `AttachmentState.onMediaGalleryPreviewResult` |
+| `AttachmentState` constructor containing parameter `onImagePreviewResult`  | 2022.09.17 <br/>5.8.2 | 2022.10.01 ⌛ | 2022.10.15 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `onImagePreviewResult`. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |

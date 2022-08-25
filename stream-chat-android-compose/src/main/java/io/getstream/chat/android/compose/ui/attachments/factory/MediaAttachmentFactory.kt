@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.content.MaximumNumberOfItemsInAGrid
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewItemSize
@@ -86,8 +87,8 @@ private fun DefaultContentPlayButton() {
             .shadow(10.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
             .size(
-                width = 42.dp,
-                height = 42.dp
+                width = ChatTheme.dimens.attachmentsContentImageWidth / MaximumNumberOfItemsInAGrid,
+                height = ChatTheme.dimens.attachmentsContentImageWidth / MaximumNumberOfItemsInAGrid,
             )
     )
 }

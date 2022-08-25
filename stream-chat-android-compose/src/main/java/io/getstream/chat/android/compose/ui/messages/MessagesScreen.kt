@@ -65,7 +65,7 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
@@ -209,9 +209,9 @@ public fun MessagesScreen(
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)
                 },
-                onImagePreviewResult = { result ->
+                onMediaGalleryPreviewResult = { result ->
                     when (result?.resultType) {
-                        ImagePreviewResultType.QUOTE -> {
+                        MediaGalleryPreviewResultType.QUOTE -> {
                             val message = listViewModel.getMessageWithId(result.messageId)
 
                             if (message != null) {
@@ -219,7 +219,7 @@ public fun MessagesScreen(
                             }
                         }
 
-                        ImagePreviewResultType.SHOW_IN_CHAT -> {
+                        MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
                             listViewModel.focusMessage(result.messageId)
                         }
                         null -> Unit

@@ -68,6 +68,11 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `MessageAttachmentsContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `QuotedMessageAttachmentContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `MessageContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `MessageContainer` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: Both bound (with `MessageListViewModel` as a parameter) and unbound `MessageList` Composable functions have had parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
 
 ### ❌ Removed
 

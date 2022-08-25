@@ -102,7 +102,7 @@ public fun GiphyMessageContent(
         MessageAttachmentsContent(
             message = message,
             onLongItemClick = {},
-            onImagePreviewResult = {},
+            onMediaGalleryPreviewResult = {},
         )
 
         Spacer(
