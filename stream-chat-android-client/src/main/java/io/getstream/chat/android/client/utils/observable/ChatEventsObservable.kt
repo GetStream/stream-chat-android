@@ -142,7 +142,7 @@ internal class ChatEventsObservable(
         }
 
         override fun onDisconnected(cause: DisconnectCause) {
-            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), cause))
+            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), disconnectCause = cause))
         }
 
         override fun onEvent(event: ChatEvent) {
@@ -150,7 +150,7 @@ internal class ChatEventsObservable(
         }
 
         override fun onError(error: ChatError) {
-            observable.onNext(ErrorEvent(EventType.CONNECTION_ERROR, Date(), error))
+            observable.onNext(ErrorEvent(EventType.CONNECTION_ERROR, Date(), error = error))
         }
     }
 }

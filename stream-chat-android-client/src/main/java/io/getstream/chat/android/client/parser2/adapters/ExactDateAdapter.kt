@@ -21,28 +21,27 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
 
 @InternalStreamChatApi
-public class DateAdapter : JsonAdapter<Date>() {
+internal class ExactDateAdapter : JsonAdapter<ExactDate>() {
 
     private val streamDateFormatter = StreamDateFormatter()
 
     @ToJson
-    override fun toJson(writer: JsonWriter, value: Date?) {
+    override fun toJson(writer: JsonWriter, value: ExactDate?) {
         if (value == null) {
             writer.nullValue()
         } else {
-            val rawValue = streamDateFormatter.format(value)
-            writer.value(rawValue)
+            writer.value(value.rawDate)
         }
     }
 
     @Suppress("TooGenericExceptionCaught")
     @FromJson
-    override fun fromJson(reader: JsonReader): Date? {
+    override fun fromJson(reader: JsonReader): ExactDate? {
         val nextValue = reader.peek()
         if (nextValue == JsonReader.Token.NULL) {
             reader.skipValue()
@@ -50,6 +49,8 @@ public class DateAdapter : JsonAdapter<Date>() {
         }
 
         val rawValue = reader.nextString()
-        return streamDateFormatter.parse(rawValue)
+        return streamDateFormatter.parse(rawValue)?.let { date ->
+            ExactDate(date, rawValue)
+        }
     }
 }

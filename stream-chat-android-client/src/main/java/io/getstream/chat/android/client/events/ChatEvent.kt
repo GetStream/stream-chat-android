@@ -28,7 +28,7 @@ import java.util.Date
 public sealed class ChatEvent {
     public abstract val type: String
     public abstract val createdAt: Date
-    public abstract val rawCreatedAt: String
+    public abstract val rawCreatedAt: String?
 }
 
 public sealed class CidEvent : ChatEvent() {
@@ -647,7 +647,7 @@ public data class ConnectedEvent(
 public data class ConnectingEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String,
+    override val rawCreatedAt: String? = null,
 ) : ChatEvent()
 
 /**
@@ -656,7 +656,7 @@ public data class ConnectingEvent(
 public data class DisconnectedEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String,
+    override val rawCreatedAt: String? = null,
     val disconnectCause: DisconnectCause = DisconnectCause.NetworkNotAvailable,
 ) : ChatEvent()
 
@@ -666,7 +666,7 @@ public data class DisconnectedEvent(
 public data class ErrorEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String,
+    override val rawCreatedAt: String? = null,
     val error: ChatError,
 ) : ChatEvent()
 
