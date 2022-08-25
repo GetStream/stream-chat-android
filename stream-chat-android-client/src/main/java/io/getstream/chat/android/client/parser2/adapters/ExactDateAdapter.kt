@@ -51,7 +51,6 @@ internal class ExactDateAdapter : JsonAdapter<ExactDate>() {
 
         val rawValue = reader.nextString()
         return streamDateFormatter.parse(rawValue)?.let { date ->
-            StreamLog.d("ExactDateAdapter") { "correctly parsed ExactDate" }
             ExactDate(date, rawValue)
         }
     }

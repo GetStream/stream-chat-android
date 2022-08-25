@@ -221,7 +221,7 @@ internal class SyncManager(
 
         if (result.isSuccess) {
             val sortedEvents = result.data().sortedBy { it.createdAt }
-            logger.d { "[performSync] succeed(${sortedEvents.size})" }
+            logger.d { "[performSync] succeed. events: ${sortedEvents.size}" }
             val latestEvent = sortedEvents.lastOrNull()
             val latestEventDate = latestEvent?.createdAt ?: Date()
             val rawLatestEventDate = latestEvent?.rawCreatedAt
@@ -249,7 +249,9 @@ internal class SyncManager(
      * @param latestEventDate The date of the last event returned by the sync endpoint.
      */
     private suspend fun updateLastSyncedDate(latestEventDate: Date, rawLatestEventDate: String?) {
-        logger.d { "[updateLastSyncedDate] latestEventDate: $latestEventDate" }
+        logger.d {
+            "[updateLastSyncedDate] latestEventDate: $latestEventDate, rawLatestEventDate: $rawLatestEventDate "
+        }
         syncState.value?.let { syncState ->
             val newSyncState = syncState.copy(lastSyncedAt = latestEventDate, rawLastSyncedAt = rawLatestEventDate)
             repos.insertSyncState(newSyncState)
