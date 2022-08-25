@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -75,7 +77,7 @@ public data class StreamDimens
     "This constructor has been deprecated. Parameter 'attachmentsContentImageHeight' has been deprecated in" +
         " favor of 'attachmentsContentImageMaxHeight'. Please use the constructor which does not contain " +
         "`attachmentsContentImageHeight`",
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 constructor(
     public val channelItemVerticalPadding: Dp,
