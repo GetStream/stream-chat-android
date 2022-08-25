@@ -61,6 +61,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
 import kotlin.reflect.KClass
@@ -111,9 +112,9 @@ public class StreamStatePluginFactory(
                 "[uncaughtCoroutineException] throwable: $throwable, context: $context"
             }
         }
-        val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-
+        val scope = ChatClient.instance().inheritScope { parentJob ->
+            SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
+        }
         return createStatePlugin(user, scope)
     }
 
@@ -210,6 +211,7 @@ public class StreamStatePluginFactory(
                 syncManager.stop()
                 eventHandler.stopListening()
                 clearCachedInstance()
+                scope.cancel()
             }
         }
 
