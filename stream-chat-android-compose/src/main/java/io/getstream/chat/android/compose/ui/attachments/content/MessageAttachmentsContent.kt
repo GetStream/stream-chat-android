@@ -33,7 +33,8 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  *
  * @param message The message that contains the attachments.
  * @param onLongItemClick Handler for long item taps on this content.
- * @param onMediaGalleryPreviewResult Handler when the user selects a message option in the Media Gallery Preview screen.
+ * @param onMediaGalleryPreviewResult Handler when the user selects a message option in the
+ * Media Gallery Preview screen.
  */
 @Composable
 public fun MessageAttachmentsContent(

@@ -484,7 +484,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
             }
             is Reply -> {
-                handleResult(MediaGalleryPreviewResult(messageId = message.id, resultType = MediaGalleryPreviewResultType.QUOTE))
+                handleResult(
+                    MediaGalleryPreviewResult(
+                        messageId = message.id,
+                        resultType = MediaGalleryPreviewResultType.QUOTE
+                    )
+                )
             }
             is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(message.attachments[currentPage])
             is SaveMedia -> {

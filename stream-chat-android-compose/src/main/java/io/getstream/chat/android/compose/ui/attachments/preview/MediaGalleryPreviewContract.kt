@@ -24,11 +24,12 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 /**
  * The contract used to start the [ImagePreviewActivity] given a message ID and the position of the clicked attachment.
  */
-public class MediaGalleryPreviewContract : ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
+public class MediaGalleryPreviewContract :
+    ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
 
     /**
-     * Creates the intent to start the [MediaGalleryPreviewActivity]. It receives a data pair of a [String] and an [Int] that
-     * represent the messageId and the attachmentPosition.
+     * Creates the intent to start the [MediaGalleryPreviewActivity].
+     * It receives a data pair of a [String] and an [Int] that represent the messageId and the attachmentPosition.
      *
      * @return The [Intent] to start the [MediaGalleryPreviewActivity].
      */

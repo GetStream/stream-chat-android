@@ -148,7 +148,8 @@ public class MediaGalleryPreviewViewModel(
 
             attachments.removeAll {
                 it.assetUrl == currentMediaAttachment.assetUrl ||
-                    (currentMediaAttachment.type == AttachmentType.IMAGE && it.imageUrl == currentMediaAttachment.imageUrl)
+                    (currentMediaAttachment.type == AttachmentType.IMAGE &&
+                        it.imageUrl == currentMediaAttachment.imageUrl)
             }
 
             chatClient.updateMessage(message).enqueue()
