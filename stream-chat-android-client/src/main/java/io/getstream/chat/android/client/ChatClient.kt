@@ -344,7 +344,12 @@ internal constructor(
                     socketStateService.onSocketUnrecoverableError()
                 }
             }
+
+            else -> {
+                // Nothing to do
+            }
         }
+
         clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
     }
 
@@ -1192,7 +1197,7 @@ internal constructor(
         }
 
         lifecycleObserver.dispose(lifecycleHandler)
-        
+
         _repositoryFacade = null
         appSettingsManager.clear()
 
