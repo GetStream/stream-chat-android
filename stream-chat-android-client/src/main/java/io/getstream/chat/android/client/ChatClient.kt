@@ -198,7 +198,7 @@ import java.io.File
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -224,22 +224,24 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    lifecycle: Lifecycle,
+    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
-    private val lifecycleObserver = StreamLifecycleObserver(
-        lifecycle,
-        object : LifecycleHandler {
-            override fun resume() = reconnectSocket()
-            override fun stopped() {
-                socket.releaseConnection()
-            }
-        }
+
+    @Deprecated(
+        message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
+            "The new Socket Implementation handle it internally"
     )
+    private val lifecycleHandler = object : LifecycleHandler {
+        override fun resume() = reconnectSocket()
+        override fun stopped() {
+            socket.releaseConnection()
+        }
+    }
 
     @InternalStreamChatApi
     public val repositoryFacade: RepositoryFacade
@@ -293,7 +295,7 @@ internal constructor(
                     api.setConnection(user.id, connectionId)
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe()
+                        lifecycleObserver.observe(lifecycleHandler)
                     }
                     notifications.onSetUser()
 
@@ -306,6 +308,7 @@ internal constructor(
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
+                        DisconnectCause.WebSocketNotAvailable,
                         is DisconnectCause.Error,
                         -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
@@ -913,7 +916,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         } else {
             socket.disconnect()
         }
@@ -932,15 +935,12 @@ internal constructor(
                 false -> Unit
             }
         } else {
-            when (chatSocketExperimental.isDisconnected()) {
-                true -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
-                }
-                false -> Unit
+            when (val userState = userStateService.state) {
+                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet
+                )
+                else -> error("Invalid user state $userState without user being set!")
             }
         }
     }
@@ -1111,13 +1111,13 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         }
         if (flushPersistence) {
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
-        lifecycleObserver.dispose()
+        lifecycleObserver.dispose(lifecycleHandler)
         appSettingsManager.clear()
         _repositoryFacade = null
         val currentJob = currentCoroutineContext()[Job]
@@ -2818,14 +2818,14 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle,
+                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkLifecyclePublisher())
+                clientState = ClientStateImpl(module.networkStateProvider)
             )
         }
 
