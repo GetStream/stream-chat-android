@@ -310,6 +310,24 @@ internal constructor(
                 is ConnectingEvent -> {
                     clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
                 }
+
+                is DisconnectedEvent -> {
+                    when (event.disconnectCause) {
+                        DisconnectCause.ConnectionReleased,
+                        DisconnectCause.NetworkNotAvailable,
+                        DisconnectCause.WebSocketNotAvailable,
+                        is DisconnectCause.Error,
+                        -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
+                        is DisconnectCause.UnrecoverableError -> {
+                            userStateService.onSocketUnrecoverableError()
+                            if (ToggleService.isSocketExperimental().not()) {
+                                socketStateService.onSocketUnrecoverableError()
+                            }
+                        }
+                    }
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
+                }
+
                 else -> Unit // Ignore other events
             }
 
@@ -322,35 +340,7 @@ internal constructor(
                 )
             }
         }
-
-        eventsObservable.subscribe { event ->
-            if (event is DisconnectedEvent) {
-                handleDisconnectionEvent(event)
-            }
-        }
-
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
-    }
-
-    private fun handleDisconnectionEvent(disconnectedEvent: DisconnectedEvent) {
-        when (disconnectedEvent.disconnectCause) {
-            DisconnectCause.ConnectionReleased,
-            DisconnectCause.NetworkNotAvailable,
-            is DisconnectCause.Error,
-            -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
-            is DisconnectCause.UnrecoverableError -> {
-                userStateService.onSocketUnrecoverableError()
-                if (ToggleService.isSocketExperimental().not()) {
-                    socketStateService.onSocketUnrecoverableError()
-                }
-            }
-
-            else -> {
-                // Nothing to do
-            }
-        }
-
-        clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
     }
 
     /**
@@ -1202,7 +1192,6 @@ internal constructor(
         appSettingsManager.clear()
 
         clientState.toMutableState()?.clearState()
-        clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
 
         logger.v { "[disconnectSuspend] completed('$userId')" }
     }
