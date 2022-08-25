@@ -169,7 +169,6 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.coroutine.cancelChildrenExcept
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mapSuspend
@@ -182,21 +181,26 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.CompositeStreamLogger
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
 import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
@@ -217,7 +221,8 @@ internal constructor(
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    scope: CoroutineScope,
+    private val clientScope: CoroutineScope,
+    private val userScope: CoroutineScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
@@ -228,9 +233,8 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
-    internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
-    private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
+    private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, chatSocketExperimental)
 
     @Deprecated(
         message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
@@ -243,15 +247,24 @@ internal constructor(
         }
     }
 
+    internal fun launch(
+        block: suspend CoroutineScope.() -> Unit
+    ) = userScope.launch(block = block)
+
+    @InternalStreamChatApi
+    public fun inheritScope(block: (Job) -> CoroutineContext): CoroutineScope {
+        return userScope + block(userScope.coroutineContext.job)
+    }
+
     @InternalStreamChatApi
     public val repositoryFacade: RepositoryFacade
         get() = _repositoryFacade
             ?: (getCurrentUser() ?: getStoredUser())
-                ?.let {
-                    createRepositoryFacade(createReposotiryFactory(it))
+                ?.let { user ->
+                    createRepositoryFacade(userScope, createRepositoryFactory(user))
                         .also { _repositoryFacade = it }
                 }
-            ?: createRepositoryFacade()
+            ?: createRepositoryFacade(userScope)
 
     private var _repositoryFacade: RepositoryFacade? = null
 
@@ -483,7 +496,10 @@ internal constructor(
         isAnonymous: Boolean,
     ) {
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'" }
-        _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
+        val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: - 1
+        val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: - 1
+        logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
+        _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
@@ -492,11 +508,14 @@ internal constructor(
         warmUp()
     }
 
-    private fun createReposotiryFactory(user: User): RepositoryFactory =
+    private fun createRepositoryFactory(user: User): RepositoryFactory =
         repositoryFactoryProvider.createRepositoryFactory(user)
 
-    private fun createRepositoryFacade(repositoFactory: RepositoryFactory = NoOpRepositoryFactory): RepositoryFacade =
-        RepositoryFacade.create(repositoFactory, scope)
+    private fun createRepositoryFacade(
+        scope: CoroutineScope,
+        repositoryFactory: RepositoryFactory = NoOpRepositoryFactory,
+    ): RepositoryFacade =
+        RepositoryFacade.create(repositoryFactory, scope)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -533,7 +552,7 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
-        return CoroutineCall(scope) {
+        return CoroutineCall(clientScope) {
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
         }
     }
@@ -669,7 +688,7 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
-        return CoroutineCall(scope) {
+        return CoroutineCall(clientScope) {
             logger.d { "[connectAnonymousUser] no args" }
             setUser(
                 anonUser,
@@ -698,7 +717,7 @@ internal constructor(
         username: String,
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
-        return CoroutineCall(scope) {
+        return CoroutineCall(clientScope) {
             logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
             getGuestToken(userId, username).await()
                 .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
@@ -746,7 +765,7 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[queryMembers] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryMembersResult(
@@ -763,7 +782,7 @@ internal constructor(
                 }
             }
             .onQueryMembersError(errorHandlers, channelType, channelId, offset, limit, filter, sort, members)
-            .share(scope) { QueryMembersIdentifier(channelType, channelId, offset, limit, filter, sort, members) }
+            .share(userScope) { QueryMembersIdentifier(channelType, channelId, offset, limit, filter, sort, members) }
     }
 
     /**
@@ -892,8 +911,8 @@ internal constructor(
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
-            .retry(scope = scope, retryPolicy = retryPolicy)
-            .doOnStart(scope) {
+            .retry(scope = userScope, retryPolicy = retryPolicy)
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[deleteReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionRequest(
@@ -904,7 +923,7 @@ internal constructor(
                     )
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[deleteReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionResult(
@@ -918,7 +937,7 @@ internal constructor(
             }
             .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
             .onMessageError(relevantErrorHandlers, cid, messageId)
-            .share(scope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
+            .share(userScope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
     }
 
     /**
@@ -947,8 +966,8 @@ internal constructor(
         val currentUser = getCurrentUser()
 
         return api.sendReaction(reaction, enforceUnique)
-            .retry(scope = scope, retryPolicy = retryPolicy)
-            .doOnStart(scope) {
+            .retry(scope = userScope, retryPolicy = retryPolicy)
+            .doOnStart(userScope) {
                 relevantPlugins
                     .forEach { plugin ->
                         logger.v { "[sendReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
@@ -960,7 +979,7 @@ internal constructor(
                         )
                     }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[sendReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onSendReactionResult(
@@ -974,7 +993,7 @@ internal constructor(
             }
             .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(relevantPlugins) { onSendReactionPrecondition(currentUser, reaction) }
-            .share(scope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
+            .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
     //endregion
 
@@ -1159,7 +1178,7 @@ internal constructor(
      */
     @CheckResult
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
-        CoroutineCall(scope) {
+        CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             disconnectSuspend(flushPersistence)
             Result.success(Unit)
@@ -1168,8 +1187,10 @@ internal constructor(
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
         val userId = clientState.user.value?.id
         logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
-        val currentJob = currentCoroutineContext()[Job]
-        scope.coroutineContext.cancelChildrenExcept(currentJob)
+        userScope.coroutineContext.cancelChildren()
+        val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: - 1
+        val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: - 1
+        logger.v { "[disconnectSuspend] userJobCount: $userJobCount, clientJobCount: $clientJobCount" }
 
         notifications.onLogout()
         getCurrentUser().let(initializationCoordinator::userDisconnected)
@@ -1262,7 +1283,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(scope, ChatError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(userScope, ChatError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1370,20 +1391,20 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getReplies(messageId, limit)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[getReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesRequest(messageId, limit)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[getReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
             .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
-            .share(scope) { GetRepliesIdentifier(messageId, limit) }
+            .share(userScope) { GetRepliesIdentifier(messageId, limit) }
     }
 
     @CheckResult
@@ -1396,20 +1417,20 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
 
         return api.getRepliesMore(messageId, firstId, limit)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[getRepliesMore] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreRequest(messageId, firstId, limit)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[getRepliesMore] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
             .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
-            .share(scope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
+            .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 
     @CheckResult
@@ -1433,14 +1454,14 @@ internal constructor(
         }
 
         return sendAction(request)
-            .retry(scope = scope, retryPolicy = retryPolicy)
-            .doOnResult(scope) { result ->
+            .retry(scope = userScope, retryPolicy = retryPolicy)
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { listener ->
                     logger.v { "[sendGiphy] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onGiphySendResult(cid = message.cid, result = result)
                 }
             }
-            .share(scope) { SendGiphyIdentifier(request) }
+            .share(userScope) { SendGiphyIdentifier(request) }
     }
 
     /**
@@ -1460,14 +1481,14 @@ internal constructor(
         }
 
         return sendAction(request)
-            .retry(scope = scope, retryPolicy = retryPolicy)
-            .doOnResult(scope) { result ->
+            .retry(scope = userScope, retryPolicy = retryPolicy)
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { listener ->
                     logger.v { "[shuffleGiphy] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onShuffleGiphyResult(cid = message.cid, result = result)
                 }
             }
-            .share(scope) { ShuffleGiphyIdentifier(request) }
+            .share(userScope) { ShuffleGiphyIdentifier(request) }
     }
 
     @CheckResult
@@ -1477,13 +1498,13 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>().also(::logPlugins)
 
         return api.deleteMessage(messageId, hard)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteRequest(messageId)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteResult(messageId, result)
@@ -1492,7 +1513,7 @@ internal constructor(
             .precondition(relevantPlugins) {
                 onMessageDeletePrecondition(messageId)
             }
-            .share(scope) { DeleteMessageIdentifier(messageId, hard) }
+            .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
     @CheckResult
@@ -1521,7 +1542,7 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
-        return CoroutineCall(scope) {
+        return CoroutineCall(userScope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
             sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
@@ -1530,8 +1551,8 @@ internal constructor(
                 } else message
             }.flatMapSuspend { newMessage ->
                 api.sendMessage(channelType, channelId, newMessage)
-                    .retry(scope, retryPolicy)
-                    .doOnResult(scope) { result ->
+                    .retry(userScope, retryPolicy)
+                    .doOnResult(userScope) { result ->
                         logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
                         relevantPlugins.forEach { listener ->
                             logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
@@ -1558,19 +1579,19 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(message)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMessageEditRequest(message)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[updateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMessageEditResult(message, result)
                 }
             }
-            .share(scope) { UpdateMessageIdentifier(message) }
+            .share(userScope) { UpdateMessageIdentifier(message) }
     }
 
     /**
@@ -1716,19 +1737,19 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
 
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryChannelRequest(channelType, channelId, request)
                 }
-            }.doOnResult(scope) { result ->
+            }.doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryChannelResult(result, channelType, channelId, request)
                 }
             }.precondition(relevantPlugins) {
                 onQueryChannelPrecondition(channelType, channelId, request)
-            }.share(scope) {
+            }.share(userScope) {
                 QueryChannelIdentifier(channelType, channelId, request)
             }
     }
@@ -1750,19 +1771,19 @@ internal constructor(
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
         logPlugins(relevantPluginsLazy())
 
-        return queryChannelsInternal(request = request).doOnStart(scope) {
+        return queryChannelsInternal(request = request).doOnStart(userScope) {
             relevantPluginsLazy().forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
             }
-        }.doOnResult(scope) { result ->
+        }.doOnResult(userScope) { result ->
             relevantPluginsLazy().forEach { listener ->
                 logger.v { "[queryChannels] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsResult(result, request)
             }
         }.precondition(relevantPluginsLazy()) {
             onQueryChannelsPrecondition(request)
-        }.share(scope) {
+        }.share(userScope) {
             QueryChannelsIdentifier(request)
         }
     }
@@ -1806,20 +1827,20 @@ internal constructor(
         logger.d { "[hideChannel] cid: $channelType:$channelId, clearHistory: $clearHistory" }
         val relevantPlugins = plugins.filterIsInstance<HideChannelListener>().also(::logPlugins)
         return api.hideChannel(channelType, channelId, clearHistory)
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[hideChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelRequest(channelType, channelId, clearHistory)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[hideChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelResult(result, channelType, channelId, clearHistory)
                 }
             }
             .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
-            .share(scope) { HideChannelIdentifier(channelType, channelId, clearHistory) }
+            .share(userScope) { HideChannelIdentifier(channelType, channelId, clearHistory) }
     }
 
     /**
@@ -1931,7 +1952,7 @@ internal constructor(
             api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
         } else {
             ErrorCall(
-                scope,
+                userScope,
                 ChatError(
                     "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
                 )
@@ -1996,13 +2017,13 @@ internal constructor(
     public fun markAllRead(): Call<Unit> {
         val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>().also(::logPlugins)
         return api.markAllRead()
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[markAllRead] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMarkAllReadRequest()
                 }
             }
-            .share(scope) { MarkAllReadIdentifier() }
+            .share(userScope) { MarkAllReadIdentifier() }
     }
 
     /**
@@ -2048,7 +2069,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.e { errorMessage }
-            return ErrorCall(scope, ChatError(errorMessage))
+            return ErrorCall(userScope, ChatError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -2421,8 +2442,8 @@ internal constructor(
             channelId = channelId,
             request = request,
         )
-            .retry(scope = scope, retryPolicy = retryPolicy)
-            .doOnStart(scope) {
+            .retry(scope = userScope, retryPolicy = retryPolicy)
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[createChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelRequest(
@@ -2434,7 +2455,7 @@ internal constructor(
                     )
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[createChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelResult(
@@ -2459,7 +2480,7 @@ internal constructor(
                     memberIds = memberIds,
                 )
             }
-            .share(scope) { QueryChannelIdentifier(channelType, channelId, request) }
+            .share(userScope) { QueryChannelIdentifier(channelType, channelId, request) }
     }
 
     /**
@@ -2477,7 +2498,7 @@ internal constructor(
         lastSyncAt: Date,
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
-            .withPrecondition(scope) {
+            .withPrecondition(userScope) {
                 checkSyncHistoryPreconditions(channelsIds, lastSyncAt)
             }
     }
@@ -2525,13 +2546,13 @@ internal constructor(
             channelId = channelId,
             extraData = extraData,
         )
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[keystroke] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[keystroke] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
@@ -2540,7 +2561,7 @@ internal constructor(
             .precondition(relevantPlugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
-            .share(scope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
+            .share(userScope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
     }
 
     /**
@@ -2567,13 +2588,13 @@ internal constructor(
             channelId = channelId,
             extraData = extraData,
         )
-            .doOnStart(scope) {
+            .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[stopTyping] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
-            .doOnResult(scope) { result ->
+            .doOnResult(userScope) { result ->
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[stopTyping] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
@@ -2582,7 +2603,7 @@ internal constructor(
             .precondition(relevantPlugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
-            .share(scope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
+            .share(userScope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
     }
 
     private fun warmUp() {
@@ -2604,7 +2625,7 @@ internal constructor(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
     ): Call<T> =
-        withPrecondition(scope) {
+        withPrecondition(userScope) {
             pluginsList.fold(Result.success(Unit)) { result, plugin ->
                 if (result.isError) {
                     result
@@ -2861,10 +2882,13 @@ internal constructor(
             if (ToggleService.isInitialized().not()) {
                 ToggleService.init(appContext, emptyMap())
             }
-
+            val clientJob = SupervisorJob()
+            val clientScope = CoroutineScope(clientJob + DispatcherProvider.IO + SharedCalls())
+            val userScope = clientScope + SupervisorJob(clientJob)
             val module =
                 ChatModule(
                     appContext,
+                    userScope,
                     config,
                     notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
                     notificationConfig,
@@ -2886,7 +2910,8 @@ internal constructor(
                 module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
-                scope = module.networkScope,
+                clientScope = clientScope,
+                userScope = userScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
