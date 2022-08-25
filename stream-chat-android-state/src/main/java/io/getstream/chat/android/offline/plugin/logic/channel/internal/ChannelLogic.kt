@@ -623,7 +623,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationInviteRejectedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.deleteMember(event.member)
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationChannelMutesUpdatedEvent -> {
