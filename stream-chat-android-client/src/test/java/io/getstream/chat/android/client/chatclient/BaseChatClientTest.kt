@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.chatclient
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -99,7 +100,7 @@ internal open class BaseChatClientTest {
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState

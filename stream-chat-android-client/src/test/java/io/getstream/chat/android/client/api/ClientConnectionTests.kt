@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -133,7 +134,7 @@ internal class ClientConnectionTests {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
