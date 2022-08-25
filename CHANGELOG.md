@@ -70,7 +70,6 @@
 ### 🐞 Fixed
 - Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
 - The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
-- Fixed stale online member count in `MessageListHeaderView` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
 - Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 - Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 
@@ -88,7 +87,6 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
-- Fixed stale online member count in `MessageListHeader` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
 - Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 - Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 
@@ -145,6 +143,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 24th, 2022 - 5.8.2
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed `useSequentialEventHandler` config parameter that was passed to `StreamOfflinePluginFactory` but had no effect. [#4089](https://github.com/GetStream/stream-chat-android/pull/4089)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed stale online member count in `MessageListHeaderView` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed stale online member count in `MessageListHeader` when a member leaves the channel. [#4072](https://github.com/GetStream/stream-chat-android/pull/4072)
 
 # August 22nd, 2022 - 5.8.1
 ## stream-chat-android-ui-components
