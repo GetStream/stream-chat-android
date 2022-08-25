@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.socket
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
@@ -55,6 +57,7 @@ internal open class ChatSocket constructor(
     private var eventsParser: EventsParser? = null
     private var socketConnectionJob: Job? = null
     private val listeners = mutableSetOf<SocketListener>()
+    private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         coroutineScope = coroutineScope,
         reconnectCallback = {
@@ -298,7 +301,7 @@ internal open class ChatSocket constructor(
     }
 
     private fun callListeners(call: (SocketListener) -> Unit) {
-        coroutineScope.launch(DispatcherProvider.Main) {
+        eventUiHandler.post {
             synchronized(listeners) {
                 listeners.forEach(call)
             }
