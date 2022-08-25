@@ -25,6 +25,7 @@ internal data class SyncStateEntity(
     @PrimaryKey var userId: String,
     var activeChannelIds: List<String> = mutableListOf(),
     var lastSyncedAt: Date? = null,
+    var rawLastSyncedAt: String? = null,
     var markedAllReadAt: Date? = null,
 )
 

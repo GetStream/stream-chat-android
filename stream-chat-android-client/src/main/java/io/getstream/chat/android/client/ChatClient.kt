@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.SharedCalls
@@ -128,6 +129,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -231,6 +233,7 @@ internal constructor(
     internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
+    public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
 
     @Deprecated(
         message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
@@ -2483,6 +2486,32 @@ internal constructor(
     }
 
     /**
+     * Returns all events that happened for a list of channels since last sync (while the user was not
+     * connected to the web-socket).
+     *
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
+     *
+     * @return Executable async [Call] responsible for obtaining missing events.
+     */
+    @CheckResult
+    public fun getSyncHistory(
+        channelsIds: List<String>,
+        lastSyncAt: String,
+    ): Call<List<ChatEvent>> {
+        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: throw IllegalArgumentException(
+            "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern} "
+        )
+
+        val exactDate = ExactDate(parsedDate, lastSyncAt)
+
+        return api.getSyncHistory(channelsIds, exactDate)
+            .withPrecondition(scope) {
+                checkSyncHistoryPreconditions(channelsIds, exactDate)
+            }
+    }
+
+    /**
      * Checks if sync history request parameters meet preconditions:
      * 1. If [channelsIds] is not empty.
      * 2. If [lastSyncAt] is no later than 30 days
@@ -2499,6 +2528,10 @@ internal constructor(
                 Result.success(Unit)
             }
         }
+    }
+
+    private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: ExactDate): Result<Unit> {
+        return checkSyncHistoryPreconditions(channelsIds, lastSyncAt.date)
     }
 
     /**

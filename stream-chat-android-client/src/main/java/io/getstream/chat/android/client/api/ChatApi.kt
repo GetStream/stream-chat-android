@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.AppSettings
@@ -385,6 +386,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+
+    @CheckResult
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: ExactDate): Call<List<ChatEvent>>
 
     fun warmUp()
 }

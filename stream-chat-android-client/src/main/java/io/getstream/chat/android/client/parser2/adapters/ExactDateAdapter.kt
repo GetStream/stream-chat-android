@@ -24,6 +24,7 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.logging.StreamLog
 
 @InternalStreamChatApi
 internal class ExactDateAdapter : JsonAdapter<ExactDate>() {
@@ -50,6 +51,7 @@ internal class ExactDateAdapter : JsonAdapter<ExactDate>() {
 
         val rawValue = reader.nextString()
         return streamDateFormatter.parse(rawValue)?.let { date ->
+            StreamLog.d("ExactDateAdapter") { "correctly parsed ExactDate" }
             ExactDate(date, rawValue)
         }
     }

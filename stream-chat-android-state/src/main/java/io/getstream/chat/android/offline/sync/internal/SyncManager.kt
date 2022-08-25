@@ -84,7 +84,7 @@ internal class SyncManager(
     scope: CoroutineScope,
 ) : SyncHistoryManager {
 
-    private val logger = StreamLog.getLogger("Chat:SyncManager")
+    private val logger = StreamLog.getLogger("SyncManager")
 
     private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
         CoroutineExceptionHandler { context, throwable ->
@@ -211,13 +211,21 @@ internal class SyncManager(
             return
         }
         val lastSyncAt = syncState.value?.lastSyncedAt ?: Date()
-        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt" }
-        val result = chatClient.getSyncHistory(cids, lastSyncAt).await()
+        val rawLastSyncAt = syncState.value?.rawLastSyncedAt
+        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
+        val result = if (rawLastSyncAt != null) {
+            chatClient.getSyncHistory(cids, rawLastSyncAt).await()
+        } else {
+            chatClient.getSyncHistory(cids, lastSyncAt).await()
+        }
+
         if (result.isSuccess) {
             val sortedEvents = result.data().sortedBy { it.createdAt }
             logger.d { "[performSync] succeed(${sortedEvents.size})" }
-            val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
-            updateLastSyncedDate(latestEventDate)
+            val latestEvent = sortedEvents.lastOrNull()
+            val latestEventDate = latestEvent?.createdAt ?: Date()
+            val rawLatestEventDate = latestEvent?.rawCreatedAt
+            updateLastSyncedDate(latestEventDate, rawLatestEventDate)
             sortedEvents.forEach {
                 if (it is MarkAllReadEvent) {
                     updateAllReadStateForDate(it.user.id, it.createdAt)
@@ -240,10 +248,10 @@ internal class SyncManager(
      *
      * @param latestEventDate The date of the last event returned by the sync endpoint.
      */
-    private suspend fun updateLastSyncedDate(latestEventDate: Date) {
+    private suspend fun updateLastSyncedDate(latestEventDate: Date, rawLatestEventDate: String?) {
         logger.d { "[updateLastSyncedDate] latestEventDate: $latestEventDate" }
         syncState.value?.let { syncState ->
-            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
+            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate, rawLastSyncedAt = rawLatestEventDate)
             repos.insertSyncState(newSyncState)
             this.syncState.value = newSyncState
         }

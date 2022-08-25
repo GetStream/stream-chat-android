@@ -46,10 +46,7 @@ public class StreamDateFormatter {
         }
     }
 
-    /**
-     * Formats the [Date] in the standard way to Stream's API
-     */
-    public fun format(date: Date): String = dateFormat.format(date)
+    internal val datePattern = DATE_FORMAT
 
     /**
      * Parses the [String] to [Date] in the standard way to Stream's API
@@ -61,12 +58,13 @@ public class StreamDateFormatter {
             try {
                 dateFormat.parse(rawValue)
             } catch (_: Throwable) {
-                try {
-                    dateFormatWithoutNanoseconds.parse(rawValue)
-                } catch (_: Throwable) {
-                    null
-                }
+                dateFormatWithoutNanoseconds.parse(rawValue)
             }
         }
     }
+
+    /**
+     * Formats the [Date] in the standard way to Stream's API
+     */
+    public fun format(date: Date): String = dateFormat.format(date)
 }
