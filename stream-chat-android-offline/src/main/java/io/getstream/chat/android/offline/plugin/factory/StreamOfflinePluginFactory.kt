@@ -162,11 +162,15 @@ public class StreamOfflinePluginFactory(
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 
-    private fun getEditMessageListener(chatClient: ChatClient, statePlugin: StatePlugin): EditMessageListenerComposite {
+    private fun getEditMessageListener(
+        clientState: ClientState, 
+        repositoryFacade: RepositoryFacade, 
+        statePlugin: StatePlugin
+    ): EditMessageListenerComposite {
         val editMessageListenerDatabase = EditMessageListenerDatabase(
-            userRepository = chatClient.repositoryFacade,
-            messageRepository = chatClient.repositoryFacade,
-            clientState = chatClient.clientState
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            clientState = clientState
         )
 
         return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
