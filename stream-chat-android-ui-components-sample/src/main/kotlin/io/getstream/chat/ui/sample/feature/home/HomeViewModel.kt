@@ -92,7 +92,7 @@ class HomeViewModel(
         when (action) {
             is UiAction.LogoutClicked -> {
                 viewModelScope.launch {
-                    ChatClient.instance().disconnect(false).await()
+                    chatClient.disconnect(false).await()
                     App.instance.userRepository.clearUser()
                     _events.value = Event(UiEvent.NavigateToLoginScreenLogout)
                 }
