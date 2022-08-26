@@ -89,7 +89,7 @@ class FakeImageLoader(
 
         return ContextCompat.getDrawable(
             context,
-            userAvatars.getOrDefault(avatarUrl, R.drawable.avatar_user)
+            userAvatars[avatarUrl] ?: R.drawable.avatar_user
         )!!
     }
 
