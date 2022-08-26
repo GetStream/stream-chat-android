@@ -123,9 +123,10 @@ public class StreamOfflinePluginFactory(
         }
 
         val chatClient = ChatClient.instance()
-        val repositoryFactory = chatClient.repositoryFacade
+        val clientState = chatClient.clientState
+        val repositoryFacade = chatClient.repositoryFacade
 
-        val editMessageListener = getEditMessageListener(chatClient, statePlugin)
+        val editMessageListener = getEditMessageListener(clientState, repositoryFacade, statePlugin)
         val hideChannelListener: HideChannelListener = getHideChannelListener(chatClient, statePlugin)
         val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(chatClient, statePlugin)
         val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
