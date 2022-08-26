@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -40,17 +39,13 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,6 +55,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -95,6 +91,8 @@ internal class SyncManagerTest {
 
     @BeforeEach
     fun setUp() {
+        reset(_syncEvents)
+
         val channelLogic: ChannelLogic = mock {
             on(it.cid) doReturn randomCID()
         }
@@ -178,7 +176,6 @@ internal class SyncManagerTest {
         )
 
         syncManager.onEvent(connectingEvent)
-        syncManager.sync()
 
         verify(_syncEvents, never()).emit(any())
     }
@@ -222,13 +219,11 @@ internal class SyncManagerTest {
         )
 
         syncManager.onEvent(connectingEvent)
-        syncManager.sync()
 
         verify(_syncEvents).emit(any())
     }
 
     @Test
-    //Todo: make this unit test pass!
     fun `when one event of time earlier of last sync arrive, it should not be propagated`() = runTest {
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
@@ -267,7 +262,6 @@ internal class SyncManagerTest {
         )
 
         syncManager.onEvent(connectingEvent)
-        syncManager.sync()
 
         verify(_syncEvents, never()).emit(any())
     }
@@ -282,7 +276,7 @@ internal class SyncManagerTest {
             chatClient = chatClient,
             clientState = clientState,
             userPresence = true,
-            _syncEvents = _syncEvents
+            events = _syncEvents
         )
     }
 }
