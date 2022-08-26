@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -32,6 +33,7 @@ import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -138,8 +140,8 @@ public class StreamOfflinePluginFactory(
             QueryMembersListenerDatabase(repositoryFacade, repositoryFacade)
         val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = chatClient.clientState,
-            channelRepository = repositoryFactory,
-            userRepository = repositoryFactory
+            channelRepository = repositoryFacade,
+            userRepository = repositoryFacade
         )
 
         return OfflinePlugin(
@@ -165,9 +167,9 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun getEditMessageListener(
-        clientState: ClientState, 
-        repositoryFacade: RepositoryFacade, 
-        statePlugin: StatePlugin
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin,
     ): EditMessageListenerComposite {
         val editMessageListenerDatabase = EditMessageListenerDatabase(
             userRepository = repositoryFacade,
@@ -215,7 +217,7 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun getSendMessageListener(
-        repositoryFacade: RepositoryFacade, 
+        repositoryFacade: RepositoryFacade,
         statePlugin: StatePlugin,
     ): SendMessageListener {
 
@@ -223,7 +225,10 @@ public class StreamOfflinePluginFactory(
         return SendMessageListenerComposite(listOf(statePlugin, sendMessageListenerDatabase))
     }
 
-    private fun getShuffleGiphyListener(repositoryFacade: RepositoryFacade, statePlugin: StatePlugin): ShuffleGiphyListener {
+    private fun getShuffleGiphyListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin,
+    ): ShuffleGiphyListener {
         val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade
