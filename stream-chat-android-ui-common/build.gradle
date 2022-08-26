@@ -72,6 +72,7 @@ dependencies {
     implementation Dependencies.coilVideo
 
     testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.kotlinReflect
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
