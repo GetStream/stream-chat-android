@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 
 /**
- * Create [IconCompat] for a given user to be shown on notifications.
+ * Creates an [IconCompat] for a given user to be shown on notifications.
  */
 public interface AvatarIconCompatLoader {
 
