@@ -233,6 +233,7 @@ internal constructor(
     internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
+    @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
 
     @Deprecated(
@@ -2487,7 +2488,8 @@ internal constructor(
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
-     * connected to the web-socket).
+     * connected to the web-socket). LastSyncAt is in the format yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'. Use this version of
+     * getSyncHistory when high precision is necessary. 
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
      * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
