@@ -953,7 +953,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private fun defaultMediaOptions(message: Message): List<MediaGalleryPreviewOption> {
         val user by mediaGalleryPreviewViewModel.user.collectAsState()
         val saveMediaColor =
-            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled
+            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                ChatTheme.colors.textHighEmphasis
+            } else {
+                ChatTheme.colors.disabled
+            }
 
         val options = mutableListOf(
             MediaGalleryPreviewOption(
@@ -981,7 +985,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         if (message.user.id == user?.id) {
             val deleteColor =
-                if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) ChatTheme.colors.errorAccent else ChatTheme.colors.disabled
+                if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.disabled
+                }
 
             options.add(
                 MediaGalleryPreviewOption(
