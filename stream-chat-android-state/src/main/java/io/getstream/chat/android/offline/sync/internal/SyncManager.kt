@@ -231,7 +231,7 @@ internal class SyncManager(
                     updateAllReadStateForDate(it.user.id, it.createdAt)
                 }
             }
-            if (sortedEvents.isNotEmpty()) {
+            if (sortedEvents.isNotEmpty() && rawLastSyncAt != rawLatestEventDate) {
                 _syncEvents.emit(sortedEvents)
                 logger.v { "[performSync] events emission completed" }
             } else {
