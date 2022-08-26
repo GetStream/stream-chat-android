@@ -17,27 +17,40 @@
 package io.getstream.chat.android.offline.sync.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import io.getstream.logging.StreamLog
 import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,6 +59,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -66,8 +80,9 @@ internal class SyncManagerTest {
     private lateinit var globalState: GlobalMutableState
     private lateinit var clientState: ClientState
     private lateinit var repositoryFacade: RepositoryFacade
-    private lateinit var syncManager: SyncManager
     private lateinit var user: User
+
+    private val _syncEvents: Tube<List<ChatEvent>> = mock()
 
     private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val streamDateFormatter = StreamDateFormatter()
@@ -80,9 +95,15 @@ internal class SyncManagerTest {
 
     @BeforeEach
     fun setUp() {
+        val channelLogic: ChannelLogic = mock {
+            on(it.cid) doReturn randomCID()
+        }
+
         user = randomUser()
         chatClient = mock()
-        logicRegistry = mock()
+        logicRegistry = mock {
+            on(it.getActiveChannelsLogic()) doReturn listOf(channelLogic)
+        }
         stateRegistry = mock()
         globalState = mock()
         clientState = mock {
@@ -96,7 +117,6 @@ internal class SyncManagerTest {
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
             }
         }
-        syncManager = mock()
     }
 
     @Test
@@ -123,6 +143,135 @@ internal class SyncManagerTest {
         verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
     }
 
+    @Test
+    fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() = runTest {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val syncManager = buildSyncManager()
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
+        }
+
+        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser()
+        )
+
+        syncManager.onEvent(connectingEvent)
+        syncManager.sync()
+
+        verify(_syncEvents, never()).emit(any())
+    }
+
+    @Test
+    fun `when one event of time later of last sync arrive, it should be propagated`() = runTest {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val laterCreatedAt = Date(createdAt.time + 10000)
+        val laterRawCreatedAt = streamDateFormatter.format(laterCreatedAt)
+
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val syncManager = buildSyncManager()
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn laterCreatedAt
+            on(it.rawCreatedAt) doReturn laterRawCreatedAt
+        }
+
+        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser()
+        )
+
+        syncManager.onEvent(connectingEvent)
+        syncManager.sync()
+
+        verify(_syncEvents).emit(any())
+    }
+
+    @Test
+    //Todo: make this unit test pass!
+    fun `when one event of time earlier of last sync arrive, it should not be propagated`() = runTest {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val laterCreatedAt = Date(createdAt.time + 10000)
+        val laterRawCreatedAt = streamDateFormatter.format(laterCreatedAt)
+
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = laterCreatedAt,
+            rawLastSyncedAt = laterRawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val syncManager = buildSyncManager()
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
+        }
+
+        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser()
+        )
+
+        syncManager.onEvent(connectingEvent)
+        syncManager.sync()
+
+        verify(_syncEvents, never()).emit(any())
+    }
+
     private fun buildSyncManager(): SyncManager {
         return SyncManager(
             currentUserId = user.id,
@@ -133,6 +282,7 @@ internal class SyncManagerTest {
             chatClient = chatClient,
             clientState = clientState,
             userPresence = true,
+            _syncEvents = _syncEvents
         )
     }
 }

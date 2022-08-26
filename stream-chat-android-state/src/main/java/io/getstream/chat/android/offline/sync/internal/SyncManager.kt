@@ -82,6 +82,7 @@ internal class SyncManager(
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
     scope: CoroutineScope,
+    private val _syncEvents: Tube<List<ChatEvent>>  = Tube()
 ) : SyncHistoryManager {
 
     private val logger = StreamLog.getLogger("SyncManager")
@@ -97,7 +98,7 @@ internal class SyncManager(
 
     private var eventsDisposable: Disposable? = null
 
-    private val _syncEvents = Tube<List<ChatEvent>>()
+
     private val state = MutableStateFlow(State.Idle)
 
     override val syncedEvents: Flow<List<ChatEvent>> = _syncEvents
@@ -231,6 +232,7 @@ internal class SyncManager(
                     updateAllReadStateForDate(it.user.id, it.createdAt)
                 }
             }
+            //Todo: Create a comparation of date string
             if (sortedEvents.isNotEmpty() && rawLastSyncAt != null && rawLastSyncAt != rawLatestEventDate) {
                 _syncEvents.emit(sortedEvents)
                 logger.v { "[performSync] events emission completed" }
