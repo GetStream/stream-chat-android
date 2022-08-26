@@ -213,10 +213,9 @@ public class StreamOfflinePluginFactory(
     }
 
     private fun getSendMessageListener(
-        chatClient: ChatClient,
+        repositoryFacade: RepositoryFacade, 
         statePlugin: StatePlugin,
     ): SendMessageListener {
-        val repositoryFacade = chatClient.repositoryFacade
 
         val sendMessageListenerDatabase = SendMessageListenerDatabase(repositoryFacade, repositoryFacade)
         return SendMessageListenerComposite(listOf(statePlugin, sendMessageListenerDatabase))
