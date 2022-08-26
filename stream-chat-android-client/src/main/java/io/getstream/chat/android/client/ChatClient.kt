@@ -120,6 +120,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
@@ -196,7 +198,7 @@ import java.io.File
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.Duration.Companion.days
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -222,22 +224,24 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    lifecycle: Lifecycle,
+    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     internal val scope = scope + SharedCalls()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, scope, chatSocketExperimental)
-    private val lifecycleObserver = StreamLifecycleObserver(
-        lifecycle,
-        object : LifecycleHandler {
-            override fun resume() = reconnectSocket()
-            override fun stopped() {
-                socket.releaseConnection()
-            }
-        }
+
+    @Deprecated(
+        message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
+            "The new Socket Implementation handle it internally"
     )
+    private val lifecycleHandler = object : LifecycleHandler {
+        override fun resume() = reconnectSocket()
+        override fun stopped() {
+            socket.releaseConnection()
+        }
+    }
 
     @InternalStreamChatApi
     public val repositoryFacade: RepositoryFacade
@@ -291,7 +295,7 @@ internal constructor(
                     api.setConnection(user.id, connectionId)
                     if (ToggleService.isSocketExperimental().not()) {
                         socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe()
+                        lifecycleObserver.observe(lifecycleHandler)
                     }
                     notifications.onSetUser()
 
@@ -300,10 +304,18 @@ internal constructor(
                         setUser(user)
                     }
                 }
+                is NewMessageEvent -> {
+                    notifications.onNewMessageEvent(event)
+                }
+                is ConnectingEvent -> {
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
+                }
+
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
+                        DisconnectCause.WebSocketNotAvailable,
                         is DisconnectCause.Error,
                         -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
@@ -315,12 +327,7 @@ internal constructor(
                     }
                     clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                 }
-                is NewMessageEvent -> {
-                    notifications.onNewMessageEvent(event)
-                }
-                is ConnectingEvent -> {
-                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
-                }
+
                 else -> Unit // Ignore other events
             }
 
@@ -475,6 +482,7 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'" }
         _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
@@ -526,16 +534,79 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
-            clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
-            logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
-            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
-                logger.v {
-                    "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                    }"
-                }
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
+        }
+    }
+
+    private suspend fun connectUserSuspend(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
+    ): Result<ConnectionData> {
+        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
+        logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
+        return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
+            logger.v {
+                "[connectUserSuspend] completed: ${
+                result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                }"
             }
         }
+    }
+
+    /**
+     * Changes the user. Disconnects the current user and connects to a new one.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
+     *
+     * This method disconnects from the SDK and right after connects to it with the new User.
+     *
+     * @see TokenProvider
+     *
+     * @param user The user to set.
+     * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    public fun switchUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            logger.d { "[switchUser] user.id: '${user.id}'" }
+            disconnectSuspend(flushPersistence = true)
+            onDisconnectionComplete()
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
+                logger.v { "[switchUser] completed('${user.id}')" }
+            }
+        }
+    }
+
+    /**
+     * Changes the user. Disconnects the current user and connects to a new one.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
+     *
+     * This method disconnects from the SDK and right after connects to it with the new User.
+     *
+     * @see TokenProvider
+     *
+     * @param user The user to set.
+     * @param token Instance of JWT token.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    public fun switchUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
+    ): Call<ConnectionData> {
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
     }
 
     /**
@@ -706,7 +777,7 @@ internal constructor(
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -719,7 +790,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<String> {
+    ): Call<UploadedFile> {
         return api.sendFile(channelType, channelId, file, callback)
     }
 
@@ -735,7 +806,7 @@ internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -749,7 +820,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<String> {
+    ): Call<UploadedImage> {
         return api.sendImage(channelType, channelId, file, callback)
     }
 
@@ -911,7 +982,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         } else {
             socket.disconnect()
         }
@@ -930,15 +1001,12 @@ internal constructor(
                 false -> Unit
             }
         } else {
-            when (chatSocketExperimental.isDisconnected()) {
-                true -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
-                }
-                false -> Unit
+            when (val userState = userStateService.state) {
+                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet
+                )
+                else -> error("Invalid user state $userState without user being set!")
             }
         }
     }
@@ -1098,10 +1166,12 @@ internal constructor(
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
-        logger.d { "[disconnectSuspend] flushPersistence: $flushPersistence" }
+        val userId = clientState.user.value?.id
+        logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
+        val currentJob = currentCoroutineContext()[Job]
+        scope.coroutineContext.cancelChildrenExcept(currentJob)
+
         notifications.onLogout()
-        clientState.toMutableState()?.clearState()
-        clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
         getCurrentUser().let(initializationCoordinator::userDisconnected)
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
@@ -1109,17 +1179,21 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect(DisconnectCause.ConnectionReleased)
+            chatSocketExperimental.disconnect()
         }
         if (flushPersistence) {
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
-        lifecycleObserver.dispose()
-        appSettingsManager.clear()
+
+        lifecycleObserver.dispose(lifecycleHandler)
+
         _repositoryFacade = null
-        val currentJob = currentCoroutineContext()[Job]
-        scope.coroutineContext.cancelChildrenExcept(currentJob)
+        appSettingsManager.clear()
+
+        clientState.toMutableState()?.clearState()
+
+        logger.v { "[disconnectSuspend] completed('$userId')" }
     }
 
     /**
@@ -2816,14 +2890,14 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocketExperimental = module.experimentalSocket(),
-                lifecycle = lifecycle,
+                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkLifecyclePublisher())
+                clientState = ClientStateImpl(module.networkStateProvider)
             )
         }
 

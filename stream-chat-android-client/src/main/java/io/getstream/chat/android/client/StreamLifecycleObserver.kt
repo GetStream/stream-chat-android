@@ -22,54 +22,49 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicBoolean
 
-internal class StreamLifecycleObserver(
-    private val lifecycle: Lifecycle,
-    private val handler: LifecycleHandler,
-) : DefaultLifecycleObserver {
+internal class StreamLifecycleObserver(private val lifecycle: Lifecycle) : DefaultLifecycleObserver {
 
     private val logger = StreamLog.getLogger("Chat:LifecycleObserver")
-
     private var recurringResumeEvent = false
+    private var handlers = setOf<LifecycleHandler>()
 
-    @Volatile
-    private var isObserving = false
+    private val isObserving = AtomicBoolean(false)
 
-    suspend fun observe() {
-        logger.d { "[observe] no args" }
-        if (isObserving.not()) {
-            isObserving = true
+    suspend fun observe(handler: LifecycleHandler) {
+        if (isObserving.compareAndSet(false, true)) {
+            recurringResumeEvent = false
             withContext(DispatcherProvider.Main) {
                 lifecycle.addObserver(this@StreamLifecycleObserver)
                 logger.v { "[observe] subscribed" }
             }
         }
+        handlers = handlers + handler
     }
 
-    suspend fun dispose() {
-        logger.d { "[dispose] no args" }
-        if (isObserving) {
+    suspend fun dispose(handler: LifecycleHandler) {
+        handlers = handlers - handler
+        if (handlers.isEmpty() && isObserving.compareAndSet(true, false)) {
             withContext(DispatcherProvider.Main) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
                 logger.v { "[dispose] unsubscribed" }
             }
         }
-        isObserving = false
-        recurringResumeEvent = false
     }
 
     override fun onResume(owner: LifecycleOwner) {
         logger.d { "[onResume] owner: $owner" }
         // ignore event when we just started observing the lifecycle
         if (recurringResumeEvent) {
-            handler.resume()
+            handlers.forEach(LifecycleHandler::resume)
         }
         recurringResumeEvent = true
     }
 
     override fun onStop(owner: LifecycleOwner) {
         logger.d { "[onStop] owner: $owner" }
-        handler.stopped()
+        handlers.forEach(LifecycleHandler::stopped)
     }
 }
 

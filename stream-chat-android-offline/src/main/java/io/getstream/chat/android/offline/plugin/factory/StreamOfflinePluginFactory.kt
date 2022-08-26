@@ -93,7 +93,8 @@ public class StreamOfflinePluginFactory(
         config = StatePluginConfig(
             backgroundSyncEnabled = config.backgroundSyncEnabled,
             userPresence = config.userPresence,
-            uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType
+            uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType,
+            useSequentialEventHandler = config.useSequentialEventHandler,
         ),
         appContext = appContext
     )
