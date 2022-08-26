@@ -17,7 +17,7 @@
 - Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
 
 ### ✅ Added
-- Method to switch between users `ChatClient.switchUser`. Can user use when switching between user to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
+- Method to switch between users `ChatClient.switchUser`. Can be used for switching between users to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
 - Added `UploadedFile` which represents an uploaded file. It contains the url to the file under the property `file`, and a thumbnail of the file under the property `thumbUrl`. Thumbnails are usually returned when uploading a video file. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
 
 ### ⚠️ Changed
