@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
@@ -69,6 +70,7 @@ internal class SyncManagerTest {
     private lateinit var user: User
 
     private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeAll
     fun beforeAll() {
@@ -99,14 +101,18 @@ internal class SyncManagerTest {
 
     @Test
     fun `when a health check event happens, a request to retry failed entities should happen`() = runTest {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
         val syncManager = buildSyncManager()
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
         val connectingEvent = HealthEvent(
             type = "type",
-            createdAt = Date(),
-            connectionId = randomString()
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
         )
 
         syncManager.onEvent(connectingEvent)

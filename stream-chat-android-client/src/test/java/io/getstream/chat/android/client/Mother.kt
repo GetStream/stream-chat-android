@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.test.randomBoolean
@@ -43,10 +44,11 @@ import kotlinx.coroutines.flow.StateFlow
 import org.mockito.kotlin.mock
 import java.util.Date
 import java.util.UUID
-
 internal object Mother {
     private val fixture: JFixture
         get() = JFixture()
+
+    private val streamDateFormatter = StreamDateFormatter()
 
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
@@ -145,8 +147,12 @@ internal object Mother {
         createdAt: Date = randomDate(),
         me: User = randomUser(),
         connectionId: String = randomString(),
-    ): ConnectedEvent =
-        ConnectedEvent(type, createdAt, me, connectionId)
+    ): ConnectedEvent {
+
+
+        ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
+    }
+
 
     fun randomChatNetworkError(
         streamCode: Int = randomInt(),
@@ -155,3 +161,4 @@ internal object Mother {
         cause: Throwable? = null
     ): ChatNetworkError = ChatNetworkError.create(streamCode, description, statusCode, cause)
 }
+

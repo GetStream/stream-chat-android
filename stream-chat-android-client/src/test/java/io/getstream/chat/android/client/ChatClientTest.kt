@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -62,13 +63,28 @@ internal class ChatClientTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
 
-        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
-        val eventB = NewMessageEvent(EventType.MESSAGE_NEW, Date(), User(), "type:id", "type", "id", Message(), 0, 0, 0)
+        val createdAt = Date()
+        val rawCreatedAt = StreamDateFormatter().format(createdAt)
+
+        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
+        val eventB = NewMessageEvent(
+            EventType.MESSAGE_NEW,
+            createdAt,
+            rawCreatedAt,
+            User(),
+            "type:id",
+            "type",
+            "id",
+            Message(),
+            0,
+            0,
+            0
+        )
         val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-        val eventD = UnknownEvent("d", Date(), null, emptyMap<Any, Any>())
-        val eventE = UnknownEvent("e", Date(), null, mapOf<Any, Any>("cid" to "myCid"))
-        val eventF = UnknownEvent("f", Date(), null, emptyMap<Any, Any>())
+        val eventD = UnknownEvent("d", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
+        val eventE = UnknownEvent("e", createdAt, rawCreatedAt, null, mapOf<Any, Any>("cid" to "myCid"))
+        val eventF = UnknownEvent("f", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
     }
 
     lateinit var api: ChatApi
@@ -80,6 +96,7 @@ internal class ChatClientTest {
     val user = Mother.randomUser { id = userId }
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
+    private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
     fun setUp() {
@@ -246,7 +263,7 @@ internal class ChatClientTest {
     @ExperimentalCoroutinesApi
     fun `Sync with empty cids`() = runTest {
         /* Given */
-        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+        whenever(api.getSyncHistory(any(), any<Date>())) doReturn TestCall(
             Result.error(
                 ChatNetworkError.create(
                     statusCode = 400,
@@ -267,12 +284,15 @@ internal class ChatClientTest {
     fun `Sync with nonempty cids`() = runTest {
         /* Given */
         val date = Date()
-        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
+        val rawDate = streamDateFormatter.format(date)
+
+        whenever(api.getSyncHistory(any(), any<Date>())) doReturn TestCall(
             Result.success(
                 listOf(
                     HealthEvent(
                         type = "type",
                         createdAt = date,
+                        rawCreatedAt = rawDate,
                         connectionId = "12345"
                     )
                 )
@@ -288,6 +308,7 @@ internal class ChatClientTest {
                 HealthEvent(
                     type = "type",
                     createdAt = date,
+                    rawCreatedAt = rawDate,
                     connectionId = "12345"
                 )
             )

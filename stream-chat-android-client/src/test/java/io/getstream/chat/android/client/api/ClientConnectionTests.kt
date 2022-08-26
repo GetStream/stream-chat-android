@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -69,6 +70,11 @@ internal class ClientConnectionTests {
     private val connectionId = "connection-id"
     private val user = User().apply { id = userId }
     private val token = "token"
+    private val createdAt = Date()
+
+    private val streamDateFormatter = StreamDateFormatter()
+
+    private val rawCreatedAt = streamDateFormatter.format(createdAt)
 
     private val config = ChatClientConfig(
         "api-key",
@@ -83,7 +89,8 @@ internal class ClientConnectionTests {
 
     private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
-        Date(),
+        createdAt,
+        rawCreatedAt,
         user,
         connectionId
     )
