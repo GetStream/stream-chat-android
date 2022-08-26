@@ -122,6 +122,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -137,6 +138,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -193,9 +195,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     return@ChatTheme
                 }
 
-                if (message.id.isNotEmpty()) {
-                    MediaGalleryPreviewContentWrapper(message, attachmentPosition)
-                }
+                MediaGalleryPreviewContentWrapper(message, attachmentPosition)
             }
         }
     }
@@ -224,15 +224,22 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 topBar = { MediaGalleryPreviewTopBar(message) },
                 content = { contentPadding ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(contentPadding)
-                    ) {
-                        MediaPreviewContent(pagerState, message.attachments)
+                    if (message.id.isNotEmpty()) {
+
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPadding)
+                        ) {
+                            MediaPreviewContent(pagerState, message.attachments)
+                        }
                     }
                 },
-                bottomBar = { MediaGalleryPreviewBottomBar(message.attachments, pagerState) }
+                bottomBar = {
+                    if (message.id.isNotEmpty()) {
+                        MediaGalleryPreviewBottomBar(message.attachments, pagerState)
+                    }
+                }
             )
 
             AnimatedVisibility(
@@ -250,18 +257,20 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
             }
 
-            AnimatedVisibility(
-                visible = mediaGalleryPreviewViewModel.isShowingGallery,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                MediaGallery(
-                    pagerState = pagerState,
-                    modifier = Modifier.animateEnterExit(
-                        enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
-                        exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
+            if (message.id.isNotEmpty()) {
+                AnimatedVisibility(
+                    visible = mediaGalleryPreviewViewModel.isShowingGallery,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    MediaGallery(
+                        pagerState = pagerState,
+                        modifier = Modifier.animateEnterExit(
+                            enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
+                            exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -299,7 +308,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     message = message
                 )
 
-                MediaGalleryPreviewOptionsToggle(modifier = Modifier.weight(1f))
+                MediaGalleryPreviewOptionsToggle(
+                    modifier = Modifier.weight(1f),
+                    message = message
+                )
             }
         }
     }
@@ -320,11 +332,25 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text(
-                text = message.user.name,
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis
-            )
+            val textStyle = ChatTheme.typography.title3Bold
+            val textColor = ChatTheme.colors.textHighEmphasis
+
+            when (mediaGalleryPreviewViewModel.connectionState) {
+                ConnectionState.CONNECTED -> Text(
+                    text = message.user.name,
+                    style = textStyle,
+                    color = textColor
+                )
+                ConnectionState.CONNECTING -> NetworkLoadingIndicator(
+                    textStyle = textStyle,
+                    textColor = textColor
+                )
+                ConnectionState.OFFLINE -> Text(
+                    text = getString(R.string.stream_compose_disconnected),
+                    style = textStyle,
+                    color = textColor
+                )
+            }
 
             Timestamp(date = message.updatedAt ?: message.createdAt ?: Date())
         }
@@ -337,6 +363,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      */
     @Composable
     private fun MediaGalleryPreviewOptionsToggle(
+        message: Message,
         modifier: Modifier = Modifier,
     ) {
         Icon(
@@ -345,11 +372,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false),
-                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = true) }
+                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = true) },
+                    enabled = message.id.isNotEmpty()
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
             contentDescription = stringResource(R.string.stream_compose_image_options),
-            tint = ChatTheme.colors.textHighEmphasis
+            tint = if (message.id.isNotEmpty()) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled
         )
     }
 
@@ -924,6 +952,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     @Composable
     private fun defaultMediaOptions(message: Message): List<MediaGalleryPreviewOption> {
         val user by mediaGalleryPreviewViewModel.user.collectAsState()
+        val saveMediaColor =
+            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled
+
         val options = mutableListOf(
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_reply),
@@ -941,21 +972,24 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ),
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_save_image),
-                titleColor = ChatTheme.colors.textHighEmphasis,
+                titleColor = saveMediaColor,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_download),
-                iconColor = ChatTheme.colors.textHighEmphasis,
-                action = SaveMedia(message)
+                iconColor = saveMediaColor,
+                action = SaveMedia(message),
             )
         )
 
         if (message.user.id == user?.id) {
+            val deleteColor =
+                if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) ChatTheme.colors.errorAccent else ChatTheme.colors.disabled
+
             options.add(
                 MediaGalleryPreviewOption(
                     title = stringResource(id = R.string.stream_compose_media_gallery_preview_delete),
-                    titleColor = ChatTheme.colors.errorAccent,
+                    titleColor = deleteColor,
                     iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
-                    iconColor = ChatTheme.colors.errorAccent,
-                    action = Delete(message)
+                    iconColor = deleteColor,
+                    action = Delete(message),
                 )
             )
         }

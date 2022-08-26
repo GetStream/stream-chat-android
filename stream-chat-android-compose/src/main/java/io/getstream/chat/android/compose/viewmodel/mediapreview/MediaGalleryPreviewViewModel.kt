@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -55,7 +54,7 @@ public class MediaGalleryPreviewViewModel(
     /**
      * Represent the header title of the gallery screen.
      */
-    public var headerTitle: String by mutableStateOf("")
+    public var connectionState: ConnectionState by mutableStateOf(ConnectionState.OFFLINE)
         private set
 
     /**
@@ -74,7 +73,7 @@ public class MediaGalleryPreviewViewModel(
      * Loads the message data, which then updates the UI state to show media.
      */
     init {
-        viewModelScope.launch(DispatcherProvider.IO) {
+        viewModelScope.launch {
             fetchMessage()
             observeConnectionStateChanges()
         }
@@ -88,7 +87,6 @@ public class MediaGalleryPreviewViewModel(
 
         if (result.isSuccess) {
             this.message = result.data()
-            headerTitle = message.user.name
         }
     }
 
@@ -98,11 +96,13 @@ public class MediaGalleryPreviewViewModel(
      */
     private suspend fun observeConnectionStateChanges() {
         clientState.connectionState.collect { connectionState ->
-            // TODO finish
             when (connectionState) {
-                ConnectionState.CONNECTED -> onConnected()
-                ConnectionState.CONNECTING -> {}
-                ConnectionState.OFFLINE -> {}
+                ConnectionState.CONNECTED -> {
+                    onConnected()
+                    this.connectionState = connectionState
+                }
+                ConnectionState.CONNECTING -> this.connectionState = connectionState
+                ConnectionState.OFFLINE -> this.connectionState = connectionState
             }
         }
     }

@@ -1997,7 +1997,7 @@ public final class io/getstream/chat/android/compose/viewmodel/mediapreview/Medi
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;)V
 	public final fun deleteCurrentMediaAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun getHeaderTitle ()Ljava/lang/String;
+	public final fun getConnectionState ()Lio/getstream/chat/android/client/models/ConnectionState;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isShowingGallery ()Z
