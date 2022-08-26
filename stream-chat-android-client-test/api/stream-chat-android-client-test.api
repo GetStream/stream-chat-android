@@ -82,8 +82,6 @@ public final class io/getstream/chat/android/client/test/SynchronizedCoroutineTe
 
 public final class io/getstream/chat/android/client/test/utils/TestDataHelper {
 	public fun <init> ()V
-	public final fun calendar (IIIIII)Ljava/util/Date;
-	public static synthetic fun calendar$default (Lio/getstream/chat/android/client/test/utils/TestDataHelper;IIIIIIILjava/lang/Object;)Ljava/util/Date;
 	public final fun createMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getAttachment1 ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getChannel1 ()Lio/getstream/chat/android/client/models/Channel;
@@ -161,5 +159,10 @@ public final class io/getstream/chat/android/client/test/utils/TestDataHelper {
 	public final fun getUserMap ()Ljava/util/Map;
 	public final fun getUserStartWatchingEvent ()Lio/getstream/chat/android/client/events/UserStartWatchingEvent;
 	public final fun getWatcher1 ()Lio/getstream/chat/android/client/models/User;
+}
+
+public final class io/getstream/chat/android/client/test/utils/TestDataHelperKt {
+	public static final fun calendar (IIIIII)Ljava/util/Date;
+	public static synthetic fun calendar$default (IIIIIIILjava/lang/Object;)Ljava/util/Date;
 }
 

@@ -774,17 +774,17 @@ public class TestDataHelper {
             null
         )
     }
+}
 
-    public fun calendar(
-        year: Int,
-        month: Int,
-        date: Int,
-        hourOfDay: Int = 0,
-        minute: Int = 0,
-        seconds: Int = 0,
-    ): Date {
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, date, hourOfDay, minute, seconds)
-        return calendar.time
-    }
+public fun calendar(
+    year: Int,
+    month: Int,
+    date: Int,
+    hourOfDay: Int = 0,
+    minute: Int = 0,
+    seconds: Int = 0,
+): Date {
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month, date, hourOfDay, minute, seconds)
+    return calendar.time
 }

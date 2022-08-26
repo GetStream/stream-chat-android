@@ -148,11 +148,8 @@ internal object Mother {
         me: User = randomUser(),
         connectionId: String = randomString(),
     ): ConnectedEvent {
-
-
-        ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
+        return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
-
 
     fun randomChatNetworkError(
         streamCode: Int = randomInt(),
@@ -161,4 +158,3 @@ internal object Mother {
         cause: Throwable? = null
     ): ChatNetworkError = ChatNetworkError.create(streamCode, description, statusCode, cause)
 }
-

@@ -174,7 +174,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK,  createdAt, rawCreatedAt, ChatError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError(message = messageError))
 
         val localScope = testCoroutines.scope + Job()
         val deferred = localScope.async {
@@ -222,7 +222,6 @@ internal class ConnectUserTest {
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, connectionId)
-
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
         val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }

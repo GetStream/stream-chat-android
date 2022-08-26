@@ -58,7 +58,11 @@ public class StreamDateFormatter {
             try {
                 dateFormat.parse(rawValue)
             } catch (_: Throwable) {
-                dateFormatWithoutNanoseconds.parse(rawValue)
+                try {
+                    dateFormatWithoutNanoseconds.parse(rawValue)
+                } catch (_: Throwable) {
+                    null
+                }
             }
         }
     }
