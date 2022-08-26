@@ -32,7 +32,7 @@ import java.net.URL
 public interface AvatarIconCompatLoader {
 
     /**
-     * Create an [IconCompat] for a given user or null if it couldn't be created.
+     * Creates an [IconCompat] for a given user or null if it cannot be created.
      *
      * @param user from which the [IconCompat] should be created.
      *
