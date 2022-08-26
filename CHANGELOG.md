@@ -45,6 +45,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Removed calls to Kotlin Collection's `getOrDefault()` inside `TypingEventPruner`. The function is not available below Android API 24 and was causing exceptions. [#4100](https://github.com/GetStream/stream-chat-android/pull/4100)
 
 ### ⬆️ Improved
 
