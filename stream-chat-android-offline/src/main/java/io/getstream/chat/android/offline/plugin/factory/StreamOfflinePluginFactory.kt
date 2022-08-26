@@ -224,7 +224,7 @@ public class StreamOfflinePluginFactory(
     private fun getShuffleGiphyListener(repositoryFacade: RepositoryFacade, statePlugin: StatePlugin): ShuffleGiphyListener {
         val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
             userRepository = repositoryFacade,
-            messageRepository = chatClient.repositoryFacade
+            messageRepository = repositoryFacade
         )
 
         return ShuffleGiphyListenerComposite(
