@@ -40,14 +40,14 @@ public object NotificationHandlerFactory {
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
      * Used in SDK_INT >= VERSION_CODES.O.
-     * @param avatarIconCompactLoader Generates [IconCompat] to be shown on notifications.
+     * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
      */
     @SuppressLint("NewApi")
     public fun createNotificationHandler(
         context: Context,
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
-        avatarIconCompactLoader: AvatarIconCompatLoader = provideDefaultAvatarIconCompatLoader(context),
+        userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
@@ -56,7 +56,7 @@ public object NotificationHandlerFactory {
                     context,
                     newMessageIntentFun,
                     notificationChannelFun,
-                    avatarIconCompactLoader
+                    userIconBuilder
                 )
             } else {
                 ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
@@ -84,12 +84,12 @@ public object NotificationHandlerFactory {
         }
     }
 
-    private fun provideDefaultAvatarIconCompatLoader(context: Context): AvatarIconCompatLoader {
+    private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
         val appContext = context.applicationContext
         return runCatching {
-            Class.forName("io.getstream.chat.android.common.notifications.StreamCoilAvatarIconCompatLoader")
+            Class.forName("io.getstream.chat.android.common.notifications.StreamCoilUserIconBuilder")
                 .kotlin.primaryConstructor
-                ?.call(appContext) as AvatarIconCompatLoader
-        }.getOrDefault(DefaultAvatarIconCompatLoader(appContext))
+                ?.call(appContext) as UserIconBuilder
+        }.getOrDefault(DefaultUserIconBuilder(appContext))
     }
 }

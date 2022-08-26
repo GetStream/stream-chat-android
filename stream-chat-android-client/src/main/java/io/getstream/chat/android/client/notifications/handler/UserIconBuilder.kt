@@ -29,7 +29,7 @@ import java.net.URL
 /**
  * Creates an [IconCompat] for a given user to be shown on notifications.
  */
-public interface AvatarIconCompatLoader {
+public interface UserIconBuilder {
 
     /**
      * Creates an [IconCompat] for a given user or null if it cannot be created.
@@ -38,14 +38,14 @@ public interface AvatarIconCompatLoader {
      *
      * @return an [IconCompat] for the given user or null.
      */
-    public suspend fun loadAvatar(user: User): IconCompat?
+    public suspend fun buildIcon(user: User): IconCompat?
 }
 
 /**
- * Default implementation of [AvatarIconCompatLoader].
+ * Default implementation of [UserIconBuilder].
  */
-internal class DefaultAvatarIconCompatLoader(val context: Context) : AvatarIconCompatLoader {
-    override suspend fun loadAvatar(user: User): IconCompat? =
+internal class DefaultUserIconBuilder(val context: Context) : UserIconBuilder {
+    override suspend fun buildIcon(user: User): IconCompat? =
         user.image
             .takeUnless { it.isEmpty() }
             ?.let {

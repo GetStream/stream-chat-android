@@ -3289,10 +3289,6 @@ public final class io/getstream/chat/android/client/models/UserEntity$DefaultImp
 	public static fun getUserId (Lio/getstream/chat/android/client/models/UserEntity;)Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/notifications/handler/AvatarIconCompatLoader {
-	public abstract fun loadAvatar (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
 	public fun <init> (ZLjava/util/List;Lkotlin/jvm/functions/Function0;)V
@@ -3325,14 +3321,18 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory {
 	public static final field INSTANCE Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;
-	public final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/AvatarIconCompatLoader;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/AvatarIconCompatLoader;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
 	public abstract fun onPushDeviceGeneratorSelected ()V
+}
+
+public abstract interface class io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
+	public abstract fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {

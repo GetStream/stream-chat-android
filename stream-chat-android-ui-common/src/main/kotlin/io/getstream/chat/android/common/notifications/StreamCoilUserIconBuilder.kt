@@ -20,13 +20,13 @@ import android.content.Context
 import androidx.core.graphics.drawable.IconCompat
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.handler.AvatarIconCompatLoader
+import io.getstream.chat.android.client.notifications.handler.UserIconBuilder
 
 /**
  * Produces an [IconCompat] using Coil, which downloads and caches the user image.
  */
-public class StreamCoilAvatarIconCompatLoader(private val context: Context) : AvatarIconCompatLoader {
-    override suspend fun loadAvatar(user: User): IconCompat? =
+public class StreamCoilUserIconBuilder(private val context: Context) : UserIconBuilder {
+    override suspend fun buildIcon(user: User): IconCompat? =
         StreamImageLoader
             .instance()
             .loadAsBitmap(context, user.image, StreamImageLoader.ImageTransformation.Circle)

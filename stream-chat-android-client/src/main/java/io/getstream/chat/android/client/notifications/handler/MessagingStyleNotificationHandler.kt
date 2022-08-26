@@ -46,7 +46,7 @@ internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
-    private val avatarIconCompatLoader: AvatarIconCompatLoader,
+    private val userIconBuilder: UserIconBuilder,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -150,7 +150,7 @@ internal class MessagingStyleNotificationHandler(
         Person.Builder()
             .setKey(id)
             .setName(personName(context))
-            .setIcon(avatarIconCompatLoader.loadAvatar(this))
+            .setIcon(userIconBuilder.buildIcon(this))
             .build()
 
     private fun User.personName(context: Context): String =

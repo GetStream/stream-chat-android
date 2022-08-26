@@ -63,7 +63,7 @@
 
 ### ✅ Added
 - Added `hasCommands` field to `MessageComposerState` to set commands button visibility. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
-- Add an implementation of `AvatarIconCompatLoader` which uses Coil to load the avatar picture. [#4069](https://github.com/GetStream/stream-chat-android/pull/4069)
+- Add an implementation of `UserIconBuilder` which uses Coil to load the avatar picture. [#4069](https://github.com/GetStream/stream-chat-android/pull/4069)
 
 ### ⚠️ Changed
 
