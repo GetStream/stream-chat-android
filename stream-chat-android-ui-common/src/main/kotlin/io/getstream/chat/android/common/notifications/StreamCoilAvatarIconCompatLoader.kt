@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.AvatarIconCompatLoader
 
 /**
- * An [AvatarIconCompatLoader] that use Coil to downloads an caches the user bitmap to generate an [IconCompat]
+ * Produces an [IconCompat] using Coil, which downloads and caches the user image.
  */
 public class StreamCoilAvatarIconCompatLoader(private val context: Context) : AvatarIconCompatLoader {
     override suspend fun loadAvatar(user: User): IconCompat? =
