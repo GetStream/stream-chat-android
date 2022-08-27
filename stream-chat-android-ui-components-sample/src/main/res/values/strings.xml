@@ -42,6 +42,7 @@
     <!--Home screen-->
     <string name="home_drawer_new_direct_message">New Direct Message</string>
     <string name="home_drawer_new_group">New Group</string>
+    <string name="home_drawer_switch_user">Switch User</string>
     <string name="home_drawer_sign_out">Sign Out</string>
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
