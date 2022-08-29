@@ -304,6 +304,13 @@ internal constructor(
                         setUser(user)
                     }
                 }
+                is NewMessageEvent -> {
+                    notifications.onNewMessageEvent(event)
+                }
+                is ConnectingEvent -> {
+                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
+                }
+
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
@@ -320,12 +327,7 @@ internal constructor(
                     }
                     clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
                 }
-                is NewMessageEvent -> {
-                    notifications.onNewMessageEvent(event)
-                }
-                is ConnectingEvent -> {
-                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
-                }
+
                 else -> Unit // Ignore other events
             }
 
@@ -480,6 +482,7 @@ internal constructor(
         tokenProvider: CacheableTokenProvider,
         isAnonymous: Boolean,
     ) {
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'" }
         _repositoryFacade = createRepositoryFacade(createReposotiryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
         // fire a handler here that the chatDomain and chatUI can use
@@ -531,16 +534,79 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(scope) {
-            clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
-            logger.d { "[connectUser] userId: '${user.id}', username: '${user.name}'" }
-            setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
-                logger.v {
-                    "[connectUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                    }"
-                }
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
+        }
+    }
+
+    private suspend fun connectUserSuspend(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long?,
+    ): Result<ConnectionData> {
+        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
+        logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
+        return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
+            logger.v {
+                "[connectUserSuspend] completed: ${
+                result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                }"
             }
         }
+    }
+
+    /**
+     * Changes the user. Disconnects the current user and connects to a new one.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
+     *
+     * This method disconnects from the SDK and right after connects to it with the new User.
+     *
+     * @see TokenProvider
+     *
+     * @param user The user to set.
+     * @param tokenProvider A [TokenProvider] implementation.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    public fun switchUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
+    ): Call<ConnectionData> {
+        return CoroutineCall(scope) {
+            logger.d { "[switchUser] user.id: '${user.id}'" }
+            disconnectSuspend(flushPersistence = true)
+            onDisconnectionComplete()
+            connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
+                logger.v { "[switchUser] completed('${user.id}')" }
+            }
+        }
+    }
+
+    /**
+     * Changes the user. Disconnects the current user and connects to a new one.
+     * The [tokenProvider] implementation is used for the initial token,
+     * and it's also invoked whenever the user's token has expired, to fetch a new token.
+     *
+     * This method disconnects from the SDK and right after connects to it with the new User.
+     *
+     * @see TokenProvider
+     *
+     * @param user The user to set.
+     * @param token Instance of JWT token.
+     * @param timeoutMilliseconds The timeout in milliseconds to be waiting until the connection is established.
+     *
+     * @return Executable [Call] responsible for connecting the user.
+     */
+    public fun switchUser(
+        user: User,
+        token: String,
+        timeoutMilliseconds: Long? = null,
+        onDisconnectionComplete: () -> Unit = {}
+    ): Call<ConnectionData> {
+        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
     }
 
     /**
@@ -1100,10 +1166,12 @@ internal constructor(
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
-        logger.d { "[disconnectSuspend] flushPersistence: $flushPersistence" }
+        val userId = clientState.user.value?.id
+        logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
+        val currentJob = currentCoroutineContext()[Job]
+        scope.coroutineContext.cancelChildrenExcept(currentJob)
+
         notifications.onLogout()
-        clientState.toMutableState()?.clearState()
-        clientState.toMutableState()?.setInitializionState(InitializationState.NOT_INITIALIZED)
         getCurrentUser().let(initializationCoordinator::userDisconnected)
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
@@ -1117,11 +1185,15 @@ internal constructor(
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
+
         lifecycleObserver.dispose(lifecycleHandler)
-        appSettingsManager.clear()
+
         _repositoryFacade = null
-        val currentJob = currentCoroutineContext()[Job]
-        scope.coroutineContext.cancelChildrenExcept(currentJob)
+        appSettingsManager.clear()
+
+        clientState.toMutableState()?.clearState()
+
+        logger.v { "[disconnectSuspend] completed('$userId')" }
     }
 
     /**
