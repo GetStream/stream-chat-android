@@ -31,7 +31,9 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageListenerStateTest {
@@ -41,6 +43,7 @@ internal class SendMessageListenerStateTest {
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.threadFromMessage(any())) doReturn threadLogic
+        on(it.getMessageFromId(any())) doReturn null
     }
 
     private val sendMessageListener = SendMessageListenerState(logicRegistry)
@@ -87,6 +90,31 @@ internal class SendMessageListenerStateTest {
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            }
+        )
+    }
+
+    @Test
+    fun `when message is already in state, it should not be upserted again`() = runTest {
+        whenever(logicRegistry.getMessageFromId(any())) doReturn randomMessage(syncStatus = SyncStatus.COMPLETED)
+
+        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.success(testMessage),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic, never()).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            }
+        )
+        verify(threadLogic, never()).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             }
         )
     }

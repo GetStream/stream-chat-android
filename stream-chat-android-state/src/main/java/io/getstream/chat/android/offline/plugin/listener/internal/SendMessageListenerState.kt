@@ -53,6 +53,9 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         message: Message,
     ) {
         val cid = "$channelType:$channelId"
+
+        if (logic.getMessageFromId(message.id)?.syncStatus == SyncStatus.COMPLETED) return
+
         if (result.isSuccess) {
             handleSendMessageSuccess(cid, logic, result.data())
         } else {

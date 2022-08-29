@@ -108,6 +108,11 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    fun getMessageFromId(messageId: String): Message? {
+        return channelFromMessageId(messageId)?.getMessage(messageId)
+            ?: threadFromMessageId(messageId)?.getMessage(messageId)
+    }
+
     /**
      * This method returns [ChannelLogic] if the messages passed is not only in a thread. Use this to avoid
      * updating [ChannelLogic] for a messages that is only inside [ThreadLogic]. If you get null as a result,

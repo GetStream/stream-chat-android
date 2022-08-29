@@ -27,10 +27,14 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageListenerDatabaseTest {
@@ -42,6 +46,8 @@ internal class SendMessageListenerDatabaseTest {
 
     @Test
     fun `when request to send messages is successful, the message should be upserted with correct status`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
@@ -62,6 +68,8 @@ internal class SendMessageListenerDatabaseTest {
 
     @Test
     fun `when request to send messages fails, the message should be upserted with correct status`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
@@ -76,6 +84,26 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
+            eq(false)
+        )
+    }
+
+    @Test
+    fun `when message is already in database and completed, it should not be inserted again`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn randomMessage(syncStatus = SyncStatus.COMPLETED)
+
+        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+
+        sendMessageListenerDatabase.onMessageSendResult(
+            result = Result.error(ChatError()),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(userRepository, never()).insertUsers(testMessage.users())
+        verify(messageRepository, never()).insertMessage(
+            argThat { message -> message.id == testMessage.id },
             eq(false)
         )
     }

@@ -58,6 +58,8 @@ internal class SendMessageListenerDatabase(
         message: Message,
     ) {
         val cid = "$channelType:$channelId"
+        if (messageRepository.selectMessage(message.id)?.syncStatus == SyncStatus.COMPLETED) return
+
         if (result.isSuccess) {
             handleSendMessageSuccess(cid, result.data())
         } else {
