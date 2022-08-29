@@ -143,6 +143,10 @@ internal class SyncManagerTest {
 
     @Test
     fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() = runTest {
+        /*
+         *  This checks if the SDK is avoiding loops in the sync. We don't want to handle the same event on every sync,
+         *  because this can waste resource and/or some events may not be idempotent.
+         */
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         val testSyncState = SyncState(
@@ -150,92 +154,6 @@ internal class SyncManagerTest {
             activeChannelIds = emptyList(),
             lastSyncedAt = createdAt,
             rawLastSyncedAt = rawCreatedAt,
-            markedAllReadAt = createdAt,
-        )
-
-        val syncManager = buildSyncManager()
-
-        val mockedChatEvent: ChatEvent = mock {
-            on(it.createdAt) doReturn createdAt
-            on(it.rawCreatedAt) doReturn rawCreatedAt
-        }
-
-        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
-        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
-
-        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.success(listOf(mockedChatEvent))
-        )
-        val connectingEvent = ConnectedEvent(
-            type = "type",
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt,
-            connectionId = randomString(),
-            me = randomUser()
-        )
-
-        syncManager.onEvent(connectingEvent)
-
-        verify(_syncEvents, never()).emit(any())
-    }
-
-    @Test
-    fun `when one event of time later of last sync arrive, it should be propagated`() = runTest {
-        val createdAt = Date()
-        val rawCreatedAt = streamDateFormatter.format(createdAt)
-
-        val laterCreatedAt = Date(createdAt.time + 10000)
-        val laterRawCreatedAt = streamDateFormatter.format(laterCreatedAt)
-
-        val testSyncState = SyncState(
-            userId = randomString(),
-            activeChannelIds = emptyList(),
-            lastSyncedAt = createdAt,
-            rawLastSyncedAt = rawCreatedAt,
-            markedAllReadAt = createdAt,
-        )
-
-        val syncManager = buildSyncManager()
-
-        val mockedChatEvent: ChatEvent = mock {
-            on(it.createdAt) doReturn laterCreatedAt
-            on(it.rawCreatedAt) doReturn laterRawCreatedAt
-        }
-
-        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
-        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
-
-        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.success(listOf(mockedChatEvent))
-        )
-        val connectingEvent = ConnectedEvent(
-            type = "type",
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt,
-            connectionId = randomString(),
-            me = randomUser()
-        )
-
-        syncManager.onEvent(connectingEvent)
-
-        verify(_syncEvents).emit(any())
-    }
-
-    @Test
-    fun `when one event of time earlier of last sync arrive, it should not be propagated`() = runTest {
-        val createdAt = Date()
-        val rawCreatedAt = streamDateFormatter.format(createdAt)
-
-        val laterCreatedAt = Date(createdAt.time + 10000)
-        val laterRawCreatedAt = streamDateFormatter.format(laterCreatedAt)
-
-        val testSyncState = SyncState(
-            userId = randomString(),
-            activeChannelIds = emptyList(),
-            lastSyncedAt = laterCreatedAt,
-            rawLastSyncedAt = laterRawCreatedAt,
             markedAllReadAt = createdAt,
         )
 
