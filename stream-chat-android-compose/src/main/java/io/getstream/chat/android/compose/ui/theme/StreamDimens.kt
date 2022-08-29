@@ -284,7 +284,6 @@ constructor(
             selectedChannelMenuUserItemAvatarSize = 64.dp,
             attachmentsContentImageWidth = 250.dp,
             attachmentsContentImageGridSpacing = 2.dp,
-            attachmentsContentImageHeight = 200.dp,
             attachmentsContentGiphyWidth = 250.dp,
             attachmentsContentGiphyHeight = 200.dp,
             attachmentsContentLinkWidth = 250.dp,
