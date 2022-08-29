@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData

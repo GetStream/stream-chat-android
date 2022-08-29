@@ -108,14 +108,6 @@ public final class com/getstream/sdk/chat/utils/DateFormatter$Companion {
 public final class com/getstream/sdk/chat/utils/DateFormatterKt {
 }
 
-public abstract class com/getstream/sdk/chat/utils/LegacyDateFormatter : com/getstream/sdk/chat/utils/DateFormatter {
-	public fun <init> ()V
-	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
-	public final fun formatDate (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
-	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
-	public final fun formatTime (Lorg/threeten/bp/LocalTime;)Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/utils/MediaStringUtil {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/utils/MediaStringUtil;
 	public static final fun convertFileSizeByteCount (J)Ljava/lang/String;
@@ -165,33 +157,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
-}
-
-public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public fun invalidate ()V
-	protected fun onDraw (Landroid/graphics/Canvas;)V
-	protected fun onMeasure (II)V
-	protected fun onSizeChanged (IIII)V
-	protected abstract fun paintMaskCanvas (Landroid/graphics/Canvas;Landroid/graphics/Paint;II)V
-	public fun setSquare (Z)V
-}
-
-public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView : com/getstream/sdk/chat/utils/roundedImageView/PorterImageView {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	protected fun paintMaskCanvas (Landroid/graphics/Canvas;Landroid/graphics/Paint;II)V
-	public fun setShape (Landroid/content/Context;Landroid/graphics/drawable/Drawable;)V
-}
-
-public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
-	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun clear ()V
-	public fun onKeystroke ()V
 }
 
 public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
