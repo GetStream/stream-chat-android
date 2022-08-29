@@ -18,6 +18,9 @@ package io.getstream.chat.android.client.api2.model.dto.utils.internal
 
 import java.util.Date
 
+/**
+ * DTO to keep serialized date and also the original Date as Stirng as sent by backend.
+ */
 internal data class ExactDate(
     internal val date: Date,
     internal val rawDate: String,
