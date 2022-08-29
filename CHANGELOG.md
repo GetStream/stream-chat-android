@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 - Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
 - Add an option to use a custom implementation when showing avatars on Push Notifications when `MessagingStyleNotificationHandler` is used. [#4069](https://github.com/GetStream/stream-chat-android/pull/4069)
+- Improving precision in time in the endpoint that syncs information between SDK and Stream's backend to make sure that undesired events are not coming due to a incorrect round down in time or desired events are not being ignored due to a incorrect round up of time when serializing/desirializing time in the SDK. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
 
 ### ✅ Added
 - Method to switch between users `ChatClient.switchUser`. Can be used for switching between users to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
