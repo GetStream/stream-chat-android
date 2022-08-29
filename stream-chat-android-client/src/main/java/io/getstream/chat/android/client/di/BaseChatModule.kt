@@ -23,6 +23,7 @@ import android.net.ConnectivityManager
 import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
@@ -50,8 +51,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
-import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -76,7 +75,7 @@ import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
@@ -107,6 +106,10 @@ internal open class BaseChatModule(
         StreamFileUploader(buildRetrofitCdnApi())
     }
 
+    val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(lifecycle) }
+    val networkStateProvider: NetworkStateProvider by lazy {
+        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+    }
     val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
@@ -125,9 +128,6 @@ internal open class BaseChatModule(
     fun socket(): ChatSocket = defaultSocket
 
     fun experimentalSocket() = chatSocketExperimental
-
-    fun networkLifecyclePublisher(): NetworkLifecyclePublisher =
-        NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
 
     @Deprecated(
         message = "Use StreamLog instead.",
@@ -237,7 +237,7 @@ internal open class BaseChatModule(
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
-        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+        networkStateProvider,
         parser,
         networkScope,
     )
@@ -245,17 +245,14 @@ internal open class BaseChatModule(
     private fun buildExperimentalChatSocket(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
-    ) = ChatSocketExperimental(
+    ) = ChatSocketExperimental.create(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
         networkScope,
-        parser,
-        listOf(
-            StreamLifecyclePublisher(lifecycle),
-            networkLifecyclePublisher(),
-        ),
+        lifecycleObserver,
+        networkStateProvider,
     )
 
     @Suppress("RemoveExplicitTypeArguments")

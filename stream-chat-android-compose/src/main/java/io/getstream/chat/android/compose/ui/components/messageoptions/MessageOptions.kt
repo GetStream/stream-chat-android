@@ -135,7 +135,8 @@ public fun defaultMessageOptionsState(
     val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
     // user capabilities
-    val canReplyToMessage = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+    val canQuoteMessage = ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
+    val canThreadReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
     val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
     val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
     val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
@@ -152,7 +153,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (isMessageSynced && canReplyToMessage) {
+        if (isMessageSynced && canQuoteMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
@@ -161,7 +162,7 @@ public fun defaultMessageOptionsState(
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
         } else null,
-        if (!isInThread && isMessageSynced && canReplyToMessage) {
+        if (!isInThread && isMessageSynced && canThreadReply) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),

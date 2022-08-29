@@ -20,6 +20,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.ConnectionData
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
@@ -35,9 +37,13 @@ class UserLoginViewModel : ViewModel() {
     val state: LiveData<State> = _state
     val events: LiveData<Event<UiEvent>> = _events
 
-    fun init() {
+    private var switchUser: Boolean = false
+
+    fun init(switchUser: Boolean) {
+        this.switchUser = switchUser
+
         val user = App.instance.userRepository.getUser()
-        if (user != SampleUser.None) {
+        if (user != SampleUser.None && !switchUser) {
             authenticateUser(user)
         } else {
             _state.postValue(State.AvailableUsers(AppConfig.availableUsers))
@@ -52,7 +58,12 @@ class UserLoginViewModel : ViewModel() {
     }
 
     private fun authenticateUser(user: SampleUser) {
+        if (switchUser) {
+            App.instance.userRepository.clearUser()
+        }
+
         App.instance.userRepository.setUser(user)
+
         val chatUser = ChatUser().apply {
             id = user.id
             image = user.image
@@ -60,20 +71,24 @@ class UserLoginViewModel : ViewModel() {
         }
 
         ChatClient.instance().run {
-            if (getCurrentUser() == null) {
-                connectUser(chatUser, user.token)
-                    .enqueue { result ->
-                        if (result.isSuccess) {
-                            logger.d { "User set successfully" }
-                        } else {
-                            _events.postValue(Event(UiEvent.Error(result.error().message)))
-                            logger.d { "Failed to set user ${result.error()}" }
-                        }
-                    }
+            if (switchUser) {
+                switchUser(chatUser, user.token) {
+                    _events.postValue(Event(UiEvent.RedirectToChannels))
+                }.enqueue(::handleUserConnection)
+            } else if (getCurrentUser() == null) {
+                connectUser(chatUser, user.token).enqueue(::handleUserConnection)
+                _events.postValue(Event(UiEvent.RedirectToChannels))
             }
         }
+    }
 
-        _events.postValue(Event(UiEvent.RedirectToChannels))
+    private fun handleUserConnection(result: Result<ConnectionData>) {
+        if (result.isSuccess) {
+            logger.d { "User set successfully" }
+        } else {
+            _events.postValue(Event(UiEvent.Error(result.error().message)))
+            logger.d { "Failed to set user ${result.error()}" }
+        }
     }
 
     sealed class State {
@@ -89,5 +104,9 @@ class UserLoginViewModel : ViewModel() {
         object RedirectToChannels : UiEvent()
         object RedirectToComponentBrowser : UiEvent()
         data class Error(val errorMessage: String?) : UiEvent()
+    }
+
+    internal companion object {
+        internal const val EXTRA_SWITCH_USER = "EXTRA_SWITCH_USER"
     }
 }

@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.experimental.socket
+package io.getstream.chat.android.common.notifications
 
-/**
- * A wrapper that contains timestamp along with the [value].
- */
-internal data class Timed<T>(val value: T, val time: Long)
+import android.content.Context
+import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
+import kotlin.reflect.full.primaryConstructor
+
+internal class StreamCoilUserIconBuilderTest {
+
+    private val FULL_CLASS_NAME = "io.getstream.chat.android.common.notifications.StreamCoilUserIconBuilder"
+
+    @Test
+    fun `Verify StreamCoilUserIconBuilder can be created by reflection`() {
+        Class.forName(FULL_CLASS_NAME)
+            .kotlin.primaryConstructor
+            ?.call(mock<Context>()) as StreamCoilUserIconBuilder
+    }
+}

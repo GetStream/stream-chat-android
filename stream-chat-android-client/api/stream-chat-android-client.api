@@ -149,6 +149,10 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun subscribeFor ([Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
+	public final fun switchUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/call/Call;
+	public final fun switchUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun switchUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/Long;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -917,6 +921,10 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
 	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+}
+
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable;
 }
 
 public final class io/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler$DefaultImpls {
@@ -3379,14 +3387,18 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory {
 	public static final field INSTANCE Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;
-	public final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;Landroid/content/Context;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
 	public abstract fun onPushDeviceGeneratorSelected ()V
+}
+
+public abstract interface class io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
+	public abstract fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
