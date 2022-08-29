@@ -970,6 +970,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setChannelItemClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelLeaveClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
 	public final fun setChannelListItemPredicate (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate;)V
+	public final fun setChannelListSubmittedHandler (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListSubmittedHandler;)V
 	public final fun setChannelListUpdateListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
@@ -1005,6 +1006,10 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Cha
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListItemPredicate {
 	public abstract fun predicate (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListSubmittedHandler {
+	public abstract fun onListSubmitted (Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelListUpdateListener {

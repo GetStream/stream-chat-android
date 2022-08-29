@@ -84,6 +84,7 @@
 
 ### ✅ Added
 - Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
+- Added `ChannelListSubmittedHandler` to `ChannelListView` to handle list state after new items have been submitted. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ⚠️ Changed
 

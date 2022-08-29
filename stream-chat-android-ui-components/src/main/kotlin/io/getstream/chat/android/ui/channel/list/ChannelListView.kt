@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListen
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
+import io.getstream.chat.android.ui.channel.list.internal.ScrollPauseLinearLayoutManager
 import io.getstream.chat.android.ui.channel.list.internal.SimpleChannelListView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -73,6 +74,16 @@ public class ChannelListView : FrameLayout {
             is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel
             is ChannelListViewModel.ErrorEvent.LeaveChannelError -> R.string.stream_ui_channel_list_error_leave_channel
         }.let(::showToast)
+    }
+
+    private var channelListSubmittedHandler: ChannelListSubmittedHandler = ChannelListSubmittedHandler { items ->
+        (layoutManager as? ScrollPauseLinearLayoutManager)?.let { layoutManager ->
+            if (items.contains(ChannelListItem.LoadingMoreItem) &&
+                layoutManager.findLastVisibleItemPosition() in items.size - 2..items.size
+            ) {
+                layoutManager.scrollToPosition(items.size - 1)
+            }
+        }
     }
 
     private lateinit var style: ChannelListViewStyle
@@ -356,6 +367,7 @@ public class ChannelListView : FrameLayout {
         simpleChannelListView.setChannels(filteredChannels) {
             restoreLayoutManagerState()
             channelListUpdateListener?.onChannelListUpdate(filteredChannels)
+            channelListSubmittedHandler.onListSubmitted(filteredChannels)
         }
     }
 
@@ -402,6 +414,13 @@ public class ChannelListView : FrameLayout {
 
     public fun hasChannels(): Boolean {
         return simpleChannelListView.hasChannels()
+    }
+
+    /**
+     * Sets the [ChannelListSubmittedHandler] after the list has been submitted to the view.
+     */
+    public fun setChannelListSubmittedHandler(channelListSubmittedHandler: ChannelListSubmittedHandler) {
+        this.channelListSubmittedHandler = channelListSubmittedHandler
     }
 
     private companion object {
@@ -452,6 +471,13 @@ public class ChannelListView : FrameLayout {
                     .show(fragmentManager, null)
             }
         }
+    }
+
+    /**
+     * Called when the new channels list has been submitted to the adapter.
+     */
+    public fun interface ChannelListSubmittedHandler {
+        public fun onListSubmitted(items: List<ChannelListItem>)
     }
 
     public fun interface UserClickListener {
