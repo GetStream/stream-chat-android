@@ -77,6 +77,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
@@ -122,6 +123,7 @@ internal class EventHandlerSequential(
     private val repos: RepositoryFacade,
     private val sideEffect: suspend () -> Unit,
     private val syncedEvents: Flow<List<ChatEvent>>,
+    private val startStopBuffer: StartStopBuffer<BatchEvent> = StartStopBuffer(bufferLimit = 500),
     scope: CoroutineScope,
 ) : EventHandler {
 
@@ -132,9 +134,7 @@ internal class EventHandlerSequential(
 
     private val mutex = Mutex()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
-    private val socketEventCollector = SocketEventCollector(scope) { batchEvent ->
-        handleBatchEvent(batchEvent)
-    }
+    private val socketEventCollector = SocketEventCollector(scope, startStopBuffer::enqueueData)
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
 
@@ -156,15 +156,14 @@ internal class EventHandlerSequential(
             scope.launch {
                 syncedEvents.collect {
                     logger.i { "[onSyncEventsReceived] events.size: ${it.size}" }
-                    handleBatchEvent(
-                        BatchEvent(sortedEvents = it, isFromHistorySync = true)
-                    )
+                    startStopBuffer.enqueueData(BatchEvent(sortedEvents = it, isFromHistorySync = true))
                 }
             }
             scope.launch {
                 socketEvents.collect { event ->
                     initJob.join()
                     sideEffect()
+
                     socketEventCollector.collect(event)
                 }
             }
@@ -175,7 +174,19 @@ internal class EventHandlerSequential(
                     StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
                 }
             }
+
+            startStopBuffer.subscribe(::handleBatchEvent)
         }
+    }
+
+    internal fun holdEvents() {
+        logger.d { "Events on hold" }
+        startStopBuffer.hold()
+    }
+
+    internal fun releaseEvents() {
+        logger.d { "Events on released" }
+        startStopBuffer.active()
     }
 
     /**
