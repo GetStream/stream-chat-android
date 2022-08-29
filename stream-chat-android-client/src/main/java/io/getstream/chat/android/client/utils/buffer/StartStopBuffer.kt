@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.utils
+package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -26,13 +26,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private const val NO_LIMIT = -1
 
-public class StartStopBuffer<T>(
-    private val bufferLimit: Int = NO_LIMIT
-) {
+public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT) {
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
-    private var func: ((T) -> Unit)? = null
+    private var func: (suspend (T) -> Unit)? = null
 
     public fun hold() {
         active.set(false)
@@ -60,7 +58,7 @@ public class StartStopBuffer<T>(
 
     private fun aboveSafetyThreshold(): Boolean = events.size > bufferLimit && bufferLimit != NO_LIMIT
 
-    public fun subscribe(func: (T) -> Unit) {
+    public fun subscribe(func: suspend (T) -> Unit) {
         this.func = func
 
         if (active.get()) {

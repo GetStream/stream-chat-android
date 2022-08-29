@@ -227,7 +227,7 @@ public class StreamStatePluginFactory(
 
         return StatePlugin(
             activeUser = user,
-            queryChannelsListener = QueryChannelsListenerImpl(logic),
+            queryChannelsListener = QueryChannelsListenerImpl(logic, eventHandler as EventHandlerSequential),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
@@ -271,7 +271,7 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
-        return when (useSequentialEventHandler) {
+        return when (true) {
             true -> EventHandlerSequential(
                 scope = scope,
                 currentUserId = user.id,

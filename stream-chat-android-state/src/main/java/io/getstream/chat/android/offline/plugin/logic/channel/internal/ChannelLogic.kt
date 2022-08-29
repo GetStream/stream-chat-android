@@ -105,7 +105,7 @@ internal class ChannelLogic(
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
+    private val logger = StreamLog.getLogger("ChannelLogic")
 
     val cid: String
         get() = mutableState.cid
@@ -518,6 +518,7 @@ internal class ChannelLogic(
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
+
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.toggleHidden(false)
             }
@@ -540,7 +541,7 @@ internal class ChannelLogic(
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                // channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {

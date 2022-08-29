@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -31,13 +32,17 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
  *
  * @param logic [LogicRegistry] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  */
-internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : QueryChannelsListener {
+internal class QueryChannelsListenerImpl(
+    private val logic: LogicRegistry,
+    private val eventHandlerSequential: EventHandlerSequential
+    ) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
+        eventHandlerSequential.holdEvents()
         logic.queryChannels(request).run {
             onQueryChannelsRequest(request)
             queryOffline(request.toPagination())
@@ -46,6 +51,7 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : Que
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logic.queryChannels(request).onQueryChannelsResult(result, request)
+        eventHandlerSequential.releaseEvents()
     }
 
     private companion object {
