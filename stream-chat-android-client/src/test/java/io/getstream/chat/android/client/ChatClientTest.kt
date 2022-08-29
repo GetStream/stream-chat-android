@@ -263,7 +263,7 @@ internal class ChatClientTest {
     @ExperimentalCoroutinesApi
     fun `Sync with empty cids`() = runTest {
         /* Given */
-        whenever(api.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.error(
                 ChatNetworkError.create(
                     statusCode = 400,
@@ -286,7 +286,7 @@ internal class ChatClientTest {
         val date = Date()
         val rawDate = streamDateFormatter.format(date)
 
-        whenever(api.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.success(
                 listOf(
                     HealthEvent(
