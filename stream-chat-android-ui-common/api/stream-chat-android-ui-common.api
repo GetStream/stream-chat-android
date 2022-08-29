@@ -279,6 +279,11 @@ public final class io/getstream/chat/android/common/model/SendAnyway : io/getstr
 	public static final field INSTANCE Lio/getstream/chat/android/common/model/SendAnyway;
 }
 
+public final class io/getstream/chat/android/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
+	public fun <init> (Landroid/content/Context;)V
+	public fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
