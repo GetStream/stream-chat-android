@@ -45,11 +45,6 @@ public fun ChannelListViewModel.bindView(
         }
 
         var list: List<ChannelListItem> = state?.channels?.map(ChannelListItem::ChannelItem) ?: emptyList()
-
-        list.filterIsInstance<ChannelListItem.ChannelItem>().map { it.channel.cid }.forEach {
-            println(it)
-        }
-
         if (paginationState?.loadingMore == true) {
             list = list + ChannelListItem.LoadingMoreItem
         }
