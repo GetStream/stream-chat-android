@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
-import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
@@ -40,46 +40,27 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class ChannelListFragment : Fragment() {
 
-    var isPinnedMode: Boolean = false
-        set(value) {
-            field = value
-            viewModel.setFilters(filter)
+    private val viewModel: ChannelListViewModel by viewModels {
+        val user = App.instance.userRepository.getUser()
+        val userId = if (user == SampleUser.None) {
+            ChatClient.instance().getCurrentUser()?.id ?: ""
+        } else {
+            user.id
         }
 
-    val pinned = listOf(
-        // "messaging:sample-app-channel-109",
-        // "messaging:c92c5e2d-a547-4337-a3bd-2d0c29b71130",
-        // "messaging:sample-app-channel-6",
-        "messaging:!members-QlpghUGsUksIlxfJHiq3mkIjsbPCK7Peipy767bzjnw",
-        // "messaging:!members-HmbzW3-bq4cZ76SWuXt9OFIn17cOB6HGi8i0uwCUDag",
-        // "essaging:1e570561-5f5e-4606-af27-c0153adb8962",
-        // "messaging:sample-app-channel-57",
-        // "messaging:8d29d9ee-445a-43f6-841c-e00d91d32c42"
-    )
-
-    val filter: FilterObject
-        get() = if (isPinnedMode) {
-        val user = App.instance.userRepository.getUser()
-        Filters.and(
-            Filters.`in`("members", listOf(user.id)),
-            Filters.`in`("cid", pinned),
-        )
-    } else {
-        val user = App.instance.userRepository.getUser()
-        Filters.and(
-            Filters.`in`("members", listOf(user.id)),
-        )
-    }
-
-    private val viewModel: ChannelListViewModel by viewModels {
         ChannelListViewModelFactory(
-            filter = filter,
+            filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf(userId)),
+                Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+            ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
     }
@@ -103,10 +84,6 @@ class ChannelListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.switchFilter.setOnCheckedChangeListener { _, isChecked ->
-            isPinnedMode = isChecked
-        }
-
         setupOnClickListeners()
         viewModel.bindView(binding.channelsView, viewLifecycleOwner)
         searchViewModel.bindView(binding.searchResultListView, this)
