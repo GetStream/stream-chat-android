@@ -55,8 +55,7 @@ internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : Que
                 channelLimit = limit,
                 channelOffset = offset,
                 messageLimit = messageLimit,
-                memberLimit = memberLimit,
-                isFilterChange = isFilterChange
+                memberLimit = memberLimit
             ).toAnyChannelPaginationRequest()
     }
 }

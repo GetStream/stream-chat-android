@@ -574,7 +574,6 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun getState ()Z
 	public fun getWatch ()Z
 	public fun hashCode ()I
-	public final fun isFilterChange ()Z
 	public final fun isFirstPage ()Z
 	public synthetic fun noPresence ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noPresence ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
@@ -582,7 +581,6 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun noState ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
-	public final fun setFilterChange (Z)V
 	public final fun setLimit (I)V
 	public final fun setMemberLimit (I)V
 	public final fun setMessageLimit (I)V
@@ -3597,10 +3595,8 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public final fun getWatcherLimit ()I
 	public final fun getWatcherOffset ()I
-	public final fun isFilterChange ()Z
 	public final fun setChannelLimit (I)V
 	public final fun setChannelOffset (I)V
-	public final fun setFilterChange (Z)V
 	public final fun setMemberLimit (I)V
 	public final fun setMemberOffset (I)V
 	public final fun setMessageFilterDirection (Lio/getstream/chat/android/client/api/models/Pagination;)V

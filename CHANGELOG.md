@@ -5,7 +5,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `isFilterChange` to `QueryChannelsRequest` to set the correct loading state when changing filters. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ⚠️ Changed
 

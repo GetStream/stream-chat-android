@@ -190,9 +190,7 @@ public class ChannelListViewModel(
                 limit = limit,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
-            ).apply {
-                isFilterChange = true
-            }
+            )
         queryChannelsState =
             chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope)
 

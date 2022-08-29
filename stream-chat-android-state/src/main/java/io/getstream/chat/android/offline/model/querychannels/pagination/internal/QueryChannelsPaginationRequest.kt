@@ -24,8 +24,7 @@ internal data class QueryChannelsPaginationRequest(
     val channelOffset: Int = 0,
     val channelLimit: Int = 30,
     val messageLimit: Int = 10,
-    val memberLimit: Int,
-    val isFilterChange: Boolean = false
+    val memberLimit: Int
 ) {
 
     val isFirstPage: Boolean

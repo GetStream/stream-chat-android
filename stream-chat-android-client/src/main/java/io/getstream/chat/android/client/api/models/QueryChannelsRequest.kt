@@ -43,8 +43,6 @@ public data class QueryChannelsRequest(
     override var watch: Boolean = true
     override var presence: Boolean = false
 
-    public var isFilterChange: Boolean = false
-
     /**
      * List of sort specifications.
      */
