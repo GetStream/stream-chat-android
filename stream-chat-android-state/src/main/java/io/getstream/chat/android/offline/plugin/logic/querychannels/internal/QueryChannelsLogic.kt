@@ -76,7 +76,7 @@ internal class QueryChannelsLogic(
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
-        val loading = if (mutableState.channels.value.isNullOrEmpty()) {
+        val loading = if (mutableState.channels.value.isNullOrEmpty() || pagination.isFilterChange) {
             mutableState._loading
         } else {
             mutableState._loadingMore
@@ -152,7 +152,8 @@ internal class QueryChannelsLogic(
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request, repos, globalState)
 
-        val loading = loadingForCurrentRequest()
+        val loading = loadingForCurrentRequest(request.isFilterChange)
+        request.isFilterChange = false
         loading.value = false
 
         if (result.isSuccess) {
@@ -248,9 +249,9 @@ internal class QueryChannelsLogic(
         }
     }
 
-    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
+    internal fun loadingForCurrentRequest(isFilterChange: Boolean): MutableStateFlow<Boolean> {
         return mutableState._currentRequest.value?.isFirstPage?.let { isFirstPage ->
-            if (isFirstPage) mutableState._loading else mutableState._loadingMore
+            if (isFirstPage || isFilterChange) mutableState._loading else mutableState._loadingMore
         } ?: mutableState._loading
     }
 

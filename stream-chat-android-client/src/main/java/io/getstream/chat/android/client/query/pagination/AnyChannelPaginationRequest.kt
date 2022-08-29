@@ -39,6 +39,8 @@ public class AnyChannelPaginationRequest(public var messageLimit: Int = MESSAGE_
 
     public var watcherLimit: Int = WATCHER_LIMIT
     public var watcherOffset: Int = 0
+
+    public var isFilterChange: Boolean = false
 }
 
 internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean {
