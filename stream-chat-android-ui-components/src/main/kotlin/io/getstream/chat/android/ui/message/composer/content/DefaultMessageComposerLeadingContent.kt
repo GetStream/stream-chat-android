@@ -89,9 +89,11 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
+        binding.commandsButton.isVisible = style.commandsButtonVisible
         binding.attachmentsButton.setImageDrawable(style.attachmentsButtonIconDrawable)
         binding.attachmentsButton.setBorderlessRipple(style.attachmentsButtonRippleColor)
 
+        binding.attachmentsButton.isVisible = style.attachmentsButtonVisible
         binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
         binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
 
