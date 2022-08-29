@@ -21,6 +21,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be in`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -162,6 +163,29 @@ internal class StartStopBufferTest {
             active()
 
             lastNumber `should be equal to` data2
+        }
+    }
+
+    @Test
+    fun `when buffer overflows, it should start emitting its items`() {
+        StartStopBuffer<String>(bufferLimit = 2).run {
+            var lastNumber = "0"
+            val data1 = "data1"
+            val data2 = "data2"
+            val data3 = "data3"
+
+            hold()
+
+            subscribe { data ->
+                hold()
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+            enqueueData(data2)
+            enqueueData(data3)
+
+            lastNumber `should be in` listOf(data1, data2, data3)
         }
     }
 }
