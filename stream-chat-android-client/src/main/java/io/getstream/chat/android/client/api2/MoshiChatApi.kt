@@ -44,9 +44,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDateUpstream
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.toUpstream
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
@@ -922,19 +919,9 @@ constructor(
         ).map { response -> response.event.toDomain() }
     }
 
-    override fun getSyncHistory(
-        channelIds: List<String>,
-        lastSyncAt: Date,
-    ): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
         return generalApi.getSyncHistory(
-            body = SyncHistoryRequest(channelIds, ExactDateUpstream(lastSyncAt, null)),
-            connectionId = connectionId,
-        ).map { response -> response.events.map(ChatEventDto::toDomain) }
-    }
-
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: ExactDate): Call<List<ChatEvent>> {
-        return generalApi.getSyncHistory(
-            body = SyncHistoryRequest(channelIds, lastSyncAt.toUpstream()),
+            body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,
         ).map { response -> response.events.map(ChatEventDto::toDomain) }
     }

@@ -22,10 +22,3 @@ internal data class ExactDate(
     internal val date: Date,
     internal val rawDate: String,
 )
-
-internal data class ExactDateUpstream(
-    internal val date: Date,
-    internal val rawDate: String?,
-)
-
-internal fun ExactDate.toUpstream() = ExactDateUpstream(date, rawDate)

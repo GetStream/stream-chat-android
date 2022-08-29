@@ -64,7 +64,6 @@ import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventD
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDateUpstream
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -115,7 +114,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     return UpstreamConnectedEventDto(
         type = this.type,
-        created_at = ExactDateUpstream(createdAt, rawCreatedAt),
+        created_at = createdAt,
         me = me.toDto(),
         connection_id = connectionId,
     )

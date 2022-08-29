@@ -17,10 +17,9 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDateUpstream
 
 @JsonClass(generateAdapter = true)
 internal data class SyncHistoryRequest(
     val channel_cids: List<String>,
-    val last_sync_at: ExactDateUpstream,
+    val last_sync_at: String,
 )

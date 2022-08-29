@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAd
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
-import io.getstream.chat.android.client.parser2.adapters.ExactDateUpstreamAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
@@ -62,7 +61,6 @@ internal class MoshiChatParser : ChatParser {
         Moshi.Builder()
             .addAdapter(DateAdapter())
             .addAdapter(ExactDateAdapter())
-            .addAdapter(ExactDateUpstreamAdapter())
             .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)
             .add(UpstreamMessageDtoAdapter)
