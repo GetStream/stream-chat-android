@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.MaximumNumberOfItemsInAGrid
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewItemSize
@@ -39,6 +38,8 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
 /**
  * An [AttachmentFactory] that is able to handle Image and Video attachments.
  *
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
  * @param contentPlayButton Displays a play button above video attachments
  * in the messages list.
  * @param previewContentPlayButton Displays a play button above video attachments
@@ -46,8 +47,15 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
  */
 @Suppress("FunctionName")
 public fun MediaAttachmentFactory(
-    contentPlayButton: @Composable () -> Unit = { DefaultContentPlayButton() },
-    previewContentPlayButton: @Composable () -> Unit = { DefaultPreviewContentPlayButton() },
+    maximumNumberOfPreviewedItems: Int = 4,
+    contentPlayButton: @Composable () -> Unit = {
+        DefaultContentPlayButton(
+            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems
+        )
+    },
+    previewContentPlayButton: @Composable () -> Unit = {
+        DefaultPreviewContentPlayButton()
+    },
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = {
@@ -70,6 +78,7 @@ public fun MediaAttachmentFactory(
                     .wrapContentHeight()
                     .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
                 attachmentState = state,
+                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 playButton = { contentPlayButton() }
             )
         }
@@ -79,16 +88,21 @@ public fun MediaAttachmentFactory(
  * Represents the default play button that is
  * overlaid above video attachment previews inside
  * the messages list.
+ *
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
  */
 @Composable
-private fun DefaultContentPlayButton() {
+private fun DefaultContentPlayButton(
+    maximumNumberOfPreviewedItems: Int,
+) {
     PlayButton(
         modifier = Modifier
             .shadow(10.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
             .size(
-                width = ChatTheme.dimens.attachmentsContentImageWidth / MaximumNumberOfItemsInAGrid,
-                height = ChatTheme.dimens.attachmentsContentImageWidth / MaximumNumberOfItemsInAGrid,
+                width = ChatTheme.dimens.attachmentsContentImageWidth / maximumNumberOfPreviewedItems,
+                height = ChatTheme.dimens.attachmentsContentImageWidth / maximumNumberOfPreviewedItems,
             )
     )
 }

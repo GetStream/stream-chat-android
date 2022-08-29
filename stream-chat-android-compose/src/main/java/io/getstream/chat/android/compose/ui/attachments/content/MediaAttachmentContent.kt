@@ -64,6 +64,8 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param attachmentState The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier The modifier used for styling.
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
  * @param playButton Represents the play button that is overlaid above video attachment
  * previews.
  */
@@ -72,6 +74,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 public fun MediaAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    maximumNumberOfPreviewedItems: Int = 4,
     playButton: @Composable () -> Unit = { PlayButton() },
 ) {
     val (message, onLongItemClick, _, onMediaGalleryPreviewResult) = attachmentState
@@ -110,6 +113,7 @@ public fun MediaAttachmentContent(
                 attachments = attachments,
                 attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
+                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 message = message,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
@@ -170,6 +174,8 @@ internal fun ShowSingleMediaAttachment(
  * @param attachments The list of attachments that are to be previewed.
  * @param attachmentCount The number of attachments that are to be previewed.
  * @param gridSpacing Determines the spacing strategy between items.
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
  * @param message The original message containing the attachments.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
@@ -183,6 +189,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
     attachments: List<Attachment>,
     attachmentCount: Int,
     gridSpacing: Dp,
+    maximumNumberOfPreviewedItems: Int = 4,
     message: Message,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
@@ -195,7 +202,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (attachmentIndex in 0 until MaximumNumberOfItemsInAGrid step 2) {
+        for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
             if (attachmentIndex < attachmentCount) {
                 MediaAttachmentContentItem(
                     attachment = attachments[attachmentIndex],
@@ -216,12 +223,13 @@ internal fun RowScope.ShowMultipleMediaAttachments(
             .aspectRatio(TwiceAsTallAsIsWideRatio),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        for (attachmentIndex in 1..MaximumNumberOfItemsInAGrid step 2) {
+        for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {
             if (attachmentIndex < attachmentCount) {
                 val attachment = attachments[attachmentIndex]
                 val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
+                val lastItemInColumnIndex = (maximumNumberOfPreviewedItems - 1) - (maximumNumberOfPreviewedItems % 2)
 
-                if (attachmentIndex == 3 && attachmentCount > MaximumNumberOfItemsInAGrid) {
+                if (attachmentIndex == lastItemInColumnIndex && attachmentCount > maximumNumberOfPreviewedItems) {
                     Box(modifier = Modifier.weight(1f)) {
                         MediaAttachmentContentItem(
                             attachment = attachment,
@@ -235,7 +243,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
                         if (!isUploading) {
                             MediaAttachmentViewMoreOverlay(
                                 mediaCount = attachmentCount,
-                                mediaIndex = attachmentIndex,
+                                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }
@@ -331,7 +339,7 @@ internal fun MediaAttachmentContentItem(
  */
 @Composable
 internal fun PlayButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
@@ -358,16 +366,17 @@ internal fun PlayButton(
  * item gallery.
  *
  * @param mediaCount The number of total media attachments.
- * @param mediaIndex The current media attachment index.
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
  * @param modifier Modifier for styling.
  */
 @Composable
 internal fun MediaAttachmentViewMoreOverlay(
     mediaCount: Int,
-    mediaIndex: Int,
+    maximumNumberOfPreviewedItems: Int,
     modifier: Modifier = Modifier,
 ) {
-    val remainingMediaCount = mediaCount - (mediaIndex + 1)
+    val remainingMediaCount = mediaCount - maximumNumberOfPreviewedItems
 
     Box(
         modifier = Modifier
@@ -399,9 +408,3 @@ private const val EqualDimensionsRatio = 1f
  * Composable when calling [Modifier.aspectRatio].
  */
 private const val TwiceAsTallAsIsWideRatio = 0.5f
-
-/**
- * The maximum numbers of items that can be tiled inside
- * [MediaAttachmentContent]
- */
-internal const val MaximumNumberOfItemsInAGrid = 4
