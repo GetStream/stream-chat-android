@@ -12,14 +12,21 @@
 ### 🔗 Quick Links
 
 * [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat
+
+#### Tutorials
 * [Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin): Learn the basics of the SDK by by building a simple messaging app (Kotlin or Java)
-* [UI Components sample app](/stream-chat-android-ui-components-sample): Full messaging app with threads, reactions, optimistic UI updates and offline storage
-* [Compose UI Components sample app](/stream-chat-android-compose-sample): Messaging sample app built with Jetpack Compose!
+
+#### Sample Apps
+* [UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample): Full messaging app with threads, reactions, optimistic UI updates and offline storage
+* [Compose UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample): Messaging sample app built with Jetpack Compose!
+* [Android Samples Repo](https://github.com/GetStream/Android-Samples): This repository contains sample projects, guides, tutorials, and links to helpful resources to help you get started with Android Stream SDK.
+
+#### Documentation
 * [Client Documentation](https://getstream.io/chat/docs/android/?language=kotlin)
 * [UI Components Documentation](https://getstream.io/chat/docs/sdk/android/)
 * [Compose UI Components Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
-* [API docs](https://getstream.github.io/stream-chat-android/): Full generated docs from Dokka
-* [Jetpack Compose Planning](https://github.com/orgs/GetStream/projects/6): Jetpack Compose public project management board and milestone overview
+* [UI Team Planning](https://github.com/orgs/GetStream/projects/6): UI Team public project management board and milestone overview
+* [Core Team Planning](https://github.com/orgs/GetStream/projects/7): Core Team public project management board and milestone overview
 
 ### V5 Migration Guide
 
@@ -50,6 +57,8 @@ repositories {
 }
 
 dependencies {
+  // Client + offline + Compose
+  implementation "io.getstream:stream-chat-android-compose:$stream_version"
   // Client + offline + UI components
   implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
   // Client + offline
