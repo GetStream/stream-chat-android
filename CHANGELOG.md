@@ -87,6 +87,7 @@
 - Added `ChannelListSubmittedHandler` to `ChannelListView` to handle list state after new items have been submitted. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `ChannelListUpdateListener` is now tasked with scrolling the list to the bottom once the `ChannelListItem.LoadingMoreItem` is inserted after requesting a new page of `Channel`s. If `ChannelListUpdateListener` inside `ChannelListView` is overridden in order to keep the scroll to bottom when loading a new page please copy the default implementation to the custom implementation of the listener. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ❌ Removed
 

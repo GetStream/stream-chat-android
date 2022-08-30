@@ -76,7 +76,14 @@ public class ChannelListView : FrameLayout {
         }.let(::showToast)
     }
 
-    private var channelListSubmittedHandler: ChannelListSubmittedHandler = ChannelListSubmittedHandler { items ->
+    private lateinit var style: ChannelListViewStyle
+    private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
+
+    /**
+     * A listener that will be notified once the channel list is updated with the new data set. By default will scroll
+     * the list to the bottom if it is at the end and the [ChannelListItem.LoadingMoreItem] is inside the list.
+     */
+    private var channelListUpdateListener: ChannelListUpdateListener? = ChannelListUpdateListener { items ->
         (layoutManager as? ScrollPauseLinearLayoutManager)?.let { layoutManager ->
             if (items.contains(ChannelListItem.LoadingMoreItem) &&
                 layoutManager.findLastVisibleItemPosition() in items.size - 2..items.size
@@ -85,14 +92,6 @@ public class ChannelListView : FrameLayout {
             }
         }
     }
-
-    private lateinit var style: ChannelListViewStyle
-    private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
-
-    /**
-     * A listener that will be notified once the channel list is updated with the new data set.
-     */
-    private var channelListUpdateListener: ChannelListUpdateListener? = null
 
     /**
      * The pending scroll state that we need to restore.
@@ -367,7 +366,6 @@ public class ChannelListView : FrameLayout {
         simpleChannelListView.setChannels(filteredChannels) {
             restoreLayoutManagerState()
             channelListUpdateListener?.onChannelListUpdate(filteredChannels)
-            channelListSubmittedHandler.onListSubmitted(filteredChannels)
         }
     }
 
@@ -414,13 +412,6 @@ public class ChannelListView : FrameLayout {
 
     public fun hasChannels(): Boolean {
         return simpleChannelListView.hasChannels()
-    }
-
-    /**
-     * Sets the [ChannelListSubmittedHandler] after the list has been submitted to the view.
-     */
-    public fun setChannelListSubmittedHandler(channelListSubmittedHandler: ChannelListSubmittedHandler) {
-        this.channelListSubmittedHandler = channelListSubmittedHandler
     }
 
     private companion object {
@@ -471,13 +462,6 @@ public class ChannelListView : FrameLayout {
                     .show(fragmentManager, null)
             }
         }
-    }
-
-    /**
-     * Called when the new channels list has been submitted to the adapter.
-     */
-    public fun interface ChannelListSubmittedHandler {
-        public fun onListSubmitted(items: List<ChannelListItem>)
     }
 
     public fun interface UserClickListener {
