@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.application
 
 import android.app.Application
+import android.os.Build
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
@@ -32,14 +33,16 @@ object ApplicationConfigurator {
     const val XIAOMI_APP_KEY = "5792005994340"
 
     fun configureApp(application: Application) {
-        SoLoader.init(application, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SoLoader.init(application, false)
 
-        if (FlipperUtils.shouldEnableFlipper(application)) {
-            AndroidFlipperClient.getInstance(application).apply {
-                addPlugin(InspectorFlipperPlugin(application, DescriptorMapping.withDefaults()))
-                addPlugin(DatabasesFlipperPlugin(application))
-                addPlugin(networkFlipper)
-            }.start()
+            if (FlipperUtils.shouldEnableFlipper(application)) {
+                AndroidFlipperClient.getInstance(application).apply {
+                    addPlugin(InspectorFlipperPlugin(application, DescriptorMapping.withDefaults()))
+                    addPlugin(DatabasesFlipperPlugin(application))
+                    addPlugin(networkFlipper)
+                }.start()
+            }
         }
     }
 }

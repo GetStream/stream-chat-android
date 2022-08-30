@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.experimental.socket
+package io.getstream.chat.android.client.models
 
 /**
- * Used to initiate a shutdown of a WebSocket.
+ * Represents a successfully uploaded file.
  *
- * @property code Status code as defined by [Section 7.4 of RFC 6455](http://tools.ietf.org/html/rfc6455#section-7.4)
- * or `0`.
- * @property reason Reason for shutting down.
+ * @param file The URL of the uploaded file.
+ * @param thumbUrl The property is auto-generated when uploading videos using
+ * Stream CDN and can be used to display video previews.
  */
-internal data class ShutdownReason(val code: Int, val reason: String) {
-    companion object {
-        private const val NORMAL_CLOSURE_STATUS_CODE = 1000
-        private const val NORMAL_CLOSURE_REASON = "Normal closure"
-
-        @JvmField
-        val GRACEFUL = ShutdownReason(NORMAL_CLOSURE_STATUS_CODE, NORMAL_CLOSURE_REASON)
-    }
-}
+public data class UploadedFile(
+    val file: String,
+    val thumbUrl: String? = null,
+)

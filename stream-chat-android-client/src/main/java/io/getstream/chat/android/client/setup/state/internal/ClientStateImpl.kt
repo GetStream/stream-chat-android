@@ -16,18 +16,16 @@
 
 package io.getstream.chat.android.client.setup.state.internal
 
-import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class ClientStateImpl(
-    private val networkLifecyclePublisher: NetworkLifecyclePublisher,
-) : ClientMutableState {
+internal class ClientStateImpl(private val networkStateProvider: NetworkStateProvider) : ClientMutableState {
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
     private val _initialized = MutableStateFlow(false)
@@ -60,7 +58,7 @@ internal class ClientStateImpl(
     override val connectionState: StateFlow<ConnectionState> = _connectionState
 
     override val isNetworkAvailable: Boolean
-        get() = networkLifecyclePublisher.isConnected()
+        get() = networkStateProvider.isConnected()
 
     override fun clearState() {
         _initializationState.value = InitializationState.NOT_INITIALIZED

@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * Class responsible for postponing call until the socket connection is established.

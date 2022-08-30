@@ -28,6 +28,17 @@ internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
+    /**
+     * Uploads the given attachment.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param attachment The attachment to be uploaded.
+     * @param progressCallback Used to listen to file upload
+     * progress, success, and failure.
+     *
+     * @return The resulting uploaded attachment.
+     */
     internal suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
@@ -36,32 +47,170 @@ internal class AttachmentUploader(
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
-        val mimeType: String? = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-            ?: attachment.mimeType
+        val mimeType: String = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+            ?: attachment.mimeType ?: ""
         val attachmentType = mimeType.toAttachmentType()
 
-        val result = if (attachmentType == AttachmentType.IMAGE) {
-            val call = client.sendImage(channelType, channelId, file, progressCallback)
-            call.await()
+        return if (attachmentType == AttachmentType.IMAGE) {
+            uploadImage(
+                channelType = channelType,
+                channelId = channelId,
+                file = file,
+                progressCallback = progressCallback,
+                attachment = attachment,
+                mimeType = mimeType,
+                attachmentType = attachmentType
+            )
         } else {
-            val call = client.sendFile(channelType, channelId, file, progressCallback)
-            call.await()
+            uploadFile(
+                channelType = channelType,
+                channelId = channelId,
+                file = file,
+                progressCallback = progressCallback,
+                attachment = attachment,
+                mimeType = mimeType,
+                attachmentType = attachmentType
+            )
         }
+    }
+
+    /**
+     * Uploads an image attachment.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param file The file that will be uploaded.
+     * @param attachment The attachment to be uploaded.
+     * @param progressCallback Used to listen to file upload
+     * progress, success, and failure.
+     * @param mimeType The mime type of the attachment that will be uploaded,
+     * e.g. image/jpeg.
+     * @param attachmentType The type of the attachment, e.g. "video", "audio", etc.
+     *
+     * @return The resulting uploaded attachment.
+     */
+    private suspend fun uploadImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        progressCallback: ProgressCallback?,
+        attachment: Attachment,
+        mimeType: String,
+        attachmentType: AttachmentType,
+    ): Result<Attachment> {
+        val result = client.sendImage(channelType, channelId, file, progressCallback)
+            .await()
+
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                 file = file,
-                mimeType = mimeType ?: "",
+                mimeType = mimeType,
                 attachmentType = attachmentType,
-                url = result.data()
+                url = result.data().file
             )
-            augmentedAttachment.uploadState = Attachment.UploadState.Success
-            progressCallback?.onSuccess(augmentedAttachment.url)
-            Result(augmentedAttachment)
+
+            onSuccessfulUpload(
+                augmentedAttachment = augmentedAttachment,
+                progressCallback = progressCallback
+            )
         } else {
-            attachment.uploadState = Attachment.UploadState.Failed(result.error())
-            progressCallback?.onError(result.error())
-            Result(result.error())
+            onFailedUpload(
+                attachment = attachment,
+                result = result,
+                progressCallback = progressCallback
+            )
         }
+    }
+
+    /**
+     * Uploads a file attachment.
+     *
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param file The file that will be uploaded.
+     * @param attachment The attachment to be uploaded.
+     * @param progressCallback Used to listen to file upload
+     * progress, success, and failure.
+     * @param mimeType The mime type of the attachment that will be uploaded,
+     * e.g. image/jpeg.
+     * @param attachmentType The type of the attachment, e.g. "video", "audio", etc.
+     *
+     * @return The resulting uploaded attachment.
+     */
+    private suspend fun uploadFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        progressCallback: ProgressCallback?,
+        attachment: Attachment,
+        mimeType: String,
+        attachmentType: AttachmentType,
+    ): Result<Attachment> {
+        val result = client.sendFile(channelType, channelId, file, progressCallback)
+            .await()
+
+        return if (result.isSuccess) {
+            val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
+                file = file,
+                mimeType = mimeType,
+                attachmentType = attachmentType,
+                url = result.data().file,
+                thumbUrl = result.data().thumbUrl
+            )
+
+            onSuccessfulUpload(
+                augmentedAttachment = augmentedAttachment,
+                progressCallback = progressCallback
+            )
+        } else {
+            onFailedUpload(
+                attachment = attachment,
+                result = result,
+                progressCallback = progressCallback
+            )
+        }
+    }
+
+    /**
+     * Updates the upload state and calls the appropriate [ProgressCallback]
+     * method.
+     *
+     * @param augmentedAttachment The attachment pre filled with
+     * the appropriate fields after the file contained in the attachment
+     * was uploaded.
+     * @param progressCallback Used to listen to file upload
+     * progress, success, and failure.
+     *
+     * @return The resulting successfully uploaded attachment.
+     * */
+    private fun onSuccessfulUpload(
+        augmentedAttachment: Attachment,
+        progressCallback: ProgressCallback?,
+    ): Result<Attachment> {
+        augmentedAttachment.uploadState = Attachment.UploadState.Success
+        progressCallback?.onSuccess(augmentedAttachment.url)
+        return Result(augmentedAttachment)
+    }
+
+    /**
+     * Updates the upload state and calls the appropriate [ProgressCallback]
+     * method.
+     *
+     * @param attachment The attachment that has failed to upload.
+     * @param result The result of the failed upload.
+     * @param progressCallback Used to listen to file upload
+     * progress, success, and failure.
+     *
+     * @return Returns a [Result] containing a [io.getstream.chat.android.client.errors.ChatError]
+     * */
+    private fun <T : Any> onFailedUpload(
+        attachment: Attachment,
+        result: Result<T>,
+        progressCallback: ProgressCallback?,
+    ): Result<Attachment> {
+        attachment.uploadState = Attachment.UploadState.Failed(result.error())
+        progressCallback?.onError(result.error())
+        return Result(result.error())
     }
 
     /**
@@ -72,12 +221,15 @@ internal class AttachmentUploader(
      * @param mimeType MimeType of uploaded attachment.
      * @param attachmentType File, video or picture enum instance.
      * @param url URL obtained from BE.
+     * @param thumbUrl The thumbnail obtained from the BE.
+     * Usually returned for uploaded videos, can be null otherwise.
      */
     private fun Attachment.augmentAttachmentOnSuccess(
         file: File,
         mimeType: String,
         attachmentType: AttachmentType,
         url: String,
+        thumbUrl: String? = null,
     ): Attachment {
         return copy(
             name = file.name,
@@ -99,6 +251,7 @@ internal class AttachmentUploader(
             if (title.isNullOrBlank()) {
                 title = file.name
             }
+            this.thumbUrl = thumbUrl
         }
     }
 

@@ -20,6 +20,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilder
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
 import io.getstream.chat.android.core.internal.fsm.builder.StateFunction
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,62 +40,33 @@ import kotlin.reflect.KClass
 public class FiniteStateMachine<S : Any, E : Any>(
     initialState: S,
     private val stateFunctions: Map<KClass<out S>, Map<KClass<out E>, StateFunction<S, E>>>,
-    private val enterListeners: MutableMap<KClass<out S>, List<(S, E) -> Unit>>,
     private val defaultEventHandler: (S, E) -> S,
 ) {
     private val mutex = Mutex()
-    private var _state: S = initialState
+    private val _state: MutableStateFlow<S> = MutableStateFlow(initialState)
 
-    private suspend inline fun <T> Mutex.withLockIfNotLocked(action: () -> T): T {
-        return if (isLocked.not()) {
-            withLock { action() }
-        } else {
-            action()
-        }
-    }
+    /**
+     * The current state as [StateFlow].
+     */
+    public val stateFlow: StateFlow<S> = _state
 
     /**
      * The current state.
      */
     public val state: S
-        get() = runBlocking {
-            mutex.withLockIfNotLocked { _state }
-        }
+        get() = _state.value
 
     /**
      * Sends an event to the state machine. The entry point to change state.
      */
     public fun sendEvent(event: E) {
         runBlocking {
-            val shouldNotify = mutex.withLock {
-                val oldState = _state
-                val functions = stateFunctions[oldState::class]
-                val handler = functions?.getHandler(event) ?: defaultEventHandler
-                _state = handler(oldState, event)
-                _state != oldState
-            }
-            if (shouldNotify) {
-                with(_state) {
-                    notifyOnEnter(event)
-                }
+            mutex.withLock {
+                val currentState = _state.value
+                val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
+                _state.value = handler(currentState, event)
             }
         }
-    }
-
-    private fun Map<KClass<out E>, (S, E) -> S>.getHandler(event: E): (S, E) -> S {
-        val handler = this[event::class]
-        if (handler != null) {
-            return handler
-        }
-
-        var eventHandler = defaultEventHandler
-        for ((clazz: KClass<out E>, evHandler: (S, E) -> S) in this) {
-            if (clazz.isInstance(event)) {
-                eventHandler = evHandler
-                break
-            }
-        }
-        return eventHandler
     }
 
     /**
@@ -113,9 +86,5 @@ public class FiniteStateMachine<S : Any, E : Any>(
         public operator fun <S : Any, E : Any> invoke(builder: FSMBuilder<S, E>.() -> Unit): FiniteStateMachine<S, E> {
             return FSMBuilder<S, E>().apply(builder).build()
         }
-    }
-
-    private fun S.notifyOnEnter(event: E) {
-        enterListeners[this::class]?.forEach { it(this, event) }
     }
 }

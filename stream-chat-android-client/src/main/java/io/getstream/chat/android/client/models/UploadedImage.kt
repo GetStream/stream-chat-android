@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.experimental.socket
+package io.getstream.chat.android.client.models
 
 /**
- * A wrapper that contains timestamp along with the [value].
+ * Represents a successfully uploaded image.
+ *
+ * @param file The URL of the uploaded image.
  */
-internal data class Timed<T>(val value: T, val time: Long)
+public data class UploadedImage(
+    val file: String,
+)

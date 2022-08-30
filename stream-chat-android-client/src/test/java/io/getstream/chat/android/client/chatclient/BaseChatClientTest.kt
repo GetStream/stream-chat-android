@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.chatclient
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -27,6 +28,7 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -67,6 +69,8 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
+    protected val clientState = mock<ClientState>()
+
     protected val initializationCoordinator = InitializationCoordinator.create()
 
     protected lateinit var chatClient: ChatClient
@@ -96,10 +100,10 @@ internal open class BaseChatClientTest {
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            clientState = clientState
         )
 
         Mockito.reset(

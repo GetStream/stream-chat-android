@@ -101,7 +101,7 @@ internal class TypingEventPruner(
         )
 
         // Cancel the self stopping event you are replacing if one exists
-        typingEvents.getOrDefault(userId, null)?.cancelJob()
+        typingEvents[userId]?.cancelJob()
 
         // Replace the old self stopping event and call
         // the updated typing events listener
@@ -116,7 +116,7 @@ internal class TypingEventPruner(
      * @param userId The ID of the user tied to the typing event.
      */
     private fun removeTypingEvent(userId: String) {
-        typingEvents.getOrDefault(userId, null)?.cancelJob()
+        typingEvents[userId]?.cancelJob()
 
         typingEvents.remove(userId)
         onUpdated(getRawTyping(), getTypingEvent())
