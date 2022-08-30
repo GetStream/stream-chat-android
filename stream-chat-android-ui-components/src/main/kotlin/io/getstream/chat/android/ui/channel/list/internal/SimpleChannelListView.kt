@@ -166,9 +166,6 @@ internal class SimpleChannelListView @JvmOverloads constructor(
     fun setChannels(channels: List<ChannelListItem>, commitCallback: () -> Unit) {
         requireAdapter().submitList(channels) {
             commitCallback()
-            if (channels.contains(ChannelListItem.LoadingMoreItem)) {
-                layoutManager.scrollToPosition(channels.size - 1)
-            }
         }
     }
 
