@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.offline.repository.domain.channel.member.internal
 
 import io.getstream.chat.android.client.models.Member
