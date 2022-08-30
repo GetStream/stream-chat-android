@@ -194,6 +194,19 @@ public class Messages {
     }
 
     /**
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
+     */
+    void deleteFileOrImage(){
+        ChannelClient channelClient = client.channel("messaging", "general");
+
+        // Deletes the image
+        channelClient.deleteImage("{{ url of uploaded image }}").enqueue();
+
+        // Deletes the file
+        channelClient.deleteFile("{{ url of uploaded file }}").enqueue();
+    }
+
+    /**
      * @see <a href="https://getstream.io/chat/docs/send_reaction/?language=java">Reactions</a>
      */
     class Reactions {
