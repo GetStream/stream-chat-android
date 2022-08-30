@@ -77,6 +77,7 @@
 - Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 - Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 - Fixed a bug that made `MessageInputView` not adhere to integration visibility attributes (`streamUiAttachButtonEnabled` and `streamUiLightningButtonEnabled`). [#4107](https://github.com/GetStream/stream-chat-android/pull/4107)
+- Fixed scroll state on filter change. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ⬆️ Improved
 - Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
@@ -87,6 +88,7 @@
 - Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `ChannelListUpdateListener` is now tasked with scrolling the list to the bottom once the `ChannelListItem.LoadingMoreItem` is inserted after requesting a new page of `Channel`s. If `ChannelListUpdateListener` inside `ChannelListView` is overridden in order to keep the scroll to bottom when loading a new page please copy the default implementation to the custom implementation of the listener. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
 
 ### ❌ Removed
 

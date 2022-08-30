@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListen
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
+import io.getstream.chat.android.ui.channel.list.internal.ScrollPauseLinearLayoutManager
 import io.getstream.chat.android.ui.channel.list.internal.SimpleChannelListView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -79,9 +80,18 @@ public class ChannelListView : FrameLayout {
     private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
 
     /**
-     * A listener that will be notified once the channel list is updated with the new data set.
+     * A listener that will be notified once the channel list is updated with the new data set. By default will scroll
+     * the list to the bottom if it is at the end and the [ChannelListItem.LoadingMoreItem] is inside the list.
      */
-    private var channelListUpdateListener: ChannelListUpdateListener? = null
+    private var channelListUpdateListener: ChannelListUpdateListener? = ChannelListUpdateListener { items ->
+        (layoutManager as? ScrollPauseLinearLayoutManager)?.let { layoutManager ->
+            if (items.contains(ChannelListItem.LoadingMoreItem) &&
+                layoutManager.findLastVisibleItemPosition() in items.size - 2..items.size
+            ) {
+                layoutManager.scrollToPosition(items.size - 1)
+            }
+        }
+    }
 
     /**
      * The pending scroll state that we need to restore.
