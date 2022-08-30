@@ -68,11 +68,11 @@ import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
@@ -305,16 +305,17 @@ public class MessageListViewModel(
      *
      * @param messageId The id of the most new [Message] inside the messages list.
      */
-    public fun loadNewerMessages(messageId: String) {
-        messageListController.loadNewerMessages(messageId)
+    public fun loadNewerMessages(messageId: String, messageLimit: Int = DefaultMessageLimit) {
+        messageListController.loadNewerMessages(messageId, messageLimit)
     }
 
     /**
      * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
      * of a thread.
      */
-    public fun loadOlderMessages(messageLimit: Int = DefaultMessageLimit): Unit =
+    public fun loadOlderMessages(messageLimit: Int = DefaultMessageLimit) {
         messageListController.loadOlderMessages(messageLimit)
+    }
 
     /**
      * Loads the selected message we wish to scroll to when the message can't be found in the current list.
@@ -322,7 +323,7 @@ public class MessageListViewModel(
      * @param message The selected message we wish to scroll to.
      */
     private fun loadMessage(message: Message) {
-        messageListController.loadMessageWithPage(message)
+        messageListController.loadMessageWithPage(message.id)
     }
 
     /**
@@ -487,7 +488,7 @@ public class MessageListViewModel(
         messageActions = messageActions - messageActions.filterIsInstance<Flag>()
         removeOverlay()
 
-        chatClient.flagMessage(message.id).enqueue()
+        messageListController.flagMessage(message)
     }
 
     /**
@@ -504,6 +505,7 @@ public class MessageListViewModel(
      * @param message Message with the content to copy.
      */
     private fun copyMessage(message: Message) {
+        // TODO
         clipboardHandler.copyMessage(message)
     }
 
@@ -513,6 +515,81 @@ public class MessageListViewModel(
      * @param user The user to mute or unmute.
      */
     private fun updateUserMute(user: User) = messageListController.updateUserMute(user)
+
+    /**
+     * Mutes the given user inside this channel.
+     *
+     * @param userId The ID of the user to be muted.
+     * @param timeout The period of time for which the user will
+     * be muted, expressed in minutes. A null value signifies that
+     * the user will be muted for an indefinite time.
+     */
+    public fun muteUser(userId: String, timeout: Int? = null) {
+        messageListController.muteUser(userId, timeout)
+    }
+
+    /**
+     * Unmutes the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unmuted.
+     */
+    public fun unmuteUser(userId: String) {
+        messageListController.unmuteUser(userId)
+    }
+
+    /**
+     * Bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be banned.
+     * @param reason The reason for banning the user.
+     * @param timeout The period of time for which the user will
+     * be banned, expressed in minutes. A null value signifies that
+     * the user will be banned for an indefinite time.
+     */
+    public fun banUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        messageListController.banUser(userId = userId, reason = reason, timeout = timeout)
+    }
+
+    /**
+     * Unbans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unbanned.
+     */
+    public fun unbanUser(userId: String) {
+        messageListController.unbanUser(userId)
+    }
+
+    /**
+     * Shadow bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be shadow banned.
+     * @param reason The reason for shadow banning the user.
+     * @param timeout The period of time for which the user will
+     * be shadow banned, expressed in minutes. A null value signifies that
+     * the user will be shadow banned for an indefinite time.
+     */
+    public fun shadowBanUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        messageListController.shadowBanUser(userId = userId, reason = reason, timeout = timeout)
+    }
+
+    /**
+     * Removes the shaddow ban for the given user inside
+     * this channel.
+     *
+     * @param userId The ID of the user for which the shadow
+     * ban is removed.
+     */
+    public fun removeShadowBanFromUser(userId: String) {
+        messageListController.removeShadowBanFromUser(userId)
+    }
 
     /**
      * Triggered when the user chooses the [React] action for the currently selected message. If the
@@ -539,7 +616,6 @@ public class MessageListViewModel(
      */
     public fun leaveThread() {
         messageListController.enterNormalMode()
-        messagesState = messagesState.copy(selectedMessageState = null)
     }
 
     /**
@@ -554,7 +630,9 @@ public class MessageListViewModel(
      * Clears the [NewMessageState] from our UI state, after the user taps on the "Scroll to bottom"
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
-    public fun clearNewMessageState(): Unit = messageListController.clearNewMessageState()
+    public fun clearNewMessageState() {
+        messageListController.clearNewMessageState()
+    }
 
     /**
      * Sets the focused message to be the message with the given ID, after which it removes it from
@@ -621,10 +699,7 @@ public class MessageListViewModel(
      * @return The [Message] with the ID, if it exists.
      */
     public fun getMessageWithId(messageId: String): Message? {
-        val messageItem =
-            currentMessagesState.messageItems.firstOrNull { it is MessageItemState && it.message.id == messageId }
-
-        return (messageItem as? MessageItemState)?.message
+        return messageListController.getMessageWithId(messageId)
     }
 
     /**
@@ -670,8 +745,9 @@ public class MessageListViewModel(
      * @param scrollToBottom Notifies the ui to scroll to the bottom if the newest messages are in the list or have been
      * loaded from the API.
      */
-    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit): Unit =
+    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
         messageListController.scrollToBottom(messageLimit, scrollToBottom)
+    }
 
     internal companion object {
         /**

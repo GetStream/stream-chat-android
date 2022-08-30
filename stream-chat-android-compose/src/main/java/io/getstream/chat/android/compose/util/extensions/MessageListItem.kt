@@ -20,7 +20,7 @@ public fun MessageListItem.toMessageListItemState(): MessageListItemState {
         is DateSeparatorItem -> DateSeparatorState(this.date)
         is MessageItem -> MessageItemState(
             message = this.message,
-            groupPosition = messagePosition.toMessageItemGroupPosition(),
+            groupPosition = groupPosition.firstOrNull()?.toMessageItemGroupPosition() ?: MessageItemGroupPosition.None,
             parentMessageId = this.parentMessageId,
             isMine = isMine,
             isInThread = isInThread,

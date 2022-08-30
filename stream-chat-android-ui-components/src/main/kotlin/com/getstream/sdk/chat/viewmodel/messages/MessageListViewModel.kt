@@ -27,12 +27,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.toPosition
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.view.messages.toMessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -81,14 +80,19 @@ public class MessageListViewModel(
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val deletedVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val footerVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
+    private val showSystemMessages: Boolean = true,
+    private val showDateSeparators: Boolean = true,
+    private val dateSeparatorTime: Long = SEPARATOR_TIME.toLong(),
     private val messageListController: MessageListController = MessageListController(
-        cid,
-        chatClient,
-        DeletedMessageVisibility.ALWAYS_VISIBLE,
-        true,
-        true,
-        24L * 60L * 60L * 1000L,
-        MessageFooterVisibility.LastInGroup
+        cid = cid,
+        chatClient = chatClient,
+        deletedMessageVisibility = deletedVisibility,
+        showSystemMessages = showSystemMessages,
+        showDateSeparators = showDateSeparators,
+        dateSeparatorThresholdMillis = dateSeparatorTime,
+        messageFooterVisibility = footerVisibility
     ),
 ) : ViewModel() {
 
@@ -126,20 +130,11 @@ public class MessageListViewModel(
 
     /**
      * Regulates the visibility of deleted messages.
+     *
+     * TODO deprecate?
      */
-    private var _deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
-        MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> = _deletedMessageVisibility
-
-    /**
-     * Regulates the message footer visibility.
-     */
-    private var messageFooterVisibility: MutableLiveData<MessageFooterVisibility> =
-        MutableLiveData(MessageFooterVisibility.WithTimeDifference())
+    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
+        messageListController._deletedMessageVisibility.asLiveData()
 
     /**
      * Represents the current state of the message list
@@ -206,7 +201,7 @@ public class MessageListViewModel(
     /**
      * The currently logged in user.
      */
-    public val user: LiveData<User?> = clientState.user.asLiveData()
+    public val user: LiveData<User?> = messageListController.user.asLiveData()
 
     // TODO
     public val unreadCount: LiveData<Int> = messageListController.unreadCount.asLiveData()
@@ -216,35 +211,6 @@ public class MessageListViewModel(
      * and other things to log.
      */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
-
-    /**
-     * Evaluates whether date separators should be added to the message list.
-     */
-    private var dateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                true
-            } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > SEPARATOR_TIME
-            }
-        }
-
-    /**
-     * Evaluates whether thread separators should be added to the message list.
-     */
-    private var threadDateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                false
-            } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > SEPARATOR_TIME
-            }
-        }
-
-    /**
-     * Determines the position of a message inside a group.
-     */
-    private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
 
     /**
      * A background job used for view model initialization.
@@ -333,23 +299,17 @@ public class MessageListViewModel(
             is Event.FlagMessage -> {
                 messageListController.flagMessage(event.message) { result ->
                     event.resultHandler(result)
-                    if (result.isError) {
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.FlagMessageError(result.error())))
-                    }
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.FlagMessageError(error)) }
                 }
             }
             is Event.PinMessage -> {
-                messageListController.pinMessage(event.message) {
-                    if (it.isError) {
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(it.error())))
-                    }
+                messageListController.pinMessage(event.message) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.PinMessageError(error)) }
                 }
             }
             is Event.UnpinMessage -> {
-                messageListController.unpinMessage(event.message) {
-                    if (it.isError) {
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(it.error())))
-                    }
+                messageListController.unpinMessage(event.message) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.UnpinMessageError(error)) }
                 }
             }
             is Event.GiphyActionSelected -> {
@@ -362,17 +322,13 @@ public class MessageListViewModel(
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
-                messageListController.muteUser(event.user) {
-                    if (it.isError) {
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(it.error())))
-                    }
+                messageListController.muteUser(event.user) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.MuteUserError(error)) }
                 }
             }
             is Event.UnmuteUser -> {
-                messageListController.unmuteUser(event.user) {
-                    if (it.isError) {
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(it.error())))
-                    }
+                messageListController.unmuteUser(event.user) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.UnpinMessageError(error)) }
                 }
             }
             is Event.BlockUser -> {
@@ -389,64 +345,31 @@ public class MessageListViewModel(
                 )
             }
             is Event.BanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.banUser(
-                    targetId = event.user.id,
+                messageListController.banUser(
+                    userId = event.user.id,
                     reason = event.reason,
-                    timeout = event.timeout,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to ban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                    timeout = event.timeout
+                ) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
+                }
             }
             is Event.UnbanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.unbanUser(
-                    targetId = event.user.id,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.unbanUser(event.user.id) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
+                }
             }
             is Event.ShadowBanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.shadowBanUser(
-                    targetId = event.user.id,
-                    reason = event.reason,
-                    timeout = event.timeout,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message
-                            ?: "Unable to shadow ban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.shadowBanUser(event.user.id) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
+                }
             }
             is Event.RemoveShadowBanFromUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.removeShadowBan(
-                    targetId = event.user.id,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage =
-                            chatError.message ?: chatError.cause?.message ?: "Unable to remove the user shadow ban"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.removeShadowBanFromUser(event.user.id) { result ->
+                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
+                }
             }
             is Event.ReplyMessage -> {
+                // TODO
                 chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
                         logger.e {
@@ -467,15 +390,13 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
+                // TODO
                 val message = getMessageWithId(event.messageId)
 
                 if (message != null) {
                     _targetMessage.value = message
                 } else {
-                    chatClient.loadMessageById(
-                        cid,
-                        event.messageId
-                    ).enqueue { result ->
+                    messageListController.loadMessageWithPage(event.messageId) { result ->
                         if (result.isSuccess) {
                             _targetMessage.value = result.data()
                         } else {
@@ -486,6 +407,7 @@ public class MessageListViewModel(
                 }
             }
             is Event.RemoveAttachment -> {
+                // TODO
                 val attachmentToBeDeleted = event.attachment
                 chatClient.loadMessageById(
                     cid,
@@ -515,6 +437,7 @@ public class MessageListViewModel(
                 }
             }
             is Event.ReplyAttachment -> {
+                // TODO
                 val messageId = event.repliedMessageId
                 val cid = event.cid
                 chatClient.loadMessageById(
@@ -530,6 +453,13 @@ public class MessageListViewModel(
                     }
                 }
             }
+        }
+    }
+
+    //TODO
+    private fun <T : Any> handleResult(result: Result<T>, wrapError: (ChatError) -> EventWrapper<ErrorEvent>) {
+        if (result.isError) {
+            _errorEvents.postValue(wrapError(result.error()))
         }
     }
 
@@ -555,8 +485,13 @@ public class MessageListViewModel(
      *
      * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
      */
+    // TODO deprecate and replace with common handler
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
-        this.dateSeparatorHandler = dateSeparatorHandler
+        dateSeparatorHandler?.let {
+            messageListController.setDateSeparatorHandler { previousMessage, message ->
+                it.shouldAddDateSeparator(previousMessage, message)
+            }
+        }
     }
 
     /**
@@ -565,8 +500,13 @@ public class MessageListViewModel(
      *
      * @param threadDateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
      */
+    // TODO deprecate and replace with common handler
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
-        this.threadDateSeparatorHandler = threadDateSeparatorHandler
+        threadDateSeparatorHandler?.let {
+            messageListController.setThreadDateSeparatorHandler { previousMessage, message ->
+                it.shouldAddDateSeparator(previousMessage, message)
+            }
+        }
     }
 
     /**
@@ -575,7 +515,10 @@ public class MessageListViewModel(
      * @param messagePositionHandler The handler to use.
      */
     public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
-        this.messagePositionHandler = messagePositionHandler
+        messageListController.setMessagePositionHandler { prevMessage, message, nextMessage, isAfterDateSeparator ->
+            messagePositionHandler.handleMessagePosition(prevMessage, message, nextMessage, isAfterDateSeparator)
+                .map { it.toPosition() }
+        }
     }
 
     /**
@@ -680,7 +623,7 @@ public class MessageListViewModel(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this._deletedMessageVisibility.value = deletedMessageVisibility
+        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
     }
 
     /**
@@ -690,7 +633,7 @@ public class MessageListViewModel(
      * @param messageFooterVisibility Changes the visibility of message footers.
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
-        this.messageFooterVisibility.value = messageFooterVisibility
+        messageListController.setMessageFooterVisibility(messageFooterVisibility)
     }
 
     /**
@@ -998,6 +941,10 @@ public class MessageListViewModel(
          * @param chatError Contains the original [Throwable] along with a message.
          */
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while
+         */
     }
 
     /**

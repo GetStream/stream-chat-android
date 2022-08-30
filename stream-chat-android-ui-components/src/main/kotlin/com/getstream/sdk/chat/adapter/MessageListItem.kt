@@ -102,7 +102,7 @@ public fun io.getstream.chat.android.common.model.MessageListItem.toUiMessageLis
         is io.getstream.chat.android.common.model.TypingItem -> TypingItem(users = typingUsers)
         is io.getstream.chat.android.common.model.MessageItem -> MessageItem(
             message = message,
-            positions = listOfNotNull(messagePosition.toPosition()),
+            positions = groupPosition.mapNotNull { it.toPosition() },
             isMine = isMine,
             messageReadBy = listOf(), // TODO
             isThreadMode = isInThread,
@@ -118,5 +118,13 @@ public fun MessagePosition.toPosition(): MessageListItem.Position? {
         MessagePosition.MIDDLE -> MessageListItem.Position.MIDDLE
         MessagePosition.BOTTOM -> MessageListItem.Position.BOTTOM
         MessagePosition.NONE -> null
+    }
+}
+
+public fun MessageListItem.Position.toPosition(): MessagePosition {
+    return when(this) {
+        MessageListItem.Position.TOP -> MessagePosition.TOP
+        MessageListItem.Position.MIDDLE -> MessagePosition.MIDDLE
+        MessageListItem.Position.BOTTOM -> MessagePosition.BOTTOM
     }
 }
