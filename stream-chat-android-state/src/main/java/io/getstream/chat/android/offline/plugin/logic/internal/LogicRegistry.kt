@@ -108,7 +108,7 @@ internal class LogicRegistry internal constructor(
         }
     }
 
-    fun getMessageFromId(messageId: String): Message? {
+    fun getMessageById(messageId: String): Message? {
         return channelFromMessageId(messageId)?.getMessage(messageId)
             ?: threadFromMessageId(messageId)?.getMessage(messageId)
     }
