@@ -43,7 +43,10 @@ class ChatApp : Application() {
 
     @OptIn(InternalStreamChatApi::class)
     private fun initializeToggleService() {
-        ToggleService.init(applicationContext, emptyMap())
+        ToggleService.init(
+            applicationContext,
+            mapOf(ToggleService.TOGGLE_KEY_SOCKET_REFACTOR to true)
+        )
     }
 
     companion object {
