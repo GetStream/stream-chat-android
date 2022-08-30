@@ -43,7 +43,7 @@ internal class SendMessageListenerStateTest {
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.threadFromMessage(any())) doReturn threadLogic
-        on(it.getMessageFromId(any())) doReturn null
+        on(it.getMessageById(any())) doReturn null
     }
 
     private val sendMessageListener = SendMessageListenerState(logicRegistry)
@@ -96,7 +96,7 @@ internal class SendMessageListenerStateTest {
 
     @Test
     fun `when message is already in state, it should not be upserted again`() = runTest {
-        whenever(logicRegistry.getMessageFromId(any())) doReturn randomMessage(syncStatus = SyncStatus.COMPLETED)
+        whenever(logicRegistry.getMessageById(any())) doReturn randomMessage(syncStatus = SyncStatus.COMPLETED)
 
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
