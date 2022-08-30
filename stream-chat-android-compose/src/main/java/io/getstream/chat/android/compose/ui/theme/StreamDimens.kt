@@ -67,7 +67,11 @@ import androidx.compose.ui.unit.dp
  * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two users.
  * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two users.
  * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
- * re-sizing itself in order to obey its aspect ratio.
+ *  re-sizing itself in order to obey its aspect ratio.
+ * @param attachmentsContentVideoMaxHeight The maximum height video attachment will expand to while automatically
+ *  re-sizing itself in order to obey its aspect ratio.
+ * @param attachmentsContentMediaGridSpacing The spacing between media preview tiles in the message list.
+ * @param attachmentsContentMediaWidth The width of media attachment previews in the message list.
  */
 @Immutable
 public data class StreamDimens
@@ -84,7 +88,9 @@ constructor(
     public val selectedChannelMenuUserItemWidth: Dp,
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,
+    // TODO - deprecate in favor of attachmentsContentMediaWidth
     public val attachmentsContentImageWidth: Dp,
+    // TODO - deprecate in favor of attachmentsContentMediaGridSpacing
     public val attachmentsContentImageGridSpacing: Dp,
     public val attachmentsContentImageHeight: Dp,
     public val attachmentsContentGiphyWidth: Dp,
@@ -122,6 +128,9 @@ constructor(
     public val groupAvatarInitialsXOffset: Dp,
     public val groupAvatarInitialsYOffset: Dp,
     public val attachmentsContentImageMaxHeight: Dp,
+    public val attachmentsContentVideoMaxHeight: Dp,
+    public val attachmentsContentMediaGridSpacing: Dp,
+    public val attachmentsContentMediaWidth: Dp,
 ) {
 
     /**
@@ -175,6 +184,10 @@ constructor(
      * users.
      * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
      *  re-sizing itself in order to obey its aspect ratio.
+     * @param attachmentsContentVideoMaxHeight The maximum height video attachment will expand to while automatically
+     *  re-sizing itself in order to obey its aspect ratio.
+     * @param attachmentsContentMediaGridSpacing The spacing between media preview tiles in the message list.
+     * @param attachmentsContentMediaWidth The width of media attachment previews in the message list.
      */
     public constructor(
         channelItemVerticalPadding: Dp,
@@ -220,6 +233,9 @@ constructor(
         groupAvatarInitialsXOffset: Dp,
         groupAvatarInitialsYOffset: Dp,
         attachmentsContentImageMaxHeight: Dp,
+        attachmentsContentVideoMaxHeight: Dp,
+        attachmentsContentMediaGridSpacing: Dp,
+        attachmentsContentMediaWidth: Dp,
     ) : this(
         channelItemVerticalPadding = channelItemVerticalPadding,
         channelItemHorizontalPadding = channelItemHorizontalPadding,
@@ -265,6 +281,9 @@ constructor(
         groupAvatarInitialsXOffset = groupAvatarInitialsXOffset,
         groupAvatarInitialsYOffset = groupAvatarInitialsYOffset,
         attachmentsContentImageMaxHeight = attachmentsContentImageMaxHeight,
+        attachmentsContentVideoMaxHeight = attachmentsContentVideoMaxHeight,
+        attachmentsContentMediaGridSpacing = attachmentsContentMediaGridSpacing,
+        attachmentsContentMediaWidth = attachmentsContentMediaWidth
     )
 
     public companion object {
@@ -318,6 +337,9 @@ constructor(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentImageMaxHeight = 600.dp,
+            attachmentsContentVideoMaxHeight = 400.dp,
+            attachmentsContentMediaGridSpacing = 2.dp,
+            attachmentsContentMediaWidth = 250.dp
         )
     }
 }

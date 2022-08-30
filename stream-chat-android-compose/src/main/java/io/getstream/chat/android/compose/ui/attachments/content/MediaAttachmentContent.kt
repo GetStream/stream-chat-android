@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -78,8 +79,7 @@ public fun MediaAttachmentContent(
     playButton: @Composable () -> Unit = { PlayButton() },
 ) {
     val (message, onLongItemClick, _, onMediaGalleryPreviewResult) = attachmentState
-    // TODO add media grid spacing to chat theme
-    val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
+    val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
 
     Row(
         modifier
@@ -155,9 +155,17 @@ internal fun ShowSingleMediaAttachment(
             }
         }
     }
+
     MediaAttachmentContentItem(
         attachment = attachment,
         modifier = Modifier
+            .heightIn(
+                max = if (attachment.type == AttachmentType.VIDEO) {
+                    ChatTheme.dimens.attachmentsContentVideoMaxHeight
+                } else {
+                    ChatTheme.dimens.attachmentsContentImageMaxHeight
+                }
+            )
             .fillMaxWidth()
             .aspectRatio(ratio ?: EqualDimensionsRatio),
         message = message,
