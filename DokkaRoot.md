@@ -46,7 +46,7 @@ There are only a few steps to get started with Stream!
 
 Let's cover some of these steps.
 ### Add dependency
-Add one of the three packages below to your dependencies for your `module/app` level `build.gradle` file:
+Add one of the four packages below to your dependencies for your `module/app` level `build.gradle` file:
 
 ```groovy
 repositories {
