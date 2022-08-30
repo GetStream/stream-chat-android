@@ -27,10 +27,17 @@ For upgrading from V4 to V5, please refer to the [V5 Migration Guide](https://ge
 
 ### Changelog
 
-Check out the [changelog](https://github.com/GetStream/stream-chat-android/releases) to see the latest changes in the package.
+Check out the [changelog](https://github.com/GetStream/stream-chat-android/releases) to see the changes and improvements in each of our releases.
 
 ## Getting started
+There are only a few steps to get started with Stream!
 
+* First, you need to add our dependency to the project.
+* Second, you need to set up our Client to communicate to the API.
+* Third, connect our Components to ViewModels to show data.
+* (Optional) Alternatively, you can skip using our components and build your custom UI powered by our data and persistence.
+
+Let's cover some of these steps.
 ### Add dependency
 Add one of the three packages below to your dependencies for your `module/app` level `build.gradle` file:
 
