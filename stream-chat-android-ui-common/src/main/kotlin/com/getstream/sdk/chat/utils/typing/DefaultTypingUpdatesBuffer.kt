@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils.typing
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -39,12 +40,7 @@ import kotlinx.coroutines.launch
  * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
-@Deprecated(
-    message = "This class has been deprecated and will be removed." +
-        "Should you wish to implement your own buffer, you can create " +
-        "a custom implementation of `TypingUpdatesBuffer`.",
-    level = DeprecationLevel.ERROR,
-)
+@InternalStreamChatApi
 public class DefaultTypingUpdatesBuffer(
     private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
     private val onTypingStarted: () -> Unit,

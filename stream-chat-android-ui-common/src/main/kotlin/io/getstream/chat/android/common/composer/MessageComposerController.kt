@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
