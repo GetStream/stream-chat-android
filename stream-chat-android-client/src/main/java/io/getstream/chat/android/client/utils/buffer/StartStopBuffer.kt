@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.utils.buffer
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private const val NO_LIMIT = -1
 
+@InternalStreamChatApi
 public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT) {
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
