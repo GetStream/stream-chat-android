@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.test.randomReactionNewEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStopEvent
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
@@ -67,6 +68,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private val repos: RepositoryFacade = mock()
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
+    private val queryChannelsTrack: QueryChannelsTrack = mock {
+        on(it.isLastSyncBeforeEvent(any())) doReturn true
+    }
 
     private lateinit var channelLogic: ChannelLogic
     private val channelMutableState: ChannelMutableStateImpl = ChannelMutableStateImpl(
@@ -89,6 +93,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             repos,
             false,
             channelStateLogic,
+            queryChannelsTrack
         )
     }
 
