@@ -3734,16 +3734,6 @@ public final class io/getstream/chat/android/client/utils/TimeProvider {
 public final class io/getstream/chat/android/client/utils/UserUtilsKt {
 }
 
-public final class io/getstream/chat/android/client/utils/buffer/StartStopBuffer {
-	public fun <init> ()V
-	public fun <init> (I)V
-	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function2;)V
-}
-
 public final class io/getstream/chat/android/client/utils/internal/ChatErrorMapperKt {
 }
 
