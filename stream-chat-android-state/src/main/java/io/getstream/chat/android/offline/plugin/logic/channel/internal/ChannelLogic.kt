@@ -82,6 +82,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -102,6 +103,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
+    private val queryChannelsTrack: QueryChannelsTrack
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
@@ -515,7 +517,9 @@ internal class ChannelLogic(
         StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                if (queryChannelsTrack.isLastSyncBeforeEvent(event)) {
+                    channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                }
                 channelStateLogic.toggleHidden(false)
 
                 if (!mutableState.insideSearch.value) {
@@ -538,7 +542,9 @@ internal class ChannelLogic(
                 channelStateLogic.toggleHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                if (queryChannelsTrack.isLastSyncBeforeEvent(event)) {
+                    channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                }
                 channelStateLogic.toggleHidden(false)
 
                 if (!mutableState.insideSearch.value) {
