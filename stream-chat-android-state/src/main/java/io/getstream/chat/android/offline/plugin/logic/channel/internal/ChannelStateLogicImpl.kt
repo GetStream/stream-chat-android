@@ -112,7 +112,7 @@ internal class ChannelStateLogicImpl(
                     currentUserId = currentUserId,
                     lastMessageAtDate = lastMessageSeenDate,
                     isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
-                )
+                ) && !mutableState.rawMessages.containsKey(message.id)
 
             if (shouldIncrementUnreadCount) {
                 StreamLog.d(TAG) {

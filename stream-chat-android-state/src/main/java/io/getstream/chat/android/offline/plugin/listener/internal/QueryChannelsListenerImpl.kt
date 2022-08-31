@@ -34,8 +34,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
  */
 internal class QueryChannelsListenerImpl(
     private val logic: LogicRegistry,
-    private val eventHandlerSequential: EventHandlerSequential
-    ) : QueryChannelsListener {
+    private val eventHandlerSequential: EventHandlerSequential,
+) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
