@@ -34,17 +34,19 @@ For upgrading from V4 to V5, please refer to the [V5 Migration Guide](https://ge
 
 ### Changelog
 
-Check out the [changelog](https://github.com/GetStream/stream-chat-android/releases) to see the changes and improvements in each of our releases.
+Check out the [CHANGELOG](https://github.com/GetStream/stream-chat-android/releases) to see the changes and improvements in each of our releases.
 
 ## Getting started
-There are only a few steps to get started with Stream!
+There are only **3 steps** to get started with Stream!
 
-* First, you need to add our dependency to the project.
-* Second, you need to set up our Client to communicate to the API.
-* Third, connect our Components to ViewModels to show data.
-* (Optional) Alternatively, you can skip using our components and build your custom UI powered by our data and persistence.
+* 1. Add Stream chat SDK dependency to your project.
+* 2. Set up Stream chat client to communicate to the API.
+* 3. Connect our components to ViewModels to show data.
+
+> Note: Alternatively, you can skip using our UI components and build your custom UI powered by our core SDK.
 
 Let's cover some of these steps.
+
 ### Add dependency
 Add one of the four packages below to your dependencies for your `module/app` level `build.gradle` file:
 
@@ -71,7 +73,7 @@ dependencies {
 
 ### Setup API Client
 
-Firstly, you need to instantiate a chat client. The Chat client will manage API call, event handling and manage the websocket connection to Stream Chat servers. You should only create the client once and re-use it across your application.
+First, you need to instantiate a chat client. The Chat client will manage API calls, event handling, and manage the WebSocket connection to Stream Chat servers. You should only create the client once and reuse it across your application.
 
 ```kotlin
 val apiKey = "{{ api_key }}"
@@ -80,14 +82,12 @@ val token = "{{ chat_user_token }}"
 val client = ChatClient.Builder(apiKey, applicationContext).build()
 ```
 
-Secondly you need authenticate and connect the user.
+Next, you need to authenticate and connect the user.
 ```kotlin
 val user = User(
-    id = "summer-brook-2",
-    extraData = mutableMapOf(
-        "name" to "Paranoid Android",
-        "image" to "https://bit.ly/2TIt8NR",
-    ),
+      id = "summer-brook-2",
+      name = "Paranoid Android",
+      image = "https://bit.ly/2TIt8NR"
 )
 client.connectUser(
     user = user,
@@ -107,7 +107,7 @@ For more complex token generation and expiration examples, have a look at [Token
 
 ### Logging
 
-By default the Chat Client will write  no logs.
+By default, the SDK will write no logs.
 
 #### Change Logging Level
 
