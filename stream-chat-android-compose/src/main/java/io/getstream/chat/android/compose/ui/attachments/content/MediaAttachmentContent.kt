@@ -316,7 +316,7 @@ internal fun MediaAttachmentContentItem(
                 onClick = {
                     mixedMediaPreviewLauncher.launch(
                         MediaGalleryPreviewContract.Input(
-                            messageId = message.id,
+                            message = message,
                             initialPosition = attachmentPosition
                         )
                     )

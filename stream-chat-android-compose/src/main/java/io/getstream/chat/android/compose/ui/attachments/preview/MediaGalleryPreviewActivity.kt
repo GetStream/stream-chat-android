@@ -79,6 +79,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -113,6 +114,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
+import coil.request.ImageRequest
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -130,12 +132,15 @@ import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
 import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewAction
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewOption
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.mediagallerypreview.Reply
 import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
+import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
+import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
@@ -163,7 +168,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private val factory by lazy {
         MediaGalleryPreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            messageId = intent?.getStringExtra(KeyMessageId) ?: ""
+            messageId = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
+                KeyMediaGalleryPreviewActivityState
+            )?.messageId ?: ""
         )
     }
 
@@ -179,7 +186,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val messageId = intent?.getStringExtra(KeyMessageId) ?: ""
+        val mediaGalleryPreviewActivityState = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
+            KeyMediaGalleryPreviewActivityState
+        )
+        val messageId = mediaGalleryPreviewActivityState?.messageId ?: ""
+
+        if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
+            val message = mediaGalleryPreviewActivityState?.toMessage()
+
+            if (message != null)
+                mediaGalleryPreviewViewModel.message = message
+        }
+
         val attachmentPosition = intent?.getIntExtra(KeyAttachmentPosition, 0) ?: 0
 
         if (messageId.isBlank()) {
@@ -596,7 +614,21 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            val painter = rememberStreamImagePainter(data = attachment.imagePreviewUrl)
+
+            // Used as a workaround for Coil's lack of a retry policy.
+            // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+            var retryHash by remember {
+                mutableStateOf(0)
+            }
+
+            val painter =
+                rememberStreamImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(attachment.imagePreviewUrl)
+                        .crossfade(true)
+                        .setParameter(key = "retry_hash", value = retryHash)
+                        .build()
+                )
 
             val density = LocalDensity.current
             val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -607,93 +639,156 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             val scale by animateFloatAsState(targetValue = currentScale)
 
+            // Used to refresh the request for the current page
+            // if it has previously failed.
+            if (page == pagerState.currentPage &&
+                mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
+                painter.state is AsyncImagePainter.State.Error
+            ) {
+                retryHash++
+            }
+
             val transformModifier = if (painter.state is AsyncImagePainter.State.Success) {
                 val size = painter.intrinsicSize
-                Modifier.aspectRatio(size.width / size.height, true)
+                Modifier
+                    .aspectRatio(size.width / size.height, true)
+                    .background(color = ChatTheme.colors.overlay)
             } else {
                 Modifier
             }
 
-            Image(
-                modifier = transformModifier
-                    .graphicsLayer(
-                        scaleY = scale,
-                        scaleX = scale,
-                        translationX = translation.x,
-                        translationY = translation.y
-                    )
-                    .onGloballyPositioned {
-                        imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
-                    }
-                    .pointerInput(Unit) {
-                        forEachGesture {
-                            awaitPointerEventScope {
-                                awaitFirstDown(requireUnconsumed = true)
-                                do {
-                                    val event = awaitPointerEvent(pass = PointerEventPass.Initial)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ImagePlaceHolder(asyncImagePainterState = painter.state)
 
-                                    val zoom = event.calculateZoom()
-                                    currentScale = (zoom * currentScale).coerceAtMost(MaxZoomScale)
+                Image(
+                    modifier = transformModifier
+                        .graphicsLayer(
+                            scaleY = scale,
+                            scaleX = scale,
+                            translationX = translation.x,
+                            translationY = translation.y
+                        )
+                        .onGloballyPositioned {
+                            imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
+                        }
+                        .pointerInput(Unit) {
+                            forEachGesture {
+                                awaitPointerEventScope {
+                                    awaitFirstDown(requireUnconsumed = true)
+                                    do {
+                                        val event = awaitPointerEvent(pass = PointerEventPass.Initial)
 
-                                    val maxTranslation = calculateMaxOffset(
-                                        imageSize = imageSize,
-                                        scale = currentScale,
-                                        parentSize = parentSize
-                                    )
+                                        val zoom = event.calculateZoom()
+                                        currentScale = (zoom * currentScale).coerceAtMost(MaxZoomScale)
 
-                                    val offset = event.calculatePan()
-                                    val newTranslationX = translation.x + offset.x * currentScale
-                                    val newTranslationY = translation.y + offset.y * currentScale
+                                        val maxTranslation = calculateMaxOffset(
+                                            imageSize = imageSize,
+                                            scale = currentScale,
+                                            parentSize = parentSize
+                                        )
 
-                                    translation = Offset(
-                                        newTranslationX.coerceIn(-maxTranslation.x, maxTranslation.x),
-                                        newTranslationY.coerceIn(-maxTranslation.y, maxTranslation.y)
-                                    )
+                                        val offset = event.calculatePan()
+                                        val newTranslationX = translation.x + offset.x * currentScale
+                                        val newTranslationY = translation.y + offset.y * currentScale
 
-                                    if (abs(newTranslationX) < calculateMaxOffsetPerAxis(
-                                            imageSize.width,
-                                            currentScale,
-                                            parentSize.width
-                                        ) || zoom != DefaultZoomScale
-                                    ) {
-                                        event.changes.forEach { it.consume() }
+                                        translation = Offset(
+                                            newTranslationX.coerceIn(-maxTranslation.x, maxTranslation.x),
+                                            newTranslationY.coerceIn(-maxTranslation.y, maxTranslation.y)
+                                        )
+
+                                        if (abs(newTranslationX) < calculateMaxOffsetPerAxis(
+                                                imageSize.width,
+                                                currentScale,
+                                                parentSize.width
+                                            ) || zoom != DefaultZoomScale
+                                        ) {
+                                            event.changes.forEach { it.consume() }
+                                        }
+                                    } while (event.changes.any { it.pressed })
+
+                                    if (currentScale < DefaultZoomScale) {
+                                        currentScale = DefaultZoomScale
                                     }
-                                } while (event.changes.any { it.pressed })
-
-                                if (currentScale < DefaultZoomScale) {
-                                    currentScale = DefaultZoomScale
                                 }
                             }
                         }
-                    }
-                    .pointerInput(Unit) {
-                        forEachGesture {
-                            awaitPointerEventScope {
-                                awaitFirstDown()
-                                withTimeoutOrNull(DoubleTapTimeoutMs) {
+                        .pointerInput(Unit) {
+                            forEachGesture {
+                                awaitPointerEventScope {
                                     awaitFirstDown()
-                                    currentScale = when {
-                                        currentScale == MaxZoomScale -> DefaultZoomScale
-                                        currentScale >= MidZoomScale -> MaxZoomScale
-                                        else -> MidZoomScale
-                                    }
+                                    withTimeoutOrNull(DoubleTapTimeoutMs) {
+                                        awaitFirstDown()
+                                        currentScale = when {
+                                            currentScale == MaxZoomScale -> DefaultZoomScale
+                                            currentScale >= MidZoomScale -> MaxZoomScale
+                                            else -> MidZoomScale
+                                        }
 
-                                    if (currentScale == DefaultZoomScale) {
-                                        translation = Offset(0f, 0f)
+                                        if (currentScale == DefaultZoomScale) {
+                                            translation = Offset(0f, 0f)
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
+                        },
+                    painter = painter,
+                    contentDescription = null
+                )
+
+                Log.d("isCurrentPage", "${page != pagerState.currentPage}")
+
+                if (pagerState.currentPage != page) {
+                    currentScale = DefaultZoomScale
+                    translation = Offset(0f, 0f)
+                }
+            }
+        }
+    }
+
+    /**
+     * Displays an image icon if no image was loaded previously
+     * or the request has failed, a circular progress indicator
+     * if the image is loading or nothing if the image has successfully
+     * loaded.
+     *
+     * @param asyncImagePainterState The painter state used to determine
+     * which UI to show.
+     */
+    @Composable
+    private fun ImagePlaceHolder(asyncImagePainterState: AsyncImagePainter.State) {
+        val painter = painterResource(
+            id = R.drawable.stream_compose_ic_image_picker
+        )
+
+        val imageModifier = Modifier.fillMaxSize(0.4f)
+
+        when (asyncImagePainterState) {
+            is AsyncImagePainter.State.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .size(50.dp),
+                    strokeWidth = 5.dp,
+                    color = ChatTheme.colors.primaryAccent
+                )
+            }
+            is AsyncImagePainter.State.Error -> Icon(
+                tint = ChatTheme.colors.textLowEmphasis,
+                modifier = imageModifier,
                 painter = painter,
                 contentDescription = null
             )
-
-            Log.d("isCurrentPage", "${page != pagerState.currentPage}")
-
-            if (pagerState.currentPage != page) {
-                currentScale = DefaultZoomScale
-                translation = Offset(0f, 0f)
+            is AsyncImagePainter.State.Success -> {}
+            is AsyncImagePainter.State.Empty -> {
+                Icon(
+                    tint = ChatTheme.colors.textLowEmphasis,
+                    modifier = imageModifier,
+                    painter = painter,
+                    contentDescription = null
+                )
             }
         }
     }
@@ -908,12 +1003,17 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    onClick = { onShareMediaClick(attachments[pagerState.currentPage]) }
+                    onClick = { onShareMediaClick(attachments[pagerState.currentPage]) },
+                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_share),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                        tint = ChatTheme.colors.textHighEmphasis,
+                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                            ChatTheme.colors.textHighEmphasis
+                        } else {
+                            ChatTheme.colors.disabled
+                        },
                     )
                 }
 
@@ -1207,7 +1307,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         /**
          * Represents the key for the ID of the message with the attachments we're browsing.
          */
-        private const val KeyMessageId: String = "messageId"
+        private const val KeyMediaGalleryPreviewActivityState: String = "mediaGalleryPreviewActivityState"
 
         /**
          * Represents the key for the starting attachment position based on the clicked attachment.
@@ -1243,12 +1343,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * Used to build an [Intent] to start the [MediaGalleryPreviewActivity] with the required data.
          *
          * @param context The context to start the activity with.
-         * @param messageId The ID of the message to explore the media of.
+         * @param message The [Message] containing the attachments.
          * @param attachmentPosition The initial position of the clicked media attachment.
          */
-        public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
+        public fun getIntent(context: Context, message: Message, attachmentPosition: Int): Intent {
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
-                putExtra(KeyMessageId, messageId)
+                val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
+
+                putExtra(KeyMediaGalleryPreviewActivityState, mediaGalleryPreviewActivityState)
                 putExtra(KeyAttachmentPosition, attachmentPosition)
             }
         }

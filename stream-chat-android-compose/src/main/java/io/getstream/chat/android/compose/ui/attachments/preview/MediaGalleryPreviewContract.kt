@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 
 /**
@@ -36,7 +37,7 @@ public class MediaGalleryPreviewContract :
     override fun createIntent(context: Context, input: Input): Intent {
         return MediaGalleryPreviewActivity.getIntent(
             context,
-            messageId = input.messageId,
+            message = input.message,
             attachmentPosition = input.initialPosition
         )
     }
@@ -53,11 +54,11 @@ public class MediaGalleryPreviewContract :
     /**
      * Defines the input for the [MediaGalleryPreviewContract].
      *
-     * @param messageId The ID of the message.
+     * @param message The message containing the attachments.
      * @param initialPosition The initial position of the Image gallery, based on the clicked item.
      */
     public class Input(
-        public val messageId: String,
+        public val message: Message,
         public val initialPosition: Int = 0,
     )
 }

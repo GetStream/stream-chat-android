@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -46,10 +45,21 @@ public class MediaGalleryPreviewViewModel(
     public val user: StateFlow<User?> = chatClient.clientState.user
 
     /**
+     * Indicates if we have fetched the complete message from the backend.
+     *
+     * This is necessary because our first state is set via a minimum viable
+     * data set needed to display the full UI in offline state.
+     *
+     * @see [io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewActivityAttachmentState]
+     * and [io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity.getIntent]
+     */
+    internal var hasCompleteMessage: Boolean = false
+
+    /**
      * Represents the message that we observe to show the UI data.
      */
     public var message: Message by mutableStateOf(Message())
-        private set
+        internal set
 
     /**
      * Represent the header title of the gallery screen.
@@ -87,6 +97,7 @@ public class MediaGalleryPreviewViewModel(
 
         if (result.isSuccess) {
             this.message = result.data()
+            hasCompleteMessage = true
         }
     }
 
@@ -108,7 +119,7 @@ public class MediaGalleryPreviewViewModel(
     }
 
     private suspend fun onConnected() {
-        if (message.id.isEmpty()) {
+        if (message.id.isEmpty() || !hasCompleteMessage) {
             fetchMessage()
         }
     }
@@ -147,11 +158,7 @@ public class MediaGalleryPreviewViewModel(
             val message = message
 
             attachments.removeAll {
-                it.assetUrl == currentMediaAttachment.assetUrl ||
-                    (
-                        currentMediaAttachment.type == AttachmentType.IMAGE &&
-                            it.imageUrl == currentMediaAttachment.imageUrl
-                        )
+                it.url == currentMediaAttachment.url
             }
 
             chatClient.updateMessage(message).enqueue()
