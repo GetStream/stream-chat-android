@@ -238,13 +238,6 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Add the members of the channel.
-     */
-    fun addMembers(members: List<Member>) {
-        mutableState.rawMembers = (mutableState.rawMembers + members.associateBy(Member::getUserId))
-    }
-
-    /**
      * Sets the watchers of the channel.
      *
      * @param watchers the [User] to be added or updated
@@ -335,8 +328,7 @@ internal class ChannelStateLogic(
      * @param members list of members to be upserted.
      */
     fun upsertMembers(members: List<Member>) {
-        mutableState.rawMembers = mutableState.rawMembers + members.associateBy { it.user.id }
-        mutableState.setMembersCount(mutableState.rawMembers.size)
+        mutableState.upsertMembers(members)
     }
 
     /**
@@ -354,16 +346,7 @@ internal class ChannelStateLogic(
      * @param member The member to be removed.
      */
     fun deleteMember(member: Member) {
-        val user = member.user
-
-        mutableState.rawMembers = mutableState.rawMembers - user.id
-
-        mutableState.setMembersCount(mutableState.membersCount.value - 1)
-
-        if (user.online) {
-            deleteWatcher(user)
-            setWatcherCount(mutableState.watcherCount.value - 1)
-        }
+        mutableState.deleteMember(member)
     }
 
     /**
@@ -440,7 +423,7 @@ internal class ChannelStateLogic(
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
-        addMembers(channel.members)
+        upsertMembers(channel.members)
         setWatchers(channel.watchers)
 
         if (!mutableState.insideSearch.value || scrollUpdate) {
@@ -467,7 +450,7 @@ internal class ChannelStateLogic(
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
-        addMembers(c.members)
+        upsertMembers(c.members)
         setWatchers(c.watchers)
         upsertOldMessages(c.messages)
     }

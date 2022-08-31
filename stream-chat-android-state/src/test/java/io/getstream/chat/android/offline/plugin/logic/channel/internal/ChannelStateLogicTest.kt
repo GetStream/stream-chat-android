@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -88,7 +87,6 @@ internal class ChannelStateLogicTest {
     private var _watchers: Map<String, User> = emptyMap()
     private val _watcherCount = MutableStateFlow(0)
     private val _membersCount = MutableStateFlow(0)
-    private var _members: Map<String, Member> = emptyMap()
     private val _channelConfig = MutableStateFlow(Config())
     private val channelId = "channelId"
 
@@ -109,8 +107,6 @@ internal class ChannelStateLogicTest {
         on(mock::rawWatchers.get()) doAnswer { _watchers }
         on(mock::rawWatchers.set(any())) doAnswer { _watchers = it.arguments[0] as Map<String, User> }
         on(mock.watcherCount) doReturn _watcherCount
-        on(mock::rawMembers.get()) doAnswer { _members }
-        on(mock::rawMembers.set(any())) doAnswer { _members = it.arguments[0] as Map<String, Member> }
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig
     }
