@@ -206,6 +206,20 @@ public class StreamOfflinePluginFactory(
         }
     }
 
+    private fun getEditMessageListener(
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): EditMessageListenerComposite {
+        val editMessageListenerDatabase = EditMessageListenerDatabase(
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            clientState = clientState
+        )
+
+        return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
+    }
+
     private fun getHideChannelListener(
         repositoryFacade: RepositoryFacade,
         statePlugin: StatePlugin
@@ -236,6 +250,23 @@ public class StreamOfflinePluginFactory(
         )
     }
 
+    private fun getSendReactionListener(
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): SendReactionListener {
+        val sendReactionListenerDatabase = SendReactionListenerDatabase(
+            clientState = clientState,
+            messageRepository = repositoryFacade,
+            reactionsRepository = repositoryFacade,
+            userRepository = repositoryFacade
+        )
+
+        return SendReactionListenerComposite(
+            listOf(statePlugin, sendReactionListenerDatabase)
+        )
+    }
+
     private fun getSendMessageListener(
         repositoryFacade: RepositoryFacade,
         statePlugin: StatePlugin,
@@ -257,37 +288,6 @@ public class StreamOfflinePluginFactory(
         return ShuffleGiphyListenerComposite(
             listOf(shuffleGiphyListenerDatabase, statePlugin)
         )
-    }
-
-    private fun getSendReactionListener(
-        clientState: ClientState,
-        repositoryFacade: RepositoryFacade,
-        statePlugin: StatePlugin
-    ): SendReactionListener {
-        val sendReactionListenerDatabase = SendReactionListenerDatabase(
-            clientState = clientState,
-            messageRepository = repositoryFacade,
-            reactionsRepository = repositoryFacade,
-            userRepository = repositoryFacade
-        )
-
-        return SendReactionListenerComposite(
-            listOf(statePlugin, sendReactionListenerDatabase)
-        )
-    }
-
-    private fun getEditMessageListener(
-        clientState: ClientState,
-        repositoryFacade: RepositoryFacade,
-        statePlugin: StatePlugin
-    ): EditMessageListenerComposite {
-        val editMessageListenerDatabase = EditMessageListenerDatabase(
-            userRepository = repositoryFacade,
-            messageRepository = repositoryFacade,
-            clientState = clientState
-        )
-
-        return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
     }
 
     private fun getDeleteMessageListenerDatabase(
