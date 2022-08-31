@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
@@ -58,6 +59,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
+    private val queryChannelsTrack: QueryChannelsTrack
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -98,6 +100,7 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
+                queryChannelsTrack = queryChannelsTrack
             )
         }
     }
@@ -229,6 +232,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
+            queryChannelsTrack: QueryChannelsTrack
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -243,7 +247,8 @@ internal class LogicRegistry internal constructor(
                 userPresence = userPresence,
                 repos = repos,
                 client = client,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                queryChannelsTrack = queryChannelsTrack
             )
                 .also { logicRegistry ->
                     instance = logicRegistry

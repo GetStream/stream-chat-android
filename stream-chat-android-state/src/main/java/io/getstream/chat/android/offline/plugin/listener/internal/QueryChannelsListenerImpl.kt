@@ -22,9 +22,11 @@ import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import java.util.Date
 
 /**
  * [QueryChannelsListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
@@ -35,7 +37,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 internal class QueryChannelsListenerImpl(
     private val logic: LogicRegistry,
     private val eventHandlerSequential: EventHandlerSequential,
-) : QueryChannelsListener {
+    private val queryChannelsTrack: QueryChannelsTrack,
+    ) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
@@ -50,6 +53,10 @@ internal class QueryChannelsListenerImpl(
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+        if (result.isSuccess) {
+            queryChannelsTrack.markSynced(Date())
+        }
+
         logic.queryChannels(request).onQueryChannelsResult(result, request)
         eventHandlerSequential.releaseEvents()
     }
