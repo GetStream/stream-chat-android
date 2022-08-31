@@ -107,7 +107,7 @@ internal class ChannelLogic(
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = StreamLog.getLogger("ChannelLogic")
+    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
 
     val cid: String
         get() = mutableState.cid
