@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
+@Suppress("TooManyFunctions")
 /** State container with mutable data of a channel.*/
 internal class ChannelMutableState(
     override val channelType: String,
@@ -83,11 +84,6 @@ internal class ChannelMutableState(
     var rawReads: Map<String, ChannelUserRead>
         get() = _rawReads.value
         set(value) { _rawReads.value = value }
-
-    /** raw version of members. */
-    var rawMembers: Map<String, Member>
-        get() = _members.value
-        set(value) { _members.value = value }
 
     /** raw version of old messages. */
     var rawOldMessages: Map<String, Message>
@@ -167,6 +163,9 @@ internal class ChannelMutableState(
     override val messagesState: StateFlow<MessagesState> = _messagesState
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount
+        .combine(_watchers) { watchersCount, watchersMap -> maxOf(watchersCount, watchersMap.size) }
+        .stateIn(scope, SharingStarted.Eagerly, 0)
+
     override val watchers: StateFlow<List<User>> =
         _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
             .map { it.sortedBy(User::createdAt) }
@@ -188,6 +187,8 @@ internal class ChannelMutableState(
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val membersCount: StateFlow<Int> = _membersCount
+        .combine(_members) { membersCount, membersMap, -> maxOf(membersCount, membersMap.size) }
+        .stateIn(scope, SharingStarted.Eagerly, 0)
 
     override val channelData: StateFlow<ChannelData> =
         _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
@@ -365,6 +366,34 @@ internal class ChannelMutableState(
     fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent) {
         _typingChatEvents.value = eventsMap
         _typing.value = typingEvent
+    }
+
+    /**
+     * Upsert members in the channel.
+     *
+     * @param members list of members to be upserted.
+     */
+    fun upsertMembers(members: List<Member>) {
+        _members.value = _members.value + members.associateBy(Member::getUserId)
+    }
+
+    /**
+     * Deletes a member.
+     *
+     * @param member The member to be removed.
+     */
+    fun deleteMember(member: Member) {
+        _members.value = _members.value - member.getUserId()
+        deleteWatcher(member.user)
+    }
+
+    /**
+     * Deletes a watcher.
+     *
+     * @param user The user to be removed.
+     */
+    private fun deleteWatcher(user: User) {
+        _watchers.value - user.id
     }
 }
 
