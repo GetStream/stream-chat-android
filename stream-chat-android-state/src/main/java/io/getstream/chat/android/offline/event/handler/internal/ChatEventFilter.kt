@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.batch
+package io.getstream.chat.android.offline.event.handler.internal
 
 import io.getstream.chat.android.client.events.ChatEvent
-import kotlin.math.absoluteValue
-import kotlin.random.Random
 
-/**
- * Events container to represent the source of the received events.
- */
-internal data class BatchEvent(
-    val id: Int = Random.nextInt().absoluteValue,
-    val sortedEvents: List<ChatEvent>,
-    val isFromHistorySync: Boolean,
-) {
-    val size: Int = sortedEvents.size
-    val isFromSocketConnection: Boolean = !isFromHistorySync
+internal class ChatEventFilter {
+
+    private val eventsHashes: MutableSet<Int> = mutableSetOf()
+
+    fun addEventHash(hash: Int) {
+        eventsHashes.add(hash)
+    }
+
+    fun addAllEventHashes(hashList: List<Int>) {
+        eventsHashes.addAll(hashList)
+    }
+
+    fun filterEvents(chatEventList: List<ChatEvent>): List<ChatEvent> {
+        return chatEventList.filterNot { chatEvent ->
+            eventsHashes.contains(chatEvent.hashCode())
+        }
+    }
 }

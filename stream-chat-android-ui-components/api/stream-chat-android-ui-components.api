@@ -112,14 +112,6 @@ public class com/getstream/sdk/chat/utils/GridSpacingItemDecoration : androidx/r
 	public fun setSpanCount (I)V
 }
 
-public final class com/getstream/sdk/chat/utils/StartStopBuffer {
-	public fun <init> ()V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
 }
 
