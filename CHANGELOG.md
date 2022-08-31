@@ -47,6 +47,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved slow mode countdown which is now started only after the message is sent to the server. [#4120](https://github.com/GetStream/stream-chat-android/pull/4120)
 
 ### ✅ Added
 
