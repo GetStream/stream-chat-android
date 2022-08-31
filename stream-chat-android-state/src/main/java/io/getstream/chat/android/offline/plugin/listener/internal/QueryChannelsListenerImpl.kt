@@ -38,7 +38,7 @@ internal class QueryChannelsListenerImpl(
     private val logic: LogicRegistry,
     private val eventHandlerSequential: EventHandlerSequential,
     private val queryChannelsTrack: QueryChannelsTrack,
-    ) : QueryChannelsListener {
+) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
