@@ -90,11 +90,6 @@ internal class ChannelMutableState(
         get() = _oldMessages.value
         set(value) { _oldMessages.value = value }
 
-    /** raw version of typing. */
-    var rawTyping: Map<String, TypingStartEvent>
-        get() = _typingChatEvents.value
-        set(value) { _typingChatEvents.value = value }
-
     /** the date of the last message */
     var lastMessageAt: Date?
         get() = _lastMessageAt.value
