@@ -124,7 +124,6 @@ internal class EventHandlerSequential(
     private val sideEffect: suspend () -> Unit,
     private val syncedEvents: Flow<List<ChatEvent>>,
     private val startStopBuffer: StartStopBuffer<BatchEvent> = StartStopBuffer(bufferLimit = 500),
-    private val chatEventFilter: ChatEventFilter,
     scope: CoroutineScope,
 ) : EventHandler {
 
@@ -135,7 +134,7 @@ internal class EventHandlerSequential(
 
     private val mutex = Mutex()
     private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
-    private val socketEventCollector = SocketEventCollector(scope, this::handleEvents)
+    private val socketEventCollector = SocketEventCollector(scope, startStopBuffer::enqueueData)
 
     private var eventsDisposable: Disposable = EMPTY_DISPOSABLE
 
@@ -157,7 +156,7 @@ internal class EventHandlerSequential(
             scope.launch {
                 syncedEvents.collect { chatEvents ->
                     logger.i { "[onSyncEventsReceived] events.size: ${chatEvents.size}" }
-                    handleEvents(chatEvents)
+                    startStopBuffer.enqueueData(BatchEvent(sortedEvents = chatEvents, isFromHistorySync = true))
                 }
             }
             scope.launch {
@@ -178,30 +177,6 @@ internal class EventHandlerSequential(
 
             startStopBuffer.subscribe(::handleBatchEvent)
         }
-    }
-
-    private fun handleEvents(chatEvents: List<ChatEvent>) {
-        chatEventFilter.filterEvents(chatEvents)
-            .takeIf { events -> events.isNotEmpty() }
-            ?.let { events ->
-                enqueueEvents(BatchEvent(sortedEvents = events, isFromHistorySync = true))
-            }
-    }
-
-    private fun handleEvents(batchEvent: BatchEvent) {
-        val chatEvents = batchEvent.sortedEvents
-        chatEventFilter.filterEvents(chatEvents)
-            .takeIf { events -> events.isNotEmpty() }
-            ?.let { events ->
-                enqueueEvents(batchEvent.copy(sortedEvents = events))
-            }
-    }
-
-    private fun enqueueEvents(batchEvent: BatchEvent) {
-        val hashCodes = batchEvent.sortedEvents.map { event -> event.hashCode() }
-        chatEventFilter.addAllEventHashes(hashCodes)
-
-        startStopBuffer.enqueueData(batchEvent)
     }
 
     internal fun holdEvents() {
