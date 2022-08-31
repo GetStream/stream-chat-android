@@ -47,10 +47,8 @@ class AndroidIntroduction {
         // Step 3 - Authenticate and connect the user
         val user = User(
             id = "summer-brook-2",
-            extraData = mutableMapOf(
-                "name" to "Paranoid Android",
-                "image" to "https://bit.ly/2TIt8NR",
-            ),
+            name = "Paranoid Android",
+            image = "https://bit.ly/2TIt8NR",
         )
         client.connectUser(
             user = user,
