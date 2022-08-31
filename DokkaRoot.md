@@ -11,7 +11,8 @@
 
 ### 🔗 Quick Links
 
-* [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat
+* [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat 
+> Small teams and individuals can also apply for a [Maker Account](https://getstream.io/maker-account/) that allows you to use Startup Plan for free.
 
 #### Tutorials
 * [Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin): Learn the basics of the SDK by by building a simple messaging app (Kotlin or Java)
@@ -39,9 +40,9 @@ Check out the [CHANGELOG](https://github.com/GetStream/stream-chat-android/relea
 ## Getting started
 There are only **3 steps** to get started with Stream!
 
-* 1. Add Stream chat SDK dependency to your project.
-* 2. Set up Stream chat client to communicate to the API.
-* 3. Connect our components to ViewModels to show data.
+1. Add Stream chat SDK dependency to your project.
+2. Set up Stream chat client to communicate to the API.
+3. Connect our components to ViewModels to show data.
 
 > Note: Alternatively, you can skip using our UI components and build your custom UI powered by our core SDK.
 
@@ -68,7 +69,6 @@ dependencies {
   // Client only
   implementation "io.getstream:stream-chat-android-client:$stream_version"
 }
-
 ```
 
 ### Setup API Client
@@ -103,15 +103,39 @@ client.connectUser(
 
 The user token is typically provided by your backend when you login or register in the app. If authentication is disabled for your app, you can also use a `ChatClient#devToken` to generate an insecure token for development. Of course, you should never launch into production with authentication disabled.
 
+There is also a [Stream Token Generator](https://getstream.io/chat/docs/react/token_generator/) which can help you to generate user tokens for prototyping and debugging; usually by hardcoding this into your application or passing it as an environment value at initialization.
+
 For more complex token generation and expiration examples, have a look at [Token Expiration](https://getstream.io/chat/docs/android/tokens_and_authentication/#token-expiration).
+
+### Offline storage
+
+To add data persistence you can provide the `ChatClient.Builder` with an instance of `StreamOfflinePluginFactory`.
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+  config = Config(
+    backgroundSyncEnabled = true,
+    userPresence = true,
+    persistenceEnabled = true,
+    uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+  ),
+  appContext = applicationContext,
+)
+
+val client = ChatClient.Builder(apiKey, applicationContext)
+    .withPlugin(offlinePluginFactory)
+    .build()
+```
 
 ### Logging
 
-By default, the SDK will write no logs.
+During development, you might want to see the SDK logs to investigate a specific area of interest. Let's see how it can be done!
+
+> Please take into account that the SDK will write no logs by default.
 
 #### Change Logging Level
 
-During development you might want to enable more logging information, you can change the default log level when constructing the client.
+To enable logging information, you can change the default log level when constructing the client.
 
 ```kotlin 
 val client = ChatClient.Builder(apiKey, applicationContext)
@@ -133,26 +157,6 @@ val client = ChatClient.Builder(apiKey, applicationContext)
     .logLevel(ChatLogLevel.ALL)
     // Provide loggerHandler instance
     .loggerHandler(loggerHandler)
-    .build()
-```
-
-### Offline storage
-
-To add data persistence you can provide the `ChatClient.Builder` with an instance of `StreamOfflinePluginFactory`.
-
-```kotlin
-val offlinePluginFactory = StreamOfflinePluginFactory(
-  config = Config(
-    backgroundSyncEnabled = true,
-    userPresence = true,
-    persistenceEnabled = true,
-    uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-  ),
-  appContext = applicationContext,
-)
-
-val client = ChatClient.Builder(apiKey, applicationContext)
-    .withPlugin(offlinePluginFactory)
     .build()
 ```
 
