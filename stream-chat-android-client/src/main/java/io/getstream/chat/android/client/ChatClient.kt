@@ -2499,7 +2499,7 @@ internal constructor(
      * @return Executable async [Call] responsible for obtaining missing events.
      */
     @CheckResult
-    public fun getSyncHistory(
+    internal fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
     ): Call<List<ChatEvent>> {
