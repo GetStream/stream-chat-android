@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.SharedCalls
@@ -2499,13 +2498,17 @@ internal constructor(
      * @return Executable async [Call] responsible for obtaining missing events.
      */
     @CheckResult
-    internal fun getSyncHistory(
+    @InternalStreamChatApi
+    public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
     ): Call<List<ChatEvent>> {
-        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(scope, ChatError(
-            "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
-        ))
+        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
+            scope,
+            ChatError(
+                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+            )
+        )
 
         return api.getSyncHistory(channelsIds, lastSyncAt)
             .withPrecondition(scope) {
@@ -2530,10 +2533,6 @@ internal constructor(
                 Result.success(Unit)
             }
         }
-    }
-
-    private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: ExactDate): Result<Unit> {
-        return checkSyncHistoryPreconditions(channelsIds, lastSyncAt.date)
     }
 
     /**
