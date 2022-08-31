@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,7 +69,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
-    private val channelMutableState: ChannelMutableStateImpl = ChannelMutableStateImpl(
+    private val channelMutableState: ChannelMutableState = ChannelMutableState(
         "type1", channelId, testCoroutines.scope, userFlow,
         MutableStateFlow(
             mapOf(currentUser.id to currentUser)
