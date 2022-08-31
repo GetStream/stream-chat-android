@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
@@ -69,7 +70,6 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
@@ -78,7 +78,7 @@ import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSo
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
-    private val scope: CoroutineScope,
+    private val scope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
     private val notificationConfig: NotificationConfig,
@@ -114,7 +114,7 @@ internal open class BaseChatModule(
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
             socketStateService = socketStateService,
-            coroutineScope = scope,
+            userScope = scope,
             chatSocketExperimental = chatSocketExperimental
         )
     }

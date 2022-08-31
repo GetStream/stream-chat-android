@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.SharedCalls
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
@@ -150,6 +149,8 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.scope.ClientScope
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
@@ -181,14 +182,12 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.CompositeStreamLogger
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -221,8 +220,8 @@ internal constructor(
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    private val clientScope: CoroutineScope,
-    private val userScope: CoroutineScope,
+    private val clientScope: ClientScope,
+    private val userScope: UserScope,
     internal val retryPolicy: RetryPolicy,
     private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
@@ -594,7 +593,7 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
         onDisconnectionComplete: () -> Unit = {}
     ): Call<ConnectionData> {
-        return CoroutineCall(scope) {
+        return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
             disconnectSuspend(flushPersistence = true)
             onDisconnectionComplete()
@@ -2882,9 +2881,8 @@ internal constructor(
             if (ToggleService.isInitialized().not()) {
                 ToggleService.init(appContext, emptyMap())
             }
-            val clientJob = SupervisorJob()
-            val clientScope = CoroutineScope(clientJob + DispatcherProvider.IO + SharedCalls())
-            val userScope = clientScope + SupervisorJob(clientJob)
+            val clientScope = ClientScope()
+            val userScope = UserScope(clientScope)
             val module =
                 ChatModule(
                     appContext,

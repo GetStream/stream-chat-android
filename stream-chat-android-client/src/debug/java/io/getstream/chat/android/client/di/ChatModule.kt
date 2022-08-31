@@ -22,9 +22,9 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 
 /**
@@ -35,7 +35,7 @@ import okhttp3.OkHttpClient
  */
 internal class ChatModule(
     appContext: Context,
-    scope: CoroutineScope,
+    scope: UserScope,
     config: ChatClientConfig,
     notificationsHandler: NotificationHandler,
     notificationConfig: NotificationConfig,

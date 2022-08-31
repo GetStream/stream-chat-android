@@ -35,6 +35,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -43,6 +45,8 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -83,6 +87,12 @@ internal class ChatClientTest {
 
     @BeforeEach
     fun setUp() {
+        StreamLog.setValidator { _, _ -> true }
+        StreamLog.setLogger(
+            KotlinStreamLogger(now = {
+                testCoroutines.dispatcher.scheduler.currentTime
+            })
+        )
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val config = ChatClientConfig(
             "api-key",
@@ -99,7 +109,9 @@ internal class ChatClientTest {
         socket = FakeSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutines.scope)
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
         client = ChatClient(
             config = config,
             api = api,
@@ -111,8 +123,8 @@ internal class ChatClientTest {
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            clientScope = testCoroutines.scope,
-            userScope = testCoroutines.childScope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
@@ -262,6 +274,7 @@ internal class ChatClientTest {
 
         /* Then */
         result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id."))
+        println("!.!.!")
     }
 
     @Test
