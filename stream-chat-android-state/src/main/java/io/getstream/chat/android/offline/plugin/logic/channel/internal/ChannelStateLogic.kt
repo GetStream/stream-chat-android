@@ -232,18 +232,16 @@ internal class ChannelStateLogic(
      * @param watcherCount the count of watchers.
      */
     fun setWatcherCount(watcherCount: Int) {
-        if (watcherCount >= 0 && watcherCount != mutableState.watcherCount.value) {
-            mutableState.setWatcherCount(watcherCount)
-        }
+        mutableState.setWatcherCount(watcherCount)
     }
 
     /**
      * Sets the watchers of the channel.
      *
-     * @param watchers the [User] to be added or updated
+     * @param watchers the list of [User] to be added or updated
      */
-    fun setWatchers(watchers: List<User>) {
-        mutableState.rawWatchers = (mutableState.rawWatchers + watchers.associateBy { it.id })
+    fun upsertWatchers(watchers: List<User>) {
+        mutableState.upsertWatchers(watchers)
     }
 
     /**
@@ -364,7 +362,7 @@ internal class ChannelStateLogic(
      * @param user [User]
      */
     fun upsertWatcher(user: User) {
-        mutableState.rawWatchers = mutableState.rawWatchers + mapOf(user.id to user)
+        upsertWatchers(listOf(user))
     }
 
     /**
@@ -373,7 +371,7 @@ internal class ChannelStateLogic(
      * @param user [User]
      */
     fun deleteWatcher(user: User) {
-        mutableState.rawWatchers = mutableState.rawWatchers - user.id
+        mutableState.deleteWatcher(user)
     }
 
     /**
@@ -424,7 +422,7 @@ internal class ChannelStateLogic(
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(channel.members)
-        setWatchers(channel.watchers)
+        upsertWatchers(channel.watchers)
 
         if (!mutableState.insideSearch.value || scrollUpdate) {
             upsertMessages(channel.messages, shouldRefreshMessages)
@@ -451,7 +449,7 @@ internal class ChannelStateLogic(
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
-        setWatchers(c.watchers)
+        upsertWatchers(c.watchers)
         upsertOldMessages(c.messages)
     }
 
