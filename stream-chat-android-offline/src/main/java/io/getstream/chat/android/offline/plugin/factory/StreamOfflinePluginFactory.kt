@@ -117,6 +117,7 @@ public class StreamOfflinePluginFactory(
      *
      * This method must be called after the user is set in the SDK.
      */
+    @Suppress("LongMethod")
     private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin {
         logger.i { "[getOrCreateOfflinePlugin] user.id: '${user.id}'" }
         val cachedPlugin = cachedOfflinePluginInstance
