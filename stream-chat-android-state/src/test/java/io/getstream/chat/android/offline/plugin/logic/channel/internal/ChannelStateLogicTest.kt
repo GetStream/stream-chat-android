@@ -100,8 +100,6 @@ internal class ChannelStateLogicTest {
         on(mock.cid) doReturn randomCID()
         on(mock.channelId) doReturn channelId
         on(mock.channelData) doReturn _channelData
-        on(mock::rawReads.get()) doAnswer { _reads }
-        on(mock::rawReads.set(any())) doAnswer { _reads = it.arguments[0] as Map<String, ChannelUserRead> }
         on(mock.insideSearch) doReturn _insideSearch
         on(mock.watcherCount) doReturn _watcherCount
         on(mock.membersCount) doReturn _membersCount
@@ -195,7 +193,7 @@ internal class ChannelStateLogicTest {
         )
 
         channelStateLogic.incrementUnreadCountIfNecessary(oldMessage)
-        verify(mutableState).setUnreadCount(newUnreadCount + 1)
+        verify(mutableState).increaseReadWith(oldMessage)
     }
 
     @Test

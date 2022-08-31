@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -121,18 +120,7 @@ internal class ChannelStateLogic(
                         "at: $lastMessageSeenDate. " +
                         "New unread count: ${unreadCount + 1}"
                 }
-
-                mutableState.setRead(
-                    readState.apply {
-                        this.unreadMessages = unreadCount + 1
-                        this.lastMessageSeenDate = message.createdAt
-                    }
-                )
-                mutableState.rawReads = mutableState.rawReads.apply {
-                    this[currentUserId]?.lastMessageSeenDate = message.createdAt
-                    this[currentUserId]?.unreadMessages = unreadCount + 1
-                }
-                mutableState.setUnreadCount(unreadCount + 1)
+                mutableState.increaseReadWith(message)
             }
         }
     }
@@ -153,42 +141,7 @@ internal class ChannelStateLogic(
      * @param reads the information about the read.
      */
     fun updateReads(reads: List<ChannelUserRead>) {
-        clientState.user.value?.let { currentUser ->
-            val currentUserId = currentUser.id
-            val previousUserIdToReadMap = mutableState.rawReads
-            val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
-
-            /**
-             * It's possible that the data coming back from the online channel query has a last read date that's
-             * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
-             * to show in the channel list.
-             */
-            incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
-                incomingUserRead.lastMessageSeenDate = mutableState.read.value?.lastMessageSeenDate
-
-                // the previous last Read date that is most current
-                val previousLastRead =
-                    mutableState.read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
-
-                // Use AFTER to determine if the incoming read is more current.
-                // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-                val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
-                    previousLastRead,
-                    OFFSET_EVENT_TIME
-                ) == true
-
-                if (shouldUpdateByIncoming) {
-                    mutableState.setRead(incomingUserRead)
-                    mutableState.setUnreadCount(incomingUserRead.unreadMessages)
-                } else {
-                    // if the previous Read was more current, replace the item in the update map
-                    incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
-                }
-            }
-
-            // always post the newly updated map
-            mutableState.rawReads = (previousUserIdToReadMap + incomingUserIdToReadMap)
-        }
+        mutableState.upsertReads(reads)
     }
 
     /**
@@ -414,7 +367,6 @@ internal class ChannelStateLogic(
         updateChannelData(channel)
         setWatcherCount(channel.watcherCount)
 
-        mutableState.setRead(mutableState.read.value)
         mutableState.setMembersCount(channel.memberCount)
 
         updateReads(channel.read)
@@ -559,7 +511,6 @@ internal class ChannelStateLogic(
     }
 
     private companion object {
-        private const val OFFSET_EVENT_TIME = 5L
         private const val TAG = "ChannelStateLogicImpl"
     }
 }
