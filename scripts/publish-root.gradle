@@ -43,3 +43,7 @@ nexusPublishing {
         }
     }
 }
+
+tasks.withType(dokkaHtmlMultiModule.getClass()) {
+    includes.from("DokkaRoot.md")
+}
