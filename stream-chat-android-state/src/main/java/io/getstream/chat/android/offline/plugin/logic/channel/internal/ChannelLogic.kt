@@ -515,12 +515,12 @@ internal class ChannelLogic(
         StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
+                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.toggleHidden(false)
+
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
-
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
@@ -538,11 +538,12 @@ internal class ChannelLogic(
                 channelStateLogic.toggleHidden(false)
             }
             is NotificationMessageNewEvent -> {
+                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.toggleHidden(false)
+
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
-                // channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {
                 upsertEventMessage(event.message)
