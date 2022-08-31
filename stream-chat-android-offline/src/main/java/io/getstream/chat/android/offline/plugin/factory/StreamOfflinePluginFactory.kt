@@ -157,7 +157,7 @@ public class StreamOfflinePluginFactory(
         val sendMessageListener: SendMessageListener = getSendMessageListener(repositoryFacade, statePlugin)
         val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(repositoryFacade, statePlugin)
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
-            chatClient.repositoryFacade, chatClient.repositoryFacade
+            repositoryFacade, repositoryFacade
         )
         val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = clientState,
