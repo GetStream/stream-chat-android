@@ -84,7 +84,6 @@ internal class ChannelStateLogicTest {
         MutableStateFlow(ChannelData(randomChannel(), emptySet()))
     private var _reads: Map<String, ChannelUserRead> = emptyMap()
     private val _insideSearch = MutableStateFlow(false)
-    private var _watchers: Map<String, User> = emptyMap()
     private val _watcherCount = MutableStateFlow(0)
     private val _membersCount = MutableStateFlow(0)
     private val _channelConfig = MutableStateFlow(Config())
@@ -104,8 +103,6 @@ internal class ChannelStateLogicTest {
         on(mock::rawReads.get()) doAnswer { _reads }
         on(mock::rawReads.set(any())) doAnswer { _reads = it.arguments[0] as Map<String, ChannelUserRead> }
         on(mock.insideSearch) doReturn _insideSearch
-        on(mock::rawWatchers.get()) doAnswer { _watchers }
-        on(mock::rawWatchers.set(any())) doAnswer { _watchers = it.arguments[0] as Map<String, User> }
         on(mock.watcherCount) doReturn _watcherCount
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig

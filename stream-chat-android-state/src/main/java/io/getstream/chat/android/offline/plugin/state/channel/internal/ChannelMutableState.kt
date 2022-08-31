@@ -90,11 +90,6 @@ internal class ChannelMutableState(
         get() = _oldMessages.value
         set(value) { _oldMessages.value = value }
 
-    /** raw version of watchers. */
-    var rawWatchers: Map<String, User>
-        get() = _watchers.value
-        set(value) { _watchers.value = value }
-
     /** raw version of typing. */
     var rawTyping: Map<String, TypingStartEvent>
         get() = _typingChatEvents.value
@@ -392,8 +387,12 @@ internal class ChannelMutableState(
      *
      * @param user The user to be removed.
      */
-    private fun deleteWatcher(user: User) {
-        _watchers.value - user.id
+    internal fun deleteWatcher(user: User) {
+        _watchers.value = _watchers.value - user.id
+    }
+
+    fun upsertWatchers(watchers: List<User>) {
+        _watchers.value = _watchers.value + watchers.associateBy(User::id)
     }
 }
 
