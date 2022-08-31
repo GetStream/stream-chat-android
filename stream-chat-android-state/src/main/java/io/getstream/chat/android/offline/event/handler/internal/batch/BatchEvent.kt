@@ -23,7 +23,7 @@ import kotlin.random.Random
 /**
  * Events container to represent the source of the received events.
  */
-internal data class BatchEvent(
+internal class BatchEvent(
     val id: Int = Random.nextInt().absoluteValue,
     val sortedEvents: List<ChatEvent>,
     val isFromHistorySync: Boolean,
