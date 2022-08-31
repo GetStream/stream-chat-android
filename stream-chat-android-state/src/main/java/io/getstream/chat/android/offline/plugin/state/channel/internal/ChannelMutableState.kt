@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package io.getstream.chat.android.offline.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
@@ -26,10 +28,12 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,6 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
 
@@ -60,7 +65,6 @@ internal class ChannelMutableState(
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val _watcherCount = MutableStateFlow(0)
-    private val _read = MutableStateFlow<ChannelUserRead?>(null)
     private val _endOfNewerMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
     private val _loading = MutableStateFlow(false)
@@ -68,7 +72,6 @@ internal class ChannelMutableState(
     private val _muted = MutableStateFlow(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _repliedMessage = MutableStateFlow<Message?>(null)
-    private val _unreadCount = MutableStateFlow(0)
     private val _membersCount = MutableStateFlow(0)
     private val _insideSearch = MutableStateFlow(false)
     private val _loadingOlderMessages = MutableStateFlow(false)
@@ -79,11 +82,6 @@ internal class ChannelMutableState(
     var rawMessages: Map<String, Message>
         get() = _messages.value
         set(value) { _messages.value = value }
-
-    /** raw version of reads. */
-    var rawReads: Map<String, ChannelUserRead>
-        get() = _rawReads.value
-        set(value) { _rawReads.value = value }
 
     /** raw version of old messages. */
     var rawOldMessages: Map<String, Message>
@@ -167,9 +165,12 @@ internal class ChannelMutableState(
         .map { it.values.sortedBy(ChannelUserRead::lastRead) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val read: StateFlow<ChannelUserRead?> = _read
+    override val read: StateFlow<ChannelUserRead?> = _rawReads
+        .combine(userFlow) { readsMap, user -> user?.id?.let { readsMap[it] } }
+        .stateIn(scope, SharingStarted.Eagerly, null)
 
-    override val unreadCount: StateFlow<Int?> = _unreadCount
+    override val unreadCount: StateFlow<Int> = read.mapLatest { it?.unreadMessages ?: 0 }
+        .stateIn(scope, SharingStarted.Eagerly, 0)
 
     override val members: StateFlow<List<Member>> = _members
         .combine(latestUsers) { membersMap, usersMap -> membersMap.values.updateUsers(usersMap) }
@@ -215,7 +216,7 @@ internal class ChannelMutableState(
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = _channelConfig.value
-        channel.unreadCount = _unreadCount.value
+        channel.unreadCount = unreadCount.value
         channel.lastMessageAt =
             lastMessageAt ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
@@ -248,15 +249,6 @@ internal class ChannelMutableState(
      */
     fun setWatcherCount(count: Int) {
         _watcherCount.value = count
-    }
-
-    /**
-     * Sets the read information for this channel.
-     *
-     * @param channelUserRead [ChannelUserRead]
-     */
-    fun setRead(channelUserRead: ChannelUserRead?) {
-        _read.value = channelUserRead
     }
 
     /** Sets the end for newer messages. */
@@ -312,15 +304,6 @@ internal class ChannelMutableState(
      */
     fun setRepliedMessage(repliedMessage: Message?) {
         _repliedMessage.value = repliedMessage
-    }
-
-    /**
-     * Sets unread count.
-     *
-     * @param count Int.
-     */
-    fun setUnreadCount(count: Int) {
-        _unreadCount.value = count
     }
 
     /**
@@ -388,6 +371,39 @@ internal class ChannelMutableState(
 
     fun upsertWatchers(watchers: List<User>) {
         _watchers.value = _watchers.value + watchers.associateBy(User::id)
+    }
+
+    fun increaseReadWith(message: Message) {
+        val user = userFlow.value ?: return
+        val newUserRead = (read.value ?: ChannelUserRead(user)).let { currentUserRead ->
+            currentUserRead.copy(
+                user = user,
+                unreadMessages = currentUserRead.unreadMessages++,
+                lastMessageSeenDate = message.createdAt,
+            )
+        }
+        _rawReads.value = _rawReads.value + (user.id to newUserRead)
+    }
+
+    fun upsertReads(reads: List<ChannelUserRead>) {
+        val currentUser = userFlow.value
+        val currentUserRead = read.value
+        val lastRead = currentUserRead?.lastRead
+        val incomingUserRead = currentUser?.id?.let { userId -> reads.firstOrNull { it.user.id == userId } }
+        val newUserRead = when {
+            incomingUserRead == null -> currentUserRead
+            currentUserRead == null -> incomingUserRead
+            lastRead == null -> incomingUserRead
+            incomingUserRead.lastRead?.inOffsetWith(lastRead, OFFSET_EVENT_TIME) == true -> incomingUserRead
+            else -> currentUserRead
+        }
+        _rawReads.value = _rawReads.value +
+            reads.associateBy(ChannelUserRead::getUserId) +
+            listOfNotNull(newUserRead).associateBy(ChannelUserRead::getUserId)
+    }
+
+    private companion object {
+        private const val OFFSET_EVENT_TIME = 5L
     }
 }
 
