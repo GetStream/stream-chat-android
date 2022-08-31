@@ -2503,9 +2503,9 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: String,
     ): Call<List<ChatEvent>> {
-        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: throw IllegalArgumentException(
-            "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern} "
-        )
+        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(scope, ChatError(
+            "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+        ))
 
         return api.getSyncHistory(channelsIds, lastSyncAt)
             .withPrecondition(scope) {
