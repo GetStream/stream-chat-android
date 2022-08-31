@@ -2475,12 +2475,15 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 public final class io/getstream/chat/android/client/models/ChannelCapabilities {
 	public static final field BAN_CHANNEL_MEMBERS Ljava/lang/String;
 	public static final field CONNECT_EVENTS Ljava/lang/String;
+	public static final field CREATE_CALL Ljava/lang/String;
 	public static final field DELETE_ANY_MESSAGE Ljava/lang/String;
 	public static final field DELETE_CHANNEL Ljava/lang/String;
 	public static final field DELETE_OWN_MESSAGE Ljava/lang/String;
 	public static final field FLAG_MESSAGE Ljava/lang/String;
 	public static final field FREEZE_CHANNEL Ljava/lang/String;
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/ChannelCapabilities;
+	public static final field JOIN_CALL Ljava/lang/String;
+	public static final field JOIN_CHANNEL Ljava/lang/String;
 	public static final field LEAVE_CHANNEL Ljava/lang/String;
 	public static final field MUTE_CHANNEL Ljava/lang/String;
 	public static final field PIN_MESSAGE Ljava/lang/String;
@@ -2494,6 +2497,8 @@ public final class io/getstream/chat/android/client/models/ChannelCapabilities {
 	public static final field SEND_REPLY Ljava/lang/String;
 	public static final field SEND_TYPING_EVENTS Ljava/lang/String;
 	public static final field SET_CHANNEL_COOLDOWN Ljava/lang/String;
+	public static final field SLOW_MODE Ljava/lang/String;
+	public static final field TYPING_EVENTS Ljava/lang/String;
 	public static final field UPDATE_ANY_MESSAGE Ljava/lang/String;
 	public static final field UPDATE_CHANNEL Ljava/lang/String;
 	public static final field UPDATE_CHANNEL_MEMBERS Ljava/lang/String;
