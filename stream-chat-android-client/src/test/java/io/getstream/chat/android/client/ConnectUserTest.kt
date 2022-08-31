@@ -29,6 +29,8 @@ import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -82,6 +84,8 @@ internal class ConnectUserTest {
         chatApi = mock()
         userStateService = UserStateService()
         socketStateService = SocketStateService()
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config = mock(),
             api = chatApi,
@@ -93,8 +97,8 @@ internal class ConnectUserTest {
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            clientScope = testCoroutines.scope,
-            userScope = testCoroutines.childScope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),

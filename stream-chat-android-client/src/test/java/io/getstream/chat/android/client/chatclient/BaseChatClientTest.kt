@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -80,6 +82,8 @@ internal open class BaseChatClientTest {
     @BeforeEach
     fun before() {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         MockitoAnnotations.openMocks(this)
         plugins = mutableListOf()
         chatClient = ChatClient(
@@ -90,13 +94,13 @@ internal open class BaseChatClientTest {
             tokenManager = tokenManager,
             socketStateService = socketStateService,
             callPostponeHelper = CallPostponeHelper(
-                socketStateService, testCoroutines.scope
+                socketStateService, userScope
             ),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            clientScope = testCoroutines.scope,
-            userScope = testCoroutines.childScope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),

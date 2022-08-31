@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.HealthMonitor
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.SocketListener
@@ -37,7 +38,6 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -49,7 +49,7 @@ internal class ChatSocket private constructor(
     private val wssUrl: String,
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
-    private val coroutineScope: CoroutineScope,
+    private val coroutineScope: UserScope,
     private val lifecycleObserver: StreamLifecycleObserver,
     private val networkStateProvider: NetworkStateProvider,
 ) {
@@ -60,7 +60,7 @@ internal class ChatSocket private constructor(
     private val chatSocketStateService = ChatSocketStateService()
     private var socketStateObserverJob: Job? = null
     private val healthMonitor = HealthMonitor(
-        coroutineScope = coroutineScope,
+        userScope = coroutineScope,
         checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
     )
@@ -279,7 +279,7 @@ internal class ChatSocket private constructor(
             wssUrl: String,
             tokenManager: TokenManager,
             socketFactory: SocketFactory,
-            coroutineScope: CoroutineScope,
+            coroutineScope: UserScope,
             lifecycleObserver: StreamLifecycleObserver,
             networkStateProvider: NetworkStateProvider,
         ): ChatSocket =

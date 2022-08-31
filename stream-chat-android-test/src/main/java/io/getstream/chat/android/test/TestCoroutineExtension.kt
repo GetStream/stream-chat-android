@@ -19,10 +19,7 @@
 package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.job
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
@@ -42,8 +39,6 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
     public val dispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     public val scope: TestScope
         get() = requireNotNull(_scope)
-    public val childScope: CoroutineScope
-        get() = scope + SupervisorJob(scope.coroutineContext.job)
     private var beforeAllCalled: Boolean = false
 
     override fun beforeAll(context: ExtensionContext) {

@@ -16,13 +16,19 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.utils.TimeProvider
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.logging.StreamLog
+import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.internal.verification.Times
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
@@ -32,16 +38,32 @@ import org.mockito.kotlin.whenever
 
 internal class HealthMonitorTest {
 
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
+
+    @BeforeEach
+    fun setUp() {
+        StreamLog.setValidator { _, _ -> true }
+        StreamLog.setLogger(
+            KotlinStreamLogger(now = {
+                testCoroutines.dispatcher.scheduler.currentTime
+            })
+        )
+    }
+
     @Test
     fun `While connection is alive, only checkCallback should be called`() = runTest {
         val cycles = positiveRandomInt(100)
-        val fixture = Fixture.Builder(this)
+        val fixture = Fixture.Builder(testCoroutines.scope)
             .keepCallingAckFor(cycles)
             .build()
         val healthMonitor = fixture.healthMonitor
 
         healthMonitor.ack()
-        advanceTimeBy(getNormalTimeToAdvance(cycles))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(cycles))
         healthMonitor.stop()
 
         verify(fixture.checkCallback, Times(cycles)).invoke()
@@ -52,13 +74,13 @@ internal class HealthMonitorTest {
     fun `When HealthMonitor_ack is not called for more than 3 cycles, reconnectCallback should be called`() = runTest {
         val normalCycles = positiveRandomInt(100)
         val cyclesUntilReconnection = normalCycles + 3
-        val fixture = Fixture.Builder(this)
+        val fixture = Fixture.Builder(testCoroutines.scope)
             .keepCallingAckFor(normalCycles)
             .build()
         val healthMonitor = fixture.healthMonitor
 
         healthMonitor.ack()
-        advanceTimeBy(getNormalTimeToAdvance(cyclesUntilReconnection, 1))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(cyclesUntilReconnection, 1))
         healthMonitor.stop()
 
         verify(fixture.checkCallback, Times(cyclesUntilReconnection - 1)).invoke()
@@ -70,14 +92,14 @@ internal class HealthMonitorTest {
         val normalCycles = positiveRandomInt(100)
         val cyclesUntilReconnection = normalCycles + 3
         val cyclesAfterReconnection = cyclesUntilReconnection + 1
-        val fixture = Fixture.Builder(this)
+        val fixture = Fixture.Builder(testCoroutines.scope)
             .keepCallingAckFor(normalCycles)
             .withSuccessfulReconnect()
             .build()
         val healthMonitor = fixture.healthMonitor
 
         healthMonitor.ack()
-        advanceTimeBy(getNormalTimeToAdvance(cyclesAfterReconnection, 1))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(cyclesAfterReconnection, 1))
         healthMonitor.stop()
 
         verify(fixture.checkCallback, Times(cyclesUntilReconnection)).invoke()
@@ -87,14 +109,14 @@ internal class HealthMonitorTest {
     @Test
     fun `When HealthMonitor_onDisconnect is not called, reconnectCallback should be called`() = runTest {
         val normalCycles = positiveRandomInt(100)
-        val fixture = Fixture.Builder(this)
+        val fixture = Fixture.Builder(testCoroutines.scope)
             .build()
         val healthMonitor = fixture.healthMonitor
 
         healthMonitor.ack()
-        advanceTimeBy(getNormalTimeToAdvance(normalCycles))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(normalCycles))
         healthMonitor.onDisconnected()
-        advanceTimeBy(getNormalTimeToAdvance(0, 1))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(0, 1))
         healthMonitor.stop()
 
         verify(fixture.checkCallback, Times(normalCycles)).invoke()
@@ -105,15 +127,15 @@ internal class HealthMonitorTest {
     fun `When HealthMonitor_onDisconnect and reconnect is successful, monitor keeps working`() = runTest {
         val cyclesBeforeDisconnect = positiveRandomInt(100)
         val cyclesAfterDisconnect = positiveRandomInt(100)
-        val fixture = Fixture.Builder(this)
+        val fixture = Fixture.Builder(testCoroutines.scope)
             .withSuccessfulReconnect()
             .build()
         val healthMonitor = fixture.healthMonitor
 
         healthMonitor.ack()
-        advanceTimeBy(getNormalTimeToAdvance(cyclesBeforeDisconnect))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(cyclesBeforeDisconnect))
         healthMonitor.onDisconnected()
-        advanceTimeBy(getNormalTimeToAdvance(cyclesAfterDisconnect, 1))
+        testCoroutines.scope.advanceTimeBy(getNormalTimeToAdvance(cyclesAfterDisconnect, 1))
         healthMonitor.stop()
 
         verify(fixture.checkCallback, Times(cyclesBeforeDisconnect + cyclesAfterDisconnect)).invoke()
@@ -151,7 +173,7 @@ internal class HealthMonitorTest {
                 val healthMonitor = HealthMonitor(
                     timeProvider = timeProvider,
                     retryInterval = retryInterval,
-                    coroutineScope = testScope,
+                    userScope = UserTestScope(testScope),
                     checkCallback = checkCallback,
                     reconnectCallback = reconnectCallback,
                 )
