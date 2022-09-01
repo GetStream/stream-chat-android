@@ -18,9 +18,8 @@ package io.getstream.chat.android.offline.repository.database.converter
 
 import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.repository.database.converter.internal.ExtraDataConverter
+import io.getstream.chat.android.test.TestLoggingHelper
 import io.getstream.chat.android.test.multiMapOf
-import io.getstream.logging.StreamLog
-import io.getstream.logging.kotlin.KotlinStreamLogger
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
@@ -31,8 +30,7 @@ internal class ExtraDataConverterTest {
 
     @Before
     fun setUp() {
-        StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(KotlinStreamLogger())
+        TestLoggingHelper.initialize()
     }
 
     @Test

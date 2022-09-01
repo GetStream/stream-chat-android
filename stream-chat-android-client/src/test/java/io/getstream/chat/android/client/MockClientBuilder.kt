@@ -28,6 +28,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -100,7 +102,9 @@ internal class MockClientBuilder(
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutineExtension.scope)
+        val clientScope = ClientTestScope(testCoroutineExtension.scope)
+        val userScope = UserTestScope(clientScope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
         client = ChatClient(
             config,
             api,
@@ -112,7 +116,8 @@ internal class MockClientBuilder(
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtil,
-            scope = testCoroutineExtension.scope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),

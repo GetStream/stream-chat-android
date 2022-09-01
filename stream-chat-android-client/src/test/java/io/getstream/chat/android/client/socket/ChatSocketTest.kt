@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
@@ -68,7 +69,7 @@ internal class ChatSocketTest {
             socketFactory,
             networkStateProvider,
             chatParser,
-            testCoroutines.scope
+            UserTestScope(testCoroutines.scope)
         )
         chatSocket.addListener(socketListener)
     }

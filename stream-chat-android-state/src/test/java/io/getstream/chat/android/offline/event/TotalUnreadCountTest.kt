@@ -29,15 +29,12 @@ import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequ
 import io.getstream.chat.android.offline.event.model.EventHandlerType
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.logging.StreamLog
-import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -66,12 +63,6 @@ internal class TotalUnreadCountTest {
 
     private val totalUnreadCount = MutableStateFlow(0)
     private val channelUnreadCount = MutableStateFlow(0)
-
-    @BeforeAll
-    fun beforeAll() {
-        StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(KotlinStreamLogger())
-    }
 
     private lateinit var userStateFlow: StateFlow<User>
 

@@ -40,13 +40,10 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
-import io.getstream.logging.StreamLog
-import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -82,12 +79,6 @@ internal class SyncManagerTest {
 
     private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val streamDateFormatter = StreamDateFormatter()
-
-    @BeforeAll
-    fun beforeAll() {
-        StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(KotlinStreamLogger())
-    }
 
     @BeforeEach
     fun setUp() {

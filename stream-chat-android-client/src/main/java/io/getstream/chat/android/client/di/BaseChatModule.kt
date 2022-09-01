@@ -62,15 +62,14 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
@@ -79,6 +78,7 @@ import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSo
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
+    private val scope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
     private val notificationConfig: NotificationConfig,
@@ -109,13 +109,12 @@ internal open class BaseChatModule(
     val networkStateProvider: NetworkStateProvider by lazy {
         NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
     }
-    val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
             socketStateService = socketStateService,
-            coroutineScope = networkScope,
+            userScope = scope,
             chatSocketExperimental = chatSocketExperimental
         )
     }
@@ -164,7 +163,7 @@ internal open class BaseChatModule(
             .baseUrl(endpoint)
             .client(okHttpClient)
             .also(parser::configRetrofit)
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, networkScope))
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, scope))
             .build()
     }
 
@@ -238,7 +237,7 @@ internal open class BaseChatModule(
         SocketFactory(parser, tokenManager),
         networkStateProvider,
         parser,
-        networkScope,
+        scope,
     )
 
     private fun buildExperimentalChatSocket(
@@ -249,7 +248,7 @@ internal open class BaseChatModule(
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
-        networkScope,
+        scope,
         lifecycleObserver,
         networkStateProvider,
     )
@@ -265,13 +264,13 @@ internal open class BaseChatModule(
         buildRetrofitApi<ModerationApi>(),
         buildRetrofitApi<GeneralApi>(),
         buildRetrofitApi<ConfigApi>(),
-        networkScope,
+        scope,
     ).let { originalApi ->
-        DistinctChatApiEnabler(DistinctChatApi(networkScope, originalApi)) {
+        DistinctChatApiEnabler(DistinctChatApi(scope, originalApi)) {
             chatConfig.distinctApiCalls
         }
     }.let { originalApi ->
-        ExtraDataValidator(networkScope, originalApi)
+        ExtraDataValidator(scope, originalApi)
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {
