@@ -45,6 +45,10 @@ import io.getstream.chat.android.compose.R
  * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
+ * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
+ * Most visible in placeholders before the images are loaded.
+ * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
+ * in the media gallery preview screen. Most visible in placeholders before the images are loaded.
  */
 @Immutable
 public data class StreamColors(
@@ -68,6 +72,8 @@ public data class StreamColors(
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
+    public val imageBackgroundMessageList: Color,
+    public val imageBackgroundMediaGalleryPicker: Color
 ) {
 
     public companion object {
@@ -98,6 +104,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_text_low_emphasis),
+            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
         )
 
         /**
@@ -127,6 +135,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_text_low_emphasis_dark),
+            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
         )
     }
 }

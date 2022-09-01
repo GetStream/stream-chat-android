@@ -54,6 +54,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
@@ -108,6 +109,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -661,7 +663,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                ImagePlaceHolder(asyncImagePainterState = painter.state)
+                PlaceHolder(
+                    asyncImagePainterState = painter.state,
+                    isImage = attachment.type == AttachmentType.IMAGE,
+                    progressIndicatorStrokeWidth = 6.dp,
+                    progressIndicatorFillMaxSizePercentage = 0.2f
+                )
 
                 Image(
                     modifier = transformModifier
@@ -756,33 +763,44 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      *
      * @param asyncImagePainterState The painter state used to determine
      * which UI to show.
+     * @param isImage If the attachment we are holding the place for is
+     * a image or not.
+     * @param progressIndicatorStrokeWidth The thickness of the progress indicator
+     * used to indicate a loading thumbnail.
+     * @param progressIndicatorFillMaxSizePercentage Dictates what percentage of
+     * available parent size the progress indicator will fill.
      */
     @Composable
-    private fun ImagePlaceHolder(asyncImagePainterState: AsyncImagePainter.State) {
+    private fun PlaceHolder(
+        asyncImagePainterState: AsyncImagePainter.State,
+        isImage: Boolean = false,
+        progressIndicatorStrokeWidth: Dp,
+        progressIndicatorFillMaxSizePercentage: Float,
+    ) {
         val painter = painterResource(
             id = R.drawable.stream_compose_ic_image_picker
         )
 
         val imageModifier = Modifier.fillMaxSize(0.4f)
 
-        when (asyncImagePainterState) {
-            is AsyncImagePainter.State.Loading -> {
+        when {
+            asyncImagePainterState is AsyncImagePainter.State.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .size(50.dp),
-                    strokeWidth = 5.dp,
+                        .padding(horizontal = 2.dp)
+                        .fillMaxSize(progressIndicatorFillMaxSizePercentage),
+                    strokeWidth = progressIndicatorStrokeWidth,
                     color = ChatTheme.colors.primaryAccent
                 )
             }
-            is AsyncImagePainter.State.Error -> Icon(
+            asyncImagePainterState is AsyncImagePainter.State.Error && isImage -> Icon(
                 tint = ChatTheme.colors.textLowEmphasis,
                 modifier = imageModifier,
                 painter = painter,
                 contentDescription = null
             )
-            is AsyncImagePainter.State.Success -> {}
-            is AsyncImagePainter.State.Empty -> {
+            asyncImagePainterState is AsyncImagePainter.State.Success -> {}
+            asyncImagePainterState is AsyncImagePainter.State.Empty && isImage -> {
                 Icon(
                     tint = ChatTheme.colors.textLowEmphasis,
                     modifier = imageModifier,
@@ -1253,9 +1271,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         user: User,
         pagerState: PagerState,
     ) {
+        // Used as a workaround for Coil's lack of a retry policy.
+        // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+        var retryHash by remember {
+            mutableStateOf(0)
+        }
+
         val coroutineScope = rememberCoroutineScope()
 
-        BoxWithConstraints(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
@@ -1267,20 +1291,48 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
+            val painter = rememberStreamImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(attachment.imagePreviewUrl)
+                    .setHeader("rety_hash", retryHash.toString())
+                    .build()
+            )
+
+            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && painter.state is AsyncImagePainter.State.Error) {
+                retryHash++
+            }
 
             Image(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(1.dp)
+                    .fillMaxSize()
+                    .background(color = ChatTheme.colors.imageBackgroundMediaGalleryPicker),
                 painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
+            )
+
+            PlaceHolder(
+                asyncImagePainterState = painter.state,
+                isImage = attachment.type == AttachmentType.IMAGE,
+                progressIndicatorStrokeWidth = 3.dp,
+                progressIndicatorFillMaxSizePercentage = 0.3f
             )
 
             UserAvatar(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(8.dp)
-                    .size(24.dp),
+                    .size(24.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.White,
+                        shape = ChatTheme.shapes.avatar
+                    )
+                    .shadow(
+                        elevation = 5.dp,
+                        shape = ChatTheme.shapes.avatar
+                    ),
                 user = user
             )
 
@@ -1289,10 +1341,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     modifier = Modifier
                         .shadow(10.dp, shape = CircleShape)
                         .background(color = Color.White, shape = CircleShape)
-                        .size(
-                            width = this@BoxWithConstraints.maxWidth / 6,
-                            height = this@BoxWithConstraints.maxHeight / 6
-                        )
+                        .fillMaxSize(0.2f)
                 )
             }
         }
