@@ -246,10 +246,17 @@ internal constructor(
         }
     }
 
+    /**
+     * Launches a new coroutine in the [UserScope] without blocking the current thread
+     * and returns a reference to the coroutine as a [Job].
+     */
     internal fun launch(
         block: suspend CoroutineScope.() -> Unit
     ) = userScope.launch(block = block)
 
+    /**
+     * Inherits the [UserScope] and provides its [Job] as an anchor for children.
+     */
     @InternalStreamChatApi
     public fun inheritScope(block: (Job) -> CoroutineContext): CoroutineScope {
         return userScope + block(userScope.coroutineContext.job)
@@ -1187,9 +1194,6 @@ internal constructor(
         val userId = clientState.user.value?.id
         logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
         userScope.coroutineContext.cancelChildren()
-        val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: - 1
-        val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: - 1
-        logger.v { "[disconnectSuspend] userJobCount: $userJobCount, clientJobCount: $clientJobCount" }
 
         notifications.onLogout()
         getCurrentUser().let(initializationCoordinator::userDisconnected)
