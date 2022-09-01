@@ -16,11 +16,14 @@
 
 package io.getstream.chat.android.ui.message.list.viewmodel.factory
 
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.common.composer.MessageComposerController
+import io.getstream.chat.android.common.model.ClipboardHandlerImpl
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 
@@ -35,6 +38,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * @see MessageInputViewModel
  */
 public class MessageListViewModelFactory @JvmOverloads constructor(
+    private val context: Context,
     private val cid: String,
     private val messageId: String? = null,
 ) : ViewModelProvider.Factory {
@@ -42,7 +46,14 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
+        MessageListViewModel::class.java to {
+            MessageListViewModel(
+                cid = cid,
+                messageId = messageId,
+                clipboardHandler =
+                ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+            )
+        },
         MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
     )
 

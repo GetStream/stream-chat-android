@@ -1,5 +1,7 @@
 package io.getstream.chat.android.common.model
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -17,6 +19,7 @@ public data class MessageListState(
     public val unreadCount: Int = 0,
     public val typingUsers: List<User> = emptyList(),
     public val newMessageState: NewMessageState? = null,
+    public val selectedMessageState: SelectedMessageState? = null
 )
 
 // TODO
@@ -35,6 +38,7 @@ public object MyOwn : NewMessageState()
  */
 public object Other : NewMessageState()
 
+// TODO
 public sealed class MessageListItem
 
 public data class MessageItem(
@@ -67,6 +71,7 @@ public data class TypingItem(
     public val typingUsers: List<User>,
 ) : MessageListItem()
 
+// TODO
 public enum class MessagePosition {
     TOP,
     MIDDLE,
@@ -74,6 +79,7 @@ public enum class MessagePosition {
     NONE
 }
 
+// TODO
 /**
  * A handler to determine the position of a message inside a group.
  */
@@ -121,6 +127,7 @@ public fun interface MessagePositionHandler {
     }
 }
 
+// TODO
 /**
  * A SAM designed to evaluate if a date separator should be added between messages.
  */
@@ -142,3 +149,68 @@ public object MessageFocused : MessageFocusState()
  * Represents the state when we've removed the focus from the message.
  */
 public object MessageFocusRemoved : MessageFocusState()
+
+// TODO
+/**
+ * Represents a state when a message or its reactions were selected.
+ *
+ * @param message The selected message.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ */
+public sealed class SelectedMessageState(public val message: Message, public val ownCapabilities: Set<String>)
+
+/**
+ * Represents a state when a message was selected.
+ */
+public class SelectedMessageOptionsState(message: Message, ownCapabilities: Set<String>) :
+    SelectedMessageState(message, ownCapabilities)
+
+/**
+ * Represents a state when message reactions were selected.
+ */
+public class SelectedMessageReactionsState(message: Message, ownCapabilities: Set<String>) :
+    SelectedMessageState(message, ownCapabilities)
+
+/**
+ * Represents a state when the show more reactions button was clicked.
+ */
+public class SelectedMessageReactionsPickerState(message: Message, ownCapabilities: Set<String>) :
+    SelectedMessageState(message, ownCapabilities)
+
+/**
+ * Represents a state when the moderated message was selected.
+ */
+public class SelectedMessageFailedModerationState(message: Message, ownCapabilities: Set<String>) :
+    SelectedMessageState(message, ownCapabilities)
+
+// TODO
+/**
+ * Abstraction over the [ClipboardHandlerImpl] that allows users to copy messages.
+ */
+public fun interface ClipboardHandler {
+
+    /**
+     * @param message The message to copy.
+     */
+    public fun copyMessage(message: Message)
+}
+
+/**
+ * A simple implementation that relies on the [clipboardManager] to copy messages.
+ *
+ * @param clipboardManager System service that allows for clipboard operations, such as putting
+ * new data on the clipboard.
+ */
+public class ClipboardHandlerImpl(private val clipboardManager: ClipboardManager) : ClipboardHandler {
+
+    /**
+     * Allows users to copy the message text.
+     *
+     * @param message Message to copy the text from.
+     */
+    override fun copyMessage(message: Message) {
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("message", message.text))
+    }
+}
+

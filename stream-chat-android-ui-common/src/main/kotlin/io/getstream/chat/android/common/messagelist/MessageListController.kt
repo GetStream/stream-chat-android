@@ -1,6 +1,7 @@
 package io.getstream.chat.android.common.messagelist
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.extensions.isError
 import io.getstream.chat.android.common.extensions.isSystem
+import io.getstream.chat.android.common.model.ClipboardHandler
 import io.getstream.chat.android.common.model.DateSeparatorHandler
 import io.getstream.chat.android.common.model.DateSeparatorItem
 import io.getstream.chat.android.common.model.MessageFocusRemoved
@@ -28,11 +30,25 @@ import io.getstream.chat.android.common.model.MessagePositionHandler
 import io.getstream.chat.android.common.model.MyOwn
 import io.getstream.chat.android.common.model.NewMessageState
 import io.getstream.chat.android.common.model.Other
+import io.getstream.chat.android.common.model.SelectedMessageFailedModerationState
+import io.getstream.chat.android.common.model.SelectedMessageOptionsState
+import io.getstream.chat.android.common.model.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.model.SelectedMessageReactionsState
+import io.getstream.chat.android.common.model.SelectedMessageState
 import io.getstream.chat.android.common.model.SystemMessageItem
 import io.getstream.chat.android.common.model.ThreadSeparatorItem
+import io.getstream.chat.android.common.state.Copy
+import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.MuteUser
+import io.getstream.chat.android.common.state.Pin
+import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
+import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
@@ -77,6 +93,7 @@ import java.util.Date
  * @param showDateSeparators Determines whether the date separators are shown or not.
  * @param dateSeparatorThresholdMillis The time between two messages after which the date separator will be visible.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
+ * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
  */
 public class MessageListController(
     private val cid: String,
@@ -86,6 +103,8 @@ public class MessageListController(
     private val showDateSeparators: Boolean,
     private val dateSeparatorThresholdMillis: Long,
     private val messageFooterVisibility: MessageFooterVisibility,
+    private val enforceUniqueReactions: Boolean,
+    private val clipboardHandler: ClipboardHandler
 ) {
 
     /**
@@ -230,6 +249,13 @@ public class MessageListController(
      * screen.
      */
     private var lastLoadedThreadMessage: Message? = null
+
+    /**
+     * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
+     * similar actions.
+     */
+    private val _messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(emptySet())
+    public val messageActions: StateFlow<Set<MessageAction>> = _messageActions
 
     /**
      * [MessagePositionHandler] that determines the message position inside the group.
@@ -742,12 +768,151 @@ public class MessageListController(
     }
 
     /**
+     * Triggered when the user long taps on and selects a message.
+     *
+     * @param message The selected message.
+     */
+    public fun selectMessage(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(
+                if (message.isModerationFailed(chatClient)) {
+                    SelectedMessageFailedModerationState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                } else {
+                    SelectedMessageOptionsState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                }
+
+            )
+        }
+    }
+
+    /**
+     * Triggered when the user taps on and selects message reactions.
+     *
+     * @param message The message that contains the reactions.
+     */
+    public fun selectReactions(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(
+                SelectedMessageReactionsState(
+                    message = message,
+                    ownCapabilities = ownCapabilities.value
+                )
+            )
+        }
+    }
+
+    /**
+     * Triggered when the user taps the show more reactions button.
+     *
+     * @param message The selected message.
+     */
+    public fun selectExtendedReactions(message: Message?) {
+        if (message != null) {
+            changeSelectMessageState(
+                SelectedMessageReactionsPickerState(
+                    message = message,
+                    ownCapabilities = ownCapabilities.value
+                )
+            )
+        }
+    }
+
+
+    /**
+     * Changes the state of [_threadListState] or [_messageListState] depending
+     * on the thread mode.
+     *
+     * @param selectedMessageState The selected message state.
+     */
+    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
+        if (isInThread) {
+            _threadListState.value = _threadListState.value.copy(selectedMessageState = selectedMessageState)
+        } else {
+            _messageListState.value = _messageListState.value.copy(selectedMessageState = selectedMessageState)
+        }
+    }
+
+    /**
+     * Triggered when the user selects a new message action, in the message overlay.
+     *
+     * We first remove the overlay, after which we consume the event and based on the type of the event,
+     * we do different things, such as starting a thread & loading thread data, showing delete or flag
+     * events and dialogs, copying the message, muting users and more.
+     *
+     * @param messageAction The action the user chose.
+     */
+    public fun performMessageAction(messageAction: MessageAction) {
+        removeOverlay()
+
+        when (messageAction) {
+            is Resend -> resendMessage(messageAction.message)
+            is ThreadReply -> {
+                _messageActions.value = _messageActions.value + Reply(messageAction.message)
+                enterThreadMode(messageAction.message)
+            }
+            is Delete, is io.getstream.chat.android.common.state.Flag -> {
+                _messageActions.value = _messageActions.value + messageAction
+            }
+            is Copy -> copyMessage(messageAction.message)
+            is MuteUser -> updateUserMute(messageAction.message.user)
+            is React -> reactToMessage(messageAction.reaction, messageAction.message, enforceUniqueReactions)
+            is Pin -> updateMessagePin(messageAction.message)
+            else -> {
+                // no op, custom user action
+            }
+        }
+    }
+
+    /**
+     * Used to dismiss a specific message action, such as delete, reply, edit or something similar.
+     *
+     * @param messageAction The action to dismiss.
+     */
+    public fun dismissMessageAction(messageAction: MessageAction) {
+        _messageActions.value = _messageActions.value - messageAction
+    }
+
+    /**
+     * Dismisses all message actions, when we cancel them in the rest of the UI.
+     */
+    public fun dismissAllMessageActions() {
+        _messageActions.value = emptySet()
+    }
+
+    /**
+     * Copies the message content using the [ClipboardHandler] we provide. This can copy both
+     * attachment and text messages.
+     *
+     * @param message Message with the content to copy.
+     */
+    private fun copyMessage(message: Message) {
+        clipboardHandler.copyMessage(message)
+    }
+
+    /**
+     * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
+     */
+    public fun removeOverlay() {
+        _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
+        _messageListState.value = _messageListState.value.copy(selectedMessageState = null)
+    }
+
+    /**
      * Deletes the given [message].
      *
      * @param message Message to delete.
      * @param hard Whether we do a hard delete or not.
      */
     public fun deleteMessage(message: Message, hard: Boolean = false) {
+        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<Delete>()
+        removeOverlay()
+
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
                 onError = { chatError ->
@@ -787,8 +952,11 @@ public class MessageListController(
      *
      * @param message Message to delete.
      * @param onResult Handler that notifies the flag message result.
+     *
+     * TODO
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
+        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<io.getstream.chat.android.common.state.Flag>()
         chatClient.flagMessage(message.id).enqueue { result ->
             onActionResult(result, "Unable to flag message: ${result.error().message}", onResult)
         }

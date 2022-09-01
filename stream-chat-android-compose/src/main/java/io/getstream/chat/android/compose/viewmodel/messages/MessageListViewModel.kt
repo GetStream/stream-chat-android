@@ -19,56 +19,32 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.messagelist.MessageListController
-import io.getstream.chat.android.common.state.Copy
-import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.MuteUser
-import io.getstream.chat.android.common.state.Pin
-import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.Resend
-import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.Other
-import io.getstream.chat.android.compose.state.messages.ScrollToFocusedMessage
-import io.getstream.chat.android.compose.state.messages.ScrollToNewestMessages
-import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
-import io.getstream.chat.android.compose.state.messages.toMessagesState
-import io.getstream.chat.android.compose.ui.util.isError
-import io.getstream.chat.android.compose.ui.util.isSystem
+import io.getstream.chat.android.compose.state.messages.toComposeState
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
@@ -107,18 +83,11 @@ public class MessageListViewModel(
         showSystemMessages = showSystemMessages,
         showDateSeparators = showDateSeparators,
         dateSeparatorThresholdMillis = dateSeparatorThresholdMillis,
-        messageFooterVisibility = messageFooterVisibility
+        messageFooterVisibility = messageFooterVisibility,
+        enforceUniqueReactions = enforceUniqueReactions,
+        clipboardHandler = { clipboardHandler.copyMessage(it) }
     ),
 ) : ViewModel() {
-
-    /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
-     *
-     * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
-     */
-    private val ownCapabilities: StateFlow<Set<String>> = messageListController.ownCapabilities
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -131,12 +100,16 @@ public class MessageListViewModel(
     /**
      * State of the screen, for [MessageMode.Normal].
      */
-    private var messagesState: MessagesState by mutableStateOf(MessagesState())
+    private val messagesState: MessagesState by messageListController.messageListState
+        .map { it.toComposeState(messagesState.focusedMessageOffset.value) }
+        .asState(viewModelScope, MessagesState())
 
     /**
      * State of the screen, for [MessageMode.MessageThread].
      */
-    private var threadMessagesState: MessagesState by mutableStateOf(MessagesState())
+    private val threadMessagesState: MessagesState by messageListController.threadListState
+        .map { it.toComposeState(threadMessagesState.focusedMessageOffset.value) }
+        .asState(viewModelScope, MessagesState())
 
     /**
      * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
@@ -157,8 +130,7 @@ public class MessageListViewModel(
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
      * similar actions.
      */
-    public var messageActions: Set<MessageAction> by mutableStateOf(mutableSetOf())
-        private set
+    public val messageActions: Set<MessageAction> by messageListController.messageActions.asState(viewModelScope)
 
     /**
      * Gives us information if we're currently in the [Thread] message mode.
@@ -186,41 +158,6 @@ public class MessageListViewModel(
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?> = messageListController.user
-
-    /**
-     * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
-     * out of the thread state.
-     */
-    private var threadJob: Job? = null
-
-    /**
-     * Sets up the core data loading operations - such as observing the current channel and loading
-     * messages and other pieces of information.
-     */
-    init {
-        observeMessageListState()
-        observeThreadListState()
-    }
-
-    /**
-     * Starts observing the current channel. We take the data exposed by the message list controller and map it to
-     * compose list.
-     */
-    private fun observeMessageListState() {
-        viewModelScope.launch {
-            messageListController.messageListState.collect { state ->
-                messagesState = state.toMessagesState()
-            }
-        }
-    }
-
-    private fun observeThreadListState() {
-        viewModelScope.launch {
-            messageListController.threadListState.collect { state ->
-                threadMessagesState = state.toMessagesState()
-            }
-        }
-    }
 
     /**
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
@@ -306,73 +243,27 @@ public class MessageListViewModel(
      * Triggered when the user long taps on and selects a message.
      *
      * @param message The selected message.
-     * TODO
      */
     public fun selectMessage(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                if (message.isModerationFailed(chatClient)) {
-                    SelectedMessageFailedModerationState(
-                        message = message,
-                        ownCapabilities = ownCapabilities.value
-                    )
-                } else {
-                    SelectedMessageOptionsState(
-                        message = message,
-                        ownCapabilities = ownCapabilities.value
-                    )
-                }
-
-            )
-        }
+        messageListController.selectMessage(message)
     }
 
     /**
      * Triggered when the user taps on and selects message reactions.
      *
      * @param message The message that contains the reactions.
-     * TODO
      */
     public fun selectReactions(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                SelectedMessageReactionsState(
-                    message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
-            )
-        }
+        messageListController.selectReactions(message)
     }
 
     /**
      * Triggered when the user taps the show more reactions button.
      *
      * @param message The selected message.
-     * TODO
      */
     public fun selectExtendedReactions(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                SelectedMessageReactionsPickerState(
-                    message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
-            )
-        }
-    }
-
-    /**
-     * Changes the state of [threadMessagesState] or [messagesState] depending
-     * on the thread mode.
-     *
-     * @param selectedMessageState The selected message state.
-     */
-    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
-        if (isInThread) {
-            threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
-        } else {
-            messagesState = messagesState.copy(selectedMessageState = selectedMessageState)
-        }
+        messageListController.selectReactions(message)
     }
 
     /**
@@ -390,14 +281,14 @@ public class MessageListViewModel(
      * @param messageAction The action to dismiss.
      */
     public fun dismissMessageAction(messageAction: MessageAction) {
-        this.messageActions = messageActions - messageAction
+        messageListController.dismissMessageAction(messageAction)
     }
 
     /**
      * Dismisses all message actions, when we cancel them in the rest of the UI.
      */
     public fun dismissAllMessageActions() {
-        this.messageActions = emptySet()
+        messageListController.dismissAllMessageActions()
     }
 
     /**
@@ -410,25 +301,7 @@ public class MessageListViewModel(
      * @param messageAction The action the user chose.
      */
     public fun performMessageAction(messageAction: MessageAction) {
-        removeOverlay()
-
-        when (messageAction) {
-            is Resend -> resendMessage(messageAction.message)
-            is ThreadReply -> {
-                messageActions = messageActions + Reply(messageAction.message)
-                loadThread(messageAction.message)
-            }
-            is Delete, is Flag -> {
-                messageActions = messageActions + messageAction
-            }
-            is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> updateUserMute(messageAction.message.user)
-            is React -> reactToMessage(messageAction.reaction, messageAction.message)
-            is Pin -> updateMessagePin(messageAction.message)
-            else -> {
-                // no op, custom user action
-            }
-        }
+        messageListController.performMessageAction(messageAction)
     }
 
     /**
@@ -450,9 +323,6 @@ public class MessageListViewModel(
     @JvmOverloads
     @Suppress("ConvertArgumentToSet")
     public fun deleteMessage(message: Message, hard: Boolean = false) {
-        messageActions = messageActions - messageActions.filterIsInstance<Delete>()
-        removeOverlay()
-
         messageListController.deleteMessage(message, hard)
     }
 
@@ -464,36 +334,8 @@ public class MessageListViewModel(
      */
     @Suppress("ConvertArgumentToSet")
     public fun flagMessage(message: Message) {
-        messageActions = messageActions - messageActions.filterIsInstance<Flag>()
-        removeOverlay()
-
         messageListController.flagMessage(message)
     }
-
-    /**
-     * Retries sending a message that has failed to send.
-     *
-     * @param message The message that will be re-sent.
-     */
-    private fun resendMessage(message: Message) = messageListController.resendMessage(message)
-
-    /**
-     * Copies the message content using the [ClipboardHandler] we provide. This can copy both
-     * attachment and text messages.
-     *
-     * @param message Message with the content to copy.
-     */
-    private fun copyMessage(message: Message) {
-        // TODO
-        clipboardHandler.copyMessage(message)
-    }
-
-    /**
-     * Mutes or unmutes the user that sent a particular message.
-     *
-     * @param user The user to mute or unmute.
-     */
-    private fun updateUserMute(user: User) = messageListController.updateUserMute(user)
 
     /**
      * Mutes the given user inside this channel.
@@ -571,27 +413,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user chooses the [React] action for the currently selected message. If the
-     * message already has that reaction, from the current user, we remove it. Otherwise we add a new
-     * reaction.
-     *
-     * @param reaction The reaction to add or remove.
-     * @param message The currently selected message.
-     */
-    private fun reactToMessage(reaction: Reaction, message: Message) =
-        messageListController.reactToMessage(reaction, message, enforceUniqueReactions)
-
-    /**
-     * Pins or unpins the message from the current channel based on its state.
-     *
-     * @param message The message to update the pin state of.
-     */
-    private fun updateMessagePin(message: Message) = messageListController.updateMessagePin(message)
-
-    /**
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
-     *
-     * It also cancels the [threadJob] to clean up resources.
      */
     public fun leaveThread() {
         messageListController.enterNormalMode()
@@ -601,8 +423,7 @@ public class MessageListViewModel(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      */
     public fun removeOverlay() {
-        threadMessagesState = threadMessagesState.copy(selectedMessageState = null)
-        messagesState = messagesState.copy(selectedMessageState = null)
+        messageListController.removeOverlay()
     }
 
     /**
