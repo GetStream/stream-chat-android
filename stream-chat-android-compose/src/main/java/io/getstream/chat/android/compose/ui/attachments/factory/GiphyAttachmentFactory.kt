@@ -33,7 +33,8 @@ import io.getstream.chat.android.ui.utils.GiphyInfoType
  */
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(
-    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
+    giphyScaling: GiphyScaling = GiphyScaling.ADAPTABLE
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
@@ -42,6 +43,12 @@ public fun GiphyAttachmentFactory(
                 modifier = modifier.wrapContentSize(),
                 attachmentState = state,
                 giphyInfoType = giphyInfoType,
+                giphyScaling = giphyScaling
             )
         },
     )
+
+public enum class GiphyScaling {
+    ADAPTABLE,
+    FILL_MAX_SIZE
+}

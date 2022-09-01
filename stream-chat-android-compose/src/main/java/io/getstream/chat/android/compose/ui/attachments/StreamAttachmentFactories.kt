@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments
 
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.GiphyScaling
 import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
@@ -47,11 +48,13 @@ public object StreamAttachmentFactories {
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+        giphyScaling: GiphyScaling = GiphyScaling.FILL_MAX_SIZE,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
+            giphyScaling = giphyScaling
         ),
         ImageAttachmentFactory(),
         FileAttachmentFactory(),

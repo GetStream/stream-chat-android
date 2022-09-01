@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.factory.GiphyScaling
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.ui.utils.GiphyInfoType
@@ -67,6 +68,7 @@ public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphyScaling: GiphyScaling = GiphyScaling.ADAPTABLE
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -99,11 +101,7 @@ public fun GiphyAttachmentContent(
                     val giphyHeight = (giphyInfo.height).dp
 
                     when {
-                        giphyInfoType == GiphyInfoType.FIXED_HEIGHT ||
-                            giphyInfoType == GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED -> DpSize(
-                            width = giphyWidth,
-                            height = giphyHeight
-                        )
+                        giphyScaling == GiphyScaling.FILL_MAX_SIZE -> { DpSize(width = maxWidth, height = maxHeight) }
                         giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,

@@ -513,8 +513,8 @@ public class io/getstream/chat/android/compose/ui/attachments/AttachmentFactory 
 public final class io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;
-	public final fun defaultFactories (ILio/getstream/chat/android/ui/utils/GiphyInfoType;)Ljava/util/List;
-	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;ILio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)Ljava/util/List;
+	public final fun defaultFactories (ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;)Ljava/util/List;
+	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;ILjava/lang/Object;)Ljava/util/List;
 	public final fun defaultQuotedFactories ()Ljava/util/List;
 }
 
@@ -538,7 +538,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/File
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentContentKt {
-	public static final fun GiphyAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/utils/GiphyInfoType;Landroidx/compose/runtime/Composer;II)V
+	public static final fun GiphyAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/ImageAttachmentContentKt {
@@ -602,8 +602,15 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/File
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyAttachmentFactoryKt {
-	public static final fun GiphyAttachmentFactory (Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun GiphyAttachmentFactory$default (Lio/getstream/chat/android/ui/utils/GiphyInfoType;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static final fun GiphyAttachmentFactory (Lio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static synthetic fun GiphyAttachmentFactory$default (Lio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling : java/lang/Enum {
+	public static final field ADAPTABLE Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;
+	public static final field FILL_MAX_SIZE Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/attachments/factory/GiphyScaling;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ImageAttachmentFactoryKt {
