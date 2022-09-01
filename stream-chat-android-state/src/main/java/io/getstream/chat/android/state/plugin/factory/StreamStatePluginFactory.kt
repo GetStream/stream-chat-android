@@ -135,7 +135,11 @@ public class StreamStatePluginFactory(
         }
 
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
+            scope.coroutineContext.job,
+            scope,
+            clientState.user,
+            repositoryFacade.messageRepository,
+            repositoryFacade.observeLatestUsers()
         )
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,

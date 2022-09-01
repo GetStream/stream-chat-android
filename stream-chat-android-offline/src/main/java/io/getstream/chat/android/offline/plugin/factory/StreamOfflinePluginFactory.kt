@@ -158,12 +158,13 @@ public class StreamOfflinePluginFactory(
         val sendMessageListener: SendMessageListener = getSendMessageListener(repositoryFacade, statePlugin)
         val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(repositoryFacade, statePlugin)
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
-            repositoryFacade, repositoryFacade
+            userRepository = repositoryFacade.userRepository,
+            channelRepository = repositoryFacade.channelsRepository
         )
         val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
             clientState = clientState,
-            channelRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            channelRepository = repositoryFacade.channelsRepository,
+            userRepository = repositoryFacade.userRepository
         )
 
         return OfflinePlugin(
@@ -213,8 +214,8 @@ public class StreamOfflinePluginFactory(
         statePlugin: StatePlugin
     ): EditMessageListenerComposite {
         val editMessageListenerDatabase = EditMessageListenerDatabase(
-            userRepository = repositoryFacade,
-            messageRepository = repositoryFacade,
+            userRepository = repositoryFacade.userRepository,
+            messageRepository = repositoryFacade.messageRepository,
             clientState = clientState
         )
 
@@ -226,8 +227,8 @@ public class StreamOfflinePluginFactory(
         statePlugin: StatePlugin
     ): HideChannelListener {
         val hideChannelListenerDatabase = HideChannelListenerDatabase(
-            channelRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            channelRepository = repositoryFacade.channelsRepository,
+            messageRepository = repositoryFacade.messageRepository
         )
 
         return HideChannelListenerComposite(
@@ -242,8 +243,8 @@ public class StreamOfflinePluginFactory(
     ): DeleteReactionListener {
         val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
             clientState = clientState,
-            reactionsRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            reactionsRepository = repositoryFacade.reactionsRepository,
+            messageRepository = repositoryFacade.messageRepository
         )
 
         return DeleteReactionListenerComposite(
@@ -258,9 +259,9 @@ public class StreamOfflinePluginFactory(
     ): SendReactionListener {
         val sendReactionListenerDatabase = SendReactionListenerDatabase(
             clientState = clientState,
-            messageRepository = repositoryFacade,
-            reactionsRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            messageRepository = repositoryFacade.messageRepository,
+            reactionsRepository = repositoryFacade.reactionsRepository,
+            userRepository = repositoryFacade.userRepository
         )
 
         return SendReactionListenerComposite(
@@ -273,7 +274,10 @@ public class StreamOfflinePluginFactory(
         statePlugin: StatePlugin,
     ): SendMessageListener {
 
-        val sendMessageListenerDatabase = SendMessageListenerDatabase(repositoryFacade, repositoryFacade)
+        val sendMessageListenerDatabase = SendMessageListenerDatabase(
+            userRepository = repositoryFacade.userRepository,
+            messageRepository = repositoryFacade.messageRepository
+        )
         return SendMessageListenerComposite(listOf(statePlugin, sendMessageListenerDatabase))
     }
 
@@ -282,8 +286,8 @@ public class StreamOfflinePluginFactory(
         statePlugin: StatePlugin
     ): ShuffleGiphyListener {
         val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
-            userRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            userRepository = repositoryFacade.userRepository,
+            messageRepository = repositoryFacade.messageRepository
         )
 
         return ShuffleGiphyListenerComposite(
@@ -298,8 +302,8 @@ public class StreamOfflinePluginFactory(
     ): DeleteMessageListener {
         val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
             clientState = clientState,
-            messageRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            messageRepository = repositoryFacade.messageRepository,
+            userRepository = repositoryFacade.userRepository
         )
 
         return DeleteMessageListenerComposite(

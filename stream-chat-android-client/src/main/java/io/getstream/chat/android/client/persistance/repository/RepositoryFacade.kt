@@ -37,14 +37,14 @@ import java.util.Date
 @InternalStreamChatApi
 @SuppressWarnings("LongParameterList")
 public class RepositoryFacade private constructor(
-    private val userRepository: UserRepository,
-    private val configsRepository: ChannelConfigRepository,
-    private val channelsRepository: ChannelRepository,
-    private val queryChannelsRepository: QueryChannelsRepository,
-    private val messageRepository: MessageRepository,
-    private val reactionsRepository: ReactionRepository,
-    private val syncStateRepository: SyncStateRepository,
-    private val attachmentRepository: AttachmentRepository,
+    public val userRepository: UserRepository,
+    public val configsRepository: ChannelConfigRepository,
+    public val channelsRepository: ChannelRepository,
+    public val queryChannelsRepository: QueryChannelsRepository,
+    public val messageRepository: MessageRepository,
+    public val reactionsRepository: ReactionRepository,
+    public val syncStateRepository: SyncStateRepository,
+    public val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
