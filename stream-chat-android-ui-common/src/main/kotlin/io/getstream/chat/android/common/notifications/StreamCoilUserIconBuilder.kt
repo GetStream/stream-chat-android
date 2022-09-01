@@ -27,7 +27,7 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
  * Produces an [IconCompat] using Coil, which downloads and caches the user image.
  */
 @StreamHandsOff(
-    reason = "This class shouldn't be renamed without verifying it works fine on Chat Client Artifacts because we " +
+    reason = "This class shouldn't be renamed without verifying it works correctly on Chat Client Artifacts because we " +
         "are using it by reflection"
 )
 public class StreamCoilUserIconBuilder(private val context: Context) : UserIconBuilder {
