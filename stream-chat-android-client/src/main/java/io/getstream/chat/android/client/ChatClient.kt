@@ -2522,7 +2522,6 @@ internal constructor(
      * @return Executable async [Call] responsible for obtaining missing events.
      */
     @CheckResult
-    @InternalStreamChatApi
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
