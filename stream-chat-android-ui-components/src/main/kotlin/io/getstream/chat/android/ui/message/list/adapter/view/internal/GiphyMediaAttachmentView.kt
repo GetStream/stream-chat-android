@@ -18,20 +18,20 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.loadAndResize
+import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachmentViewStyle
-import io.getstream.chat.android.ui.utils.GIPHY_INFO_DEFAULT_HEIGHT_DP
 import io.getstream.chat.android.ui.utils.GiphyInfoType
 import io.getstream.chat.android.ui.utils.giphyInfo
 import kotlinx.coroutines.CoroutineScope
@@ -96,24 +96,17 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
-        val height = if (style.giphyType == GiphyInfoType.ORIGINAL) {
-            giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP.dpToPx()
-        } else {
-            (giphyInfo?.height ?: GIPHY_INFO_DEFAULT_HEIGHT_DP).dpToPx()
-        }
-        val width = giphyInfo?.width
+        ConstraintSet().apply {
+            constrainMaxWidth(binding.imageView.id, ViewGroup.LayoutParams.MATCH_PARENT)
+            val ratio = (giphyInfo?.width ?: 1).toFloat() / (giphyInfo?.height ?: 1).toFloat()
+            setDimensionRatio(binding.imageView.id, ratio.toString())
 
-        this.updateLayoutParams {
-            this.height = height
-            if (width != null && style.giphyType == GiphyInfoType.ORIGINAL) {
-                this.width = width
-            }
-        }
-        binding.imageView.updateLayoutParams {
-            this.height = height
-            if (width != null && style.giphyType == GiphyInfoType.ORIGINAL) {
-                this.width = width
-            }
+            constrainViewToParentBySide(binding.imageView, ConstraintSet.LEFT)
+            constrainViewToParentBySide(binding.imageView, ConstraintSet.RIGHT)
+            constrainViewToParentBySide(binding.imageView, ConstraintSet.TOP)
+            constrainViewToParentBySide(binding.imageView, ConstraintSet.BOTTOM)
+
+            applyTo(binding.root)
         }
 
         loadGiphy(url)
