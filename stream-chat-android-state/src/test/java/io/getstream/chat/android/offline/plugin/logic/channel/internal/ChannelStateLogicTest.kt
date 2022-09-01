@@ -75,7 +75,6 @@ internal class ChannelStateLogicTest {
     private val user = randomUser()
     private var _messages: Map<String, Message> = emptyMap()
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
-    private var _lastMessageAt: Date? = null
     private val unreadCount = randomInt()
     private val _read: MutableStateFlow<ChannelUserRead> = MutableStateFlow(
         ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
@@ -94,8 +93,6 @@ internal class ChannelStateLogicTest {
         on(mock::rawMessages.get()) doAnswer { _messages }
         on(mock::rawMessages.set(any())) doAnswer { _messages = it.arguments[0] as Map<String, Message> }
         on(mock.unreadCount) doReturn _unreadCount
-        on(mock::lastMessageAt.get()) doAnswer { _lastMessageAt }
-        on(mock::lastMessageAt.set(any())) doAnswer { _lastMessageAt = it.arguments[0] as Date }
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()
         on(mock.channelId) doReturn channelId
@@ -123,7 +120,6 @@ internal class ChannelStateLogicTest {
 
         _messages = emptyMap()
         _unreadCount.value = 0
-        _lastMessageAt = null
         _read.value = ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
         _channelData.value = ChannelData(randomChannel(), emptySet())
         _reads = emptyMap()
@@ -208,74 +204,6 @@ internal class ChannelStateLogicTest {
         }
 
         _unreadCount.value `should be equal to` 0
-    }
-
-    @Test
-    fun `given new messages were upserted the newest date one should be become the new lastMessageAt - older and newer message`() {
-        val createdAt = randomDate()
-        val oldCreatedAt = randomDateBefore(createdAt.time)
-        val updatedAt = randomDateAfter(createdAt.time)
-
-        val recentMessage = randomMessage(
-            user = User(id = "otherUserId"),
-            createdAt = createdAt,
-            createdLocallyAt = createdAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-        val oldMessage = randomMessage(
-            user = User(id = "otherUserId"),
-            createdAt = oldCreatedAt,
-            createdLocallyAt = oldCreatedAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-
-        channelStateLogic.upsertMessage(oldMessage)
-        _lastMessageAt `should be equal to` oldCreatedAt
-
-        channelStateLogic.upsertMessage(recentMessage)
-        _lastMessageAt `should be equal to` createdAt
-    }
-
-    @Test
-    fun `given new messages were upserted the newest date one should be become the new lastMessageAt - newer and old message`() {
-        val createdAt = randomDate()
-        val oldCreatedAt = randomDateBefore(createdAt.time)
-        val updatedAt = randomDateAfter(createdAt.time)
-
-        val recentMessage = randomMessage(
-            user = User(id = "otherUserId"),
-            createdAt = createdAt,
-            createdLocallyAt = createdAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-        val oldMessage = randomMessage(
-            user = User(id = "otherUserId"),
-            createdAt = oldCreatedAt,
-            createdLocallyAt = oldCreatedAt,
-            updatedAt = updatedAt,
-            updatedLocallyAt = updatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true
-        )
-
-        channelStateLogic.upsertMessage(recentMessage)
-        _lastMessageAt `should be equal to` createdAt
-
-        channelStateLogic.upsertMessage(oldMessage)
-        _lastMessageAt `should be equal to` createdAt
     }
 
     @Test

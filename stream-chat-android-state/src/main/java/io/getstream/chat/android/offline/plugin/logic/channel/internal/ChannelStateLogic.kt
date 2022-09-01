@@ -41,7 +41,6 @@ import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrent
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
-import kotlin.math.max
 
 @Suppress("TooManyFunctions")
 /**
@@ -215,7 +214,6 @@ internal class ChannelStateLogic(
      */
     fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
         val newMessages = parseMessages(messages, shouldRefreshMessages)
-        updateLastMessageAtByNewMessages(newMessages.values)
         mutableState.rawMessages = newMessages
     }
 
@@ -226,7 +224,6 @@ internal class ChannelStateLogic(
      */
     fun deleteMessage(message: Message) {
         mutableState.rawMessages -= message.id
-        updateLastMessageAtByNewMessages(mutableState.messages.value)
     }
 
     /**
@@ -242,7 +239,6 @@ internal class ChannelStateLogic(
             mutableState.rawMessages = messages
         } else {
             mutableState.rawMessages = messages + listOf(systemMessage).associateBy(Message::id)
-            updateLastMessageAtByNewMessages(listOf(systemMessage))
         }
     }
 
@@ -380,7 +376,6 @@ internal class ChannelStateLogic(
             upsertMessages(channel.messages, shouldRefreshMessages)
         }
 
-        mutableState.lastMessageAt = channel.lastMessageAt
         mutableState.setChannelConfig(channel.config)
     }
 
@@ -497,18 +492,6 @@ internal class ChannelStateLogic(
     ).map { it.time }
         .maxOrNull()
         ?: NEVER.time
-
-    private fun updateLastMessageAtByNewMessages(newMessages: Collection<Message>) {
-        if (newMessages.isEmpty()) {
-            return
-        }
-        val newLastMessageAt =
-            newMessages.mapNotNull { it.createdAt ?: it.createdLocallyAt }.maxOfOrNull(Date::getTime) ?: return
-        mutableState.lastMessageAt = when (val currentLastMessageAt = mutableState.lastMessageAt) {
-            null -> Date(newLastMessageAt)
-            else -> max(currentLastMessageAt.time, newLastMessageAt).let(::Date)
-        }
-    }
 
     private companion object {
         private const val TAG = "ChannelStateLogicImpl"
