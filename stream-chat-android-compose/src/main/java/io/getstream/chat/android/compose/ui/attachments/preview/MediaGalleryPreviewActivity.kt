@@ -129,6 +129,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
 import io.getstream.chat.android.compose.handlers.PermissionHandler
@@ -147,6 +148,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -1319,7 +1321,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 progressIndicatorFillMaxSizePercentage = 0.3f
             )
 
-            UserAvatar(
+            Avatar(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(8.dp)
@@ -1333,7 +1335,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         elevation = 5.dp,
                         shape = ChatTheme.shapes.avatar
                     ),
-                user = user
+                imageUrl = user.image,
+                initials = user.initials
             )
 
             if (attachment.type == AttachmentType.VIDEO) {
