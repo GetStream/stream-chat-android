@@ -76,7 +76,6 @@ internal class ChannelMutableState(
     private val _insideSearch = MutableStateFlow(false)
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
-    private val _lastMessageAt = MutableStateFlow<Date?>(null)
 
     /** raw version of messages. */
     var rawMessages: Map<String, Message>
@@ -87,11 +86,6 @@ internal class ChannelMutableState(
     var rawOldMessages: Map<String, Message>
         get() = _oldMessages.value
         set(value) { _oldMessages.value = value }
-
-    /** the date of the last message */
-    var lastMessageAt: Date?
-        get() = _lastMessageAt.value
-        set(value) { _lastMessageAt.value = value }
 
     /** Channel config data. */
     private val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -217,8 +211,7 @@ internal class ChannelMutableState(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = _channelConfig.value
         channel.unreadCount = unreadCount.value
-        channel.lastMessageAt =
-            lastMessageAt ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
         return channel
