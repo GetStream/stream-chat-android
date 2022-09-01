@@ -12,8 +12,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
 
+// TODO
 internal fun <T> StateFlow<T>.asState(coroutineScope: CoroutineScope) : State<T> {
     val state = mutableStateOf(this.value)
+    onEach { state.value = it }.launchIn(coroutineScope)
+    return state
+}
+
+internal fun <T> Flow<T>.asState(coroutineScope: CoroutineScope, defaultValue: T) : State<T> {
+    val state = mutableStateOf(defaultValue)
     onEach { state.value = it }.launchIn(coroutineScope)
     return state
 }

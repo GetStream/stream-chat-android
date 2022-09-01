@@ -47,6 +47,7 @@ public data class MessageItem(
     public val groupPosition: List<MessagePosition> = listOf(MessagePosition.NONE),
     public val isMessageRead: Boolean = false,
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
+    public val focusState: MessageFocusState? = null
 ) : MessageListItem()
 
 public data class DateSeparatorItem(
@@ -126,3 +127,18 @@ public fun interface MessagePositionHandler {
 public fun interface DateSeparatorHandler {
     public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
 }
+
+/**
+ * Represents the message focus state, in case the user jumps to a message.
+ */
+public sealed class MessageFocusState
+
+/**
+ * Represents the state when the message is currently being focused.
+ */
+public object MessageFocused : MessageFocusState()
+
+/**
+ * Represents the state when we've removed the focus from the message.
+ */
+public object MessageFocusRemoved : MessageFocusState()

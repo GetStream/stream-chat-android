@@ -18,6 +18,8 @@ import io.getstream.chat.android.common.extensions.isError
 import io.getstream.chat.android.common.extensions.isSystem
 import io.getstream.chat.android.common.model.DateSeparatorHandler
 import io.getstream.chat.android.common.model.DateSeparatorItem
+import io.getstream.chat.android.common.model.MessageFocusRemoved
+import io.getstream.chat.android.common.model.MessageFocused
 import io.getstream.chat.android.common.model.MessageItem
 import io.getstream.chat.android.common.model.MessageListItem
 import io.getstream.chat.android.common.model.MessageListState
@@ -48,6 +50,7 @@ import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -273,6 +276,11 @@ public class MessageListController(
         MutableStateFlow(deletedMessageVisibility)
 
     /**
+     * Represents the message we wish to scroll to.
+     */
+    private var scrollToMessage: Message? = null
+
+    /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
      * out of the thread state.
      */
@@ -339,6 +347,11 @@ public class MessageListController(
                     } else {
                         newState
                     }
+
+                    _messageListState.value.messages
+                        .firstOrNull { it is MessageItem && it.message.id == scrollToMessage?.id }?.let {
+                            focusMessage((it as MessageItem).message.id)
+                        }
 
                     lastLoadedMessage = newLastMessage
                 }
@@ -647,8 +660,85 @@ public class MessageListController(
      * @param messageId The id of the [Message] we wish to load.
      * @param onResult Handler that notifies the result of the load action.
      */
-    public fun loadMessageWithPage(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
+    public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
         chatClient.loadMessageById(cid, messageId).enqueue { result -> onResult(result) }
+    }
+
+    /**
+     * Scrolls to selected message. If the message is not currently in the list it will first load a page with the
+     * message in the middle of it, add it to the list and then notify to scroll to the message.
+     *
+     * @param messageId The id of the [Message] we wish to scroll to.
+     */
+    public fun scrollToMessage(messageId: String) {
+        if (isInThread) return
+        val message = getMessageWithId(messageId)
+
+        if (message != null) {
+            scrollToMessage = message
+            focusMessage(messageId)
+        } else {
+            loadMessageById(messageId) {
+                scrollToMessage = it.data()
+                focusMessage(messageId)
+            }
+        }
+    }
+
+    /**
+     * Sets the focused message to be the message with the given ID, after which it removes it from
+     * focus with a delay.
+     *
+     * @param messageId The ID of the message.
+     */
+    public fun focusMessage(messageId: String) {
+        val messages = messagesState.messages.map {
+            if (it is MessageItem && it.message.id == messageId) {
+                it.copy(focusState = MessageFocused)
+            } else {
+                it
+            }
+        }
+
+        scope.launch {
+            updateMessages(messages)
+            delay(REMOVE_MESSAGE_FOCUS_DELAY)
+            removeMessageFocus(messageId)
+        }
+    }
+
+    /**
+     * Removes the focus from the message with the given ID.
+     *
+     * @param messageId The ID of the message.
+     */
+    private fun removeMessageFocus(messageId: String) {
+        val messages = messagesState.messages.map {
+            if (it is MessageItem && it.message.id == messageId) {
+                it.copy(focusState = MessageFocusRemoved)
+            } else {
+                it
+            }
+        }
+
+        if (scrollToMessage?.id == messageId) {
+            scrollToMessage = null
+        }
+
+        updateMessages(messages)
+    }
+
+    /**
+     * Updates the current message state with new messages.
+     *
+     * @param messages The list of new message items.
+     * */
+    private fun updateMessages(messages: List<MessageListItem>) {
+        if (isInThread) {
+            this._threadListState.value = _threadListState.value.copy(messages = messages)
+        } else {
+            this._messageListState.value = _messageListState.value.copy(messages = messages)
+        }
     }
 
     /**
@@ -1082,5 +1172,7 @@ public class MessageListController(
          * number, then we show a separator, if it's enabled in the list.
          */
         const val SEPARATOR_TIME_MILLIS: Long = 1000 * 60 * 60 * 4
+
+        const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }
 }

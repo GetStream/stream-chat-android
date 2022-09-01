@@ -46,6 +46,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.model.MessageFocused
+import io.getstream.chat.android.common.model.MessageItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
@@ -130,8 +132,6 @@ public class MessageListViewModel(
 
     /**
      * Regulates the visibility of deleted messages.
-     *
-     * TODO deprecate?
      */
     public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
         messageListController._deletedMessageVisibility.asLiveData()
@@ -179,14 +179,10 @@ public class MessageListViewModel(
      * Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
-
-    /**
-     * The target message that the list should scroll to.
-     * Used when scrolling to a pinned message, a message opened from
-     * a push notification or similar.
-     */
-    public val targetMessage: LiveData<Message> = _targetMessage
+    public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
+        (it.messages.firstOrNull { it is MessageItem && it.focusState == MessageFocused } as? MessageItem)?.message
+            ?: Message()
+    }.asLiveData()
 
     /**
      * Emits error events.
@@ -390,21 +386,7 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
-                // TODO
-                val message = getMessageWithId(event.messageId)
-
-                if (message != null) {
-                    _targetMessage.value = message
-                } else {
-                    messageListController.loadMessageWithPage(event.messageId) { result ->
-                        if (result.isSuccess) {
-                            _targetMessage.value = result.data()
-                        } else {
-                            val error = result.error()
-                            logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
-                        }
-                    }
-                }
+                messageListController.scrollToMessage(event.messageId)
             }
             is Event.RemoveAttachment -> {
                 // TODO
@@ -456,13 +438,6 @@ public class MessageListViewModel(
         }
     }
 
-    //TODO
-    private fun <T : Any> handleResult(result: Result<T>, wrapError: (ChatError) -> EventWrapper<ErrorEvent>) {
-        if (result.isError) {
-            _errorEvents.postValue(wrapError(result.error()))
-        }
-    }
-
     /**
      * Returns a message with the given ID from the [messageListData].
      *
@@ -485,7 +460,6 @@ public class MessageListViewModel(
      *
      * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
      */
-    // TODO deprecate and replace with common handler
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
         dateSeparatorHandler?.let {
             messageListController.setDateSeparatorHandler { previousMessage, message ->
@@ -500,7 +474,6 @@ public class MessageListViewModel(
      *
      * @param threadDateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
      */
-    // TODO deprecate and replace with common handler
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
         threadDateSeparatorHandler?.let {
             messageListController.setThreadDateSeparatorHandler { previousMessage, message ->
@@ -593,6 +566,8 @@ public class MessageListViewModel(
      * @param message The message the user is reacting to.
      * @param reactionType The exact reaction type.
      * @param enforceUnique Whether the user is able to leave multiple reactions.
+     *
+     * TODO
      */
     private fun onMessageReaction(message: Message, reactionType: String, enforceUnique: Boolean) {
         val reaction = Reaction().apply {
@@ -952,6 +927,13 @@ public class MessageListViewModel(
      */
     public fun interface DateSeparatorHandler {
         public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
+    }
+
+    //TODO
+    private fun <T : Any> handleResult(result: Result<T>, wrapError: (ChatError) -> EventWrapper<ErrorEvent>) {
+        if (result.isError) {
+            _errorEvents.postValue(wrapError(result.error()))
+        }
     }
 
     /**

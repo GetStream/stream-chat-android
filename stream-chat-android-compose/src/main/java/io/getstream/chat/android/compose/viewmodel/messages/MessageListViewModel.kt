@@ -57,10 +57,7 @@ import io.getstream.chat.android.compose.state.messages.SelectedMessageReactions
 import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
-import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.toMessagesState
@@ -69,10 +66,8 @@ import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
@@ -199,11 +194,6 @@ public class MessageListViewModel(
     private var threadJob: Job? = null
 
     /**
-     * Represents the message we wish to scroll to.
-     */
-    private var scrollToMessage: Message? = null
-
-    /**
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
      */
@@ -220,11 +210,6 @@ public class MessageListViewModel(
         viewModelScope.launch {
             messageListController.messageListState.collect { state ->
                 messagesState = state.toMessagesState()
-                if (scrollToMessage != null) {
-                    messagesState.messageItems.firstOrNull { itemState ->
-                        itemState is MessageItemState && itemState.message.id == scrollToMessage?.id
-                    }?.let { focusMessage((it as MessageItemState).message.id) }
-                }
             }
         }
     }
@@ -318,18 +303,10 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads the selected message we wish to scroll to when the message can't be found in the current list.
-     *
-     * @param message The selected message we wish to scroll to.
-     */
-    private fun loadMessage(message: Message) {
-        messageListController.loadMessageWithPage(message.id)
-    }
-
-    /**
      * Triggered when the user long taps on and selects a message.
      *
      * @param message The selected message.
+     * TODO
      */
     public fun selectMessage(message: Message?) {
         if (message != null) {
@@ -354,6 +331,7 @@ public class MessageListViewModel(
      * Triggered when the user taps on and selects message reactions.
      *
      * @param message The message that contains the reactions.
+     * TODO
      */
     public fun selectReactions(message: Message?) {
         if (message != null) {
@@ -370,6 +348,7 @@ public class MessageListViewModel(
      * Triggered when the user taps the show more reactions button.
      *
      * @param message The selected message.
+     * TODO
      */
     public fun selectExtendedReactions(message: Message?) {
         if (message != null) {
@@ -641,55 +620,7 @@ public class MessageListViewModel(
      * @param messageId The ID of the message.
      */
     public fun focusMessage(messageId: String) {
-        val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(focusState = MessageFocused)
-            } else {
-                it
-            }
-        }
-
-        viewModelScope.launch {
-            updateMessages(messages)
-            delay(RemoveMessageFocusDelay)
-            removeMessageFocus(messageId)
-        }
-    }
-
-    /**
-     * Removes the focus from the message with the given ID.
-     *
-     * @param messageId The ID of the message.
-     */
-    private fun removeMessageFocus(messageId: String) {
-        val messages = currentMessagesState.messageItems.map {
-            if (it is MessageItemState && it.message.id == messageId) {
-                it.copy(focusState = MessageFocusRemoved)
-            } else {
-                it
-            }
-        }
-
-        if (scrollToMessage?.id == messageId) {
-            scrollToMessage = null
-        }
-
-        updateMessages(messages)
-    }
-
-    /**
-     * Updates the current message state with new messages.
-     *
-     * @param messages The list of new message items.
-     * */
-    private fun updateMessages(messages: List<MessageListItemState>) {
-        if (isInThread) {
-            this.threadMessagesState =
-                threadMessagesState.copy(messageItems = messages)
-        } else {
-            this.messagesState =
-                messagesState.copy(messageItems = messages)
-        }
+        messageListController.focusMessage(messageId = messageId)
     }
 
     /**
@@ -722,18 +653,7 @@ public class MessageListViewModel(
      * @param message The message we wish to scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
-        if (isInThread) return
-
-        val isMessageInList = currentMessagesState.messageItems.firstOrNull {
-            it is MessageItemState && it.message.id == message.id
-        } != null
-        scrollToMessage = message
-
-        if (isMessageInList) {
-            focusMessage(message.id)
-        } else {
-            loadMessage(message = message)
-        }
+        messageListController.scrollToMessage(messageId = message.id)
     }
 
     /**
@@ -760,10 +680,5 @@ public class MessageListViewModel(
          * The default limit for messages count in requests.
          */
         internal const val DefaultMessageLimit: Int = 30
-
-        /**
-         * Time in millis, after which the focus is removed.
-         */
-        private const val RemoveMessageFocusDelay: Long = 2000
     }
 }
