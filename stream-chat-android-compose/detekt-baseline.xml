@@ -15,6 +15,7 @@
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:ImageAttachmentContent.kt$@OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
+    <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
@@ -33,8 +34,8 @@
     <ID>MagicNumber:MediaAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:MediaAttachmentContent.kt$8</ID>
     <ID>MagicNumber:MediaAttachmentFactory.kt$4</ID>
+    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.4f</ID>
-    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$6</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>

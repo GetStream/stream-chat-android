@@ -1299,7 +1299,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .build()
             )
 
-            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && painter.state is AsyncImagePainter.State.Error) {
+            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
+                painter.state is AsyncImagePainter.State.Error) {
                 retryHash++
             }
 
