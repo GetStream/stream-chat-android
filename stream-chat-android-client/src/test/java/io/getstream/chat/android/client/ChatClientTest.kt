@@ -103,7 +103,9 @@ internal class ChatClientTest {
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
+        val callPostponeHelper = CallPostponeHelper(userScope) {
+            socketStateService.awaitConnection()
+        }
         client = ChatClient(
             config = config,
             api = api,

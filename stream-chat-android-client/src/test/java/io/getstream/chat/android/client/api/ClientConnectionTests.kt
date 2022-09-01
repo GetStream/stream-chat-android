@@ -107,7 +107,9 @@ internal class ClientConnectionTests {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
+        val callPostponeHelper = CallPostponeHelper(userScope) {
+            socketStateService.awaitConnection()
+        }
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
