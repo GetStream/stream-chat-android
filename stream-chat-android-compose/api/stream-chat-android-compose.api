@@ -1621,8 +1621,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun getErrorAccent-0d7_KjU ()J
 	public final fun getGiphyMessageBackground-0d7_KjU ()J
 	public final fun getHighlight-0d7_KjU ()J
+	public final fun getImageBackgroundMediaGalleryPicker-0d7_KjU ()J
 	public final fun getImageBackgroundMessageList-0d7_KjU ()J
-	public final fun getImageBackgroundPickers-0d7_KjU ()J
 	public final fun getInfoAccent-0d7_KjU ()J
 	public final fun getInputBackground-0d7_KjU ()J
 	public final fun getLinkBackground-0d7_KjU ()J
