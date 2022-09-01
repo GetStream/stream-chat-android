@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.channel.controller
 
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.test.randomReactionNewEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStopEvent
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
@@ -41,6 +43,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMu
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -83,6 +86,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         on(it.writeChannelState()) doReturn channelMutableState
     }
 
+    private val allowCount = MutableSharedFlow<Boolean>()
+    private val startStopBuffer = mock<StartStopBuffer<ChatEvent>>()
+
     @BeforeEach
     fun setUp() {
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
@@ -93,13 +99,16 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             repos,
             false,
             channelStateLogic,
-            queryChannelsTrack
+            queryChannelsTrack,
+            startStopBuffer = startStopBuffer,
+            allowCount = allowCount,
+            scope = testCoroutines.scope
         )
     }
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() = runTest {
+    fun `when user watching event arrives, last message should upsert messages, enqueue increment count and appear`() = runTest {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(
@@ -110,14 +119,15 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         )
 
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
+        allowCount.tryEmit(true)
 
-        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
+        val newMessageEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
-        channelLogic.handleEvent(userStartWatchingEvent)
+        channelLogic.handleEvent(newMessageEvent)
 
         verify(channelStateLogic).upsertMessages(listOf(newMessage))
-        verify(channelStateLogic).incrementUnreadCountIfNecessary(newMessage)
         verify(channelStateLogic).toggleHidden(false)
+        verify(startStopBuffer).enqueueData(newMessageEvent)
     }
 
     // Message update

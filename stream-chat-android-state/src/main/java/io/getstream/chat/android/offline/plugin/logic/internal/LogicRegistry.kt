@@ -42,6 +42,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableS
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -59,13 +60,22 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-    private val queryChannelsTrack: QueryChannelsTrack
+    private val queryChannelsTrack: QueryChannelsTrack,
+    private val allowCount: MutableStateFlow<Boolean>
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
+
+    fun countingHold() {
+        allowCount.tryEmit(false)
+    }
+
+    fun countingRelease() {
+        allowCount.tryEmit(true)
+    }
 
     fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
@@ -100,7 +110,9 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
-                queryChannelsTrack = queryChannelsTrack
+                queryChannelsTrack = queryChannelsTrack,
+                allowCount = allowCount,
+                scope = coroutineScope
             )
         }
     }
@@ -232,7 +244,8 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
-            queryChannelsTrack: QueryChannelsTrack
+            queryChannelsTrack: QueryChannelsTrack,
+            allowCount: MutableStateFlow<Boolean>,
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -248,7 +261,8 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 client = client,
                 coroutineScope = coroutineScope,
-                queryChannelsTrack = queryChannelsTrack
+                queryChannelsTrack = queryChannelsTrack,
+                allowCount = allowCount
             )
                 .also { logicRegistry ->
                     instance = logicRegistry

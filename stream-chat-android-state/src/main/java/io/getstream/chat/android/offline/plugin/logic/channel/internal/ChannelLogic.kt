@@ -79,6 +79,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -89,6 +90,9 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
@@ -103,11 +107,49 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
-    private val queryChannelsTrack: QueryChannelsTrack
+    private val queryChannelsTrack: QueryChannelsTrack,
+    private val startStopBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(),
+    private val allowCount: SharedFlow<Boolean>,
+    scope: CoroutineScope,
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
     private val logger = StreamLog.getLogger("Chat:ChannelLogic")
+
+    init {
+        scope.launch {
+            allowCount.collect { shouldCount ->
+                if (shouldCount) {
+                    startStopBuffer.active()
+                } else {
+                    startStopBuffer.hold()
+                }
+            }
+        }
+
+        startStopBuffer.subscribe { chatEvent ->
+            if (!queryChannelsTrack.isLastSyncBeforeEvent(chatEvent)) {
+                return@subscribe
+            }
+
+            when (chatEvent) {
+                is NewMessageEvent -> {
+                    logger.d { "Handling buffered NewMessageEvent" }
+                    channelStateLogic.incrementUnreadCountIfNecessary(chatEvent.message)
+                }
+
+                is NotificationMessageNewEvent -> {
+                    logger.d { "Handling buffered NotificationMessageNewEvent" }
+                    channelStateLogic.incrementUnreadCountIfNecessary(chatEvent.message)
+                }
+                else -> {
+                    logger.d {
+                        "The wrong event has buffered. Don't buffer an event unnecessarily"
+                    }
+                }
+            }
+        }
+    }
 
     val cid: String
         get() = mutableState.cid
@@ -514,12 +556,12 @@ internal class ChannelLogic(
      * Responsible for synchronizing [ChannelMutableStateImpl].
      */
     internal fun handleEvent(event: ChatEvent) {
-        StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
+        logger.d { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
-                if (queryChannelsTrack.isLastSyncBeforeEvent(event)) {
-                    channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                }
+                logger.d { "enqueueing NewMessageEvent" }
+                startStopBuffer.enqueueData(event)
+
                 channelStateLogic.toggleHidden(false)
 
                 if (!mutableState.insideSearch.value) {
@@ -542,9 +584,8 @@ internal class ChannelLogic(
                 channelStateLogic.toggleHidden(false)
             }
             is NotificationMessageNewEvent -> {
-                if (queryChannelsTrack.isLastSyncBeforeEvent(event)) {
-                    channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                }
+                startStopBuffer.enqueueData(event)
+
                 channelStateLogic.toggleHidden(false)
 
                 if (!mutableState.insideSearch.value) {

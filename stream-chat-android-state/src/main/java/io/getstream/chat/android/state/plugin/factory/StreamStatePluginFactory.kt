@@ -64,6 +64,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 import kotlin.reflect.KClass
 
@@ -140,6 +141,7 @@ public class StreamStatePluginFactory(
         )
 
         val queryChannelsTrack = QueryChannelsTrack()
+        val allowCount: MutableStateFlow<Boolean> = MutableStateFlow(value = true)
 
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
@@ -149,7 +151,8 @@ public class StreamStatePluginFactory(
             client = chatClient,
             clientState = clientState,
             coroutineScope = scope,
-            queryChannelsTrack = queryChannelsTrack
+            queryChannelsTrack = queryChannelsTrack,
+            allowCount = allowCount
         )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
@@ -232,11 +235,7 @@ public class StreamStatePluginFactory(
 
         return StatePlugin(
             activeUser = user,
-            queryChannelsListener = QueryChannelsListenerImpl(
-                logic,
-                eventHandler as EventHandlerSequential,
-                queryChannelsTrack
-            ),
+            queryChannelsListener = QueryChannelsListenerImpl(logic, queryChannelsTrack),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
