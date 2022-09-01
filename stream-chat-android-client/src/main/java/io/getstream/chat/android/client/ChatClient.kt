@@ -2489,7 +2489,7 @@ internal constructor(
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
-     * connected to the web-socket). LastSyncAt is in the format yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'. Use this version of
+     * connected to the web socket). [lastSyncAt] is in _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.  Use this version of
      * getSyncHistory when high precision is necessary.
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
