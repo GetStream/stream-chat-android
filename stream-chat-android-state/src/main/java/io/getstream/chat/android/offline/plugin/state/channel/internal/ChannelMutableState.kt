@@ -123,7 +123,6 @@ internal class ChannelMutableState(
     }
 
     internal var lastMarkReadEvent: Date? = null
-    internal var lastKeystrokeAt: Date? = null
 
     /** The date of the last typing event. */
     var lastStartTypingEvent: Date? = null
