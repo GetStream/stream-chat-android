@@ -138,7 +138,6 @@ internal class TypingEventListenerState(
             channelState.lastStartTypingEvent = eventTime
         } else if (eventType == EventType.TYPING_STOP) {
             channelState.lastStartTypingEvent = null
-            channelState.lastKeystrokeAt = null
         }
     }
 
