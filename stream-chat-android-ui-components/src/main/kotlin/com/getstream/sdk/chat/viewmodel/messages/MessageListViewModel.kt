@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.model.ClipboardHandler
-import io.getstream.chat.android.common.model.ClipboardHandlerImpl
 import io.getstream.chat.android.common.model.MessageFocused
 import io.getstream.chat.android.common.model.MessageItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -90,7 +89,6 @@ public class MessageListViewModel(
     private val showDateSeparators: Boolean = true,
     private val dateSeparatorTime: Long = SEPARATOR_TIME.toLong(),
     private val enforceUniqueReactions: Boolean = true,
-    private val clipboardHandler: ClipboardHandler,
     private val messageListController: MessageListController = MessageListController(
         cid = cid,
         chatClient = chatClient,
@@ -100,7 +98,7 @@ public class MessageListViewModel(
         dateSeparatorThresholdMillis = dateSeparatorTime,
         messageFooterVisibility = footerVisibility,
         enforceUniqueReactions = enforceUniqueReactions,
-        clipboardHandler = clipboardHandler
+        clipboardHandler = { }
     ),
 ) : ViewModel() {
 

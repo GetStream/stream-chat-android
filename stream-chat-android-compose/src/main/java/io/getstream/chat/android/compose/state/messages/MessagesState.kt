@@ -89,7 +89,7 @@ public data class MessagesState(
 }
 
 // TODO
-public fun MessageListState.toComposeState(focusedMessageOffset: Int?): MessagesState {
+public fun MessageListState.toComposeState(): MessagesState {
     // TODO focusedMessageOffsetState
     return MessagesState(
         isLoading = isLoading,
@@ -104,7 +104,6 @@ public fun MessageListState.toComposeState(focusedMessageOffset: Int?): Messages
         messageItems = messages.reversed().map { it.toMessageListItemState() },
         newMessageState = newMessageState?.toComposeState(),
         selectedMessageState = selectedMessageState?.toComposeState(),
-        focusedMessageOffsetState = MutableStateFlow(focusedMessageOffset)
     )
 }
 

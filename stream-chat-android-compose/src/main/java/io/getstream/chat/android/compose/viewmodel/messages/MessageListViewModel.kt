@@ -100,15 +100,13 @@ public class MessageListViewModel(
     /**
      * State of the screen, for [MessageMode.Normal].
      */
-    private val messagesState: MessagesState by messageListController.messageListState
-        .map { it.toComposeState(messagesState.focusedMessageOffset.value) }
+    private val messagesState: MessagesState by messageListController.messageListState.map { it.toComposeState() }
         .asState(viewModelScope, MessagesState())
 
     /**
      * State of the screen, for [MessageMode.MessageThread].
      */
-    private val threadMessagesState: MessagesState by messageListController.threadListState
-        .map { it.toComposeState(threadMessagesState.focusedMessageOffset.value) }
+    private val threadMessagesState: MessagesState by messageListController.threadListState.map { it.toComposeState() }
         .asState(viewModelScope, MessagesState())
 
     /**
