@@ -91,6 +91,7 @@ public class MessageListViewModel(
     private val enforceUniqueReactions: Boolean = true,
     private val messageListController: MessageListController = MessageListController(
         cid = cid,
+        messageId = messageId,
         chatClient = chatClient,
         deletedMessageVisibility = deletedVisibility,
         showSystemMessages = showSystemMessages,
@@ -255,17 +256,6 @@ public class MessageListViewModel(
             addSource(messageListData) {
                 value = State.Result(it)
             }
-        }
-
-        messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
-            stateMerger.observeForever(object : Observer<State> {
-                override fun onChanged(state: State?) {
-                    if (state is State.Result) {
-                        onEvent(Event.ShowMessage(targetMessageId))
-                        stateMerger.removeObserver(this)
-                    }
-                }
-            })
         }
     }
 

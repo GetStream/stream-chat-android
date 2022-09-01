@@ -75,8 +75,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -97,6 +100,7 @@ import java.util.Date
  */
 public class MessageListController(
     private val cid: String,
+    private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val deletedMessageVisibility: DeletedMessageVisibility,
     private val showSystemMessages: Boolean,
@@ -314,6 +318,13 @@ public class MessageListController(
 
     init {
         observeMessages()
+        messageId?.takeUnless { it.isNullOrBlank() }?.let { messageId ->
+            scope.launch {
+                _messageListState
+                    .onCompletion { scrollToMessage(messageId) }
+                    .first { it.messages.isNotEmpty() }
+            }
+        }
     }
 
     /**
