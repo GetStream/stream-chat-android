@@ -122,8 +122,6 @@ internal class ChannelMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     }
 
-    internal var lastMarkReadEvent: Date? = null
-
     /** The date of the last typing event. */
     var lastStartTypingEvent: Date? = null
     internal var keystrokeParentMessageId: String? = null
@@ -160,6 +158,9 @@ internal class ChannelMutableState(
 
     override val read: StateFlow<ChannelUserRead?> = _rawReads
         .combine(userFlow) { readsMap, user -> user?.id?.let { readsMap[it] } }
+        .stateIn(scope, SharingStarted.Eagerly, null)
+
+    val lastMarkReadEvent: StateFlow<Date?> = read.mapLatest { it?.lastRead }
         .stateIn(scope, SharingStarted.Eagerly, null)
 
     override val unreadCount: StateFlow<Int> = read.mapLatest { it?.unreadMessages ?: 0 }
@@ -393,6 +394,27 @@ internal class ChannelMutableState(
             reads.associateBy(ChannelUserRead::getUserId) +
             listOfNotNull(newUserRead).associateBy(ChannelUserRead::getUserId)
     }
+
+    /**
+     * Marks channel as read locally if different conditions are met:
+     * 1. Channel has read events enabled
+     * 2. Channel has messages not marked as read yet
+     * 3. Current user is set
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markChannelAsRead(): Boolean = read.value
+        ?.takeUnless { channelConfig.value.readEventsEnabled }
+        ?.let { currentUserRead ->
+            messages.value.lastOrNull()?.let { lastMessage ->
+                upsertReads(
+                    listOf(
+                        currentUserRead.copy(lastRead = lastMessage.let { it.createdAt ?: it.createdLocallyAt })
+                    )
+                )
+                true
+            }
+        } ?: false
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
