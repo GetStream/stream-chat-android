@@ -20,7 +20,6 @@ package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -42,6 +41,9 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
     private var beforeAllCalled: Boolean = false
 
     override fun beforeAll(context: ExtensionContext) {
+        TestLoggingHelper.initialize {
+            dispatcher.scheduler.currentTime
+        }
         Dispatchers.setMain(dispatcher)
         DispatcherProvider.set(
             mainDispatcher = dispatcher,

@@ -20,13 +20,10 @@ import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.logging.StreamLog
-import io.getstream.logging.kotlin.KotlinStreamLogger
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.internal.verification.Times
@@ -42,16 +39,6 @@ internal class HealthMonitorTest {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
-    }
-
-    @BeforeEach
-    fun setUp() {
-        StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(
-            KotlinStreamLogger(now = {
-                testCoroutines.dispatcher.scheduler.currentTime
-            })
-        )
     }
 
     @Test
