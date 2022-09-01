@@ -60,8 +60,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `MessageListView::showMessageOptionsDialog` method to show message options dialog. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
 
 ### ⚠️ Changed
+- Exposed `MessageOptionsDialogFragment` so that clients are able to create and show the dialog manually. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
 
 ### ❌ Removed
 
