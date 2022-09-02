@@ -80,7 +80,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -109,7 +108,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -146,6 +144,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGaller
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
@@ -664,7 +663,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                PlaceHolder(
+                MediaPreviewPlaceHolder(
                     asyncImagePainterState = painter.state,
                     isImage = attachment.type == AttachmentType.IMAGE,
                     progressIndicatorStrokeWidth = 6.dp,
@@ -752,62 +751,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     currentScale = DefaultZoomScale
                     translation = Offset(0f, 0f)
                 }
-            }
-        }
-    }
-
-    /**
-     * Displays an image icon if no image was loaded previously
-     * or the request has failed, a circular progress indicator
-     * if the image is loading or nothing if the image has successfully
-     * loaded.
-     *
-     * @param asyncImagePainterState The painter state used to determine
-     * which UI to show.
-     * @param isImage If the attachment we are holding the place for is
-     * a image or not.
-     * @param progressIndicatorStrokeWidth The thickness of the progress indicator
-     * used to indicate a loading thumbnail.
-     * @param progressIndicatorFillMaxSizePercentage Dictates what percentage of
-     * available parent size the progress indicator will fill.
-     */
-    @Composable
-    private fun PlaceHolder(
-        asyncImagePainterState: AsyncImagePainter.State,
-        isImage: Boolean = false,
-        progressIndicatorStrokeWidth: Dp,
-        progressIndicatorFillMaxSizePercentage: Float,
-    ) {
-        val painter = painterResource(
-            id = R.drawable.stream_compose_ic_image_picker
-        )
-
-        val imageModifier = Modifier.fillMaxSize(0.4f)
-
-        when {
-            asyncImagePainterState is AsyncImagePainter.State.Loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(horizontal = 2.dp)
-                        .fillMaxSize(progressIndicatorFillMaxSizePercentage),
-                    strokeWidth = progressIndicatorStrokeWidth,
-                    color = ChatTheme.colors.primaryAccent
-                )
-            }
-            asyncImagePainterState is AsyncImagePainter.State.Error && isImage -> Icon(
-                tint = ChatTheme.colors.textLowEmphasis,
-                modifier = imageModifier,
-                painter = painter,
-                contentDescription = null
-            )
-            asyncImagePainterState is AsyncImagePainter.State.Success -> {}
-            asyncImagePainterState is AsyncImagePainter.State.Empty && isImage -> {
-                Icon(
-                    tint = ChatTheme.colors.textLowEmphasis,
-                    modifier = imageModifier,
-                    painter = painter,
-                    contentDescription = null
-                )
             }
         }
     }
@@ -1315,7 +1258,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 contentScale = ContentScale.Crop
             )
 
-            PlaceHolder(
+            MediaPreviewPlaceHolder(
                 asyncImagePainterState = painter.state,
                 isImage = attachment.type == AttachmentType.IMAGE,
                 progressIndicatorStrokeWidth = 3.dp,

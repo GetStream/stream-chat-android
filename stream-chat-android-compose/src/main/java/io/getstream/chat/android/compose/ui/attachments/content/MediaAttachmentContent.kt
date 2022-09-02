@@ -35,25 +35,35 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter
+import coil.request.ImageRequest
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.constant.AttachmentType
@@ -299,12 +309,33 @@ internal fun MediaAttachmentContentItem(
     modifier: Modifier = Modifier,
     playButton: @Composable () -> Unit,
 ) {
-    val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
+    val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
+
+    // Used as a workaround for Coil's lack of a retry policy.
+    // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+    var retryHash by remember {
+        mutableStateOf(0)
+    }
+
+    val painter = rememberStreamImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(attachment.imagePreviewUrl)
+            .setParameter(key = "retry_hash", value = retryHash)
+            .build()
+    )
 
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),
         onResult = { result -> onMediaGalleryPreviewResult(result) }
     )
+
+    // Used to refresh the request for the current page
+    // if it has previously failed.
+    if (connectionState == ConnectionState.CONNECTED &&
+        painter.state is AsyncImagePainter.State.Error
+    ) {
+        retryHash++
+    }
 
     Box(
         modifier = modifier
@@ -327,10 +358,19 @@ internal fun MediaAttachmentContentItem(
     ) {
         Image(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(ChatTheme.colors.imageBackgroundMessageList),
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Crop
+        )
+
+        MediaPreviewPlaceHolder(
+            asyncImagePainterState = painter.state,
+            progressIndicatorStrokeWidth = 3.dp,
+            progressIndicatorFillMaxSizePercentage = 0.25f,
+            isImage = attachment.type == AttachmentType.IMAGE,
+            placeholderIconTintColor = ChatTheme.colors.appBackground
         )
 
         if (attachment.type == AttachmentType.VIDEO) {
