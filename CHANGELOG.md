@@ -15,6 +15,8 @@
 
 ### ⬆️ Improved
 - Improving precision in time in the endpoint that syncs information between SDK and Stream's backend to make sure that undesired events are not coming due to a incorrect round down in time or desired events are not being ignored due to a incorrect round up of time when serializing/desirializing time in the SDK. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
+- Fixing precision of unread messages count when messages arrive and the SDK is syncing the information about channels. [#4122](https://github.com/GetStream/stream-chat-android/pull/4122)
+
 
 ### ✅ Added
 - Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
