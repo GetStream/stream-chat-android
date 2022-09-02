@@ -889,7 +889,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     if (shouldShowPlayButton) {
                         PlayButton(
                             modifier = Modifier
-                                .shadow(10.dp, shape = CircleShape)
+                                .shadow(6.dp, shape = CircleShape)
                                 .background(color = Color.White, shape = CircleShape)
                                 .size(
                                     width = 42.dp,
@@ -1284,7 +1284,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         shape = ChatTheme.shapes.avatar
                     )
                     .shadow(
-                        elevation = 5.dp,
+                        elevation = 4.dp,
                         shape = ChatTheme.shapes.avatar
                     ),
                 imageUrl = user.image,
@@ -1294,7 +1294,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             if (attachment.type == AttachmentType.VIDEO) {
                 PlayButton(
                     modifier = Modifier
-                        .shadow(10.dp, shape = CircleShape)
+                        .shadow(6.dp, shape = CircleShape)
                         .background(color = Color.White, shape = CircleShape)
                         .fillMaxSize(0.2f)
                 )

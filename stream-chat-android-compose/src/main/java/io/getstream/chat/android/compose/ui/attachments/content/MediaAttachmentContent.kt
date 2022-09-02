@@ -370,7 +370,7 @@ internal fun MediaAttachmentContentItem(
             progressIndicatorStrokeWidth = 3.dp,
             progressIndicatorFillMaxSizePercentage = 0.25f,
             isImage = attachment.type == AttachmentType.IMAGE,
-            placeholderIconTintColor = ChatTheme.colors.appBackground
+            placeholderIconTintColor = ChatTheme.colors.disabled
         )
 
         if (attachment.type == AttachmentType.VIDEO) {
@@ -386,7 +386,7 @@ internal fun MediaAttachmentContentItem(
  * @param modifier The modifier used for styling.
  */
 @Composable
-internal fun PlayButton(
+public fun PlayButton(
     modifier: Modifier = Modifier,
 ) {
     Box(

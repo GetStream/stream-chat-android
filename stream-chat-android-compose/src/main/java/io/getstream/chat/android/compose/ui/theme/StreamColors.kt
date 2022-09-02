@@ -73,7 +73,7 @@ public data class StreamColors(
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
     public val imageBackgroundMessageList: Color,
-    public val imageBackgroundMediaGalleryPicker: Color
+    public val imageBackgroundMediaGalleryPicker: Color,
 ) {
 
     public companion object {
@@ -104,7 +104,7 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
-            imageBackgroundMessageList = colorResource(R.color.stream_compose_text_low_emphasis),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
         )
 
@@ -135,7 +135,7 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
-            imageBackgroundMessageList = colorResource(R.color.stream_compose_text_low_emphasis_dark),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
         )
     }

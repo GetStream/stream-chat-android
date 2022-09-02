@@ -17,8 +17,10 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -29,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
-import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewItemSize
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.constant.AttachmentType
@@ -48,9 +49,7 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
 public fun MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
     contentPlayButton: @Composable () -> Unit = {
-        DefaultContentPlayButton(
-            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems
-        )
+        DefaultContentPlayButton()
     },
     previewContentPlayButton: @Composable () -> Unit = {
         DefaultPreviewContentPlayButton()
@@ -85,22 +84,16 @@ public fun MediaAttachmentFactory(
  * Represents the default play button that is
  * overlaid above video attachment previews inside
  * the messages list.
- *
- * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
- * in a group when previewing Media attachments in the message list.
  */
 @Composable
-private fun DefaultContentPlayButton(
-    maximumNumberOfPreviewedItems: Int,
-) {
+private fun DefaultContentPlayButton() {
     PlayButton(
         modifier = Modifier
-            .shadow(10.dp, shape = CircleShape)
+            .padding(2.dp)
+            .shadow(6.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
-            .size(
-                width = ChatTheme.dimens.attachmentsContentImageWidth / maximumNumberOfPreviewedItems,
-                height = ChatTheme.dimens.attachmentsContentImageWidth / maximumNumberOfPreviewedItems,
-            )
+            .fillMaxWidth(0.25f)
+            .aspectRatio(1f)
     )
 }
 
@@ -113,11 +106,8 @@ private fun DefaultContentPlayButton(
 private fun DefaultPreviewContentPlayButton() {
     PlayButton(
         modifier = Modifier
-            .shadow(10.dp, shape = CircleShape)
+            .shadow(6.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
-            .size(
-                width = (MediaAttachmentPreviewItemSize / 4).dp,
-                height = (MediaAttachmentPreviewItemSize / 4).dp
-            )
+            .fillMaxSize(0.25f)
     )
 }

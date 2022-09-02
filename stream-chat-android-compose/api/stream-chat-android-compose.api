@@ -611,10 +611,15 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Link
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentContentKt {
 	public static final fun MediaAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun PlayButton (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentPreviewContentKt {
 	public static final fun MediaAttachmentPreviewContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentQuotedContentKt {
+	public static final fun MediaAttachmentQuotedContent (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MessageAttachmentsContentKt {
@@ -653,8 +658,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$MediaAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$MediaAttachmentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$QuotedAttachmentFactoryKt {
