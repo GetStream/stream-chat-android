@@ -36,7 +36,6 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.toComposeState
@@ -140,12 +139,12 @@ public class MessageListViewModel(
      * Gives us information if we have selected a message.
      */
     public val isShowingOverlay: Boolean
-        get() = messagesState.selectedMessageState != null || threadMessagesState.selectedMessageState != null
+        get() = currentMessagesState.selectedMessageState != null
 
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
+    public val connectionState: StateFlow<ConnectionState> = messageListController.connectionState
 
     /**
      * Gives us information about the online state of the device.
@@ -164,13 +163,7 @@ public class MessageListViewModel(
      * @param message The message that is currently seen by the user.
      */
     public fun updateLastSeenMessage(message: Message) {
-        val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
-            messageItem is MessageItemState
-        } as? MessageItemState
-
-        if (message.id == latestMessage?.message?.id) {
-            messageListController.markLastMessageRead()
-        }
+        messageListController.updateLastSeenMessage(message)
     }
 
     /**

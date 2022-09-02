@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
@@ -72,13 +73,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenConcat
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -108,7 +113,7 @@ public class MessageListController(
     private val dateSeparatorThresholdMillis: Long,
     private val messageFooterVisibility: MessageFooterVisibility,
     private val enforceUniqueReactions: Boolean,
-    private val clipboardHandler: ClipboardHandler
+    private val clipboardHandler: ClipboardHandler,
 ) {
 
     /**
@@ -135,6 +140,11 @@ public class MessageListController(
             messageLimit = DEFAULT_MESSAGES_LIMIT,
             coroutineScope = scope
         )
+
+    /**
+     * Gives us information about the online state of the device.
+     */
+    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
 
     /**
      * Gives us information about the logged in user state.
@@ -237,6 +247,17 @@ public class MessageListController(
     public val threadListState: StateFlow<MessageListState> = _threadListState
 
     /**
+     * Current state of the message list depending on the [MessageMode] the list is in.
+     */
+    public val listState: StateFlow<MessageListState> = _mode.flatMapLatest {
+        if (it is MessageMode.MessageThread) {
+            _threadListState
+        } else {
+            _messageListState
+        }
+    }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = MessageListState())
+
+    /**
      * State of the list depending of the mode, thread or normal.
      */
     private val messagesState: MessageListState
@@ -311,13 +332,20 @@ public class MessageListController(
     private var scrollToMessage: Message? = null
 
     /**
+     * TODO
+     */
+    public val isInsideSearch: StateFlow<Boolean> = channelState.filterNotNull()
+        .flatMapLatest { it.insideSearch }
+        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = false)
+
+    /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
      * out of the thread state.
      */
     private var threadJob: Job? = null
 
     init {
-        observeMessages()
+        observeMessagesState()
         messageId?.takeUnless { it.isNullOrBlank() }?.let { messageId ->
             scope.launch {
                 _messageListState
@@ -330,70 +358,73 @@ public class MessageListController(
     /**
      * Start observing messages for a given channel, groups and filers them to be show on the ui.
      */
-    private fun observeMessages() {
-        scope.launch {
-            channelState.filterNotNull().collectLatest { channelState ->
-                combine(
-                    channelState.messagesState,
-                    channelState.reads,
-                    unreadCount,
-                    user,
-                    _messageFooterVisibility,
-                    _deletedMessageVisibility
-                ) { data ->
-                    val state = data[0] as MessagesState
-                    val reads = (data[1] as List<*>).map { it as ChannelUserRead }
-                    val unreadCount = data[2] as Int
-                    val user = data[3] as User?
-
-                    when (state) {
-                        is MessagesState.Loading,
-                        is MessagesState.NoQueryActive,
-                        -> _messageListState.value.copy(isLoading = true)
-                        MessagesState.OfflineNoResults -> _messageListState.value.copy(
-                            isLoading = false
-                        )
-                        is MessagesState.Result -> _messageListState.value.copy(
-                            isLoading = false,
-                            messages = groupMessages(
-                                filterMessagesToShow(state.messages),
-                                isInThread = isInThread,
-                                reads = reads
-                            ),
-                            isLoadingNewerMessages = false,
-                            isLoadingOlderMessages = false,
-                            endOfNewMessagesReached = channelState.endOfNewerMessages.value,
-                            endOfOldMessagesReached = channelState.endOfOlderMessages.value,
-                            currentUser = user,
-                            unreadCount = unreadCount
-                        )
-                    }
-                }.catch {
-                    it.cause?.printStackTrace()
-                    showEmptyState()
-                }.collect { newState ->
-                    val newLastMessage =
-                        (newState.messages.firstOrNull { it is MessageItem } as? MessageItem)?.message
-
-                    val hasNewMessage = lastLoadedMessage != null &&
-                        _messageListState.value.messages.isNotEmpty() &&
-                        newLastMessage?.id != lastLoadedMessage?.id
-
-                    _messageListState.value = if (hasNewMessage) {
-                        newState.copy(newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage))
-                    } else {
-                        newState
-                    }
-
-                    _messageListState.value.messages
-                        .firstOrNull { it is MessageItem && it.message.id == scrollToMessage?.id }?.let {
-                            focusMessage((it as MessageItem).message.id)
-                        }
-
-                    lastLoadedMessage = newLastMessage
+    private fun observeMessagesState() {
+        channelState.filterNotNull().flatMapLatest { channelState ->
+            combine(
+                channelState.messagesState,
+                channelState.reads,
+                _messageFooterVisibility,
+                _deletedMessageVisibility
+            ) { state, reads, _, _ ->
+                when (state) {
+                    is MessagesState.Loading,
+                    is MessagesState.NoQueryActive,
+                    -> _messageListState.value.copy(isLoading = true)
+                    MessagesState.OfflineNoResults -> _messageListState.value.copy(
+                        isLoading = false
+                    )
+                    is MessagesState.Result -> _messageListState.value.copy(
+                        isLoading = false,
+                        isLoadingNewerMessages = false,
+                        isLoadingOlderMessages = false,
+                        messages = groupMessages(
+                            filterMessagesToShow(state.messages),
+                            isInThread = isInThread,
+                            reads = reads
+                        ),
+                    )
                 }
             }
-        }
+        }.catch {
+            it.cause?.printStackTrace()
+            showEmptyState()
+        }.onEach { newState ->
+            val newLastMessage =
+                (newState.messages.firstOrNull { it is MessageItem } as? MessageItem)?.message
+
+            val hasNewMessage = lastLoadedMessage != null &&
+                _messageListState.value.messages.isNotEmpty() &&
+                newLastMessage?.id != lastLoadedMessage?.id
+
+            _messageListState.value = if (hasNewMessage) {
+                newState.copy(newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage))
+            } else {
+                newState
+            }
+
+            _messageListState.value.messages
+                .firstOrNull { it is MessageItem && it.message.id == scrollToMessage?.id }?.let {
+                    focusMessage((it as MessageItem).message.id)
+                }
+
+            lastLoadedMessage = newLastMessage
+        }.launchIn(scope)
+
+        channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
+            _messageListState.value = _messageListState.value.copy(endOfOldMessagesReached = it)
+        }.launchIn(scope)
+
+        channelState.filterNotNull().flatMapLatest { it.endOfNewerMessages }.onEach {
+            _messageListState.value = _messageListState.value.copy(endOfNewMessagesReached = it)
+        }.launchIn(scope)
+
+        user.onEach {
+            _messageListState.value = _messageListState.value.copy(currentUser = it)
+        }.launchIn(scope)
+
+        channelUnreadCount.onEach {
+            _messageListState.value = _messageListState.value.copy(unreadCount = it)
+        }.launchIn(scope)
     }
 
     /**
@@ -405,7 +436,7 @@ public class MessageListController(
      * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
      * @param reads State flow source of read states.
      */
-    private fun observeThreadMessages(
+    private fun observeThreadMessagesState(
         threadId: String,
         messages: StateFlow<List<Message>>,
         endOfOlderMessages: StateFlow<Boolean>,
@@ -413,12 +444,9 @@ public class MessageListController(
     ) {
         threadJob = scope.launch {
             combine(
-                user,
-                endOfOlderMessages,
                 messages,
                 reads,
-                unreadCount
-            ) { user, endOfOlderMessages, messages, reads, unreadCount ->
+            ) { messages, reads ->
                 _threadListState.value.copy(
                     isLoading = false,
                     messages = groupMessages(
@@ -426,12 +454,9 @@ public class MessageListController(
                         isInThread = true,
                         reads = reads,
                     ),
-                    endOfOldMessagesReached = endOfOlderMessages,
-                    currentUser = user,
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
                     isLoadingOlderMessages = false,
-                    unreadCount = unreadCount
                 )
             }.collect { newState ->
                 val newLastMessage =
@@ -441,6 +466,18 @@ public class MessageListController(
                 )
                 lastLoadedThreadMessage = newLastMessage
             }
+
+            user.onEach {
+                _messageListState.value = _threadListState.value.copy(currentUser = it)
+            }.launchIn(this)
+
+            endOfOlderMessages.onEach {
+                _threadListState.value = _threadListState.value.copy(endOfOldMessagesReached = it)
+            }.launchIn(this)
+
+            threadUnreadCount.onEach {
+                _threadListState.value = _threadListState.value.copy(unreadCount = it)
+            }.launchIn(this)
         }
     }
 
@@ -673,7 +710,7 @@ public class MessageListController(
         val channelState = channelState.value ?: return
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         _mode.value = MessageMode.MessageThread(parentMessage, state)
-        observeThreadMessages(
+        observeThreadMessagesState(
             threadId = state.parentId,
             messages = state.messages,
             endOfOlderMessages = state.endOfOlderMessages,
@@ -834,7 +871,6 @@ public class MessageListController(
         }
     }
 
-
     /**
      * Changes the state of [_threadListState] or [_messageListState] depending
      * on the thread mode.
@@ -937,6 +973,16 @@ public class MessageListController(
             )
     }
 
+    public fun updateLastSeenMessage(message: Message) {
+        val latestMessage: MessageItem? = listState.value.messages.firstOrNull { messageItem ->
+            messageItem is MessageItem
+        } as? MessageItem
+
+        if (message.id == latestMessage?.message?.id) {
+            markLastMessageRead()
+        }
+    }
+
     /**
      * Marks that the last message in the list as read.
      */
@@ -967,7 +1013,8 @@ public class MessageListController(
      * TODO
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
-        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<io.getstream.chat.android.common.state.Flag>()
+        _messageActions.value =
+            _messageActions.value - _messageActions.value.filterIsInstance<io.getstream.chat.android.common.state.Flag>()
         chatClient.flagMessage(message.id).enqueue { result ->
             onActionResult(result, "Unable to flag message: ${result.error().message}", onResult)
         }
@@ -1274,6 +1321,36 @@ public class MessageListController(
                     "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
             }
         })
+    }
+
+    // TODO
+    public fun removeAttachment(messageId: String, attachment: Attachment) {
+        chatClient.loadMessageById(
+            cid,
+            messageId
+        ).enqueue { result ->
+            if (result.isSuccess) {
+                val message = result.data()
+                message.attachments.removeAll { attachment ->
+                    if (attachment.assetUrl != null) {
+                        attachment.assetUrl == attachment.assetUrl
+                    } else {
+                        attachment.imageUrl == attachment.imageUrl
+                    }
+                }
+
+                chatClient.updateMessage(message).enqueue(
+                    onError = { chatError ->
+                        logger.e {
+                            "Could not edit message to remove its attachments: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
+                        }
+                    }
+                )
+            } else {
+                logger.e { "Could not load message: ${result.error()}" }
+            }
+        }
     }
 
     /**

@@ -21,11 +21,9 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.toPosition
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -46,7 +44,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.MessageListController
-import io.getstream.chat.android.common.model.ClipboardHandler
 import io.getstream.chat.android.common.model.MessageFocused
 import io.getstream.chat.android.common.model.MessageItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -58,14 +55,15 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
 import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
+import io.getstream.chat.android.common.model.DateSeparatorHandler as DateSeparatorHandlerCommon
+import io.getstream.chat.android.common.model.MessagePositionHandler as MessagePositionHandlerCommon
 
 /**
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
@@ -118,24 +116,6 @@ public class MessageListViewModel(
     public val ownCapabilities: LiveData<Set<String>> = messageListController.ownCapabilities.asLiveData()
 
     /**
-     * Contains a list of messages along with additional
-     * information about the message list.
-     * TODO
-     */
-    private val messageListData: LiveData<MessageListItemWrapper> = messageListController.messageListState.map {
-        it.toMessageListItemWrapper()
-    }.asLiveData()
-
-    /**
-     * Contains a list of messages along with additional
-     * information about the message list.
-     * TODO
-     */
-    private val threadListData: LiveData<MessageListItemWrapper> = messageListController.threadListState.map {
-        it.toMessageListItemWrapper()
-    }.asLiveData()
-
-    /**
      * Regulates the visibility of deleted messages.
      */
     public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
@@ -167,12 +147,8 @@ public class MessageListViewModel(
     /**
      * Emits true if we should load more messages.
      */
-    private val _loadMoreLiveData = MediatorLiveData<Boolean>()
-
-    /**
-     * Emits true if we should load more messages.
-     */
-    public val loadMoreLiveData: LiveData<Boolean> = _loadMoreLiveData
+    public val loadMoreLiveData: LiveData<Boolean> = messageListController.messageListState
+        .map { it.isLoadingOlderMessages }.asLiveData()
 
     /**
      *  The current channel used to load the message list data.
@@ -191,6 +167,8 @@ public class MessageListViewModel(
 
     /**
      * Emits error events.
+     *
+     * TODO see to move this to the controller
      */
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
 
@@ -204,7 +182,9 @@ public class MessageListViewModel(
      */
     public val user: LiveData<User?> = messageListController.user.asLiveData()
 
-    // TODO
+    /**
+     * Unread count of the channel or thread depending on [MessageMode].
+     */
     public val unreadCount: LiveData<Int> = messageListController.unreadCount.asLiveData()
 
     /**
@@ -214,49 +194,16 @@ public class MessageListViewModel(
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
-     * A background job used for view model initialization.
-     * The job should be canceled after receiving the first, non-null value from the watch channel request.
-     */
-    private var initialJob: Job? = null
-
-    /**
      * Emits the status of searching situation. True when inside a search and false otherwise.
      */
-    private val _insideSearch = MediatorLiveData<Boolean>()
-
-    /**
-     * Emits the status of searching situation. True when inside a search and false otherwise.
-     */
-    public val insideSearch: LiveData<Boolean> = _insideSearch
+    public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
     init {
-        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
-
-        initialJob = viewModelScope.launch {
-            channelState.collect { channelState ->
-                if (channelState != null) {
-                    initWithOfflinePlugin(channelState)
-                    initialJob?.cancel()
-                }
-            }
-        }
-    }
-
-    /**
-     * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin] after connecting the user.
-     *
-     * @param channelState State container for particular channel.
-     */
-    private fun initWithOfflinePlugin(channelState: ChannelState) {
-        _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
-        _insideSearch.addSource(channelState.insideSearch.asLiveData()) { _insideSearch.value = it }
-
-        stateMerger.apply {
-            addSource(messageListData) {
-                value = State.Result(it)
-            }
-        }
+        val listState = messageListController.listState
+            .onSubscription { State.Loading }
+            .map { State.Result(it.toMessageListItemWrapper()) }
+            .asLiveData()
+        stateMerger.addSource(listState) { stateMerger.value = it }
     }
 
     /**
@@ -383,34 +330,7 @@ public class MessageListViewModel(
                 messageListController.scrollToMessage(event.messageId)
             }
             is Event.RemoveAttachment -> {
-                // TODO
-                val attachmentToBeDeleted = event.attachment
-                chatClient.loadMessageById(
-                    cid,
-                    event.messageId
-                ).enqueue { result ->
-                    if (result.isSuccess) {
-                        val message = result.data()
-                        message.attachments.removeAll { attachment ->
-                            if (attachmentToBeDeleted.assetUrl != null) {
-                                attachment.assetUrl == attachmentToBeDeleted.assetUrl
-                            } else {
-                                attachment.imageUrl == attachmentToBeDeleted.imageUrl
-                            }
-                        }
-
-                        chatClient.updateMessage(message).enqueue(
-                            onError = { chatError ->
-                                logger.e {
-                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                        "Cause: ${chatError.cause?.message}"
-                                }
-                            }
-                        )
-                    } else {
-                        logger.e { "Could not load message: ${result.error()}" }
-                    }
-                }
+                messageListController.removeAttachment(event.messageId, event.attachment)
             }
             is Event.ReplyAttachment -> {
                 // TODO
@@ -445,8 +365,9 @@ public class MessageListViewModel(
      * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
      * list.
      */
-    public fun scrollToBottom(scrollToBottom: () -> Unit): Unit = messageListController
-        .scrollToBottom(DEFAULT_MESSAGES_LIMIT, scrollToBottom)
+    public fun scrollToBottom(scrollToBottom: () -> Unit) {
+        messageListController.scrollToBottom(DEFAULT_MESSAGES_LIMIT, scrollToBottom)
+    }
 
     /**
      * Sets the date separator handler which determines when to add date separators.
@@ -454,6 +375,14 @@ public class MessageListViewModel(
      *
      * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
      */
+    @Deprecated(
+        message = "Deprecated in favor of common module DateSeparatorHandler.",
+        replaceWith = ReplaceWith(
+            expression = "public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon)",
+            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
         dateSeparatorHandler?.let {
             messageListController.setDateSeparatorHandler { previousMessage, message ->
@@ -463,11 +392,30 @@ public class MessageListViewModel(
     }
 
     /**
+     * Sets the date separator handler which determines when to add date separators.
+     * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
+     *
+     * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
+     */
+    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon) {
+        messageListController.setDateSeparatorHandler(dateSeparatorHandler)
+    }
+
+    /**
      * Sets thread date separator handler which determines when to add date separators inside the thread.
      * @see setDateSeparatorHandler
      *
-     * @param threadDateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
+     * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
+     * separators.
      */
+    @Deprecated(
+        message = "Deprecated in favor of common module DateSeparatorHandler.",
+        replaceWith = ReplaceWith(
+            expression = "setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon)",
+            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
         threadDateSeparatorHandler?.let {
             messageListController.setThreadDateSeparatorHandler { previousMessage, message ->
@@ -477,15 +425,43 @@ public class MessageListViewModel(
     }
 
     /**
+     * Sets thread date separator handler which determines when to add date separators inside the thread.
+     * @see setDateSeparatorHandler
+     *
+     * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
+     * separators.
+     */
+    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon) {
+        messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
+    }
+
+    /**
      * Sets a handler which determines the position of a message inside a group.
      *
      * @param messagePositionHandler The handler to use.
      */
+    @Deprecated(
+        message = "Deprecated in favor of common module MessagePositionHandler.",
+        replaceWith = ReplaceWith(
+            expression = "setMessagePositionHandler(messagePositionHandler: MessagePositionHandlerCommon)",
+            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
         messageListController.setMessagePositionHandler { prevMessage, message, nextMessage, isAfterDateSeparator ->
             messagePositionHandler.handleMessagePosition(prevMessage, message, nextMessage, isAfterDateSeparator)
                 .map { it.toPosition() }
         }
+    }
+
+    /**
+     * Sets a handler which determines the position of a message inside a group.
+     *
+     * @param messagePositionHandler The handler to use.
+     */
+    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandlerCommon) {
+        messageListController.setMessagePositionHandler(messagePositionHandler)
     }
 
     /**
@@ -546,12 +522,6 @@ public class MessageListViewModel(
      */
     private fun onThreadModeEntered(parentMessage: Message) {
         messageListController.enterThreadMode(parentMessage)
-        stateMerger.apply {
-            removeSource(messageListData)
-            addSource(threadListData) {
-                value = State.Result(it)
-            }
-        }
     }
 
     /**
@@ -577,12 +547,6 @@ public class MessageListViewModel(
      */
     private fun onNormalModeEntered() {
         messageListController.enterNormalMode()
-        stateMerger.apply {
-            removeSource(threadListData)
-            addSource(messageListData) {
-                value = State.Result(it)
-            }
-        }
     }
 
     /**
