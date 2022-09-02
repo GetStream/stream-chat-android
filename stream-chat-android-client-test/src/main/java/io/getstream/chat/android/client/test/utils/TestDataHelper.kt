@@ -270,7 +270,7 @@ public class TestDataHelper {
     }
 
     public val disconnectedEvent: DisconnectedEvent = DisconnectedEvent(
-        EventType.CONNECTION_DISCONNECTED, Date()
+        EventType.CONNECTION_DISCONNECTED, Date(), null
     )
     public val newMessageEvent: NewMessageEvent by lazy {
         val createdAt = Date()

@@ -82,7 +82,7 @@ internal class ChatClientTest {
             0,
             0
         )
-        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), rawCreatedAt = null)
 
         val eventD = UnknownEvent("d", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
         val eventE = UnknownEvent("e", createdAt, rawCreatedAt, null, mapOf<Any, Any>("cid" to "myCid"))

@@ -85,7 +85,7 @@ internal class ChatEventsObservableTest {
             0,
             0
         )
-        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         observable.subscribe { result.add(it) }
 
         socket.sendEvent(eventA)

@@ -96,7 +96,7 @@ internal class ClientConnectionTests {
         user,
         connectionId
     )
-    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
 
     private lateinit var api: MoshiChatApi
     private lateinit var socket: ChatSocket

@@ -138,7 +138,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         val connectedEvent = if (isConnected) {
             ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, data.user1, data.connection1)
         } else {
-            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         }
 
         val queryChannelsResult = Result.success(listOf(data.channel1))

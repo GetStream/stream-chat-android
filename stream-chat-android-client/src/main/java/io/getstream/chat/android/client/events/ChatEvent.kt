@@ -647,7 +647,7 @@ public data class ConnectedEvent(
 public data class ConnectingEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String? = null,
+    override val rawCreatedAt: String?,
 ) : ChatEvent()
 
 /**
@@ -656,7 +656,7 @@ public data class ConnectingEvent(
 public data class DisconnectedEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String? = null,
+    override val rawCreatedAt: String?,
     val disconnectCause: DisconnectCause = DisconnectCause.NetworkNotAvailable,
 ) : ChatEvent()
 
@@ -666,7 +666,7 @@ public data class DisconnectedEvent(
 public data class ErrorEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String? = null,
+    override val rawCreatedAt: String?,
     val error: ChatError,
 ) : ChatEvent()
 

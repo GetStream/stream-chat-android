@@ -1280,7 +1280,6 @@ public final class io/getstream/chat/android/client/events/ConnectedEvent : io/g
 
 public final class io/getstream/chat/android/client/events/ConnectingEvent : io/getstream/chat/android/client/events/ChatEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
@@ -1314,7 +1313,6 @@ public final class io/getstream/chat/android/client/events/DisconnectedEvent : i
 
 public final class io/getstream/chat/android/client/events/ErrorEvent : io/getstream/chat/android/client/events/ChatEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
