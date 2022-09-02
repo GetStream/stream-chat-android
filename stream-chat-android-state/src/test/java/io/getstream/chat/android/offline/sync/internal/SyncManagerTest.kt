@@ -17,19 +17,28 @@
 package io.getstream.chat.android.offline.sync.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +51,8 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -62,16 +73,26 @@ internal class SyncManagerTest {
     private lateinit var globalState: GlobalMutableState
     private lateinit var clientState: ClientState
     private lateinit var repositoryFacade: RepositoryFacade
-    private lateinit var syncManager: SyncManager
     private lateinit var user: User
 
+    private val _syncEvents: Tube<List<ChatEvent>> = mock()
+
     private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
     fun setUp() {
+        reset(_syncEvents)
+
+        val channelLogic: ChannelLogic = mock {
+            on(it.cid) doReturn randomCID()
+        }
+
         user = randomUser()
         chatClient = mock()
-        logicRegistry = mock()
+        logicRegistry = mock {
+            on(it.getActiveChannelsLogic()) doReturn listOf(channelLogic)
+        }
         stateRegistry = mock()
         globalState = mock()
         clientState = mock {
@@ -85,19 +106,22 @@ internal class SyncManagerTest {
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
             }
         }
-        syncManager = mock()
     }
 
     @Test
     fun `when a health check event happens, a request to retry failed entities should happen`() = runTest {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
         val syncManager = buildSyncManager()
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
 
         val connectingEvent = HealthEvent(
             type = "type",
-            createdAt = Date(),
-            connectionId = randomString()
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
         )
 
         syncManager.onEvent(connectingEvent)
@@ -106,6 +130,49 @@ internal class SyncManagerTest {
         verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
         verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
+    }
+
+    @Test
+    fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() = runTest {
+        /*
+         *  This checks if the SDK is avoiding loops in the sync. We don't want to handle the same event on every sync,
+         *  because this can waste resource and/or some events may not be idempotent.
+         */
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val syncManager = buildSyncManager()
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
+        }
+
+        whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser()
+        )
+
+        syncManager.onEvent(connectingEvent)
+
+        verify(_syncEvents, never()).emit(any())
     }
 
     private fun buildSyncManager(): SyncManager {
@@ -118,6 +185,7 @@ internal class SyncManagerTest {
             chatClient = chatClient,
             clientState = clientState,
             userPresence = true,
+            events = _syncEvents
         )
     }
 }

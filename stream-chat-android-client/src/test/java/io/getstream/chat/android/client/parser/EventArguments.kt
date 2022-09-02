@@ -111,8 +111,11 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
+
+private val streamDateFormatter = StreamDateFormatter()
 
 internal object EventArguments {
     private val date = Date(1593411268000)
@@ -212,6 +215,7 @@ internal object EventArguments {
     private val channelDeletedEvent = ChannelDeletedEvent(
         type = EventType.CHANNEL_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -222,6 +226,7 @@ internal object EventArguments {
     private val channelHiddenEvent = ChannelHiddenEvent(
         type = EventType.CHANNEL_HIDDEN,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -231,6 +236,7 @@ internal object EventArguments {
     private val channelTruncatedEvent = ChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -241,6 +247,7 @@ internal object EventArguments {
     private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -251,6 +258,7 @@ internal object EventArguments {
     private val channelUpdatedEvent = ChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -260,6 +268,7 @@ internal object EventArguments {
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -270,6 +279,7 @@ internal object EventArguments {
     private val channelVisibleEvent = ChannelVisibleEvent(
         type = EventType.CHANNEL_VISIBLE,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -278,6 +288,7 @@ internal object EventArguments {
     private val memberAddedEvent = MemberAddedEvent(
         type = EventType.MEMBER_ADDED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -287,6 +298,7 @@ internal object EventArguments {
     private val memberRemovedEvent = MemberRemovedEvent(
         type = EventType.MEMBER_REMOVED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -296,6 +308,7 @@ internal object EventArguments {
     private val memberUpdatedEvent = MemberUpdatedEvent(
         type = EventType.MEMBER_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -305,6 +318,7 @@ internal object EventArguments {
     private val messageDeletedEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -314,6 +328,7 @@ internal object EventArguments {
     private val messageDeletedServerSideEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = null,
         cid = cid,
         channelType = channelType,
@@ -323,6 +338,7 @@ internal object EventArguments {
     private val messageReadEvent = MessageReadEvent(
         type = EventType.MESSAGE_READ,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -331,6 +347,7 @@ internal object EventArguments {
     private val messageUpdatedEvent = MessageUpdatedEvent(
         type = EventType.MESSAGE_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -340,6 +357,7 @@ internal object EventArguments {
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -351,6 +369,7 @@ internal object EventArguments {
     private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -359,6 +378,7 @@ internal object EventArguments {
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -367,6 +387,7 @@ internal object EventArguments {
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -377,6 +398,7 @@ internal object EventArguments {
     private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -387,6 +409,7 @@ internal object EventArguments {
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -396,6 +419,7 @@ internal object EventArguments {
     private val notificationMarkReadEvent = NotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -406,6 +430,7 @@ internal object EventArguments {
     private val notificationMessageNewEvent = NotificationMessageNewEvent(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -417,6 +442,7 @@ internal object EventArguments {
     private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -427,6 +453,7 @@ internal object EventArguments {
     private val reactionDeletedEvent = ReactionDeletedEvent(
         type = EventType.REACTION_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -437,6 +464,7 @@ internal object EventArguments {
     private val reactionNewEvent = ReactionNewEvent(
         type = EventType.REACTION_NEW,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -447,6 +475,7 @@ internal object EventArguments {
     private val reactionUpdateEvent = ReactionUpdateEvent(
         type = EventType.REACTION_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -457,6 +486,7 @@ internal object EventArguments {
     private val typingStartEvent = TypingStartEvent(
         type = EventType.TYPING_START,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -466,6 +496,7 @@ internal object EventArguments {
     private val typingStopEvent = TypingStopEvent(
         type = EventType.TYPING_STOP,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -475,6 +506,7 @@ internal object EventArguments {
     private val channelUserBannedEvent = ChannelUserBannedEvent(
         type = EventType.USER_BANNED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -484,21 +516,25 @@ internal object EventArguments {
     private val globalUserBannedEvent = GlobalUserBannedEvent(
         type = EventType.USER_BANNED,
         user = user,
-        createdAt = date
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
     )
     private val userDeletedEvent = UserDeletedEvent(
         type = EventType.USER_DELETED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user
     )
     private val userPresenceChangedEvent = UserPresenceChangedEvent(
         type = EventType.USER_PRESENCE_CHANGED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user
     )
     private val userStartWatchingEvent = UserStartWatchingEvent(
         type = EventType.USER_WATCHING_START,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         watcherCount = watcherCount,
         channelType = channelType,
@@ -508,6 +544,7 @@ internal object EventArguments {
     private val userStopWatchingEvent = UserStopWatchingEvent(
         type = EventType.USER_WATCHING_STOP,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         cid = cid,
         watcherCount = watcherCount,
         channelType = channelType,
@@ -517,6 +554,7 @@ internal object EventArguments {
     private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -525,37 +563,44 @@ internal object EventArguments {
     private val globalUserUnbannedEvent = GlobalUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user
     )
     private val userUpdatedEvent = UserUpdatedEvent(
         type = EventType.USER_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user
     )
     private val healthEvent = HealthEvent(
         type = EventType.HEALTH_CHECK,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         connectionId = connectionId
     )
     private val connectedEvent = ConnectedEvent(
         type = EventType.HEALTH_CHECK,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         me = user,
         connectionId = connectionId
     )
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         me = user
     )
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
         type = EventType.NOTIFICATION_MUTES_UPDATED,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         me = user
     )
     private val newMessageEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -568,6 +613,7 @@ internal object EventArguments {
     private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -578,18 +624,21 @@ internal object EventArguments {
     private val unknownEvent = UnknownEvent(
         type = EventType.UNKNOWN,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = null,
         rawData = mapOf("type" to EventType.UNKNOWN, "created_at" to dateString)
     )
     private val otherUnknownEvent = UnknownEvent(
         type = "some.unknown.type",
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = null,
         rawData = mapOf("type" to "some.unknown.type", "created_at" to dateString)
     )
     private val markAllReadEvent = MarkAllReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
         createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
         user = user
     )
 

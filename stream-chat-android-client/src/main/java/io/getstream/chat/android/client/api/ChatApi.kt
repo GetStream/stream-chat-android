@@ -384,7 +384,7 @@ internal interface ChatApi {
     fun translate(messageId: String, language: String): Call<Message>
 
     @CheckResult
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
 
     fun warmUp()
 }

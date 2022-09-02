@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.sync
+package io.getstream.chat.android.client.api2.model.dto.utils.internal
 
 import java.util.Date
 
-public data class SyncState(
-    val userId: String,
-    val activeChannelIds: List<String> = emptyList(),
-    val lastSyncedAt: Date? = null,
-    val rawLastSyncedAt: String? = null,
-    val markedAllReadAt: Date? = null,
+/**
+ * DTO to keep serialized date and also the original Date as Stirng as sent by backend.
+ *
+ * @param date The [Date] was parsed from backend of created locally.
+ * @param rawDate The Date as a String. This is probably going to be the generated in the backend and can have
+ * up to nanoseconds of precision.
+ */
+internal data class ExactDate(
+    internal val date: Date,
+    internal val rawDate: String,
 )

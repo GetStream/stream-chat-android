@@ -127,6 +127,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -233,6 +234,8 @@ internal constructor(
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
+    @InternalStreamChatApi
+    public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, chatSocketExperimental)
 
     @Deprecated(
@@ -2500,9 +2503,39 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: Date,
     ): Call<List<ChatEvent>> {
-        return api.getSyncHistory(channelsIds, lastSyncAt)
+        val stringDate = streamDateFormatter.format(lastSyncAt)
+
+        return api.getSyncHistory(channelsIds, stringDate)
             .withPrecondition(userScope) {
                 checkSyncHistoryPreconditions(channelsIds, lastSyncAt)
+            }
+    }
+
+    /**
+     * Returns all events that happened for a list of channels since last sync (while the user was not
+     * connected to the web socket). [lastSyncAt] is in _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.  Use this version of
+     * getSyncHistory when high precision is necessary.
+     *
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
+     *
+     * @return Executable async [Call] responsible for obtaining missing events.
+     */
+    @CheckResult
+    public fun getSyncHistory(
+        channelsIds: List<String>,
+        lastSyncAt: String,
+    ): Call<List<ChatEvent>> {
+        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
+            userScope,
+            ChatError(
+                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+            )
+        )
+
+        return api.getSyncHistory(channelsIds, lastSyncAt)
+            .withPrecondition(userScope) {
+                checkSyncHistoryPreconditions(channelsIds, parsedDate)
             }
     }
 

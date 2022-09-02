@@ -122,7 +122,6 @@ public final class io/getstream/chat/android/client/test/utils/TestDataHelper {
 	public final fun getMessageUpdatedEvent ()Lio/getstream/chat/android/client/events/MessageUpdatedEvent;
 	public final fun getMute1 ()Lio/getstream/chat/android/client/models/Mute;
 	public final fun getNewMessageEvent ()Lio/getstream/chat/android/client/events/NewMessageEvent;
-	public final fun getNewMessageEvent2 ()Lio/getstream/chat/android/client/events/NewMessageEvent;
 	public final fun getNewMessageEventNotification ()Lio/getstream/chat/android/client/events/NotificationMessageNewEvent;
 	public final fun getNewMessageFromUser2 ()Lio/getstream/chat/android/client/events/NewMessageEvent;
 	public final fun getNotificationAddedToChannel2Event ()Lio/getstream/chat/android/client/events/NotificationAddedToChannelEvent;
