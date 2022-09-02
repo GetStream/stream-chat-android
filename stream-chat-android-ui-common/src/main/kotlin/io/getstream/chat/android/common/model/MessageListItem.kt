@@ -7,6 +7,22 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import java.util.Date
 
+/**
+ * Holds the state of the messages list screen.
+ *
+ * @param messages The list of [MessageListItem]s to be shown in the list.
+ * @param endOfNewMessagesReached Whether the user has reached the newest message or not.
+ * @param endOfOldMessagesReached Whether the user has reached the older message or not.
+ * @param isLoading Whether the initial loading is in progress or not.
+ * @param isLoadingNewerMessages Whether loading of a page with newer messages is in progress or not.
+ * @param isLoadingOlderMessages Whether loading of a page with older messages is in progress or not.
+ * @param currentUser The current logged in [User].
+ * @param parentMessageId The [Message] id if we are in a thread, null otherwise.
+ * @param unreadCount Count of unread messages in channel or thread.
+ * @param typingUsers The list of the users currently typing a message.
+ * @param newMessageState The [NewMessageState] of the newly received message.
+ * @param selectedMessageState The current [SelectedMessageState].
+ */
 public data class MessageListState(
     public val messages: List<MessageListItem> = emptyList(),
     public val endOfNewMessagesReached: Boolean = false,
@@ -39,8 +55,25 @@ public object MyOwn : NewMessageState()
 public object Other : NewMessageState()
 
 // TODO
+/**
+ * Represents an list item inside a message list.
+ */
 public sealed class MessageListItem
 
+/**
+ * Represents a message item inside the messages list.
+ *
+ * @param message The [Message] to show in the list.
+ * @param parentMessageId The id of the parent [Message] if the message is inside a thread.
+ * @param isMine Whether the message is sent by the current user or not.
+ * @param isInThread Whether the message is inside a thread or not.
+ * @param showMessageFooter Whether we need to show the message footer or not.
+ * @param currentUser The currently logged in user.
+ * @param groupPosition The [MessagePosition] of the item inside a group.
+ * @param isMessageRead Whether the message has been read or not.
+ * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the behavior of deleted messages.
+ * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
+ */
 public data class MessageItem(
     public val message: Message = Message(),
     public val parentMessageId: String? = null,
@@ -54,28 +87,66 @@ public data class MessageItem(
     public val focusState: MessageFocusState? = null
 ) : MessageListItem()
 
+/**
+ * Represents a date separator inside the message list.
+ *
+ * @param date The date to show on the separator.
+ */
 public data class DateSeparatorItem(
     val date: Date,
 ) : MessageListItem()
 
+/**
+ * Represents a date separator inside thread messages list.
+ *
+ * @param date The date show on the separator.
+ * @param messageCount Number of messages inside the thread.
+ */
 public data class ThreadSeparatorItem(
     public val date: Date,
     public val messageCount: Int,
 ) : MessageListItem()
 
+/**
+ * Represents a system message inside the message list.
+ *
+ * @param message The [Message] to show as the system message inside the list.
+ */
 public data class SystemMessageItem(
     public val message: Message,
 ) : MessageListItem()
 
+/**
+ * Represents a typing indicator item inside a message list.
+ *
+ * @param typingUsers The list of the [User]s currently typing a message.
+ */
 public data class TypingItem(
     public val typingUsers: List<User>,
 ) : MessageListItem()
 
 // TODO
+/**
+ * Represents the group position of a message, if the message is in a group. Otherwise represented as [NONE].
+ *
+ * Used to define the shape of the message as well as other UI styling.
+ */
 public enum class MessagePosition {
+    /**
+     * Message that is the first message in the group at the top.
+     */
     TOP,
+    /**
+     * Message that has another message both at the top and bottom of it.
+     */
     MIDDLE,
+    /**
+     * Message that's the last message in the group, at the bottom.
+     */
     BOTTOM,
+    /**
+     * Message that is not in a group.
+     */
     NONE
 }
 
