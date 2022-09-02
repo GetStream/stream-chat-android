@@ -17,6 +17,7 @@
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
+    <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@OptIn(ExperimentalAnimationApi::class) @Composable private fun MediaGalleryPreviewContentWrapper( message: Message, initialAttachmentPosition: Int, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:Messages.kt$@Composable public fun Messages( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent(messagesState, lazyListState) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
@@ -35,8 +36,8 @@
     <ID>MagicNumber:MediaAttachmentContent.kt$8</ID>
     <ID>MagicNumber:MediaAttachmentFactory.kt$4</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
-    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.4f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
+    <ID>MagicNumber:MediaPreviewPlaceHolder.kt$0.4f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>

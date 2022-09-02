@@ -85,6 +85,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -237,11 +238,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val startingPosition =
             if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
 
+        val scaffoldState = rememberScaffoldState()
         val pagerState = rememberPagerState(initialPage = startingPosition)
+        val coroutineScope = rememberCoroutineScope()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                scaffoldState = scaffoldState,
                 topBar = { MediaGalleryPreviewTopBar(message) },
                 content = { contentPadding ->
                     if (message.id.isNotEmpty()) {
@@ -251,7 +255,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 .fillMaxSize()
                                 .padding(contentPadding)
                         ) {
-                            MediaPreviewContent(pagerState, message.attachments)
+                            MediaPreviewContent(pagerState, message.attachments) {
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = getString(R.string.stream_ui_message_list_video_display_error)
+                                    )
+                                }
+                            }
                         }
                     }
                 },
@@ -573,6 +583,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private fun MediaPreviewContent(
         pagerState: PagerState,
         attachments: List<Attachment>,
+        onPlaybackError: () -> Unit,
     ) {
         if (attachments.isEmpty()) {
             finish()
@@ -591,9 +602,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     attachment = attachments[page],
                     pagerState = pagerState,
                     page = page,
-                    onPlaybackError = {
-                        // TODO add error
-                    }
+                    onPlaybackError = onPlaybackError
                 )
             }
         }
@@ -818,7 +827,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 }
                 setOnPreparedListener {
                     // Don't remove the preview unless the user has clicked play previously,
-                    // otherwise the preview will be removed whenever the video finished downloading.
+                    // otherwise the preview will be removed whenever the video has finished downloading.
                     if (!hasPrepared && userHasClickedPlay) {
                         shouldShowProgressBar = false
                         shouldShowPreview = false
@@ -843,7 +852,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
 
         Box(contentAlignment = Alignment.Center) {
-
             AndroidView(
                 modifier = Modifier
                     .fillMaxSize()
