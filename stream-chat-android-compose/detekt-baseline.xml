@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$data != null &amp;&amp; page == pagerState.currentPage &amp;&amp; mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &amp;&amp; painter.state is AsyncImagePainter.State.Error</ID>
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.shouldShowFooter || messageItem.groupPosition == Bottom || messageItem.groupPosition == None )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
@@ -14,6 +15,7 @@
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:ImageAttachmentContent.kt$@OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:MediaAttachmentContent.kt$@Suppress("LongParameterList") @OptIn(ExperimentalFoundationApi::class) @Composable internal fun MediaAttachmentContentItem( message: Message, attachmentPosition: Int, attachment: Attachment, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit, onLongItemClick: (Message) -> Unit, modifier: Modifier = Modifier, playButton: @Composable () -> Unit, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
