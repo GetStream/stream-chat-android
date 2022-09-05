@@ -54,6 +54,7 @@
     <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$public fun updateLastSeenMessage(message: Message)</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>UnusedPrivateMember:MediaAttachmentContent.kt$/** * Produces a height value that is twice the width of the * Composable when calling [Modifier.aspectRatio]. */ private const val TwiceAsTallAsIsWideRatio = 0.5f</ID>
     <ID>UnusedPrivateMember:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$private fun shareVideo(videoUri: Uri)</ID>
     <ID>UnusedPrivateMember:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$videoUri: Uri</ID>
   </CurrentIssues>
