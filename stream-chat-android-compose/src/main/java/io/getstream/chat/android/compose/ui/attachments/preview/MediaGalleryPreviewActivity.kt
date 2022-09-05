@@ -89,6 +89,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -481,6 +482,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ChatTheme.colors.barsBackground)
+                .padding(8.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
@@ -491,9 +493,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             pagerState.currentPage,
                             downloadPermissionHandler
                         )
-                    }
-                )
-                .padding(8.dp),
+                    },
+                    enabled = mediaGalleryPreviewOption.isEnabled
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(8.dp))
@@ -958,6 +960,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     @Composable
     private fun MediaGalleryPreviewBottomBar(attachments: List<Attachment>, pagerState: PagerState) {
         val attachmentCount = attachments.size
+        val isCurrentAttachmentVideo = attachments[pagerState.currentPage].type == AttachmentType.VIDEO
 
         Surface(
             modifier = Modifier
@@ -974,12 +977,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
                     onClick = { onShareMediaClick(attachments[pagerState.currentPage]) },
-                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && !isCurrentAttachmentVideo
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_share),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && !isCurrentAttachmentVideo) {
                             ChatTheme.colors.textHighEmphasis
                         } else {
                             ChatTheme.colors.disabled
@@ -1022,8 +1025,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     @Composable
     private fun defaultMediaOptions(message: Message): List<MediaGalleryPreviewOption> {
         val user by mediaGalleryPreviewViewModel.user.collectAsState()
+
+        val isChatConnected by remember(mediaGalleryPreviewViewModel.connectionState) {
+            derivedStateOf {
+                mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+            }
+        }
+
         val saveMediaColor =
-            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+            if (isChatConnected) {
                 ChatTheme.colors.textHighEmphasis
             } else {
                 ChatTheme.colors.disabled
@@ -1035,14 +1045,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_reply),
                 iconColor = ChatTheme.colors.textHighEmphasis,
-                action = Reply(message)
+                action = Reply(message),
+                isEnabled = true
             ),
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_show_in_chat),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_show_in_chat),
                 iconColor = ChatTheme.colors.textHighEmphasis,
-                action = ShowInChat(message)
+                action = ShowInChat(message),
+                isEnabled = true
             ),
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_save_image),
@@ -1050,6 +1062,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_download),
                 iconColor = saveMediaColor,
                 action = SaveMedia(message),
+                isEnabled = isChatConnected
             )
         )
 
@@ -1068,6 +1081,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                     iconColor = deleteColor,
                     action = Delete(message),
+                    isEnabled = isChatConnected
                 )
             )
         }

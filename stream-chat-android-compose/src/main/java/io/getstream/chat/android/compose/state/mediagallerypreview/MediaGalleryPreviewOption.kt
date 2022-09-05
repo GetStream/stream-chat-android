@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param iconPainter The icon of the option.
  * @param iconColor The color of the icon.
  * @param action The action this option represents.
+ * @param isEnabled If the action is currently enabled.
  */
 internal data class MediaGalleryPreviewOption(
     internal val title: String,
@@ -34,4 +35,5 @@ internal data class MediaGalleryPreviewOption(
     internal val iconPainter: Painter,
     internal val iconColor: Color,
     internal val action: MediaGalleryPreviewAction,
+    internal val isEnabled: Boolean,
 )
