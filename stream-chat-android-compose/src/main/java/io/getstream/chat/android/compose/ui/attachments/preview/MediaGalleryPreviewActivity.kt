@@ -977,12 +977,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
                     onClick = { onShareMediaClick(attachments[pagerState.currentPage]) },
-                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && !isCurrentAttachmentVideo
+                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+                        && !isCurrentAttachmentVideo
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_share),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED && !isCurrentAttachmentVideo) {
+                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+                            && !isCurrentAttachmentVideo
+                        ) {
                             ChatTheme.colors.textHighEmphasis
                         } else {
                             ChatTheme.colors.disabled
