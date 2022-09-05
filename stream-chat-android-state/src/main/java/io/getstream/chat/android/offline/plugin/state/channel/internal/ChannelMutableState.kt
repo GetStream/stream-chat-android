@@ -383,7 +383,7 @@ internal class ChannelMutableState(
         val newUserRead = (read.value ?: ChannelUserRead(user)).let { currentUserRead ->
             currentUserRead.copy(
                 user = user,
-                unreadMessages = currentUserRead.unreadMessages++,
+                unreadMessages = ++currentUserRead.unreadMessages,
                 lastMessageSeenDate = message.createdAt,
             )
         }
