@@ -193,6 +193,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val mediaGalleryPreviewActivityState = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
             KeyMediaGalleryPreviewActivityState
         )
+        val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
         val messageId = mediaGalleryPreviewActivityState?.messageId ?: ""
 
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
@@ -209,7 +210,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
 
         setContent {
-            ChatTheme {
+            ChatTheme(videoThumbnailsEnabled = videoThumbnailsEnabled) {
                 val message = mediaGalleryPreviewViewModel.message
 
                 if (message.deletedAt != null) {
@@ -863,7 +864,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             )
 
             if (shouldShowPreview) {
-                val painter = rememberStreamImagePainter(data = attachment.thumbUrl)
+                val data = if (ChatTheme.videoThumbnailsEnabled) {
+                    attachment.thumbUrl
+                } else {
+                    null
+                }
+
+                val painter = rememberStreamImagePainter(data = data)
 
                 Box(
                     contentAlignment = Alignment.Center,
@@ -1261,10 +1268,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            val data = attachment.imagePreviewUrl
+            val data =
+                if (attachment.type == AttachmentType.IMAGE ||
+                    (attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled)
+                ) {
+                    attachment.imagePreviewUrl
+                } else {
+                    null
+                }
+
             val painter = rememberStreamImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(attachment.imagePreviewUrl)
+                    .data(data)
                     .setHeader("retry_hash", retryHash.toString())
                     .build()
             )
@@ -1333,6 +1348,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private const val KeyMediaGalleryPreviewActivityState: String = "mediaGalleryPreviewActivityState"
 
         /**
+         * Represents the key for the [Boolean] value dictating whether video thumbnails
+         * will be displayed in previews or not.
+         */
+        private const val KeyVideoThumbnailsEnabled: String = "videoThumbnailsEnabled"
+
+        /**
          * Represents the key for the starting attachment position based on the clicked attachment.
          */
         private const val KeyAttachmentPosition: String = "attachmentPosition"
@@ -1368,13 +1389,20 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * @param context The context to start the activity with.
          * @param message The [Message] containing the attachments.
          * @param attachmentPosition The initial position of the clicked media attachment.
+         * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
          */
-        public fun getIntent(context: Context, message: Message, attachmentPosition: Int): Intent {
+        public fun getIntent(
+            context: Context,
+            message: Message,
+            attachmentPosition: Int,
+            videoThumbnailsEnabled: Boolean,
+        ): Intent {
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 
                 putExtra(KeyMediaGalleryPreviewActivityState, mediaGalleryPreviewActivityState)
                 putExtra(KeyAttachmentPosition, attachmentPosition)
+                putExtra(KeyVideoThumbnailsEnabled, videoThumbnailsEnabled)
             }
         }
     }

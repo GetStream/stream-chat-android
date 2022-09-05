@@ -317,7 +317,15 @@ internal fun MediaAttachmentContentItem(
         mutableStateOf(0)
     }
 
-    val data = attachment.imagePreviewUrl
+    val data =
+        if (attachment.type == AttachmentType.IMAGE ||
+            (attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled)
+        ) {
+            attachment.imagePreviewUrl
+        } else {
+            null
+        }
+
     val painter = rememberStreamImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(data)
@@ -338,6 +346,8 @@ internal fun MediaAttachmentContentItem(
         retryHash++
     }
 
+    val areVideosEnabled = ChatTheme.videoThumbnailsEnabled
+
     Box(
         modifier = modifier
             .background(Color.Black)
@@ -349,7 +359,8 @@ internal fun MediaAttachmentContentItem(
                     mixedMediaPreviewLauncher.launch(
                         MediaGalleryPreviewContract.Input(
                             message = message,
-                            initialPosition = attachmentPosition
+                            initialPosition = attachmentPosition,
+                            videoThumbnailsEnabled = areVideosEnabled
                         )
                     )
                 },

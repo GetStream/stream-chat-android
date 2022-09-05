@@ -38,7 +38,8 @@ public class MediaGalleryPreviewContract :
         return MediaGalleryPreviewActivity.getIntent(
             context,
             message = input.message,
-            attachmentPosition = input.initialPosition
+            attachmentPosition = input.initialPosition,
+            videoThumbnailsEnabled = input.videoThumbnailsEnabled
         )
     }
 
@@ -56,9 +57,11 @@ public class MediaGalleryPreviewContract :
      *
      * @param message The message containing the attachments.
      * @param initialPosition The initial position of the Image gallery, based on the clicked item.
+     * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      */
     public class Input(
         public val message: Message,
         public val initialPosition: Int = 0,
+        public val videoThumbnailsEnabled: Boolean,
     )
 }
