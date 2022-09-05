@@ -634,6 +634,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton() {
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled
         binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
         binding.attachmentsButton.setBorderlessRipple(messageInputViewStyle.attachmentButtonRippleColor)
 
@@ -913,7 +914,8 @@ public class MessageInputView : ConstraintLayout {
 
             attachmentsButton.isVisible =
                 messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands && hasCommands
+            commandsButton.isVisible = messageInputViewStyle.commandsButtonEnabled &&
+                shouldShowCommandsButton() && !isCommandMode && canUseCommands && hasCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
@@ -949,8 +951,8 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send messages.
      */
     private fun setCanSendMessages(canSend: Boolean) {
-        binding.commandsButton.isVisible = canSend && hasCommands
-        binding.attachmentsButton.isVisible = canSend
+        binding.commandsButton.isVisible = messageInputViewStyle.commandsEnabled && canSend && hasCommands
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
 
         canSendAttachments = canSend
         canUseCommands = canSend
@@ -978,7 +980,7 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send attachments.
      */
     private fun setCanSendAttachments(canSend: Boolean) {
-        binding.attachmentsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
         canSendAttachments = canSend
     }
 

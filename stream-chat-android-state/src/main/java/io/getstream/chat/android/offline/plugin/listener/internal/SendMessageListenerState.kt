@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -33,11 +32,20 @@ import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandler"
 
-internal class SendMessageListenerImpl(
-    private val logic: LogicRegistry,
-    private val repos: RepositoryFacade,
-) : SendMessageListener {
+/**
+ * Implementation of [SendMessageListener] that deals with updates of state of the SDK.
+ */
+internal class SendMessageListenerState(private val logic: LogicRegistry) : SendMessageListener {
 
+    /**
+     * Side effect to be invoked when the original request is completed with a response. This method updates the state
+     * of the SDK.
+     *
+     * @param result [Result] response from the original request.
+     * @param channelType The type of the channel in which message is sent.
+     * @param channelId The id of the the channel in which message is sent.
+     * @param message [Message] to be sent.
+     */
     override suspend fun onMessageSendResult(
         result: Result<Message>,
         channelType: String,
@@ -45,6 +53,9 @@ internal class SendMessageListenerImpl(
         message: Message,
     ) {
         val cid = "$channelType:$channelId"
+
+        if (logic.getMessageById(message.id)?.syncStatus == SyncStatus.COMPLETED) return
+
         if (result.isSuccess) {
             handleSendMessageSuccess(cid, logic, result.data())
         } else {
@@ -58,25 +69,19 @@ internal class SendMessageListenerImpl(
      * @param processedMessage [Message] returned from API response.
      * @return [Message] Updated message.
      */
-    private suspend fun handleSendMessageSuccess(
+    private fun handleSendMessageSuccess(
         cid: String,
         logic: LogicRegistry,
-        processedMessage: Message
+        processedMessage: Message,
     ) {
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = repos.selectMessage(processedMessage.id)
-        if (latestUpdatedMessage?.syncStatus == SyncStatus.COMPLETED) {
-            return
-        }
         processedMessage.enrichWithCid(cid)
             .copy(
                 syncStatus = SyncStatus.COMPLETED,
                 syncDescription = null
             )
-            .also {
-                repos.insertMessage(it)
-                logic.channelFromMessage(it)?.upsertMessage(it)
-                logic.threadFromMessage(it)?.upsertMessage(it)
+            .also { message ->
+                logic.channelFromMessage(message)?.upsertMessage(message)
+                logic.threadFromMessage(message)?.upsertMessage(message)
             }
     }
 
@@ -88,16 +93,11 @@ internal class SendMessageListenerImpl(
      *
      * @return [Message] Updated message.
      */
-    private suspend fun handleSendMessageFail(
+    private fun handleSendMessageFail(
         logic: LogicRegistry,
         message: Message,
-        error: ChatError
+        error: ChatError,
     ) {
-        // Don't update latest message with this id if it is already synced.
-        val latestUpdatedMessage = repos.selectMessage(message.id) ?: message
-        if (latestUpdatedMessage.syncStatus == SyncStatus.COMPLETED) {
-            return
-        }
         val isPermanentError = error.isPermanent()
         val isMessageModerationFailed = error is ChatNetworkError &&
             error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
@@ -113,11 +113,9 @@ internal class SendMessageListenerImpl(
             },
             syncDescription = error.toMessageSyncDescription(),
             updatedLocallyAt = Date(),
-        )
-            .also {
-                repos.insertMessage(it)
-                logic.channelFromMessage(it)?.upsertMessage(it)
-                logic.threadFromMessage(it)?.upsertMessage(it)
-            }
+        ).also {
+            logic.channelFromMessage(it)?.upsertMessage(it)
+            logic.threadFromMessage(it)?.upsertMessage(it)
+        }
     }
 }

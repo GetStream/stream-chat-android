@@ -106,3 +106,14 @@ dependencies {
 
     detektPlugins(Dependencies.detektFormatting)
 }
+
+/* Uncomment if the Dokka page per module is required
+tasks.withType(dokkaHtmlPartial.getClass()) {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("LLC")
+            includes.from("DokkaModule.md")
+        }
+    }
+}
+*/

@@ -43,7 +43,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadLis
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerFull
@@ -61,6 +61,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
 import kotlin.reflect.KClass
@@ -111,9 +112,9 @@ public class StreamStatePluginFactory(
                 "[uncaughtCoroutineException] throwable: $throwable, context: $context"
             }
         }
-        val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-
+        val scope = ChatClient.instance().inheritScope { parentJob ->
+            SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
+        }
         return createStatePlugin(user, scope)
     }
 
@@ -210,6 +211,7 @@ public class StreamStatePluginFactory(
                 syncManager.stop()
                 eventHandler.stopListening()
                 clearCachedInstance()
+                scope.cancel()
             }
         }
 
@@ -235,7 +237,7 @@ public class StreamStatePluginFactory(
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
-            sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
+            sendMessageListener = SendMessageListenerState(logic),
             sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             typingEventListener = TypingEventListenerState(stateRegistry),

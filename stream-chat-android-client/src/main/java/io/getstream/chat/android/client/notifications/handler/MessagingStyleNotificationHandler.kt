@@ -71,7 +71,7 @@ internal class MessagingStyleNotificationHandler(
             newMessageIntent(message.id, channel.type, channel.id),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        ChatClient.instance().scope.launch {
+        ChatClient.instance().launch {
             val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
             val notification = NotificationCompat.Builder(context, getNotificationChannelId())
                 .setSmallIcon(R.drawable.stream_ic_notification)

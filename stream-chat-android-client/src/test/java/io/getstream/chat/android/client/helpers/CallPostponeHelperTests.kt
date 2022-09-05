@@ -21,6 +21,8 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomInt
@@ -51,8 +53,10 @@ internal class CallPostponeHelperTests {
 
     @BeforeEach
     fun setUp() {
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         socketStateService = mock()
-        sut = CallPostponeHelper(socketStateService, testCoroutines.scope, DELAY_DURATION, ATTEMPTS_COUNT)
+        sut = CallPostponeHelper(socketStateService, userScope, DELAY_DURATION, ATTEMPTS_COUNT)
     }
 
     @Test

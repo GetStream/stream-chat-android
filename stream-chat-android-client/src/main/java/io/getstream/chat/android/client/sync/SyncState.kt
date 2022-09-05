@@ -22,5 +22,6 @@ public data class SyncState(
     val userId: String,
     val activeChannelIds: List<String> = emptyList(),
     val lastSyncedAt: Date? = null,
+    val rawLastSyncedAt: String? = null,
     val markedAllReadAt: Date? = null,
 )

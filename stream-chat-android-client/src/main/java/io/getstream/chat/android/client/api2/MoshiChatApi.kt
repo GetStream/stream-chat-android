@@ -944,10 +944,7 @@ constructor(
         ).map { response -> response.event.toDomain() }
     }
 
-    override fun getSyncHistory(
-        channelIds: List<String>,
-        lastSyncAt: Date,
-    ): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,

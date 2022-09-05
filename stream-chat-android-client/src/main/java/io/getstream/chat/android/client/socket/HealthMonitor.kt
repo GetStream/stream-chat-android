@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +34,7 @@ private const val NO_EVENT_INTERVAL_THRESHOLD = 30_000L
 internal class HealthMonitor(
     private val timeProvider: TimeProvider = TimeProvider,
     private val retryInterval: RetryInterval = ExponencialRetryInterval,
-    private val coroutineScope: CoroutineScope,
+    private val userScope: UserScope,
     private val checkCallback: () -> Unit,
     private val reconnectCallback: () -> Unit,
 ) {
@@ -86,7 +87,7 @@ internal class HealthMonitor(
      */
     private fun postponeHealthMonitor() {
         healthMonitorJob?.cancel()
-        healthMonitorJob = coroutineScope.launchDelayed(MONITOR_INTERVAL) {
+        healthMonitorJob = userScope.launchDelayed(MONITOR_INTERVAL) {
             if (needToReconnect()) {
                 postponeReconnect()
             } else {
@@ -101,7 +102,7 @@ internal class HealthMonitor(
      */
     private fun postponeHealthCheck() {
         healthCheckJob?.cancel()
-        healthCheckJob = coroutineScope.launchDelayed(HEALTH_CHECK_INTERVAL) {
+        healthCheckJob = userScope.launchDelayed(HEALTH_CHECK_INTERVAL) {
             checkCallback()
             postponeHealthMonitor()
         }
@@ -115,7 +116,7 @@ internal class HealthMonitor(
         reconnectJob?.cancel()
         val retryIntervalTime = retryInterval.nextInterval(consecutiveFailures++)
         logger.i { "Next connection attempt in $retryIntervalTime ms" }
-        reconnectJob = coroutineScope.launchDelayed(retryIntervalTime) {
+        reconnectJob = userScope.launchDelayed(retryIntervalTime) {
             reconnectCallback()
             postponeHealthMonitor()
         }
