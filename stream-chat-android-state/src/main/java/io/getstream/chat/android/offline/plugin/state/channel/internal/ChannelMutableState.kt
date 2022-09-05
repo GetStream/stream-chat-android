@@ -136,8 +136,6 @@ internal class ChannelMutableState(
     override val messagesState: StateFlow<MessagesState> = _messagesState
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount
-        .combine(_watchers) { watchersCount, watchersMap -> maxOf(watchersCount, watchersMap.size) }
-        .stateIn(scope, SharingStarted.Eagerly, 0)
 
     override val watchers: StateFlow<List<User>> =
         _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
@@ -227,15 +225,6 @@ internal class ChannelMutableState(
      */
     fun setLoadingNewerMessages(isLoading: Boolean) {
         _loadingNewerMessages.value = isLoading
-    }
-
-    /**
-     * Sets the watchers counter the this channel.
-     *
-     * @param count Int.
-     */
-    fun setWatcherCount(count: Int) {
-        _watcherCount.value = count
     }
 
     /** Sets the end for newer messages. */
@@ -344,24 +333,30 @@ internal class ChannelMutableState(
      */
     fun deleteMember(member: Member) {
         _members.value = _members.value - member.getUserId()
-        deleteWatcher(member.user)
+        deleteWatcher(
+            member.user,
+            _watcherCount.value - _watchers.value.count { it.key == member.getUserId() }
+        )
     }
 
     /**
      * Deletes a watcher.
      *
      * @param user The user to be removed.
+     * @param watchersCount The current number of watchers.
      */
-    internal fun deleteWatcher(user: User) {
+    internal fun deleteWatcher(user: User, watchersCount: Int) {
         _watchers.value = _watchers.value - user.id
+        _watcherCount.value = watchersCount.takeUnless { it < 0 } ?: _watchers.value.size
     }
 
     fun deleteMessage(message: Message) {
         _messages.value = _messages.value - message.id
     }
 
-    fun upsertWatchers(watchers: List<User>) {
-        _watchers.value = _watchers.value + watchers.associateBy(User::id)
+    fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
+        _watchers.value += watchers.associateBy(User::id)
+        _watcherCount.value = watchersCount.takeUnless { it == 0 } ?: _watchers.value.size
     }
 
     /**
@@ -375,7 +370,8 @@ internal class ChannelMutableState(
 
     fun upsertUserPresence(user: User) {
         _members.value[user.id]?.copy(user = user)?.let { upsertMembers(listOf(it)) }
-        user.takeIf { _watchers.value.any { it.key == user.id } }?.let { upsertWatchers(listOf(it)) }
+        user.takeIf { _watchers.value.any { it.key == user.id } }
+            ?.let { upsertWatchers(listOf(it), _watcherCount.value) }
     }
 
     fun increaseReadWith(message: Message) {
