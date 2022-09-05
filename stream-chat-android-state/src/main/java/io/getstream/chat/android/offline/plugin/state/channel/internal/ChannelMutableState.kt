@@ -416,7 +416,7 @@ internal class ChannelMutableState(
      * @return The flag to determine if the channel was marked as read locally.
      */
     fun markChannelAsRead(): Boolean = read.value
-        ?.takeUnless { channelConfig.value.readEventsEnabled }
+        ?.takeIf { channelConfig.value.readEventsEnabled }
         ?.let { currentUserRead ->
             messages.value.lastOrNull()?.let { lastMessage ->
                 upsertReads(
