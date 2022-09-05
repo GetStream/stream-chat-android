@@ -317,9 +317,10 @@ internal fun MediaAttachmentContentItem(
         mutableStateOf(0)
     }
 
+    val data = attachment.imagePreviewUrl
     val painter = rememberStreamImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(attachment.imagePreviewUrl)
+            .data(data)
             .setParameter(key = "retry_hash", value = retryHash)
             .build()
     )
@@ -331,7 +332,7 @@ internal fun MediaAttachmentContentItem(
 
     // Used to refresh the request for the current page
     // if it has previously failed.
-    if (connectionState == ConnectionState.CONNECTED &&
+    if (data != null && connectionState == ConnectionState.CONNECTED &&
         painter.state is AsyncImagePainter.State.Error
     ) {
         retryHash++

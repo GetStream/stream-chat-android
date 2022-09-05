@@ -634,10 +634,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 mutableStateOf(0)
             }
 
+            val data = attachment.imagePreviewUrl
             val painter =
                 rememberStreamImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(attachment.imagePreviewUrl)
+                        .data(data)
                         .crossfade(true)
                         .setParameter(key = "retry_hash", value = retryHash)
                         .build()
@@ -654,7 +655,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             // Used to refresh the request for the current page
             // if it has previously failed.
-            if (page == pagerState.currentPage &&
+            if (data != null && page == pagerState.currentPage &&
                 mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
                 painter.state is AsyncImagePainter.State.Error
             ) {
@@ -1260,14 +1261,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 },
             contentAlignment = Alignment.Center
         ) {
+            val data = attachment.imagePreviewUrl
             val painter = rememberStreamImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(attachment.imagePreviewUrl)
-                    .setHeader("rety_hash", retryHash.toString())
+                    .setHeader("retry_hash", retryHash.toString())
                     .build()
             )
 
-            if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
+            if (data != null && mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
                 painter.state is AsyncImagePainter.State.Error
             ) {
                 retryHash++
