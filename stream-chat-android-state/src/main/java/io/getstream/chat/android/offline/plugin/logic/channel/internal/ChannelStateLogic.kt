@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -104,7 +103,7 @@ internal class ChannelStateLogic(
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
-            val isMessageAlreadyInState = mutableState.rawMessages.containsKey(message.id)
+            val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
             val shouldIncrementUnreadCount = !isMessageAlreadyInState &&
                 message.shouldIncrementUnreadCount(
                     currentUserId = currentUserId,
@@ -212,10 +211,16 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
-        val newMessages = parseMessages(messages, shouldRefreshMessages)
-        mutableState.rawMessages = newMessages
-    }
+    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false): Unit =
+        when (shouldRefreshMessages) {
+            true -> mutableState.setMessages(messages)
+            false -> {
+                val oldMessages = mutableState.messageList.value.associateBy(Message::id)
+                val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
+                    .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
+                mutableState.upsertMessages(updatedMessages)
+            }
+        }
 
     /**
      * Deletes a message for the channel
@@ -223,7 +228,7 @@ internal class ChannelStateLogic(
      * @param message [Message]
      */
     fun deleteMessage(message: Message) {
-        mutableState.rawMessages -= message.id
+        mutableState.deleteMessage(message)
     }
 
     /**
@@ -233,22 +238,8 @@ internal class ChannelStateLogic(
      * @param systemMessage the system message to be added to inform the user.
      */
     fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
-        val messages = mutableState.rawMessages.filter { it.value.wasCreatedAfter(date) }
-
-        if (systemMessage == null) {
-            mutableState.rawMessages = messages
-        } else {
-            mutableState.rawMessages = messages + listOf(systemMessage).associateBy(Message::id)
-        }
-    }
-
-    /**
-     * Removes local messages. Doesn't remove message in database.
-     *
-     * @param message The [Message] to be deleted.
-     */
-    fun removeLocalMessage(message: Message) {
-        mutableState.rawMessages = mutableState.rawMessages - message.id
+        mutableState.removeMessagesBefore(date)
+        systemMessage?.let(mutableState::upsertMessage)
     }
 
     /**
@@ -280,15 +271,6 @@ internal class ChannelStateLogic(
      */
     fun upsertMembers(members: List<Member>) {
         mutableState.upsertMembers(members)
-    }
-
-    /**
-     * Upsert old messages.
-     *
-     * @param messages The list of messages to be upserted.
-     */
-    fun upsertOldMessages(messages: List<Message>) {
-        mutableState.rawOldMessages = parseMessages(messages)
     }
 
     /**
@@ -401,7 +383,6 @@ internal class ChannelStateLogic(
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
         upsertWatchers(c.watchers)
-        upsertOldMessages(c.messages)
     }
 
     /**
@@ -458,19 +439,6 @@ internal class ChannelStateLogic(
         val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
         StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
         updateMute(isChannelMuted)
-    }
-
-    /**
-     * Updates [ChannelMutableState.rawMessages] with new messages.
-     * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
-     *
-     * @param messages The list of messages to update.
-     */
-    private fun parseMessages(messages: List<Message>, shouldRefresh: Boolean = false): Map<String, Message> {
-        val currentMessages = if (shouldRefresh) emptyMap() else mutableState.rawMessages
-        return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
-            .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
-            .associateBy(Message::id)
     }
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
