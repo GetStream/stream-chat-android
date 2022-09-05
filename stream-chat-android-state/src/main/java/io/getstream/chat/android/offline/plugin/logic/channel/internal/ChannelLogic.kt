@@ -542,12 +542,10 @@ internal class ChannelLogic(
                 upsertUser(event.user)
             }
             is UserStartWatchingEvent -> {
-                channelStateLogic.upsertWatcher(event.user)
-                channelStateLogic.setWatcherCount(event.watcherCount)
+                channelStateLogic.upsertWatcher(event)
             }
             is UserStopWatchingEvent -> {
-                channelStateLogic.deleteWatcher(event.user)
-                channelStateLogic.setWatcherCount(event.watcherCount)
+                channelStateLogic.deleteWatcher(event)
             }
             is ChannelUpdatedEvent -> {
                 channelStateLogic.updateChannelData(event.channel)

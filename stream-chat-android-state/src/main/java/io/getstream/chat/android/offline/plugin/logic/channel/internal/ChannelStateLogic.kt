@@ -19,6 +19,8 @@ package io.getstream.chat.android.offline.plugin.logic.channel.internal
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.isPermanent
@@ -178,21 +180,12 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Sets the watcher count for the channel.
-     *
-     * @param watcherCount the count of watchers.
-     */
-    fun setWatcherCount(watcherCount: Int) {
-        mutableState.setWatcherCount(watcherCount)
-    }
-
-    /**
      * Sets the watchers of the channel.
      *
      * @param watchers the list of [User] to be added or updated
      */
-    fun upsertWatchers(watchers: List<User>) {
-        mutableState.upsertWatchers(watchers)
+    private fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
+        mutableState.upsertWatchers(watchers, watchersCount)
     }
 
     /**
@@ -294,19 +287,19 @@ internal class ChannelStateLogic(
     /**
      * Upsert watcher.
      *
-     * @param user [User]
+     * @param event [UserStartWatchingEvent]
      */
-    fun upsertWatcher(user: User) {
-        upsertWatchers(listOf(user))
+    fun upsertWatcher(event: UserStartWatchingEvent) {
+        upsertWatchers(listOf(event.user), event.watcherCount)
     }
 
     /**
      * Removes watcher.
      *
-     * @param user [User]
+     * @param event [UserStopWatchingEvent]
      */
-    fun deleteWatcher(user: User) {
-        mutableState.deleteWatcher(user)
+    fun deleteWatcher(event: UserStopWatchingEvent) {
+        mutableState.deleteWatcher(event.user, event.watcherCount)
     }
 
     /**
@@ -347,7 +340,6 @@ internal class ChannelStateLogic(
     fun updateDataFromChannel(channel: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
-        setWatcherCount(channel.watcherCount)
 
         mutableState.setMembersCount(channel.memberCount)
 
@@ -356,7 +348,7 @@ internal class ChannelStateLogic(
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(channel.members)
-        upsertWatchers(channel.watchers)
+        upsertWatchers(channel.watchers, channel.watcherCount)
 
         if (!mutableState.insideSearch.value || scrollUpdate) {
             upsertMessages(channel.messages, shouldRefreshMessages)
@@ -375,14 +367,13 @@ internal class ChannelStateLogic(
 
         // Update all the flow objects based on the channel
         updateChannelData(c)
-        setWatcherCount(c.watcherCount)
         updateReads(c.read)
         mutableState.setMembersCount(c.memberCount)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
-        upsertWatchers(c.watchers)
+        upsertWatchers(c.watchers, c.watcherCount)
     }
 
     /**
