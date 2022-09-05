@@ -164,8 +164,6 @@ internal class ChannelMutableState(
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val membersCount: StateFlow<Int> = _membersCount
-        .combine(_members) { membersCount, membersMap, -> maxOf(membersCount, membersMap.size) }
-        .stateIn(scope, SharingStarted.Eagerly, 0)
 
     override val channelData: StateFlow<ChannelData> =
         _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
@@ -323,7 +321,18 @@ internal class ChannelMutableState(
      * @param members list of members to be upserted.
      */
     fun upsertMembers(members: List<Member>) {
-        _members.value = _members.value + members.associateBy(Member::getUserId)
+        val membersMap = members.associateBy(Member::getUserId)
+        _members.value = _members.value + membersMap
+    }
+
+    /**
+     * Add a member
+     *
+     * @param member The member to be added.
+     */
+    fun addMember(member: Member) {
+        _membersCount.value += 1.takeUnless { _members.value.keys.contains(member.getUserId()) } ?: 0
+        upsertMembers(listOf(member))
     }
 
     /**
@@ -332,6 +341,7 @@ internal class ChannelMutableState(
      * @param member The member to be removed.
      */
     fun deleteMember(member: Member) {
+        _membersCount.value -= _members.value.count { it.key == member.getUserId() }
         _members.value = _members.value - member.getUserId()
         deleteWatcher(
             member.user,

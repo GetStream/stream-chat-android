@@ -142,7 +142,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(memberAddedEvent)
 
-        verify(channelStateLogic).upsertMember(member)
+        verify(channelStateLogic).addMember(member)
     }
 
     // Typing events

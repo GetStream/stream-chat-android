@@ -527,7 +527,7 @@ internal class ChannelLogic(
                 channelStateLogic.deleteMember(event.member)
             }
             is MemberAddedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.addMember(event.member)
             }
             is MemberUpdatedEvent -> {
                 channelStateLogic.upsertMember(event.member)
@@ -585,7 +585,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is NotificationInviteAcceptedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.addMember(event.member)
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationInviteRejectedEvent -> {

@@ -456,6 +456,10 @@ internal class ChannelStateLogic(
         .maxOrNull()
         ?: NEVER.time
 
+    fun addMember(member: Member) {
+        mutableState.addMember(member)
+    }
+
     private companion object {
         private const val TAG = "ChannelStateLogicImpl"
     }
