@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ImageAttachmentContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | `ImageAttachmentContent` has been deprecated in favor of `MediattachmentContent`. The new function is able to preview videos as well as images and has access to a new and improved media gallery. |
+| `ImageAttachmentFactory` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | `ImageAttachmentFactory` has been deprecated in favor of `MediaAttachmentFactory`. The new factory is able to preview videos as well as images and has access to a new and improved media gallery. |
+| `ImagePreviewContract` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | `ImagePreviewContract` has been deprecated in favor of `MediaGalleryPreviewContract`, please use it in conjunction with `MediaGalleryPreviewActivity`. The new gallery holds multiple improvements such as the ability to reproduce mixed image and video content, automatic reloading upon regaining network connection and more. |
+| `ImagePreviewActivity` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | This gallery activity has been deprecated in favour of `MediaGalleryPreviewContract`. The new gallery holds multiple improvements such as the ability to reproduce mixed image and video content, automatic reloading upon regaining network connection and more. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |

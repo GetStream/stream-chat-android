@@ -24,6 +24,17 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 /**
  * The contract used to start the [ImagePreviewActivity] given a message ID and the position of the clicked attachment.
  */
+@Deprecated(
+    message = "Deprecated in favor of 'MediaGalleryPreviewActivity', please use it in combination with" +
+        "'MediaGalleryPreviewActivity'. The new activity is able to " +
+        "reproduce video content as well as images and features a number of improvements such as " +
+        "automatic reloading upon regaining network connection and more.",
+    replaceWith = ReplaceWith(
+        expression = "MediaGalleryPreviewContract()",
+        "io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract"
+    ),
+    level = DeprecationLevel.WARNING
+)
 public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.Input, ImagePreviewResult?>() {
 
     /**
@@ -55,6 +66,17 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
      * @param messageId The ID of the message.
      * @param initialPosition The initial position of the Image gallery, based on the clicked item.
      */
+    @Deprecated(
+        message = "Deprecated in favor of 'MediaGalleryPreviewActivity', please use it in combination with" +
+            "'MediaGalleryPreviewActivity'. The new activity is able to " +
+            "reproduce video content as well as images and features a number of improvements such as " +
+            "automatic reloading upon regaining network connection and more.",
+        replaceWith = ReplaceWith(
+            expression = "MediaGalleryPreviewContract.Input()",
+            "io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input"
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public class Input(
         public val messageId: String,
         public val initialPosition: Int = 0,
