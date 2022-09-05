@@ -366,6 +366,11 @@ internal class ChannelMutableState(
         _watchers.value = _watchers.value + watchers.associateBy(User::id)
     }
 
+    fun upsertUserPresence(user: User) {
+        _members.value[user.id]?.copy(user = user)?.let { upsertMembers(listOf(it)) }
+        user.takeIf { _watchers.value.any { it.key == user.id } }?.let { upsertWatchers(listOf(it)) }
+    }
+
     fun increaseReadWith(message: Message) {
         val user = userFlow.value ?: return
         val newUserRead = (read.value ?: ChannelUserRead(user)).let { currentUserRead ->
