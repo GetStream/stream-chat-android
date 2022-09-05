@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -380,15 +379,6 @@ internal class ChannelLogic(
     }
 
     /**
-     * Remove a local message from the current list.
-     *
-     * @param message The [Message] to remove.
-     */
-    internal fun removeLocalMessage(message: Message) {
-        channelStateLogic.removeLocalMessage(message)
-    }
-
-    /**
      * Removes messages before the given date and optionally adds a system message
      * that was coming with the event.
      *
@@ -418,23 +408,14 @@ internal class ChannelLogic(
     }
 
     /**
-     * Returns message stored in [ChannelMutableStateImpl] if exists and wasn't hidden.
+     * Returns message stored in [ChannelMutableState] if exists and wasn't hidden.
      *
      * @param messageId The id of the message.
      *
      * @return [Message] if exists and wasn't hidden, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? {
-        var message = mutableState.rawMessages[messageId]?.copy()
-
-        if (mutableState.hideMessagesBefore != null) {
-            if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
-                message = null
-            }
-        }
-
-        return message
-    }
+    internal fun getMessage(messageId: String): Message? =
+        mutableState.visibleMessages.value[messageId]?.copy()
 
     private fun upsertUserPresence(user: User) {
         channelStateLogic.upsertUserPresence(user)
@@ -517,7 +498,7 @@ internal class ChannelLogic(
             }
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
-                    removeLocalMessage(event.message)
+                    deleteMessage(event.message)
                 } else {
                     upsertEventMessage(event.message)
                 }

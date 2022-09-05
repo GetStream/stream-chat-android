@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
@@ -90,8 +91,6 @@ internal class ChannelStateLogicTest {
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
-        on(mock::rawMessages.get()) doAnswer { _messages }
-        on(mock::rawMessages.set(any())) doAnswer { _messages = it.arguments[0] as Map<String, Message> }
         on(mock.unreadCount) doReturn _unreadCount
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()
@@ -101,6 +100,7 @@ internal class ChannelStateLogicTest {
         on(mock.watcherCount) doReturn _watcherCount
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig
+        on(mock.messageList) doReturn MutableStateFlow(emptyList())
     }
     private val globalMutableState: GlobalMutableState = mock {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
@@ -169,7 +169,8 @@ internal class ChannelStateLogicTest {
     fun `new messages should increment the unread count`() {
         val createdAt = randomDate()
         val oldCreatedAt = randomDateBefore(createdAt.time)
-
+        val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
         val newUnreadCount = randomInt()
         whenever(mutableState.read) doReturn MutableStateFlow(
             ChannelUserRead(
@@ -198,9 +199,11 @@ internal class ChannelStateLogicTest {
         whenever(mutableState.read) doReturn MutableStateFlow(
             ChannelUserRead(user, lastMessageSeenDate = Date(Long.MAX_VALUE))
         )
+        val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
 
         repeat(3) {
-            channelStateLogic.incrementUnreadCountIfNecessary(randomMessage())
+            channelStateLogic.incrementUnreadCountIfNecessary(oldMessages.random())
         }
 
         _unreadCount.value `should be equal to` 0
@@ -219,41 +222,6 @@ internal class ChannelStateLogicTest {
         )
 
         _messages `should be equal to` emptyMap()
-    }
-
-    @Test
-    fun `given inside search should upsert messages when messages are coming from scroll update`() {
-        _insideSearch.value = true
-
-        val message = randomMessage()
-
-        channelStateLogic.updateDataFromChannel(
-            randomChannel(messages = listOf(message)),
-            shouldRefreshMessages = false,
-            scrollUpdate = true
-        )
-
-        _messages `should be equal to` mapOf(message.id to message)
-    }
-
-    @Test
-    fun `given message should be refreshed, old messages should be clean`() {
-        val message = randomMessage()
-        val message2 = randomMessage()
-
-        channelStateLogic.updateDataFromChannel(
-            randomChannel(messages = listOf(message)),
-            shouldRefreshMessages = false,
-            scrollUpdate = true
-        )
-
-        channelStateLogic.updateDataFromChannel(
-            randomChannel(messages = listOf(message2)),
-            shouldRefreshMessages = true,
-            scrollUpdate = true
-        )
-
-        _messages `should be equal to` mapOf(message2.id to message2)
     }
 
     @Test

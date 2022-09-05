@@ -77,16 +77,6 @@ internal class ChannelMutableState(
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
 
-    /** raw version of messages. */
-    var rawMessages: Map<String, Message>
-        get() = _messages.value
-        set(value) { _messages.value = value }
-
-    /** raw version of old messages. */
-    var rawOldMessages: Map<String, Message>
-        get() = _oldMessages.value
-        set(value) { _oldMessages.value = value }
-
     /** Channel config data. */
     private val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
 
@@ -126,10 +116,14 @@ internal class ChannelMutableState(
     var lastStartTypingEvent: Date? = null
     internal var keystrokeParentMessageId: String? = null
 
+    internal val visibleMessages: StateFlow<Map<String, Message>> = messageList.mapLatest { messages ->
+        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+            .associateBy(Message::id)
+    }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
     /** Sorted version of messages. */
-    val sortedMessages: StateFlow<List<Message>> = messageList.map {
-        it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
-            .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+    val sortedMessages: StateFlow<List<Message>> = visibleMessages.mapLatest { messagesMap ->
+        messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
@@ -362,8 +356,21 @@ internal class ChannelMutableState(
         _watchers.value = _watchers.value - user.id
     }
 
+    fun deleteMessage(message: Message) {
+        _messages.value = _messages.value - message.id
+    }
+
     fun upsertWatchers(watchers: List<User>) {
         _watchers.value = _watchers.value + watchers.associateBy(User::id)
+    }
+
+    /**
+     * Upsert message in the channel.
+     *
+     * @param message message to be upserted.
+     */
+    fun upsertMessage(message: Message) {
+        _messages.value = _messages.value + (message.id to message)
     }
 
     fun upsertUserPresence(user: User) {
@@ -420,6 +427,18 @@ internal class ChannelMutableState(
                 true
             }
         } ?: false
+
+    fun removeMessagesBefore(date: Date) {
+        _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
+    }
+
+    fun upsertMessages(updatedMessages: Collection<Message>) {
+        _messages.value += updatedMessages.associateBy(Message::id)
+    }
+
+    fun setMessages(messages: List<Message>) {
+        _messages.value = messages.associateBy(Message::id)
+    }
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
