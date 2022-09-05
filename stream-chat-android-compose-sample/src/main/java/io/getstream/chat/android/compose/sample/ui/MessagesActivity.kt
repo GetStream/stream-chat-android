@@ -93,10 +93,7 @@ class MessagesActivity : BaseConnectedActivity() {
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
         setContent {
-            ChatTheme(
-                dateFormatter = ChatApp.dateFormatter,
-                videoThumbnailsEnabled = false
-            ) {
+            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },

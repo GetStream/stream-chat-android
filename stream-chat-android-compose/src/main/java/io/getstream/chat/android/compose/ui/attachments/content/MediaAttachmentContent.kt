@@ -30,7 +30,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -176,7 +178,13 @@ internal fun ShowSingleMediaAttachment(
                     ChatTheme.dimens.attachmentsContentImageMaxHeight
                 }
             )
-            .fillMaxWidth()
+            .width(
+                if (attachment.type == AttachmentType.VIDEO) {
+                    ChatTheme.dimens.attachmentsContentVideoWidth
+                } else {
+                    ChatTheme.dimens.attachmentsContentImageWidth
+                }
+            )
             .aspectRatio(ratio ?: EqualDimensionsRatio),
         message = message,
         attachmentPosition = 0,
@@ -217,7 +225,8 @@ internal fun RowScope.ShowMultipleMediaAttachments(
     Column(
         modifier = Modifier
             .weight(1f, fill = false)
-            .aspectRatio(TwiceAsTallAsIsWideRatio),
+            .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
+            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
@@ -238,7 +247,8 @@ internal fun RowScope.ShowMultipleMediaAttachments(
     Column(
         modifier = Modifier
             .weight(1f, fill = false)
-            .aspectRatio(TwiceAsTallAsIsWideRatio),
+            .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
+            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
         verticalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
         for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {

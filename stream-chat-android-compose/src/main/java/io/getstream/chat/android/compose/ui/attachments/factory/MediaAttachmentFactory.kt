@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
@@ -71,8 +69,7 @@ public fun MediaAttachmentFactory(
         },
         content = @Composable { modifier, state ->
             MediaAttachmentContent(
-                modifier = modifier
-                    .width(ChatTheme.dimens.attachmentsContentMediaWidth),
+                modifier = modifier,
                 attachmentState = state,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 playButton = { contentPlayButton() }
