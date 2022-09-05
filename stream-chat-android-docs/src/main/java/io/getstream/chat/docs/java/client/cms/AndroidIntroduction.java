@@ -49,12 +49,10 @@ public class AndroidIntroduction {
                 .build();
 
         // Step 3 - Authenticate and connect the user
-        Map<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Paranoid Android");
-        extraData.put("image", "https://bit.ly/2TIt8NR");
         User user = new User();
         user.setId("summer-brook-2");
-        user.setExtraData(extraData);
+        user.setName("Paranoid Android");
+        user.setImage("https://bit.ly/2TIt8NR");
 
         client.connectUser(user, token).enqueue((result) -> {
             if (result.isSuccess()) {

@@ -14,24 +14,16 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
+- Improving precision in time in the endpoint that syncs information between SDK and Stream's backend to make sure that undesired events are not coming due to a incorrect round down in time or desired events are not being ignored due to a incorrect round up of time when serializing/desirializing time in the SDK. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
 
 ### ✅ Added
-- Added `UploadedFile` which represents an uploaded file. It contains the url to the file under the property `file`, and a thumbnail of the file under the property `thumbUrl`. Thumbnails are usually returned when uploading a video file. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
 
 ### ⚠️ Changed
-- 🚨 Breaking change: `ChatClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: `ChannelClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: Overloaded functions `FileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedFile`. If you have extended this interface and only need the previous return functionality, you can assign a value to `UploadedFile.file` while keeping `UploadedFile.thumbUrl` `null`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they now return `UploadedFile`. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: `ChatClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: `ChannelClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: Overloaded functions `FileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedImage`. To mitigate these changes, you can wrap your previously returned file URL inside `UploadedImage`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
-- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they now return `UploadedImage`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
 
 ### ❌ Removed
 
-## stream-chat-android-state
+## stream-chat-android-offline
 ### 🐞 Fixed
 
 ### ⬆️ Improved
@@ -39,11 +31,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- `EventHandlerSequential` is now in use by default.
 
 ### ❌ Removed
 
-## stream-chat-android-offline
+## stream-chat-android-state
 ### 🐞 Fixed
 
 ### ⬆️ Improved
@@ -60,7 +51,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `hasCommands` field to `MessageComposerState` to set commands button visibility. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ⚠️ Changed
 
@@ -68,17 +58,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
-- The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
-- Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
-- Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 
 ### ⬆️ Improved
-- Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
-- Revert workaround for setting `ChatUI::imageHeadersProvider` introduced in [#3237](https://github.com/GetStream/stream-chat-android/pull/3237). [#4065](https://github.com/GetStream/stream-chat-android/pull/4065)
 
 ### ✅ Added
-- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 ### ⚠️ Changed
 
@@ -86,15 +69,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
-- Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
-- Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
 
 ### ⬆️ Improved
-- Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
 
 ### ✅ Added
-- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `MessageAttachmentsContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
@@ -148,6 +126,71 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 30th, 2022 - 5.9.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Show rounded avatars on Push Notification when `MessagingStyleNotificationHandler` is used. [#4059](https://github.com/GetStream/stream-chat-android/pull/4059)
+- Add an option to use a custom implementation when showing avatars on Push Notifications when `MessagingStyleNotificationHandler` is used. [#4069](https://github.com/GetStream/stream-chat-android/pull/4069)
+
+### ✅ Added
+- Method to switch between users `ChatClient.switchUser`. Can be used for switching between users to simplify code for disconnecting and connecting to the SDK. [#4018](https://github.com/GetStream/stream-chat-android/pull/4018)
+- Added `UploadedFile` which represents an uploaded file. It contains the url to the file under the property `file`, and a thumbnail of the file under the property `thumbUrl`. Thumbnails are usually returned when uploading a video file. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+
+### ⚠️ Changed
+- 🚨 Breaking change: `ChatClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChannelClient.sendFile` now returns `UploadedFile` instead of `String`. `UploadedFile.file` is the equivalent of the previous return value. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `FileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedFile`. If you have extended this interface and only need the previous return functionality, you can assign a value to `UploadedFile.file` while keeping `UploadedFile.thumbUrl` `null`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendFile()` have had their signatures changed. Instead of returning `String`, they now return `UploadedFile`. If you do not need the other parts of `UploadedFile`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChatClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: `ChannelClient.sendImage` now returns `UploadedImage` instead of `String`. `UploadedImage.file` is the equivalent of the previous return value, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `FileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they are now supposed to return `UploadedImage`. To mitigate these changes, you can wrap your previously returned file URL inside `UploadedImage`. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+- 🚨 Breaking change: Overloaded functions `StreamFileUploader.sendImage()` have had their signatures changed. Instead of returning `String`, they now return `UploadedImage`, you can use `.map { it.file }` to mitigate the breaking change. [#4058](https://github.com/GetStream/stream-chat-android/pull/4058)
+
+## stream-chat-android-state
+### ⚠️ Changed
+- `EventHandlerSequential` is now in use by default.
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Removed calls to Kotlin Collection's `getOrDefault()` inside `TypingEventPruner`. The function is not available below Android API 24 and was causing exceptions. [#4100](https://github.com/GetStream/stream-chat-android/pull/4100)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added `hasCommands` field to `MessageComposerState` to set commands button visibility. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
+- Add an implementation of `UserIconBuilder` which uses Coil to load the avatar picture. [#4069](https://github.com/GetStream/stream-chat-android/pull/4069)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed user avatar in navigation drawer of the sample app. [#4050](https://github.com/GetStream/stream-chat-android/pull/4050)
+- The commands button in `MessageComposerView` can now be used to hide the command suggestion popup. [#4041](https://github.com/GetStream/stream-chat-android/pull/4041)
+- Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
+- Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
+- Fixed a bug that made `MessageInputView` not adhere to integration visibility attributes (`streamUiAttachButtonEnabled` and `streamUiLightningButtonEnabled`). [#4107](https://github.com/GetStream/stream-chat-android/pull/4107)
+- Fixed scroll state on filter change. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
+
+### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageInputView` and `MessageComposerView`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
+- Revert workaround for setting `ChatUI::imageHeadersProvider` introduced in [#3237](https://github.com/GetStream/stream-chat-android/pull/3237). [#4065](https://github.com/GetStream/stream-chat-android/pull/4065)
+- Integration button visibility inside `MessageComposerView` dictated by attributes `streamUiMessageComposerCommandsButtonVisible` and `streamUiMessageComposerAttachmentsButtonVisible` is now set prior to binding the ViewModel, improving compliance and possible flickering issues. [#4107](https://github.com/GetStream/stream-chat-android/pull/4107)
+
+### ✅ Added
+- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
+
+### ⚠️ Changed
+- 🚨 Breaking change: `ChannelListUpdateListener` is now tasked with scrolling the list to the bottom once the `ChannelListItem.LoadingMoreItem` is inserted after requesting a new page of `Channel`s. If `ChannelListUpdateListener` inside `ChannelListView` is overridden in order to keep the scroll to bottom when loading a new page please copy the default implementation to the custom implementation of the listener. [#4105](https://github.com/GetStream/stream-chat-android/pull/4105/files)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed the online member count indicator in the message list header. Previously it did not properly track members going offline. [#4043](https://github.com/GetStream/stream-chat-android/pull/4043)
+- Now "Quotes" toggle in the dashboard controls the "Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
+- Now "Threads & Replies" toggle in the dashboard controls the "Thread Reply" option in the message list. [#4074](https://github.com/GetStream/stream-chat-android/pull/4074)
+
+### ⬆️ Improved
+- Added check to hide command button if no commands are available in `MessageComposer`. [#4057](https://github.com/GetStream/stream-chat-android/pull/4057)
+
+### ✅ Added
+- Added the `stream-chat-android-ui-guides` application that showcases different customizations of the SDK. [#4024](https://github.com/GetStream/stream-chat-android/pull/4024)
 
 # August 24th, 2022 - 5.8.2
 ## stream-chat-android-offline

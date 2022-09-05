@@ -55,7 +55,8 @@ class UserLoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViews()
         observeStateAndEvents()
-        viewModel.init()
+
+        viewModel.init(arguments?.getBoolean(UserLoginViewModel.EXTRA_SWITCH_USER) ?: false)
     }
 
     override fun onDestroyView() {

@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
+| `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
+| Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |
+| `NonMemberChatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `BaseChatEventHandler` or `DefaultChatEventHandler` instead. |
 | Lambda parameter `AttachmentState.onImagePreviewResult` | 2022.09.17 <br/>5.8.2 | 2022.10.01 ⌛ | 2022.10.15 ⌛ | Replace it with lambda parameter `AttachmentState.onMediaGalleryPreviewResult` |
 | `AttachmentState` constructor containing parameter `onImagePreviewResult`  | 2022.09.17 <br/>5.8.2 | 2022.10.01 ⌛ | 2022.10.15 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `onImagePreviewResult`. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
@@ -22,13 +26,13 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageListView::setBlockUserEnabled` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The option to block the user from `MessageListView` has been deprecated and will be removed. |
 | `MessageListView` attributes | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The attributes `streamUiMuteOptionIcon`, `streamUiUnmuteOptionIcon`, `streamUiMuteUserEnabled`, `streamUiBlockOptionIcon` and `streamUiBlockUserEnabled` have been deprecated and will be removed. The options to block and mute users will no longer be contained inside `MessageListView` |
 | `MessageListViewStyle` constructor containing params: `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` and `blockEnabled`  | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
-| `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30 ⌛ | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
+| `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
 | `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
-| `LegacyDateFormatter` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30 ⌛ | The class is unused and will be removed. |
-| `PorterImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30 ⌛ | The class is unused and will be removed. |
-| `PorterShapeImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30 ⌛ | The class is unused and will be removed. |
+| `LegacyDateFormatter` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
+| `PorterImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
+| `PorterShapeImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
 | `ChatClient::disconnect` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
 | `TaggedLogger` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `StreamLog` instead.|
 | `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `StreamLog` instead.|

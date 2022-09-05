@@ -55,7 +55,7 @@ public interface QueryChannelsState {
 
     @Deprecated(
         message = "Use chatEventHandlerFactory instead",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
     public var chatEventHandler: ChatEventHandler?

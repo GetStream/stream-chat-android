@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -28,9 +29,11 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -44,6 +47,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageLis
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
@@ -57,6 +62,8 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -70,22 +77,13 @@ public class StreamOfflinePluginFactory(
     private val appContext: Context,
 ) : PluginFactory, RepositoryFactory.Provider {
 
+    private val logger = StreamLog.getLogger("Chat:OfflinePluginFactory")
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
     private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         StreamLog.e("StreamOfflinePlugin", throwable) {
             "[uncaughtCoroutineException] throwable: $throwable, context: $context"
         }
     }
-    private val scope = CoroutineScope(SupervisorJob() + DispatcherProvider.IO + exceptionHandler)
-    private val logger = StreamLog.getLogger("Chat:StreamOfflinePluginFactory")
-
-    /**
-     * Creates a [Plugin]
-     *
-     * @return The [Plugin] instance.
-     */
-    override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
-
     private val statePluginFactory = StreamStatePluginFactory(
         config = StatePluginConfig(
             backgroundSyncEnabled = config.backgroundSyncEnabled,
@@ -95,6 +93,23 @@ public class StreamOfflinePluginFactory(
         ),
         appContext = appContext
     )
+    @Volatile private var _scope: CoroutineScope? = null
+
+    override fun createRepositoryFactory(user: User): RepositoryFactory {
+        logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }
+        val scope = ensureScope(user)
+        return DatabaseRepositoryFactory(
+            database = createDatabase(scope, appContext, user, config.persistenceEnabled),
+            currentUser = user
+        )
+    }
+
+    /**
+     * Creates a [Plugin]
+     *
+     * @return The [Plugin] instance.
+     */
+    override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
 
     /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
@@ -102,7 +117,9 @@ public class StreamOfflinePluginFactory(
      *
      * This method must be called after the user is set in the SDK.
      */
+    @Suppress("LongMethod")
     private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin {
+        logger.i { "[getOrCreateOfflinePlugin] user.id: '${user.id}'" }
         val cachedPlugin = cachedOfflinePluginInstance
 
         if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
@@ -114,28 +131,40 @@ public class StreamOfflinePluginFactory(
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
+        val scope = ensureScope(user)
+
         val statePlugin = statePluginFactory.createStatePlugin(user, scope)
 
         InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
+            logger.i { "[onUserDisconnected] user.id: '${it?.id}'" }
             clearCachedInstance()
+            _scope?.cancel()
+            _scope = null
         }
 
         val chatClient = ChatClient.instance()
-        val repositoryFactory = chatClient.repositoryFacade
+        val clientState = chatClient.clientState
+        val repositoryFacade = chatClient.repositoryFacade
 
-        val hideChannelListener: HideChannelListener = getHideChannelListener(chatClient, statePlugin)
-        val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(chatClient, statePlugin)
-        val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(chatClient, statePlugin)
-        val sendReactionListener = getSendReactionListener(chatClient, statePlugin)
-        val deleteMessageListener: DeleteMessageListener = getDeleteMessageListenerDatabase(chatClient, statePlugin)
-        val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
-            clientState = chatClient.clientState,
-            channelRepository = repositoryFactory,
-            userRepository = repositoryFactory
+        val editMessageListener = getEditMessageListener(clientState, repositoryFacade, statePlugin)
+        val hideChannelListener: HideChannelListener = getHideChannelListener(repositoryFacade, statePlugin)
+        val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(
+            clientState, repositoryFacade, statePlugin
         )
-        val editMessageListener = getEditMessageListener(chatClient, statePlugin)
-        val queryMembersListener: QueryMembersListener =
-            QueryMembersListenerDatabase(chatClient.repositoryFacade, chatClient.repositoryFacade)
+        val sendReactionListener = getSendReactionListener(clientState, repositoryFacade, statePlugin)
+        val deleteMessageListener: DeleteMessageListener = getDeleteMessageListenerDatabase(
+            clientState, repositoryFacade, statePlugin
+        )
+        val sendMessageListener: SendMessageListener = getSendMessageListener(repositoryFacade, statePlugin)
+        val shuffleGiphyListener: ShuffleGiphyListener = getShuffleGiphyListener(repositoryFacade, statePlugin)
+        val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
+            repositoryFacade, repositoryFacade
+        )
+        val createChannelListener: CreateChannelListener = CreateChannelListenerImpl(
+            clientState = clientState,
+            channelRepository = repositoryFacade,
+            userRepository = repositoryFacade
+        )
 
         return OfflinePlugin(
             activeUser = user,
@@ -149,7 +178,7 @@ public class StreamOfflinePluginFactory(
             deleteReactionListener = deleteReactionListener,
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
-            sendMessageListener = statePlugin,
+            sendMessageListener = sendMessageListener,
             sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
@@ -159,10 +188,46 @@ public class StreamOfflinePluginFactory(
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 
-    private fun getHideChannelListener(chatClient: ChatClient, statePlugin: StatePlugin): HideChannelListener {
+    private fun ensureScope(user: User): CoroutineScope {
+        val currentScope = _scope
+        logger.d {
+            "[ensureScope] user.id: '${user.id}', hasScope: ${currentScope != null}, " +
+                "isScopeActive: ${currentScope?.isActive}"
+        }
+        return when (currentScope == null || !currentScope.isActive) {
+            true -> ChatClient.instance().inheritScope { parentJob ->
+                SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
+            }.also {
+                logger.v { "[ensureScope] create new scope: '${user.id}'" }
+                _scope = it
+            }
+            else -> currentScope.also {
+                logger.v { "[ensureScope] reuse existing scope: '${user.id}'" }
+            }
+        }
+    }
+
+    private fun getEditMessageListener(
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): EditMessageListenerComposite {
+        val editMessageListenerDatabase = EditMessageListenerDatabase(
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+            clientState = clientState
+        )
+
+        return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
+    }
+
+    private fun getHideChannelListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): HideChannelListener {
         val hideChannelListenerDatabase = HideChannelListenerDatabase(
-            channelRepository = chatClient.repositoryFacade,
-            messageRepository = chatClient.repositoryFacade
+            channelRepository = repositoryFacade,
+            messageRepository = repositoryFacade
         )
 
         return HideChannelListenerComposite(
@@ -170,11 +235,15 @@ public class StreamOfflinePluginFactory(
         )
     }
 
-    private fun getDeleteReactionListener(chatClient: ChatClient, statePlugin: StatePlugin): DeleteReactionListener {
+    private fun getDeleteReactionListener(
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): DeleteReactionListener {
         val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
-            clientState = chatClient.clientState,
-            reactionsRepository = chatClient.repositoryFacade,
-            messageRepository = chatClient.repositoryFacade
+            clientState = clientState,
+            reactionsRepository = repositoryFacade,
+            messageRepository = repositoryFacade
         )
 
         return DeleteReactionListenerComposite(
@@ -182,23 +251,16 @@ public class StreamOfflinePluginFactory(
         )
     }
 
-    private fun getShuffleGiphyListener(chatClient: ChatClient, statePlugin: StatePlugin): ShuffleGiphyListener {
-        val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
-            userRepository = chatClient.repositoryFacade,
-            messageRepository = chatClient.repositoryFacade
-        )
-
-        return ShuffleGiphyListenerComposite(
-            listOf(shuffleGiphyListenerDatabase, statePlugin)
-        )
-    }
-
-    private fun getSendReactionListener(chatClient: ChatClient, statePlugin: StatePlugin): SendReactionListener {
+    private fun getSendReactionListener(
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): SendReactionListener {
         val sendReactionListenerDatabase = SendReactionListenerDatabase(
-            clientState = chatClient.clientState,
-            messageRepository = chatClient.repositoryFacade,
-            reactionsRepository = chatClient.repositoryFacade,
-            userRepository = chatClient.repositoryFacade
+            clientState = clientState,
+            messageRepository = repositoryFacade,
+            reactionsRepository = repositoryFacade,
+            userRepository = repositoryFacade
         )
 
         return SendReactionListenerComposite(
@@ -206,24 +268,38 @@ public class StreamOfflinePluginFactory(
         )
     }
 
-    private fun getEditMessageListener(chatClient: ChatClient, statePlugin: StatePlugin): EditMessageListenerComposite {
-        val editMessageListenerDatabase = EditMessageListenerDatabase(
-            userRepository = chatClient.repositoryFacade,
-            messageRepository = chatClient.repositoryFacade,
-            clientState = chatClient.clientState
+    private fun getSendMessageListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin,
+    ): SendMessageListener {
+
+        val sendMessageListenerDatabase = SendMessageListenerDatabase(repositoryFacade, repositoryFacade)
+        return SendMessageListenerComposite(listOf(statePlugin, sendMessageListenerDatabase))
+    }
+
+    private fun getShuffleGiphyListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin
+    ): ShuffleGiphyListener {
+        val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade
         )
 
-        return EditMessageListenerComposite(listOf(statePlugin, editMessageListenerDatabase))
+        return ShuffleGiphyListenerComposite(
+            listOf(shuffleGiphyListenerDatabase, statePlugin)
+        )
     }
 
     private fun getDeleteMessageListenerDatabase(
-        chatClient: ChatClient,
+        clientState: ClientState,
+        repositoryFacade: RepositoryFacade,
         statePlugin: StatePlugin,
     ): DeleteMessageListener {
         val deleteMessageListenerDatabase = DeleteMessageListenerDatabase(
-            clientState = chatClient.clientState,
-            messageRepository = chatClient.repositoryFacade,
-            userRepository = chatClient.repositoryFacade
+            clientState = clientState,
+            messageRepository = repositoryFacade,
+            userRepository = repositoryFacade
         )
 
         return DeleteMessageListenerComposite(
@@ -241,6 +317,7 @@ public class StreamOfflinePluginFactory(
         user: User?,
         offlineEnabled: Boolean,
     ): ChatDatabase {
+        logger.i { "[createDatabase] user.id: '${user?.id}', offlineEnabled: $offlineEnabled" }
         return if (offlineEnabled && user != null) {
             ChatDatabase.getDatabase(context, user.id)
         } else {
@@ -248,9 +325,5 @@ public class StreamOfflinePluginFactory(
                 scope.launch { inMemoryDatabase.clearAllTables() }
             }
         }
-    }
-
-    override fun createRepositoryFactory(user: User): RepositoryFactory {
-        return DatabaseRepositoryFactory(createDatabase(scope, appContext, user, config.persistenceEnabled), user)
     }
 }

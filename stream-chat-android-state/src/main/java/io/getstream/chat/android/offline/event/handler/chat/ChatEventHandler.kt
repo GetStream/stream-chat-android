@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.offline.event.handler.chat
 
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -98,7 +100,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleChatEvent() instead.",
         replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [NotificationAddedToChannelEvent] event. It runs in background. */
     public abstract fun handleNotificationAddedToChannelEvent(
@@ -109,7 +111,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleCidEvent() instead.",
         replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [MemberAddedEvent] event. It runs in background. */
     public open fun handleMemberAddedEvent(
@@ -121,7 +123,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleCidEvent() instead.",
         replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [MemberRemovedEvent] event. It runs in background. */
     public open fun handleMemberRemovedEvent(
@@ -133,7 +135,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleChatEvent() instead.",
         replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedByUserEvent(
@@ -144,7 +146,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleChatEvent() instead.",
         replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [ChannelUpdatedEvent] event. It runs in background. */
     public abstract fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
@@ -159,7 +161,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleCidEvent() instead.",
         replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public open fun handleChannelVisibleEvent(
         event: ChannelVisibleEvent,
@@ -169,7 +171,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleChatEvent() instead.",
         replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [NotificationMessageNewEvent] event. It runs in background. */
     public open fun handleNotificationMessageNewEvent(
@@ -180,7 +182,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     @Deprecated(
         message = "Use handleChatEvent() instead.",
         replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
     public open fun handleNotificationRemovedFromChannelEvent(

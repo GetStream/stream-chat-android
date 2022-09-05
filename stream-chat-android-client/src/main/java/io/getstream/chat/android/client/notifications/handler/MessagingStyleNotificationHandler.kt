@@ -22,25 +22,18 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.content.edit
-import androidx.core.graphics.drawable.IconCompat
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
-import androidx.core.graphics.drawable.toBitmapOrNull
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URL
 import java.util.Date
 
 /**
@@ -53,6 +46,7 @@ internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
+    private val userIconBuilder: UserIconBuilder,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -77,7 +71,7 @@ internal class MessagingStyleNotificationHandler(
             newMessageIntent(message.id, channel.type, channel.id),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        ChatClient.instance().scope.launch {
+        ChatClient.instance().launch {
             val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
             val notification = NotificationCompat.Builder(context, getNotificationChannelId())
                 .setSmallIcon(R.drawable.stream_ic_notification)
@@ -144,42 +138,22 @@ internal class MessagingStyleNotificationHandler(
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"
     }
+    private suspend fun Message.toMessagingStyleMessage(context: Context): NotificationCompat.MessagingStyle.Message =
+        NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
+
+    private suspend fun Message.person(context: Context): Person = user.toPerson(context)
+
+    private val Message.timestamp: Long
+        get() = (createdAt ?: createdLocallyAt ?: Date()).time
+
+    private suspend fun User.toPerson(context: Context): Person =
+        Person.Builder()
+            .setKey(id)
+            .setName(personName(context))
+            .setIcon(userIconBuilder.buildIcon(this))
+            .build()
+
+    private fun User.personName(context: Context): String =
+        name.takeIf { it.isNotBlank() }
+            ?: context.getString(R.string.stream_chat_notification_empty_username)
 }
-
-private suspend fun Message.toMessagingStyleMessage(context: Context): NotificationCompat.MessagingStyle.Message =
-    NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
-
-private suspend fun Message.person(context: Context): Person = user.toPerson(context)
-
-private val Message.timestamp: Long
-    get() = (createdAt ?: createdLocallyAt ?: Date()).time
-
-private suspend fun User.toPerson(context: Context): Person =
-    Person.Builder()
-        .setKey(id)
-        .setName(personName(context))
-        .setIcon(avatarIconCompact(context))
-        .build()
-
-private fun User.personName(context: Context): String =
-    name.takeIf { it.isNotBlank() }
-        ?: context.getString(R.string.stream_chat_notification_empty_username)
-
-private suspend fun User.avatarIconCompact(context: Context): IconCompat? =
-    image
-        .takeUnless { it.isEmpty() }
-        ?.let {
-            withContext(DispatcherProvider.IO) {
-                runCatching {
-                    URL(it).openStream().use {
-                        RoundedBitmapDrawableFactory.create(
-                            context.resources,
-                            BitmapFactory.decodeStream(it),
-                        )
-                            .apply { isCircular = true }
-                            .toBitmapOrNull()
-                    }
-                        ?.let(IconCompat::createWithBitmap)
-                }.getOrNull()
-            }
-        }
