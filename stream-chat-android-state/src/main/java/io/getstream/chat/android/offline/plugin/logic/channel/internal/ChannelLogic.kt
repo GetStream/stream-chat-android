@@ -437,19 +437,7 @@ internal class ChannelLogic(
     }
 
     private fun upsertUserPresence(user: User) {
-        val userId = user.id
-        // members and watchers have users
-        val members = mutableState.members.value
-        val watchers = mutableState.watchers.value
-        val member = members.firstOrNull { it.getUserId() == userId }?.copy()
-        val watcher = watchers.firstOrNull { it.id == userId }
-        if (member != null) {
-            member.user = user
-            channelStateLogic.upsertMember(member)
-        }
-        if (watcher != null) {
-            channelStateLogic.upsertWatcher(user)
-        }
+        channelStateLogic.upsertUserPresence(user)
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {

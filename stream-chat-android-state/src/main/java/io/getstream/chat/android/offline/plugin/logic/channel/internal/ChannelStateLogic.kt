@@ -260,6 +260,10 @@ internal class ChannelStateLogic(
         mutableState.hideMessagesBefore = date
     }
 
+    fun upsertUserPresence(user: User) {
+        mutableState.upsertUserPresence(user)
+    }
+
     /**
      * Upsert member in the channel.
      *
