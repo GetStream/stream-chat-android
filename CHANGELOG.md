@@ -90,6 +90,7 @@
 - Started the deprecation process for `ImagePreviewActivity`, please use `MediaGalleryPreviewActivity` as it has all the functionality of the previous gallery while adding additional features such as video playback and offline capabilities. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentFactory`, please use `MediaAttachmentFactory` as it has all the functionality of the previous factory while adding additional features such as displaying video previews modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentContent`, please use `MediaAttachmentContent` as it has all the functionality of the previous component while adding additional features such as displaying video previous and modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Started the deprecation process for `ImageAttachmentQuotedContent`, please use `MediaAttachmentQuotedContent` as it retains all of the previous functionality while adding the ability to preview video attachments. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ❌ Removed
 

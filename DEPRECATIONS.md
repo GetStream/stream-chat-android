@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ImageAttachmentQuotedContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | Deprecated in favor of `MediaAttachmentQuotedContent`. The new function has the ability to preview videos as well as images. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageGridSpacing`  | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageGridSpacing`. |
 | `ImageAttachmentContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | `ImageAttachmentContent` has been deprecated in favor of `MediattachmentContent`. The new function is able to preview videos as well as images and has access to a new and improved media gallery. |
 | `ImageAttachmentFactory` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.10.11 ⌛ | `ImageAttachmentFactory` has been deprecated in favor of `MediaAttachmentFactory`. The new factory is able to preview videos as well as images and has access to a new and improved media gallery. |

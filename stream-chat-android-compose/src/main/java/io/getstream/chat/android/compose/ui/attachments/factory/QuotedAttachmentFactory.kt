@@ -27,7 +27,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
- * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] in case the
+ * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the
  * attachment is a media attachment or [FileAttachmentQuotedContent] in case the attachment is a file to build the UI
  * for the quoted message.
  */
