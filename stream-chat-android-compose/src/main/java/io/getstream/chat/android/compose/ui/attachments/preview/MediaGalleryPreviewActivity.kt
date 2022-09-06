@@ -832,7 +832,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 setOnPreparedListener {
                     // Don't remove the preview unless the user has clicked play previously,
                     // otherwise the preview will be removed whenever the video has finished downloading.
-                    if (!hasPrepared && userHasClickedPlay) {
+                    if (!hasPrepared && userHasClickedPlay && page == pagerState.currentPage) {
                         shouldShowProgressBar = false
                         shouldShowPreview = false
                         mediaController.show()
