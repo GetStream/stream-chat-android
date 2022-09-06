@@ -22,11 +22,15 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 private const val DEFAULT_BITMAP_QUALITY = 90
+
 @InternalStreamChatApi
 public object StreamFileUtil {
 
@@ -53,5 +57,56 @@ public object StreamFileUtil {
         } catch (_: IOException) {
             null
         }
+    }
+
+    /**
+     * Hashes the links of given attachments and then tries to create a new file
+     * under that hash. If the file already exists checks that the full file
+     * has been written and shares it if it has, in other cases downloads the file
+     * and writes it.
+     *
+     * @param context The Android [Context] used for path resolving and [Uri] fetching.
+     * @param attachment the attachment to be downloaded.
+     *
+     * @return The [Uri] that represents the path to the downloaded file.
+     */
+    public suspend fun writeFileToShareableFile(context: Context, attachment: Attachment): Uri? {
+        val result = runCatching {
+            val hashSuffix = "_tmp"
+            val attachmentName = (attachment.url ?: attachment.assetUrl)?.hashCode()
+            val fileName = attachmentName.toString() + hashSuffix
+
+            val file = File(context.cacheDir, fileName)
+
+            // When File.createNewFile returns false it means that the file already exists.
+            // We then check the hash name equality to confirm it's the same file and check file size
+            // equality to make sure we've completed the download successfully.
+            if (!file.createNewFile() &&
+                // TODO reported size is not the same as downloaded size
+                // TODO check why
+                attachmentName != null &&
+                // once this is functional
+                file.length() == attachment.fileSize.toLong()
+            ) {
+                getUriForFile(context, file)
+            } else {
+                val fileUrl = attachment.assetUrl ?: attachment.url ?: return null
+                val response = ChatClient.instance().downloadFile(fileUrl).await()
+
+                if (response.isSuccess) {
+                    // write the response to a file
+                    val byteArray = response.data().byteStream().readBytes()
+                    val fileOutputStream = FileOutputStream(file)
+                    fileOutputStream.write(byteArray)
+                    fileOutputStream.close()
+
+                    getUriForFile(context, file)
+                } else {
+                    null
+                }
+            }
+        }
+
+        return result.getOrNull()
     }
 }

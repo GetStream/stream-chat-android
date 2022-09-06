@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
+import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 
@@ -393,6 +394,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
+
+    @CheckResult
+    fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     fun warmUp()
 }
